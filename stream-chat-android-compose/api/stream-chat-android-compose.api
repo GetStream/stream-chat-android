@@ -795,13 +795,16 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatThemeKt {
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamColors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component10-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
 	public final fun component12-0d7_KjU ()J
 	public final fun component13-0d7_KjU ()J
 	public final fun component14-0d7_KjU ()J
+	public final fun component15-0d7_KjU ()J
+	public final fun component16-0d7_KjU ()J
+	public final fun component17-0d7_KjU ()J
 	public final fun component2-0d7_KjU ()J
 	public final fun component3-0d7_KjU ()J
 	public final fun component4-0d7_KjU ()J
@@ -810,20 +813,23 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun component7-0d7_KjU ()J
 	public final fun component8-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun copy-dVHXu7A (JJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
-	public static synthetic fun copy-dVHXu7A$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;JJJJJJJJJJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public final fun copy-OG5zQOY (JJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public static synthetic fun copy-OG5zQOY$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;JJJJJJJJJJJJJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAppBackground-0d7_KjU ()J
 	public final fun getBarsBackground-0d7_KjU ()J
 	public final fun getBorders-0d7_KjU ()J
+	public final fun getDeletedMessagesBackgroundColor-0d7_KjU ()J
 	public final fun getDisabled-0d7_KjU ()J
 	public final fun getErrorAccent-0d7_KjU ()J
 	public final fun getHighlight-0d7_KjU ()J
 	public final fun getInfoAccent-0d7_KjU ()J
 	public final fun getInputBackground-0d7_KjU ()J
 	public final fun getLinkBackground-0d7_KjU ()J
+	public final fun getOtherMessagesBackground-0d7_KjU ()J
 	public final fun getOverlay-0d7_KjU ()J
 	public final fun getOverlayDark-0d7_KjU ()J
+	public final fun getOwnMessagesBackground-0d7_KjU ()J
 	public final fun getPrimaryAccent-0d7_KjU ()J
 	public final fun getTextHighEmphasis-0d7_KjU ()J
 	public final fun getTextLowEmphasis-0d7_KjU ()J

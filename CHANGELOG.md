@@ -110,6 +110,7 @@
 - Added `MessagePreviewFormatter` option to the `ChatTheme`, to allow for message preview text format customization across the app.
 - Added the `leadingContent`, `headerContent`, `footerContent`, `trailingContent` and `content` Slot APIs for the `DefaultMessageItem`
 - Added `channelInfoUserItemWidth`, `channelInfoUserItemHorizontalPadding` and `channelInfoUserItemAvatarSize` options to `StreamDimens`, to make it possible to customize the dimensions inside the `ChannelInfo` component via `ChatTheme`. 
+- Added `ownMessagesBackground`, `otherMessagesBackground` and `deletedMessagesBackgroundColor` options to `StreamColors`, to make it possible to customize the message bubble color via `ChatTheme`. 
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
