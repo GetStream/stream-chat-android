@@ -48,6 +48,7 @@ You can customize push notifications in the following ways:
 * Overriding resources: Lets you customize notification's icon and text resources
 * `NotificationHandlerFactory`: Uses the styles we provide but customizes an intent the user triggers when clicking on a notification.
 * `NotificationHandler`: Lets you fully customize how notifications are shown and dismissed
+* `NotificationConfig::shouldShowNotificationOnPush`: Lets you decide whether to show a notification after receiving a push
 
 ### Overriding resources
 
@@ -127,7 +128,7 @@ ChatClient.Builder("api-key", context)
 
 Our [`MessageListView`](../../../03-ui/04-components/05-message-list.mdx) UI component and [`MessageList`](../../../04-compose/04-message-components/03-message-list.mdx) Compose UI Component automatically dismiss notifications related to a `Channel` when the user opens it.
 
-If you need to dismiss them manually (for example, if you are using a custom `MessageListiew` component) you can call the `ChatClient::dismissChannelNotifications` method, providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications:
+If you need to dismiss them manually (for example, if you are using a custom `MessageListView` component) you can call the `ChatClient::dismissChannelNotifications` method, providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications:
 
 ```kotlin
 ChatClient.dismissChannelNotifications("messaging", "general")
