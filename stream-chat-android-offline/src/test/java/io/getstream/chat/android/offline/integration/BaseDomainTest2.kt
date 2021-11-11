@@ -189,7 +189,6 @@ internal open class BaseDomainTest2 {
             .database(db)
             .offlineEnabled()
             .userPresenceEnabled()
-            .retryPolicy(NoRetryPolicy())
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
 
@@ -202,6 +201,7 @@ internal open class BaseDomainTest2 {
         // manually configure the user since client is mocked
         chatDomainImpl.setUser(data.user1)
 
+        chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
 
         chatDomainImpl.scope.launch {

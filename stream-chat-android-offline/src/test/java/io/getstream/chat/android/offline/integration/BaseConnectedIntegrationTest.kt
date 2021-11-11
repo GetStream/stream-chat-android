@@ -71,10 +71,10 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             backgroundSyncEnabled,
             context,
             offlinePlugin = plugin,
-            retryPolicy = NoRetryPolicy()
         )
         plugin.initState(chatDomainImpl, client)
         chatDomain = chatDomainImpl
+        chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
