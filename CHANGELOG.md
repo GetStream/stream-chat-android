@@ -67,7 +67,8 @@
 ### 🐞 Fixed
 - Fixed bug when showing messages with pending attachments that cause loading state to be not shown in some cases.
 - Fixed clearing `MessageInputView` after dismissing message to edit
-- Fixing support for videos from other SDKs
+- Fixed support for videos from other SDKs
+- Fixed downloading attachments with some special characters in their names
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 translation related to the flagging.
