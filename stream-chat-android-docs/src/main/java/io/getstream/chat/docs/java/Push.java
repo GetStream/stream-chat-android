@@ -23,8 +23,6 @@ import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerato
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate;
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator;
 import io.getstream.chat.docs.MainActivity;
-import io.getstream.chat.docs.R;
-import kotlin.Unit;
 
 public class Push {
     private Context context;
@@ -57,17 +55,6 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=java#setting-up-notification-data-payload-at-stream-dashboard">Setting up notification</a>
          */
         public void setupNotifications() {
-            int notificationChannelId = R.string.stream_chat_notification_channel_id;
-            int notificationChannelName = R.string.stream_chat_notification_channel_name;
-            int smallIcon = R.drawable.stream_ic_notification;
-            int errorCaseNotificationTitle = R.string.stream_chat_notification_title;
-            int errorCaseNotificationContent = R.string.stream_chat_notification_content;
-            int loadNotificationDataChannelName = R.string.stream_chat_load_notification_data_title;
-            int loadNotificationDataIcon = R.drawable.stream_ic_notification;
-            int loadNotificationDataTitle = R.string.stream_chat_load_notification_data_title;
-            int notificationGroupSummaryContentText = R.string.stream_chat_notification_group_summary_content_text;
-            int errorNotificationGroupSummaryTitle = R.string.stream_chat_error_notification_group_summary_content_text;
-            int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
             boolean pushNotificationsEnabled = true;
             List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>() {{
                 add(new FirebasePushDeviceGenerator());
@@ -75,17 +62,6 @@ public class Push {
 
 
             NotificationConfig notificationsConfig = new NotificationConfig(
-                    notificationChannelId,
-                    notificationChannelName,
-                    smallIcon,
-                    errorCaseNotificationTitle,
-                    errorCaseNotificationContent,
-                    loadNotificationDataChannelName,
-                    loadNotificationDataIcon,
-                    loadNotificationDataTitle,
-                    notificationGroupSummaryContentText,
-                    errorNotificationGroupSummaryTitle,
-                    errorNotificationGroupSummaryContentText,
                     pushNotificationsEnabled,
                     pushDeviceGenerators,
                     () -> {
