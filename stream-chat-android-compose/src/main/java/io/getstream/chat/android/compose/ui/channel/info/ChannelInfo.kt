@@ -195,8 +195,8 @@ private fun ChannelMembers(
         items(members) { member ->
             ChannelInfoUserItem(
                 modifier = Modifier
-                    .width(80.dp)
-                    .padding(horizontal = 8.dp),
+                    .width(ChatTheme.dimens.channelInfoUserItemWidth)
+                    .padding(horizontal = ChatTheme.dimens.channelInfoUserItemHorizontalPadding),
                 member = member,
             )
         }
@@ -223,7 +223,7 @@ private fun ChannelInfoUserItem(
     ) {
 
         UserAvatar(
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.size(ChatTheme.dimens.channelInfoUserItemAvatarSize),
             user = member.user,
             contentDescription = memberName
         )
