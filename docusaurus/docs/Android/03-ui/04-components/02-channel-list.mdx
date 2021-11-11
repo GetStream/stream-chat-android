@@ -422,16 +422,25 @@ public fun interface ChatEventHandler {
     public fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
 }
 
-/** Enum representing possible outcome of channels event handling. */
-public enum class EventHandlingResult {
-    /** Add a channel to a query channels collection.*/
-    ADD,
+/** Class representing possible outcome of chat event handling. */
+public sealed class EventHandlingResult {
+    /**
+     * Add a channel to a query channels collection.
+     *
+     * @param channel Channel to be added.
+     */
+    public class Add(public val channel: Channel) : EventHandlingResult()
 
-    /** Remove a channel from a query channels collection. */
-    REMOVE,
+    /**
+     * Remove a channel from a query channels collection.
+     *
+     * @param cid cid of channel to remove.
+     *
+     */
+    public class Remove(public val cid: String) : EventHandlingResult()
 
     /** Skip handling of this event. */
-    SKIP
+    public object Skip : EventHandlingResult()
 }
 ```
 
