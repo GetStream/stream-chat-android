@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.randomConfig
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.delay
@@ -94,8 +95,9 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
         private var parentId: String? = null
 
+        @OptIn(ExperimentalStreamChatApi::class)
         fun givenTypingEvents(areSupported: Boolean) = apply {
-            whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(typingEventsEnabled = areSupported)
+            mutableState.channelConfig.value = randomConfig(typingEventsEnabled = areSupported)
         }
 
         fun givenParentId(parentId: String?) = apply {

@@ -31,6 +31,9 @@
     <string name="stream_compose_cancel">Annuler</string>
     <string name="stream_compose_waiting_for_network">En attente de réseau</string>
     <string name="stream_compose_untitled_channel">Channel without name</string>
+    <string name="stream_compose_user_status_online">En ligne</string>
+    <string name="stream_compose_user_status_last_seen">Vu pour la dernière fois %1$s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">Dernière vue à l\'instant</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">Pas de messages</string>

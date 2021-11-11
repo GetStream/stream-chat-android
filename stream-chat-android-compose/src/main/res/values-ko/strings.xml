@@ -30,6 +30,9 @@
     <string name="stream_compose_cancel">취소</string>
     <string name="stream_compose_waiting_for_network">네트워크를 검색하는 중입니다</string>
     <string name="stream_compose_untitled_channel">무명의 그룹</string>
+    <string name="stream_compose_user_status_online">온라인</string>
+    <string name="stream_compose_user_status_last_seen">마지막 확인: %s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">방금 확인했습니다</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">메시지 없음</string>
