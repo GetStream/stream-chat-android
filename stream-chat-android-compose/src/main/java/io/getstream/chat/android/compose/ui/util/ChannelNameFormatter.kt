@@ -16,7 +16,7 @@ public interface ChannelNameFormatter {
      * @param channel The channel whose data is used to generate the name.
      * @return The display name for the given channel.
      */
-    public fun format(channel: Channel): String
+    public fun formatChannelName(channel: Channel): String
 
     public companion object {
         /**
@@ -58,7 +58,7 @@ private class DefaultChannelNameFormatter(
      * @param channel The channel whose data is used to generate the name.
      * @return The display name for the given channel.
      */
-    override fun format(channel: Channel): String {
+    override fun formatChannelName(channel: Channel): String {
         return channel.name.takeIf { it.isNotEmpty() }
             ?: channel.getUsersExcludingCurrent()
                 .joinToString(limit = maxMembers) { it.name }
