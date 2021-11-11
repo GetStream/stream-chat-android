@@ -153,7 +153,10 @@ public sealed interface ChatDomain {
     @CheckResult
     @Deprecated(
         message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
-        replaceWith = ReplaceWith("ChatClient.replayEventsForActiveChannels()"),
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
         level = DeprecationLevel.WARNING
     )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
