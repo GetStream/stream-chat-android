@@ -136,7 +136,7 @@ public class ChannelListViewModel(
     public fun leaveChannel(channel: Channel) {
         chatDomain.leaveChannel(channel.cid).enqueue(
             onError = { chatError ->
-                logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}")
+                logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
             }
         )
@@ -145,7 +145,7 @@ public class ChannelListViewModel(
     public fun deleteChannel(channel: Channel) {
         chatDomain.deleteChannel(channel.cid).enqueue(
             onError = { chatError ->
-                logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}")
+                logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
             }
         )
@@ -154,7 +154,7 @@ public class ChannelListViewModel(
     public fun hideChannel(channel: Channel) {
         chatDomain.hideChannel(channel.cid, true).enqueue(
             onError = { chatError ->
-                logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}")
+                logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
             }
         )
@@ -163,7 +163,7 @@ public class ChannelListViewModel(
     public fun markAllRead() {
         chatDomain.markAllRead().enqueue(
             onError = { chatError ->
-                logger.logE("Could not mark all messages as read. Error: ${chatError.message}")
+                logger.logE("Could not mark all messages as read. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
             }
         )
     }
@@ -172,7 +172,7 @@ public class ChannelListViewModel(
         filterLiveData.value?.let { filter ->
             chatDomain.queryChannelsLoadMore(filter, sort).enqueue(
                 onError = { chatError ->
-                    logger.logE("Could not load more channels. Error: ${chatError.message}")
+                    logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 }
             )
         }

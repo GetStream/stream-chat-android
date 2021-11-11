@@ -69,8 +69,6 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
-    private val logger = ChatLogger.get("MessageListViewModel")
-
     /**
      * Whether the user is viewing a thread.
      * @see Mode
@@ -266,7 +264,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.LastMessageRead -> {
                 domain.markRead(cid).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not mark cid: $cid as read. Error messageL ${chatError.message}")
+                        logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
                     }
                 )
             }
@@ -280,7 +278,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.deleteMessage(event.message, false)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE("Could not delete message: ${chatError.message}")
+                            logger.logE("Could not delete message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                             _errorEvents.postValue(EventWrapper(ErrorEvent.DeleteMessageError(chatError)))
                         }
                     )
@@ -297,7 +295,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.PinMessage -> {
                 client.pinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not flag message: ${chatError.message}")
+                        logger.logE("Could not flag message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
                     }
                 )
@@ -305,7 +303,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.UnpinMessage -> {
                 client.unpinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not unpin message: ${chatError.message}")
+                        logger.logE("Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(chatError)))
                     }
                 )
@@ -316,7 +314,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.RetryMessage -> {
                 domain.sendMessage(event.message).enqueue(
                     onError = { chatError ->
-                        logger.logE("(Retry) Could not send message: ${chatError.message}")
+                        logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
                 )
             }
@@ -355,7 +353,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyMessage -> {
                 domain.setMessageForReply(event.cid, event.repliedMessage).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not reply message: ${chatError.message}")
+                        logger.logE("Could not reply message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
                 )
             }
@@ -376,7 +374,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                     if (result.isSuccess) {
                         _targetMessage.value = result.data()
                     } else {
-                        logger.logE("Could not load message: ${result.error()}")
+                        val error = result.error()
+                        logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
                     }
                 }
             }
@@ -399,7 +398,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                         }
                         domain.editMessage(message).enqueue(
                             onError = { chatError ->
-                                logger.logE("Could not edit message to remove its attachments: $chatError")
+                                logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")
                             }
                         )
                     } else {
@@ -420,7 +419,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                         val message = result.data()
                         onEvent(Event.ReplyMessage(cid, message))
                     } else {
-                        logger.logE("Could not load message to reply: ${result.error()}")
+                        val error = result.error()
+                        logger.logE("Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}")
                     }
                 }
             }
@@ -453,7 +453,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.sendGiphy(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
-                            "Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}"
+                            "Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                         )
                     }
                 )
@@ -462,7 +462,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.shuffleGiphy(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
-                            "Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}"
+                            "Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                         )
                     }
                 )
@@ -471,7 +471,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.cancelMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
-                            "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}"
+                            "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                         )
                     }
                 )
@@ -534,7 +534,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             domain.deleteReaction(cid, reaction).enqueue(
                 onError = { chatError ->
                     logger.logE(
-                        "Could not delete reaction for message with id: ${reaction.messageId} Error: ${chatError.message}"
+                        "Could not delete reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                     )
                 }
             )
@@ -542,7 +542,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             domain.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue(
                 onError = { chatError ->
                     logger.logE(
-                        "Could not send reaction for message with id: ${reaction.messageId} Error: ${chatError.message}"
+                        "Could not send reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                     )
                 }
             )
