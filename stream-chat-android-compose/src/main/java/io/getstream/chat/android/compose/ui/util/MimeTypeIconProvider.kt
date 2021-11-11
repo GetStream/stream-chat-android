@@ -24,7 +24,10 @@ internal object MimeTypeIconProvider {
         ModelType.attach_mime_ppt to R.drawable.stream_compose_ic_file_ppt,
         ModelType.attach_mime_pptx to R.drawable.stream_compose_ic_file_pptx,
         ModelType.attach_mime_mov to R.drawable.stream_compose_ic_file_mov,
+        ModelType.attach_mime_quicktime to R.drawable.stream_compose_ic_file_mov,
+        ModelType.attach_mime_video_quicktime to R.drawable.stream_compose_ic_file_mov,
         ModelType.attach_mime_mp4 to R.drawable.stream_compose_ic_file_mov,
+        ModelType.attach_mime_video_mp4 to R.drawable.stream_compose_ic_file_mov,
         ModelType.attach_mime_m4a to R.drawable.stream_compose_ic_file_mp3,
         ModelType.attach_mime_mp3 to R.drawable.stream_compose_ic_file_mp3,
     )
