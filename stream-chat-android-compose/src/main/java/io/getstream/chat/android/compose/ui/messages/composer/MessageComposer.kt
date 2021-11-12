@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.state.Edit
 import com.getstream.sdk.chat.state.MessageAction
-import com.getstream.sdk.chat.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
@@ -29,6 +28,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.components.Default
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and

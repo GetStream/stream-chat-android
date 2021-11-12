@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.state.Reply
 import com.getstream.sdk.chat.state.Thread
-import com.getstream.sdk.chat.viewmodel.MessageComposerViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
@@ -42,6 +41,7 @@ import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOver
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 

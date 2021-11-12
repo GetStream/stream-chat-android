@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.viewmodel.MessageComposerViewModel
+import com.getstream.sdk.chat.viewmodel.MessageComposerController
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -13,7 +13,7 @@ import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
- * Currently builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
+ * Currently builds the [MessageComposerController], [MessageListViewModel] and [AttachmentsPickerViewModel].
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
  * @param chatClient The client to use for API calls.
@@ -32,7 +32,13 @@ public class MessagesViewModelFactory(
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(chatClient, chatDomain, channelId)
+            MessageComposerViewModel(
+                MessageComposerController(
+                    chatClient = chatClient,
+                    chatDomain = chatDomain,
+                    channelId = channelId
+                )
+            )
         },
         MessageListViewModel::class.java to {
             MessageListViewModel(
