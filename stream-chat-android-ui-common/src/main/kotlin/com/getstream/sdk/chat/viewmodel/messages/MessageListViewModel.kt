@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -30,6 +31,8 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.setMessageForReply
 import kotlinx.coroutines.flow.map
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
@@ -68,8 +71,6 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
-    private val logger = ChatLogger.get("MessageListViewModel")
-
     /**
      * Whether the user is viewing a thread.
      * @see Mode
@@ -83,6 +84,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val state: LiveData<State> = stateMerger
 
     public val user: LiveData<User?> = domain.user
+
+    private val logger: TaggedLogger = ChatLogger.get("MessageListViewModel")
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
@@ -261,7 +264,11 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onEndRegionReached()
             }
             is Event.LastMessageRead -> {
-                domain.markRead(cid).enqueue()
+                domain.markRead(cid).enqueue(
+                    onError = { chatError ->
+                        logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                    }
+                )
             }
             is Event.ThreadModeEntered -> {
                 onThreadModeEntered(event.parentMessage)
@@ -270,43 +277,66 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                domain.deleteMessage(event.message, false).enqueue()
+                domain.deleteMessage(event.message, false)
+                    .enqueue(
+                        onError = { chatError ->
+                            logger.logE("Could not delete message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                            _errorEvents.postValue(EventWrapper(ErrorEvent.DeleteMessageError(chatError)))
+                        }
+                    )
             }
             is Event.FlagMessage -> {
                 client.flagMessage(event.message.id).enqueue { result ->
                     event.resultHandler(result)
                     if (result.isError) {
+                        logger.logE("Could not flag message: ${result.error().message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.FlagMessageError(result.error())))
                     }
                 }
             }
             is Event.PinMessage -> {
                 client.pinMessage(Message(id = event.message.id)).enqueue(
-                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(it))) }
+                    onError = { chatError ->
+                        logger.logE("Could not flag message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
+                    }
                 )
             }
             is Event.UnpinMessage -> {
                 client.unpinMessage(Message(id = event.message.id)).enqueue(
-                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(it))) }
+                    onError = { chatError ->
+                        logger.logE("Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(chatError)))
+                    }
                 )
             }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
             }
             is Event.RetryMessage -> {
-                domain.sendMessage(event.message).enqueue()
+                domain.sendMessage(event.message).enqueue(
+                    onError = { chatError ->
+                        logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    }
+                )
             }
             is Event.MessageReaction -> {
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
             }
             is Event.MuteUser -> {
                 client.muteUser(event.user.id).enqueue(
-                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(it))) }
+                    onError = { chatError ->
+                        logger.logE("Could not mute user: ${chatError.message}")
+                        _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(chatError)))
+                    }
                 )
             }
             is Event.UnmuteUser -> {
                 client.unmuteUser(event.user.id).enqueue(
-                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(it))) }
+                    onError = { chatError ->
+                        logger.logE("Could not unmute user: ${chatError.message}")
+                        _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(chatError)))
+                    }
                 )
             }
             is Event.BlockUser -> {
@@ -316,14 +346,21 @@ public class MessageListViewModel @JvmOverloads constructor(
                     reason = null,
                     timeout = null,
                 ).enqueue(
-                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(it))) }
+                    onError = { chatError ->
+                        logger.logE("Could not block user: ${chatError.message}")
+                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
+                    }
                 )
             }
             is Event.ReplyMessage -> {
-                domain.setMessageForReply(event.cid, event.repliedMessage).enqueue()
+                client.setMessageForReply(event.cid, event.repliedMessage).enqueue(
+                    onError = { chatError ->
+                        logger.logE("Could not reply message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    }
+                )
             }
             is Event.DownloadAttachment -> {
-                domain.downloadAttachment(event.attachment).enqueue(
+                client.downloadAttachment(event.attachment).enqueue(
                     onError = { chatError ->
                         logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
@@ -335,9 +372,12 @@ public class MessageListViewModel @JvmOverloads constructor(
                     event.messageId,
                     MESSAGES_LIMIT,
                     MESSAGES_LIMIT
-                ).enqueue {
-                    if (it.isSuccess) {
-                        _targetMessage.value = it.data()
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        _targetMessage.value = result.data()
+                    } else {
+                        val error = result.error()
+                        logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
                     }
                 }
             }
@@ -348,17 +388,23 @@ public class MessageListViewModel @JvmOverloads constructor(
                     event.messageId,
                     MESSAGES_LIMIT,
                     MESSAGES_LIMIT
-                ).enqueue {
-                    if (it.isSuccess) {
-                        val message = it.data()
-                        message.attachments.removeAll {
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        val message = result.data()
+                        message.attachments.removeAll { attachment ->
                             if (attachmentToBeDeleted.assetUrl != null) {
-                                it.assetUrl == attachmentToBeDeleted.assetUrl
+                                attachment.assetUrl == attachmentToBeDeleted.assetUrl
                             } else {
-                                it.imageUrl == attachmentToBeDeleted.imageUrl
+                                attachment.imageUrl == attachmentToBeDeleted.imageUrl
                             }
                         }
-                        domain.editMessage(message).enqueue()
+                        domain.editMessage(message).enqueue(
+                            onError = { chatError ->
+                                logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                            }
+                        )
+                    } else {
+                        logger.logE("Could not load message: ${result.error()}")
                     }
                 }
             }
@@ -370,10 +416,13 @@ public class MessageListViewModel @JvmOverloads constructor(
                     messageId,
                     MESSAGES_LIMIT,
                     MESSAGES_LIMIT
-                ).enqueue {
-                    if (it.isSuccess) {
-                        val message = it.data()
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        val message = result.data()
                         onEvent(Event.ReplyMessage(cid, message))
+                    } else {
+                        val error = result.error()
+                        logger.logE("Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}")
                     }
                 }
             }
@@ -403,13 +452,31 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
         when (event.action) {
             GiphyAction.SEND -> {
-                domain.sendGiphy(event.message).enqueue()
+                domain.sendGiphy(event.message).enqueue(
+                    onError = { chatError ->
+                        logger.logE(
+                            "Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        )
+                    }
+                )
             }
             GiphyAction.SHUFFLE -> {
-                domain.shuffleGiphy(event.message).enqueue()
+                domain.shuffleGiphy(event.message).enqueue(
+                    onError = { chatError ->
+                        logger.logE(
+                            "Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        )
+                    }
+                )
             }
             GiphyAction.CANCEL -> {
-                domain.cancelMessage(event.message).enqueue()
+                domain.cancelMessage(event.message).enqueue(
+                    onError = { chatError ->
+                        logger.logE(
+                            "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        )
+                    }
+                )
             }
         }.exhaustive
     }
@@ -466,9 +533,21 @@ public class MessageListViewModel @JvmOverloads constructor(
             score = 1
         }
         if (message.ownReactions.any { it.type == reactionType }) {
-            domain.deleteReaction(cid, reaction).enqueue()
+            domain.deleteReaction(cid, reaction).enqueue(
+                onError = { chatError ->
+                    logger.logE(
+                        "Could not delete reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                    )
+                }
+            )
         } else {
-            domain.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue()
+            domain.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue(
+                onError = { chatError ->
+                    logger.logE(
+                        "Could not send reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                    )
+                }
+            )
         }
     }
 
@@ -522,6 +601,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
         public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class DeleteMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
     public fun interface DateSeparatorHandler {

@@ -40,7 +40,10 @@ import io.getstream.chat.android.offline.experimental.channel.state.toMutableSta
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
+import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -61,7 +64,6 @@ import io.getstream.chat.android.offline.usecase.CreateChannel
 import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
-import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.GetThread
@@ -76,12 +78,10 @@ import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.offline.usecase.QueryMembers
-import io.getstream.chat.android.offline.usecase.ReplayEventsForActiveChannels
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendGiphy
 import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
-import io.getstream.chat.android.offline.usecase.SetMessageForReply
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.StopTyping
@@ -888,8 +888,7 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        ReplayEventsForActiveChannels(this).invoke(cid)
+    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> = client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
@@ -982,10 +981,9 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteChannel(cid: String): Call<Unit> = DeleteChannel(this).invoke(cid)
 
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        SetMessageForReply(this).invoke(cid, message)
+    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> = client.setMessageForReply(cid, message)
 
-    override fun downloadAttachment(attachment: Attachment): Call<Unit> = DownloadAttachment(this).invoke(attachment)
+    override fun downloadAttachment(attachment: Attachment): Call<Unit> = client.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,

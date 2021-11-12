@@ -63,4 +63,5 @@
     <string name="stream_ui_message_list_error_flag_message">Gagal menandai pesan</string>
     <string name="stream_ui_message_list_error_pin_message">Gagal menyematkan pesan</string>
     <string name="stream_ui_message_list_error_unpin_message">Gagal melepas pesan</string>
+    <string name="stream_ui_message_list_error_delete_message">Gagal menghapus pesan</string>
 </resources>
