@@ -10,12 +10,14 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
 
 /**
@@ -94,3 +96,14 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
         Result(Unit)
     }
 }
+
+/**
+ * Downloads the selected attachment to the "Download" folder in the public external storage directory.
+ *
+ * @param attachment The attachment to download.
+ *
+ * @return Executable async [Call] downloading attachment.
+ */
+@CheckResult
+public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
+    DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)

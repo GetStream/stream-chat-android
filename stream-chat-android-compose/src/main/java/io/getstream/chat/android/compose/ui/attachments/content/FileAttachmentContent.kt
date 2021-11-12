@@ -30,12 +30,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 
 /**
  * Width of file attachments.
@@ -125,7 +126,7 @@ public fun FileAttachmentItem(attachment: Attachment) {
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false)
                     ) {
-                        ChatDomain
+                        ChatClient
                             .instance()
                             .downloadAttachment(attachment)
                             .enqueue()

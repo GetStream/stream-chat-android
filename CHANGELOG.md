@@ -48,6 +48,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 - Added new extension function `ChatClient::replayEventsForActiveChannels`.
 - Added new extension function `ChatClient::setMessageForReply`.
+- Added new extension function `ChatClient::downloadAttachment` to download attachments without `ChatDomain`.
 
 ### ⚠️ Changed
 
