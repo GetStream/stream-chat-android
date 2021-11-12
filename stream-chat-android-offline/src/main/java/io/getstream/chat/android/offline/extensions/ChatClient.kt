@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -58,6 +59,21 @@ public fun ChatClient.searchUsersByName(
     userLimit: Int,
     userPresence: Boolean,
 ): Call<List<User>> = ChatDomain.instance().searchUsersByName(querySearch, offset, userLimit, userPresence)
+
+/**
+ * Adds the provided channel to the active channels and replays events for all active channels.
+ *
+ * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
+ */
+@CheckResult
+public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
+    validateCid(cid)
+
+    val domainImpl = ChatDomain.instance() as ChatDomainImpl
+    return CoroutineCall(domainImpl.scope) {
+        domainImpl.replayEvents(cid)
+    }
+}
 
 /**
  * Set the reply state for the channel.
