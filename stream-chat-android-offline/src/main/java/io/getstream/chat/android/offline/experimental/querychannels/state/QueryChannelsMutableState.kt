@@ -25,7 +25,7 @@ internal class QueryChannelsMutableState(
     scope: CoroutineScope,
 ) : QueryChannelsState {
 
-    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter)
+    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
 
     internal val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     internal val _loading = MutableStateFlow(false)
