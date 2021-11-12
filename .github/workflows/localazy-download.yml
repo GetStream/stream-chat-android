@@ -1,8 +1,6 @@
 name: Download translations from Localazy Test
-on:
-  push:
-    branches:
-      - task/cas-1308-localazy
+
+on: workflow_dispatch
 
 jobs:
   localazy-download:
