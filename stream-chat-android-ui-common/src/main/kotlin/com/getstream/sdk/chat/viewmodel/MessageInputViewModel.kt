@@ -8,12 +8,14 @@ import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.setMessageForReply
 import java.io.File
 
 /**
@@ -174,7 +176,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
     public fun dismissReply() {
         if (repliedMessage.value != null) {
-            chatDomain.setMessageForReply(cid, null).enqueue()
+            ChatClient.instance().setMessageForReply(cid, null).enqueue()
         }
     }
 }
