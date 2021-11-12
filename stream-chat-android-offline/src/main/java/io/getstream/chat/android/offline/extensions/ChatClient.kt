@@ -12,7 +12,9 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
@@ -72,6 +74,26 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
     val domainImpl = ChatDomain.instance() as ChatDomainImpl
     return CoroutineCall(domainImpl.scope) {
         domainImpl.replayEvents(cid)
+    }
+}
+
+/**
+ * Set the reply state for the channel.
+ *
+ * @param cid CID of the channel where reply state is being set.
+ * @param message The message we want reply to. The null value means dismiss reply state.
+ *
+ * @return Executable async [Call].
+ */
+@CheckResult
+public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
+    validateCid(cid)
+
+    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val channelController = chatDomain.channel(cid)
+    return CoroutineCall(chatDomain.scope) {
+        channelController.replyMessage(message)
+        Result(Unit)
     }
 }
 
