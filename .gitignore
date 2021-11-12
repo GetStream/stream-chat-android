@@ -107,3 +107,6 @@ docusaurus/.env
 .sign/keystore.properties
 .sign/release.keystore
 
+*.classpath
+*.project
+*.prefs
