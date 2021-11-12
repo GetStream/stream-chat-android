@@ -66,4 +66,5 @@
     <string name="stream_ui_message_list_error_flag_message">Fallo al marcar el mensaje</string>
     <string name="stream_ui_message_list_error_pin_message">Fallo al fijar el mensaje</string>
     <string name="stream_ui_message_list_error_unpin_message">Fallo al desfijar el mensaje</string>
+    <string name="stream_ui_message_list_error_delete_message">Fallo al eliminar el mensaje</string>
 </resources>

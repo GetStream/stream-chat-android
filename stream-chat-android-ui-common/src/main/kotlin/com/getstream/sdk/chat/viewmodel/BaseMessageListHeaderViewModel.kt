@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -31,6 +32,8 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
     public val online: LiveData<ConnectionState> = chatDomain.connectionState
     public val typingUsers: LiveData<List<User>> = _typingUsers
 
+    private val logger = ChatLogger.get("MessageListHeaderViewModel")
+
     init {
         chatDomain.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
@@ -49,6 +52,8 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
                 _typingUsers.addSource(channelController.typing) { typingEvent ->
                     _typingUsers.value = typingEvent.users
                 }
+            } else {
+                logger.logE("Could not watch channel with cid: $cid. Error: ${channelControllerResult.error()}")
             }
         }
     }
