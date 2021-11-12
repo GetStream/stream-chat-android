@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
@@ -76,16 +77,16 @@ public class ChannelListViewModel(
                 }
 
                 val channelState = queryChannelsController.channelsState.map { channelState ->
-                    handleChannelState(channelState, queryChannelsController.mutedChannelIds.value)
+                    handleChannelState(channelState, chatDomain.channelMutes.value)
                 }.asLiveData()
 
                 stateMerger.addSource(channelState) { state -> stateMerger.value = state }
 
-                stateMerger.addSource(queryChannelsController.mutedChannelIds.asLiveData()) { mutedChannels ->
+                stateMerger.addSource(chatDomain.channelMutes.asLiveData()) { channelMutes ->
                     val state = stateMerger.value
 
                     if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
+                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
                     } else {
                         stateMerger.value = state?.copy()
                     }
@@ -103,7 +104,7 @@ public class ChannelListViewModel(
 
     private fun handleChannelState(
         channelState: QueryChannelsController.ChannelsState,
-        channelMutesIds: List<String>,
+        channelMutes: List<ChannelMute>,
     ): State {
         return when (channelState) {
             is QueryChannelsController.ChannelsState.NoQueryActive,
@@ -116,7 +117,7 @@ public class ChannelListViewModel(
             is QueryChannelsController.ChannelsState.Result ->
                 State(
                     isLoading = false,
-                    channels = parseMutedChannels(channelState.channels, channelMutesIds),
+                    channels = parseMutedChannels(channelState.channels, channelMutes),
                 )
         }
     }
@@ -161,11 +162,12 @@ public class ChannelListViewModel(
 
     private fun parseMutedChannels(
         channels: List<Channel>,
-        channelMutesIds: List<String>,
+        channelMutes: List<ChannelMute>,
     ): List<Channel> {
+        val mutedChannelsIds = channelMutes.map { channelMute -> channelMute.channel.id }.toSet()
         return channels.map { channel ->
             when {
-                channel.isMuted != channelMutesIds.contains(channel.id) ->
+                channel.isMuted != channel.id in mutedChannelsIds ->
                     channel.copy(extraData = channel.extraData.clone(EXTRA_DATA_MUTED, !channel.isMuted))
 
                 else -> channel

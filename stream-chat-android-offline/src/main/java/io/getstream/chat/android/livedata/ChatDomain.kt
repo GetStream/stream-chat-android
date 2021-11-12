@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -84,6 +85,11 @@ public sealed interface ChatDomain {
      * list of users that you've muted
      */
     public val muted: LiveData<List<Mute>>
+
+    /**
+     * List of channels you've muted
+     */
+    public val channelMutes: LiveData<List<ChannelMute>>
 
     /**
      * if the current user is banned or not
