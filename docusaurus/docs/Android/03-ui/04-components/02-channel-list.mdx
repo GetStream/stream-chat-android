@@ -45,6 +45,7 @@ val viewModel: ChannelListViewModel by viewModels {
 // Bind the ViewModel with ChannelListView
 viewModel.bindView(channelListView, viewLifecycleOwner)
 ```
+To instantiate `ChannelListViewModel` you may want to pass an instance of the `ChatEventHandler` interface. See [this point](##ChatEventHandler) to read more.
 
 All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
 
@@ -402,3 +403,46 @@ channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PAREN
 These changes should have the following results:
 
 ![Light mode](../../assets/channel_list_shimmer.png)
+
+
+## ChatEventHandler
+
+When `ChannelListViewModel` is instantiated it makes a query channels request to get the list of channels. Starting from this point, the list is being synced through WebSocket events. The SDK includes a `ChatEventHandler` that decides whether to include or exclude the channel from the list after receiving some events. Sometimes desired behavior differs from the default one and you can notice that for example - the channel doesn't disappear from the list after removing a member. In that case, you should provide a custom `ChatEventHandler` implementation, which has the following interface:
+
+```kotlin
+public fun interface ChatEventHandler {
+    /**
+     * Function that computes result of handling event. It runs in background.
+     *
+     * @param event ChatEvent that may contain updates for the set of channels. See more [ChatEvent]
+     * @param filter [FilterObject] that can be used to define result of handling.
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
+    public fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
+}
+
+/** Class representing possible outcome of chat event handling. */
+public sealed class EventHandlingResult {
+    /**
+     * Add a channel to a query channels collection.
+     *
+     * @param channel Channel to be added.
+     */
+    public class Add(public val channel: Channel) : EventHandlingResult()
+
+    /**
+     * Remove a channel from a query channels collection.
+     *
+     * @param cid cid of channel to remove.
+     *
+     */
+    public class Remove(public val cid: String) : EventHandlingResult()
+
+    /** Skip handling of this event. */
+    public object Skip : EventHandlingResult()
+}
+```
+
+You can also use `BaseChatEventHandler` - a more detailed implementation that covers the most generic cases and forces you to implement the required ones.
+
