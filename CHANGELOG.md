@@ -64,7 +64,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Removing ripple effect for attachements in message options.
+- Removed ripple effect for attachements in message options.
 ### ⬆️ Improved
 
 ### ✅ Added
