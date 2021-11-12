@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
-import android.content.res.ColorStateList;
+import static java.util.Collections.singletonList;
+
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -91,8 +93,6 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemVi
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder;
 import io.getstream.chat.docs.R;
 import kotlin.coroutines.Continuation;
-
-import static java.util.Collections.singletonList;
 
 public class Android {
 
@@ -914,7 +914,6 @@ public class Android {
                                 genericDrawable,
                                 genericDrawable
                         )
-
             );
         }
     }
