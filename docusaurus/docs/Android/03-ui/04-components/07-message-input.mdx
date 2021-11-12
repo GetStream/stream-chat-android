@@ -180,7 +180,12 @@ You can use [TransformStyle](https://github.com/GetStream/stream-chat-android/bl
 ```kotlin
 TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
     viewStyle.copy(
-        messageInputTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_white)
+        messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+            color = ContextCompat.getColor(
+                requireContext(),
+                R.color.stream_ui_white,
+            ),
+        )
     )
 }
 ```

@@ -57,7 +57,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             Config(
                 backgroundSyncEnabled = backgroundSyncEnabled,
                 userPresence = userPresence,
-                persistenceEnabled = offlineEnabled
+                persistenceEnabled = offlineEnabled,
+                retryPolicy = NoRetryPolicy(),
             )
         )
 
@@ -74,7 +75,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         )
         plugin.initState(chatDomainImpl, client)
         chatDomain = chatDomainImpl
-        chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {

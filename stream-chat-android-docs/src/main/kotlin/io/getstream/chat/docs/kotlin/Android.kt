@@ -849,7 +849,12 @@ class Android {
         fun messageInputCustomisation() {
             TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
                 viewStyle.copy(
-                    messageInputTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_white)
+                    messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+                        color = ContextCompat.getColor(
+                            requireContext(),
+                            R.color.stream_ui_white,
+                        ),
+                    )
                 )
             }
         }

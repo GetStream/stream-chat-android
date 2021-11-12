@@ -116,41 +116,20 @@ public sealed interface ChatDomain {
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::removeMembers directly",
-        replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
-
-    /**
-     * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
-     *
-     * @param channelType String represents channel type.
-     * @param members List of members' id.
-     * @param extraData Map object with custom fields and additional data.
-     *
-     * @return [Call] instance with [Channel].
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::createChannel directly",
-        replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel>
-
     /**
      * Adds the provided channel to the active channels and replays events for all active channels.
      *
      * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
      */
     @CheckResult
+    @Deprecated(
+        message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     /**
@@ -540,6 +519,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call].
      */
     @CheckResult
+    @Deprecated(
+        message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().setMessageForReply(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
     /**
@@ -550,6 +537,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] downloading attachment.
      */
     @CheckResult
+    @Deprecated(
+        message = "downloadAttachment is deprecated. Use extension function ChatClient::downloadAttachment instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().downloadAttachment(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**
@@ -607,7 +602,8 @@ public sealed interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-        private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
+        private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType =
+            UploadAttachmentsNetworkType.NOT_ROAMING
 
         private var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
@@ -673,14 +669,20 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
+            instance?.run {
+                Log.e(
+                    "Chat",
+                    "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]"
+                )
+            }
             instance = buildImpl()
             return instance()
         }
 
         @ExperimentalStreamChatApi
         private fun getPlugin(): OfflinePlugin {
-            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
+            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }
+                ?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
                 ?: OfflinePluginConfig(
                     backgroundSyncEnabled = backgroundSyncEnabled,
                     userPresence = userPresence,
