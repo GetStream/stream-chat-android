@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.state.Edit
 import com.getstream.sdk.chat.state.MessageAction
 import com.getstream.sdk.chat.state.MessageMode
@@ -12,32 +10,38 @@ import com.getstream.sdk.chat.state.ThreadReply
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 
 /**
- * ViewModel responsible for handling the composing and sending of messages.
+ * Controller responsible for handling the composing and sending of messages.
+ *
+ * It acts as a central place for both the core business logic and state required to create and send messages, handle
+ * attachments, message actions and more.
+ *
+ * If you require more state and business logic, compose this Controller with your code and apply the necessary changes.
+ *
+ * @param channelId The ID of the channel we're chatting in.
+ * @param chatClient The client used to communicate to the API.
+ * @param chatDomain The domain used to communicate to the API and store data offline.
  */
-@InternalStreamChatApi
-public open class MessageComposerViewModel(
-    private val chatClient: ChatClient,
-    private val chatDomain: ChatDomain,
+public class MessageComposerController constructor(
     private val channelId: String,
-) : ViewModel() {
+    private val chatClient: ChatClient = ChatClient.instance(),
+    private val chatDomain: ChatDomain = ChatDomain.instance(),
+) {
 
     /**
      * UI state of the current composer input.
      */
-    public var input: MutableStateFlow<String> = MutableStateFlow("")
-        private set
+    public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
-    public var selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
-        private set
+    public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
 
     /**
      * Current message mode, either [Normal] or [Thread]. Used to determine if we're sending a thread
@@ -49,12 +53,19 @@ public open class MessageComposerViewModel(
      * Set of currently active message actions. These are used to display different UI in the composer,
      * as well as help us decorate the message with information, such as the quoted message id.
      */
-    private var messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
+    public val messageActions: MutableStateFlow<Set<MessageAction>> =
+        MutableStateFlow(mutableSetOf())
+
+    /**
+     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
+     */
+    public val lastActiveAction: Flow<MessageAction?>
+        get() = messageActions.map { actions -> actions.lastOrNull { it is Edit || it is Reply } }
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
-    public val activeAction: MessageAction?
+    private val activeAction: MessageAction?
         get() = messageActions.value.lastOrNull { it is Edit || it is Reply }
 
     /**
@@ -171,17 +182,16 @@ public open class MessageComposerViewModel(
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
-        viewModelScope.launch {
-            val sendMessageCall = if (isInEditMode) {
-                chatDomain.editMessage(message)
-            } else {
-                chatDomain.sendMessage(message)
-            }
-
-            dismissMessageActions()
-            sendMessageCall.enqueue()
+        val sendMessageCall = if (isInEditMode) {
+            chatDomain.editMessage(message)
+        } else {
+            chatDomain.sendMessage(message)
         }
+
+        dismissMessageActions()
         clearData()
+
+        sendMessageCall.enqueue()
     }
 
     /**

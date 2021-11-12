@@ -164,15 +164,15 @@ class MessagesActivity : AppCompatActivity() {
                 .wrapContentHeight(),
             viewModel = composerViewModel,
             integrations = {},
-            input = {
+            input = { value, attachments, action ->
                 MessageInput(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(7f)
                         .padding(start = 8.dp),
-                    value = composerViewModel.input,
-                    attachments = composerViewModel.selectedAttachments,
-                    activeAction = composerViewModel.activeAction,
+                    value = value,
+                    attachments = attachments,
+                    activeAction = action,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     label = {
