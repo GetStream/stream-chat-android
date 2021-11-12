@@ -62,20 +62,23 @@ internal class FileAttachmentsView : RecyclerView {
     }
 
     fun setAttachments(attachments: List<Attachment>) {
-        fileAttachmentsAdapter = FileAttachmentsAdapter(
-            attachmentClickListener = attachmentClickListener?.let { listener ->
-                AttachmentClickListener(listener::onAttachmentClick)
-            },
-            attachmentLongClickListener = attachmentLongClickListener?.let { listener ->
-                AttachmentLongClickListener(listener::onAttachmentLongClick)
-            },
-            attachmentDownloadClickListener = attachmentDownloadClickListener?.let { listener ->
-                AttachmentDownloadClickListener(listener::onAttachmentDownloadClick)
-            },
-            style,
-        )
-        adapter = fileAttachmentsAdapter
+        if (!::fileAttachmentsAdapter.isInitialized) {
+            fileAttachmentsAdapter = FileAttachmentsAdapter(
+                attachmentClickListener = attachmentClickListener?.let { listener ->
+                    AttachmentClickListener(listener::onAttachmentClick)
+                },
+                attachmentLongClickListener = attachmentLongClickListener?.let { listener ->
+                    AttachmentLongClickListener(listener::onAttachmentLongClick)
+                },
+                attachmentDownloadClickListener = attachmentDownloadClickListener?.let { listener ->
+                    AttachmentDownloadClickListener(listener::onAttachmentDownloadClick)
+                },
+                style,
+            )
 
+            adapter = fileAttachmentsAdapter
+        }
+        
         fileAttachmentsAdapter.setItems(attachments)
     }
 
