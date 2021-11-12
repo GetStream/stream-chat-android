@@ -9,8 +9,9 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 
 internal class SyncMessagesWork(
     appContext: Context,
@@ -21,7 +22,7 @@ internal class SyncMessagesWork(
 
     override fun doWork(): Result {
         val cid = inputData.getString(DATA_CID)!!
-        val result = ChatDomain.instance().replayEventsForActiveChannels(cid).execute()
+        val result = ChatClient.instance().replayEventsForActiveChannels(cid).execute()
 
         return if (result.isSuccess) {
             logger.logD("Sync success.")

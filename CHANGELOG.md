@@ -46,6 +46,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::replayEventsForActiveChannels`.
 
 ### ⚠️ Changed
 

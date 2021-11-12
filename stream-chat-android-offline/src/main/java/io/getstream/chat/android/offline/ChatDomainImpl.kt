@@ -41,6 +41,7 @@ import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -76,7 +77,6 @@ import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.offline.usecase.QueryMembers
-import io.getstream.chat.android.offline.usecase.ReplayEventsForActiveChannels
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendGiphy
 import io.getstream.chat.android.offline.usecase.SendMessage
@@ -888,8 +888,7 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        ReplayEventsForActiveChannels(this).invoke(cid)
+    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> = client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
