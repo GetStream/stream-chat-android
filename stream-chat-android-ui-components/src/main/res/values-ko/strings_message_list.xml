@@ -63,4 +63,5 @@
     <string name="stream_ui_message_list_error_flag_message">메시지를 신고하지 못했습니다</string>
     <string name="stream_ui_message_list_error_pin_message">메시지를 고정하지 못했습니다</string>
     <string name="stream_ui_message_list_error_unpin_message">메시지 고정을 해제하지 못했습니다</string>
+    <string name="stream_ui_message_list_error_delete_message">메세지 삭제에 실패했습니다</string>
 </resources>

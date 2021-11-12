@@ -66,5 +66,5 @@
     <string name="stream_ui_message_list_error_flag_message">Échec du signalement du message</string>
     <string name="stream_ui_message_list_error_pin_message">Échec de l\'épinglage du message</string>
     <string name="stream_ui_message_list_error_unpin_message">Échec du désépinglage du message</string>
-    <string name="stream_ui_message_list_error_delete_message">Échec du supprimer du message</string>
+    <string name="stream_ui_message_list_error_delete_message">Échec de la suppression du message</string>
 </resources>
