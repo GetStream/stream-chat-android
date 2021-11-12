@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo
@@ -13,18 +14,21 @@ internal class QueryChannelsSpecTest {
                 "type",
                 "messaging"
             ),
+            QuerySort(),
         )
         val query2 = QueryChannelsSpec(
             Filters.eq(
                 "type",
                 "messaging"
             ),
+            QuerySort()
         )
         val query3 = QueryChannelsSpec(
             Filters.eq(
                 "type",
                 "commerce"
             ),
+            QuerySort()
         )
         // verify that 1 and 2 are equal
         query2.id shouldBeEqualTo query.id

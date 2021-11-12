@@ -65,11 +65,7 @@ internal class WhenQuery {
         val dbChannels = listOf(randomChannel(cid = "cid1"), randomChannel(cid = "cid2"))
         val sut = Fixture()
             .givenFailedNetworkRequest()
-            .givenQueryChannelsSpec(
-                QueryChannelsSpec(
-                    Filters.neutral(),
-                )
-            )
+            .givenQueryChannelsSpec(QueryChannelsSpec(Filters.neutral(), QuerySort()))
             .givenDBChannels(dbChannels)
             .get()
 
@@ -85,11 +81,7 @@ internal class WhenQuery {
             val dbChannel = randomChannel(cid = "cid", lastMessageAt = Date(1000L))
             val networkChannels = listOf(dbChannel.copy(lastMessageAt = Date(2000L)), randomChannel(cid = "cid2"))
             val sut = Fixture()
-                .givenQueryChannelsSpec(
-                    QueryChannelsSpec(
-                        Filters.neutral(),
-                    )
-                )
+                .givenQueryChannelsSpec(QueryChannelsSpec(Filters.neutral(), QuerySort()))
                 .givenDBChannels(listOf(dbChannel))
                 .givenNetworkChannels(networkChannels)
                 .get()
@@ -110,10 +102,7 @@ internal class WhenQuery {
                 .givenFailedNetworkRequest()
                 .givenQuerySort(querySort)
                 .givenQueryChannelsSpec(
-                    QueryChannelsSpec(
-                        Filters.neutral(),
-                        cids = setOf("cid1", "cid2")
-                    )
+                    QueryChannelsSpec(Filters.neutral(), QuerySort()).apply { cids = setOf("cid1", "cid2") }
                 )
                 .givenDBChannels(listOf(dbChannel1, dbChannel2))
                 .get()
@@ -133,10 +122,7 @@ internal class WhenQuery {
             val sut = Fixture()
                 .givenQuerySort(querySort)
                 .givenQueryChannelsSpec(
-                    QueryChannelsSpec(
-                        Filters.neutral(),
-                        cids = setOf("cid1", "cid2")
-                    )
+                    QueryChannelsSpec(Filters.neutral(), QuerySort()).apply { cids = setOf("cid1", "cid2") }
                 )
                 .givenDBChannels(listOf(dbChannel))
                 .givenNetworkChannels(listOf(networkChannel1, networkChannel2))

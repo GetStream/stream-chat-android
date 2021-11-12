@@ -6,6 +6,7 @@ import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -707,14 +708,14 @@ internal fun randomChannelConfig(type: String = randomString(), config: Config =
 
 internal fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,
+    sort: QuerySort<Channel> = QuerySort(),
     cids: Set<String> = emptySet(),
-): QueryChannelsSpec = QueryChannelsSpec(filter, cids)
+): QueryChannelsSpec = QueryChannelsSpec(filter, sort).apply { this.cids = cids }
 
 internal fun randomQueryChannelsEntity(
     id: String = randomString(),
     filter: FilterObject = NeutralFilterObject,
     cids: List<String> = emptyList(),
-
 ): QueryChannelsEntity = QueryChannelsEntity(id, filter, cids)
 
 internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =

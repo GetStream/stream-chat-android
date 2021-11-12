@@ -211,7 +211,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         fun givenChannelsInOfflineStorage(vararg channels: Channel): Fixture {
             runBlocking {
                 val channelList = channels.toList()
-                val query = QueryChannelsSpec(filter).apply { cids = channelList.map(Channel::cid).toSet() }
+                val query = QueryChannelsSpec(filter, QuerySort()).apply { cids = channelList.map(Channel::cid).toSet() }
                 chatDomainImpl.repos.insertChannels(channelList)
                 chatDomainImpl.repos.insertQueryChannels(query)
                 whenever(chatDomainImpl.client.queryChannelsInternal(any())) doReturn channelList.asCall()
