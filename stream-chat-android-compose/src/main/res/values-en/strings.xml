@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">Leave group</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">Leave group</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">Do you want to leave the %1$s group?</string>
+    <string name="stream_compose_channel_info_mute_channel">Mute channel</string>
+    <string name="stream_compose_channel_info_unmute_channel">Unmute channel</string>
     <string name="stream_compose_channel_info_delete_conversation">Delete conversation</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Delete conversation</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Do you want to delete the channel %1$s?</string>

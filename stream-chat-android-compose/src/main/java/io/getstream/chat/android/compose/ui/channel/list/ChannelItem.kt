@@ -176,7 +176,9 @@ public fun ChannelDetails(
                 channelName()
 
                 Icon(
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_mute),
                     contentDescription = null,
                 )
