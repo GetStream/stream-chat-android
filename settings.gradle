@@ -17,6 +17,7 @@ include (
 		':stream-chat-android-compose-sample',
 		':stream-chat-android-pushprovider-firebase',
 		':stream-chat-android-pushprovider-huawei',
+		':videosample'
 )
 
 buildCache {
