@@ -15,9 +15,9 @@
     <!-- Channel Info Dialog -->
     <string name="stream_compose_channel_info_view_info">정보 보기</string>
     <string name="stream_compose_channel_info_leave_group">그룹 나가기</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_title">그룹을 떠나다</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">그룹 나가기</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">%1$s 그룹에서 나가시겠습니까?</string>
-    <string name="stream_compose_channel_info_mute_channel">음소거 채널</string>
+    <string name="stream_compose_channel_info_mute_channel">채널 음소거</string>
     <string name="stream_compose_channel_info_unmute_channel">채널 음소거 해제</string>
     <string name="stream_compose_channel_info_delete_conversation">대화 삭제하기</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">대화 삭제하기</string>
