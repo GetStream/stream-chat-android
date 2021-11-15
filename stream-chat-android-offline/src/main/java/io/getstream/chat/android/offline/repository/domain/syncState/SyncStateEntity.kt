@@ -8,7 +8,6 @@ import java.util.Date
 internal data class SyncStateEntity(
     @PrimaryKey var userId: String,
     var activeChannelIds: List<String> = mutableListOf(),
-    var activeQueryIds: List<String> = mutableListOf(),
     var lastSyncedAt: Date? = null,
     var markedAllReadAt: Date? = null,
 )

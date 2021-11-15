@@ -9,6 +9,4 @@ internal data class QueryChannelsSpec(
     val querySort: QuerySort<Channel>
 ) {
     var cids: Set<String> = emptySet()
-    // TODO remove it
-    val id = "123"
 }
