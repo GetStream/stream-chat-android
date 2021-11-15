@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.startup.Initializer
 import com.jakewharton.threetenabp.AndroidThreeTen
 
-@Suppress("unused")
-internal class ThreeTenInitializer : Initializer<Unit> {
+/**
+ * Jetpack Startup Initializer for the TreeTenABP library.
+ */
+public class ThreeTenInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         AndroidThreeTen.init(context)
     }
