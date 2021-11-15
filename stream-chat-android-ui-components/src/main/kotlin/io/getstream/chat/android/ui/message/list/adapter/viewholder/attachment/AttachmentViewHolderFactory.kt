@@ -6,7 +6,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentGroupBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
-import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
@@ -20,7 +19,6 @@ public open class AttachmentViewHolderFactory(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    private val style: FileAttachmentViewStyle,
 ) {
 
     public companion object {
@@ -79,7 +77,6 @@ public open class AttachmentViewHolderFactory(
                             attachmentClickListener,
                             attachmentLongClickListener,
                             attachmentDownloadClickListener,
-                            style,
                         )
                     }
             }

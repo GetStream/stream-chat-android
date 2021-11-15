@@ -639,8 +639,11 @@ public class MessageListView : ConstraintLayout {
 
         if (::attachmentViewFactory.isInitialized.not() && ::attachmentViewHolderFactory.isInitialized.not()) {
             // Create a default instance if neither (old or new) attachment factory has been set by the user
-            attachmentViewHolderFactory =
-                AttachmentViewHolderFactory({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
+            attachmentViewHolderFactory = AttachmentViewHolderFactory(
+                attachmentClickListener = {},
+                attachmentLongClickListener = {},
+                attachmentDownloadClickListener = {}
+            )
         }
 
         // Create default ViewHolderFactory if needed
@@ -941,7 +944,7 @@ public class MessageListView : ConstraintLayout {
     /**
      * Allows clients to set a custom implementation of [AttachmentViewFactory]. Use this
      * method to create a custom content view for the message attachments.
-     *§
+     *
      * @param attachmentViewFactory The custom view factory for attachments.
      */
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
