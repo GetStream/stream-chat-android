@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
@@ -33,15 +34,29 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Sys
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 
+/**
+ * Factory for creating the message items displayed in [MessageListView].
+ */
 public open class MessageListItemViewHolderFactory {
     internal lateinit var decoratorProvider: DecoratorProvider
 
+    /**
+     * Listeners set on [MessageListView] that should be invoked when the user interacts with
+     * list items.
+     */
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set
 
+    /**
+     * Factory for creating message attachments.
+     */
+    @Deprecated(message = "Prefer using attachmentViewHolderFactory instead")
     protected var attachmentViewFactory: AttachmentViewFactory? = null
         private set
 
+    /**
+     * Factory for creating message attachments.
+     */
     // TODO change to lateinit when AttachmentViewFactory is removed
     protected var attachmentViewHolderFactory: AttachmentViewHolderFactory? = null
         private set
