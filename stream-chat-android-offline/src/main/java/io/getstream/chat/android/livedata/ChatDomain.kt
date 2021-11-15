@@ -106,36 +106,7 @@ public sealed interface ChatDomain {
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::removeMembers directly",
-        replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
-
     // region use-case functions
-
-    /**
-     * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
-     *
-     * @param channelType String represents channel type.
-     * @param members List of members' id.
-     * @param extraData Map object with custom fields and additional data.
-     *
-     * @return [Call] instance with [Channel].
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::createChannel directly",
-        replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel>
 
     // replaying events
     /**
@@ -144,6 +115,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for obtainging list of historical [ChatEvent] objects.
      */
     @CheckResult
+    @Deprecated(
+        message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     // getting controllers
@@ -536,6 +515,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call].
      */
     @CheckResult
+    @Deprecated(
+        message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().setMessageForReply(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
     /**
@@ -545,6 +532,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] downloading attachment.
      */
     @CheckResult
+    @Deprecated(
+        message = "downloadAttachment is deprecated. Use extension function ChatClient::downloadAttachment instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().downloadAttachment(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**

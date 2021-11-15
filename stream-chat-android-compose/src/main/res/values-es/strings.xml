@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">Salir del grupo</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">Salir del grupo</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">¿Quieres dejar el grupo %1$s?</string>
+    <string name="stream_compose_channel_info_mute_channel">Silenciar canal</string>
+    <string name="stream_compose_channel_info_unmute_channel">Activar el sonido del canal</string>
     <string name="stream_compose_channel_info_delete_conversation">Eliminar conversación</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Eliminar conversación</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">¿Quieres eliminar el canal %1$s?</string>
@@ -31,6 +33,9 @@
     <string name="stream_compose_cancel">Cancelar</string>
     <string name="stream_compose_waiting_for_network">Esperando conexión de red</string>
     <string name="stream_compose_untitled_channel">Canal sin nombre</string>
+    <string name="stream_compose_user_status_online">Conectado</string>
+    <string name="stream_compose_user_status_last_seen">Ultima vez visto %1$s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">Última vez visto justo ahora</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">Sin mensajes</string>

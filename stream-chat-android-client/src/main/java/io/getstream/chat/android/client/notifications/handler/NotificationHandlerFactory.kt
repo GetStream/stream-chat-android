@@ -10,6 +10,7 @@ import android.os.Build
  */
 public object NotificationHandlerFactory {
 
+    @Suppress("DEPRECATION_ERROR")
     /**
      * Method that create a [NotificationHandler].
      *

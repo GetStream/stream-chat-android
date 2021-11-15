@@ -468,7 +468,11 @@ public fun DefaultMessageItemContent(
         }
     }
 
-    val messageCardColor = if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
+    val messageCardColor = when {
+        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackgroundColor
+        ownsMessage -> ChatTheme.colors.ownMessagesBackground
+        else -> ChatTheme.colors.otherMessagesBackground
+    }
 
     MessageBubble(
         modifier = modifier,

@@ -15,8 +15,10 @@
     <!-- Channel Info Dialog -->
     <string name="stream_compose_channel_info_view_info">정보 보기</string>
     <string name="stream_compose_channel_info_leave_group">그룹 나가기</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_title">Leave group</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">그룹 나가기</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">%1$s 그룹에서 나가시겠습니까?</string>
+    <string name="stream_compose_channel_info_mute_channel">채널 음소거</string>
+    <string name="stream_compose_channel_info_unmute_channel">채널 음소거 해제</string>
     <string name="stream_compose_channel_info_delete_conversation">대화 삭제하기</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">대화 삭제하기</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">%1$s 채널을 삭제하시겠습니까</string>
@@ -30,6 +32,9 @@
     <string name="stream_compose_cancel">취소</string>
     <string name="stream_compose_waiting_for_network">네트워크를 검색하는 중입니다</string>
     <string name="stream_compose_untitled_channel">무명의 그룹</string>
+    <string name="stream_compose_user_status_online">온라인</string>
+    <string name="stream_compose_user_status_last_seen">마지막 확인: %s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">방금 확인했습니다</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">메시지 없음</string>
