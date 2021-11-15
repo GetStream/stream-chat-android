@@ -715,8 +715,9 @@ internal fun randomQueryChannelsSpec(
 internal fun randomQueryChannelsEntity(
     id: String = randomString(),
     filter: FilterObject = NeutralFilterObject,
+    querySort: QuerySort<Channel> = QuerySort(),
     cids: List<String> = emptyList(),
-): QueryChannelsEntity = QueryChannelsEntity(id, filter, cids)
+): QueryChannelsEntity = QueryChannelsEntity(id, filter, querySort, cids)
 
 internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
     Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)

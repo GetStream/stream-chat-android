@@ -44,7 +44,7 @@ internal class WhenQuery {
 
         sut.query()
 
-        verify(repositories).selectById(any())
+        verify(repositories).selectBy(any(), any())
     }
 
     @Test
@@ -166,7 +166,7 @@ internal class WhenQuery {
         }
 
         suspend fun givenQueryChannelsSpec(queryChannelsSpec: QueryChannelsSpec) = apply {
-            whenever(repositories.selectById(any())) doReturn queryChannelsSpec
+            whenever(repositories.selectBy(any(), any())) doReturn queryChannelsSpec
             whenever(chatDomainImpl.selectAndEnrichChannels(any(), any())) doReturn emptyList()
         }
 
