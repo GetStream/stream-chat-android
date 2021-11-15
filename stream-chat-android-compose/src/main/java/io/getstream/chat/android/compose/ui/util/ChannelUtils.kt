@@ -1,9 +1,11 @@
 package io.getstream.chat.android.compose.ui.util
 
+import android.content.Context
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import java.util.Date
 
@@ -57,3 +59,47 @@ public fun Channel.getReadStatuses(userToIgnore: User?): List<Date> {
  * @return True if the channel is distinct.
  */
 public fun Channel.isDistinct(): Boolean = cid.contains("!members")
+
+/**
+ * Checks if the channel is a direct conversation between the current user and some
+ * other user.
+ *
+ * A one-to-one chat is basically a corner case of a distinct channel with only 2 members.
+ *
+ * @param currentUser The currently logged in user.
+ * @return True if the channel is a one-to-one conversation.
+ */
+public fun Channel.isOneToOne(currentUser: User?): Boolean {
+    return isDistinct() &&
+        members.size == 2 &&
+        members.any { it.user.id == currentUser?.id }
+}
+
+/**
+ * Returns a string describing the member status of the channel: either a member count for a group channel
+ * or the last seen text for a direct one-to-one conversation with the current user.
+ *
+ * @param context The context to load string resources.
+ * @param currentUser The currently logged in user.
+ * @return The text that represent the member status of the channel.
+ */
+public fun Channel.getMembersStatusText(context: Context, currentUser: User?): String {
+    val otherMembers = members.filter { it.user.id != currentUser?.id }
+
+    return when {
+        otherMembers.isEmpty() -> ""
+        isOneToOne(currentUser) -> {
+            otherMembers.first()
+                .user
+                .getLastSeenText(context)
+        }
+        else -> {
+            context.resources.getQuantityString(
+                R.plurals.stream_compose_channel_members,
+                otherMembers.count(),
+                otherMembers.count(),
+                otherMembers.count { it.user.online }
+            )
+        }
+    }
+}

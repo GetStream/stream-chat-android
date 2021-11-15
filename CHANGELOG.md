@@ -80,6 +80,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the information about channel members shown in the `MessageListHeader` subtitle.
 
 ### ⬆️ Improved
 
