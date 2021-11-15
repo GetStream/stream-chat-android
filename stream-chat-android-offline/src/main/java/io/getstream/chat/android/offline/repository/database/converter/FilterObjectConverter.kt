@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
 import java.lang.IllegalArgumentException
 
-internal object FilterObjectConverter {
+internal class FilterObjectConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val adapter = moshi.adapter<Map<String, Any>>()
 
@@ -46,7 +46,7 @@ private fun Map<String, Any>.toFilterObject(): FilterObject = when {
     this.isEmpty() -> NeutralFilterObject
     this.size == 1 -> this.entries.first().toFilterObject()
     this.size == 2 && this.containsKey(KEY_DISTINCT) && this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List<String>))
-    else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
+    else -> throw IllegalArgumentException("FilterObject can not be created with this map `$this`")
 }
 
 private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.key) {
@@ -74,7 +74,7 @@ private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.k
     }
 }
 
-private fun FilterObject.toMap(): Map<String, Any> = when (this) {
+internal fun FilterObject.toMap(): Map<String, Any> = when (this) {
     is AndFilterObject -> mapOf(KEY_AND to this.filterObjects.map(FilterObject::toMap))
     is OrFilterObject -> mapOf(KEY_OR to this.filterObjects.map(FilterObject::toMap))
     is NorFilterObject -> mapOf(KEY_NOR to this.filterObjects.map(FilterObject::toMap))
