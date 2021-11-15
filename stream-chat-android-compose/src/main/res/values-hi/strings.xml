@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">ग्रुप छोड़ेें</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">ग्रुप छोड़ेें</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">क्या आप %1$s समूह को छोड़ना चाहते हैं?</string>
+    <string name="stream_compose_channel_info_mute_channel">म्यूट चैनल</string>
+    <string name="stream_compose_channel_info_unmute_channel">चैनल अनम्यूट करें</string>
     <string name="stream_compose_channel_info_delete_conversation">बातचीत मिटायें</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">बातचीत मिटायें</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">क्या आप %1$s . चैनल को हटाना चाहते हैं</string>
