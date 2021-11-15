@@ -13,13 +13,13 @@ import androidx.compose.ui.unit.dp
  * @param channelInfoUserItemWidth The width of a member tile in the channel info dialog.
  * @param channelInfoUserItemHorizontalPadding The padding inside a member tile in the channel info dialog.
  * @param channelInfoUserItemAvatarSize The size of a member avatar in the channel info dialog.
- * @param attachmentsContentImageWidth The width of
- * @param attachmentsContentImageHeight The height of
- * @param attachmentsContentGiphyWidth The with of
- * @param attachmentsContentGiphyHeight The height of
- * @param attachmentsContentLinkWidth The with of link
- * @param attachmentsContentFileWidth The width of file
- * @param attachmentsContentFileUploadWidth The Width of
+ * @param attachmentsContentImageWidth The width of image attachments in the message list.
+ * @param attachmentsContentImageHeight The height of image attachments in the message list.
+ * @param attachmentsContentGiphyWidth The with of Giphy attachments in the message list.
+ * @param attachmentsContentGiphyHeight The height of Giphy attachments in the message list.
+ * @param attachmentsContentLinkWidth The with of link attachments in the message list.
+ * @param attachmentsContentFileWidth The width of file attachments in the message list.
+ * @param attachmentsContentFileUploadWidth The width of uploading file attachments in the message list.
  */
 @Immutable
 public data class StreamDimens(
