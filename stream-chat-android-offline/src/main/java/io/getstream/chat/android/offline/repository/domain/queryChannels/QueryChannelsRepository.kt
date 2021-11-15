@@ -25,9 +25,17 @@ internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryCh
         }
 
         private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsEntity =
-            QueryChannelsEntity(queryChannelsSpec.id, queryChannelsSpec.filter, queryChannelsSpec.querySort, queryChannelsSpec.cids.toList())
+            QueryChannelsEntity(
+                generateId(queryChannelsSpec.filter, queryChannelsSpec.querySort),
+                queryChannelsSpec.filter,
+                queryChannelsSpec.querySort,
+                queryChannelsSpec.cids.toList()
+            )
 
         private fun toModel(queryChannelsEntity: QueryChannelsEntity): QueryChannelsSpec =
-            QueryChannelsSpec(queryChannelsEntity.filter, queryChannelsEntity.querySort).apply { queryChannelsEntity.cids.toSet() }
+            QueryChannelsSpec(
+                queryChannelsEntity.filter,
+                queryChannelsEntity.querySort
+            ).apply { cids = queryChannelsEntity.cids.toSet() }
     }
 }
