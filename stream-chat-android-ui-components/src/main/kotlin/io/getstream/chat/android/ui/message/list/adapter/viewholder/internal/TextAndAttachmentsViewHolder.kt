@@ -51,7 +51,7 @@ internal class TextAndAttachmentsViewHolder(
      * of the Message are unchanged. However, other properties (like reactions) might
      * change, and these listeners should receive a fully up-to-date Message.
      */
-    // TODO this is currently unused
+    // TODO do we need the same thing for the new attachment implementation?
     private val modifiedListeners = MessageListListenerContainerImpl(
         messageClickListener = { listeners.messageClickListener.onMessageClick(data.message) },
         messageLongClickListener = { listeners.messageLongClickListener.onMessageLongClick(data.message) },
