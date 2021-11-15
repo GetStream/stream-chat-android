@@ -7,13 +7,16 @@ import android.widget.LinearLayout
 import androidx.core.view.setPadding
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 
@@ -54,6 +57,7 @@ public open class AttachmentViewFactory {
                 parent
             )
             links.isNotEmpty() -> createLinkContent(links.first(), data.isMine, listeners, style, parent)
+            attachments.isNotEmpty() -> createAttachmentsContent(data, listeners, attachments, parent)
             giphy.isNotEmpty() -> createAttachmentsContent(data, listeners, giphy, parent)
             else -> error("Can't create content view for the empty attachments collection")
         }
@@ -107,6 +111,7 @@ public open class AttachmentViewFactory {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
                 is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
+                is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
         }
     }
@@ -149,7 +154,9 @@ public open class AttachmentViewFactory {
             attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
                 layoutParams = DEFAULT_LAYOUT_PARAMS
             }
-
+            attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
+                layoutParams = DEFAULT_LAYOUT_PARAMS
+            }
             else -> error("Unsupported case for attachment view factory!")
         }
     }
@@ -171,9 +178,31 @@ public open class AttachmentViewFactory {
         showAttachments(attachments)
     }
 
+    private fun setupFileAttachmentsView(
+        fileAttachmentsView: FileAttachmentsView,
+        attachments: List<Attachment>,
+        listeners: MessageListListenerContainer,
+        message: Message,
+    ) = fileAttachmentsView.run {
+        setPadding(FILE_ATTACHMENT_VIEW_PADDING)
+        attachmentLongClickListener = AttachmentLongClickListener {
+            listeners.messageLongClickListener.onMessageLongClick(message)
+        }
+        attachmentClickListener = AttachmentClickListener {
+            listeners.attachmentClickListener.onAttachmentClick(message, it)
+        }
+        attachmentDownloadClickListener = AttachmentDownloadClickListener {
+            listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
+        }
+        setAttachments(attachments)
+    }
+
     private companion object {
+        private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all(Attachment::isMedia)
+
         private val MEDIA_ATTACHMENT_VIEW_PADDING = 1.dpToPx()
         private val LINK_VIEW_PADDING = 8.dpToPx()
+        private val FILE_ATTACHMENT_VIEW_PADDING = 4.dpToPx()
 
         private val DEFAULT_LAYOUT_PARAMS =
             ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
