@@ -15,11 +15,7 @@
             tools:node="merge"
             >
             <meta-data
-                android:name="io.getstream.chat.android.ui.common.internal.ChatUIInitializer"
-                android:value="androidx.startup"
-                />
-            <meta-data
-                android:name="io.getstream.chat.android.ui.common.internal.ImageLoaderFactoryInitializer"
+                android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
                 android:value="androidx.startup"
                 />
         </provider>
