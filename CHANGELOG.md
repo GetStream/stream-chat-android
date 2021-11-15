@@ -84,6 +84,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the "mute" option to the `ChannelInfo` action dialog.
 
 ### ⚠️ Changed
 

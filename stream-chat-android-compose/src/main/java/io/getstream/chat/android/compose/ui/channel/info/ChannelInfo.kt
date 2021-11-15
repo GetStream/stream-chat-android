@@ -43,11 +43,14 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelOption
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channel.list.MuteChannel
+import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.ui.util.isDistinct
+import io.getstream.chat.android.compose.ui.util.isMuted
 
 /**
  * Shows special UI when an item is selected.
@@ -70,6 +73,7 @@ public fun ChannelInfo(
     val channelMembers = selectedChannel.members
 
     val canLeaveChannel = !selectedChannel.isDistinct()
+    val isChannelMuted = selectedChannel.isMuted
     val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
         ?.role
         ?.let { it == "admin" || it == "owner" }
@@ -107,6 +111,23 @@ public fun ChannelInfo(
                 action = LeaveGroup(selectedChannel)
             )
         } else null,
+        if (isChannelMuted) {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_unmute_channel),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_unmute),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = UnmuteChannel(selectedChannel)
+            )
+        } else {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_mute_channel),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_mute),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = MuteChannel(selectedChannel)
+            )
+        },
         if (canDeleteChannel) {
             ChannelOption(
                 title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
