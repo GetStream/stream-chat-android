@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fileAttachmentView"
+<io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fileAttachmentsView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     />

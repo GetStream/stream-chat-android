@@ -27,10 +27,12 @@ internal class AttachmentsAdapter(
         holder.bind(getItem(position))
     }
 
+    // TODO improve diffing?
     object DiffCallback  : DiffUtil.ItemCallback<List<Attachment>>() {
         override fun areItemsTheSame(oldItem: List<Attachment>, newItem: List<Attachment>): Boolean {
             return oldItem == newItem
         }
+
         override fun areContentsTheSame(oldItem: List<Attachment>, newItem: List<Attachment>): Boolean {
             return oldItem == newItem
         }

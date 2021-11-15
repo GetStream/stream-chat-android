@@ -1,9 +1,9 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
 import androidx.core.view.setPadding
+import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
@@ -14,13 +14,13 @@ internal class FileAttachmentViewHolder(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-) : SimpleListAdapter.ViewHolder<Attachment>(fileAttachmentView) {
+) : RecyclerView.ViewHolder(fileAttachmentView) {
 
     private companion object {
         private val FILE_ATTACHMENT_VIEW_PADDING = 4.dpToPx()
     }
 
-    override fun bind(item: Attachment) {
+    fun bind(item: Attachment) {
         fileAttachmentView.apply {
             setPadding(FILE_ATTACHMENT_VIEW_PADDING)
             // attachmentLongClickListener = AttachmentLongClickListener {

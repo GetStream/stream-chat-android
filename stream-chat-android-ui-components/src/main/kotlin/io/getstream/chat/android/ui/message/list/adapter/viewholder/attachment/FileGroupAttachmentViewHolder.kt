@@ -1,32 +1,31 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentGroupBinding
-import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
 
 internal class FileGroupAttachmentViewHolder(
-    binding: StreamUiItemFileAttachmentGroupBinding,
+    private val binding: StreamUiItemFileAttachmentGroupBinding,
     attachmentClickListener: AttachmentClickListener,
     attachmentLongClickListener: AttachmentLongClickListener,
     attachmentDownloadClickListener: AttachmentDownloadClickListener,
 ) : AttachmentViewHolder(binding.root) {
 
-    private val adapter = FileAttachmentsAdapter(
-        attachmentClickListener,
-        attachmentLongClickListener,
-        attachmentDownloadClickListener,
-    )
-
-    init {
-        binding.fileAttachmentView.layoutManager = LinearLayoutManager(itemView.context)
-        binding.fileAttachmentView.adapter = adapter
-    }
+    // init {
+    // attachmentLongClickListener = AttachmentLongClickListener {
+    //     this@FileAttachmentViewHolder.onMessageLongClick(message)
+    // }
+    // attachmentClickListener = AttachmentClickListener {
+    //     attachmentClickListener.onAttachmentClick(message, it)
+    // }
+    // attachmentDownloadClickListener = AttachmentDownloadClickListener {
+    //     attachmentDownloadClickListener.onAttachmentDownloadClick(it)
+    // }    }
+    // }
 
     override fun bind(attachments: List<Attachment>) {
-        adapter.setItems(attachments)
+        binding.fileAttachmentsView.setAttachments(attachments)
     }
 }
