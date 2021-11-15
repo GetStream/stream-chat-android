@@ -97,6 +97,16 @@ public final class io/getstream/chat/android/compose/state/channel/list/LeaveGro
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
+public final class io/getstream/chat/android/compose/state/channel/list/MuteChannel : io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
+public final class io/getstream/chat/android/compose/state/channel/list/UnmuteChannel : io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
 public final class io/getstream/chat/android/compose/state/channel/list/ViewInfo : io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
@@ -929,11 +939,13 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 	public final fun isOnline ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun leaveGroup (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun loadMore ()V
+	public final fun muteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;)V
 	public final fun selectChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/client/api/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public final fun setSearchQuery (Ljava/lang/String;)V
+	public final fun unmuteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {

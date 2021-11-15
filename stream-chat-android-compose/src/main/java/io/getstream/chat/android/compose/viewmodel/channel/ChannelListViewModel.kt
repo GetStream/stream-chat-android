@@ -255,6 +255,28 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Mutes a channel.
+     *
+     * @param channel The channel to mute.
+     */
+    public fun muteChannel(channel: Channel) {
+        dismissChannelAction()
+
+        chatClient.muteChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
+     * Unmutes a channel.
+     *
+     * @param channel The channel to unmute.
+     */
+    public fun unmuteChannel(channel: Channel) {
+        dismissChannelAction()
+
+        chatClient.unmuteChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
      * Deletes a channel, after the user chooses the delete [ChannelListAction]. It also removes the
      * [activeChannelAction], to remove the dialog from the UI.
      *
@@ -298,9 +320,15 @@ public class ChannelListViewModel(
      */
     private fun enrichMutedChannels(channels: List<Channel>, mutedChannelIds: List<String>): List<Channel> {
         val mutedChannelIdsSet = mutedChannelIds.toSet()
-        channels.forEach { channel ->
-            channel.isMuted = channel.id in mutedChannelIdsSet
+        return channels.map { channel ->
+            val isMuted = channel.id in mutedChannelIdsSet
+
+            if (channel.isMuted != isMuted) {
+                channel.copy(extraData = channel.extraData.toMutableMap())
+                    .also { it.isMuted = isMuted }
+            } else {
+                channel
+            }
         }
-        return channels
     }
 }

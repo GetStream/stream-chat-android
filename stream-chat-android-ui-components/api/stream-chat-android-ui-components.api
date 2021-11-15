@@ -657,6 +657,13 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
+public final class io/getstream/chat/android/ui/common/ChatUIInitializer : androidx/startup/Initializer {
+	public fun <init> ()V
+	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;
+	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun dependencies ()Ljava/util/List;
+}
+
 public final class io/getstream/chat/android/ui/common/Debouncer {
 	public fun <init> (J)V
 	public final fun shutdown ()V
@@ -700,13 +707,6 @@ public final class io/getstream/chat/android/ui/common/extensions/MessageKt {
 
 public final class io/getstream/chat/android/ui/common/extensions/UserKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/internal/ChatUIInitializer : androidx/startup/Initializer {
-	public fun <init> ()V
-	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;
-	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
-	public fun dependencies ()Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/markdown/ChatMarkdown {

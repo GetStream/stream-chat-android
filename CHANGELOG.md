@@ -11,6 +11,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved logs for errors in the SDK.
 
 ### ✅ Added
 
@@ -60,6 +61,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Made `ThreeTenInitializer` public to allow manual invocations of it. See the new [documentation](https://getstream.io/chat/docs/sdk/android/ui/guides/app-startup-initializers/) for more details.
 
 ### ⚠️ Changed
 
@@ -82,6 +84,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the "mute" option to the `ChannelInfo` action dialog.
 
 ### ⚠️ Changed
 
