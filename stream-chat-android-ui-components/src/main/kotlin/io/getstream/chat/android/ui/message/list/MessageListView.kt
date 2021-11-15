@@ -638,6 +638,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         if (::attachmentViewFactory.isInitialized.not() && ::attachmentViewHolderFactory.isInitialized.not()) {
+            // Create a default instance if neither (old or new) attachment factory has been set by the user
             attachmentViewHolderFactory =
                 AttachmentViewHolderFactory({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
         }
