@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 public data class Message(
@@ -143,7 +142,6 @@ public data class Message(
      */
     var showInChannel: Boolean = false,
 
-    @InternalStreamChatApi
     var channelInfo: ChannelInfo? = null,
 
     /**
