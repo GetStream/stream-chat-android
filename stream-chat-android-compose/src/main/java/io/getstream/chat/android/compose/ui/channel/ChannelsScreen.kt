@@ -28,6 +28,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channel.list.MuteChannel
+import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
@@ -142,6 +144,8 @@ public fun ChannelsScreen(
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
+                        is MuteChannel -> listViewModel.muteChannel(action.channel)
+                        is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
                         else -> listViewModel.performChannelAction(action)
                     }
                 }
