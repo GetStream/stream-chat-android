@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">グループを離れる</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">グループを離れる</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">％1$s グループを離れますか？</string>
+    <string name="stream_compose_channel_info_mute_channel">ミュートチャンネル</string>
+    <string name="stream_compose_channel_info_unmute_channel">チャネルのミュートを解除する</string>
     <string name="stream_compose_channel_info_delete_conversation">会話を削除する</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">会話を削除する</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">チャネル ％1$s を削除しますか</string>
@@ -30,6 +32,9 @@
     <string name="stream_compose_cancel">キャンセル</string>
     <string name="stream_compose_waiting_for_network">ネットワークを検索中</string>
     <string name="stream_compose_untitled_channel">名前のないチャンネル</string>
+    <string name="stream_compose_user_status_online">オンライン</string>
+    <string name="stream_compose_user_status_last_seen">%s見ました</string>
+    <string name="stream_compose_user_status_last_seen_just_now">今見ました</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>

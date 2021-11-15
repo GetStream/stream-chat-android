@@ -10,12 +10,12 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.sample.BuildConfig
-import io.getstream.chat.sample.R
 import io.getstream.chat.sample.feature.HostActivity
 
 const val EXTRA_CHANNEL_ID = "extra_channel_id"
 const val EXTRA_CHANNEL_TYPE = "extra_channel_type"
 const val EXTRA_MESSAGE_ID = "extra_message_id"
+
 class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
@@ -25,7 +25,7 @@ class ChatInitializer(private val context: Context) {
             newMessageIntent = {
                     messageId: String,
                     channelType: String,
-                    channelId: String
+                    channelId: String,
                 ->
                 Intent(context, HostActivity::class.java).apply {
                     putExtra(EXTRA_CHANNEL_ID, channelId)
@@ -35,11 +35,7 @@ class ChatInitializer(private val context: Context) {
                 }
             }
         )
-        val notificationConfig =
-            NotificationConfig(
-                smallIcon = R.drawable.ic_chat_bubble,
-                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
-            )
+        val notificationConfig = NotificationConfig(pushDeviceGenerators = listOf(FirebasePushDeviceGenerator()))
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)

@@ -6,12 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.enqueue
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.setMessageForReply
 import java.io.File
 
 /**
@@ -41,6 +45,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
     private val _channel = MediatorLiveData<Channel>()
 
+    private val logger = ChatLogger.get("MessageInputViewModel")
+
     init {
         _maxMessageLength.value = Int.MAX_VALUE
         _commands.value = emptyList()
@@ -61,6 +67,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
                 _members.addSource(channelController.members) { _members.value = it }
                 _repliedMessage.addSource(channelController.repliedMessage) { _repliedMessage.value = it }
+            } else {
+                val error = channelControllerResult.error()
+                logger.logE("Could not watch channel with cid: $cid. Error message: ${error.message}. Cause message: ${error.cause?.message}")
             }
         }
     }
@@ -91,7 +100,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
 
-        chatDomain.sendMessage(message.apply(messageTransformer)).enqueue()
+        chatDomain.sendMessage(message.apply(messageTransformer)).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+            }
+        )
     }
 
     public fun sendMessageWithAttachments(
@@ -105,7 +118,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
         }.toMutableList()
 
         val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
-        chatDomain.sendMessage(message).enqueue()
+        chatDomain.sendMessage(message).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+            }
+        )
     }
 
     /**
@@ -115,7 +132,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     public fun editMessage(message: Message) {
         stopTyping()
-        chatDomain.editMessage(message).enqueue()
+        chatDomain.editMessage(message).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not edit message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+            }
+        )
     }
 
     /**
@@ -134,7 +155,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
     @Synchronized
     public fun keystroke() {
         val parentId = activeThread.value?.id
-        chatDomain.keystroke(cid, parentId).enqueue()
+        chatDomain.keystroke(cid, parentId).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not send keystroke cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+            }
+        )
     }
 
     /**
@@ -142,12 +167,16 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     public fun stopTyping() {
         val parentId = activeThread.value?.id
-        chatDomain.stopTyping(cid, parentId).enqueue()
+        chatDomain.stopTyping(cid, parentId).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+            }
+        )
     }
 
     public fun dismissReply() {
         if (repliedMessage.value != null) {
-            chatDomain.setMessageForReply(cid, null).enqueue()
+            ChatClient.instance().setMessageForReply(cid, null).enqueue()
         }
     }
 }

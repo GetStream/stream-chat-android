@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">ग्रुप छोड़ेें</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">ग्रुप छोड़ेें</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">क्या आप %1$s समूह को छोड़ना चाहते हैं?</string>
+    <string name="stream_compose_channel_info_mute_channel">म्यूट चैनल</string>
+    <string name="stream_compose_channel_info_unmute_channel">चैनल अनम्यूट करें</string>
     <string name="stream_compose_channel_info_delete_conversation">बातचीत मिटायें</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">बातचीत मिटायें</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">क्या आप %1$s . चैनल को हटाना चाहते हैं</string>
@@ -31,6 +33,9 @@
     <string name="stream_compose_cancel">रद्द करें</string>
     <string name="stream_compose_waiting_for_network">नेटवर्क की प्रतीक्षा में</string>
     <string name="stream_compose_untitled_channel">बिना नाम वाला चैनल</string>
+    <string name="stream_compose_user_status_online">ऑनलाइन</string>
+    <string name="stream_compose_user_status_last_seen">पिछली बार देखा %1$s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">अंतिम बार अभी देखा</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>

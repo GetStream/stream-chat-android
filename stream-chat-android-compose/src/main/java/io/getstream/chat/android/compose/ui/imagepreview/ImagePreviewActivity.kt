@@ -90,6 +90,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -409,7 +410,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
             }
             is Delete -> imagePreviewViewModel.deleteCurrentImage(message.attachments[currentPage])
             is SaveImage -> {
-                ChatDomain
+                ChatClient
                     .instance()
                     .downloadAttachment(message.attachments[currentPage])
                     .enqueue()

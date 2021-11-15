@@ -22,6 +22,8 @@ public open class AttachmentDestination(
     context: Context,
 ) : ChatDestination(context) {
 
+    private val logger = ChatLogger.get("AttachmentDestination")
+
     override fun navigate() {
         showAttachment(message, attachment)
     }
@@ -29,6 +31,7 @@ public open class AttachmentDestination(
     public fun showAttachment(message: Message, attachment: Attachment) {
         if (attachment.type == ModelType.attach_file ||
             attachment.type == ModelType.attach_video ||
+            attachment.type == ModelType.attach_audio ||
             attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true
         ) {
             loadFile(attachment)
@@ -41,8 +44,8 @@ public open class AttachmentDestination(
         when (attachment.type) {
             ModelType.attach_image -> {
                 when {
-                    attachment.titleLink != null || attachment.ogUrl != null -> {
-                        url = attachment.titleLink ?: attachment.ogUrl
+                    attachment.titleLink != null || attachment.ogUrl != null || attachment.assetUrl != null -> {
+                        url = attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
                         type = ModelType.attach_link
                     }
                     attachment.isGif() -> {
@@ -60,8 +63,12 @@ public open class AttachmentDestination(
         }
 
         if (url.isNullOrEmpty()) {
-            Toast.makeText(context, context.getString(R.string.stream_ui_message_list_attachment_invalid_url), Toast.LENGTH_SHORT)
-                .show()
+            logger.logE("Wrong URL for attachment. Attachment: $attachment")
+            Toast.makeText(
+                context,
+                context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -75,8 +82,9 @@ public open class AttachmentDestination(
     private fun loadFile(attachment: Attachment) {
         val mimeType = attachment.mimeType
         val url = attachment.assetUrl
+        val type = attachment.type
 
-        if (mimeType == null) {
+        if (mimeType == null && type == null) {
             ChatLogger.instance.logE("AttachmentDestination", "MimeType is null for url $url")
             Toast.makeText(
                 context,
@@ -88,24 +96,48 @@ public open class AttachmentDestination(
 
         // Media
         when {
-            mimeType.contains("audio") || mimeType.contains(VIDEO_MIME_TYPE_PREFIX) -> {
+            playableContent(mimeType, type) -> {
                 val intent = Intent(context, AttachmentMediaActivity::class.java).apply {
                     putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType)
                     putExtra(AttachmentMediaActivity.URL_KEY, url)
                 }
                 start(intent)
             }
-            mimeType == ModelType.attach_mime_doc ||
-                mimeType == ModelType.attach_mime_txt ||
-                mimeType == ModelType.attach_mime_pdf ||
-                mimeType == ModelType.attach_mime_html ||
-                mimeType.contains("application/vnd") -> {
+            docMimeType(mimeType) -> {
                 val intent = Intent(context, AttachmentDocumentActivity::class.java).apply {
                     putExtra("url", url)
                 }
                 start(intent)
             }
+
+            else -> {
+                ChatLogger.instance.logE(
+                    "AttachmentDestination", "Could not load attachment. Mimetype: $mimeType. Type: $type")
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
+    }
+
+    private fun playableContent(mimeType: String?, type: String?): Boolean {
+        return mimeType?.contains("audio") == true ||
+            mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true ||
+            mimeType?.contains(MP4_MIME_TYPE) == true ||
+            mimeType?.contains(MPEG_MIME_TYPE) == true ||
+            mimeType?.contains(QUICKTIME_MIME_TYPE) == true ||
+            type == AUDIO_TYPE ||
+            type == VIDEO_TYPE
+    }
+
+    private fun docMimeType(mimeType: String?): Boolean {
+        return mimeType == ModelType.attach_mime_doc ||
+            mimeType == ModelType.attach_mime_txt ||
+            mimeType == ModelType.attach_mime_pdf ||
+            mimeType == ModelType.attach_mime_html ||
+            mimeType?.contains("application/vnd") == true
     }
 
     protected open fun showImageViewer(
@@ -135,5 +167,10 @@ public open class AttachmentDestination(
 
     private companion object {
         private const val VIDEO_MIME_TYPE_PREFIX = "video"
+        private const val MP4_MIME_TYPE = "mp4"
+        private const val MPEG_MIME_TYPE = "audio/mpeg"
+        private const val QUICKTIME_MIME_TYPE = "quicktime"
+        private const val VIDEO_TYPE = "video"
+        private const val AUDIO_TYPE = "audio"
     }
 }

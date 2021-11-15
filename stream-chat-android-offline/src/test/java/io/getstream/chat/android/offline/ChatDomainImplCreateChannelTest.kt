@@ -6,8 +6,6 @@ import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -23,9 +21,7 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 
 internal class ChatDomainImplCreateChannelTest {
@@ -203,25 +199,6 @@ internal class ChatDomainImplCreateChannelTest {
                     syncStatus = SyncStatus.FAILED_PERMANENTLY
                 }
             }
-        }
-
-    @Test
-    fun `Given failed network response When create distinct channel Should return failed response And do not insert any channel to DB`() =
-        runBlockingTest {
-            val repositoryFacade: RepositoryFacade = mock()
-            val sut = Fixture()
-                .givenChatClientResult(Result(mock()))
-                .givenRepositoryFacade(repositoryFacade)
-                .get()
-
-            reset(repositoryFacade)
-
-            @Suppress("DEPRECATION_ERROR")
-            val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
-
-            result.isError.shouldBeTrue()
-            verify(repositoryFacade, never()).insertChannel(any())
-            verify(repositoryFacade, never()).insertChannels(any())
         }
 
     private inner class Fixture {
