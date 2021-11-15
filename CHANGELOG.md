@@ -73,7 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added setter `MessageListView.setMessageBackgroundFactory` to set a factory to provide a background for messages. 
 ### ⚠️ Changed
 
 ### ❌ Removed
