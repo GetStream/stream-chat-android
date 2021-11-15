@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">Quitter le Groupe</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">Quitter le Groupe</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">Voulez-vous quitter le groupe %1$s?</string>
+    <string name="stream_compose_channel_info_mute_channel">Canal muet</string>
+    <string name="stream_compose_channel_info_unmute_channel">Rétablir le son du canal</string>
     <string name="stream_compose_channel_info_delete_conversation">Supprimer la conversation</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Supprimer la conversation</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Voulez-vous quitter le groupe %1$s?</string>

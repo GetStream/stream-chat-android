@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">グループを離れる</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">グループを離れる</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">％1$s グループを離れますか？</string>
+    <string name="stream_compose_channel_info_mute_channel">ミュートチャンネル</string>
+    <string name="stream_compose_channel_info_unmute_channel">チャネルのミュートを解除する</string>
     <string name="stream_compose_channel_info_delete_conversation">会話を削除する</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">会話を削除する</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">チャネル ％1$s を削除しますか</string>
