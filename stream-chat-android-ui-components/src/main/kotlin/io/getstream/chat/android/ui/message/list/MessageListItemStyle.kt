@@ -10,7 +10,6 @@ import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -65,7 +64,6 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageMaxWidthFactorTheirs Factor used to compute max width for message sent by other user. Should be in <0.75, 1> range.
  */
 public data class MessageListItemStyle(
-    public val fileAttachmentStyle: FileAttachmentViewStyle,
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
@@ -148,89 +146,6 @@ public data class MessageListItemStyle(
 
         private const val BASE_MESSAGE_MAX_WIDTH_FACTOR = 1
         private const val DEFAULT_MESSAGE_MAX_WIDTH_FACTOR = 0.75f
-
-        private fun fileAttachmentStyle(context: Context, typedArray: TypedArray): FileAttachmentViewStyle {
-            val progressBarDrawable =
-                typedArray.getDrawable(R.styleable.MessageListView_streamUiFileAttachmentProgressBarDrawable)
-                    ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
-
-            val backgroundColor = typedArray.getColor(
-                R.styleable.MessageListView_streamUiFileAttachmentBackgroundColor,
-                context.getColorCompat(R.color.stream_ui_white)
-            )
-
-            val actionIcon = typedArray.getDrawable(R.styleable.MessageListView_streamUiFileAttachmentActionButton)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_ic_icon_download)!!
-
-            val titleTextStyle = TextStyle.Builder(typedArray)
-                .size(
-                    R.styleable.MessageListView_streamUiFileAttachmentTitleTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
-                )
-                .color(
-                    R.styleable.MessageListView_streamUiFileAttachmentTitleTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
-                )
-                .font(
-                    R.styleable.MessageListView_streamUiFileAttachmentTitleFontAssets,
-                    R.styleable.MessageListView_streamUiFileAttachmentTitleTextFont
-                )
-                .style(
-                    R.styleable.MessageListView_streamUiFileAttachmentTitleTextStyle,
-                    Typeface.NORMAL
-                )
-                .build()
-
-            val fileSizeTextStyle = TextStyle.Builder(typedArray)
-                .size(
-                    R.styleable.MessageListView_streamUiFileAttachmentFileSizeTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_small)
-                )
-                .color(
-                    R.styleable.MessageListView_streamUiFileAttachmentFileSizeTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
-                )
-                .font(
-                    R.styleable.MessageListView_streamUiFileAttachmentFileSizeFontAssets,
-                    R.styleable.MessageListView_streamUiFileAttachmentFileSizeTextFont
-                )
-                .style(
-                    R.styleable.MessageListView_streamUiFileAttachmentFileSizeTextStyle,
-                    Typeface.NORMAL
-                )
-                .build()
-
-            val failedAttachmentIcon =
-                typedArray.getDrawable(R.styleable.MessageListView_streamUiFileAttachmentFailedAttachmentIcon)
-                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_warning)!!
-
-            val strokeColor = typedArray.getColor(
-                R.styleable.MessageListView_streamUiFileAttachmentStrokeColor,
-                context.getColorCompat(R.color.stream_ui_grey_whisper)
-            )
-
-            val strokeWidth = typedArray.getDimensionPixelSize(
-                R.styleable.MessageListView_streamUiFileAttachmentStrokeWidth,
-                1.dpToPx()
-            )
-
-            val cornerRadius = typedArray.getDimensionPixelSize(
-                R.styleable.MessageListView_streamUiFileAttachmentCornerRadius,
-                12.dpToPx()
-            )
-
-            return FileAttachmentViewStyle(
-                backgroundColor = backgroundColor,
-                progressBarDrawable = progressBarDrawable,
-                actionButtonIcon = actionIcon,
-                titleTextStyle = titleTextStyle,
-                fileSizeTextStyle = fileSizeTextStyle,
-                failedAttachmentIcon = failedAttachmentIcon,
-                strokeColor = strokeColor,
-                strokeWidth = strokeWidth,
-                cornerRadius = cornerRadius,
-            ).let(TransformStyle.fileAttachmentStyleTransformer::transform)
-        }
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -293,8 +208,6 @@ public data class MessageListItemStyle(
         }
 
         fun build(): MessageListItemStyle {
-            val fileAttachmentStyle = fileAttachmentStyle(context, attributes)
-
             val linkBackgroundColorMine =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageLinkBackgroundColorMine,
@@ -635,7 +548,6 @@ public data class MessageListItemStyle(
             )
 
             return MessageListItemStyle(
-                fileAttachmentStyle = fileAttachmentStyle,
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
                 messageLinkTextColorMine = messageLinkTextColorMine.nullIfNotSet(),

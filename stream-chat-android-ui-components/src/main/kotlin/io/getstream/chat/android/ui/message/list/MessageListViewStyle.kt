@@ -244,8 +244,7 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_delete,
                 )
 
-                val flagEnabled =
-                    attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageEnabled, true)
+                val flagEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageEnabled, true)
 
                 val pinIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiPinOptionIcon,
