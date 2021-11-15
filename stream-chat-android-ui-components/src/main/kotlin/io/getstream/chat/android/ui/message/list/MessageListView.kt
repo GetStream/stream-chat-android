@@ -947,11 +947,27 @@ public class MessageListView : ConstraintLayout {
      *
      * @param attachmentViewFactory The custom view factory for attachments.
      */
+    @Deprecated(
+        message = "Use setAttachmentViewHolderFactory instead"
+    )
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         check(::adapter.isInitialized.not()) {
             "Adapter was already initialized, please set AttachmentViewFactory first"
         }
         this.attachmentViewFactory = attachmentViewFactory
+    }
+
+    /**
+     * Allows clients to set a custom implementation of [AttachmentViewHolderFactory].
+     * Use this method to create a custom content view for the message attachments.
+     *
+     * @param attachmentViewHolderFactory The custom view factory for attachments.
+     */
+    public fun setAttachmentViewHolderFactory(attachmentViewHolderFactory: AttachmentViewHolderFactory) {
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set AttachmentViewHolderFactory first"
+        }
+        this.attachmentViewHolderFactory = attachmentViewHolderFactory
     }
 
     public fun handleFlagMessageResult(result: Result<Flag>) {
