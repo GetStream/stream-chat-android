@@ -20,8 +20,6 @@ import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 
 internal class FileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
@@ -31,13 +29,6 @@ internal class FileAttachmentViewHolder(
     private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private var attachment: Attachment? = null
-
-    private var scope: CoroutineScope? = null
-
-    fun clearScope() {
-        scope?.cancel()
-        scope = null
-    }
 
     init {
         binding.root.setOnClickListener {
@@ -78,10 +69,6 @@ internal class FileAttachmentViewHolder(
                 )
                 setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
             }
-    }
-
-    fun restartJob() {
-        attachment?.let(::subscribeForProgressIfNeeded)
     }
 
     private fun subscribeForProgressIfNeeded(attachment: Attachment) {
@@ -134,11 +121,6 @@ internal class FileAttachmentViewHolder(
                 MediaStringUtil.convertFileSizeByteCount(bytesRead),
                 totalValue
             )
-    }
-
-    override fun unbind() {
-        clearScope()
-        super.unbind()
     }
 
     private companion object {

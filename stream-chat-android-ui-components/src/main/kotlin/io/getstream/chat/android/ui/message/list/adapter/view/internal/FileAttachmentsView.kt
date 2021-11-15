@@ -19,7 +19,6 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -28,8 +27,6 @@ import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 
 internal class FileAttachmentsView : RecyclerView {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -113,16 +110,6 @@ private class FileAttachmentsAdapter(
         super.onViewAttachedToWindow(holder)
         holder.restartJob()
     }
-
-    override fun onViewDetachedFromWindow(holder: FileAttachmentViewHolder) {
-        holder.clearScope()
-        super.onViewDetachedFromWindow(holder)
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        doForAllViewHolders(recyclerView) { it.clearScope() }
-        super.onDetachedFromRecyclerView(recyclerView)
-    }
 }
 
 private class FileAttachmentViewHolder(
@@ -133,13 +120,6 @@ private class FileAttachmentViewHolder(
     private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private var attachment: Attachment? = null
-
-    private var scope: CoroutineScope? = null
-
-    fun clearScope() {
-        scope?.cancel()
-        scope = null
-    }
 
     init {
         binding.root.setOnClickListener {
@@ -236,11 +216,6 @@ private class FileAttachmentViewHolder(
                 MediaStringUtil.convertFileSizeByteCount(bytesRead),
                 totalValue
             )
-    }
-
-    override fun unbind() {
-        clearScope()
-        super.unbind()
     }
 
     private companion object {
