@@ -12,13 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -32,17 +28,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.offline.ChatDomain
-
-/**
- * Width of file attachments.
- */
-internal val FILE_ATTACHMENT_WIDTH = 250.dp
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -59,15 +51,12 @@ public fun FileAttachmentContent(
     val (message, onLongItemClick) = attachmentState
 
     Column(
-        modifier = modifier
-            .wrapContentHeight()
-            .width(FILE_ATTACHMENT_WIDTH)
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {},
-                onLongClick = { onLongItemClick(message) }
-            )
+        modifier = modifier.combinedClickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+            onClick = {},
+            onLongClick = { onLongItemClick(message) }
+        )
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(attachment = attachment)
@@ -127,15 +116,13 @@ public fun FileAttachmentItem(attachment: Attachment) {
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false)
                     ) {
-                        ChatDomain
+                        ChatClient
                             .instance()
                             .downloadAttachment(attachment)
                             .enqueue()
                     },
-                imageVector = Icons.Default.CloudDownload,
-                contentDescription = stringResource(
-                    id = R.string.stream_compose_download
-                ),
+                painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
+                contentDescription = stringResource(id = R.string.stream_compose_download),
                 tint = ChatTheme.colors.textHighEmphasis
             )
         }

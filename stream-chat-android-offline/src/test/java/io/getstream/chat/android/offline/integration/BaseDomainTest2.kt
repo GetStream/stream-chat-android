@@ -129,7 +129,8 @@ internal open class BaseDomainTest2 {
             DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
         }
 
-        val result = Result(listOf(data.channel1))
+        val queryChannelsResult = Result.success(listOf(data.channel1))
+        val queryChannelResult = Result.success(data.channel1)
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
                 Result(data.channel1)
@@ -150,8 +151,9 @@ internal open class BaseDomainTest2 {
                 }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
-            on { queryChannels(any()) } doReturn TestCall(result)
-            on { queryChannelsInternal(any()) } doReturn TestCall(result)
+            on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
+            on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsResult)
+            on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
@@ -187,6 +189,7 @@ internal open class BaseDomainTest2 {
             .database(db)
             .offlineEnabled()
             .userPresenceEnabled()
+            .retryPolicy(NoRetryPolicy())
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
 
@@ -199,7 +202,6 @@ internal open class BaseDomainTest2 {
         // manually configure the user since client is mocked
         chatDomainImpl.setUser(data.user1)
 
-        chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
 
         chatDomainImpl.scope.launch {
@@ -213,7 +215,7 @@ internal open class BaseDomainTest2 {
 
         channelControllerImpl.updateDataFromChannel(data.channel1)
 
-        query = QueryChannelsSpec(data.filter1)
+        query = QueryChannelsSpec(data.filter1, QuerySort())
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }

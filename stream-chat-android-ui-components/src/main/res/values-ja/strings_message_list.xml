@@ -30,6 +30,7 @@
   <string name="stream_ui_message_list_empty">"メッセージはありません"</string>
   <string name="stream_ui_message_list_ephemeral_message">"自分しか見れません"</string>
   <string name="stream_ui_message_list_error_block_user">"ユーザーのブロックに失敗しました"</string>
+  <string name="stream_ui_message_list_error_delete_message">"メッセージの削除に失敗しました"</string>
   <string name="stream_ui_message_list_error_flag_message">"メッセージのフラグ付けに失敗しました"</string>
   <string name="stream_ui_message_list_error_mute_user">"ユーザーのミュートに失敗しました"</string>
   <string name="stream_ui_message_list_error_pin_message">"メッセージにピンを留めれませんでした"</string>

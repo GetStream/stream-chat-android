@@ -43,10 +43,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -94,6 +90,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -283,7 +280,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     indication = rememberRipple(bounded = false),
                     onClick = { imagePreviewViewModel.toggleImageOptions(isShowingOptions = true) }
                 ),
-            imageVector = Icons.Default.MoreVert,
+            painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
             contentDescription = stringResource(R.string.stream_compose_image_options),
             tint = ChatTheme.colors.textHighEmphasis
         )
@@ -413,7 +410,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
             }
             is Delete -> imagePreviewViewModel.deleteCurrentImage(message.attachments[currentPage])
             is SaveImage -> {
-                ChatDomain
+                ChatClient
                     .instance()
                     .downloadAttachment(message.attachments[currentPage])
                     .enqueue()
@@ -524,7 +521,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                         .align(Alignment.CenterStart)
                         .padding(8.dp)
                         .clickable { onShareImageClick(attachments[pagerState.currentPage]) },
-                    imageVector = Icons.Default.Share,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_share),
                     contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
                     tint = ChatTheme.colors.textHighEmphasis
                 )
@@ -549,7 +546,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                             indication = rememberRipple(),
                             onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = true) }
                         ),
-                    imageVector = Icons.Default.Apps,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                     contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
                     tint = ChatTheme.colors.textHighEmphasis
                 )

@@ -57,7 +57,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             Config(
                 backgroundSyncEnabled = backgroundSyncEnabled,
                 userPresence = userPresence,
-                persistenceEnabled = offlineEnabled
+                persistenceEnabled = offlineEnabled,
+                retryPolicy = NoRetryPolicy(),
             )
         )
 
@@ -74,7 +75,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         )
         plugin.initState(chatDomainImpl, client)
         chatDomain = chatDomainImpl
-        chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
@@ -111,7 +111,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             runBlocking { chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateDataFromChannel(data.channel1)
-            query = QueryChannelsSpec(data.filter1)
+            query = QueryChannelsSpec(data.filter1, QuerySort())
 
             queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 

@@ -1,6 +1,23 @@
 package io.getstream.chat.android.client.api.models
 
-public sealed class FilterObject
+import io.getstream.chat.android.client.parser.toMap
+
+/**
+ * Filter object that specifies requests for backend queries.
+ */
+public sealed class FilterObject {
+    override fun equals(other: Any?): Boolean {
+        return if (other is FilterObject) {
+            this.toMap() == other.toMap()
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return toMap().hashCode()
+    }
+}
 
 public data class AndFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
 public data class OrFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()

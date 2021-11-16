@@ -4,14 +4,22 @@ import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.Field
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.chat.android.client.models.CustomObject
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
+/**
+ * Sort specification for api queries. You can specify QuerySort by referencing kotlin class property or passing field
+ * name as string instance.
+ * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
+ */
 public class QuerySort<T : Any> {
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
+    @InternalStreamChatApi
+    /** Composite comparator based on sort attributes. */
     public val comparator: Comparator<in T>
         get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
 
@@ -135,22 +143,34 @@ public class QuerySort<T : Any> {
         return sortSpecifications.hashCode()
     }
 
+    override fun toString(): String {
+        return sortSpecifications.toString()
+    }
+
     private data class SortSpecification<T>(
         val sortAttribute: SortAttribute<T>,
         val sortDirection: SortDirection,
     )
 
+    /** Inner representation of sorting feature specification. */
     private sealed class SortAttribute<T> {
+        /** Name of attribute */
         abstract val name: String
 
+        /** KProperty referenced attribute. */
         data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
             SortAttribute<T>()
 
+        /** Referenced by name attribute. */
         data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
     }
 
+    /** Sort order which can be ascending or descending. */
     public enum class SortDirection(public val value: Int) {
-        DESC(-1), ASC(1)
+        /** Descending sort order. */
+        DESC(-1),
+        /** Ascending sort order. */
+        ASC(1)
     }
 
     internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {

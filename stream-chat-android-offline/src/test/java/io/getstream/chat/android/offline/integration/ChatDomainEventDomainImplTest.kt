@@ -1,6 +1,8 @@
 package io.getstream.chat.android.offline.integration
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.offline.querychannels.ChatEventHandler
+import io.getstream.chat.android.offline.querychannels.EventHandlingResult
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
@@ -22,7 +24,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         super.setup()
         runBlocking {
             chatDomainImpl.repos.insertUsers(data.userMap.values)
-            queryControllerImpl.newChannelEventFilter = { _, _ -> true }
+            queryControllerImpl.chatEventHandler = ChatEventHandler { _, _ -> EventHandlingResult.Skip }
         }
     }
 
@@ -100,6 +102,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `verify that a channel is correctly deleted when channel deleted event is received`(): Unit =
         runBlocking {
+            queryControllerImpl.chatEventHandler = ChatEventHandler { _, _ -> EventHandlingResult.Skip }
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
             val message =

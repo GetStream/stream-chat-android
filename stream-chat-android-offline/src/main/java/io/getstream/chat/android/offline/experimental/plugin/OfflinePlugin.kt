@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -35,6 +36,7 @@ public class OfflinePlugin(private val config: Config) : Plugin {
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
             if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
             recoveryEnabled()
+            retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
         initState(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl, chatClient)
@@ -52,12 +54,24 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest): Unit =
         logic.queryChannels(request).onQueryChannelsResult(result, request)
 
+    override suspend fun onQueryChannelPrecondition(
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ): Result<Unit> = logic.channel(channelType, channelId).onQueryChannelPrecondition(channelType, channelId, request)
+
+    override suspend fun onQueryChannelRequest(
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ): Unit = logic.channel(channelType, channelId).onQueryChannelRequest(channelType, channelId, request)
+
     override suspend fun onQueryChannelResult(
         result: Result<Channel>,
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Unit = logic.queryChannel().onQueryChannelResult(result, channelType, channelId, request)
+    ): Unit = logic.channel(channelType, channelId).onQueryChannelResult(result, channelType, channelId, request)
 
     internal fun clear() {
         logic.clear()

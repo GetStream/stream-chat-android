@@ -120,7 +120,10 @@ messageInputView.setSendMessageHandler(
 
 ## Customization
 
-`MessageInputView` can be customized in two ways: using XML attributes and programmatically using style transformations.
+`MessageInputView` can be customized using:
+- XML attributes
+- Style transformations
+- Methods called on `MessageInputView`'s instance
 
 ### Using XML Attributes
 
@@ -177,7 +180,12 @@ You can use [TransformStyle](https://github.com/GetStream/stream-chat-android/bl
 ```kotlin
 TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
     viewStyle.copy(
-        messageInputTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_white)
+        messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+            color = ContextCompat.getColor(
+                requireContext(),
+                R.color.stream_ui_white,
+            ),
+        )
     )
 }
 ```
@@ -185,6 +193,34 @@ TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
 :::note
 The transformer should be set before the View is rendered to make sure that the new style was applied.
 :::
+
+### Changing Send Message Button
+
+Send message button drawable can be changed dynamically based on the current input mode. You can
+set the `MessageInputModeListener` on `MessageInputView` instance and change drawables based on the current input mode.
+Keep in mind that `MessageInputView` displays two different send message buttons:
+- `sendMessageButtonEnabled` - when the user is able to send a message
+- `sendMessageButtonDisabled` - when the user is not able to send a message (send button is disabled)
+
+:::note
+Drawable will override the one provided either by attributes or `TransformStyle.messageInputStyleTransformer`.
+Make sure to set different drawables in all input modes.
+:::
+
+```kotlin
+messageInputView.setMessageInputModeListener {
+    when(it) {
+        is MessageInputView.InputMode.Edit -> {
+            messageInputView.setSendMessageButtonEnabledDrawable(context.getDrawable(R.drawable.stream_ui_ic_check_single)!!)
+            messageInputView.setSendMessageButtonDisabledDrawable(context.getDrawable(R.drawable.stream_ui_ic_close)!!)
+        }
+        else -> {
+            messageInputView.setSendMessageButtonEnabledDrawable(context.getDrawable(R.drawable.stream_ui_ic_filled_up_arrow)!!)
+            messageInputView.setSendMessageButtonDisabledDrawable(context.getDrawable(R.drawable.stream_ui_ic_filled_right_arrow)!!)
+        }
+    }
+}
+```
 
 ## Creating Custom Suggestion Items
 

@@ -4,6 +4,7 @@
   <string name="stream_ui_message_input_capture_media">"Tomar foto o vídeo"</string>
   <string name="stream_ui_message_input_error_file_large_size">"El fichero es demasiado grande - Máximo %dMB."</string>
   <string name="stream_ui_message_input_error_file_size">"Fichero demasiado grande"</string>
+  <string name="stream_ui_message_input_error_max_attachments_count_exceeded">"No es posible añadir más de %1$d archivos adjuntos."</string>
   <string name="stream_ui_message_input_error_max_length">"Tamaño máximo de mensaje (%1$d) excedido."</string>
   <string name="stream_ui_message_input_files_access">"Permitir acceso a tus ficheros"</string>
   <string name="stream_ui_message_input_gallery_access">"Permitir acceso a tu galería"</string>

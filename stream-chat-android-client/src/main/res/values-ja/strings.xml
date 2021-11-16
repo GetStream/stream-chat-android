@@ -5,6 +5,7 @@
   <string name="stream_chat_load_notification_data_title">"ロード通知データ"</string>
   <string name="stream_chat_notification_channel_name">"新しいチャットメッセージ"</string>
   <string name="stream_chat_notification_content">"新しいメッセージを受け取りました"</string>
+  <string name="stream_chat_notification_empty_username">"名前のないユーザー"</string>
   <string name="stream_chat_notification_group_summary_content_text">"新しいメッセージを受け取りました"</string>
   <string name="stream_chat_notification_read">"既読にする"</string>
   <string name="stream_chat_notification_reply">"返信"</string>

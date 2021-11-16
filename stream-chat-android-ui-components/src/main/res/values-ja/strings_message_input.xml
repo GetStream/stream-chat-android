@@ -4,6 +4,7 @@
   <string name="stream_ui_message_input_capture_media">"画像またはビデオをキャプチャする"</string>
   <string name="stream_ui_message_input_error_file_large_size">"ファイルが大きすぎます- 最大%dMB。"</string>
   <string name="stream_ui_message_input_error_file_size">"ファイルが大きすぎます"</string>
+  <string name="stream_ui_message_input_error_max_attachments_count_exceeded">"添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません"</string>
   <string name="stream_ui_message_input_error_max_length">"最大メッセージ長（％d)字を超えました"</string>
   <string name="stream_ui_message_input_files_access">"ファイルへのアクセスを許可する"</string>
   <string name="stream_ui_message_input_gallery_access">"ギャラリーへのアクセスを許可する"</string>

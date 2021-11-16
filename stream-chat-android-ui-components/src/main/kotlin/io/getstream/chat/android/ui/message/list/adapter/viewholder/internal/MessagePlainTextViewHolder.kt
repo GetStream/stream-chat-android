@@ -55,6 +55,8 @@ internal class MessagePlainTextViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
+        if (diff?.text == false) return
+
         with(binding) {
             markdown.setText(messageText, data.message.text)
             messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <plurals name="stream_compose_channel_members">
+    <item quantity="one">"%1d Miembro, %2d Conectados"</item>
+    <item quantity="other">"%1d Miembros, %2d Conectados"</item>
+  </plurals>
+  <string name="stream_compose_cancel">"Cancelar"</string>
+  <string name="stream_compose_channel_info_delete_conversation">"Eliminar conversación"</string>
+  <string name="stream_compose_channel_info_delete_conversation_confirmation_message">"¿Quieres eliminar el canal %1$s?"</string>
+  <string name="stream_compose_channel_info_delete_conversation_confirmation_title">"Eliminar conversación"</string>
+  <string name="stream_compose_channel_info_dismiss">"Cancelar"</string>
+  <string name="stream_compose_channel_info_leave_group">"Salir del grupo"</string>
+  <string name="stream_compose_channel_info_leave_group_confirmation_message">"¿Quieres dejar el grupo %1$s?"</string>
+  <string name="stream_compose_channel_info_leave_group_confirmation_title">"Salir del grupo"</string>
+  <string name="stream_compose_channel_info_mute_channel">"Silenciar canal"</string>
+  <string name="stream_compose_channel_info_unmute_channel">"Activar el sonido del canal"</string>
+  <string name="stream_compose_channel_info_view_info">"Ver información"</string>
+  <string name="stream_compose_channel_list_empty_channels">"No hay canales disponibles"</string>
+  <string name="stream_compose_channel_list_empty_search_results">"No se encontraron resultados para \"%1$s\""</string>
+  <string name="stream_compose_channel_list_header_new_chat">"Nueva conversación"</string>
+  <string name="stream_compose_channel_list_you">"Tú"</string>
+  <string name="stream_compose_message_list_empty_messages">"Sin mensajes"</string>
+  <string name="stream_compose_ok">"Vale"</string>
+  <string name="stream_compose_search_input_cancel">"Cancelar"</string>
+  <string name="stream_compose_search_input_hint">"Buscar canales por nombre"</string>
+  <string name="stream_compose_untitled_channel">"Canal sin nombre"</string>
+  <string name="stream_compose_user_status_last_seen">"Ultima vez visto %1$s"</string>
+  <string name="stream_compose_user_status_last_seen_just_now">"Última vez visto justo ahora"</string>
+  <string name="stream_compose_user_status_online">"Conectado"</string>
+  <string name="stream_compose_waiting_for_network">"Esperando conexión de red"</string>
+</resources>

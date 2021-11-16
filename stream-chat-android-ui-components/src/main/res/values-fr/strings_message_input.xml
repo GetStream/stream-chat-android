@@ -4,6 +4,7 @@
   <string name="stream_ui_message_input_capture_media">"Capture d\'image ou vidéo"</string>
   <string name="stream_ui_message_input_error_file_large_size">"Le fichier est trop volumineux - %dMB maximum."</string>
   <string name="stream_ui_message_input_error_file_size">"Fichier trop volumineux"</string>
+  <string name="stream_ui_message_input_error_max_attachments_count_exceeded">"Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %1$d pièces jointes"</string>
   <string name="stream_ui_message_input_error_max_length">"Longueur maximale du message (%1$d) dépassée."</string>
   <string name="stream_ui_message_input_files_access">"Autoriser l\'accès à vos fichiers"</string>
   <string name="stream_ui_message_input_gallery_access">"Autoriser l\'accès à votre galerie"</string>

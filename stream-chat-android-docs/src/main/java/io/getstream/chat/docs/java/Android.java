@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
-import android.content.res.ColorStateList;
+import static java.util.Collections.singletonList;
+
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -91,8 +93,6 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemVi
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder;
 import io.getstream.chat.docs.R;
 import kotlin.coroutines.Continuation;
-
-import static java.util.Collections.singletonList;
 
 public class Android {
 
@@ -588,20 +588,22 @@ public class Android {
             chatClient.disconnect();
         }
 
-        public void customizeRetryPolicy() {
-            ChatDomain chatDomain = ChatDomain.instance();
+        public void initializeChatDomainWithCustomRetryPolicy() {
+            ChatClient chatClient =
+                    new ChatClient.Builder("apiKey", requireContext()).build();
+            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
+                    .retryPolicy(new RetryPolicy() {
+                        @Override
+                        public boolean shouldRetry(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
+                            return attempt < 3;
+                        }
 
-            chatDomain.setRetryPolicy(new RetryPolicy() {
-                @Override
-                public boolean shouldRetry(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
-                    return attempt < 3;
-                }
-
-                @Override
-                public int retryTimeout(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
-                    return 1000 * attempt;
-                }
-            });
+                        @Override
+                        public int retryTimeout(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
+                            return 1000 * attempt;
+                        }
+                    })
+                    .build();
         }
 
         public void watchChannel() {
@@ -873,9 +875,6 @@ public class Android {
                                 genericDrawable,
                                 true,
                                 genericDrawable,
-                                requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
-                                colorBlack,
-                                colorBlack,
                                 textStyleGeneric,
                                 true,
                                 true,
@@ -911,9 +910,10 @@ public class Android {
                                 genericDrawable,
                                 textStyleGeneric,
                                 genericDrawable,
-                                10
+                                10,
+                                genericDrawable,
+                                genericDrawable
                         )
-
             );
         }
     }

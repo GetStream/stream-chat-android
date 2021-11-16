@@ -153,7 +153,8 @@ internal open class BaseDomainTest {
     }
 
     fun createConnectedMockClient(): ChatClient {
-        val result = Result(listOf(data.channel1))
+        val queryChannelsResult = Result(listOf(data.channel1))
+        val queryChannelResult = Result(data.channel1)
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
                 Result(data.channel1)
@@ -171,7 +172,8 @@ internal open class BaseDomainTest {
                 override fun dispose() = Unit
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
-            on { queryChannels(any()) } doReturn TestCall(result)
+            on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
+            on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any<Reaction>(), any()) } doReturn TestCall(
@@ -195,11 +197,11 @@ internal open class BaseDomainTest {
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
+            .retryPolicy(NoRetryPolicy())
             .build()
         chatDomainImpl = chatDomain as ChatDomainImpl
 
         chatDomainImpl.scope = testCoroutines.scope
-        chatDomainImpl.retryPolicy = NoRetryPolicy()
 
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
@@ -216,7 +218,7 @@ internal open class BaseDomainTest {
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateDataFromChannel(data.channel1)
 
-        query = QueryChannelsSpec(data.filter1)
+        query = QueryChannelsSpec(data.filter1, QuerySort())
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }

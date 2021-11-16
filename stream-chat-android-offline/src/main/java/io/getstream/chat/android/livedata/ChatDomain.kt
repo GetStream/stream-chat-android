@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -86,12 +87,17 @@ public sealed interface ChatDomain {
     public val muted: LiveData<List<Mute>>
 
     /**
+     * List of channels you've muted
+     */
+    public val channelMutes: LiveData<List<ChannelMute>>
+
+    /**
      * if the current user is banned or not
      */
     public val banned: LiveData<Boolean>
 
     /** The retry policy for retrying failed requests */
-    public var retryPolicy: RetryPolicy
+    public val retryPolicy: RetryPolicy
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
@@ -106,36 +112,7 @@ public sealed interface ChatDomain {
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::removeMembers directly",
-        replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
-
     // region use-case functions
-
-    /**
-     * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
-     *
-     * @param channelType String represents channel type.
-     * @param members List of members' id.
-     * @param extraData Map object with custom fields and additional data.
-     *
-     * @return [Call] instance with [Channel].
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::createChannel directly",
-        replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel>
 
     // replaying events
     /**
@@ -144,6 +121,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for obtainging list of historical [ChatEvent] objects.
      */
     @CheckResult
+    @Deprecated(
+        message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     // getting controllers
@@ -536,6 +521,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call].
      */
     @CheckResult
+    @Deprecated(
+        message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().setMessageForReply(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
     /**
@@ -545,6 +538,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] downloading attachment.
      */
     @CheckResult
+    @Deprecated(
+        message = "downloadAttachment is deprecated. Use extension function ChatClient::downloadAttachment instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().downloadAttachment(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**
@@ -635,11 +636,15 @@ public sealed interface ChatDomain {
             offlineChatDomainBuilder.uploadAttachmentsWorkerNetworkType(networkType)
         }
 
+        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
+            offlineChatDomainBuilder.retryPolicy(retryPolicy)
+        }
+
         public fun build(): ChatDomain {
-            ChatDomain.instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
+            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
             val offlineChatDomain = offlineChatDomainBuilder.build()
-            ChatDomain.instance = buildImpl(offlineChatDomain)
-            return ChatDomain.instance()
+            instance = buildImpl(offlineChatDomain)
+            return instance()
         }
 
         internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomain): ChatDomainImpl {

@@ -31,6 +31,7 @@
   <string name="stream_ui_message_list_empty">"Sin mensajes"</string>
   <string name="stream_ui_message_list_ephemeral_message">"Sólo visible para ti"</string>
   <string name="stream_ui_message_list_error_block_user">"Fallo al bloquear al usuario"</string>
+  <string name="stream_ui_message_list_error_delete_message">"Fallo al eliminar el mensaje"</string>
   <string name="stream_ui_message_list_error_flag_message">"Fallo al marcar el mensaje"</string>
   <string name="stream_ui_message_list_error_mute_user">"Fallo al silenciar al usuario"</string>
   <string name="stream_ui_message_list_error_pin_message">"Fallo al fijar el mensaje"</string>

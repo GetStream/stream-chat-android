@@ -72,6 +72,10 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         channels = cloneChannelList;
     }
 
+    public List<Channel> getChannels() {
+        return channels;
+    }
+
     @Override
     public int getItemViewType(int position) {
 

@@ -5,12 +5,12 @@ import androidx.compose.ui.graphics.painter.Painter
 /**
  * UI representation of reactions.
  *
- * @param drawable The ImageVector that's shown in the icon.
+ * @param painter The icon of the option.
  * @param isSelected If the option is selected or not (already reacted with it).
  * @param type The String representation of the reaction, for the API.
  */
-public class ReactionOption(
-    public val drawable: Painter,
+public data class ReactionOption(
+    public val painter: Painter,
     public val isSelected: Boolean,
     public val type: String,
 )

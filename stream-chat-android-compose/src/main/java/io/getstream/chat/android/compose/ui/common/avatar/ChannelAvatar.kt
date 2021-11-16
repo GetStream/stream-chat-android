@@ -1,17 +1,17 @@
 package io.getstream.chat.android.compose.ui.common.avatar
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -22,14 +22,26 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param channel The channel whose data we need to show.
  * @param currentUser The current user, used to determine avatar data.
  * @param modifier Modifier for styling.
+ * @param shape The shape of the avatar.
+ * @param showOnlineIndicator If we show online indicator or not.
+ * @param onlineIndicatorAlignment The alignment of online indicator.
+ * @param onlineIndicator Custom composable that allows to replace the default online indicator.
  * @param contentDescription The description to use for the avatar.
+ * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
 public fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.avatar,
+    showOnlineIndicator: Boolean = true,
+    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+    onlineIndicator: @Composable BoxScope.() -> Unit = {
+        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+    },
     contentDescription: String? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     val members = channel.members
     val memberCount = members.size
@@ -44,7 +56,9 @@ public fun ChannelAvatar(
             Avatar(
                 modifier = modifier,
                 painter = painter,
-                contentDescription = contentDescription
+                shape = shape,
+                contentDescription = contentDescription,
+                onClick = onClick
             )
         }
         /**
@@ -53,7 +67,12 @@ public fun ChannelAvatar(
         memberCount == 1 -> {
             val channelInitials = channel.initials
 
-            InitialsAvatar(initials = channelInitials, modifier)
+            InitialsAvatar(
+                modifier = modifier,
+                initials = channelInitials,
+                shape = shape,
+                onClick = onClick
+            )
         }
         /**
          * If the channel has two members - direct message with another person - we show their image or initials.
@@ -64,55 +83,61 @@ public fun ChannelAvatar(
             UserAvatar(
                 modifier = modifier,
                 user = user,
-                contentDescription = user.name
+                shape = shape,
+                contentDescription = user.name,
+                showOnlineIndicator = showOnlineIndicator,
+                onlineIndicatorAlignment = onlineIndicatorAlignment,
+                onlineIndicator = onlineIndicator,
+                onClick = onClick
             )
         }
         /**
          * If the channel has more than two members - group - we load a matrix of their images or initials.
          */
         else -> {
-            val activeUsers = members.filter { it.user.id != currentUser?.id }.take(4)
-            val imageCount = activeUsers.size
+            val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
 
-            Row(modifier.clip(ChatTheme.shapes.avatar)) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f, fill = false)
-                        .fillMaxHeight()
-                ) {
-                    for (imageIndex in 0 until imageCount step 2) {
-                        if (imageIndex < imageCount) {
-                            UserAvatar(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize(),
-                                user = activeUsers[imageIndex].user,
-                                shape = RectangleShape,
-                                showOnlineIndicator = false
-                            )
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f, fill = false)
-                        .fillMaxHeight()
-                ) {
-                    for (imageIndex in 1 until imageCount step 2) {
-                        if (imageIndex < imageCount) {
-                            UserAvatar(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize(),
-                                user = activeUsers[imageIndex].user,
-                                shape = RectangleShape,
-                                showOnlineIndicator = false
-                            )
-                        }
-                    }
-                }
-            }
+            GroupAvatar(
+                users = users,
+                modifier = modifier,
+                shape = shape,
+                onClick = onClick,
+            )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelWithImageAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithImage)
+}
+
+@Preview
+@Composable
+private fun ChannelWithOnlineUserAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithOnlineUser)
+}
+
+@Preview
+@Composable
+private fun ChannelWithFewMembersAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithFewMembers)
+}
+
+@Preview
+@Composable
+private fun ChannelWithManyMembersAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithManyMembers)
+}
+
+@Composable
+private fun buildChannelAvatarPreview(channel: Channel) {
+    ChatTheme {
+        ChannelAvatar(
+            channel = channel,
+            currentUser = channel.members.first().user,
+            modifier = Modifier.size(36.dp)
+        )
     }
 }

@@ -64,7 +64,11 @@ public class Result<T : Any> private constructor(
     public companion object {
 
         /**
-         * Creates a [Result] object with [data] payload
+         * Creates a [Result] object with [data] payload.
+         *
+         * @param data successful data payload.
+         *
+         * @return [Result] of [T] that contains successful data payload.
          */
         @JvmStatic
         public fun <T : Any> success(data: T): Result<T> {
@@ -72,7 +76,11 @@ public class Result<T : Any> private constructor(
         }
 
         /**
-         * Creates a [Result] object with error payload
+         * Creates a [Result] object with error payload.
+         *
+         * @param t Unexpected [Exception] or [Throwable].
+         *
+         * @return [Result] of [T] that contains [ChatError] error payload.
          */
         @JvmStatic
         public fun <T : Any> error(t: Throwable): Result<T> {
@@ -80,7 +88,11 @@ public class Result<T : Any> private constructor(
         }
 
         /**
-         * Creates a [Result] object with error payload
+         * Creates a [Result] object with error payload.
+         *
+         * @param error [ChatError] error payload.
+         *
+         * @return [Result] of [T] that contains [ChatError] error payload.
          */
         @JvmStatic
         public fun <T : Any> error(error: ChatError): Result<T> {
@@ -104,11 +116,13 @@ public fun Result<*>.toUnitResult(): Result<Unit> = map {}
  *
  * @return The original instance of the [Result].
  */
-public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<T> {
+@JvmSynthetic
+public inline fun <T : Any> Result<T>.onSuccess(
+    crossinline successSideEffect: (T) -> Unit,
+): Result<T> = apply {
     if (isSuccess) {
         successSideEffect(data())
     }
-    return this
 }
 
 /**
@@ -118,11 +132,13 @@ public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result
  *
  * @return The original instance of the [Result].
  */
-public suspend fun <T : Any> Result<T>.onSuccessSuspend(successSideEffect: suspend (T) -> Unit): Result<T> {
+@JvmSynthetic
+public suspend inline fun <T : Any> Result<T>.onSuccessSuspend(
+    crossinline successSideEffect: suspend (T) -> Unit,
+): Result<T> = apply {
     if (isSuccess) {
         successSideEffect(data())
     }
-    return this
 }
 
 /**
@@ -134,6 +150,7 @@ public suspend fun <T : Any> Result<T>.onSuccessSuspend(successSideEffect: suspe
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -151,6 +168,7 @@ public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -167,6 +185,7 @@ public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
@@ -183,6 +202,7 @@ public fun <T : Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T>
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
@@ -198,11 +218,29 @@ public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (Chat
  *
  * @return The original instance of the [Result].
  */
-public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Result<T> {
+@JvmSynthetic
+public inline fun <T : Any> Result<T>.onError(
+    crossinline errorSideEffect: (ChatError) -> Unit,
+): Result<T> = apply {
     if (isError) {
         errorSideEffect(error())
     }
-    return this
+}
+
+/**
+ * Runs the suspending [errorSideEffect] lambda function if the [Result] contains an error payload.
+ *
+ * @param errorSideEffect A suspending lambda that receives the [ChatError] payload.
+ *
+ * @return The original instance of the [Result].
+ */
+@JvmSynthetic
+public suspend inline fun <T : Any> Result<T>.onErrorSuspend(
+    crossinline errorSideEffect: suspend (ChatError) -> Unit,
+): Result<T> = apply {
+    if (isError) {
+        errorSideEffect(error())
+    }
 }
 
 /**
@@ -213,6 +251,7 @@ public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Re
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())
@@ -229,6 +268,7 @@ public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())

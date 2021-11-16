@@ -22,8 +22,13 @@ internal abstract class MessageDao {
         insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
+    @Transaction
+    open fun deleteAttachments(messageIds: List<String>) {
+        messageIds.chunked(SQLITE_MAX_VARIABLE_NUMBER).forEach(::deleteAttachmentsChunked)
+    }
+
     @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
-    abstract fun deleteAttachments(messageIds: List<String>)
+    protected abstract fun deleteAttachmentsChunked(messageIds: List<String>)
 
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
@@ -60,7 +65,7 @@ internal abstract class MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insertReactions(reactions: List<ReactionEntity>)
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt > :dateFilter ORDER BY createdAt ASC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelNewerThan(
         cid: String,
@@ -68,7 +73,7 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt >= :dateFilter ORDER BY createdAt ASC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelEqualOrNewerThan(
         cid: String,
@@ -76,7 +81,7 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt < :dateFilter ORDER BY createdAt DESC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt < :dateFilter || createdLocallyAt < :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelOlderThan(
         cid: String,
@@ -84,7 +89,7 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt <= :dateFilter ORDER BY createdAt DESC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt <= :dateFilter || createdLocallyAt <= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelEqualOrOlderThan(
         cid: String,
@@ -92,7 +97,7 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
@@ -102,9 +107,14 @@ internal abstract class MessageDao {
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND id = :messageId")
     abstract suspend fun deleteMessage(cid: String, messageId: String)
 
+    @Transaction
+    open suspend fun select(ids: List<String>): List<MessageEntity> {
+        return ids.chunked(SQLITE_MAX_VARIABLE_NUMBER).flatMap { messageIds -> selectChunked(messageIds) }
+    }
+
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:ids)")
     @Transaction
-    abstract suspend fun select(ids: List<String>): List<MessageEntity>
+    protected abstract suspend fun selectChunked(ids: List<String>): List<MessageEntity>
 
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:id)")
     @Transaction
@@ -120,7 +130,11 @@ internal abstract class MessageDao {
         return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
 
-    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY createdAt ASC")
+    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")
     @Transaction
     protected abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
+
+    private companion object {
+        private const val SQLITE_MAX_VARIABLE_NUMBER = 999
+    }
 }

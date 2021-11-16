@@ -20,6 +20,16 @@ public class ViewInfo(channel: Channel) : ChannelListAction(channel)
 public class LeaveGroup(channel: Channel) : ChannelListAction(channel)
 
 /**
+ * Mutes the channel.
+ */
+public class MuteChannel(channel: Channel) : ChannelListAction(channel)
+
+/**
+ * Unmutes the channel.
+ */
+public class UnmuteChannel(channel: Channel) : ChannelListAction(channel)
+
+/**
  * Shows a dialog to delete the conversation, if we have the permission.
  */
 public class DeleteConversation(channel: Channel) : ChannelListAction(channel)

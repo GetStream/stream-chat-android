@@ -5,6 +5,7 @@
   <string name="stream_chat_load_notification_data_title">"Chargement des données de notification"</string>
   <string name="stream_chat_notification_channel_name">"Nouveaux messages de discussion"</string>
   <string name="stream_chat_notification_content">"Vous avez reçu un nouveau message"</string>
+  <string name="stream_chat_notification_empty_username">"Utilisateur sans nom"</string>
   <string name="stream_chat_notification_group_summary_content_text">"Vous avez reçu de nouveaux messages"</string>
   <string name="stream_chat_notification_read">"Marquer comme lu"</string>
   <string name="stream_chat_notification_reply">"Répondre"</string>

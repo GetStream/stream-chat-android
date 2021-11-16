@@ -87,6 +87,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
@@ -252,12 +254,14 @@ public class MessageListView : ConstraintLayout {
             is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
             is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
             is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
+            is MessageListViewModel.ErrorEvent.DeleteMessageError -> R.string.stream_ui_message_list_error_delete_message
         }.let(::showToast)
     }
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
+    private var messageBackgroundFactory: MessageBackgroundFactory? = null
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
@@ -288,7 +292,9 @@ public class MessageListView : ConstraintLayout {
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
                         ),
-                        requireStyle()
+                        requireStyle(),
+                        messageListItemViewHolderFactory,
+                        backgroundFactory()
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -388,7 +394,9 @@ public class MessageListView : ConstraintLayout {
                         hasTextToCopy = false, // No effect when displaying reactions
                         suppressThreads = false, // No effect when displaying reactions
                     ),
-                    requireStyle()
+                    requireStyle(),
+                    messageListItemViewHolderFactory,
+                    backgroundFactory()
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -475,6 +483,10 @@ public class MessageListView : ConstraintLayout {
                 loadingViewContainer.addView(this)
             }
         }
+    }
+
+    private fun backgroundFactory(): MessageBackgroundFactory {
+        return messageBackgroundFactory ?: MessageBackgroundFactoryImpl(requireStyle().itemStyle)
     }
 
     private fun initEmptyStateView() {
@@ -608,8 +620,8 @@ public class MessageListView : ConstraintLayout {
         initAdapter()
 
         messageListViewStyle = requireStyle().copy(
-            replyEnabled = requireStyle().replyEnabled && channel.config.isRepliesEnabled,
-            threadsEnabled = requireStyle().threadsEnabled && channel.config.isRepliesEnabled,
+            replyEnabled = requireStyle().replyEnabled,
+            threadsEnabled = requireStyle().threadsEnabled && channel.config.isThreadEnabled,
         )
     }
 
@@ -633,6 +645,7 @@ public class MessageListView : ConstraintLayout {
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
+            backgroundFactory()
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

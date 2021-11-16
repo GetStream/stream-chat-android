@@ -2,8 +2,10 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="stream_ui_message_input_camera_access">"कैमरा एक्सेस करने की अनुमति दें"</string>
   <string name="stream_ui_message_input_capture_media">"फोटो या वीडियो खींच"</string>
+  <string name="stream_ui_message_input_command_template">"/%1$s %2$s"</string>
   <string name="stream_ui_message_input_error_file_large_size">"फ़ाइल बहुत बड़ी है - अधिकतम %d एमबी."</string>
   <string name="stream_ui_message_input_error_file_size">"फ़ाइल अपलोड करने के लिए बहुत बड़ी है।"</string>
+  <string name="stream_ui_message_input_error_max_attachments_count_exceeded">"अटैचमेंट्स संख्या (%1$d) पार हो गयी"</string>
   <string name="stream_ui_message_input_error_max_length">"मैसेज की वर्ण सीमा (%1$d) पार हो गई है।"</string>
   <string name="stream_ui_message_input_files_access">"फाइल्स एक्सेस करने की अनुमति दें"</string>
   <string name="stream_ui_message_input_gallery_access">"गैलरी एक्सेस करने की अनुमति दें"</string>

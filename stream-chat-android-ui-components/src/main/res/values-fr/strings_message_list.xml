@@ -31,6 +31,7 @@
   <string name="stream_ui_message_list_empty">"Pas de messages"</string>
   <string name="stream_ui_message_list_ephemeral_message">"Seulement visible par vous"</string>
   <string name="stream_ui_message_list_error_block_user">"Échec du blocage de l\'utilisateur"</string>
+  <string name="stream_ui_message_list_error_delete_message">"Échec de la suppression du message"</string>
   <string name="stream_ui_message_list_error_flag_message">"Échec du signalement du message"</string>
   <string name="stream_ui_message_list_error_mute_user">"Échec de la mise en sourdine de l\'utilisateur"</string>
   <string name="stream_ui_message_list_error_pin_message">"Échec de l\'épinglage du message"</string>

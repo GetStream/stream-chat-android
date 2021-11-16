@@ -22,19 +22,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -47,16 +43,21 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelOption
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channel.list.MuteChannel
+import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.getMembersStatusText
+import io.getstream.chat.android.compose.ui.util.isDistinct
+import io.getstream.chat.android.compose.ui.util.isMuted
 
 /**
  * Shows special UI when an item is selected.
  * It also prepares the available options for the channel, based on if we're an admin or not.
  *
  * @param selectedChannel The channel the user selected.
- * @param user Currently logged-in user data.
+ * @param currentUser The currently logged-in user data.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  * @param modifier Modifier for styling.
  * @param shape The shape of the component.
@@ -64,60 +65,73 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun ChannelInfo(
     selectedChannel: Channel,
-    user: User?,
+    currentUser: User?,
     onChannelOptionClick: (ChannelListAction) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    val isAdmin = selectedChannel.members.firstOrNull { it.user.id == user?.id }?.role == "admin"
-
     val channelMembers = selectedChannel.members
-    val onlineMembers = channelMembers.count { it.user.online }
 
-    val title = channelMembers.fold("") { current, member ->
-        if (current.isEmpty()) {
-            member.user.name
-        } else {
-            "$current, ${member.user.name}"
-        }
-    }
+    val canLeaveChannel = !selectedChannel.isDistinct()
+    val isChannelMuted = selectedChannel.isMuted
+    val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
+        ?.role
+        ?.let { it == "admin" || it == "owner" }
+        ?: false
 
-    val channelOptions = mutableListOf(
+    val otherMembers = channelMembers.filter { it.user.id != currentUser?.id }
+
+    val channelOptions = listOfNotNull(
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_view_info),
+            title = stringResource(id = R.string.stream_compose_channel_info_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
-            icon = Icons.Default.Person,
+            iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = ViewInfo(selectedChannel)
         ),
+        if (canLeaveChannel) {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_leave_group),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = LeaveGroup(selectedChannel)
+            )
+        } else null,
+        if (isChannelMuted) {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_unmute_channel),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_unmute),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = UnmuteChannel(selectedChannel)
+            )
+        } else {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_mute_channel),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_mute),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = MuteChannel(selectedChannel)
+            )
+        },
+        if (canDeleteChannel) {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
+                titleColor = ChatTheme.colors.errorAccent,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
+                iconColor = ChatTheme.colors.errorAccent,
+                action = DeleteConversation(selectedChannel)
+            )
+        } else null,
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_leave_group),
+            title = stringResource(id = R.string.stream_compose_channel_info_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
-            icon = Icons.Default.PersonRemove,
-            iconColor = ChatTheme.colors.textLowEmphasis,
-            action = LeaveGroup(selectedChannel)
-        ),
-        ChannelOption(
-            title = stringResource(id = R.string.stream_compose_cancel),
-            titleColor = ChatTheme.colors.textHighEmphasis,
-            icon = Icons.Default.Cancel,
+            iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = Cancel,
         )
     )
-
-    if (isAdmin) {
-        channelOptions.add(
-            2,
-            ChannelOption(
-                title = stringResource(id = R.string.stream_compose_delete_conversation),
-                titleColor = ChatTheme.colors.errorAccent,
-                icon = Icons.Default.Delete,
-                iconColor = ChatTheme.colors.errorAccent,
-                action = DeleteConversation(selectedChannel)
-            )
-        )
-    }
 
     Box(
         modifier = Modifier
@@ -148,37 +162,51 @@ public fun ChannelInfo(
 
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = title,
-                    style = ChatTheme.typography.bodyBold,
+                    text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel),
+                    style = ChatTheme.typography.title3Bold,
                     color = ChatTheme.colors.textHighEmphasis,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = stringResource(
-                        id = R.string.stream_compose_channel_members,
-                        channelMembers.size,
-                        onlineMembers
-                    ),
+                    text = selectedChannel.getMembersStatusText(LocalContext.current, currentUser),
                     style = ChatTheme.typography.footnoteBold,
                     color = ChatTheme.colors.textLowEmphasis,
                 )
 
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 16.dp)
-                        .align(Alignment.CenterHorizontally),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
-                ) {
-                    items(selectedChannel.members) { member ->
-                        ChannelInfoUserItem(member = member)
-                    }
-                }
+                ChannelMembers(otherMembers)
 
                 ChannelOptions(channelOptions, onChannelOptionClick)
             }
+        }
+    }
+}
+
+/**
+ * Represents a list of members in the channel.
+ *
+ * @param members The list of channel members.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+private fun ChannelMembers(
+    members: List<Member>,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        horizontalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+    ) {
+        items(members) { member ->
+            ChannelInfoUserItem(
+                modifier = Modifier
+                    .width(ChatTheme.dimens.channelInfoUserItemWidth)
+                    .padding(horizontal = ChatTheme.dimens.channelInfoUserItemHorizontalPadding),
+                member = member,
+            )
         }
     }
 }
@@ -197,15 +225,13 @@ private fun ChannelInfoUserItem(
     val memberName = member.user.name
 
     Column(
-        modifier = modifier
-            .width(48.dp),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         UserAvatar(
-            modifier = modifier
-                .size(48.dp),
+            modifier = Modifier.size(ChatTheme.dimens.channelInfoUserItemAvatarSize),
             user = member.user,
             contentDescription = memberName
         )
@@ -244,8 +270,8 @@ private fun ChannelOptions(
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = Color.LightGray, shape = RectangleShape)
+                    .height(0.5.dp)
+                    .background(color = ChatTheme.colors.borders)
             )
 
             ChannelOptionItem(
@@ -253,7 +279,10 @@ private fun ChannelOptions(
                 titleColor = option.titleColor,
                 leadingIcon = {
                     Icon(
-                        imageVector = option.icon,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .padding(16.dp),
+                        painter = option.iconPainter,
                         tint = option.iconColor,
                         contentDescription = null
                     )
@@ -284,21 +313,20 @@ private fun ChannelOptionItem(
     Row(
         modifier
             .fillMaxWidth()
+            .height(56.dp)
             .clickable(
                 onClick = onClick,
                 indication = rememberRipple(),
                 interactionSource = remember { MutableInteractionSource() }
-            )
-            .padding(12.dp),
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
         leadingIcon()
 
         Text(
-            modifier = Modifier.padding(start = 12.dp),
             text = title,
-            style = ChatTheme.typography.footnoteBold,
+            style = ChatTheme.typography.bodyBold,
             color = titleColor
         )
     }

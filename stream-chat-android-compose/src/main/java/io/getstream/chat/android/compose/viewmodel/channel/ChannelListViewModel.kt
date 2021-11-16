@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.viewmodel.channel
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,25 +11,31 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
+import io.getstream.chat.android.compose.ui.util.isMuted
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
  * A state store that represents all the information required to query, filter, show and react to
  * [Channel] items in a list.
  *
+ * @param chatClient Used to connect to the API.
+ * @param chatDomain Used to connect to the API and fetch the domain status.
  * @param initialSort The initial sort used for [Channel]s.
  * @param initialFilters The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
@@ -62,7 +69,7 @@ public class ChannelListViewModel(
      * Currently selected channel, if any. Used to show the bottom drawer information when long
      * tapping on a list item.
      */
-    public var selectedChannel: Channel? by mutableStateOf(null)
+    public var selectedChannel: MutableState<Channel?> = mutableStateOf(null)
         private set
 
     /**
@@ -76,7 +83,7 @@ public class ChannelListViewModel(
      * The state of our network connection - if we're online or not.
      */
     @Deprecated("Use connectionState instead")
-    public val isOnline: StateFlow<Boolean> = chatDomain.online
+    public val isOnline: Flow<Boolean> = chatDomain.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * The state of our network connection - if we're online, connecting or offline.
@@ -95,23 +102,46 @@ public class ChannelListViewModel(
         viewModelScope.launch {
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
-
-                    val filter = if (query.isNotEmpty()) {
-                        Filters.and(config.filters, Filters.autocomplete("name", query))
-                    } else {
-                        config.filters
-                    }
-
-                    val result = chatDomain.queryChannels(filter, config.querySort).await()
+                    val result = chatDomain.queryChannels(
+                        filter = createQueryChannelsFilter(config.filters, query),
+                        sort = config.querySort
+                    ).await()
 
                     if (result.isSuccess) {
-                        observeChannels(result.data())
+                        observeChannels(controller = result.data(), searchQuery = query)
                     } else {
                         result.error().cause?.printStackTrace()
-                        channelsState =
-                            channelsState.copy(isLoading = false, channels = emptyList())
+                        channelsState = channelsState.copy(isLoading = false, channels = emptyList())
                     }
                 }
+        }
+    }
+
+    /**
+     * Creates a filter that is used to query channels.
+     *
+     * If the [searchQuery] is empty, then returns the original [filter] provided by the user.
+     * Otherwise, returns a wrapped [filter] that also checks that the channel name match the
+     * [searchQuery].
+     *
+     * @param filter The filter that was passed by the user.
+     * @param searchQuery The search query used to filter the channels.
+     * @return The filter that will be used to query channels.
+     */
+    private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
+        return if (searchQuery.isNotEmpty()) {
+            Filters.and(
+                filter,
+                Filters.or(
+                    Filters.and(
+                        Filters.autocomplete("member.user.name", searchQuery),
+                        Filters.notExists("name")
+                    ),
+                    Filters.autocomplete("name", searchQuery)
+                )
+            )
+        } else {
+            filter
         }
     }
 
@@ -120,26 +150,30 @@ public class ChannelListViewModel(
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
-    private suspend fun observeChannels(controller: QueryChannelsController) {
-        controller.loadingMore
-            .combine(controller.channelsState) { isLoadingMore, channelsState ->
-                isLoadingMore to channelsState
-            }.combine(controller.endOfChannels) { (isLoadingMore, state), endOfChannels ->
+    private suspend fun observeChannels(controller: QueryChannelsController, searchQuery: String) {
+        chatDomain.channelMutes.combine(controller.channelsState, ::Pair)
+            .map { (channelMutes, state) ->
                 when (state) {
                     QueryChannelsController.ChannelsState.NoQueryActive,
                     QueryChannelsController.ChannelsState.Loading,
-                    ->
-                        channelsState.copy(isLoading = true)
-                    QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
-                        isLoading = false,
-                        channels = emptyList()
+                    -> channelsState.copy(
+                        isLoading = true,
+                        searchQuery = searchQuery
                     )
+                    QueryChannelsController.ChannelsState.OfflineNoResults -> {
+                        channelsState.copy(
+                            isLoading = false,
+                            channels = emptyList(),
+                            searchQuery = searchQuery
+                        )
+                    }
                     is QueryChannelsController.ChannelsState.Result -> {
                         channelsState.copy(
                             isLoading = false,
-                            channels = state.channels,
-                            isLoadingMore = isLoadingMore,
-                            endOfChannels = endOfChannels
+                            channels = enrichMutedChannels(state.channels, channelMutes),
+                            isLoadingMore = false,
+                            endOfChannels = controller.endOfChannels.value,
+                            searchQuery = searchQuery
                         )
                     }
                 }
@@ -151,7 +185,7 @@ public class ChannelListViewModel(
      * the state change.
      */
     public fun selectChannel(channel: Channel?) {
-        this.selectedChannel = channel
+        this.selectedChannel.value = channel
     }
 
     /**
@@ -200,6 +234,7 @@ public class ChannelListViewModel(
             currentConfig.filters
         }
 
+        channelsState = channelsState.copy(isLoadingMore = true)
         chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
     }
 
@@ -213,7 +248,7 @@ public class ChannelListViewModel(
      */
     public fun performChannelAction(channelListAction: ChannelListAction) {
         if (channelListAction is Cancel) {
-            selectedChannel = null
+            selectedChannel.value = null
         }
 
         activeChannelAction = if (channelListAction == Cancel) {
@@ -221,6 +256,28 @@ public class ChannelListViewModel(
         } else {
             channelListAction
         }
+    }
+
+    /**
+     * Mutes a channel.
+     *
+     * @param channel The channel to mute.
+     */
+    public fun muteChannel(channel: Channel) {
+        dismissChannelAction()
+
+        chatClient.muteChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
+     * Unmutes a channel.
+     *
+     * @param channel The channel to unmute.
+     */
+    public fun unmuteChannel(channel: Channel) {
+        dismissChannelAction()
+
+        chatClient.unmuteChannel(channel.type, channel.id).enqueue()
     }
 
     /**
@@ -252,6 +309,30 @@ public class ChannelListViewModel(
      */
     public fun dismissChannelAction() {
         activeChannelAction = null
-        selectedChannel = null
+        selectedChannel.value = null
+    }
+
+    /**
+     * Uses [Channel.isMuted] property to store additional flag for each channel if the channel is muted
+     * for the current user.
+     *
+     * @param channels The list of channels channels without the information about channel mutes.
+     * @param channelMutes The list of [ChannelMute] that represent muted channels for the current user.
+     * @return The list of channels enriched with the information about channel mutes.
+     *
+     * @see [Channel.isMuted]
+     */
+    private fun enrichMutedChannels(channels: List<Channel>, channelMutes: List<ChannelMute>): List<Channel> {
+        val mutedChannelIdsSet = channelMutes.map { channelMute -> channelMute.channel.id }.toSet()
+        return channels.map { channel ->
+            val isMuted = channel.id in mutedChannelIdsSet
+
+            if (channel.isMuted != isMuted) {
+                channel.copy(extraData = channel.extraData.toMutableMap())
+                    .also { it.isMuted = isMuted }
+            } else {
+                channel
+            }
+        }
     }
 }
