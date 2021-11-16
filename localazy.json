@@ -37,7 +37,8 @@
       {
         "group": "compose-all",
         "pattern": "stream-chat-android-compose/src/main/res/values-*/strings*.xml",
-        "lang": "${autodetectLang}"
+        "lang": "${autodetectLang}",
+        "file": "strings-compose.xml"
       }
     ]
   },
