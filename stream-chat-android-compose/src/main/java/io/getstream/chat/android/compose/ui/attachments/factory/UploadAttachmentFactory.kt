@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import androidx.compose.runtime.Composable
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.util.isUploading
 
@@ -12,7 +11,6 @@ import io.getstream.chat.android.compose.ui.util.isUploading
 @Suppress("FunctionName")
 public fun UploadAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.isUploading() } },
-    previewContent = @Composable { _, _, _ -> },
     content = @Composable { modifier, state ->
         FileUploadContent(
             modifier = modifier,

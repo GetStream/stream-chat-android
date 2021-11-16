@@ -87,6 +87,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the "mute" option to the `ChannelInfo` action dialog.
 
 ### ⚠️ Changed
+- Moved the `AttachmentFactory` class to `io.getstream.chat.android.compose.ui.attachments.factory` package.
+- Made the `AttachmentFactory.previewContent` field nullable.
 
 ### ❌ Removed
 

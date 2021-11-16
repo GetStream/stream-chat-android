@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.ui.attachments.factory
 
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
 
