@@ -33,7 +33,6 @@ internal class QueryChannelsMutableState(
     internal val _endOfChannels = MutableStateFlow(false)
     internal val _sortedChannels =
         _channels.map { it.values.sortedWith(sort.comparator) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
-    internal val _mutedChannelIds = MutableStateFlow<List<String>>(emptyList())
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -55,7 +54,6 @@ internal class QueryChannelsMutableState(
     override val loadingMore: StateFlow<Boolean> = _loadingMore
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels
     override val channels: StateFlow<List<Channel>> = _sortedChannels
-    override val mutedChannelIds: StateFlow<List<String>> = _mutedChannelIds
     override val channelsStateData: StateFlow<ChannelsStateData> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
             when {

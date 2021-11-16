@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.offline.ChatDomain
@@ -31,7 +32,13 @@ public class MessagesViewModelFactory(
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(chatClient, chatDomain, channelId)
+            MessageComposerViewModel(
+                MessageComposerController(
+                    chatClient = chatClient,
+                    chatDomain = chatDomain,
+                    channelId = channelId
+                )
+            )
         },
         MessageListViewModel::class.java to {
             MessageListViewModel(

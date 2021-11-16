@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Member
@@ -190,6 +191,7 @@ internal class ChatDomainImpl internal constructor(
     private val _banned = MutableStateFlow(false)
 
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
+    private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
     private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
 
     private val _user = MutableStateFlow<User?>(null)
@@ -223,6 +225,11 @@ internal class ChatDomainImpl internal constructor(
      * list of users that you've muted
      */
     override val muted: StateFlow<List<Mute>> = _mutedUsers
+
+    /**
+     * List of channels you've muted
+     */
+    override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes
 
     /**
      * if the current user is banned or not
@@ -343,11 +350,10 @@ internal class ChatDomainImpl internal constructor(
         _user.value = me
         repos.insertCurrentUser(me)
         _mutedUsers.value = me.mutes
+        _channelMutes.value = me.channelMutes
         setTotalUnreadCount(me.totalUnreadCount)
         setChannelUnreadCount(me.unreadChannels)
-
         setBanned(me.banned)
-        getActiveQueries().forEach { queryChannelsController -> queryChannelsController.updateMutedChannels(me.channelMutes) }
     }
 
     internal suspend fun storeSyncState(): SyncState? {
