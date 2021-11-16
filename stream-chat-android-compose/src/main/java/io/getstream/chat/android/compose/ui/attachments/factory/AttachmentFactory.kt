@@ -21,11 +21,13 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  */
 public open class AttachmentFactory @ExperimentalStreamChatApi constructor(
     public val canHandle: (attachments: List<Attachment>) -> Boolean,
-    public val previewContent: (@Composable (
-        modifier: Modifier,
-        attachments: List<Attachment>,
-        onAttachmentRemoved: (Attachment) -> Unit,
-    ) -> Unit)? = null,
+    public val previewContent: (
+        @Composable (
+            modifier: Modifier,
+            attachments: List<Attachment>,
+            onAttachmentRemoved: (Attachment) -> Unit,
+        ) -> Unit
+    )? = null,
     public val content: @Composable (
         modifier: Modifier,
         attachmentState: AttachmentState,
