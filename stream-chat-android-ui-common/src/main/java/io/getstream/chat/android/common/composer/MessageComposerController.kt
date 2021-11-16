@@ -8,6 +8,7 @@ import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,8 @@ import kotlinx.coroutines.flow.map
  * @param chatClient The client used to communicate to the API.
  * @param chatDomain The domain used to communicate to the API and store data offline.
  */
-public class MessageComposerController constructor(
+@InternalStreamChatApi
+public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val chatDomain: ChatDomain = ChatDomain.instance(),

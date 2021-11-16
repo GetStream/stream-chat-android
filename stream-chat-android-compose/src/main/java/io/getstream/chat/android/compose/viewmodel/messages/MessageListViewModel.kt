@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit
  *
  * @param chatClient Used to connect to the API.
  * @param chatDomain Used to connect to the API and fetch the domain status.
- * @param channelId Used to connect to the required channel.
+ * @param channelId The ID of the channel to load the messages for.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param enforceUniqueReactions Enables or disables unique message reactions per user.
  * @param clipboardHandler Used to copy data from message actions to the clipboard.
