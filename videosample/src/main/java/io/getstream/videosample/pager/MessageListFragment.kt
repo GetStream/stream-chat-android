@@ -1,19 +1,15 @@
 package io.getstream.videosample.pager
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.input.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.MessageListView
-import io.getstream.chat.android.ui.message.list.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.getstream.videosample.R
+import io.getstream.videosample.recycler.ItemsAdapter
 
 /**
  * A simple [Fragment] subclass.
@@ -22,31 +18,43 @@ import io.getstream.videosample.R
  */
 class MessageListFragment : Fragment() {
 
-  private val factory: MessageListViewModelFactory =
-    MessageListViewModelFactory(cid = "messaging:sample-app-channel-109")
+    private val adapter = ItemsAdapter()
 
-  private val messageListViewModel: MessageListViewModel by viewModels { factory }
-  private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        return inflater.inflate(R.layout.fragment_message_list, container, false)
+    }
 
-  override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_message_list, container, false)
-  }
+    private val list = mutableListOf<String>()
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    val messageListView = view.findViewById<MessageListView>(R.id.messageListView)
-    val messageInputView = view.findViewById<MessageInputView>(R.id.messageInputView)
+        val recycler = view.findViewById<RecyclerView>(R.id.itemsRV).apply {
+            layoutManager = LinearLayoutManager(context).apply {
+                stackFromEnd = true
+            }
+            setHasFixedSize(false)
+            setItemViewCacheSize(20)
+        }
 
-    messageListViewModel.bindView(messageListView, this)
-    messageInputViewModel.bindView(messageInputView, this)
-  }
+        recycler.adapter = adapter
 
-  companion object {
-    @JvmStatic
-    fun newInstance() = MessageListFragment()
-  }
+        view.findViewById<Button>(R.id.addItemsBtn).setOnClickListener {
+            repeat(5) { list.add("Hi - ${list.size}") }
+
+            val newList = mutableListOf<String>().apply {
+                addAll(list)
+            }
+
+            adapter.submitList(newList)
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = MessageListFragment()
+    }
 }
