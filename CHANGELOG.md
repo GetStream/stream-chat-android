@@ -89,6 +89,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `attachmentsContentImageWidth`, `attachmentsContentImageHeight`, `attachmentsContentGiphyWidth`, `attachmentsContentGiphyHeight`, `attachmentsContentLinkWidth`, `attachmentsContentFileWidth` and `attachmentsContentFileUploadWidth` options to `StreamDimens`, to make it possible to customize the dimensions of attachments content via `ChatTheme`.
 
 ### ⚠️ Changed
+- Made the `AttachmentFactory.previewContent` field nullable.
 
 ### ❌ Removed
 

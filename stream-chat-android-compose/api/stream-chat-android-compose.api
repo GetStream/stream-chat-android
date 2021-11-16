@@ -438,11 +438,9 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$GiphyAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$GiphyAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$ImageAttachmentFactoryKt {
@@ -454,20 +452,11 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$LinkAttachmentFactoryKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$LinkAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-}
-
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$UploadAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$UploadAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/FileAttachmentFactoryKt {
