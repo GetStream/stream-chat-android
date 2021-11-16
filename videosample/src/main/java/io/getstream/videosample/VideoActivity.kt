@@ -35,8 +35,8 @@ class VideoActivity : AppCompatActivity() {
 
         player?.setMediaItem(mediaItem)
 
-        player?.playWhenReady = true
-        player?.prepare()
+        // player?.playWhenReady = true
+        // player?.prepare()
     }
 
     private fun configPager() {
