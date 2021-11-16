@@ -366,12 +366,10 @@ public fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-        val reactionCounts = message.reactionCounts
         val supportedReactions = ChatTheme.reactionTypes
 
-        if (reactionCounts.isEmpty()) return
-
-        message.reactionCounts
+        val reactionCounts = message.reactionCounts.ifEmpty { return }
+        reactionCounts
             .filter { supportedReactions.containsKey(it.key) }
             .takeIf { it.isNotEmpty() }
             ?.map { it.key }
