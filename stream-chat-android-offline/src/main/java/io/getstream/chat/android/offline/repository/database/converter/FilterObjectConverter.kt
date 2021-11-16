@@ -74,7 +74,7 @@ private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.k
     }
 }
 
-internal fun FilterObject.toMap(): Map<String, Any> = when (this) {
+private fun FilterObject.toMap(): Map<String, Any> = when (this) {
     is AndFilterObject -> mapOf(KEY_AND to this.filterObjects.map(FilterObject::toMap))
     is OrFilterObject -> mapOf(KEY_OR to this.filterObjects.map(FilterObject::toMap))
     is NorFilterObject -> mapOf(KEY_NOR to this.filterObjects.map(FilterObject::toMap))
