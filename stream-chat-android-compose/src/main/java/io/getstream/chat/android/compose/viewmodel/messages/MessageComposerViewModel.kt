@@ -1,24 +1,22 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.state.Edit
-import com.getstream.sdk.chat.state.MessageAction
-import com.getstream.sdk.chat.state.MessageMode
-import com.getstream.sdk.chat.state.Normal
-import com.getstream.sdk.chat.state.Reply
-import com.getstream.sdk.chat.viewmodel.MessageComposerController
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.common.composer.MessageComposerController
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  *
- * It relays all its core actions to the [MessageComposerController], as a central place for all the Composer logic.
- * Additionally, all the core data that can be reused across our SDKs can be provided through the [MessageComposerController],
- * while implementation-specific data is stored in respective [ViewModel]s.
+ * It relays all its core actions to a shared data source, as a central place for all the Composer logic.
+ * Additionally, all the core data that can be reused across our SDKs is available through shared data sources, while
+ * implementation-specific data is stored in respective in the [ViewModel].
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
  */
@@ -58,7 +56,7 @@ public class MessageComposerViewModel(
     public fun setMessageMode(messageMode: MessageMode): Unit = messageComposerController.setMessageMode(messageMode)
 
     /**
-     * Handles selected [messageAction] by passing it to the [MessageComposerController].
+     * Handles the selected [messageAction].
      *
      * @param messageAction The newly selected action.
      */
@@ -66,7 +64,7 @@ public class MessageComposerViewModel(
         messageComposerController.performMessageAction(messageAction)
 
     /**
-     * Dismisses all message actions from the UI and clears the input based on the [MessageComposerController] state.
+     * Dismisses all message actions from the UI and clears the input based on the internal state.
      */
     public fun dismissMessageActions(): Unit = messageComposerController.dismissMessageActions()
 
@@ -91,8 +89,8 @@ public class MessageComposerViewModel(
         messageComposerController.removeSelectedAttachment(attachment)
 
     /**
-     * Sends a given message using our Stream API. Based on the [MessageComposerController] state, we either edit an
-     * existing message, or we send a new message, using the [ChatDomain].
+     * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
+     * or we send a new message, using our API.
      *
      * It also dismisses any current message actions.
      *
@@ -101,8 +99,8 @@ public class MessageComposerViewModel(
     public fun sendMessage(message: Message): Unit = messageComposerController.sendMessage(message)
 
     /**
-     * Builds a new [Message] to send to our API. Based on the [MessageComposerController] state, we use the current
-     * action's message and apply the given changes.
+     * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and
+     * apply the given changes.
      *
      * If we're not editing a message, we'll fill in the required data for the message.
      *
@@ -117,7 +115,7 @@ public class MessageComposerViewModel(
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 
     /**
-     * Updates the UI state when leaving the thread, to switch back to the [Normal] message mode, by
+     * Updates the UI state when leaving the thread, to switch back to the [MessageMode.Normal] message mode, by
      * calling [setMessageMode].
      *
      * It also dismisses any currently active message actions, such as [Edit] and [Reply], as the

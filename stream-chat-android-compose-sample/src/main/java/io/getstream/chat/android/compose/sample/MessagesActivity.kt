@@ -28,9 +28,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.state.Reply
-import com.getstream.sdk.chat.state.Thread
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
@@ -103,7 +103,7 @@ class MessagesActivity : AppCompatActivity() {
                         .fillMaxSize(),
                     viewModel = listViewModel,
                     onThreadClick = { message ->
-                        composerViewModel.setMessageMode(Thread(message))
+                        composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     },
                     onImagePreviewResult = { result ->
@@ -164,15 +164,13 @@ class MessagesActivity : AppCompatActivity() {
                 .wrapContentHeight(),
             viewModel = composerViewModel,
             integrations = {},
-            input = { value, attachments, action ->
+            input = { inputState ->
                 MessageInput(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(7f)
                         .padding(start = 8.dp),
-                    value = value,
-                    attachments = attachments,
-                    activeAction = action,
+                    messageInputState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     label = {

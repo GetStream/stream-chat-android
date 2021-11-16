@@ -21,6 +21,7 @@ import io.getstream.chat.android.compose.ui.util.isMuted
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -32,6 +33,8 @@ import kotlinx.coroutines.launch
  * A state store that represents all the information required to query, filter, show and react to
  * [Channel] items in a list.
  *
+ * @param chatClient Used to connect to the API.
+ * @param chatDomain Used to connect to the API and fetch the domain status.
  * @param initialSort The initial sort used for [Channel]s.
  * @param initialFilters The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
@@ -79,7 +82,7 @@ public class ChannelListViewModel(
      * The state of our network connection - if we're online or not.
      */
     @Deprecated("Use connectionState instead")
-    public val isOnline: StateFlow<Boolean> = chatDomain.online
+    public val isOnline: Flow<Boolean> = chatDomain.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * The state of our network connection - if we're online, connecting or offline.

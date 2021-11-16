@@ -1,15 +1,13 @@
-package com.getstream.sdk.chat.viewmodel
+package io.getstream.chat.android.common.composer
 
-import com.getstream.sdk.chat.state.Edit
-import com.getstream.sdk.chat.state.MessageAction
-import com.getstream.sdk.chat.state.MessageMode
-import com.getstream.sdk.chat.state.Normal
-import com.getstream.sdk.chat.state.Reply
-import com.getstream.sdk.chat.state.Thread
-import com.getstream.sdk.chat.state.ThreadReply
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.offline.ChatDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,10 +42,10 @@ public class MessageComposerController constructor(
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
 
     /**
-     * Current message mode, either [Normal] or [Thread]. Used to determine if we're sending a thread
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
      * reply or a regular message.
      */
-    private var messageMode: MessageMode = Normal
+    private var messageMode: MessageMode = MessageMode.Normal
 
     /**
      * Set of currently active message actions. These are used to display different UI in the composer,
@@ -106,7 +104,7 @@ public class MessageComposerController constructor(
     public fun performMessageAction(messageAction: MessageAction) {
         when (messageAction) {
             is ThreadReply -> {
-                setMessageMode(Thread(messageAction.message))
+                setMessageMode(MessageMode.MessageThread(messageAction.message))
             }
             is Reply -> {
                 messageActions.value = messageActions.value + messageAction
@@ -214,7 +212,7 @@ public class MessageComposerController constructor(
 
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
-        val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
+        val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
 
         return if (isInEditMode) {
             actionMessage.copy(
@@ -233,14 +231,14 @@ public class MessageComposerController constructor(
     }
 
     /**
-     * Updates the UI state when leaving the thread, to switch back to the [Normal] message mode, by
+     * Updates the UI state when leaving the thread, to switch back to the [MessageMode.Normal], by
      * calling [setMessageMode].
      *
      * It also dismisses any currently active message actions, such as [Edit] and [Reply], as the
      * user left the relevant thread.
      */
     public fun leaveThread() {
-        setMessageMode(Normal)
+        setMessageMode(MessageMode.Normal)
         dismissMessageActions()
     }
 }

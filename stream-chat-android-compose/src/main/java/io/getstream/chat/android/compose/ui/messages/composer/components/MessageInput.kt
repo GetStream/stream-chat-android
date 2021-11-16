@@ -24,11 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.state.Edit
-import com.getstream.sdk.chat.state.MessageAction
-import com.getstream.sdk.chat.state.Reply
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.composer.MessageInputState
 import io.getstream.chat.android.compose.ui.common.InputField
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
@@ -89,9 +90,7 @@ public fun MessageInputOptions(
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
  * when the input changes.
  *
- * @param value Current value of the input.
- * @param attachments Currently selected and visible attachments.
- * @param activeAction Currently active action (for [Edit] UI).
+ * @param messageInputState The state of the input.
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param modifier Modifier for styling.
@@ -99,14 +98,13 @@ public fun MessageInputOptions(
  */
 @Composable
 public fun MessageInput(
-    value: String,
-    attachments: List<Attachment>,
-    activeAction: MessageAction?,
+    messageInputState: MessageInputState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     label: @Composable () -> Unit = { DefaultComposerLabel() },
 ) {
+    val (value, attachments, activeAction) = messageInputState
 
     InputField(
         modifier = modifier,

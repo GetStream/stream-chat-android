@@ -23,11 +23,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.state.MessageMode
-import com.getstream.sdk.chat.state.Normal
-import com.getstream.sdk.chat.state.Thread
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
@@ -57,7 +55,7 @@ public fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
-    messageMode: MessageMode = Normal,
+    messageMode: MessageMode = MessageMode.Normal,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (Channel) -> Unit = {},
@@ -123,24 +121,24 @@ public fun MessageListHeader(
 public fun DefaultMessageHeaderTitle(
     channel: Channel,
     modifier: Modifier,
-    messageMode: MessageMode = Normal,
+    messageMode: MessageMode = MessageMode.Normal,
     onHeaderActionClick: (Channel) -> Unit = {},
     connectionState: ConnectionState = ConnectionState.CONNECTED,
 ) {
 
     val title = when (messageMode) {
-        Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel)
-        is Thread -> stringResource(id = R.string.stream_compose_thread_title)
+        MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel)
+        is MessageMode.MessageThread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
     val subtitle = when (messageMode) {
-        Normal -> LocalContext.current.resources.getQuantityString(
+        MessageMode.Normal -> LocalContext.current.resources.getQuantityString(
             R.plurals.stream_compose_channel_members,
             channel.memberCount,
             channel.memberCount,
             channel.members.count { it.user.online }
         )
-        is Thread -> stringResource(
+        is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,
             ChatTheme.channelNameFormatter.formatChannelName(channel)
         )

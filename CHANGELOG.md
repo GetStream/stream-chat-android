@@ -82,11 +82,18 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated a lot of documentation around the Messages features
 
 ### ✅ Added
 - Added the "mute" option to the `ChannelInfo` action dialog.
+- Added a wrapper for the message input state in the form of `MessageInputState`
+- Added a MessageComposerController which abstracts away all the Composer state and behavior
 
 ### ⚠️ Changed
+- Made the MessageMode subtypes to the parent class, to make it easier to understand when importing
+- Renamed the MessageMode.Thread to MessageMode.MessageThread for clarity
+- Changed the signature of the MessageComposer to accommodate for the `MessageInputState`
+- Moved common state to the `io.getstream.chat.android.common` package
 
 ### ❌ Removed
 

@@ -27,10 +27,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.getstream.sdk.chat.state.Delete
-import com.getstream.sdk.chat.state.Reply
-import com.getstream.sdk.chat.state.Thread
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
@@ -145,7 +145,7 @@ public fun MessagesScreen(
                     .padding(it),
                 viewModel = listViewModel,
                 onThreadClick = { message ->
-                    composerViewModel.setMessageMode(Thread(message))
+                    composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)
                 },
                 onImagePreviewResult = { result ->
