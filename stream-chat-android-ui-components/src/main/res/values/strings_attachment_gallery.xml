@@ -10,6 +10,4 @@
 
     <!-- Gallery Overview Dialog -->
     <string name="stream_ui_attachment_gallery_overview_title">Photos</string>
-
-    <string name="stream_ui_test_string">This is test string for localazy</string>
 </resources>
