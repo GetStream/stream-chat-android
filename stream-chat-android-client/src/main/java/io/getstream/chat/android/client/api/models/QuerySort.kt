@@ -163,21 +163,6 @@ public class QuerySort<T : Any> {
 
         /** Referenced by name attribute. */
         data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as SortAttribute<*>
-
-            if (name != other.name) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return name.hashCode()
-        }
     }
 
     /** Sort order which can be ascending or descending. */
