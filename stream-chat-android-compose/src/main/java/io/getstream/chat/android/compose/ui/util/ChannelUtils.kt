@@ -88,16 +88,15 @@ public fun Channel.getMembersStatusText(context: Context, currentUser: User?): S
 
     return when {
         otherMembers.isEmpty() -> ""
-        isOneToOne(currentUser) -> {
-            otherMembers.first()
-                .user
-                .getLastSeenText(context)
-        }
+        isOneToOne(currentUser) -> otherMembers.first()
+            .user
+            .getLastSeenText(context)
         else -> {
+            val count = otherMembers.count()
             context.resources.getQuantityString(
                 R.plurals.stream_compose_channel_members,
-                otherMembers.count(),
-                otherMembers.count(),
+                count,
+                count,
                 otherMembers.count { it.user.online }
             )
         }
