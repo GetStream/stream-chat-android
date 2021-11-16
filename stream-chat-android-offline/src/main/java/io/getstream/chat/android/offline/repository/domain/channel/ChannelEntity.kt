@@ -28,6 +28,8 @@ internal data class ChannelEntity(
     val hideMessagesBefore: Date?,
     /** till when the channel is muted */
     val members: Map<String, MemberEntity>,
+    /** Count of members for this channel. */
+    val memberCount: Int,
     /** Id of watchers */
     val watcherIds: List<String>,
     /** Count of watchers */
