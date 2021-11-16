@@ -5,6 +5,8 @@ on: workflow_dispatch
 jobs:
   localazy-download:
     name: Download strings from Localazy
+    # Translations should be downloaded on develop branch only.
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
