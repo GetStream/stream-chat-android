@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
@@ -150,8 +151,8 @@ public class ChannelListViewModel(
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
     private suspend fun observeChannels(controller: QueryChannelsController, searchQuery: String) {
-        controller.mutedChannelIds.combine(controller.channelsState, ::Pair)
-            .map { (mutedChannelIds, state) ->
+        chatDomain.channelMutes.combine(controller.channelsState, ::Pair)
+            .map { (channelMutes, state) ->
                 when (state) {
                     QueryChannelsController.ChannelsState.NoQueryActive,
                     QueryChannelsController.ChannelsState.Loading,
@@ -169,7 +170,7 @@ public class ChannelListViewModel(
                     is QueryChannelsController.ChannelsState.Result -> {
                         channelsState.copy(
                             isLoading = false,
-                            channels = enrichMutedChannels(state.channels, mutedChannelIds),
+                            channels = enrichMutedChannels(state.channels, channelMutes),
                             isLoadingMore = false,
                             endOfChannels = controller.endOfChannels.value,
                             searchQuery = searchQuery
@@ -316,13 +317,13 @@ public class ChannelListViewModel(
      * for the current user.
      *
      * @param channels The list of channels channels without the information about channel mutes.
-     * @param mutedChannelIds The list of channel IDs that represent channels muted for the current user.
+     * @param channelMutes The list of [ChannelMute] that represent muted channels for the current user.
      * @return The list of channels enriched with the information about channel mutes.
      *
      * @see [Channel.isMuted]
      */
-    private fun enrichMutedChannels(channels: List<Channel>, mutedChannelIds: List<String>): List<Channel> {
-        val mutedChannelIdsSet = mutedChannelIds.toSet()
+    private fun enrichMutedChannels(channels: List<Channel>, channelMutes: List<ChannelMute>): List<Channel> {
+        val mutedChannelIdsSet = channelMutes.map { channelMute -> channelMute.channel.id }.toSet()
         return channels.map { channel ->
             val isMuted = channel.id in mutedChannelIdsSet
 

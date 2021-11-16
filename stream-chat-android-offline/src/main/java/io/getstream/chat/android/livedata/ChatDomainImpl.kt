@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -91,6 +92,11 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
      * list of users that you've muted
      */
     override val muted: LiveData<List<Mute>> = chatDomainStateFlow.muted.asLiveData()
+
+    /**
+     * List of channels you've muted
+     */
+    override val channelMutes: LiveData<List<ChannelMute>> = chatDomainStateFlow.channelMutes.asLiveData()
 
     /**
      * if the current user is banned or not

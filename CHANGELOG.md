@@ -43,6 +43,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Deprecated `QueryChannelsController::mutedChannelsIds`. Use `ChatDomain.mutedChannels` instead
 
 ### ⬆️ Improved
 

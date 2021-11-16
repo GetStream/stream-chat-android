@@ -28,8 +28,6 @@ public interface QueryChannelsState {
     public val endOfChannels: StateFlow<Boolean>
     /** The collection of channels loaded by the query channels request. */
     public val channels: StateFlow<List<Channel>>
-    /** The collection of channel IDs that were muted. */
-    public val mutedChannelIds: StateFlow<List<String>>
     /** The channels loaded state. See [ChannelsStateData]. */
     public val channelsStateData: StateFlow<ChannelsStateData>
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
