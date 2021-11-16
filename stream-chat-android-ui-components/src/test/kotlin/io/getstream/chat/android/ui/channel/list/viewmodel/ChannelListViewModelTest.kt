@@ -77,13 +77,13 @@ internal class ChannelListViewModelTest {
 
 private class Fixture {
     private val user = createUser()
-    private val chatDomain: ChatDomain = mock()
+    private val chatDomain: ChatDomain = mock {
+        on(it.channelMutes) doReturn MutableStateFlow(emptyList())
+    }
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsCall = TestCall(queryChannelsControllerResult)
     private val queryChannelsLoadMoreCall: Call<List<Channel>> = mock()
-    private val queryChannelsController: QueryChannelsController = mock {
-        on(it.mutedChannelIds) doReturn MutableStateFlow(emptyList())
-    }
+    private val queryChannelsController: QueryChannelsController = mock()
 
     private val channelsStateFlow: MutableStateFlow<List<Channel>> = MutableStateFlow(emptyList())
     private val channelsState = MutableStateFlow<QueryChannelsController.ChannelsState>(
