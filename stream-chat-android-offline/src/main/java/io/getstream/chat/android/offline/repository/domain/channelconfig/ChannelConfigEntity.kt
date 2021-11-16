@@ -20,7 +20,7 @@ internal data class ChannelConfigInnerEntity(
     val isConnectEvents: Boolean,
     val isSearch: Boolean,
     val isReactionsEnabled: Boolean,
-    val isRepliesEnabled: Boolean,
+    val isThreadEnabled: Boolean,
     val isMutes: Boolean,
     val uploadsEnabled: Boolean,
     val urlEnrichmentEnabled: Boolean,

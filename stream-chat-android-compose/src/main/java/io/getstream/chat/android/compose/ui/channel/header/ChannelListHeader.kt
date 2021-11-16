@@ -39,7 +39,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param modifier Modifier for styling.
  * @param title The title to display, when the network is available.
  * @param currentUser The currently logged in user, to load its image in the avatar.
- * @param isNetworkAvailable A flag that governs if we show the title or the network loading view.
+ * @param connectionState The state of WS connection used to switch between the title and the network loading view.
  * @param onAvatarClick Action handler when the user taps on an avatar.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.
@@ -119,10 +119,10 @@ internal fun DefaultChannelHeaderLeadingContent(
 }
 
 /**
- * Represents the channel header's title slot. It either shows a [Text] if [isNetworkAvailable] is true,
- * or a [NetworkLoadingView] if there is no connections.
+ * Represents the channel header's title slot. It either shows a [Text] if [connectionState] is
+ * [ConnectionState.CONNECTED], or a [NetworkLoadingView] if there is no connections.
  *
- * @param isNetworkAvailable If the network connection is available or not.
+ * @param connectionState The state of WebSocket connection.
  * @param title The title to show.
  * @param modifier Modifier for styling.
  */
@@ -165,13 +165,13 @@ internal fun DefaultChannelListHeaderAction(
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(bounded = false, radius = 24.dp),
+        indication = rememberRipple(bounded = false),
         color = ChatTheme.colors.primaryAccent,
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
-            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
-            contentDescription = stringResource(id = R.string.stream_compose_edit_action),
+            painter = painterResource(id = R.drawable.stream_compose_ic_new_chat),
+            contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
             tint = Color.White,
         )
     }

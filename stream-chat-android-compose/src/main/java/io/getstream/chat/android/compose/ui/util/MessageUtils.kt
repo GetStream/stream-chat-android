@@ -29,3 +29,18 @@ internal fun Message.isRegular(): Boolean = type == ModelType.message_regular
  * @return If the message type is system.
  */
 internal fun Message.isSystem(): Boolean = type == ModelType.message_system
+
+/**
+ * @return If the message is deleted.
+ */
+internal fun Message.isDeleted(): Boolean = deletedAt != null
+
+/**
+ * @return If the message contains an attachment that is currently being uploaded.
+ */
+internal fun Message.isUploading(): Boolean = attachments.any { it.isUploading() }
+
+/**
+ * @return If the message is a start of a thread.
+ */
+internal fun Message.hasThread(): Boolean = threadParticipants.isNotEmpty()

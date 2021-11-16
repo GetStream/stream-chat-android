@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,6 @@ import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
@@ -44,7 +44,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param currentUser The current user, required for different UI states.
  * @param modifier Modifier for styling.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
- * @param isNetworkAvailable A flag that governs if we show the subtitle or the network loading view.
+ * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
@@ -129,17 +129,21 @@ public fun DefaultMessageHeaderTitle(
 ) {
 
     val title = when (messageMode) {
-        Normal -> channel.getDisplayName()
+        Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel)
         is Thread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
     val subtitle = when (messageMode) {
-        Normal -> stringResource(
-            id = R.string.stream_compose_channel_members,
+        Normal -> LocalContext.current.resources.getQuantityString(
+            R.plurals.stream_compose_channel_members,
+            channel.memberCount,
             channel.memberCount,
             channel.members.count { it.user.online }
         )
-        is Thread -> stringResource(id = R.string.stream_compose_thread_subtitle, channel.getDisplayName())
+        is Thread -> stringResource(
+            R.string.stream_compose_thread_subtitle,
+            ChatTheme.channelNameFormatter.formatChannelName(channel)
+        )
     }
 
     Column(

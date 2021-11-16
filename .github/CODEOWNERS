@@ -1,0 +1,60 @@
+# Default owner for everything in the repo
+*   @GetStream/android-developers
+
+### Modules
+# Common
+stream-chat-android            @GetStream/android-developers
+stream-chat-android-docs       @GetStream/android-developers
+stream-chat-android-sample     @GetStream/android-developers
+
+# Core
+stream-chat-android-client                  @GetStream/android-developers-core
+stream-chat-android-core                    @GetStream/android-developers-core
+stream-chat-android-offline                 @GetStream/android-developers-core
+stream-chat-android-pushprovider-firebase   @GetStream/android-developers-core
+stream-chat-android-pushprovider-huawei     @GetStream/android-developers-core
+stream-chat-android-test                    @GetStream/android-developers-core
+
+# UI
+stream-chat-android-ui-common               @GetStream/android-developers-ui
+stream-chat-android-ui-components           @GetStream/android-developers-ui
+stream-chat-android-ui-components-sample    @GetStream/android-developers-ui
+
+# Compose
+stream-chat-android-compose             @GetStream/android-developers-compose
+stream-chat-android-compose-sample      @GetStream/android-developers-compose
+
+
+### Top level files and directories
+# Git and GitHub
+.gitattributes              @GetStream/android-developers
+.gitignore                  @GetStream/android-developers
+.github                     @GetStream/android-developers
+hooks                       @GetStream/android-developers
+
+# Build config
+.sign                       @GetStream/android-developers
+build.gradle                @GetStream/android-developers
+buildSrc                    @GetStream/android-developers
+gradle                      @GetStream/android-developers
+gradle.properties           @GetStream/android-developers
+gradlew                     @GetStream/android-developers
+gradlew.bat                 @GetStream/android-developers
+jitpack.yml                 @GetStream/android-developers
+scripts                     @GetStream/android-developers
+settings.gradle             @GetStream/android-developers
+
+# Docs
+CHANGELOG.md                            @GetStream/android-developers
+DEPRECATIONS.md                         @GetStream/android-developers
+LICENSE                                 @GetStream/android-developers
+README.md                               @GetStream/android-developers
+docs                                    @GetStream/android-developers
+docusaurus                              @GetStream/android-developers
+docusaurus/docs/Android/02-client       @GetStream/android-developers-core
+docusaurus/docs/Android/03-ui           @GetStream/android-developers-ui
+docusaurus/docs/Android/04-compose      @GetStream/android-developers-compose
+dokkasaurus_filter.json                 @leandroBorgesFerreira
+
+# Misc
+.idea                       @GetStream/android-developers

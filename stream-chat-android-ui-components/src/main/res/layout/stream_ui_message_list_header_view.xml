@@ -134,6 +134,7 @@
                 android:focusable="true"
                 android:text="@string/stream_ui_message_list_header_retry"
                 android:textColor="@color/stream_ui_accent_blue"
+                android:visibility="gone"
                 />
         </LinearLayout>
 

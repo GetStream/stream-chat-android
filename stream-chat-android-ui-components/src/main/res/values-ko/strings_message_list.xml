@@ -29,7 +29,7 @@
     <string name="stream_ui_message_list_resend_message">재전송</string>
     <string name="stream_ui_message_list_copy_message">메세지 복사</string>
     <string name="stream_ui_message_list_edit_message">메세지 수정</string>
-    <string name="stream_ui_message_list_flag_message">플래그 지정</string>
+    <string name="stream_ui_message_list_flag_message">메세지 신고</string>
     <string name="stream_ui_message_list_pin_message">대화 고정</string>
     <string name="stream_ui_message_list_unpin_message">메세지 고정해제</string>
     <string name="stream_ui_message_list_mute_user">사용자 무시</string>
@@ -45,9 +45,9 @@
     <string name="stream_ui_message_list_delete_confirmation_message">이 메시지를 완전히 삭제하시겠습니까?</string>
     <string name="stream_ui_message_list_delete_confirmation_positive_button">삭제</string>
     <string name="stream_ui_message_list_delete_confirmation_negative_button">취소</string>
-    <string name="stream_ui_message_list_flag_confirmation_title">메시지 플래그</string>
-    <string name="stream_ui_message_list_flag_confirmation_message">후속 조치를 위해 관리자에게 해당 메시지의 복사본을 전송하시겠습니까?</string>
-    <string name="stream_ui_message_list_flag_confirmation_positive_button">플래그하기</string>
+    <string name="stream_ui_message_list_flag_confirmation_title">메시지를 신고합니다</string>
+    <string name="stream_ui_message_list_flag_confirmation_message">추가 조사를 위해 관리자에게 해당 메시지의 복사본을 전송하시겠습니까?</string>
+    <string name="stream_ui_message_list_flag_confirmation_positive_button">신고</string>
     <string name="stream_ui_message_list_flag_confirmation_negative_button">취소</string>
 
     <!-- Attachment Viewer -->
@@ -60,7 +60,8 @@
     <string name="stream_ui_message_list_error_mute_user">사용자를 무시하지 못했습니다</string>
     <string name="stream_ui_message_list_error_unmute_user">사용자 무시를 해제하지 못했습니다</string>
     <string name="stream_ui_message_list_error_block_user">사용자 차단에 실패했습니다</string>
-    <string name="stream_ui_message_list_error_flag_message">메시지에 플래그를 지정하지 못했습니다</string>
+    <string name="stream_ui_message_list_error_flag_message">메시지를 신고하지 못했습니다</string>
     <string name="stream_ui_message_list_error_pin_message">메시지를 고정하지 못했습니다</string>
     <string name="stream_ui_message_list_error_unpin_message">메시지 고정을 해제하지 못했습니다</string>
+    <string name="stream_ui_message_list_error_delete_message">메세지 삭제에 실패했습니다</string>
 </resources>

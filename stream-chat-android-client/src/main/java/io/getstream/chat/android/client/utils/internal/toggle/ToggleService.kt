@@ -23,8 +23,14 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
 
     public companion object {
         private const val PREFS_NAME = "toggle_storage"
+        public const val TOGGLE_KEY_OFFLINE: String = "offline plugin"
 
         private var instance: ToggleService? = null
+
+        /**
+         * Internal check used to avoid NPE in cases when SDK users don't initialize it.
+         */
+        internal fun isInitialized() = instance != null
 
         @InternalStreamChatApi
         public fun instance(): ToggleService = requireNotNull(instance) {
@@ -42,6 +48,11 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
             }
 
             return ToggleService(sp).also { instance = it }
+        }
+
+        @InternalStreamChatApi
+        public fun isEnabled(featureKey: String): Boolean {
+            return instance?.isEnabled(featureKey) ?: false
         }
     }
 }

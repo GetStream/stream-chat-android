@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -111,17 +110,9 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlow.typingUpdates.asLiveData()
 
     /** The retry policy for retrying failed requests */
-    override var retryPolicy: RetryPolicy
-        get() = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
-        set(value) {
-            chatDomainStateFlow.retryPolicy = value
-        }
+    override val retryPolicy: RetryPolicy = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
 
     override fun getVersion(): String = chatDomainStateFlow.getVersion()
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> =
-        chatDomainStateFlow.removeMembers(cid, *userIds)
 
     override fun isOnline(): Boolean = chatDomainStateFlow.isOnline()
 
@@ -255,12 +246,5 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         sort: QuerySort<Member>,
         members: List<Member>,
     ): Call<List<Member>> = chatDomainStateFlow.queryMembers(cid, offset, limit, filter, sort, members)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> = chatDomainStateFlow.createDistinctChannel(channelType, members, extraData)
     // end region
 }

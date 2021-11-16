@@ -11,13 +11,15 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
@@ -33,7 +35,7 @@ import kotlinx.coroutines.flow.map
  * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
- * @param channelEventsHandler The instance of [ChannelEventsHandler] that will be used to handle channel updates event for this combination of [sort] and [filter].
+ * @param chatEventHandler The instance of [ChatEventHandler] that will be used to handle channel updates event for this combination of [sort] and [filter].
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
@@ -41,7 +43,7 @@ public class ChannelListViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
-    private val channelEventsHandler: ChannelEventsHandler? = null,
+    private val chatEventHandler: ChatEventHandler? = null,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -52,6 +54,8 @@ public class ChannelListViewModel(
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
     private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     public val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
+
+    private val logger: TaggedLogger = ChatLogger.get("ChannelListViewModel")
 
     private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
@@ -71,8 +75,8 @@ public class ChannelListViewModel(
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
 
-                channelEventsHandler?.let { eventsHandler ->
-                    queryChannelsController.channelEventsHandler = eventsHandler
+                chatEventHandler?.let { eventsHandler ->
+                    queryChannelsController.chatEventHandler = eventsHandler
                 }
 
                 val channelState = queryChannelsController.channelsState.map { channelState ->
@@ -97,6 +101,8 @@ public class ChannelListViewModel(
                 paginationStateMerger.addSource(queryChannelsController.endOfChannels.asLiveData()) { endOfChannels ->
                     setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
+            } else {
+                logger.logE("Could not query channels. Error: ${queryChannelsControllerResult.error()}")
             }
         }
     }
@@ -129,28 +135,47 @@ public class ChannelListViewModel(
 
     public fun leaveChannel(channel: Channel) {
         chatDomain.leaveChannel(channel.cid).enqueue(
-            onError = { _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(it))) }
+            onError = { chatError ->
+                logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
+            }
         )
     }
 
     public fun deleteChannel(channel: Channel) {
         chatDomain.deleteChannel(channel.cid).enqueue(
-            onError = { _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(it))) }
+            onError = { chatError ->
+                logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
+            }
         )
     }
 
     public fun hideChannel(channel: Channel) {
         chatDomain.hideChannel(channel.cid, true).enqueue(
-            onError = { _errorEvents.postValue(Event(ErrorEvent.HideChannelError(it))) }
+            onError = { chatError ->
+                logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
+            }
         )
     }
 
     public fun markAllRead() {
-        chatDomain.markAllRead().enqueue()
+        chatDomain.markAllRead().enqueue(
+            onError = { chatError ->
+                logger.logE("Could not mark all messages as read. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+            }
+        )
     }
 
     private fun requestMoreChannels() {
-        filterLiveData.value?.let { chatDomain.queryChannelsLoadMore(it, sort).enqueue() }
+        filterLiveData.value?.let { filter ->
+            chatDomain.queryChannelsLoadMore(filter, sort).enqueue(
+                onError = { chatError ->
+                    logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                }
+            )
+        }
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {

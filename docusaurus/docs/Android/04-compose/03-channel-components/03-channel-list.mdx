@@ -70,8 +70,7 @@ Here's an example of using the default `viewModel`, but overriding the behavior:
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-
+    
     setContent {
         ChatTheme {
             // Custom state holder
@@ -138,7 +137,13 @@ If you're looking to customize the UI of the `ChannelList`, there are a few ways
 fun ChannelList(
     modifier: Modifier = Modifier,
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyView(modifier) },
+    emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
+        DefaultChannelSearchEmptyView(
+            searchQuery = searchQuery,
+            modifier = modifier
+        )
+    },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             item = channel,
@@ -153,41 +158,52 @@ fun ChannelList(
 
 * `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
 * `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
-* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available.  
+* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available. 
+* `emptySearchContent`: Customizable composable function that allows you to override the empty state, when there are no channels matching the search query.
 * `itemContent`: Customizable composable function that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda, when building your custom UI.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
 
 ```kotlin
-ChannelList(
-    ..., // State and actions
-    itemContent = { // Customize the channel items
-        val painter = ... // Load appropriate image
+@Composable
+fun CustomChannelListItem() {
+    val user by ... // fetch user from ChatDomain or ViewModel
 
-        Card(modifier = Modifier.padding(2.dp).fillMaxWidth()) {
-            Row(
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Avatar(
-                    modifier = Modifier.padding(end = 6.dp).size(24.dp),
-                    painter = painter
-                )
+    ChannelList(
+        ..., // set up state
+        itemContent = { // Customize the channel items
+            Card(modifier = Modifier
+                .padding(2.dp)
+                .fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ChannelAvatar(
+                        modifier = Modifier.size(40.dp),
+                        channel = it,
+                        currentUser = user
+                    )
 
-                Text(
-                    text = it.id,
-                	style = ChatTheme.typography.bodyBold,
-                	maxLines = 1,
-            	)
-        	}
-    	}
-	}
-)
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = ChatTheme.channelNameFormatter.format(it),
+                        style = ChatTheme.typography.bodyBold,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+    )
+}
 ```
 
 The snippet above will generate the following UI:
 
-![Customized ChannelItem Component](../../assets/compose_custom_channel_item.png)
+![Customized ChannelItem Component](../../assets/compose_custom_channel_list_item.png)
 
 As you can see, the items are now within a card and show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.
 

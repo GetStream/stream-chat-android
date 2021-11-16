@@ -79,7 +79,7 @@ internal class QueryChannelsLogic(
             .also { onQueryChannelsResult(it, request) }
     }
 
-    internal suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+    private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         if (result.isSuccess) {
             mutableState.recoveryNeeded.value = false
 
@@ -119,8 +119,10 @@ internal class QueryChannelsLogic(
     ) {
         if (isFirstPage) {
             (mutableState._channels.value - channels.map { it.cid }).values
-                .filterNot { mutableState.newChannelEventFilter(it, mutableState.filter) }
-                .map { it.cid }
+                .map(Channel::cid)
+                .filterNot { cid ->
+                    mutableState.defaultChatEventHandler.channelFilter(cid, mutableState.filter)
+                }
                 .let { removeChannels(it) }
         }
         mutableState.channelsOffset.value += channels.size

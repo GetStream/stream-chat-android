@@ -1,9 +1,11 @@
 package io.getstream.chat.android.compose.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -12,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -57,7 +61,7 @@ public fun SearchInput(
                 content = {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_clear),
-                        contentDescription = stringResource(id = R.string.stream_compose_cancel_search),
+                        contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
                         tint = ChatTheme.colors.textLowEmphasis,
                     )
                 }
@@ -120,8 +124,28 @@ internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
 @Composable
 internal fun DefaultSearchLabel() {
     Text(
-        text = stringResource(id = R.string.stream_compose_query_channels),
+        text = stringResource(id = R.string.stream_compose_search_input_hint),
         style = ChatTheme.typography.body,
         color = ChatTheme.colors.textLowEmphasis,
     )
+}
+
+@Preview(name = "Search input")
+@Composable
+private fun SearchInputPreview() {
+    ChatTheme {
+        var searchQuery by rememberSaveable { mutableStateOf("") }
+
+        SearchInput(
+            modifier = Modifier
+                .background(color = ChatTheme.colors.appBackground)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+            query = searchQuery,
+            onSearchStarted = {},
+            onValueChange = {
+                searchQuery = it
+            },
+        )
+    }
 }

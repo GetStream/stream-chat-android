@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Channel List Header -->
+    <string name="stream_compose_channel_list_header_new_chat">नई चैट</string>
+
+    <!-- Search Input -->
+    <string name="stream_compose_search_input_cancel">रद्द करें</string>
+    <string name="stream_compose_search_input_hint">नाम से चैनल खोजें</string>
+
+    <!-- Channel List -->
+    <string name="stream_compose_channel_list_you">आप</string>
+    <string name="stream_compose_channel_list_empty_channels">कोई चैनल उपलब्ध नहीं है</string>
+    <string name="stream_compose_channel_list_empty_search_results">%1$s के लिए कोई परिणाम नहीं</string>
+
+    <!-- Channel Info Dialog -->
+    <string name="stream_compose_channel_info_view_info">जानकारी देखें</string>
+    <string name="stream_compose_channel_info_leave_group">ग्रुप छोड़ेें</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">ग्रुप छोड़ेें</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">क्या आप %1$s समूह को छोड़ना चाहते हैं?</string>
+    <string name="stream_compose_channel_info_mute_channel">म्यूट चैनल</string>
+    <string name="stream_compose_channel_info_unmute_channel">चैनल अनम्यूट करें</string>
+    <string name="stream_compose_channel_info_delete_conversation">बातचीत मिटायें</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">बातचीत मिटायें</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">क्या आप %1$s . चैनल को हटाना चाहते हैं</string>
+    <string name="stream_compose_channel_info_dismiss">रद्द करें</string>
+
+    <!-- Common -->
+    <plurals name="stream_compose_channel_members">
+        <item quantity="one">%1d सदस्य, %2d ऑनलाइन</item>
+        <item quantity="other">%1d सदस्य, %2d ऑनलाइन</item>
+    </plurals>
+    <string name="stream_compose_ok">ठीक</string>
+    <string name="stream_compose_cancel">रद्द करें</string>
+    <string name="stream_compose_waiting_for_network">नेटवर्क की प्रतीक्षा में</string>
+    <string name="stream_compose_untitled_channel">बिना नाम वाला चैनल</string>
+    <string name="stream_compose_user_status_online">ऑनलाइन</string>
+    <string name="stream_compose_user_status_last_seen">पिछली बार देखा %1$s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">अंतिम बार अभी देखा</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>
+</resources>

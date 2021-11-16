@@ -623,18 +623,19 @@ class Android {
             val chatDomain = ChatDomain.instance()
         }
 
-        fun customizeRetryPolicy() {
-            val chatDomain = ChatDomain.instance()
+        fun initializeChatDomainWithCustomRetryPolicy() {
+            val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
+            val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
+                .retryPolicy(object : RetryPolicy {
+                    override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
+                        return attempt < 3
+                    }
 
-            chatDomain.retryPolicy = object : RetryPolicy {
-                override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
-                    return attempt < 3
-                }
-
-                override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
-                    return 1000 * attempt
-                }
-            }
+                    override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
+                        return 1000 * attempt
+                    }
+                })
+                .build()
         }
 
         fun watchChannel() {
@@ -848,7 +849,12 @@ class Android {
         fun messageInputCustomisation() {
             TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
                 viewStyle.copy(
-                    messageInputTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_white)
+                    messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+                        color = ContextCompat.getColor(
+                            requireContext(),
+                            R.color.stream_ui_white,
+                        ),
+                    )
                 )
             }
         }

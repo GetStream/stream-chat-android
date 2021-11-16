@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,6 +28,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channel.list.MuteChannel
+import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
@@ -78,7 +81,7 @@ public fun ChannelsScreen(
         )
     )
 
-    val selectedChannel = listViewModel.selectedChannel
+    val selectedChannel by remember { listViewModel.selectedChannel }
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
@@ -136,11 +139,13 @@ public fun ChannelsScreen(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                selectedChannel = selectedChannel,
-                user = user,
+                selectedChannel = selectedChannel!!,
+                currentUser = user,
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
+                        is MuteChannel -> listViewModel.muteChannel(action.channel)
+                        is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
                         else -> listViewModel.performChannelAction(action)
                     }
                 }
@@ -152,9 +157,11 @@ public fun ChannelsScreen(
         if (activeAction is LeaveGroup) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.stream_compose_leave_group),
+                title = stringResource(
+                    id = R.string.stream_compose_channel_info_leave_group_confirmation_title
+                ),
                 message = stringResource(
-                    id = R.string.stream_compose_leave_group_text,
+                    id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
                     activeAction.channel.id
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
@@ -163,9 +170,11 @@ public fun ChannelsScreen(
         } else if (activeAction is DeleteConversation) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.stream_compose_delete_conversation),
+                title = stringResource(
+                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_title
+                ),
                 message = stringResource(
-                    id = R.string.stream_compose_delete_conversation_text,
+                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
                     activeAction.channel.id
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },

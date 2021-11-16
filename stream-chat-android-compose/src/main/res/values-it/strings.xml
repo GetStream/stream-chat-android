@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Channel List Header -->
+    <string name="stream_compose_channel_list_header_new_chat">Nuova chat</string>
+
+    <!-- Search Input -->
+    <string name="stream_compose_search_input_cancel">Annulla</string>
+    <string name="stream_compose_search_input_hint">Cerca i canali per nome</string>
+
+    <!-- Channel List -->
+    <string name="stream_compose_channel_list_you">Tu</string>
+    <string name="stream_compose_channel_list_empty_channels">Nessun canale disponibile</string>
+    <string name="stream_compose_channel_list_empty_search_results">Nessun risultato per %1$s</string>
+
+    <!-- Channel Info Dialog -->
+    <string name="stream_compose_channel_info_view_info">Vedi info</string>
+    <string name="stream_compose_channel_info_leave_group">Esci dal gruppo</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">Esci dal gruppo</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">Vuoi lasciare il gruppo %1$s?</string>
+    <string name="stream_compose_channel_info_mute_channel">Disattiva canale</string>
+    <string name="stream_compose_channel_info_unmute_channel">Riattiva canale</string>
+    <string name="stream_compose_channel_info_delete_conversation">Elimina canale</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Elimina canale</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Vuoi eliminare il canale% 1$s?</string>
+    <string name="stream_compose_channel_info_dismiss">Annulla</string>
+
+    <!-- Common -->
+    <plurals name="stream_compose_channel_members">
+        <item quantity="one">%1d Membro, %2d Online</item>
+        <item quantity="other">%1d Membri, %2d Online</item>
+    </plurals>
+    <string name="stream_compose_ok">OK</string>
+    <string name="stream_compose_cancel">Annulla</string>
+    <string name="stream_compose_waiting_for_network">Attendo la rete</string>
+    <string name="stream_compose_untitled_channel">Canale senza nome</string>
+    <string name="stream_compose_user_status_online">Online</string>
+    <string name="stream_compose_user_status_last_seen">Ultimo accesso %1$s fa</string>
+    <string name="stream_compose_user_status_last_seen_just_now">Ultimo accesso di recente</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">Nessun messaggio</string>
+</resources>

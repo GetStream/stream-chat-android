@@ -5,15 +5,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,10 +34,12 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
+import io.getstream.chat.android.compose.ui.channel.list.DefaultChannelItem
 import io.getstream.chat.android.compose.ui.common.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
@@ -83,10 +91,14 @@ class ChannelActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * An example of a screen UI that's much more simple than the ChannelsScreen component, that features a custom
+     * ChannelList item.
+     */
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
-    fun MyCustomUiSimplified() {
+    private fun MyCustomUiSimplified() {
         val user by ChatDomain.instance().user.collectAsState()
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -95,8 +107,44 @@ class ChannelActivity : AppCompatActivity() {
                 currentUser = user
             )
 
-            ChannelList()
+            ChannelList(
+                itemContent = {
+                    CustomChannelListItem(channel = it, user = user)
+                }
+            )
         }
+    }
+
+    /**
+     * An example of a customized DefaultChannelItem component.
+     */
+    @Composable
+    private fun CustomChannelListItem(channel: Channel, user: User?) {
+        DefaultChannelItem(
+            channel = channel,
+            currentUser = user,
+            onChannelLongClick = { },
+            onChannelClick = { },
+            divider = {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(0.5.dp)
+                        .align(CenterHorizontally)
+                        .background(color = ChatTheme.colors.textLowEmphasis)
+                )
+            },
+            trailingContent = {
+                Spacer(modifier = Modifier.width(8.dp))
+            },
+            detailsContent = {
+                Text(
+                    text = ChatTheme.channelNameFormatter.formatChannelName(channel),
+                    style = ChatTheme.typography.bodyBold,
+                    color = ChatTheme.colors.textHighEmphasis
+                )
+            }
+        )
     }
 
     /**
@@ -110,11 +158,11 @@ class ChannelActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
-    fun MyCustomUi() {
+    private fun MyCustomUi() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel = listViewModel.selectedChannel
+        val selectedChannel by remember { listViewModel.selectedChannel }
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -137,6 +185,7 @@ class ChannelActivity : AppCompatActivity() {
                 )
 
                 ChannelList(
+                    modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = ::openMessages,
                     onChannelLongClick = { listViewModel.selectChannel(it) }
@@ -151,8 +200,8 @@ class ChannelActivity : AppCompatActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    selectedChannel = selectedChannel,
-                    user = user,
+                    selectedChannel = selectedChannel!!,
+                    currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )
             }

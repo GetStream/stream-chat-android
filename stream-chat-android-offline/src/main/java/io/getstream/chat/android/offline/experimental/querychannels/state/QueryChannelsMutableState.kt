@@ -6,8 +6,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
-import io.getstream.chat.android.offline.querychannels.DefaultChannelEventsHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventHandler
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,14 +38,17 @@ internal class QueryChannelsMutableState(
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
-    internal var defaultChannelEventsHandler: DefaultChannelEventsHandler = DefaultChannelEventsHandler(client)
-    override var checkFilterOnChannelUpdatedEvent: Boolean by defaultChannelEventsHandler::checkFilterOnChannelUpdatedEvent
-    override var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by defaultChannelEventsHandler::newChannelEventFilter
+    internal val defaultChatEventHandler: DefaultChatEventHandler = DefaultChatEventHandler(client, _sortedChannels)
 
-    override var channelEventsHandler: ChannelEventsHandler? = null
+    /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
+    override var chatEventHandler: ChatEventHandler? = null
 
-    internal val eventsHandler: ChannelEventsHandler
-        get() = channelEventsHandler ?: defaultChannelEventsHandler
+    /**
+     * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
+     * handler set by user or default one if there is no.
+     */
+    internal val eventHandler: ChatEventHandler
+        get() = chatEventHandler ?: defaultChatEventHandler
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
     override val loading: StateFlow<Boolean> = _loading
@@ -53,14 +56,14 @@ internal class QueryChannelsMutableState(
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels
     override val channels: StateFlow<List<Channel>> = _sortedChannels
     override val mutedChannelIds: StateFlow<List<String>> = _mutedChannelIds
-    override val channelsState: StateFlow<ChannelsState> =
+    override val channelsStateData: StateFlow<ChannelsStateData> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
             when {
-                loading -> ChannelsState.Loading
-                channels.isEmpty() -> ChannelsState.OfflineNoResults
-                else -> ChannelsState.Result(channels)
+                loading -> ChannelsStateData.Loading
+                channels.isEmpty() -> ChannelsStateData.OfflineNoResults
+                else -> ChannelsStateData.Result(channels)
             }
-        }.stateIn(scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
+        }.stateIn(scope, SharingStarted.Eagerly, ChannelsStateData.NoQueryActive)
 
     override val nextPageRequest: StateFlow<QueryChannelsRequest?> =
         currentRequest.combine(channelsOffset) { currentRequest, currentOffset ->
@@ -68,4 +71,5 @@ internal class QueryChannelsMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, null)
 }
 
+@ExperimentalStreamChatApi
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState

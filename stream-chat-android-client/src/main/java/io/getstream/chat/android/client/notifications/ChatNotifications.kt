@@ -8,8 +8,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
-import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +28,7 @@ public interface ChatNotifications {
 
 internal class ChatNotificationsImpl constructor(
     private val handler: NotificationHandler,
-    private val pushDeviceGenerators: List<PushDeviceGenerator>,
+    private val notificationConfig: NotificationConfig,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
@@ -38,7 +38,7 @@ internal class ChatNotificationsImpl constructor(
     private val showedMessages = mutableSetOf<String>()
 
     override fun onSetUser() {
-        pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
+        notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.asyncGenerateDevice(::setDevice)
     }
 
@@ -56,7 +56,7 @@ internal class ChatNotificationsImpl constructor(
 
         pushNotificationReceivedListener.onPushNotificationReceived(message.channelType, message.channelId)
 
-        if (!handler.onPushMessage(message)) {
+        if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(message)) {
             handlePushMessage(message)
         }
     }
