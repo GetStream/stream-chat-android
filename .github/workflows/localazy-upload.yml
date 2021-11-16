@@ -2,7 +2,11 @@ name: Upload to Localazy
 on:
   push:
     branches:
-      - develop
+      - task/cas-1308-localazy
+    paths:
+      - 'stream-chat-android-ui-common/src/main/res/values/strings*.xml'
+      - 'stream-chat-android-client/src/main/res/values/strings*.xml'
+      - 'stream-chat-android-ui-components/src/main/res/values/strings*.xml'
 
 jobs:
   localazy-upload:
