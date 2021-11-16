@@ -706,7 +706,7 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/compon
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
@@ -962,9 +962,11 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelNameFormatte
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 	public static final fun getReadStatuses (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/util/List;
 	public static final fun isDistinct (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMuted (Lio/getstream/chat/android/client/models/Channel;)Z
+	public static final fun isOneToOne (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
 	public static final fun setMuted (Lio/getstream/chat/android/client/models/Channel;Z)V
 }
 
