@@ -171,7 +171,7 @@ public class ChannelListViewModel(
 
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
-            chatDomain.queryChannelsLoadMore(filter, sort).enqueue(
+            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
                 onError = { chatError ->
                     logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 }
