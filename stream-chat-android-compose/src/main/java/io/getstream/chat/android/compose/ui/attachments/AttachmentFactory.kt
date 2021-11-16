@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.factory
+package io.getstream.chat.android.compose.ui.attachments
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

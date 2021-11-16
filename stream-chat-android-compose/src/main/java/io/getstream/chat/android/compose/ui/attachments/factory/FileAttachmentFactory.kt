@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme

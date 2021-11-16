@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.attachments.factory
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 

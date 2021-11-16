@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.attachments
 
-import io.getstream.chat.android.compose.ui.attachments.factory.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
