@@ -108,7 +108,7 @@ public class MessageListViewModel(
      * Gives us information if we're currently in the [Thread] message mode.
      */
     public val isInThread: Boolean
-        get() = messageMode is Thread
+        get() = messageMode is MessageMode.MessageThread
 
     /**
      * Gives us information if we're showing the selected message overlay.
