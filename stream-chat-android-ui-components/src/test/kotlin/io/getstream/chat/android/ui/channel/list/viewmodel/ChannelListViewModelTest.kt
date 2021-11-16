@@ -121,7 +121,7 @@ private class Fixture {
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
-        whenever(chatDomain.queryChannelsLoadMore(any(), any())) doReturn queryChannelsLoadMoreCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any())) doReturn queryChannelsLoadMoreCall
         whenever(queryChannelsLoadMoreCall.enqueue(any())) doAnswer {
             val channels = channelsStateFlow.value + moreChannels
             channelsStateFlow.value = channels
