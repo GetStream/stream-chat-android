@@ -87,6 +87,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the "mute" option to the `ChannelInfo` action dialog.
 
 ### ⚠️ Changed
+- Exposed `MessageReactions` as a public component so users can use it to display a message reactions bubble in their custom UI.
 
 ### ❌ Removed
 

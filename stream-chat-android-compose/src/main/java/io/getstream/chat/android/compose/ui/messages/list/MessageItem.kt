@@ -49,6 +49,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
@@ -56,6 +57,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
@@ -499,13 +501,44 @@ public fun DefaultMessageItemContent(
 }
 
 /**
- * Container for all the reactions this message has.
+ * Represents a reaction bubble with a list of reactions this message has.
  *
+ * @param message The message we are displaying reactions for.
  * @param modifier Modifier for styling.
- * @param reactions Map of reactions and their count.
  */
 @Composable
-private fun MessageReactions(
+public fun MessageReactions(
+    message: Message,
+    modifier: Modifier = Modifier,
+) {
+    val ownReactions = message.ownReactions
+    val supportedReactions = ChatTheme.reactionTypes
+
+    val reactions = message.reactionCounts
+        .map { it.key }
+        .filter { supportedReactions[it] != null }
+        .map { type ->
+            val reactionIconRes = requireNotNull(supportedReactions[type])
+            val isOwnReaction = type in ownReactions.map { it.type }
+            reactionIconRes to isOwnReaction
+        }
+
+    if (reactions.isNotEmpty()) {
+        MessageReactions(
+            modifier = modifier,
+            reactions = reactions
+        )
+    }
+}
+
+/**
+ * Represents a reaction bubble with a list of reactions this message has.
+ *
+ * @param reactions The list of reactions to display.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun MessageReactions(
     reactions: List<Pair<Int, Boolean>>,
     modifier: Modifier = Modifier,
 ) {
@@ -872,5 +905,37 @@ private fun OwnedMessageVisibilityContent(
             modifier = Modifier.padding(8.dp),
             date = message.updatedAt ?: message.createdAt ?: Date()
         )
+    }
+}
+
+@Preview
+@Composable
+private fun OneReactionPreview() {
+    ChatTheme {
+        MessageReactions(reactions = PreviewReactionData.oneReaction)
+    }
+}
+
+@Preview
+@Composable
+private fun ManyReactionsPreview() {
+    ChatTheme {
+        MessageReactions(reactions = PreviewReactionData.manyReactions)
+    }
+}
+
+@Preview
+@Composable
+private fun MessageWithOneReactionPreview() {
+    ChatTheme {
+        MessageReactions(message = PreviewReactionData.messageWithOneReaction)
+    }
+}
+
+@Preview
+@Composable
+private fun MessageWithManyReactionsPreview() {
+    ChatTheme {
+        MessageReactions(message = PreviewReactionData.messageWithManyReactions)
     }
 }
