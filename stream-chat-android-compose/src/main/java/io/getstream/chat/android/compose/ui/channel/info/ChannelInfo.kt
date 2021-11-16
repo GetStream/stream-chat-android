@@ -48,7 +48,7 @@ import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.getLastSeenText
+import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isDistinct
 import io.getstream.chat.android.compose.ui.util.isMuted
 
@@ -80,19 +80,6 @@ public fun ChannelInfo(
         ?: false
 
     val otherMembers = channelMembers.filter { it.user.id != currentUser?.id }
-
-    val subtitle = when {
-        otherMembers.isEmpty() -> ""
-        otherMembers.size == 1 -> otherMembers.first().user.getLastSeenText(LocalContext.current)
-        else -> {
-            LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_channel_members,
-                otherMembers.count(),
-                otherMembers.count(),
-                otherMembers.count { it.user.online }
-            )
-        }
-    }
 
     val channelOptions = listOfNotNull(
         ChannelOption(
@@ -182,7 +169,7 @@ public fun ChannelInfo(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = subtitle,
+                    text = selectedChannel.getMembersStatusText(LocalContext.current, currentUser),
                     style = ChatTheme.typography.footnoteBold,
                     color = ChatTheme.colors.textLowEmphasis,
                 )
