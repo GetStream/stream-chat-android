@@ -39,6 +39,8 @@ internal fun Channel.toEntity(): ChannelEntity {
         lastMessageId = lastMessage?.messageInnerEntity?.id,
         lastMessageAt = lastMessageAt,
         createdByUserId = createdBy.id,
+        watcherIds = watchers.map(User::id),
+        watcherCount = watcherCount,
         team = team,
     )
 }
@@ -64,5 +66,7 @@ internal suspend fun ChannelEntity.toModel(
     messages = listOfNotNull(lastMessageId?.let { getMessage(it) }),
     read = reads.values.map { it.toModel(getUser) },
     createdBy = getUser(createdByUserId),
+    watchers = watcherIds.map { getUser(it) },
+    watcherCount = watcherCount,
     team = team,
 )

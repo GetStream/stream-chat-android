@@ -15,10 +15,9 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     @Test
     fun `inserting a channel and reading it should be equal`(): Unit = runBlocking {
         helper.insertChannels(listOf(data.channel1))
+        helper.clearChannelCache()
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
         channel.config = data.channel1.config
-        channel.watchers = data.channel1.watchers
-        channel.watcherCount = data.channel1.watcherCount
 
         channel shouldBeEqualTo data.channel1
     }

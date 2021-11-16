@@ -35,9 +35,7 @@ public data class Channel(
 
     var hiddenMessagesBefore: Date? = null,
 
-    /**
-     *  Cooldown period after sending each message in seconds
-     */
+    /** Cooldown period after sending each message in seconds. */
     val cooldown: Int = 0,
 
     var pinnedMessages: List<Message> = mutableListOf(),
