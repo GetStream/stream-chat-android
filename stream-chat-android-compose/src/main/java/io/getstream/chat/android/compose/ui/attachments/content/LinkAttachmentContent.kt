@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -67,8 +65,6 @@ public fun LinkAttachmentContent(
 
     Column(
         modifier = modifier
-            .width(250.dp)
-            .wrapContentHeight()
             .clip(ChatTheme.shapes.attachment)
             .background(ChatTheme.colors.linkBackground)
             .combinedClickable(

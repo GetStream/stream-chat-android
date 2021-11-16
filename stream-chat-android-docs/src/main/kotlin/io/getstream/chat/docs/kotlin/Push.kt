@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION_ERROR")
 package io.getstream.chat.docs.kotlin
 
 import android.content.Context

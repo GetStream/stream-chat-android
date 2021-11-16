@@ -109,7 +109,7 @@ internal open class BaseChatModule(
         notificationConfig: NotificationConfig,
     ): ChatNotifications {
         return if (notificationConfig.pushNotificationsEnabled) {
-            ChatNotificationsImpl(handler, notificationConfig.pushDeviceGenerators, appContext)
+            ChatNotificationsImpl(handler, notificationConfig, appContext)
         } else {
             NoOpChatNotifications
         }
