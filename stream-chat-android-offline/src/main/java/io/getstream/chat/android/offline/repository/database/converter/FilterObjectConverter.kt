@@ -46,7 +46,7 @@ private fun Map<String, Any>.toFilterObject(): FilterObject = when {
     this.isEmpty() -> NeutralFilterObject
     this.size == 1 -> this.entries.first().toFilterObject()
     this.size == 2 && this.containsKey(KEY_DISTINCT) && this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List<String>))
-    else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
+    else -> throw IllegalArgumentException("FilterObject can not be created with this map `$this`")
 }
 
 private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.key) {

@@ -85,7 +85,7 @@ public fun SelectedMessageOverlay(
     val reactionOptions = reactionTypes.entries
         .map { (type, drawable) ->
             ReactionOption(
-                drawable = painterResource(drawable),
+                painter = painterResource(drawable),
                 isSelected = ownReactions.any { it.type == type },
                 type = type
             )
@@ -182,7 +182,7 @@ internal fun ReactionOptionItem(
                 onClick = { onReactionClick(option) }
             )
             .padding(2.dp),
-        painter = option.drawable,
+        painter = option.painter,
         contentDescription = option.type,
         tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
     )

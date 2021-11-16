@@ -106,6 +106,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Changed the signature of the MessageComposer to accommodate for the `MessageInputState`
 - Moved common state to the `io.getstream.chat.android.common` package
 - Made the `AttachmentFactory.previewContent` field nullable.
+- Exposed `MessageReactions` as a public component so users can use it to display a message reactions bubble in their custom UI.
 
 ### ❌ Removed
 
