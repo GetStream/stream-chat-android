@@ -1,4 +1,4 @@
-name: Download translations from Localazy Test
+name: Download translations from Localazy
 
 on: workflow_dispatch
 
