@@ -15,7 +15,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Suppress("FunctionName")
 public fun GiphyAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
-    previewContent = @Composable { _, _, _ -> },
     content = @Composable { modifier, state ->
         GiphyAttachmentContent(
             modifier = modifier.size(

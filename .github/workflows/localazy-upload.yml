@@ -1,0 +1,21 @@
+name: Upload to Localazy
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'stream-chat-android-ui-common/src/main/res/values/strings*.xml'
+      - 'stream-chat-android-client/src/main/res/values/strings*.xml'
+      - 'stream-chat-android-ui-components/src/main/res/values/strings*.xml'
+      - 'stream-chat-android-compose/src/main/res/values/strings*.xml'
+
+jobs:
+  localazy-upload:
+    name: Upload strings to Localazy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: localazy/upload@v1
+        with:
+          read_key: ${{ secrets.LOCALAZY_READ_KEY }}
+          write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}
