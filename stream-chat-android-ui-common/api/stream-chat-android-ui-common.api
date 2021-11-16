@@ -763,6 +763,62 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/CustomAction : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getExtraProperties ()Ljava/util/Map;
+}
+
+public final class io/getstream/chat/android/common/state/Delete : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/Edit : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/Flag : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract class io/getstream/chat/android/common/state/MessageAction {
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+}
+
+public abstract class io/getstream/chat/android/common/state/MessageMode {
+}
+
+public final class io/getstream/chat/android/common/state/MessageMode$MessageThread : io/getstream/chat/android/common/state/MessageMode {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun getParentMessage ()Lio/getstream/chat/android/client/models/Message;
+}
+
+public final class io/getstream/chat/android/common/state/MessageMode$Normal : io/getstream/chat/android/common/state/MessageMode {
+	public static final field INSTANCE Lio/getstream/chat/android/common/state/MessageMode$Normal;
+}
+
+public final class io/getstream/chat/android/common/state/MuteUser : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/React : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Reaction;Lio/getstream/chat/android/client/models/Message;)V
+	public final fun getReaction ()Lio/getstream/chat/android/client/models/Reaction;
+}
+
+public final class io/getstream/chat/android/common/state/Reply : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/ThreadReply : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public final class io/getstream/chat/android/ui/common/BuildConfig {
 	public static final field BUILD_TYPE Ljava/lang/String;
 	public static final field DEBUG Z
