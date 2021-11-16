@@ -9,7 +9,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
@@ -58,7 +57,6 @@ public fun GiphyAttachmentContent(
 
     Box(
         modifier = modifier
-            .size(height = 200.dp, width = 250.dp)
             .clip(ChatTheme.shapes.attachment)
             .combinedClickable(
                 indication = null,
