@@ -85,6 +85,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added the "mute" option to the `ChannelInfo` action dialog.
+- Added `attachmentsContentImageWidth`, `attachmentsContentImageHeight`, `attachmentsContentGiphyWidth`, `attachmentsContentGiphyHeight`, `attachmentsContentLinkWidth`, `attachmentsContentFileWidth` and `attachmentsContentFileUploadWidth` options to `StreamDimens`, to make it possible to customize the dimensions of attachments content via `ChatTheme`.
 
 ### ⚠️ Changed
 - Exposed `MessageReactions` as a public component so users can use it to display a message reactions bubble in their custom UI.
