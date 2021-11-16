@@ -1601,6 +1601,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setLoadingView (Landroid/view/View;)V
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setMessageBackgroundFactory (Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory;)V
 	public final fun setMessageClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageClickListener;)V
 	public final fun setMessageDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setMessageDeleteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageDeleteHandler;)V
