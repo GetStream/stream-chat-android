@@ -400,6 +400,8 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public static synthetic fun sendMessage$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessageWithAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun sendMessageWithCustomAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun stopTyping ()V
 }
