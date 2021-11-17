@@ -1,7 +1,9 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
@@ -102,6 +104,10 @@ internal class TextAndAttachmentsViewHolder(
 
         if (diff?.attachments != false) {
             setupAttachment(data)
+        }
+
+        binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            horizontalBias = if (data.isTheirs) 0f else 1f
         }
 
         setupUploads(data)

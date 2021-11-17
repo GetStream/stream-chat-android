@@ -1,12 +1,15 @@
 package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.AttributeSet
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.model.GiphyInfo
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.GiphyInfoType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -23,11 +26,16 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+import kotlin.math.min
 
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
+
+    private val maxMediaAttachmentWidth: Int by lazy {
+        (Resources.getSystem().displayMetrics.widthPixels * MAX_WIDTH_PERCENTAGE).toInt()
+    }
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
@@ -61,7 +69,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         binding.giphyLabel.setImageDrawable(style.giphyIcon)
     }
 
-    fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
+    fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT, containerView: View? = null) {
         val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
@@ -77,8 +85,13 @@ internal class MediaAttachmentView : ConstraintLayout {
         if (attachment.type == ModelType.attach_giphy) {
             attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
                 binding.imageView.updateLayoutParams {
-                    height = giphyInfo.height
-                    width = giphyInfo.width
+                    height = parseHeight(giphyInfo)
+                    width = parseWidth(giphyInfo)
+                }
+
+                containerView?.updateLayoutParams {
+                    height = parseHeight(giphyInfo) + DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                    width = parseWidth(giphyInfo) + DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
                 }
             }
         }
@@ -94,6 +107,18 @@ internal class MediaAttachmentView : ConstraintLayout {
                 attachmentLongClickListener?.onAttachmentLongClick()
                 true
             }
+        }
+    }
+
+    private fun parseWidth(giphyInfo: GiphyInfo): Int {
+        return min(maxMediaAttachmentWidth, giphyInfo.width)
+    }
+
+    private fun parseHeight(giphyInfo: GiphyInfo): Int {
+        return if (giphyInfo.width > maxMediaAttachmentWidth) {
+            giphyInfo.height * (maxMediaAttachmentWidth / giphyInfo.width)
+        } else {
+            giphyInfo.height
         }
     }
 
@@ -146,5 +171,7 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     companion object {
         private const val NO_MORE_COUNT = 0
+        private const val DEFAULT_MARGIN_FOR_CONTAINER_DP = 4
+        private const val MAX_WIDTH_PERCENTAGE = .75
     }
 }
