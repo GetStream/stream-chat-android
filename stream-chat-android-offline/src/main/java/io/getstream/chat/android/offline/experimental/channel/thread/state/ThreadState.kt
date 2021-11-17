@@ -17,4 +17,7 @@ public interface ThreadState {
 
     /** If we've reached the earliest point in this thread. */
     public val endOfOlderMessages: StateFlow<Boolean>
+
+    /** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */
+    public val oldestInThread: StateFlow<Message?>
 }

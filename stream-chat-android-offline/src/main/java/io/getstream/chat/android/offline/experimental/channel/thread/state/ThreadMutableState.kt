@@ -21,7 +21,9 @@ internal class ThreadMutableState(
 
     internal val _loadingOlderMessages = MutableStateFlow(false)
     internal val _endOfOlderMessages = MutableStateFlow(false)
-    internal var firstMessage: Message? = null
+    internal val _oldestInThread: MutableStateFlow<Message?> = MutableStateFlow(null)
+
+    override val oldestInThread: StateFlow<Message?> = _oldestInThread
 
     internal val threadMessages: Flow<List<Message>> =
         channelMutableState.unfilteredMessages.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }
