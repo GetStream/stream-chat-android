@@ -95,6 +95,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the "mute" option to the `ChannelInfo` action dialog.
 - Added a wrapper for the message input state in the form of `MessageInputState`
 - Added `attachmentsContentImageWidth`, `attachmentsContentImageHeight`, `attachmentsContentGiphyWidth`, `attachmentsContentGiphyHeight`, `attachmentsContentLinkWidth`, `attachmentsContentFileWidth` and `attachmentsContentFileUploadWidth` options to `StreamDimens`, to make it possible to customize the dimensions of attachments content via `ChatTheme`.
+- Added a thread separator between a parent message and thread replies.
 
 ### ⚠️ Changed
 - Made the MessageMode subtypes to the parent class, to make it easier to understand when importing
