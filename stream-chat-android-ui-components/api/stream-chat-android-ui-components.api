@@ -1094,6 +1094,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
+	public final fun submitCustomAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener {
@@ -1172,13 +1173,16 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 	public abstract fun sendMessage (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendToThread (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Z)V
 	public abstract fun sendToThreadWithAttachments (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/List;)V
+	public abstract fun sendToThreadWithCustomAttachments (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler$DefaultImpls {
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
 	public static synthetic fun sendMessageWithAttachments$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
+	public static synthetic fun sendMessageWithCustomAttachments$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener {
@@ -1376,6 +1380,15 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public static final field MEDIA Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
+}
+
+public abstract class io/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Landroid/view/View;)V
+	public abstract fun bind (Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory {
+	public abstract fun createAttachmentViewHolder (Ljava/util/List;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandlerKt {
@@ -1602,6 +1615,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setLoadingView (Landroid/view/View;)V
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setMessageBackgroundFactory (Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory;)V
 	public final fun setMessageClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageClickListener;)V
 	public final fun setMessageDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setMessageDeleteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageDeleteHandler;)V

@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -61,7 +62,7 @@ public sealed interface ChatDomain {
     public val connectionState: StateFlow<ConnectionState>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online, connecting of offline.
+     * StateFlow<Boolean> that indicates if we are currently online, connecting or offline.
      */
     @Deprecated("Use connectionState instead")
     public val online: StateFlow<Boolean>
@@ -91,6 +92,11 @@ public sealed interface ChatDomain {
      * list of users that you've muted
      */
     public val muted: StateFlow<List<Mute>>
+
+    /**
+     * List of channels you've muted
+     */
+    public val channelMutes: StateFlow<List<ChannelMute>>
 
     /**
      * if the current user is banned or not

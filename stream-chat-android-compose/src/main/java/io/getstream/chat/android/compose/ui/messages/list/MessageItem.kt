@@ -49,6 +49,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
@@ -56,6 +57,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
@@ -64,6 +66,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
@@ -360,21 +363,29 @@ public fun DefaultMessageItemHeaderContent(
     modifier: Modifier,
 ) {
     val message = messageItem.message
-    val ownReactions = message.ownReactions
-    val supportedReactions = ChatTheme.reactionTypes
 
     if (!message.isDeleted()) {
-        val reactions = message.reactionCounts
-            .map { it.key }
-            .filter { supportedReactions[it] != null }
-            .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
+        val ownReactions = message.ownReactions
+        val supportedReactions = ChatTheme.reactionTypes
 
-        if (reactions.isNotEmpty()) {
-            MessageReactions(
-                modifier = modifier,
-                reactions = reactions
-            )
-        }
+        val reactionCounts = message.reactionCounts.ifEmpty { return }
+        reactionCounts
+            .filter { supportedReactions.containsKey(it.key) }
+            .takeIf { it.isNotEmpty() }
+            ?.map { it.key }
+            ?.map { type ->
+                ReactionOption(
+                    painter = painterResource(requireNotNull(supportedReactions[type])),
+                    isSelected = ownReactions.any { it.type == type },
+                    type = type
+                )
+            }
+            ?.let { options ->
+                MessageReactions(
+                    modifier = modifier,
+                    options = options
+                )
+            }
     }
 }
 
@@ -499,15 +510,24 @@ public fun DefaultMessageItemContent(
 }
 
 /**
- * Container for all the reactions this message has.
+ * Represents a reaction bubble with a list of reactions this message has.
  *
+ * @param options The list of reactions to display.
  * @param modifier Modifier for styling.
- * @param reactions Map of reactions and their count.
  */
 @Composable
-private fun MessageReactions(
-    reactions: List<Pair<Int, Boolean>>,
+public fun MessageReactions(
+    options: List<ReactionOption>,
     modifier: Modifier = Modifier,
+    itemContent: @Composable RowScope.(ReactionOption) -> Unit = { option ->
+        MessageReactionsItem(
+            modifier = Modifier
+                .size(20.dp)
+                .padding(2.dp)
+                .align(CenterVertically),
+            option = option
+        )
+    },
 ) {
     Row(
         modifier = modifier
@@ -515,18 +535,29 @@ private fun MessageReactions(
             .padding(4.dp),
         verticalAlignment = CenterVertically
     ) {
-        for ((icon, ownReaction) in reactions) {
-            Icon(
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(2.dp)
-                    .align(CenterVertically),
-                painter = painterResource(icon),
-                tint = if (ownReaction) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-                contentDescription = null
-            )
+        options.forEach { option ->
+            itemContent(option)
         }
     }
+}
+
+/**
+ * Represents a reaction item in the reaction bubble.
+ *
+ * @param option The reaction to display.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun MessageReactionsItem(
+    option: ReactionOption,
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier,
+        painter = option.painter,
+        tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
+        contentDescription = null
+    )
 }
 
 /**
@@ -872,5 +903,21 @@ private fun OwnedMessageVisibilityContent(
             modifier = Modifier.padding(8.dp),
             date = message.updatedAt ?: message.createdAt ?: Date()
         )
+    }
+}
+
+@Preview
+@Composable
+private fun OneMessageReactionPreview() {
+    ChatTheme {
+        MessageReactions(options = PreviewReactionData.oneReaction())
+    }
+}
+
+@Preview
+@Composable
+private fun ManyMessageReactionsPreview() {
+    ChatTheme {
+        MessageReactions(options = PreviewReactionData.manyReactions())
     }
 }

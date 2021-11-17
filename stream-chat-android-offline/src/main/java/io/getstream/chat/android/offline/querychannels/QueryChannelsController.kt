@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
@@ -54,13 +53,19 @@ public class QueryChannelsController internal constructor(
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
     private val _channels = mutableState._channels
-    private val _mutedChannelIds = mutableState._mutedChannelIds
 
     public val loading: StateFlow<Boolean> = mutableState.loading
     public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
     public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
     public val channels: StateFlow<List<Channel>> = mutableState.channels
-    public val mutedChannelIds: StateFlow<List<String>> = mutableState.mutedChannelIds
+    @Deprecated(
+        message = "Use ChatDomain.channelMutes instead",
+        replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
+        level = DeprecationLevel.WARNING,
+    )
+    public val mutedChannelIds: StateFlow<List<String>> =
+        domainImpl.channelMutes.map { channelMutes -> channelMutes.map { channelMute -> channelMute.channel.id } }
+            .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     public val channelsState: StateFlow<ChannelsState> = mutableState.channelsStateData.map { state ->
         when (state) {
@@ -99,10 +104,6 @@ public class QueryChannelsController internal constructor(
         } else {
             removeChannel(channel.cid)
         }
-    }
-
-    internal fun updateMutedChannels(mutedChannels: List<ChannelMute>) {
-        _mutedChannelIds.value = mutedChannels.map { it.channel.id }
     }
 
     internal suspend fun handleEvents(events: List<ChatEvent>) {
