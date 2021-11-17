@@ -180,6 +180,25 @@ public final class com/getstream/sdk/chat/model/AttachmentMetaData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/model/GiphyInfo {
+	public fun <init> (Ljava/lang/String;IIII)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()I
+	public final fun copy (Ljava/lang/String;IIII)Lcom/getstream/sdk/chat/model/GiphyInfo;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/model/GiphyInfo;Ljava/lang/String;IIIIILjava/lang/Object;)Lcom/getstream/sdk/chat/model/GiphyInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrames ()I
+	public final fun getHeight ()I
+	public final fun getSize ()I
+	public final fun getUrl ()Ljava/lang/String;
+	public final fun getWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class com/getstream/sdk/chat/navigation/ChatNavigationHandler {
 	public abstract fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)Z
 }
@@ -272,6 +291,7 @@ public abstract class com/getstream/sdk/chat/utils/Utils$TextViewLinkHandler : a
 public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt {
 	public static final fun getDisplayableName (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 	public static final fun getImagePreviewUrl (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
+	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lcom/getstream/sdk/chat/utils/extensions/GiphyInfoType;)Lcom/getstream/sdk/chat/model/GiphyInfo;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
@@ -291,6 +311,13 @@ public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt 
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
+}
+
+public final class com/getstream/sdk/chat/utils/extensions/GiphyInfoType : java/lang/Enum {
+	public static final field ORIGINAL Lcom/getstream/sdk/chat/utils/extensions/GiphyInfoType;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/utils/extensions/GiphyInfoType;
+	public static fun values ()[Lcom/getstream/sdk/chat/utils/extensions/GiphyInfoType;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
