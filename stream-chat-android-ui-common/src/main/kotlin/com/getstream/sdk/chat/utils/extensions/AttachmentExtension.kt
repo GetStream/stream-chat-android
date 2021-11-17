@@ -15,7 +15,7 @@ public fun Attachment.getDisplayableName(): String? {
 public val Attachment.imagePreviewUrl: String?
     get() = thumbUrl ?: imageUrl
 
-public fun Attachment.giphyInfo(field: GiphyInfoType) : GiphyInfo?{
+public fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
     val giphyInfoMap = (extraData["giphy"] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
 
     return giphyInfoMap?.let { map ->
