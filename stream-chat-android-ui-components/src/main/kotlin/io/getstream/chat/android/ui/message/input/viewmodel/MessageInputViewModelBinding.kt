@@ -4,8 +4,10 @@ package io.getstream.chat.android.ui.message.input.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.DIRECT_CHAT
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.GROUP_CHAT
@@ -61,6 +63,14 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 }
             }
 
+            override fun sendMessageWithCustomAttachments(
+                message: String,
+                attachments: List<Attachment>,
+                messageReplyTo: Message?,
+            ) {
+                viewModel.sendMessageWithCustomAttachments(message, attachments)
+            }
+
             override fun sendToThreadWithAttachments(
                 parentMessage: Message,
                 message: String,
@@ -68,6 +78,18 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 attachmentsWithMimeTypes: List<Pair<File, String?>>,
             ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsWithMimeTypes) {
+                    this.parentId = parentMessage.id
+                    this.showInChannel = alsoSendToChannel
+                }
+            }
+
+            override fun sendToThreadWithCustomAttachments(
+                parentMessage: Message,
+                message: String,
+                alsoSendToChannel: Boolean,
+                attachments: List<Attachment>,
+            ) {
+                viewModel.sendMessageWithCustomAttachments(message, attachments) {
                     this.parentId = parentMessage.id
                     this.showInChannel = alsoSendToChannel
                 }

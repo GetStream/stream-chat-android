@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
@@ -27,6 +28,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
@@ -57,6 +59,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.input.attachment.selected.internal.BaseSelectedCustomAttachmentViewHolder
+import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedCustomAttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -74,6 +78,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder
+import io.getstream.chat.docs.databinding.CustomAttachmentItemBinding
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -261,6 +266,14 @@ class Android {
                         // Handle message with attachments
                     }
 
+                    override fun sendMessageWithCustomAttachments(
+                        message: String,
+                        attachments: List<Attachment>,
+                        messageReplyTo: Message?,
+                    ) {
+                        // Handle message with custom attachments
+                    }
+
                     override fun sendToThreadWithAttachments(
                         parentMessage: Message,
                         message: String,
@@ -268,6 +281,15 @@ class Android {
                         attachmentsWithMimeTypes: List<Pair<File, String?>>,
                     ) {
                         // Handle message to thread with attachments
+                    }
+
+                    override fun sendToThreadWithCustomAttachments(
+                        parentMessage: Message,
+                        message: String,
+                        alsoSendToChannel: Boolean,
+                        attachmentsWithMimeTypes: List<Attachment>,
+                    ) {
+                        // Handle message to thread with custom attachments
                     }
 
                     override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
@@ -285,6 +307,11 @@ class Android {
             )
         }
 
+        fun customAttachments() {
+            val attachments = listOf(Attachment(title = "A"), Attachment(title = "B"))
+            messageInputView.submitCustomAttachments(attachments, MyCustomAttachmentFactory())
+        }
+
         class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
 
             override fun createCommandViewHolder(
@@ -299,6 +326,29 @@ class Android {
             ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
                 // Create custom mention view holder here
                 return super.createMentionViewHolder(parentView)
+            }
+        }
+
+        class MyCustomViewHolder(
+            parentView: ViewGroup,
+            private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(LayoutInflater.from(parentView.context),
+                parentView,
+                false),
+        ) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
+            override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
+                binding.textView.text = attachment.title
+                binding.deleteButton.setOnClickListener {
+                    onAttachmentCancelled(attachment)
+                }
+            }
+        }
+
+        class MyCustomAttachmentFactory : SelectedCustomAttachmentViewHolderFactory {
+            override fun createAttachmentViewHolder(
+                attachments: List<Attachment>,
+                parent: ViewGroup,
+            ): MyCustomViewHolder {
+                return MyCustomViewHolder(parent)
             }
         }
     }

@@ -273,6 +273,8 @@ public final class io/getstream/chat/android/client/api/models/ExistsFilterObjec
 }
 
 public abstract class io/getstream/chat/android/client/api/models/FilterObject {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 }
 
 public final class io/getstream/chat/android/client/api/models/GreaterThanFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
@@ -508,6 +510,7 @@ public final class io/getstream/chat/android/client/api/models/QuerySort {
 	public fun hashCode ()I
 	public final fun toDto ()Ljava/util/List;
 	public final fun toList ()Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/api/models/QuerySort$Companion {

@@ -46,7 +46,8 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun fetchChannelsFromCache(pagination: AnyChannelPaginationRequest): List<Channel> {
-        val query = chatDomainImpl.repos.selectById(mutableState.queryChannelsSpec.id) ?: return emptyList()
+        val queryChannelsSpec = mutableState.queryChannelsSpec
+        val query = chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
 
         return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
