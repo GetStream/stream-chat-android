@@ -459,7 +459,7 @@ public class MessageListView : ConstraintLayout {
         messageListViewStyle?.messagesStart?.let(::chatMessageStart)
 
         initRecyclerView()
-        initScrollHelper()
+        // initScrollHelper()
         initLoadingView()
         initEmptyStateView()
 
@@ -501,16 +501,17 @@ public class MessageListView : ConstraintLayout {
             }
             setHasFixedSize(false)
             setItemViewCacheSize(20)
+            itemAnimator = null
         }
     }
 
     private fun initScrollHelper() {
-        scrollHelper = MessageListScrollHelper(
-            recyclerView = binding.chatMessagesRV,
-            scrollButtonView = binding.scrollToBottomButton,
-        ) {
-            lastMessageReadHandler.onLastMessageRead()
-        }
+        // scrollHelper = MessageListScrollHelper(
+        //     recyclerView = binding.chatMessagesRV,
+        //     scrollButtonView = binding.scrollToBottomButton,
+        // ) {
+        //     lastMessageReadHandler.onLastMessageRead()
+        // }
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {
@@ -530,7 +531,7 @@ public class MessageListView : ConstraintLayout {
             }
 
             binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-            scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
+            // scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
 
             NewMessagesBehaviour.parseValue(
                 tArray.getInt(
@@ -538,7 +539,7 @@ public class MessageListView : ConstraintLayout {
                     NewMessagesBehaviour.COUNT_UPDATE.value
                 )
             ).also {
-                scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+                // scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             }
         }
 
@@ -591,7 +592,7 @@ public class MessageListView : ConstraintLayout {
      * @param message The message to scroll to and highlight.
      */
     public fun scrollToMessage(message: Message) {
-        scrollHelper.scrollToMessage(message)
+        // scrollHelper.scrollToMessage(message)
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
@@ -740,7 +741,7 @@ public class MessageListView : ConstraintLayout {
      * @param newMessagesBehaviour The behavior to be used when new messages are added to the list.
      */
     public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
-        scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+        // scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
     }
 
     /**
@@ -749,7 +750,7 @@ public class MessageListView : ConstraintLayout {
      * @param scrollToBottomButtonEnabled True if scroll to bottom button should be displayed.
      */
     public fun setScrollToBottomButtonEnabled(scrollToBottomButtonEnabled: Boolean) {
-        scrollHelper.scrollToBottomButtonEnabled = scrollToBottomButtonEnabled
+        // scrollHelper.scrollToBottomButtonEnabled = scrollToBottomButtonEnabled
     }
 
     /**
@@ -987,11 +988,11 @@ public class MessageListView : ConstraintLayout {
                 }
 
                 adapter.submitList(filteredList) {
-                    scrollHelper.onMessageListChanged(
-                        isThreadStart = isThreadStart,
-                        hasNewMessages = listItem.hasNewMessages,
-                        isInitialList = isOldListEmpty && filteredList.isNotEmpty()
-                    )
+                    // scrollHelper.onMessageListChanged(
+                    //     isThreadStart = isThreadStart,
+                    //     hasNewMessages = listItem.hasNewMessages,
+                    //     isInitialList = isOldListEmpty && filteredList.isNotEmpty()
+                    // )
 
                     buffer.active()
                 }
