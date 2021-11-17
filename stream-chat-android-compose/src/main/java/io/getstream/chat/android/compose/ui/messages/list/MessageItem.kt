@@ -150,8 +150,16 @@ public fun DefaultMessageItem(
     },
 ) {
     when (messageListItem) {
-        is DateSeparator -> MessageDateSeparator(messageListItem)
-        is ThreadSeparator -> MessageThreadSeparator(messageListItem)
+        is DateSeparator -> MessageDateSeparator(
+            modifier = Modifier.fillMaxWidth(),
+            dateSeparator = messageListItem
+        )
+        is ThreadSeparator -> MessageThreadSeparator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding),
+            threadSeparator = messageListItem
+        )
         is MessageItem -> DefaultMessageContainer(
             modifier = modifier,
             messageItem = messageListItem,
@@ -171,12 +179,14 @@ public fun DefaultMessageItem(
  * Represents a date separator item that shows whenever messages are too far apart in time.
  *
  * @param dateSeparator The data used to show the separator text.
+ * @param modifier Modifier for styling.
  */
 @Composable
 public fun MessageDateSeparator(
     dateSeparator: DateSeparator,
+    modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Center) {
+    Box(modifier = modifier, contentAlignment = Center) {
         Surface(
             modifier = Modifier
                 .padding(vertical = 8.dp),
@@ -203,28 +213,28 @@ public fun MessageDateSeparator(
  * from thread replies.
  *
  * @param threadSeparator The data used to show the separator text.
+ * @param modifier Modifier for styling.
  */
 @Composable
 public fun MessageThreadSeparator(
     threadSeparator: ThreadSeparator,
+    modifier: Modifier = Modifier,
 ) {
     val backgroundGradient = Brush.verticalGradient(
         listOf(
-            ChatTheme.colors.inputBackground,
-            ChatTheme.colors.appBackground
+            ChatTheme.colors.threadSeparatorGradientStart,
+            ChatTheme.colors.threadSeparatorGradientEnd
         )
     )
     val replyCount = threadSeparator.replyCount
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
+        modifier = modifier
             .background(brush = backgroundGradient),
         contentAlignment = Center
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding),
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_separator,
                 replyCount,
@@ -521,7 +531,7 @@ public fun DefaultMessageItemContent(
     }
 
     val messageCardColor = when {
-        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackgroundColor
+        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackground
         ownsMessage -> ChatTheme.colors.ownMessagesBackground
         else -> ChatTheme.colors.otherMessagesBackground
     }

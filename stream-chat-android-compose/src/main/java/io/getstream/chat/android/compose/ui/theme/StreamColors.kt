@@ -25,7 +25,9 @@ import io.getstream.chat.android.compose.R
  * @param highlight Used for message highlights.
  * @param ownMessagesBackground Used as a background color for the messages sent by the current user.
  * @param otherMessagesBackground Used as a background color for the messages sent by other users.
- * @param deletedMessagesBackgroundColor Used as a background for deleted messages.
+ * @param deletedMessagesBackground Used as a background for deleted messages.
+ * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
+ * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
  */
 @Immutable
 public data class StreamColors(
@@ -45,7 +47,9 @@ public data class StreamColors(
     public val highlight: Color,
     public val ownMessagesBackground: Color,
     public val otherMessagesBackground: Color,
-    public val deletedMessagesBackgroundColor: Color,
+    public val deletedMessagesBackground: Color,
+    public val threadSeparatorGradientStart: Color,
+    public val threadSeparatorGradientEnd: Color,
 ) {
 
     public companion object {
@@ -72,7 +76,9 @@ public data class StreamColors(
             highlight = colorResource(R.color.stream_compose_highlight),
             ownMessagesBackground = colorResource(R.color.stream_compose_borders),
             otherMessagesBackground = colorResource(R.color.stream_compose_bars_background),
-            deletedMessagesBackgroundColor = colorResource(R.color.stream_compose_input_background),
+            deletedMessagesBackground = colorResource(R.color.stream_compose_input_background),
+            threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
+            threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
         )
 
         /**
@@ -98,7 +104,9 @@ public data class StreamColors(
             highlight = colorResource(R.color.stream_compose_highlight_dark),
             ownMessagesBackground = colorResource(R.color.stream_compose_borders_dark),
             otherMessagesBackground = colorResource(R.color.stream_compose_bars_background_dark),
-            deletedMessagesBackgroundColor = colorResource(R.color.stream_compose_input_background_dark),
+            deletedMessagesBackground = colorResource(R.color.stream_compose_input_background_dark),
+            threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
+            threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
         )
     }
 }
