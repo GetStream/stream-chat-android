@@ -38,6 +38,7 @@ class SimpleItemsFragment : Fragment() {
             }
             setHasFixedSize(false)
             setItemViewCacheSize(20)
+            // itemAnimator = null
         }
 
         recycler.adapter = adapter

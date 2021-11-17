@@ -13,6 +13,6 @@ class PagerAdapter(
     override fun getItemCount(): Int = 1
 
     override fun createFragment(position: Int): Fragment {
-        return MessageListViewFragment.newInstance()
+        return SimpleItemsFragment.newInstance()
     }
 }
