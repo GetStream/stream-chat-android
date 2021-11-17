@@ -825,18 +825,25 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
-    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        return api.getReplies(messageId, limit)
-    }
+    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> =
+        api.getReplies(messageId, limit)
+            .doOnStart(scope) { plugins.forEach { it.onGetRepliesRequest(messageId, limit) } }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onGetRepliesResult(result, messageId, limit) }
+            }
+            .precondition { onGetRepliesPrecondition(messageId, limit) }
 
     @CheckResult
     public fun getRepliesMore(
         messageId: String,
         firstId: String,
         limit: Int,
-    ): Call<List<Message>> {
-        return api.getRepliesMore(messageId, firstId, limit)
-    }
+    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
+        .doOnStart(scope) { plugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
+        .doOnResult(scope) { result ->
+            plugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
+        }
+        .precondition { onGetRepliesMorePrecondition(messageId, firstId, limit) }
 
     @CheckResult
     public fun sendAction(request: SendActionRequest): Call<Message> {
