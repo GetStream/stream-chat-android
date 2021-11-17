@@ -12,14 +12,20 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.Copy
+import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.Flag
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
-import io.getstream.chat.android.compose.state.messages.MessageMode
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.Normal
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
@@ -27,29 +33,30 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
-import io.getstream.chat.android.compose.state.messages.list.Copy
-import io.getstream.chat.android.compose.state.messages.list.Delete
-import io.getstream.chat.android.compose.state.messages.list.Flag
-import io.getstream.chat.android.compose.state.messages.list.MessageAction
-import io.getstream.chat.android.compose.state.messages.list.MuteUser
-import io.getstream.chat.android.compose.state.messages.list.React
-import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
+ *
+ * @param chatClient Used to connect to the API.
+ * @param chatDomain Used to connect to the API and fetch the domain status.
+ * @param channelId The ID of the channel to load the messages for.
+ * @param messageLimit The limit of messages being fetched with each page od data.
+ * @param enforceUniqueReactions Enables or disables unique message reactions per user.
+ * @param clipboardHandler Used to copy data from message actions to the clipboard.
  */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
@@ -69,19 +76,19 @@ public class MessageListViewModel(
         get() = if (isInThread) threadMessagesState else messagesState
 
     /**
-     * State of the screen, for the [Normal] [messageMode].
+     * State of the screen, for [MessageMode.Normal].
      */
     private var messagesState: MessagesState by mutableStateOf(MessagesState())
 
     /**
-     * State of the screen, for the [Thread] [messageMode].
+     * State of the screen, for [MessageMode.MessageThread].
      */
     private var threadMessagesState: MessagesState by mutableStateOf(MessagesState())
 
     /**
-     * Holds the current [MessageMode] that's used for the messages list. [Normal] by default.
+     * Holds the current [MessageMode] that's used for the messages list. [MessageMode.Normal] by default.
      */
-    public var messageMode: MessageMode by mutableStateOf(Normal)
+    public var messageMode: MessageMode by mutableStateOf(MessageMode.Normal)
         private set
 
     /**
@@ -101,7 +108,7 @@ public class MessageListViewModel(
      * Gives us information if we're currently in the [Thread] message mode.
      */
     public val isInThread: Boolean
-        get() = messageMode is Thread
+        get() = messageMode is MessageMode.MessageThread
 
     /**
      * Gives us information if we're showing the selected message overlay.
@@ -117,9 +124,8 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    @Deprecated("Use connectionState instead")
-    public val isOnline: StateFlow<Boolean>
-        get() = chatDomain.online
+    public val isOnline: Flow<Boolean>
+        get() = chatDomain.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Gives us information about the logged in user state.
@@ -375,7 +381,7 @@ public class MessageListViewModel(
     public fun loadMore() {
         val messageMode = messageMode
 
-        if (messageMode is Thread) {
+        if (messageMode is MessageMode.MessageThread) {
             threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
             chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
                 .enqueue()
@@ -406,7 +412,7 @@ public class MessageListViewModel(
      * @param message The selected message with a thread.
      */
     public fun openMessageThread(message: Message) {
-        this.messageMode = Thread(message)
+        this.messageMode = MessageMode.MessageThread(message)
 
         loadThread(message)
     }
@@ -465,7 +471,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        messageMode = Thread(parentMessage)
+        messageMode = MessageMode.MessageThread(parentMessage)
 
         chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
             if (result.isSuccess) {
@@ -473,7 +479,7 @@ public class MessageListViewModel(
 
                 observeThreadMessages(controller)
             } else {
-                messageMode = Normal
+                messageMode = MessageMode.Normal
             }
         }
     }
@@ -512,7 +518,7 @@ public class MessageListViewModel(
      * @return A list of [MessageItem]s, each containing a position.
      */
     private fun groupMessages(messages: List<Message>): List<MessageListItem> {
-        val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
+        val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
         val groupedMessages = mutableListOf<MessageListItem>()
 
@@ -612,7 +618,7 @@ public class MessageListViewModel(
      * It also cancels the [threadJob] to clean up resources.
      */
     public fun leaveThread() {
-        messageMode = Normal
+        messageMode = MessageMode.Normal
         messagesState = messagesState.copy(selectedMessage = null)
         threadMessagesState = MessagesState()
         lastSeenThreadMessage = null

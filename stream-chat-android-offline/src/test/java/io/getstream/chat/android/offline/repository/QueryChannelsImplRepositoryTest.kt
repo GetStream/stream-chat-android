@@ -1,11 +1,14 @@
 package io.getstream.chat.android.offline.repository
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.randomQueryChannelsSpec
@@ -47,13 +50,14 @@ internal class QueryChannelsImplRepositoryTest {
 
     @Test
     fun `Given query channels spec in DB When select by id Should return not null result`() = runBlockingTest {
-        whenever(dao.select("id1")) doReturn randomQueryChannelsEntity(
+        whenever(dao.select(any())) doReturn randomQueryChannelsEntity(
             id = "id1",
             filter = Filters.contains("cid", "cid1"),
+            querySort = QuerySort(),
             cids = listOf("cid1")
         )
 
-        val result = sut.selectById("id1")
+        val result = sut.selectBy(Filters.contains("cid", "cid1"), QuerySort())
 
         result.shouldNotBeNull()
         result.filter.shouldBeInstanceOf<ContainsFilterObject>()
@@ -64,9 +68,9 @@ internal class QueryChannelsImplRepositoryTest {
 
     @Test
     fun `Given no row in DB with such id When select by id Should return null`() = runBlockingTest {
-        whenever(dao.select("id1")) doReturn null
+        whenever(dao.select(any())) doReturn null
 
-        val result = sut.selectById("id1")
+        val result = sut.selectBy(NeutralFilterObject, QuerySort())
 
         result.shouldBeNull()
     }

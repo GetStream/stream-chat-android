@@ -143,7 +143,7 @@ public data class Message(
      */
     var showInChannel: Boolean = false,
 
-    @InternalStreamChatApi
+    @property:InternalStreamChatApi
     var channelInfo: ChannelInfo? = null,
 
     /**

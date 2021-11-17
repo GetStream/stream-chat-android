@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -24,6 +25,15 @@ public class MessageOption(
     public val action: MessageAction,
 )
 
+/**
+ * Wraps the given information in a data holder that helps us render message options.
+ *
+ * @param title The title that represents this message option.
+ * @param icon The image that represents this message option.
+ * @param action The action that we run when the option is selected.
+ *
+ * @return [MessageOption] That is shown in the UI.
+ */
 @Composable
 public fun buildMessageOption(
     @StringRes title: Int,

@@ -41,16 +41,16 @@ import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.Copy
+import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.Copy
-import io.getstream.chat.android.compose.state.messages.list.Delete
-import io.getstream.chat.android.compose.state.messages.list.Edit
-import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.MessageOption
-import io.getstream.chat.android.compose.state.messages.list.MuteUser
-import io.getstream.chat.android.compose.state.messages.list.React
-import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.compose.state.messages.list.buildMessageOption
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
@@ -85,7 +85,7 @@ public fun SelectedMessageOverlay(
     val reactionOptions = reactionTypes.entries
         .map { (type, drawable) ->
             ReactionOption(
-                drawable = painterResource(drawable),
+                painter = painterResource(drawable),
                 isSelected = ownReactions.any { it.type == type },
                 type = type
             )
@@ -182,7 +182,7 @@ internal fun ReactionOptionItem(
                 onClick = { onReactionClick(option) }
             )
             .padding(2.dp),
-        painter = option.drawable,
+        painter = option.painter,
         contentDescription = option.type,
         tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
     )

@@ -111,7 +111,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             runBlocking { chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateDataFromChannel(data.channel1)
-            query = QueryChannelsSpec(data.filter1)
+            query = QueryChannelsSpec(data.filter1, QuerySort())
 
             queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
