@@ -110,7 +110,6 @@ public class ChannelController internal constructor(
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
     messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
-
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
     public val cid: String by mutableState::cid
@@ -166,7 +165,7 @@ public class ChannelController internal constructor(
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadId: String, threadState: ThreadMutableState): ThreadController = threadControllerMap.getOrPut(threadId) {
-        ThreadController(threadState, this).also { domainImpl.scope.launch { it.loadOlderMessages() } }
+        ThreadController(threadState, client, channelLogic).also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
@@ -1035,24 +1034,6 @@ public class ChannelController internal constructor(
         channel.hidden = mutableState._hidden.value
 
         return channel
-    }
-
-    internal suspend fun loadOlderThreadMessages(
-        threadId: String,
-        limit: Int,
-        firstMessage: Message? = null,
-    ): Result<List<Message>> {
-        val result = if (firstMessage != null) {
-            client.getRepliesMore(threadId, firstMessage.id, limit).await()
-        } else {
-            client.getReplies(threadId, limit).await()
-        }
-        if (result.isSuccess) {
-            val newMessages = result.data()
-            channelLogic.upsertMessages(newMessages)
-            // Note that we don't handle offline storage for threads at the moment.
-        }
-        return result
     }
 
     internal suspend fun loadMessageById(

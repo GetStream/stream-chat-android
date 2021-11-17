@@ -3,13 +3,16 @@ package io.getstream.chat.android.offline.thread
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
+import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
@@ -26,7 +29,9 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     lateinit var threadReply: Message
     lateinit var channelMessages: MutableStateFlow<List<Message>>
     lateinit var threadController: ThreadController
+    lateinit var threadMutableState: ThreadMutableState
 
+    @OptIn(ExperimentalStreamChatApi::class)
     @Before
     override fun setup() {
         super.setup()
@@ -37,7 +42,11 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         channelMessages = MutableStateFlow(listOf(data.message1, threadMessage, threadReply))
         whenever(channelControllerMock.unfilteredMessages) doReturn channelMessages
         whenever(channelControllerMock.hideMessagesBefore) doReturn null
-        threadController = ThreadController(threadId, channelControllerMock, chatDomainImpl)
+        val channelMutableState =
+            ChannelMutableState("channelType", "channelId", chatDomainImpl.scope, chatDomainImpl.user)
+        val channelLogic = ChannelLogic(channelMutableState, chatDomainImpl)
+        threadMutableState = ThreadMutableState(threadId, channelMutableState, chatDomainImpl.scope)
+        threadController = ThreadController(threadMutableState, clientMock, channelLogic)
     }
 
     @Test
@@ -78,11 +87,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     fun `loading more should set loading and endReached variables`() = testCoroutines.scope.runBlockingTest {
         // mock the loadOlderThreadMessages to return 1 result when asking for 2 messages
         val threadReply2 = data.createMessage().apply { parentId = threadId }
-        whenever(channelControllerMock.loadOlderThreadMessages(any(), any(), eq(null))) doReturn Result(
-            listOf(
-                threadReply2
-            )
-        )
+        whenever(clientMock.getReplies(any(), any())) doReturn listOf(threadReply2).asCall()
         threadController.loadOlderMessages(2)
 
         // verify that loading is false and end reached is true
