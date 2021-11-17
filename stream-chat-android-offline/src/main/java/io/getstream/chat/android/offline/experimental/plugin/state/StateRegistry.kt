@@ -50,5 +50,6 @@ public class StateRegistry internal constructor(
     public fun clear() {
         queryChannels.clear()
         channels.clear()
+        threads.clear()
     }
 }
