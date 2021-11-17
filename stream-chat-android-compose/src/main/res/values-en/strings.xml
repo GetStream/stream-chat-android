@@ -38,6 +38,14 @@
     <string name="stream_compose_user_status_last_seen_just_now">Last seen just now</string>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">Thread Reply</item>
+        <item quantity="other">%d Thread Replies</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d Reply</item>
+        <item quantity="other">%d Replies</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
 
     <string name="stream_compose_message_label">Send a message</string>
@@ -62,7 +70,6 @@
     <string name="stream_compose_reply_to_message">Reply to message</string>
     <string name="stream_compose_message_deleted">Message deleted</string>
     <string name="stream_compose_only_visible_to_you">Only visible to you</string>
-    <string name="stream_compose_thread_footnote">Thread Reply</string>
     <string name="stream_compose_download">Download</string>
     <string name="stream_compose_share">Share</string>
     <string name="stream_compose_photos">Photos</string>

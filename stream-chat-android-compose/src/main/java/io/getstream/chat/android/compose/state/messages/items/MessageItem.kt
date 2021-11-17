@@ -16,6 +16,13 @@ public sealed class MessageListItem
 public data class DateSeparator(val date: Date) : MessageListItem()
 
 /**
+ * Represents a separator between thread parent message and thread replies.
+ *
+ * @param replyCount The number of thread replies to the message.
+ */
+public data class ThreadSeparator(val replyCount: Int) : MessageListItem()
+
+/**
  * Represents each message item we show in the list of messages.
  *
  * @param message The message to show.
@@ -23,6 +30,7 @@ public data class DateSeparator(val date: Date) : MessageListItem()
  * @param parentMessageId The id of the parent message, when we're in a thread.
  * @param isMine If the message is of the current user or someone else.
  * @param isFocused If the message is being focused currently.
+ * @param isInThread If the message is being displayed in a thread.
  */
 public data class MessageItem(
     val message: Message,
@@ -30,4 +38,5 @@ public data class MessageItem(
     val parentMessageId: String? = null,
     val isMine: Boolean = false,
     val isFocused: Boolean = false,
+    val isInThread: Boolean = false,
 ) : MessageListItem()

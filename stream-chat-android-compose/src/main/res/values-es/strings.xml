@@ -38,5 +38,13 @@
     <string name="stream_compose_user_status_last_seen_just_now">Última vez visto justo ahora</string>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">Respuesta al hilo</item>
+        <item quantity="other">%1$d Respuestas en el hilo</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d Respuesta</item>
+        <item quantity="other">%d Respuestas</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">Sin mensajes</string>
 </resources>
