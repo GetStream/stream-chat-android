@@ -35,11 +35,14 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     private var state: State = State.Empty
-    private var containerView : View? = null
+    private var containerView: View? = null
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr)
+
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
@@ -51,10 +54,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         this.containerView = containerView
     }
 
-    fun showAttachments(attachments: List<Attachment>, isMine: Boolean) {
+    fun showAttachments(attachments: List<Attachment>) {
         when (attachments.size) {
             0 -> Unit
-            1 -> showOne(attachments.first(), isMine)
+            1 -> showOne(attachments.first())
             2 -> showTwo(attachments.first(), attachments[1])
             3 -> showThree(attachments.first(), attachments[1], attachments[2])
             else -> showFour(
@@ -68,7 +71,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)
     }
 
-    private fun showOne(first: Attachment, isMine: Boolean) {
+    private fun showOne(first: Attachment) {
         removeAllViews()
         val mediaAttachmentView = createMediaAttachmentView()
         addView(mediaAttachmentView)
@@ -76,17 +79,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         ConstraintSet().apply {
             constrainHeight(mediaAttachmentView.id, LayoutParams.WRAP_CONTENT)
             constrainMaxHeight(mediaAttachmentView.id, maxMediaAttachmentHeight)
-            if (first.type == "giphy") {
-                if (isMine) {
-                    constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
-                } else {
-                    constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
-                }
-            } else {
-                constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
-                constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
-            }
-
+            constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
+            constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
             applyTo(this@MediaAttachmentsGroupView)
         }
