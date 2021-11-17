@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 internal class GiphyViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listeners: MessageListListenerContainer,
+    listeners: MessageListListenerContainer?,
     private val style: GiphyViewHolderStyle,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.streamThemeInflater,
@@ -25,15 +25,18 @@ internal class GiphyViewHolder(
 
     init {
         binding.run {
-            cancelButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
+            listeners?.let { container ->
+                cancelButton.setOnClickListener {
+                    container.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
+                }
+                shuffleButton.setOnClickListener {
+                    container.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
+                }
+                sendButton.setOnClickListener {
+                    container.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
+                }
             }
-            shuffleButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
-            }
-            sendButton.setOnClickListener {
-                listeners.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
-            }
+
             mediaAttachmentView.giphyBadgeEnabled = false
         }
     }
