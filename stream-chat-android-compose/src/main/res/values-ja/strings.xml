@@ -44,4 +44,12 @@
         <item quantity="other">%dスレッド返信</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">返信</string>
+    <string name="stream_compose_thread_reply">スレッド返信</string>
+    <string name="stream_compose_copy_message">メッセージをコピーする</string>
+    <string name="stream_compose_edit_message">メッセージを編集する</string>
+    <string name="stream_compose_delete_message">メッセージを削除する</string>
+    <string name="stream_compose_mute_user">ユーザーをミュートする</string>
 </resources>

@@ -47,4 +47,12 @@
         <item quantity="other">%d Respuestas</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">Sin mensajes</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">Contestar</string>
+    <string name="stream_compose_thread_reply">Contestar en el hilo</string>
+    <string name="stream_compose_copy_message">Copiar Mensaje</string>
+    <string name="stream_compose_edit_message">Editar Mensaje</string>
+    <string name="stream_compose_delete_message">Eliminar mensaje</string>
+    <string name="stream_compose_mute_user">Silenciar usuario</string>
 </resources>
