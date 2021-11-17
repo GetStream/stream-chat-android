@@ -72,7 +72,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Removed ripple effect for attachements in message options.
 ### ⬆️ Improved
-
+- Giphys are auto sizable, there's no need to set a predefined size for then as they will follow the size of the sent giphy, respecting the limits of the message size. 
+- streamUiMediaAttachmentGiphyHeight removed as it is no longer necessary.
 ### ✅ Added
 - Added setter `MessageListView.setMessageBackgroundFactory` to set a factory to provide a background for messages. 
 - Added `MessageInputViewModel::sendMessageWithCustomAttachments` function allowing to send message with custom attachments list.
