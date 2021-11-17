@@ -9,11 +9,8 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.GiphyInfo
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.GiphyInfoType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
-import com.getstream.sdk.chat.utils.extensions.giphyInfo
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -169,9 +166,38 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
     }
 
+    private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
+        val giphyInfoMap = (extraData["giphy"] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
+
+        return giphyInfoMap?.let { map ->
+            GiphyInfo(
+                url = map["url"] ?: this.thumbUrl ?: "",
+                width = map["width"]?.toInt() ?: GIPHY_INFO_DEAFULT_WIDTH,
+                height = map["height"]?.toInt() ?: GIPHY_INFO_DEAFULT_HEIGHT,
+                size = map["size"]?.toInt() ?: 0,
+                frames = map["frames"]?.toInt() ?: 0
+            )
+        }
+    }
+
+    internal enum class GiphyInfoType(val value: String) {
+        ORIGINAL("original")
+    }
+
+    internal data class GiphyInfo(
+        val url: String,
+        val width: Int,
+        val height: Int,
+        val size: Int,
+        val frames: Int,
+    )
+
     companion object {
         private const val NO_MORE_COUNT = 0
         private const val DEFAULT_MARGIN_FOR_CONTAINER_DP = 4
         private const val MAX_WIDTH_PERCENTAGE = .75
+
+        private const val GIPHY_INFO_DEAFULT_WIDTH = 200
+        private const val GIPHY_INFO_DEAFULT_HEIGHT = 200
     }
 }
