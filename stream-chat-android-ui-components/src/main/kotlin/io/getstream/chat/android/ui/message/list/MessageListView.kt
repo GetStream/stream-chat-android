@@ -863,7 +863,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setMessageBackgroundFactory(messageBackgroundFactory: MessageBackgroundFactory) {
         check(::adapter.isInitialized.not()) {
-            "Adapter was already initialized, please set MessageViewHolderFactory first"
+            "Adapter was already initialized, please set MessageBackgroundFactory first"
         }
         this.messageBackgroundFactory = messageBackgroundFactory
     }
