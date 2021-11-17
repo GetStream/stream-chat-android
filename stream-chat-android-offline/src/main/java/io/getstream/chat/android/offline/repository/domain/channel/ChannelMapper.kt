@@ -35,10 +35,13 @@ internal fun Channel.toEntity(): ChannelEntity {
         hidden = hidden,
         hideMessagesBefore = hiddenMessagesBefore,
         members = members.map(Member::toEntity).associateBy(MemberEntity::userId).toMutableMap(),
+        memberCount = memberCount,
         reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
         lastMessageId = lastMessage?.messageInnerEntity?.id,
         lastMessageAt = lastMessageAt,
         createdByUserId = createdBy.id,
+        watcherIds = watchers.map(User::id),
+        watcherCount = watcherCount,
         team = team,
     )
 }
@@ -61,8 +64,11 @@ internal suspend fun ChannelEntity.toModel(
     hidden = hidden,
     hiddenMessagesBefore = hideMessagesBefore,
     members = members.values.map { it.toModel(getUser) },
+    memberCount = memberCount,
     messages = listOfNotNull(lastMessageId?.let { getMessage(it) }),
     read = reads.values.map { it.toModel(getUser) },
     createdBy = getUser(createdByUserId),
+    watchers = watcherIds.map { getUser(it) },
+    watcherCount = watcherCount,
     team = team,
 )
