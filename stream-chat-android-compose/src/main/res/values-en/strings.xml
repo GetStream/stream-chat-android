@@ -52,8 +52,8 @@
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
     <string name="stream_compose_copy_message">Copy Message</string>
-    <string name="stream_compose_edit_message">Edit message</string>
-    <string name="stream_compose_delete_message">Delete message</string>
+    <string name="stream_compose_edit_message">Edit Message</string>
+    <string name="stream_compose_delete_message">Delete Message</string>
     <string name="stream_compose_mute_user">Mute User</string>
 
     <string name="stream_compose_message_label">Send a message</string>
