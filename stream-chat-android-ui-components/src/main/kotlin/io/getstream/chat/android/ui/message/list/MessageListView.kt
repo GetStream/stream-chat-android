@@ -261,7 +261,6 @@ public class MessageListView : ConstraintLayout {
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
-    private var messageBackgroundFactory: MessageBackgroundFactory? = null
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
@@ -294,7 +293,7 @@ public class MessageListView : ConstraintLayout {
                         ),
                         requireStyle(),
                         messageListItemViewHolderFactory,
-                        backgroundFactory()
+                        messageBackgroundFactory
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -396,7 +395,7 @@ public class MessageListView : ConstraintLayout {
                     ),
                     requireStyle(),
                     messageListItemViewHolderFactory,
-                    backgroundFactory()
+                    messageBackgroundFactory
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -441,6 +440,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentViewFactory: AttachmentViewFactory
+    private lateinit var messageBackgroundFactory: MessageBackgroundFactory
 
     public constructor(context: Context) : this(context, null, 0)
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -483,10 +483,6 @@ public class MessageListView : ConstraintLayout {
                 loadingViewContainer.addView(this)
             }
         }
-    }
-
-    private fun backgroundFactory(): MessageBackgroundFactory {
-        return messageBackgroundFactory ?: MessageBackgroundFactoryImpl(requireStyle().itemStyle)
     }
 
     private fun initEmptyStateView() {
@@ -640,12 +636,16 @@ public class MessageListView : ConstraintLayout {
             messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
+        if (::messageBackgroundFactory.isInitialized.not()) {
+            messageBackgroundFactory = MessageBackgroundFactoryImpl(requireStyle().itemStyle)
+        }
+
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
-            backgroundFactory()
+            messageBackgroundFactory
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
@@ -853,6 +853,19 @@ public class MessageListView : ConstraintLayout {
             "Adapter was already initialized, please set MessageViewHolderFactory first"
         }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
+    }
+
+    /**
+     * Allows clients to set a custom implementation of [MessageBackgroundFactory]. Use this
+     * method if you want to change the background of messages
+     *
+     * @param messageBackgroundFactory The custom factory that provides drawables to be used in the messages background
+     */
+    public fun setMessageBackgroundFactory(messageBackgroundFactory: MessageBackgroundFactory) {
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set MessageViewHolderFactory first"
+        }
+        this.messageBackgroundFactory = messageBackgroundFactory
     }
 
     /**
