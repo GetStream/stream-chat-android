@@ -177,7 +177,7 @@ public open class AttachmentViewFactory {
         attachmentLongClickListener = AttachmentLongClickListener {
             listeners?.messageLongClickListener?.onMessageLongClick(data.message)
         }
-        showAttachments(attachments)
+        showAttachments(attachments, data.isMine)
     }
 
     private fun setupFileAttachmentsView(
