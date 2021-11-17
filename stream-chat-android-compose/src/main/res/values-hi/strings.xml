@@ -38,5 +38,13 @@
     <string name="stream_compose_user_status_last_seen_just_now">अंतिम बार अभी देखा</string>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>
 </resources>

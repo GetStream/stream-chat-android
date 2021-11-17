@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,6 +67,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
@@ -149,6 +151,7 @@ public fun DefaultMessageItem(
 ) {
     when (messageListItem) {
         is DateSeparator -> MessageDateSeparator(messageListItem)
+        is ThreadSeparator -> MessageThreadSeparator(messageListItem)
         is MessageItem -> DefaultMessageContainer(
             modifier = modifier,
             messageItem = messageListItem,
@@ -192,6 +195,44 @@ public fun MessageDateSeparator(
                 style = ChatTheme.typography.body
             )
         }
+    }
+}
+
+/**
+ * Represents a thread separator item that is displayed in thread mode to separate a parent message
+ * from thread replies.
+ *
+ * @param threadSeparator The data used to show the separator text.
+ */
+@Composable
+public fun MessageThreadSeparator(
+    threadSeparator: ThreadSeparator,
+) {
+    val backgroundGradient = Brush.verticalGradient(
+        listOf(
+            ChatTheme.colors.inputBackground,
+            ChatTheme.colors.appBackground
+        )
+    )
+    val replyCount = threadSeparator.replyCount
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(brush = backgroundGradient),
+        contentAlignment = Center
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_separator,
+                replyCount,
+                replyCount
+            ),
+            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.body
+        )
     }
 }
 
@@ -850,11 +891,16 @@ internal fun MessageFooter(
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
 
-    if (hasThread) {
+    if (hasThread && !messageItem.isInThread) {
+        val replyCount = message.replyCount
         ThreadParticipants(
             modifier = modifier,
             participants = message.threadParticipants,
-            text = stringResource(id = R.string.stream_compose_thread_footnote)
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_footnote,
+                replyCount,
+                replyCount
+            )
         )
     } else if (!hasThread && (position == Bottom || position == None)) {
         Row(

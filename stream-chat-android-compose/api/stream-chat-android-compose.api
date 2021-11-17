@@ -255,21 +255,23 @@ public final class io/getstream/chat/android/compose/state/messages/items/DateSe
 
 public final class io/getstream/chat/android/compose/state/messages/items/MessageItem : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZ)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
 	public final fun component2 ()Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZ)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
+	public final fun component6 ()Z
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZ)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getGroupPosition ()Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public final fun isFocused ()Z
+	public final fun isInThread ()Z
 	public final fun isMine ()Z
 	public fun toString ()Ljava/lang/String;
 }
@@ -300,6 +302,18 @@ public final class io/getstream/chat/android/compose/state/messages/items/Messag
 
 public abstract class io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/compose/state/messages/items/ThreadSeparator : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;IILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReplyCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageOption {
@@ -715,6 +729,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageIte
 	public static final fun MessageDateSeparator (Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;Landroidx/compose/runtime/Composer;I)V
 	public static final fun MessageReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageReactionsItem (Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOption;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageThreadSeparator (Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;Landroidx/compose/runtime/Composer;I)V
 	public static final fun ThreadParticipants (Ljava/util/List;Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
 	public static final fun UploadingFooter (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }

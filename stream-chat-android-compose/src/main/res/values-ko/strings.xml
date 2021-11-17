@@ -37,5 +37,11 @@
     <string name="stream_compose_user_status_last_seen_just_now">방금 확인했습니다</string>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="other">%d개의 스레드 응답</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="other">%d개의 응답</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">메시지 없음</string>
 </resources>

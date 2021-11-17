@@ -38,5 +38,13 @@
     <string name="stream_compose_user_status_last_seen_just_now">Ultimo accesso di recente</string>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">%d Risposta nella Conversazione</item>
+        <item quantity="other">%d Risposte nella Conversazione</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d Risposta</item>
+        <item quantity="other">%d Risposte</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">Nessun messaggio</string>
 </resources>

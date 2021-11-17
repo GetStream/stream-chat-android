@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -545,9 +546,14 @@ public class MessageListViewModel(
                     message = message,
                     groupPosition = position,
                     parentMessageId = parentMessageId,
-                    isMine = user.id == currentUser?.id
+                    isMine = user.id == currentUser?.id,
+                    isInThread = isInThread
                 )
             )
+
+            if (index == 0 && isInThread) {
+                groupedMessages.add(ThreadSeparator(message.replyCount))
+            }
         }
 
         return groupedMessages.reversed()

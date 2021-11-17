@@ -37,5 +37,11 @@
     <string name="stream_compose_user_status_last_seen_just_now">今見ました</string>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="other">%dスレッド返信</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="other">%dスレッド返信</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>
 </resources>
