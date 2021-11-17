@@ -13,10 +13,10 @@ import io.getstream.videosample.recycler.ItemsAdapter
 
 /**
  * A simple [Fragment] subclass.
- * Use the [MessageListFragment.newInstance] factory method to
+ * Use the [SimpleItemsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MessageListFragment : Fragment() {
+class SimpleItemsFragment : Fragment() {
 
     private val adapter = ItemsAdapter()
 
@@ -24,7 +24,7 @@ class MessageListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.fragment_message_list, container, false)
+        return inflater.inflate(R.layout.fragment_simple_items, container, false)
     }
 
     private val list = mutableListOf<String>()
@@ -55,6 +55,6 @@ class MessageListFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = MessageListFragment()
+        fun newInstance() = SimpleItemsFragment()
     }
 }
