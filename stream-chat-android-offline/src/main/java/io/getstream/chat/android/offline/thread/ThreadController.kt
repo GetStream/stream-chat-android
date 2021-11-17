@@ -40,14 +40,14 @@ public class ThreadController internal constructor(
             return Result(ChatError(errorMsg))
         }
         threadMutableState._loadingOlderMessages.value = true
-        val result = doLoadMore(limit, threadMutableState.firstMessage)
+        val result = doLoadMore(limit, threadMutableState.oldestInThread.value)
         if (result.isSuccess) {
             // Note that we don't handle offline storage for threads at the moment.
             val newMessages = result.data()
             channelLogic.upsertMessages(newMessages)
             threadMutableState._endOfOlderMessages.value = newMessages.size < limit
-            threadMutableState.firstMessage =
-                newMessages.sortedBy { it.createdAt }.firstOrNull() ?: threadMutableState.firstMessage
+            threadMutableState._oldestInThread.value =
+                newMessages.sortedBy { it.createdAt }.firstOrNull() ?: threadMutableState._oldestInThread.value
         }
 
         threadMutableState._loadingOlderMessages.value = false

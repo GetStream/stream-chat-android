@@ -445,6 +445,7 @@ public abstract interface class io/getstream/chat/android/offline/experimental/c
 	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getOldestInThread ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getParentId ()Ljava/lang/String;
 }
 
