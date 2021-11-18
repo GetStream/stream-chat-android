@@ -273,7 +273,7 @@ internal fun MessageOptionItem(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(40.dp)
+            .height(ChatTheme.dimens.messageOverlayActionItemHeight)
             .clickable(
                 onClick = { onMessageOptionClick(option) },
                 interactionSource = remember { MutableInteractionSource() },
