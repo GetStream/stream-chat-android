@@ -113,10 +113,7 @@ public open class AttachmentViewFactory {
     ): View {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
-                is MediaAttachmentsGroupView -> {
-                    it.setMessageContainerView(parent.findViewById(R.id.messageContainer))
-                    setupMediaAttachmentView(it, attachments, listeners, data)
-                }
+                is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data, parent)
                 is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
         }
@@ -172,9 +169,11 @@ public open class AttachmentViewFactory {
         attachments: List<Attachment>,
         listeners: MessageListListenerContainer?,
         data: MessageListItem.MessageItem,
+        parent: View,
     ) = mediaAttachmentsGroupView.run {
         setPadding(MEDIA_ATTACHMENT_VIEW_PADDING)
         setupBackground(data)
+        setMessageContainerView(parent.findViewById(R.id.messageContainer))
         attachmentClickListener = AttachmentClickListener {
             listeners?.attachmentClickListener?.onAttachmentClick(data.message, it)
         }
