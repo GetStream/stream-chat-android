@@ -3,7 +3,9 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 import android.content.Context
 import android.content.res.Resources
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.view.View
+import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
@@ -30,8 +32,11 @@ internal class MediaAttachmentView : ConstraintLayout {
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
 
-    private val maxMediaAttachmentWidth: Int by lazy {
-        (Resources.getSystem().displayMetrics.widthPixels * MAX_WIDTH_PERCENTAGE).toInt()
+    internal val displayMetrics: DisplayMetrics
+        inline get() = Resources.getSystem().displayMetrics
+
+    private val maxMediaAttachmentWidth: Int by lazy(LazyThreadSafetyMode.NONE) {
+        (displayMetrics.widthPixels * MAX_WIDTH_PERCENTAGE).toInt()
     }
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
@@ -167,13 +172,13 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
-        val giphyInfoMap = (extraData["giphy"] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
+        val giphyInfoMap = (extraData[ModelType.attach_giphy] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
 
         return giphyInfoMap?.let { map ->
             GiphyInfo(
                 url = map["url"] ?: this.thumbUrl ?: "",
-                width = map["width"]?.toInt() ?: GIPHY_INFO_DEAFULT_WIDTH,
-                height = map["height"]?.toInt() ?: GIPHY_INFO_DEAFULT_HEIGHT,
+                width = map["width"]?.toInt() ?: GIPHY_INFO_DEAFULT_WIDTH_DP.dpToPx(),
+                height = map["height"]?.toInt() ?: GIPHY_INFO_DEAFULT_HEIGHT_DP.dpToPx(),
                 size = map["size"]?.toInt() ?: 0,
                 frames = map["frames"]?.toInt() ?: 0
             )
@@ -186,8 +191,8 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     internal data class GiphyInfo(
         val url: String,
-        val width: Int,
-        val height: Int,
+        @Px val width: Int,
+        @Px val height: Int,
         val size: Int,
         val frames: Int,
     )
@@ -197,7 +202,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         private const val DEFAULT_MARGIN_FOR_CONTAINER_DP = 4
         private const val MAX_WIDTH_PERCENTAGE = .75
 
-        private const val GIPHY_INFO_DEAFULT_WIDTH = 200
-        private const val GIPHY_INFO_DEAFULT_HEIGHT = 200
+        private const val GIPHY_INFO_DEAFULT_WIDTH_DP = 200
+        private const val GIPHY_INFO_DEAFULT_HEIGHT_DP = 200
     }
 }

@@ -15,8 +15,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
-private const val DEFAULT_GIPHY_HEIGHT = 200
-
 /**
  * Style for [MediaAttachmentView].
  * Use this class together with [TransformStyle.mediaAttachmentStyleTransformer] to change styles programmatically.
