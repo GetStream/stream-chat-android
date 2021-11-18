@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -21,6 +22,8 @@ public data class AvatarStyle(
     public val onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition,
     @ColorInt public val onlineIndicatorColor: Int,
     @ColorInt public val onlineIndicatorBorderColor: Int,
+    public val avatarShape: Int,
+    @Px public val borderRadius: Float,
 ) {
 
     internal companion object {
@@ -65,8 +68,20 @@ public data class AvatarStyle(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
                     AvatarView.OnlineIndicatorPosition.TOP_RIGHT
                 )
-                val onlineIndicatorColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
-                val onlineIndicatorBorderColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)
+                val onlineIndicatorColor =
+                    it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
+                val onlineIndicatorBorderColor =
+                    it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)
+
+                val avatarShape =
+                    it.getInt(R.styleable.AvatarView_streamUiAvatarShape, AvatarView.AvatarShape.CIRCLE.value)
+
+                val borderRadius =
+                    it.getDimensionPixelSize(
+                        R.styleable.AvatarView_streamUiAvatarBorderRadius,
+                        4.dpToPx()
+                    ).toFloat()
+
                 return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
@@ -75,6 +90,8 @@ public data class AvatarStyle(
                     onlineIndicatorPosition = onlineIndicatorPosition,
                     onlineIndicatorColor = onlineIndicatorColor,
                     onlineIndicatorBorderColor = onlineIndicatorBorderColor,
+                    avatarShape = avatarShape,
+                    borderRadius = borderRadius,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }
         }
