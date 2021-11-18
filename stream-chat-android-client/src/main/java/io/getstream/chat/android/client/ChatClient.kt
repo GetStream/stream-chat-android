@@ -825,6 +825,20 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @InternalStreamChatApi
+    @ExperimentalStreamChatApi
+    public fun getRepliesInternal(messageId: String, limit: Int): Call<List<Message>> = api.getReplies(messageId, limit)
+
+    @CheckResult
+    @InternalStreamChatApi
+    @ExperimentalStreamChatApi
+    public fun getRepliesMoreInternal(
+        messageId: String,
+        firstId: String,
+        limit: Int,
+    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
+
+    @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> =
         api.getReplies(messageId, limit)
             .doOnStart(scope) { plugins.forEach { it.onGetRepliesRequest(messageId, limit) } }

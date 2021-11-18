@@ -2,24 +2,20 @@ package io.getstream.chat.android.offline.thread
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalStreamChatApi::class)
 public class ThreadController internal constructor(
     private val threadMutableState: ThreadMutableState,
+    private val threadLogic: ThreadLogic,
     private val client: ChatClient,
-    private val channelLogic: ChannelLogic,
 ) {
     public val threadId: String by threadMutableState::parentId
-
-    private val logger = ChatLogger.get("ThreadController")
 
     /** the sorted list of messages for this thread */
     public val messages: StateFlow<List<Message>> by threadMutableState::messages
@@ -34,23 +30,16 @@ public class ThreadController internal constructor(
 
     internal suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
         // TODO: offline storage for thread load more
-        if (loadingOlderMessages.value) {
-            val errorMsg = "already loading messages for this thread, ignoring the load more requests."
-            logger.logI(errorMsg)
-            return Result(ChatError(errorMsg))
+        val preconditionResult = threadLogic.precondition()
+        if (preconditionResult.isError) {
+            return Result(preconditionResult.error())
         }
-        threadMutableState._loadingOlderMessages.value = true
-        val result = doLoadMore(limit, threadMutableState.oldestInThread.value)
-        if (result.isSuccess) {
-            // Note that we don't handle offline storage for threads at the moment.
-            val newMessages = result.data()
-            channelLogic.upsertMessages(newMessages)
-            threadMutableState._endOfOlderMessages.value = newMessages.size < limit
-            threadMutableState._oldestInThread.value =
-                newMessages.sortedBy { it.createdAt }.firstOrNull() ?: threadMutableState._oldestInThread.value
-        }
+        threadLogic.onRequest()
 
-        threadMutableState._loadingOlderMessages.value = false
+        val result = doLoadMore(limit, threadMutableState.oldestInThread.value)
+
+        threadLogic.onResult(result, limit)
+
         return result
     }
 
@@ -58,8 +47,8 @@ public class ThreadController internal constructor(
         limit: Int,
         firstMessage: Message? = null,
     ): Result<List<Message>> = if (firstMessage != null) {
-        client.getRepliesMore(threadId, firstMessage.id, limit).await()
+        client.getRepliesMoreInternal(threadId, firstMessage.id, limit).await()
     } else {
-        client.getReplies(threadId, limit).await()
+        client.getRepliesInternal(threadId, limit).await()
     }
 }

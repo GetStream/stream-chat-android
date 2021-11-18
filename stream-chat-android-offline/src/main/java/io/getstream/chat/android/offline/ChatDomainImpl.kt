@@ -154,7 +154,7 @@ internal class ChatDomainImpl internal constructor(
     internal var appContext: Context,
     private val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    override val retryPolicy: RetryPolicy = DefaultRetryPolicy()
+    override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,
@@ -900,7 +900,8 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> = client.replayEventsForActiveChannels(cid)
+    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
+        client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
@@ -926,7 +927,12 @@ internal class ChatDomainImpl internal constructor(
     override fun getThread(cid: String, parentId: String): Call<ThreadController> {
         validateCid(cid)
         return CoroutineCall(scope) {
-            Result.success(channel(cid).getThread(offlinePlugin.state.thread(parentId).toMutableState()))
+            Result.success(
+                channel(cid).getThread(
+                    offlinePlugin.state.thread(parentId).toMutableState(),
+                    offlinePlugin.logic.thread(parentId)
+                )
+            )
         }
     }
 
@@ -1021,7 +1027,8 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteChannel(cid: String): Call<Unit> = DeleteChannel(this).invoke(cid)
 
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> = client.setMessageForReply(cid, message)
+    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
+        client.setMessageForReply(cid, message)
 
     override fun downloadAttachment(attachment: Attachment): Call<Unit> = client.downloadAttachment(attachment)
 

@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.experimental.plugin.logic
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
@@ -14,6 +15,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.toMut
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
 @ExperimentalStreamChatApi
@@ -53,7 +55,11 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {
         return threads.getOrPut(messageId) {
-            ThreadLogic(stateRegistry.thread(messageId).toMutableState())
+            val (channelType, channelId) = runBlocking {
+                chatDomain.repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
+                    ?: error("There is not such message with messageId = $messageId")
+            }
+            ThreadLogic(stateRegistry.thread(messageId).toMutableState(), channel(channelType, channelId))
         }
     }
 
