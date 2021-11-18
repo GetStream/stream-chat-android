@@ -53,4 +53,12 @@
         <item quantity="other">%d जवाब</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">जवाब दें</string>
+    <string name="stream_compose_thread_reply">चर्चा पर जवाब दें</string>
+    <string name="stream_compose_copy_message">मैसेज कॉपी करें</string>
+    <string name="stream_compose_edit_message">मैसेज एडिट करें</string>
+    <string name="stream_compose_delete_message">मैसेज मिटायें</string>
+    <string name="stream_compose_mute_user">यूजर को म्यूट करें</string>
 </resources>

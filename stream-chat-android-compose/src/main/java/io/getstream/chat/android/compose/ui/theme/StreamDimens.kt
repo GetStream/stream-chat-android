@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
  * @param attachmentsContentFileUploadWidth The width of uploading file attachments in the message list.
  * @param threadSeparatorVerticalPadding The vertical content padding inside thread separator item.
  * @param threadSeparatorTextVerticalPadding The vertical padding inside thread separator text.
+ * @param messageOverlayActionItemHeight The height of an action item on the selected message overlay.
  */
 @Immutable
 public data class StreamDimens(
@@ -40,6 +41,7 @@ public data class StreamDimens(
     public val attachmentsContentFileUploadWidth: Dp,
     public val threadSeparatorVerticalPadding: Dp,
     public val threadSeparatorTextVerticalPadding: Dp,
+    public val messageOverlayActionItemHeight: Dp,
 ) {
     public companion object {
         public fun defaultDimens(): StreamDimens = StreamDimens(
@@ -57,7 +59,8 @@ public data class StreamDimens(
             attachmentsContentFileWidth = 250.dp,
             attachmentsContentFileUploadWidth = 250.dp,
             threadSeparatorVerticalPadding = 8.dp,
-            threadSeparatorTextVerticalPadding = 2.dp
+            threadSeparatorTextVerticalPadding = 2.dp,
+            messageOverlayActionItemHeight = 40.dp
         )
     }
 }

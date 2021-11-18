@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,13 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FileCopy
-import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -247,6 +241,13 @@ internal fun MessageOptions(
     ) {
         LazyColumn(modifier) {
             items(options) { option ->
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(0.5.dp)
+                        .background(color = ChatTheme.colors.borders)
+                )
+
                 MessageOptionItem(
                     option = option,
                     onMessageOptionClick = { onMessageAction(it.action) }
@@ -272,25 +273,25 @@ internal fun MessageOptionItem(
     Row(
         Modifier
             .fillMaxWidth()
+            .height(ChatTheme.dimens.messageOverlayActionItemHeight)
             .clickable(
                 onClick = { onMessageOptionClick(option) },
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple()
-            )
-            .padding(12.dp),
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
         Icon(
-            imageVector = option.icon,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            painter = option.iconPainter,
             tint = option.iconColor,
             contentDescription = title,
         )
 
         Text(
-            modifier = Modifier.padding(start = 12.dp),
             text = title,
-            style = ChatTheme.typography.footnoteBold,
+            style = ChatTheme.typography.body,
             color = option.titleColor
         )
     }
@@ -300,71 +301,60 @@ internal fun MessageOptionItem(
  * Builds the default message options we show to our users.
  *
  * @param selectedMessage Currently selected message, used to callbacks.
- * @param user Current user, used to expose different states for messages.
- * @param inThread If the message is in a thread or not, to block off some options.
+ * @param currentUser Current user, used to expose different states for messages.
+ * @param isInThread If the message is in a thread or not, to block off some options.
  */
 @Composable
 public fun defaultMessageOptions(
     selectedMessage: Message,
-    user: User?,
-    inThread: Boolean,
+    currentUser: User?,
+    isInThread: Boolean,
 ): List<MessageOption> {
-    val messageOptions = arrayListOf(
+    val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
+    val isOwnMessage = selectedMessage.user.id == currentUser?.id
+
+    return listOfNotNull(
         buildMessageOption(
             title = R.string.stream_compose_reply,
-            icon = Icons.Default.Reply,
+            iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
             action = Reply(selectedMessage)
-        )
-    )
-
-    if (selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()) {
-        messageOptions.add(
-            buildMessageOption(
-                title = R.string.stream_compose_copy_message,
-                icon = Icons.Default.FileCopy,
-                action = Copy(selectedMessage)
-            )
-        )
-    }
-
-    if (!inThread) {
-        messageOptions.add(
-            1,
+        ),
+        if (!isInThread) {
             buildMessageOption(
                 title = R.string.stream_compose_thread_reply,
-                icon = Icons.Default.Chat,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_thread_reply),
                 action = ThreadReply(selectedMessage)
             )
-        )
-    }
-
-    if (selectedMessage.user.id == user?.id) {
-        messageOptions.add(
+        } else null,
+        if (isTextOnlyMessage) {
+            buildMessageOption(
+                title = R.string.stream_compose_copy_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
+                action = Copy(selectedMessage)
+            )
+        } else null,
+        if (isOwnMessage) {
             buildMessageOption(
                 title = R.string.stream_compose_edit_message,
-                icon = Icons.Default.Edit,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
                 action = Edit(selectedMessage)
             )
-        )
-
-        messageOptions.add(
+        } else null,
+        if (isOwnMessage) {
             MessageOption(
                 title = R.string.stream_compose_delete_message,
-                icon = Icons.Default.Delete,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
                 action = Delete(selectedMessage),
                 iconColor = ChatTheme.colors.errorAccent,
                 titleColor = ChatTheme.colors.errorAccent
             )
-        )
-    } else {
-        messageOptions.add(
+        } else null,
+        if (!isOwnMessage) {
             buildMessageOption(
                 title = R.string.stream_compose_mute_user,
-                icon = Icons.Default.VolumeMute,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_mute),
                 action = MuteUser(selectedMessage)
             )
-        )
-    }
-
-    return messageOptions
+        } else null
+    )
 }

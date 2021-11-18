@@ -99,6 +99,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the `threadSeparatorGradientStart` and `threadSeparatorGradientEnd` options to `StreamColors`, to make it possible to customize the thread separator background gradient colors via `ChatTheme`.
 - Added the `threadSeparatorVerticalPadding` and `threadSeparatorTextVerticalPadding` options to `StreamDimens`, to make it possible to customize the dimensions of thread separator via `ChatTheme`.
 - Added a typing indicator to the `MessageListHeader` component. 
+- Added the `messageOverlayActionItemHeight` option to `StreamDimens`, to make it possible to customize the height of an action item on the selected message overlay via `ChatTheme`.
 
 ### ⚠️ Changed
 - Made the MessageMode subtypes to the parent class, to make it easier to understand when importing
