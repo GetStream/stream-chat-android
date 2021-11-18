@@ -100,7 +100,7 @@ public fun ChatTheme(
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current),
-        LocalMessageAlignmentProvider provides MessageAlignmentProvider.defaultMessageAlignmentProvider()
+        LocalMessageAlignmentProvider provides messageAlignmentProvider
     ) {
         content()
     }
