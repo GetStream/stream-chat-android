@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
@@ -317,7 +316,7 @@ public fun DefaultMessageContainer(
         )
     },
 ) {
-    val (message, _, _, ownsMessage, isFocused) = messageItem
+    val (message, _, _, _, isFocused) = messageItem
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -345,12 +344,14 @@ public fun DefaultMessageContainer(
         )
     )
 
+    val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = backgroundColor),
-        contentAlignment = if (ownsMessage) CenterEnd else CenterStart
+        contentAlignment = messageAlignment.messageAlignment
     ) {
         Row(
             modifier
@@ -360,7 +361,7 @@ public fun DefaultMessageContainer(
 
             leadingContent(messageItem)
 
-            Column(horizontalAlignment = if (ownsMessage) End else Start) {
+            Column(horizontalAlignment = messageAlignment.messageContentAlignment) {
                 headerContent(messageItem)
 
                 content(messageItem)
@@ -386,17 +387,15 @@ public fun DefaultMessageItemLeadingContent(
     messageItem: MessageItem,
     modifier: Modifier = Modifier,
 ) {
-    if (!messageItem.isMine) {
-        val position = messageItem.groupPosition
-        if (position == Bottom || position == None) {
-            UserAvatar(
-                modifier = modifier,
-                user = messageItem.message.user,
-                showOnlineIndicator = false
-            )
-        } else {
-            Spacer(modifier = modifier)
-        }
+    val position = messageItem.groupPosition
+    if (!messageItem.isMine && (position == Bottom || position == None)) {
+        UserAvatar(
+            modifier = modifier,
+            user = messageItem.message.user,
+            showOnlineIndicator = false
+        )
+    } else {
+        Spacer(modifier = modifier)
     }
 }
 
@@ -960,6 +959,20 @@ private fun OwnedMessageVisibilityContent(
             date = message.updatedAt ?: message.createdAt ?: Date()
         )
     }
+}
+
+/**
+ * Represents the horizontal alignment of messages in the message list.
+ *
+ * @param messageAlignment The alignment of message.
+ * @param messageContentAlignment The alignment of the inner content.
+ */
+public enum class MessageAlignment(
+    public val messageAlignment: Alignment,
+    public val messageContentAlignment: Alignment.Horizontal,
+) {
+    Start(CenterStart, Alignment.Start),
+    End(CenterEnd, Alignment.End),
 }
 
 @Preview
