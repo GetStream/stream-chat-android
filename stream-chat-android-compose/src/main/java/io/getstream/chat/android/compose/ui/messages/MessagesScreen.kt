@@ -116,6 +116,7 @@ public fun MessagesScreen(
                             .height(56.dp),
                         channel = listViewModel.channel,
                         currentUser = user,
+                        typingUsers = listViewModel.typingUsers,
                         connectionState = connectionState,
                         messageMode = messageMode,
                         onBackPressed = backAction,

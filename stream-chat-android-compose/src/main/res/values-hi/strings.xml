@@ -37,6 +37,12 @@
     <string name="stream_compose_user_status_last_seen">पिछली बार देखा %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">अंतिम बार अभी देखा</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s लिख रहे/रहीं हैं</item>
+        <item quantity="other">%s and %d अन्य लिख रहें हैं</item>
+    </plurals>
+
     <!-- Message List -->
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">%d जवाब</item>

@@ -99,6 +99,12 @@ public class MessageListViewModel(
         private set
 
     /**
+     * The list of typing users.
+     */
+    public var typingUsers: List<User> by mutableStateOf(emptyList())
+        private set
+
+    /**
      * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
      * similar actions.
      */
@@ -170,6 +176,7 @@ public class MessageListViewModel(
                 val controller = result.data()
 
                 observeConversation(controller)
+                observeTypingUsers(controller)
             } else {
                 result.error().cause?.printStackTrace()
                 showEmptyState()
@@ -231,6 +238,17 @@ public class MessageListViewModel(
                         setCurrentChannel(channel)
                     }
                 }
+        }
+    }
+
+    /**
+     * Starts observing the list of typing users.
+     */
+    private fun observeTypingUsers(controller: ChannelController) {
+        viewModelScope.launch {
+            controller.typing.collect {
+                typingUsers = it.users
+            }
         }
     }
 
