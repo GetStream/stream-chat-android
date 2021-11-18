@@ -925,14 +925,8 @@ internal class ChatDomainImpl internal constructor(
     @CheckResult
     override fun getThread(cid: String, parentId: String): Call<ThreadController> {
         validateCid(cid)
-        val (type, id) = cid.cidToTypeAndId()
         return CoroutineCall(scope) {
-            Result.success(
-                channel(cid).getThread(
-                    parentId,
-                    offlinePlugin.state.thread(type, id, parentId).toMutableState()
-                )
-            )
+            Result.success(channel(cid).getThread(offlinePlugin.state.thread(parentId).toMutableState()))
         }
     }
 
