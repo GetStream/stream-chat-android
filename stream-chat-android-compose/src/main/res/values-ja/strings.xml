@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Channel List Header -->
     <string name="stream_compose_channel_list_header_new_chat">新しいチャット</string>
 
@@ -36,6 +36,12 @@
     <string name="stream_compose_user_status_last_seen">%s見ました</string>
     <string name="stream_compose_user_status_last_seen_just_now">今見ました</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users" tools:ignore="UnusedQuantity">
+        <item quantity="one">%sが入力しています</item>
+        <item quantity="other">%sと%d人が入力しています</item>
+    </plurals>
+
     <!-- Message List -->
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="other">%dスレッド返信</item>
@@ -44,4 +50,12 @@
         <item quantity="other">%dスレッド返信</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">返信</string>
+    <string name="stream_compose_thread_reply">スレッド返信</string>
+    <string name="stream_compose_copy_message">メッセージをコピーする</string>
+    <string name="stream_compose_edit_message">メッセージを編集する</string>
+    <string name="stream_compose_delete_message">メッセージを削除する</string>
+    <string name="stream_compose_mute_user">ユーザーをミュートする</string>
 </resources>

@@ -37,6 +37,12 @@
     <string name="stream_compose_user_status_last_seen">Vu pour la dernière fois %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">Dernière vue à l\'instant</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s est en train d\'écrire</item>
+        <item quantity="other">%s et %d sont entrain d\'écrire</item>
+    </plurals>
+
     <!-- Message List -->
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">%d Réponse au fil de discussion</item>
@@ -47,4 +53,12 @@
         <item quantity="other">%d Réponses</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">Pas de messages</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">Réponse</string>
+    <string name="stream_compose_thread_reply">Réponse au fil de discussion</string>
+    <string name="stream_compose_copy_message">Copier le message</string>
+    <string name="stream_compose_edit_message">Modifier le message</string>
+    <string name="stream_compose_delete_message">Supprimer le message</string>
+    <string name="stream_compose_mute_user">Mettre en sourdine l\'utilisateur</string>
 </resources>
