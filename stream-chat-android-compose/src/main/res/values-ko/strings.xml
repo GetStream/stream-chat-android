@@ -36,6 +36,12 @@
     <string name="stream_compose_user_status_last_seen">마지막 확인: %s</string>
     <string name="stream_compose_user_status_last_seen_just_now">방금 확인했습니다</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s 입력중</item>
+        <item quantity="other">%s 및 %d명 입력중</item>
+    </plurals>
+
     <!-- Message List -->
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="other">%d개의 스레드 응답</item>

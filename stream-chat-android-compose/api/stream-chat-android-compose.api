@@ -559,6 +559,10 @@ public final class io/getstream/chat/android/compose/ui/common/TimestampKt {
 	public static final fun Timestamp (Ljava/util/Date;Landroidx/compose/ui/Modifier;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/state/DateFormatType;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/common/TypingIndicatorKt {
+	public static final fun TypingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/common/avatar/AvatarKt {
 	public static final fun Avatar (Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
@@ -677,8 +681,8 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/compon
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/common/state/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/common/state/MessageMode;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageMode;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt {
@@ -1092,6 +1096,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun getMessageActions ()Ljava/util/Set;
 	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;
 	public final fun getMessageWithId (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
+	public final fun getTypingUsers ()Ljava/util/List;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isInThread ()Z
 	public final fun isOnline ()Lkotlinx/coroutines/flow/Flow;

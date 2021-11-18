@@ -37,6 +37,12 @@
     <string name="stream_compose_user_status_last_seen">Vu pour la dernière fois %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">Dernière vue à l\'instant</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s est en train d\'écrire</item>
+        <item quantity="other">%s et %d sont entrain d\'écrire</item>
+    </plurals>
+
     <!-- Message List -->
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">%d Réponse au fil de discussion</item>
