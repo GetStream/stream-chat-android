@@ -8,7 +8,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 @ExperimentalStreamChatApi
 /** Listener for reply queries. */
 public interface ThreadQueryListener {
-
     /**
      * Runs precondition check for [ChatClient.getReplies]. If it returns [Result.isSuccess] then the request is run
      * otherwise it returns [Result.error] and no request is made.

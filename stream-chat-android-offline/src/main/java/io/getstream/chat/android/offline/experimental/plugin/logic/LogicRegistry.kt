@@ -10,6 +10,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
+import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
@@ -30,7 +31,7 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
-    private val threads: ConcurrentHashMap<Triple<String, String, String>, ThreadLogic> = ConcurrentHashMap()
+    private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
     fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
@@ -49,10 +50,10 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         }
     }
 
-    /** Returns [ThreadLogic] for combination of channelType, channelId and messageId. */
-    fun thread(channelType: String, channelId: String, messageId: String): ThreadLogic {
-        return threads.getOrPut(Triple(channelType, channelId, messageId)) {
-            ThreadLogic()
+    /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
+    fun thread(messageId: String): ThreadLogic {
+        return threads.getOrPut(messageId) {
+            ThreadLogic(stateRegistry.thread(messageId).toMutableState())
         }
     }
 

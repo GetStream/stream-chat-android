@@ -164,7 +164,7 @@ public class ChannelController internal constructor(
     public val channelConfig: StateFlow<Config> by mutableState::channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
-    internal fun getThread(threadId: String, threadState: ThreadMutableState): ThreadController = threadControllerMap.getOrPut(threadId) {
+    internal fun getThread(threadState: ThreadMutableState): ThreadController = threadControllerMap.getOrPut(threadState.parentId) {
         ThreadController(threadState, client, channelLogic).also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
 
