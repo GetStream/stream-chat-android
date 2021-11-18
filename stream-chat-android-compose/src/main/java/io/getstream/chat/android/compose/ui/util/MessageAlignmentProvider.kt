@@ -6,7 +6,7 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageAlignment
 /**
  *  An interface that allows to return the desired horizontal alignment for a particular [MessageItem].
  */
-public interface MessageAlignmentProvider {
+public fun interface MessageAlignmentProvider {
 
     /**
      * Returns [MessageAlignment] for a particular [MessageItem].
