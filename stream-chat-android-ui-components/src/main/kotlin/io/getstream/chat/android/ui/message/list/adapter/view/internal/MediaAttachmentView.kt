@@ -20,6 +20,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -32,11 +33,8 @@ internal class MediaAttachmentView : ConstraintLayout {
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
 
-    internal val displayMetrics: DisplayMetrics
-        inline get() = Resources.getSystem().displayMetrics
-
     private val maxMediaAttachmentWidth: Int by lazy(LazyThreadSafetyMode.NONE) {
-        (displayMetrics.widthPixels * MAX_WIDTH_PERCENTAGE).toInt()
+        (displayMetrics().widthPixels * MAX_WIDTH_PERCENTAGE).toInt()
     }
 
     internal val binding: StreamUiMediaAttachmentViewBinding =

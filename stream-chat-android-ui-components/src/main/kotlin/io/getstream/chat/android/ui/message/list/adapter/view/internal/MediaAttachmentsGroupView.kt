@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
@@ -21,6 +20,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
@@ -31,7 +31,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     private val maxMediaAttachmentHeight: Int by lazy {
-        (Resources.getSystem().displayMetrics.heightPixels * MAX_HEIGHT_PERCENTAGE).toInt()
+        (displayMetrics().heightPixels * MAX_HEIGHT_PERCENTAGE).toInt()
     }
 
     private var state: State = State.Empty
