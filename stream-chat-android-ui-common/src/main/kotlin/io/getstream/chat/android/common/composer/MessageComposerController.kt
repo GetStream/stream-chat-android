@@ -1,6 +1,7 @@
 package io.getstream.chat.android.common.composer
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Edit
@@ -9,10 +10,15 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * Controller responsible for handling the composing and sending of messages.
@@ -32,6 +38,11 @@ public class MessageComposerController(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val chatDomain: ChatDomain = ChatDomain.instance(),
 ) {
+    /**
+     * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
+     * ViewModel is disposed.
+     */
+    private val scope = CoroutineScope(DispatcherProvider.Main)
 
     /**
      * UI state of the current composer input.
@@ -42,6 +53,28 @@ public class MessageComposerController(
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
+
+    /**
+     * Represents the maximum allowed message length.
+     */
+    public val maxMessageLength: MutableStateFlow<Int> = MutableStateFlow(Integer.MAX_VALUE)
+
+    /**
+     * Sets up the core data loading operations - such as observing the current channel and loading
+     * messages and other pieces of information.
+     */
+    init {
+        scope.launch {
+            val result = chatDomain.watchChannel(channelId, 0).await()
+
+            if (result.isSuccess) {
+                val channelController = result.data()
+                channelController.channelConfig.collect {
+                    maxMessageLength.value = it.maxMessageLength
+                }
+            }
+        }
+    }
 
     /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
@@ -242,5 +275,12 @@ public class MessageComposerController(
     public fun leaveThread() {
         setMessageMode(MessageMode.Normal)
         dismissMessageActions()
+    }
+
+    /**
+     * Cancels any pending work when the parent ViewModel is about to be destroyed.
+     */
+    public fun onCleared() {
+        scope.cancel()
     }
 }

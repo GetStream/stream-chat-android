@@ -35,6 +35,11 @@ public class MessageComposerViewModel(
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
 
     /**
+     * Represents the maximum allowed message length.
+     */
+    public val maxMessageLength: MutableStateFlow<Int> = messageComposerController.maxMessageLength
+
+    /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
@@ -122,4 +127,12 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    /**
+     * Disposes the inner [MessageComposerController].
+     */
+    override fun onCleared() {
+        super.onCleared()
+        messageComposerController.onCleared()
+    }
 }

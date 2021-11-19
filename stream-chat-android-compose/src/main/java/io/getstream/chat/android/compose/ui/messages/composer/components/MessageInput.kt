@@ -109,6 +109,7 @@ public fun MessageInput(
     InputField(
         modifier = modifier,
         value = value,
+        maxLines = 6,
         onValueChange = onValueChange,
         decorationBox = { innerTextField ->
             Column {
