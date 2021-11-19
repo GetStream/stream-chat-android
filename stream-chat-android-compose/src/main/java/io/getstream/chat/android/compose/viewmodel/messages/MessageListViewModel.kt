@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Flag
@@ -36,6 +37,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -484,23 +486,42 @@ public class MessageListViewModel(
     /**
      * Loads the thread data and changes the current [messageMode] to be [Thread].
      *
-     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage],
-     * after which we observe specific data from the thread.
-     *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
         messageMode = MessageMode.MessageThread(parentMessage)
 
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            loadThreadWithOfflinePlugin(parentMessage)
+        } else {
+            loadThreadWithChatDomain(parentMessage)
+        }
+    }
+
+    /**
+     * Loads thread data using ChatDomain approach. The data is loaded by fetching the [ThreadController] first, based
+     * on the [parentMessage], after which we observe specific data from the thread.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private fun loadThreadWithChatDomain(parentMessage: Message) {
         chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
-
-                observeThreadMessages(controller)
+                observeThreadMessages(controller.threadId, controller.messages, controller.endOfOlderMessages)
             } else {
                 messageMode = MessageMode.Normal
             }
         }
+    }
+
+    /**
+     * Loads thread data using ChatClient directly. The data is observed by using [ThreadState].
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
+        TODO()
     }
 
     /**
@@ -510,20 +531,25 @@ public class MessageListViewModel(
      * The data consists of the 'loadingOlderMessages', 'messages' and 'endOfOlderMessages' states,
      * that are combined into one [MessagesState].
      *
-     * @param controller The controller for the active thread.
+     * @param threadId The message id with the thread we want to observe.
+     * @param messages State flow source of thread messages.
+     * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
      */
-    private fun observeThreadMessages(controller: ThreadController) {
+    private fun observeThreadMessages(
+        threadId: String,
+        messages: StateFlow<List<Message>>,
+        endOfOlderMessages: StateFlow<Boolean>,
+    ) {
         threadJob = viewModelScope.launch {
-            controller.messages
-                .combine(user) { messages, user -> messages to user }
-                .combine(controller.endOfOlderMessages) { (messages, user), endOfOlderMessages ->
+            messages.combine(user) { messages, user -> messages to user }
+                .combine(endOfOlderMessages) { (messages, user), endOfOlderMessages ->
                     threadMessagesState.copy(
                         isLoading = false,
                         messageItems = groupMessages(filterDeletedMessages(messages)),
                         isLoadingMore = false,
                         endOfMessages = endOfOlderMessages,
                         currentUser = user,
-                        parentMessageId = controller.threadId
+                        parentMessageId = threadId
                     )
                 }.collect { newState -> threadMessagesState = newState }
         }
