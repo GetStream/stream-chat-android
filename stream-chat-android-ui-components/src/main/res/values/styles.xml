@@ -229,9 +229,9 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
-        <item name="streamUiAvatarInitialsTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiAvatarInitialsTextColor">@color/stream_ui_white</item>
         <item name="streamUiAvatarInitialsTextSize">20sp</item>
-        <item name="streamUiAvatarColor">@color/stream_ui_literal_black</item>
+        <item name="streamUiAvatarColor">@color/stream_ui_black</item>
     </style>
 
     <style name="StreamUi">

@@ -13,21 +13,21 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
     private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
     private val backgroundPaint = Paint().apply { style = Paint.Style.FILL }
-    private val textPaint = Paint().apply {
-        textSize = 50F
-        textAlign = Paint.Align.CENTER
-        style = Paint.Style.FILL
-        color = context.getColorCompat(R.color.stream_ui_white)
+    private val textPaint by lazy {
+        Paint().apply {
+            textSize = 50F
+            textAlign = Paint.Align.CENTER
+            style = Paint.Style.FILL
+            color = avatarStyle.initialsTextColor
+        }
     }
 
     private lateinit var avatarStyle: AvatarStyle
