@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -108,7 +107,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
@@ -116,7 +114,6 @@ import java.util.InputMismatchException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
-private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
@@ -978,10 +975,9 @@ internal class ChatDomainImpl internal constructor(
         validateCid(cid)
         require(parentId.isNotEmpty()) { "parentId can't be empty" }
 
-        return getThread(cid, parentId).map { threadController ->
-            runBlocking {
-                threadController.loadOlderMessages(messageLimit).data()
-            }
+        return CoroutineCall(scope) {
+            val threadController = getThread(cid, parentId).execute().data()
+            threadController.loadOlderMessages(messageLimit)
         }
     }
 
