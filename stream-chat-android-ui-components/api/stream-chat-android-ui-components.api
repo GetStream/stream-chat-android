@@ -133,20 +133,32 @@ public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Compa
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
-	public fun <init> (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;II)V
+	public fun <init> (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IIIFIIII)V
 	public final fun component1 ()I
+	public final fun component10 ()I
+	public final fun component11 ()I
+	public final fun component12 ()I
+	public final fun component13 ()I
 	public final fun component2 ()I
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component4 ()Z
 	public final fun component5 ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public final fun component6 ()I
 	public final fun component7 ()I
-	public final fun copy (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;II)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public final fun component8 ()I
+	public final fun component9 ()F
+	public final fun copy (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IIIFIIII)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IIIFIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarBorderColor ()I
 	public final fun getAvatarBorderWidth ()I
+	public final fun getAvatarColor ()I
 	public final fun getAvatarInitialText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getAvatarShape ()I
+	public final fun getAvatarType ()I
+	public final fun getBorderRadius ()F
+	public final fun getInitialsTextColor ()I
+	public final fun getInitialsTextSize ()I
 	public final fun getOnlineIndicatorBorderColor ()I
 	public final fun getOnlineIndicatorColor ()I
 	public final fun getOnlineIndicatorEnabled ()Z
@@ -161,6 +173,22 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/app
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setChannelData (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setUserData (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarView$AvatarShape : java/lang/Enum {
+	public static final field CIRCLE Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public static final field SQUARE Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarView$AvatarType : java/lang/Enum {
+	public static final field COLOR Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
+	public static final field PICTURE Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
+	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
