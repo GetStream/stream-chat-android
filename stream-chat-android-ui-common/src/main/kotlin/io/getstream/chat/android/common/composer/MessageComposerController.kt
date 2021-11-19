@@ -60,8 +60,7 @@ public class MessageComposerController(
     public val maxMessageLength: MutableStateFlow<Int> = MutableStateFlow(Integer.MAX_VALUE)
 
     /**
-     * Sets up the core data loading operations - such as observing the current channel and loading
-     * messages and other pieces of information.
+     * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
         scope.launch {
