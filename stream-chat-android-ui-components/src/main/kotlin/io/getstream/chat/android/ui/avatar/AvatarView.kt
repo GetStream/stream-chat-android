@@ -15,12 +15,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
     private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
+    private val backgroundPaint = Paint().apply { style = Paint.Style.FILL }
 
     private lateinit var avatarStyle: AvatarStyle
     private var isOnline: Boolean = false
@@ -58,7 +58,7 @@ public class AvatarView : AppCompatImageView {
     public fun setUserData(user: User) {
         load(
             data = Avatar.UserAvatar(user, avatarStyle),
-            transformation = Circle,
+            transformation = avatarShape(avatarStyle),
         )
         isOnline = user.online
     }
@@ -72,15 +72,21 @@ public class AvatarView : AppCompatImageView {
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (drawable != null) {
-            super.onDraw(canvas)
-            drawBorder(canvas)
-            drawOnlineStatus(canvas)
+        if (avatarStyle.avatarType == AvatarType.COLOR.value) {
+            drawColor(canvas, avatarStyle)
+        } else {
+            if (drawable != null) {
+                super.onDraw(canvas)
+                drawBorder(canvas)
+                drawOnlineStatus(canvas)
+            }
         }
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
         setStyle(AvatarStyle(context, attrs))
+
+        backgroundPaint.color = avatarStyle.avatarColor
     }
 
     private fun setStyle(avatarStyle: AvatarStyle) {
@@ -125,6 +131,27 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
+    private fun drawColor(canvas: Canvas, avatarStyle: AvatarStyle) {
+        if (avatarStyle.avatarShape == AvatarShape.SQUARE.value) {
+            canvas.drawRoundRect(
+                0F,
+                0F,
+                width.toFloat(),
+                height.toFloat(),
+                avatarStyle.borderRadius,
+                avatarStyle.borderRadius,
+                backgroundPaint
+            )
+        } else {
+            canvas.drawCircle(
+                width / 2f,
+                height / 2f,
+                width / 2f,
+                backgroundPaint
+            )
+        }
+    }
+
     private fun drawBorder(canvas: Canvas) {
         if (avatarStyle.avatarBorderWidth != 0) {
             if (avatarStyle.avatarShape == AvatarShape.SQUARE.value) {
@@ -133,8 +160,8 @@ public class AvatarView : AppCompatImageView {
                     BORDER_OFFSET,
                     width.toFloat() - BORDER_OFFSET,
                     height.toFloat() - BORDER_OFFSET,
-                    4.dpToPx().toFloat(),
-                    4.dpToPx().toFloat(),
+                    avatarStyle.borderRadius,
+                    avatarStyle.borderRadius,
                     borderPaint
                 )
             } else {
@@ -157,6 +184,10 @@ public class AvatarView : AppCompatImageView {
 
     public enum class AvatarShape(public val value: Int) {
         CIRCLE(0), SQUARE(1)
+    }
+
+    public enum class AvatarType(public val value: Int) {
+        PICTURE(0), COLOR(1)
     }
 
     internal companion object {

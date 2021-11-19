@@ -9,6 +9,7 @@ import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -24,6 +25,8 @@ public data class AvatarStyle(
     @ColorInt public val onlineIndicatorBorderColor: Int,
     public val avatarShape: Int,
     @Px public val borderRadius: Float,
+    public val avatarType: Int,
+    @ColorInt public val avatarColor: Int
 ) {
 
     internal companion object {
@@ -82,6 +85,15 @@ public data class AvatarStyle(
                         4.dpToPx()
                     ).toFloat()
 
+                val avatarType =
+                    it.getInt(R.styleable.AvatarView_streamUiAvatarType, AvatarView.AvatarType.PICTURE.value)
+
+                val avatarColor =
+                    it.getColor(
+                        R.styleable.AvatarView_streamUiAvatarColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue)
+                    )
+
                 return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
@@ -92,6 +104,8 @@ public data class AvatarStyle(
                     onlineIndicatorBorderColor = onlineIndicatorBorderColor,
                     avatarShape = avatarShape,
                     borderRadius = borderRadius,
+                    avatarType = avatarType,
+                    avatarColor = avatarColor,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }
         }

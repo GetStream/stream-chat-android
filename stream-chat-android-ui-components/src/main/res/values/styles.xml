@@ -244,7 +244,8 @@
         <item name="streamUiAvatarBorderWidth">2dp</item>
         <item name="streamUiAvatarOnlineIndicatorColor">?attr/streamUiGlobalAvatarOnlineIndicatorColor</item>
         <item name="streamUiAvatarOnlineIndicatorBorderColor">@color/stream_ui_white</item>
-        <item name="streamUiAvatarShape">square</item>
+        <item name="streamUiAvatarShape">circle</item>
+        <item name="streamUiAvatarType">color</item>
     </style>
 
     <style name="StreamUi.MessageList" parent="StreamUi">
