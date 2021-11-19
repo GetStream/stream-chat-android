@@ -41,6 +41,8 @@
             <enum name="color" value="1"/>
         </attr>
         <attr name="streamUiAvatarColor" format="color|reference" />
-        <attr name="streamUiAvatarBorderRadius" format="dimension"/>
+        <attr name="streamUiAvatarBorderRadius" format="dimension|reference"/>
+        <attr name="streamUiAvatarInitialsTextColor" format="color|reference" />
+        <attr name="streamUiAvatarInitialsTextSize" format="dimension|reference" />
     </declare-styleable>
 </resources>

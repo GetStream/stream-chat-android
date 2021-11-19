@@ -13,18 +13,27 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
     private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
     private val backgroundPaint = Paint().apply { style = Paint.Style.FILL }
+    private val textPaint = Paint().apply {
+        textSize = 50F
+        textAlign = Paint.Align.CENTER
+        style = Paint.Style.FILL
+        color = context.getColorCompat(R.color.stream_ui_white)
+    }
 
     private lateinit var avatarStyle: AvatarStyle
     private var isOnline: Boolean = false
     private var avatarViewSize: Int = 0
+    private var avatarInitials: String = "XX"
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -47,20 +56,45 @@ public class AvatarView : AppCompatImageView {
         if (channel.isAnonymousChannel() && otherUsers.size == 1) {
             setUserData(otherUsers.first())
         } else {
-            load(
-                data = Avatar.ChannelAvatar(channel, avatarStyle),
-                transformation = avatarShape(avatarStyle),
-            )
+            if (avatarStyle.avatarType == AvatarType.PICTURE.value) {
+                load(
+                    data = Avatar.ChannelAvatar(channel, avatarStyle),
+                    transformation = avatarShape(avatarStyle),
+                )
+            } else {
+                avatarInitials = parseInitials(channel.name)
+            }
+
             isOnline = false
         }
     }
 
     public fun setUserData(user: User) {
-        load(
-            data = Avatar.UserAvatar(user, avatarStyle),
-            transformation = avatarShape(avatarStyle),
-        )
+        if (avatarStyle.avatarType == AvatarType.PICTURE.value) {
+            load(
+                data = Avatar.UserAvatar(user, avatarStyle),
+                transformation = avatarShape(avatarStyle),
+            )
+        } else {
+            avatarInitials = parseInitials(user.name)
+        }
+
         isOnline = user.online
+    }
+
+    private fun parseInitials(text: String): String {
+        val textList = text.split(" ")
+
+        return when {
+            textList.size > 1 -> "${textList[0][0]}${textList[1][0]}"
+
+            textList[0].length > 1 -> "${textList[0][0]}${textList[0][1]}"
+
+            textList[0].isNotEmpty() -> "${textList[0][0]}${textList[0][0]}"
+
+            else -> "XX"
+
+        }.uppercase()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -74,6 +108,7 @@ public class AvatarView : AppCompatImageView {
     override fun onDraw(canvas: Canvas) {
         if (avatarStyle.avatarType == AvatarType.COLOR.value) {
             drawColor(canvas, avatarStyle)
+            drawInitials(canvas, avatarInitials)
         } else {
             if (drawable != null) {
                 super.onDraw(canvas)
@@ -129,6 +164,15 @@ public class AvatarView : AppCompatImageView {
             AvatarShape.SQUARE.value -> RoundedCorners(style.borderRadius)
             else -> Circle
         }
+    }
+
+    private fun drawInitials(canvas: Canvas, initials: String) {
+        canvas.drawText(
+            initials,
+            width.toFloat() / 2,
+            (canvas.height / 2) - ((textPaint.descent() + textPaint.ascent()) / 2),
+            textPaint
+        )
     }
 
     private fun drawColor(canvas: Canvas, avatarStyle: AvatarStyle) {

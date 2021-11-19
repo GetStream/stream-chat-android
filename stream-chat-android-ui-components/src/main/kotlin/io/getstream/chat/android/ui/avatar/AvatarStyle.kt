@@ -26,7 +26,9 @@ public data class AvatarStyle(
     public val avatarShape: Int,
     @Px public val borderRadius: Float,
     public val avatarType: Int,
-    @ColorInt public val avatarColor: Int
+    @ColorInt public val avatarColor: Int,
+    @Px public val initialsTextSize: Int,
+    @ColorInt public val initialsTextColor: Int
 ) {
 
     internal companion object {
@@ -94,6 +96,18 @@ public data class AvatarStyle(
                         context.getColorCompat(R.color.stream_ui_accent_blue)
                     )
 
+                val initialsTextSize =
+                    it.getDimensionPixelSize(
+                        R.styleable.AvatarView_streamUiAvatarInitialsTextSize,
+                        50
+                    )
+
+                val initialsTextColor =
+                    it.getColor(
+                        R.styleable.AvatarView_streamUiAvatarInitialsTextColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+
                 return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
@@ -106,6 +120,8 @@ public data class AvatarStyle(
                     borderRadius = borderRadius,
                     avatarType = avatarType,
                     avatarColor = avatarColor,
+                    initialsTextSize = initialsTextSize,
+                    initialsTextColor = initialsTextColor,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }
         }
