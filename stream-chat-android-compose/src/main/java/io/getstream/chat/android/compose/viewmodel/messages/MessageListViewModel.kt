@@ -46,6 +46,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -530,7 +531,8 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        TODO()
+        val threadState = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
     }
 
     /**
