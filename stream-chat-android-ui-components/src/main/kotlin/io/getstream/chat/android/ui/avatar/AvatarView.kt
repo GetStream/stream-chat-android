@@ -123,6 +123,8 @@ public class AvatarView : AppCompatImageView {
             AvatarType.COLOR -> {
                 drawColor(canvas, avatarStyle)
                 drawInitials(canvas, avatarInitials)
+                drawBorder(canvas)
+                drawOnlineStatus(canvas)
             }
         }
     }
@@ -207,10 +209,10 @@ public class AvatarView : AppCompatImageView {
         if (avatarStyle.avatarBorderWidth != 0) {
             if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
                 canvas.drawRoundRect(
-                    BORDER_OFFSET,
-                    BORDER_OFFSET,
-                    width.toFloat() - BORDER_OFFSET,
-                    height.toFloat() - BORDER_OFFSET,
+                    0F,
+                    0F,
+                    width.toFloat(),
+                    height.toFloat(),
                     avatarStyle.borderRadius,
                     avatarStyle.borderRadius,
                     borderPaint
@@ -248,7 +250,5 @@ public class AvatarView : AppCompatImageView {
         internal const val AVATAR_SIZE_EXTRA = 1
 
         internal const val MAX_AVATAR_SECTIONS = 4
-
-        private const val BORDER_OFFSET = 4F
     }
 }
