@@ -152,7 +152,7 @@ public fun MessageComposer(
                     integrations()
                 } else {
                     Spacer(
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                 }
 
