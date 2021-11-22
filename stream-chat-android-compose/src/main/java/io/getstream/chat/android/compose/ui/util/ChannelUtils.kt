@@ -84,21 +84,26 @@ public fun Channel.isOneToOne(currentUser: User?): Boolean {
  * @return The text that represent the member status of the channel.
  */
 public fun Channel.getMembersStatusText(context: Context, currentUser: User?): String {
-    val otherMembers = members.filter { it.user.id != currentUser?.id }
-
     return when {
-        otherMembers.isEmpty() -> ""
-        isOneToOne(currentUser) -> otherMembers.first()
+        isOneToOne(currentUser) -> members.first { it.user.id != currentUser?.id }
             .user
             .getLastSeenText(context)
         else -> {
-            val count = otherMembers.count()
-            context.resources.getQuantityString(
-                R.plurals.stream_compose_channel_members,
-                count,
-                count,
-                otherMembers.count { it.user.online }
+            val memberCountString = context.resources.getQuantityString(
+                R.plurals.stream_compose_member_count,
+                memberCount,
+                memberCount
             )
+
+            return if (watcherCount > 0) {
+                context.getString(
+                    R.string.stream_compose_member_count_online,
+                    memberCountString,
+                    watcherCount
+                )
+            } else {
+                memberCountString
+            }
         }
     }
 }

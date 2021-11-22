@@ -25,8 +25,9 @@
     <string name="stream_compose_channel_info_dismiss">취소</string>
 
     <!-- Common -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="other">%1d명, %2d명이 온라인</item>
+    <string name="stream_compose_member_count_online">%s, %d온라인</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="other">%1d명</item>
     </plurals>
     <string name="stream_compose_ok">확인</string>
     <string name="stream_compose_cancel">취소</string>
