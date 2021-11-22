@@ -24,8 +24,7 @@ public data class AvatarStyle(
     @ColorInt public val onlineIndicatorColor: Int,
     @ColorInt public val onlineIndicatorBorderColor: Int,
     public val avatarShape: AvatarView.AvatarShape,
-    @Px public val borderRadius: Float,
-    @ColorInt public val avatarColor: Int,
+    @Px public val borderRadius: Float
 ) {
 
     internal companion object {
@@ -87,12 +86,6 @@ public data class AvatarStyle(
                         4.dpToPx()
                     ).toFloat()
 
-                val avatarColor =
-                    it.getColor(
-                        R.styleable.AvatarView_streamUiAvatarColor,
-                        context.getColorCompat(R.color.stream_ui_black)
-                    )
-
                 return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
@@ -103,7 +96,6 @@ public data class AvatarStyle(
                     onlineIndicatorBorderColor = onlineIndicatorBorderColor,
                     avatarShape = avatarShape,
                     borderRadius = borderRadius,
-                    avatarColor = avatarColor,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }
         }
