@@ -42,6 +42,5 @@
         </attr>
         <attr name="streamUiAvatarColor" format="color|reference" />
         <attr name="streamUiAvatarBorderRadius" format="dimension|reference"/>
-        <attr name="streamUiAvatarInitialsTextColor" format="color|reference" />
     </declare-styleable>
 </resources>

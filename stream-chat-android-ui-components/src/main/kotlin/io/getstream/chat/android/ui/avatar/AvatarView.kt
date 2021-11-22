@@ -26,7 +26,7 @@ public class AvatarView : AppCompatImageView {
             textSize = avatarStyle.avatarInitialText.size.toFloat()
             textAlign = Paint.Align.CENTER
             style = Paint.Style.FILL
-            color = avatarStyle.initialsTextColor
+            color = avatarStyle.avatarInitialText.color
         }
     }
 
