@@ -162,10 +162,6 @@ public class AvatarView : AppCompatImageView {
         CIRCLE(0), SQUARE(1)
     }
 
-    public enum class AvatarType(public val value: Int) {
-        PICTURE(0), COLOR(1)
-    }
-
     internal companion object {
         /**
          * A small extra added to the avatar size to prevent anti-aliasing issues.
