@@ -5,6 +5,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/)
 - [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
 - [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
+- [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
 
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
