@@ -175,14 +175,6 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView$AvatarShape : 
 	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
 }
 
-public final class io/getstream/chat/android/ui/avatar/AvatarView$AvatarType : java/lang/Enum {
-	public static final field COLOR Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
-	public static final field PICTURE Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
-	public final fun getValue ()I
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
-	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarType;
-}
-
 public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
 	public static final field BOTTOM_LEFT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static final field BOTTOM_RIGHT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
