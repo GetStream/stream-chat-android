@@ -23,12 +23,11 @@ public data class AvatarStyle(
     public val onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition,
     @ColorInt public val onlineIndicatorColor: Int,
     @ColorInt public val onlineIndicatorBorderColor: Int,
-    public val avatarShape: Int,
+    public val avatarShape: AvatarView.AvatarShape,
     @Px public val borderRadius: Float,
-    public val avatarType: Int,
+    public val avatarType: AvatarView.AvatarType,
     @ColorInt public val avatarColor: Int,
-    @Px public val initialsTextSize: Int,
-    @ColorInt public val initialsTextColor: Int
+    @ColorInt public val initialsTextColor: Int,
 ) {
 
     internal companion object {
@@ -45,7 +44,7 @@ public data class AvatarStyle(
                 )
                 val avatarBorderColor = it.getColor(
                     R.styleable.AvatarView_streamUiAvatarBorderColor,
-                    Color.WHITE
+                    context.getColorCompat(R.color.stream_ui_white)
                 )
                 val avatarInitialText = TextStyle.Builder(it)
                     .size(
@@ -54,7 +53,7 @@ public data class AvatarStyle(
                     )
                     .color(
                         R.styleable.AvatarView_streamUiAvatarTextColor,
-                        Color.WHITE
+                        context.getColorCompat(R.color.stream_ui_white)
                     )
                     .font(
                         R.styleable.AvatarView_streamUiAvatarTextFontAssets,
@@ -76,10 +75,13 @@ public data class AvatarStyle(
                 val onlineIndicatorColor =
                     it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
                 val onlineIndicatorBorderColor =
-                    it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)
+                    it.getColor(
+                        R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
 
                 val avatarShape =
-                    it.getInt(R.styleable.AvatarView_streamUiAvatarShape, AvatarView.AvatarShape.CIRCLE.value)
+                    it.getEnum(R.styleable.AvatarView_streamUiAvatarShape, AvatarView.AvatarShape.CIRCLE)
 
                 val borderRadius =
                     it.getDimensionPixelSize(
@@ -88,18 +90,12 @@ public data class AvatarStyle(
                     ).toFloat()
 
                 val avatarType =
-                    it.getInt(R.styleable.AvatarView_streamUiAvatarType, AvatarView.AvatarType.PICTURE.value)
+                    it.getEnum(R.styleable.AvatarView_streamUiAvatarType, AvatarView.AvatarType.PICTURE)
 
                 val avatarColor =
                     it.getColor(
                         R.styleable.AvatarView_streamUiAvatarColor,
-                        context.getColorCompat(R.color.stream_ui_accent_blue)
-                    )
-
-                val initialsTextSize =
-                    it.getDimensionPixelSize(
-                        R.styleable.AvatarView_streamUiAvatarInitialsTextSize,
-                        50
+                        context.getColorCompat(R.color.stream_ui_black)
                     )
 
                 val initialsTextColor =
@@ -120,7 +116,6 @@ public data class AvatarStyle(
                     borderRadius = borderRadius,
                     avatarType = avatarType,
                     avatarColor = avatarColor,
-                    initialsTextSize = initialsTextSize,
                     initialsTextColor = initialsTextColor,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }

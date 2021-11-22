@@ -23,7 +23,7 @@ public class AvatarView : AppCompatImageView {
     private val backgroundPaint = Paint().apply { style = Paint.Style.FILL }
     private val textPaint by lazy {
         Paint().apply {
-            textSize = 50F
+            textSize = avatarStyle.avatarInitialText.size.toFloat()
             textAlign = Paint.Align.CENTER
             style = Paint.Style.FILL
             color = avatarStyle.initialsTextColor
@@ -56,13 +56,16 @@ public class AvatarView : AppCompatImageView {
         if (channel.isAnonymousChannel() && otherUsers.size == 1) {
             setUserData(otherUsers.first())
         } else {
-            if (avatarStyle.avatarType == AvatarType.PICTURE.value) {
-                load(
-                    data = Avatar.ChannelAvatar(channel, avatarStyle),
-                    transformation = avatarShape(avatarStyle),
-                )
-            } else {
-                avatarInitials = parseInitials(channel.name)
+            when (avatarStyle.avatarType) {
+                AvatarType.PICTURE -> {
+                    load(
+                        data = Avatar.ChannelAvatar(channel, avatarStyle),
+                        transformation = avatarShape(avatarStyle),
+                    )
+                }
+                AvatarType.COLOR -> {
+                    avatarInitials = parseInitials(channel.name)
+                }
             }
 
             isOnline = false
@@ -70,13 +73,16 @@ public class AvatarView : AppCompatImageView {
     }
 
     public fun setUserData(user: User) {
-        if (avatarStyle.avatarType == AvatarType.PICTURE.value) {
-            load(
-                data = Avatar.UserAvatar(user, avatarStyle),
-                transformation = avatarShape(avatarStyle),
-            )
-        } else {
-            avatarInitials = parseInitials(user.name)
+        when (avatarStyle.avatarType) {
+            AvatarType.PICTURE -> {
+                load(
+                    data = Avatar.UserAvatar(user, avatarStyle),
+                    transformation = avatarShape(avatarStyle),
+                )
+            }
+            AvatarType.COLOR -> {
+                avatarInitials = parseInitials(user.name)
+            }
         }
 
         isOnline = user.online
@@ -106,22 +112,23 @@ public class AvatarView : AppCompatImageView {
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (avatarStyle.avatarType == AvatarType.COLOR.value) {
-            drawColor(canvas, avatarStyle)
-            drawInitials(canvas, avatarInitials)
-        } else {
-            if (drawable != null) {
-                super.onDraw(canvas)
-                drawBorder(canvas)
-                drawOnlineStatus(canvas)
+        when (avatarStyle.avatarType) {
+            AvatarType.PICTURE -> {
+                if (drawable != null) {
+                    super.onDraw(canvas)
+                    drawBorder(canvas)
+                    drawOnlineStatus(canvas)
+                }
+            }
+            AvatarType.COLOR -> {
+                drawColor(canvas, avatarStyle)
+                drawInitials(canvas, avatarInitials)
             }
         }
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
         setStyle(AvatarStyle(context, attrs))
-
-        backgroundPaint.color = avatarStyle.avatarColor
     }
 
     private fun setStyle(avatarStyle: AvatarStyle) {
@@ -132,6 +139,7 @@ public class AvatarView : AppCompatImageView {
         setPadding(padding, padding, padding, padding)
         onlineIndicatorOutlinePaint.color = avatarStyle.onlineIndicatorBorderColor
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
+        backgroundPaint.color = avatarStyle.avatarColor
     }
 
     private fun drawOnlineStatus(canvas: Canvas) {
@@ -160,9 +168,8 @@ public class AvatarView : AppCompatImageView {
 
     private fun avatarShape(style: AvatarStyle): StreamImageLoader.ImageTransformation {
         return when (style.avatarShape) {
-            AvatarShape.CIRCLE.value -> Circle
-            AvatarShape.SQUARE.value -> RoundedCorners(style.borderRadius)
-            else -> Circle
+            AvatarShape.CIRCLE -> Circle
+            AvatarShape.SQUARE -> RoundedCorners(style.borderRadius)
         }
     }
 
@@ -176,7 +183,7 @@ public class AvatarView : AppCompatImageView {
     }
 
     private fun drawColor(canvas: Canvas, avatarStyle: AvatarStyle) {
-        if (avatarStyle.avatarShape == AvatarShape.SQUARE.value) {
+        if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
             canvas.drawRoundRect(
                 0F,
                 0F,
@@ -198,7 +205,7 @@ public class AvatarView : AppCompatImageView {
 
     private fun drawBorder(canvas: Canvas) {
         if (avatarStyle.avatarBorderWidth != 0) {
-            if (avatarStyle.avatarShape == AvatarShape.SQUARE.value) {
+            if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
                 canvas.drawRoundRect(
                     BORDER_OFFSET,
                     BORDER_OFFSET,

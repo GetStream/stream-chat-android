@@ -3,7 +3,7 @@
 
     <style name="StreamUiBaseAvatarStyle">
         <item name="streamUiAvatarBorderWidth">0dp</item>
-        <item name="streamUiAvatarBorderColor">@color/stream_ui_black</item>
+        <item name="streamUiAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiAvatarTextStyle">bold</item>
     </style>
@@ -214,7 +214,7 @@
         <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/StreamUi.AttachmentGallery.BottomBar.ImageCount</item>
         <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.LeftIcon</item>
         <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
-        <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_black</item>
+        <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
@@ -230,7 +230,6 @@
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
         <item name="streamUiAvatarInitialsTextColor">@color/stream_ui_white</item>
-        <item name="streamUiAvatarInitialsTextSize">20sp</item>
         <item name="streamUiAvatarColor">@color/stream_ui_black</item>
     </style>
 
