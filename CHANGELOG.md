@@ -91,6 +91,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⬆️ Improved
 - Updated a lot of documentation around the Messages features
+- Made the `ChannelNameFormatter`, `ClipboardHandler` and `MessagePreviewFormatter` interfaces functional for ease of use.
 
 ### ✅ Added
 - Added the "mute" option to the `ChannelInfo` action dialog.

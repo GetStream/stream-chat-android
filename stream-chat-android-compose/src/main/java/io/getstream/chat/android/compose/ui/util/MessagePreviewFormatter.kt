@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
@@ -13,7 +14,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  *  An interface that allows to generate a preview text for the given message.
  */
-public interface MessagePreviewFormatter {
+public fun interface MessagePreviewFormatter {
 
     /**
      * Generates a preview text for the given message.
@@ -77,6 +78,7 @@ private class DefaultMessagePreviewFormatter(
     /**
      * Appends the sender name to the [AnnotatedString].
      */
+    @SuppressLint("ComposableNaming")
     @Composable
     private fun AnnotatedString.Builder.appendSenderName(message: Message, currentUser: User?) {
         val sender = message.getSenderDisplayName(context, currentUser)
@@ -97,6 +99,7 @@ private class DefaultMessagePreviewFormatter(
     /**
      * Appends the message text to the [AnnotatedString].
      */
+    @SuppressLint("ComposableNaming")
     @Composable
     private fun AnnotatedString.Builder.appendMessageText(messageText: String) {
         if (messageText.isNotEmpty()) {
@@ -116,6 +119,7 @@ private class DefaultMessagePreviewFormatter(
     /**
      * Appends a string representations of [attachments] to the [AnnotatedString].
      */
+    @SuppressLint("ComposableNaming")
     @Composable
     private fun AnnotatedString.Builder.appendAttachmentText(attachments: List<Attachment>) {
         if (attachments.isNotEmpty()) {
