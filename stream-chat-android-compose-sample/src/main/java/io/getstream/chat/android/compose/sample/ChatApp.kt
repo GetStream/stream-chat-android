@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
-import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 
 class ChatApp : Application() {
 
@@ -52,13 +51,7 @@ class ChatApp : Application() {
 
     private fun createNotificationConfig(): NotificationConfig {
         return NotificationConfig(
-            pushDeviceGenerators = listOf(
-                FirebasePushDeviceGenerator(),
-                HuaweiPushDeviceGenerator(
-                    context = this,
-                    appId = "104598359"
-                )
-            )
+            pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
         )
     }
 
