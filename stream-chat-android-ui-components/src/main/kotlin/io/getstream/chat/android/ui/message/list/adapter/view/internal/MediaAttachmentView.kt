@@ -1,9 +1,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
-import android.content.res.Resources
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.view.View
 import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -175,8 +173,8 @@ internal class MediaAttachmentView : ConstraintLayout {
         return giphyInfoMap?.let { map ->
             GiphyInfo(
                 url = map["url"] ?: this.thumbUrl ?: "",
-                width = map["width"]?.toInt() ?: GIPHY_INFO_DEAFULT_WIDTH_DP.dpToPx(),
-                height = map["height"]?.toInt() ?: GIPHY_INFO_DEAFULT_HEIGHT_DP.dpToPx(),
+                width = map["width"]?.toInt() ?: GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx(),
+                height = map["height"]?.toInt() ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx(),
                 size = map["size"]?.toInt() ?: 0,
                 frames = map["frames"]?.toInt() ?: 0
             )
@@ -200,7 +198,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         private const val DEFAULT_MARGIN_FOR_CONTAINER_DP = 4
         private const val MAX_WIDTH_PERCENTAGE = .75
 
-        private const val GIPHY_INFO_DEAFULT_WIDTH_DP = 200
-        private const val GIPHY_INFO_DEAFULT_HEIGHT_DP = 200
+        private const val GIPHY_INFO_DEFAULT_WIDTH_DP = 200
+        private const val GIPHY_INFO_DEFAULT_HEIGHT_DP = 200
     }
 }
