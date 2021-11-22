@@ -25,7 +25,6 @@ public data class AvatarStyle(
     @ColorInt public val onlineIndicatorBorderColor: Int,
     public val avatarShape: AvatarView.AvatarShape,
     @Px public val borderRadius: Float,
-    public val avatarType: AvatarView.AvatarType,
     @ColorInt public val avatarColor: Int,
 ) {
 
@@ -43,7 +42,7 @@ public data class AvatarStyle(
                 )
                 val avatarBorderColor = it.getColor(
                     R.styleable.AvatarView_streamUiAvatarBorderColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_black)
                 )
                 val avatarInitialText = TextStyle.Builder(it)
                     .size(
@@ -88,9 +87,6 @@ public data class AvatarStyle(
                         4.dpToPx()
                     ).toFloat()
 
-                val avatarType =
-                    it.getEnum(R.styleable.AvatarView_streamUiAvatarType, AvatarView.AvatarType.PICTURE)
-
                 val avatarColor =
                     it.getColor(
                         R.styleable.AvatarView_streamUiAvatarColor,
@@ -107,7 +103,6 @@ public data class AvatarStyle(
                     onlineIndicatorBorderColor = onlineIndicatorBorderColor,
                     avatarShape = avatarShape,
                     borderRadius = borderRadius,
-                    avatarType = avatarType,
                     avatarColor = avatarColor,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }

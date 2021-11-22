@@ -15,25 +15,16 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
     private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
-    private val backgroundPaint = Paint().apply { style = Paint.Style.FILL }
-    private val textPaint by lazy {
-        Paint().apply {
-            textSize = avatarStyle.avatarInitialText.size.toFloat()
-            textAlign = Paint.Align.CENTER
-            style = Paint.Style.FILL
-            color = avatarStyle.avatarInitialText.color
-        }
-    }
 
     private lateinit var avatarStyle: AvatarStyle
     private var isOnline: Boolean = false
     private var avatarViewSize: Int = 0
-    private var avatarInitials: String = "XX"
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -56,51 +47,22 @@ public class AvatarView : AppCompatImageView {
         if (channel.isAnonymousChannel() && otherUsers.size == 1) {
             setUserData(otherUsers.first())
         } else {
-            when (avatarStyle.avatarType) {
-                AvatarType.PICTURE -> {
-                    load(
-                        data = Avatar.ChannelAvatar(channel, avatarStyle),
-                        transformation = avatarShape(avatarStyle),
-                    )
-                }
-                AvatarType.COLOR -> {
-                    avatarInitials = parseInitials(channel.name)
-                }
-            }
+            load(
+                data = Avatar.ChannelAvatar(channel, avatarStyle),
+                transformation = avatarShape(avatarStyle),
+            )
 
             isOnline = false
         }
     }
 
     public fun setUserData(user: User) {
-        when (avatarStyle.avatarType) {
-            AvatarType.PICTURE -> {
-                load(
-                    data = Avatar.UserAvatar(user, avatarStyle),
-                    transformation = avatarShape(avatarStyle),
-                )
-            }
-            AvatarType.COLOR -> {
-                avatarInitials = parseInitials(user.name)
-            }
-        }
+        load(
+            data = Avatar.UserAvatar(user, avatarStyle),
+            transformation = avatarShape(avatarStyle),
+        )
 
         isOnline = user.online
-    }
-
-    private fun parseInitials(text: String): String {
-        val textList = text.split(" ")
-
-        return when {
-            textList.size > 1 -> "${textList[0][0]}${textList[1][0]}"
-
-            textList[0].length > 1 -> "${textList[0][0]}${textList[0][1]}"
-
-            textList[0].isNotEmpty() -> "${textList[0][0]}${textList[0][0]}"
-
-            else -> "XX"
-
-        }.uppercase()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -112,20 +74,10 @@ public class AvatarView : AppCompatImageView {
     }
 
     override fun onDraw(canvas: Canvas) {
-        when (avatarStyle.avatarType) {
-            AvatarType.PICTURE -> {
-                if (drawable != null) {
-                    super.onDraw(canvas)
-                    drawBorder(canvas, avatarStyle, borderPaint)
-                    drawOnlineStatus(canvas, isOnline, avatarStyle)
-                }
-            }
-            AvatarType.COLOR -> {
-                drawColor(canvas, avatarStyle, backgroundPaint)
-                drawInitials(canvas, avatarInitials)
-                drawBorder(canvas, avatarStyle, borderPaint)
-                drawOnlineStatus(canvas, isOnline, avatarStyle)
-            }
+        if (drawable != null) {
+            super.onDraw(canvas)
+            drawBorder(canvas, avatarStyle, borderPaint)
+            drawOnlineStatus(canvas, isOnline, avatarStyle)
         }
     }
 
@@ -141,7 +93,6 @@ public class AvatarView : AppCompatImageView {
         setPadding(padding, padding, padding, padding)
         onlineIndicatorOutlinePaint.color = avatarStyle.onlineIndicatorBorderColor
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
-        backgroundPaint.color = avatarStyle.avatarColor
     }
 
     private fun drawOnlineStatus(canvas: Canvas, isOnline: Boolean, avatarStyle: AvatarStyle) {
@@ -175,44 +126,16 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    private fun drawInitials(canvas: Canvas, initials: String) {
-        canvas.drawText(
-            initials,
-            width.toFloat() / 2,
-            (canvas.height / 2) - ((textPaint.descent() + textPaint.ascent()) / 2),
-            textPaint
-        )
-    }
-
-    private fun drawColor(canvas: Canvas, avatarStyle: AvatarStyle, backgroundPaint: Paint) {
-        if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
-            canvas.drawRoundRect(
-                0F,
-                0F,
-                width.toFloat(),
-                height.toFloat(),
-                avatarStyle.borderRadius,
-                avatarStyle.borderRadius,
-                backgroundPaint
-            )
-        } else {
-            canvas.drawCircle(
-                width / 2f,
-                height / 2f,
-                width / 2f,
-                backgroundPaint
-            )
-        }
-    }
-
     private fun drawBorder(canvas: Canvas, avatarStyle: AvatarStyle, borderPaint: Paint) {
         if (avatarStyle.avatarBorderWidth != 0) {
             if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
+                val dpOffset = SQUARE_BORDER_OFFSET.dpToPx().toFloat()
+
                 canvas.drawRoundRect(
-                    0F,
-                    0F,
-                    width.toFloat(),
-                    height.toFloat(),
+                    dpOffset,
+                    dpOffset,
+                    width.toFloat() - dpOffset,
+                    height.toFloat() - dpOffset,
                     avatarStyle.borderRadius,
                     avatarStyle.borderRadius,
                     borderPaint
@@ -250,5 +173,7 @@ public class AvatarView : AppCompatImageView {
         internal const val AVATAR_SIZE_EXTRA = 1
 
         internal const val MAX_AVATAR_SECTIONS = 4
+
+        private const val SQUARE_BORDER_OFFSET = 1
     }
 }

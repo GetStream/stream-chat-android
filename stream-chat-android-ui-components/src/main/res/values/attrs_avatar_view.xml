@@ -36,11 +36,6 @@
             <enum name="circle" value="0"/>
             <enum name="square" value="1"/>
         </attr>
-        <attr name="streamUiAvatarType" format="enum">
-            <enum name="picture" value="0"/>
-            <enum name="color" value="1"/>
-        </attr>
-        <attr name="streamUiAvatarColor" format="color|reference" />
         <attr name="streamUiAvatarBorderRadius" format="dimension|reference"/>
     </declare-styleable>
 </resources>
