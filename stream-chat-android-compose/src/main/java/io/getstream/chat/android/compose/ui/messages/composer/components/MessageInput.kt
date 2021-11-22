@@ -94,6 +94,7 @@ public fun MessageInputOptions(
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param modifier Modifier for styling.
+ * @param maxLines The number of lines that are allowed in the input.
  * @param label Composable function that represents the label UI, when there's no input/focus.
  */
 @Composable
@@ -102,6 +103,7 @@ public fun MessageInput(
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
+    maxLines: Int = DEFAULT_MESSAGE_INPUT_MAX_LINES,
     label: @Composable () -> Unit = { DefaultComposerLabel() },
 ) {
     val (value, attachments, activeAction) = messageInputState
@@ -109,7 +111,7 @@ public fun MessageInput(
     InputField(
         modifier = modifier,
         value = value,
-        maxLines = 6,
+        maxLines = maxLines,
         onValueChange = onValueChange,
         decorationBox = { innerTextField ->
             Column {
@@ -163,3 +165,5 @@ private fun MessageInputAttachments(
 
     previewFactory?.previewContent?.invoke(modifier, attachments, onAttachmentRemoved)
 }
+
+private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6
