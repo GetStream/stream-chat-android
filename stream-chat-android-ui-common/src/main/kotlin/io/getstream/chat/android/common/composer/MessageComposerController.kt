@@ -57,7 +57,7 @@ public class MessageComposerController(
     /**
      * Represents the maximum allowed message length.
      */
-    public val maxMessageLength: MutableStateFlow<Int> = MutableStateFlow(Integer.MAX_VALUE)
+    public val maxMessageLength: MutableStateFlow<Int> = MutableStateFlow(DEFAULT_MAX_MESSAGE_LENGTH)
 
     /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
@@ -281,5 +281,12 @@ public class MessageComposerController(
      */
     public fun onCleared() {
         scope.cancel()
+    }
+
+    private companion object {
+        /**
+         * The default allowed number of characters in a message.
+         */
+        private const val DEFAULT_MAX_MESSAGE_LENGTH: Int = 5000
     }
 }
