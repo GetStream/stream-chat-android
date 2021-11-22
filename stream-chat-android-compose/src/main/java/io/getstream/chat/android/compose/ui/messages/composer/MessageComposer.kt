@@ -12,6 +12,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,9 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.Edit
-import io.getstream.chat.android.compose.state.messages.list.MessageAction
+import io.getstream.chat.android.compose.state.messages.composer.MessageInputState
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
@@ -38,9 +40,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
  * @param onAttachmentsClick Handler for the default Attachments integration.
- * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
+ * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param integrations A view that represents custom integrations. By default, we provide
  * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
  * their own integrations, which they need to hook up to their own data providers and UI.
@@ -60,20 +62,22 @@ public fun MessageComposer(
         DefaultComposerIntegrations(onAttachmentsClick)
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
-    input: @Composable RowScope.() -> Unit = {
+    input: @Composable RowScope.(MessageInputState) -> Unit = { inputState ->
         MessageInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             label = label,
-            value = viewModel.input,
-            attachments = viewModel.selectedAttachments,
-            activeAction = viewModel.activeAction,
+            messageInputState = inputState,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved
         )
     },
 ) {
+    val value by viewModel.input.collectAsState()
+    val selectedAttachments by viewModel.selectedAttachments.collectAsState()
+    val activeAction by viewModel.lastActiveAction.collectAsState(null)
+
     MessageComposer(
         modifier = modifier,
         onSendMessage = { text, attachments ->
@@ -83,9 +87,7 @@ public fun MessageComposer(
         },
         integrations = integrations,
         input = input,
-        value = viewModel.input,
-        attachments = viewModel.selectedAttachments,
-        activeAction = viewModel.activeAction,
+        messageInputState = MessageInputState(value, selectedAttachments, activeAction),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
     )
@@ -95,28 +97,26 @@ public fun MessageComposer(
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
  * manual way to handle and represent data and various operations.
  *
- * @param value Current input field value.
- * @param attachments Currently selected attachments, shown in the composer.
- * @param integrations Composable that represents integrations for the composer, such as Attachments.
- * @param input Composable that represents the input field in the composer.
- * @param modifier Modifier for styling.
- * @param shouldShowIntegrations If we should show or hide integrations.
- * @param activeAction Currently active action either Reply or Edit, whichever is last.
+ * @param messageInputState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
+ * @param modifier Modifier for styling.
+ * @param shouldShowIntegrations If we should show or hide integrations.
+ * @param integrations Composable that represents integrations for the composer, such as Attachments.
+ * @param input Composable that represents the input field in the composer.
  */
 @Composable
 public fun MessageComposer(
-    value: String,
-    attachments: List<Attachment>,
-    activeAction: MessageAction?,
+    messageInputState: MessageInputState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
-    input: @Composable RowScope.() -> Unit,
+    input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
+    val (value, attachments, activeAction) = messageInputState
+
     Surface(
         modifier = modifier,
         elevation = 4.dp,
@@ -152,7 +152,7 @@ public fun MessageComposer(
                     )
                 }
 
-                input()
+                input(messageInputState)
 
                 val isInputValid = value.isNotEmpty() || attachments.isNotEmpty()
 

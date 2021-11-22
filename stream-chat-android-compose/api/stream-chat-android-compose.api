@@ -57,10 +57,10 @@ public abstract class io/getstream/chat/android/compose/state/channel/list/Chann
 
 public final class io/getstream/chat/android/compose/state/channel/list/ChannelOption {
 	public static final field $stable I
-	public synthetic fun <init> (Ljava/lang/String;JLandroidx/compose/ui/graphics/vector/ImageVector;JLio/getstream/chat/android/compose/state/channel/list/ChannelListAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;JLandroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/compose/state/channel/list/ChannelListAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getAction ()Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;
-	public final fun getIcon ()Landroidx/compose/ui/graphics/vector/ImageVector;
 	public final fun getIconColor-0d7_KjU ()J
+	public final fun getIconPainter ()Landroidx/compose/ui/graphics/painter/Painter;
 	public final fun getTitle ()Ljava/lang/String;
 	public final fun getTitleColor-0d7_KjU ()J
 }
@@ -97,6 +97,16 @@ public final class io/getstream/chat/android/compose/state/channel/list/LeaveGro
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
+public final class io/getstream/chat/android/compose/state/channel/list/MuteChannel : io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
+public final class io/getstream/chat/android/compose/state/channel/list/UnmuteChannel : io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
 public final class io/getstream/chat/android/compose/state/channel/list/ViewInfo : io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
@@ -117,10 +127,6 @@ public final class io/getstream/chat/android/compose/state/imagepreview/ImagePre
 	public static final field SHOW_IN_CHAT Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
 	public static fun values ()[Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
-}
-
-public abstract class io/getstream/chat/android/compose/state/messages/MessageMode {
-	public static final field $stable I
 }
 
 public final class io/getstream/chat/android/compose/state/messages/MessagesState {
@@ -162,20 +168,9 @@ public abstract class io/getstream/chat/android/compose/state/messages/NewMessag
 	public static final field $stable I
 }
 
-public final class io/getstream/chat/android/compose/state/messages/Normal : io/getstream/chat/android/compose/state/messages/MessageMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/Normal;
-}
-
 public final class io/getstream/chat/android/compose/state/messages/Other : io/getstream/chat/android/compose/state/messages/NewMessageState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/Other;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/Thread : io/getstream/chat/android/compose/state/messages/MessageMode {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun getParentMessage ()Lio/getstream/chat/android/client/models/Message;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/AttachmentItem {
@@ -228,6 +223,24 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/MediaCapture;
 }
 
+public final class io/getstream/chat/android/compose/state/messages/composer/MessageInputState {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lio/getstream/chat/android/common/state/MessageAction;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;)Lio/getstream/chat/android/compose/state/messages/composer/MessageInputState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/composer/MessageInputState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/composer/MessageInputState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAction ()Lio/getstream/chat/android/common/state/MessageAction;
+	public final fun getAttachments ()Ljava/util/List;
+	public final fun getInputValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/state/messages/items/DateSeparator : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
 	public fun <init> (Ljava/util/Date;)V
@@ -242,21 +255,23 @@ public final class io/getstream/chat/android/compose/state/messages/items/DateSe
 
 public final class io/getstream/chat/android/compose/state/messages/items/MessageItem : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZ)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
 	public final fun component2 ()Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZ)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
+	public final fun component6 ()Z
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZ)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getGroupPosition ()Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public final fun isFocused ()Z
+	public final fun isInThread ()Z
 	public final fun isMine ()Z
 	public fun toString ()Ljava/lang/String;
 }
@@ -289,88 +304,56 @@ public abstract class io/getstream/chat/android/compose/state/messages/items/Mes
 	public static final field $stable I
 }
 
-public final class io/getstream/chat/android/compose/state/messages/list/Copy : io/getstream/chat/android/compose/state/messages/list/MessageAction {
+public final class io/getstream/chat/android/compose/state/messages/items/ThreadSeparator : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/CustomAction : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getExtraProperties ()Ljava/util/Map;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/Delete : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/Edit : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/Flag : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public abstract class io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;IILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReplyCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageOption {
 	public static final field $stable I
-	public synthetic fun <init> (IJLandroidx/compose/ui/graphics/vector/ImageVector;JLio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getAction ()Lio/getstream/chat/android/compose/state/messages/list/MessageAction;
-	public final fun getIcon ()Landroidx/compose/ui/graphics/vector/ImageVector;
+	public synthetic fun <init> (IJLandroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/common/state/MessageAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAction ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun getIconColor-0d7_KjU ()J
+	public final fun getIconPainter ()Landroidx/compose/ui/graphics/painter/Painter;
 	public final fun getTitle ()I
 	public final fun getTitleColor-0d7_KjU ()J
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageOptionKt {
-	public static final fun buildMessageOption (ILandroidx/compose/ui/graphics/vector/ImageVector;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/state/messages/list/MessageOption;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/MuteUser : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/React : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Reaction;Lio/getstream/chat/android/client/models/Message;)V
-	public final fun getReaction ()Lio/getstream/chat/android/client/models/Reaction;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/Reply : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/compose/state/messages/list/ThreadReply : io/getstream/chat/android/compose/state/messages/list/MessageAction {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public static final fun buildMessageOption (ILandroidx/compose/ui/graphics/painter/Painter;Lio/getstream/chat/android/common/state/MessageAction;Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/state/messages/list/MessageOption;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/reaction/ReactionOption {
 	public static final field $stable I
 	public fun <init> (Landroidx/compose/ui/graphics/painter/Painter;ZLjava/lang/String;)V
-	public final fun getDrawable ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun component1 ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun component2 ()Z
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Landroidx/compose/ui/graphics/painter/Painter;ZLjava/lang/String;)Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOption;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOption;Landroidx/compose/ui/graphics/painter/Painter;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOption;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPainter ()Landroidx/compose/ui/graphics/painter/Painter;
 	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
 	public final fun isSelected ()Z
+	public fun toString ()Ljava/lang/String;
 }
 
 public class io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
 	public static final field $stable I
-	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCanHandle ()Lkotlin/jvm/functions/Function1;
 	public final fun getContent ()Lkotlin/jvm/functions/Function4;
 	public final fun getPreviewContent ()Lkotlin/jvm/functions/Function5;
+	public final fun getTextFormatter ()Lkotlin/jvm/functions/Function1;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories {
@@ -426,11 +409,9 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$GiphyAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$GiphyAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$ImageAttachmentFactoryKt {
@@ -442,20 +423,11 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$LinkAttachmentFactoryKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$LinkAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-}
-
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$UploadAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$UploadAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/FileAttachmentFactoryKt {
@@ -587,6 +559,10 @@ public final class io/getstream/chat/android/compose/ui/common/TimestampKt {
 	public static final fun Timestamp (Ljava/util/Date;Landroidx/compose/ui/Modifier;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/state/DateFormatType;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/common/TypingIndicatorKt {
+	public static final fun TypingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/common/avatar/AvatarKt {
 	public static final fun Avatar (Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
@@ -681,8 +657,8 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Compos
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/MessageComposerKt {
-	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageComposer (Lio/getstream/chat/android/compose/state/messages/composer/MessageInputState;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/components/ComposableSingletons$ComposerIntegrationsKt {
@@ -700,13 +676,40 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/compon
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/components/MessageInputKt {
-	public static final fun MessageInput (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageInputOptions (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageInput (Lio/getstream/chat/android/compose/state/messages/composer/MessageInputState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageInputOptions (Lio/getstream/chat/android/common/state/MessageAction;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageMode;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
+	public static field lambda-10 Lkotlin/jvm/functions/Function2;
+	public static field lambda-11 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public static field lambda-3 Lkotlin/jvm/functions/Function4;
+	public static field lambda-4 Lkotlin/jvm/functions/Function4;
+	public static field lambda-5 Lkotlin/jvm/functions/Function4;
+	public static field lambda-6 Lkotlin/jvm/functions/Function4;
+	public static field lambda-7 Lkotlin/jvm/functions/Function4;
+	public static field lambda-8 Lkotlin/jvm/functions/Function4;
+	public static field lambda-9 Lkotlin/jvm/functions/Function4;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-10$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-11$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-7$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-8$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-9$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageListKt {
@@ -720,9 +723,17 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageItemKt {
 	public static final field HIGHLIGHT_FADE_OUT_DURATION_MILLIS I
-	public static final fun DefaultMessageContainer (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
-	public static final fun DefaultMessageItem (Lio/getstream/chat/android/compose/state/messages/items/MessageListItem;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageDateSeparator (Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;Landroidx/compose/runtime/Composer;I)V
+	public static final fun DefaultMessageContainer (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageItem (Lio/getstream/chat/android/compose/state/messages/items/MessageListItem;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageItemContent (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageItemFooterContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageItemHeaderContent (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static final fun DefaultMessageItemLeadingContent (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageItemTrailingContent (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageDateSeparator (Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageReactionsItem (Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOption;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageThreadSeparator (Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ThreadParticipants (Ljava/util/List;Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
 	public static final fun UploadingFooter (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
@@ -755,24 +766,30 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public final fun getColors (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
 	public final fun getDateFormatter (Landroidx/compose/runtime/Composer;I)Lcom/getstream/sdk/chat/utils/DateFormatter;
 	public final fun getDimens (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun getMessagePreviewFormatter (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
 	public final fun getReactionTypes (Landroidx/compose/runtime/Composer;I)Ljava/util/Map;
 	public final fun getShapes (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamShapes;
 	public final fun getTypography (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatThemeKt {
-	public static final fun ChatTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Ljava/util/List;Ljava/util/Map;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/ui/util/ChannelNameFormatter;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChatTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Ljava/util/List;Ljava/util/Map;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/ui/util/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamColors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component10-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
 	public final fun component12-0d7_KjU ()J
 	public final fun component13-0d7_KjU ()J
 	public final fun component14-0d7_KjU ()J
+	public final fun component15-0d7_KjU ()J
+	public final fun component16-0d7_KjU ()J
+	public final fun component17-0d7_KjU ()J
+	public final fun component18-0d7_KjU ()J
+	public final fun component19-0d7_KjU ()J
 	public final fun component2-0d7_KjU ()J
 	public final fun component3-0d7_KjU ()J
 	public final fun component4-0d7_KjU ()J
@@ -781,23 +798,28 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun component7-0d7_KjU ()J
 	public final fun component8-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun copy-dVHXu7A (JJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
-	public static synthetic fun copy-dVHXu7A$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;JJJJJJJJJJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public final fun copy-USMLqHw (JJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public static synthetic fun copy-USMLqHw$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;JJJJJJJJJJJJJJJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAppBackground-0d7_KjU ()J
 	public final fun getBarsBackground-0d7_KjU ()J
 	public final fun getBorders-0d7_KjU ()J
+	public final fun getDeletedMessagesBackground-0d7_KjU ()J
 	public final fun getDisabled-0d7_KjU ()J
 	public final fun getErrorAccent-0d7_KjU ()J
 	public final fun getHighlight-0d7_KjU ()J
 	public final fun getInfoAccent-0d7_KjU ()J
 	public final fun getInputBackground-0d7_KjU ()J
 	public final fun getLinkBackground-0d7_KjU ()J
+	public final fun getOtherMessagesBackground-0d7_KjU ()J
 	public final fun getOverlay-0d7_KjU ()J
 	public final fun getOverlayDark-0d7_KjU ()J
+	public final fun getOwnMessagesBackground-0d7_KjU ()J
 	public final fun getPrimaryAccent-0d7_KjU ()J
 	public final fun getTextHighEmphasis-0d7_KjU ()J
 	public final fun getTextLowEmphasis-0d7_KjU ()J
+	public final fun getThreadSeparatorGradientEnd-0d7_KjU ()J
+	public final fun getThreadSeparatorGradientStart-0d7_KjU ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -809,16 +831,42 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDimens$Companion;
-	public synthetic fun <init> (FFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
+	public final fun component10-D9Ej5fM ()F
+	public final fun component11-D9Ej5fM ()F
+	public final fun component12-D9Ej5fM ()F
+	public final fun component13-D9Ej5fM ()F
+	public final fun component14-D9Ej5fM ()F
+	public final fun component15-D9Ej5fM ()F
+	public final fun component16-D9Ej5fM ()F
 	public final fun component2-D9Ej5fM ()F
 	public final fun component3-D9Ej5fM ()F
-	public final fun copy-2z7ARbQ (FFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
-	public static synthetic fun copy-2z7ARbQ$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun component4-D9Ej5fM ()F
+	public final fun component5-D9Ej5fM ()F
+	public final fun component6-D9Ej5fM ()F
+	public final fun component7-D9Ej5fM ()F
+	public final fun component8-D9Ej5fM ()F
+	public final fun component9-D9Ej5fM ()F
+	public final fun copy-TfHjUgA (FFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public static synthetic fun copy-TfHjUgA$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachmentsContentFileUploadWidth-D9Ej5fM ()F
+	public final fun getAttachmentsContentFileWidth-D9Ej5fM ()F
+	public final fun getAttachmentsContentGiphyHeight-D9Ej5fM ()F
+	public final fun getAttachmentsContentGiphyWidth-D9Ej5fM ()F
+	public final fun getAttachmentsContentImageHeight-D9Ej5fM ()F
+	public final fun getAttachmentsContentImageWidth-D9Ej5fM ()F
+	public final fun getAttachmentsContentLinkWidth-D9Ej5fM ()F
 	public final fun getChannelAvatarSize-D9Ej5fM ()F
+	public final fun getChannelInfoUserItemAvatarSize-D9Ej5fM ()F
+	public final fun getChannelInfoUserItemHorizontalPadding-D9Ej5fM ()F
+	public final fun getChannelInfoUserItemWidth-D9Ej5fM ()F
 	public final fun getChannelItemHorizontalPadding-D9Ej5fM ()F
 	public final fun getChannelItemVerticalPadding-D9Ej5fM ()F
+	public final fun getMessageOverlayActionItemHeight-D9Ej5fM ()F
+	public final fun getThreadSeparatorTextVerticalPadding-D9Ej5fM ()F
+	public final fun getThreadSeparatorVerticalPadding-D9Ej5fM ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -892,9 +940,13 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamTypography$C
 	public static synthetic fun defaultTypography$default (Lio/getstream/chat/android/compose/ui/theme/StreamTypography$Companion;Landroidx/compose/ui/text/font/FontFamily;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
 }
 
+public final class io/getstream/chat/android/compose/ui/util/AttachmentsUtilsKt {
+	public static final fun getPreviewText (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/compose/ui/util/ChannelNameFormatter {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/ChannelNameFormatter$Companion;
-	public abstract fun format (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
+	public abstract fun formatChannelName (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelNameFormatter$Companion {
@@ -904,10 +956,11 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelNameFormatte
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
-	public static final fun getLastMessagePreviewText (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/AnnotatedString;
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 	public static final fun getReadStatuses (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/util/List;
 	public static final fun isDistinct (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMuted (Lio/getstream/chat/android/client/models/Channel;)Z
+	public static final fun isOneToOne (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
 	public static final fun setMuted (Lio/getstream/chat/android/client/models/Channel;Z)V
 }
 
@@ -917,6 +970,15 @@ public final class io/getstream/chat/android/compose/ui/util/DefaultReactionType
 	public final fun defaultReactionTypes ()Ljava/util/Map;
 }
 
+public abstract interface class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter {
+	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion;
+	public abstract fun formatMessagePreview (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/AnnotatedString;
+}
+
+public final class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion {
+	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
+}
+
 public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrapper {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;Lcom/getstream/sdk/chat/utils/StorageHelper;)V
@@ -924,6 +986,10 @@ public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrappe
 	public final fun getAttachmentsFromUris (Ljava/util/List;)Ljava/util/List;
 	public final fun getFiles ()Ljava/util/List;
 	public final fun getMedia ()Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/compose/ui/util/UserUtilsKt {
+	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelListViewModel : androidx/lifecycle/ViewModel {
@@ -936,16 +1002,18 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getSelectedChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun getSelectedChannel ()Landroidx/compose/runtime/MutableState;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun isOnline ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun isOnline ()Lkotlinx/coroutines/flow/Flow;
 	public final fun leaveGroup (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun loadMore ()V
+	public final fun muteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;)V
 	public final fun selectChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/client/api/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public final fun setSearchQuery (Ljava/lang/String;)V
+	public final fun unmuteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
@@ -995,22 +1063,20 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/common/composer/MessageComposerController;)V
 	public final fun addSelectedAttachments (Ljava/util/List;)V
 	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/models/Message;
 	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
 	public final fun dismissMessageActions ()V
-	public final fun getActiveAction ()Lio/getstream/chat/android/compose/state/messages/list/MessageAction;
-	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
-	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
-	public final fun getInput ()Ljava/lang/String;
-	public final fun getSelectedAttachments ()Ljava/util/List;
+	public final fun getInput ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getLastActiveAction ()Lkotlinx/coroutines/flow/Flow;
+	public final fun getSelectedAttachments ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun leaveThread ()V
-	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
+	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setMessageInput (Ljava/lang/String;)V
-	public final fun setMessageMode (Lio/getstream/chat/android/compose/state/messages/MessageMode;)V
+	public final fun setMessageMode (Lio/getstream/chat/android/common/state/MessageMode;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
@@ -1022,7 +1088,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)V
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)V
 	public final fun dismissAllMessageActions ()V
-	public final fun dismissMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
+	public final fun dismissMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
 	public final fun focusMessage (Ljava/lang/String;)V
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
@@ -1030,16 +1096,17 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/compose/state/messages/MessagesState;
 	public final fun getMessageActions ()Ljava/util/Set;
-	public final fun getMessageMode ()Lio/getstream/chat/android/compose/state/messages/MessageMode;
+	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;
 	public final fun getMessageWithId (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
+	public final fun getTypingUsers ()Ljava/util/List;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isInThread ()Z
-	public final fun isOnline ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun isOnline ()Lkotlinx/coroutines/flow/Flow;
 	public final fun isShowingOverlay ()Z
 	public final fun leaveThread ()V
 	public final fun loadMore ()V
 	public final fun openMessageThread (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
+	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
 	public final fun removeOverlay ()V
 	public final fun selectMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun updateLastSeenMessage (Lio/getstream/chat/android/client/models/Message;)V

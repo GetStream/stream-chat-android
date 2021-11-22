@@ -25,14 +25,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.MessageMode
-import io.getstream.chat.android.compose.state.messages.Normal
-import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
+import io.getstream.chat.android.compose.ui.common.TypingIndicator
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
@@ -43,6 +43,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param channel Channel info to display.
  * @param currentUser The current user, required for different UI states.
  * @param modifier Modifier for styling.
+ * @param typingUsers The list of typing users.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
  * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
  * @param onBackPressed Handler that propagates the back button click event.
@@ -57,7 +58,8 @@ public fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
-    messageMode: MessageMode = Normal,
+    typingUsers: List<User> = emptyList(),
+    messageMode: MessageMode = MessageMode.Normal,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (Channel) -> Unit = {},
@@ -74,6 +76,8 @@ public fun MessageListHeader(
         DefaultMessageHeaderTitle(
             modifier = Modifier.weight(1f),
             channel = channel,
+            currentUser = currentUser,
+            typingUsers = typingUsers,
             messageMode = messageMode,
             onHeaderActionClick = onHeaderActionClick,
             connectionState = connectionState
@@ -115,6 +119,7 @@ public fun MessageListHeader(
  *
  * @param channel The channel used for the title information.
  * @param modifier Modifier for styling.
+ * @param typingUsers The list of typing users.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderActionClick Handler for when the user taps on the header content.
  * @param connectionState A flag that governs if we show the subtitle or the network loading view.
@@ -122,27 +127,24 @@ public fun MessageListHeader(
 @Composable
 public fun DefaultMessageHeaderTitle(
     channel: Channel,
-    modifier: Modifier,
-    messageMode: MessageMode = Normal,
+    currentUser: User?,
+    modifier: Modifier = Modifier,
+    typingUsers: List<User> = emptyList(),
+    messageMode: MessageMode = MessageMode.Normal,
     onHeaderActionClick: (Channel) -> Unit = {},
     connectionState: ConnectionState = ConnectionState.CONNECTED,
 ) {
 
     val title = when (messageMode) {
-        Normal -> ChatTheme.channelNameFormatter.format(channel)
-        is Thread -> stringResource(id = R.string.stream_compose_thread_title)
+        MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel)
+        is MessageMode.MessageThread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
     val subtitle = when (messageMode) {
-        Normal -> LocalContext.current.resources.getQuantityString(
-            R.plurals.stream_compose_channel_members,
-            channel.memberCount,
-            channel.memberCount,
-            channel.members.count { it.user.online }
-        )
-        is Thread -> stringResource(
+        MessageMode.Normal -> channel.getMembersStatusText(LocalContext.current, currentUser)
+        is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,
-            ChatTheme.channelNameFormatter.format(channel)
+            ChatTheme.channelNameFormatter.formatChannelName(channel)
         )
     }
 
@@ -166,11 +168,38 @@ public fun DefaultMessageHeaderTitle(
         )
 
         if (connectionState == ConnectionState.CONNECTED) {
-            Text(
-                text = subtitle,
-                color = ChatTheme.colors.textLowEmphasis,
-                style = ChatTheme.typography.footnote,
-            )
+            if (typingUsers.isEmpty()) {
+                Text(
+                    text = subtitle,
+                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.footnote,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            } else {
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val typingUsersText = LocalContext.current.resources.getQuantityString(
+                        R.plurals.stream_compose_message_list_header_typing_users,
+                        typingUsers.size,
+                        typingUsers.first().name,
+                        typingUsers.size - 1
+                    )
+
+                    TypingIndicator()
+
+                    Text(
+                        text = typingUsersText,
+                        color = ChatTheme.colors.textLowEmphasis,
+                        style = ChatTheme.typography.footnote,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
         } else {
             NetworkLoadingView(
                 modifier = Modifier.wrapContentHeight(),

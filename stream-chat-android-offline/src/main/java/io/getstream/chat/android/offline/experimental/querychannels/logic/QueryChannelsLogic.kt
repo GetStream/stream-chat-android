@@ -46,7 +46,8 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun fetchChannelsFromCache(pagination: AnyChannelPaginationRequest): List<Channel> {
-        val query = chatDomainImpl.repos.selectById(mutableState.queryChannelsSpec.id) ?: return emptyList()
+        val queryChannelsSpec = mutableState.queryChannelsSpec
+        val query = chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
 
         return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
@@ -79,7 +80,7 @@ internal class QueryChannelsLogic(
             .also { onQueryChannelsResult(it, request) }
     }
 
-    internal suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+    private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         if (result.isSuccess) {
             mutableState.recoveryNeeded.value = false
 
@@ -119,8 +120,10 @@ internal class QueryChannelsLogic(
     ) {
         if (isFirstPage) {
             (mutableState._channels.value - channels.map { it.cid }).values
-                .filterNot { mutableState.newChannelEventFilter(it, mutableState.filter) }
-                .map { it.cid }
+                .map(Channel::cid)
+                .filterNot { cid ->
+                    mutableState.defaultChatEventHandler.channelFilter(cid, mutableState.filter)
+                }
                 .let { removeChannels(it) }
         }
         mutableState.channelsOffset.value += channels.size

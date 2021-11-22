@@ -17,6 +17,8 @@
     <string name="stream_compose_channel_info_leave_group">Leave group</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">Leave group</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_message">Do you want to leave the %1$s group?</string>
+    <string name="stream_compose_channel_info_mute_channel">Mute channel</string>
+    <string name="stream_compose_channel_info_unmute_channel">Unmute channel</string>
     <string name="stream_compose_channel_info_delete_conversation">Delete conversation</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Delete conversation</string>
     <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Do you want to delete the channel %1$s?</string>
@@ -31,20 +33,39 @@
     <string name="stream_compose_cancel">Cancel</string>
     <string name="stream_compose_waiting_for_network">Waiting for network</string>
     <string name="stream_compose_untitled_channel">Channel without name</string>
+    <string name="stream_compose_user_status_online">Online</string>
+    <string name="stream_compose_user_status_last_seen">Last seen %1$s</string>
+    <string name="stream_compose_user_status_last_seen_just_now">Last seen just now</string>
+
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s is typing</item>
+        <item quantity="other">%s and %d more are typing</item>
+    </plurals>
 
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">Thread Reply</item>
+        <item quantity="other">%d Thread Replies</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d Reply</item>
+        <item quantity="other">%d Replies</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">Reply</string>
+    <string name="stream_compose_thread_reply">Thread reply</string>
+    <string name="stream_compose_copy_message">Copy Message</string>
+    <string name="stream_compose_edit_message">Edit Message</string>
+    <string name="stream_compose_delete_message">Delete Message</string>
+    <string name="stream_compose_mute_user">Mute User</string>
 
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_send_message">Send</string>
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_instant_commands">Instant Commands</string>
-    <string name="stream_compose_reply">Reply</string>
-    <string name="stream_compose_thread_reply">Thread reply</string>
-    <string name="stream_compose_copy_message">Copy</string>
-    <string name="stream_compose_edit_message">Edit message</string>
-    <string name="stream_compose_delete_message">Delete message</string>
-    <string name="stream_compose_mute_user">Mute user</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
     <string name="stream_compose_capture_option">Media capture</string>
@@ -57,7 +78,6 @@
     <string name="stream_compose_reply_to_message">Reply to message</string>
     <string name="stream_compose_message_deleted">Message deleted</string>
     <string name="stream_compose_only_visible_to_you">Only visible to you</string>
-    <string name="stream_compose_thread_footnote">Thread Reply</string>
     <string name="stream_compose_download">Download</string>
     <string name="stream_compose_share">Share</string>
     <string name="stream_compose_photos">Photos</string>

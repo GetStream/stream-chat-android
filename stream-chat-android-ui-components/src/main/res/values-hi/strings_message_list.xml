@@ -66,4 +66,5 @@
     <string name="stream_ui_message_list_error_flag_message">मैसेज को चिह्नित नहीं किया जा सका</string>
     <string name="stream_ui_message_list_error_pin_message">मैसेज को पिन नहीं किया जा सका</string>
     <string name="stream_ui_message_list_error_unpin_message">मैसेज को अनपिन नहीं किया जा सका</string>
+    <string name="stream_ui_message_list_error_delete_message">मैसेज मिटाया नहीं जा सका</string>
 </resources>

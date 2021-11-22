@@ -426,7 +426,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         /* Default listener. We don't want the message of this dialog to listen for clicks just like it was
                         * a normal message inside MessageListView
                         */
-                        setListenerContainer(MessageListListenerContainerImpl())
+                        setListenerContainer(null)
                         decoratorProvider = MessageOptionsDecoratorProvider(
                             style.itemStyle,
                             style.replyMessageStyle,

@@ -197,11 +197,11 @@ internal open class BaseDomainTest {
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
+            .retryPolicy(NoRetryPolicy())
             .build()
         chatDomainImpl = chatDomain as ChatDomainImpl
 
         chatDomainImpl.scope = testCoroutines.scope
-        chatDomainImpl.retryPolicy = NoRetryPolicy()
 
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
@@ -218,7 +218,7 @@ internal open class BaseDomainTest {
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateDataFromChannel(data.channel1)
 
-        query = QueryChannelsSpec(data.filter1)
+        query = QueryChannelsSpec(data.filter1, QuerySort())
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }

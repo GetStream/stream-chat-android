@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.client
 
 import android.content.Context
@@ -19,7 +17,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
@@ -88,6 +85,7 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -720,16 +718,6 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun addDevice(device: Device): Call<Unit> {
         return api.addDevice(device)
-    }
-
-    @Deprecated(
-        message = "Use the searchMessages method with unwrapped parameters instead",
-        replaceWith = ReplaceWith("searchMessages(channelFilter, messageFilter, offset, limit)"),
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
-        return api.searchMessages(request)
     }
 
     /**
@@ -1618,7 +1606,7 @@ public class ChatClient internal constructor(
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: NotificationHandler? = null
-        private var notificationConfig: NotificationConfig = NotificationConfig()
+        private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var plugins: List<Plugin> = emptyList()
@@ -1691,13 +1679,19 @@ public class ChatClient internal constructor(
             return this
         }
 
-        @Deprecated("Use okHttpClient() to set the timeouts")
+        @Deprecated(
+            message = "Use okHttpClient() to set the timeouts",
+            level = DeprecationLevel.ERROR,
+        )
         public fun baseTimeout(timeout: Long): Builder {
             baseTimeout = timeout
             return this
         }
 
-        @Deprecated("Use okHttpClient() to set the timeouts")
+        @Deprecated(
+            message = "Use okHttpClient() to set the timeouts",
+            level = DeprecationLevel.ERROR,
+        )
         public fun cdnTimeout(timeout: Long): Builder {
             cdnTimeout = timeout
             return this
@@ -1754,26 +1748,6 @@ public class ChatClient internal constructor(
             return this
         }
 
-        @Deprecated(
-            message = "Do not use this method for file upload customization. Instead, implement the FileUploader interface and use the fileUploader method of this builder.",
-            level = DeprecationLevel.ERROR,
-            replaceWith = ReplaceWith("this.fileUploader(CustomFileUploader())")
-        )
-        public fun cdnUrl(value: String): Builder {
-            var cdnUrl = value
-            if (cdnUrl.startsWith("https://")) {
-                cdnUrl = cdnUrl.split("https://").toTypedArray()[1]
-            }
-            if (cdnUrl.startsWith("http://")) {
-                cdnUrl = cdnUrl.split("http://").toTypedArray()[1]
-            }
-            if (cdnUrl.endsWith("/")) {
-                cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1)
-            }
-            this.cdnUrl = cdnUrl
-            return this
-        }
-
         @InternalStreamChatApi
         @VisibleForTesting
         public fun callbackExecutor(callbackExecutor: Executor): Builder = apply {
@@ -1822,6 +1796,10 @@ public class ChatClient internal constructor(
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )
+
+            if (ToggleService.isInitialized().not()) {
+                ToggleService.init(appContext, emptyMap())
+            }
 
             val module =
                 ChatModule(

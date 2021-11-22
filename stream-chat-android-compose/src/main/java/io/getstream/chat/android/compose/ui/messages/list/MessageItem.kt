@@ -13,6 +13,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +50,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
@@ -55,21 +58,25 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
+import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.hasThread
+import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isUploading
 import java.util.Date
 
@@ -88,6 +95,17 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onThreadClick Handler when the user taps on a thread in a message item.
  * @param onImagePreviewResult Handler when the user receives a result from previewing message attachments.
+ * @param leadingContent The content shown at the start of a message list item. By default, we provide
+ * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
+ * current user.
+ * @param headerContent The content shown at the top of a message list item. By default, we provide
+ * [DefaultMessageItemHeaderContent], which shows a list of reactions for the message.
+ * @param footerContent The content shown at the bottom of a message list item. By default, we provide
+ * [DefaultMessageItemFooterContent], which shows the information like thread participants, upload status, etc.
+ * @param trailingContent The content shown at the end of a message list item. By default, we provide
+ * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
+ * @param content The content shown at the center of a message list item. By default, we provide
+ * [DefaultMessageItemContent], which shows the message bubble with message text and attachments.
  */
 @Composable
 public fun DefaultMessageItem(
@@ -96,15 +114,63 @@ public fun DefaultMessageItem(
     onLongItemClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    leadingContent: @Composable RowScope.(MessageItem) -> Unit = {
+        DefaultMessageItemLeadingContent(
+            messageItem = it,
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .size(24.dp)
+                .align(Alignment.Bottom)
+        )
+    },
+    headerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemHeaderContent(
+            messageItem = it,
+            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
+        )
+    },
+    footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemFooterContent(
+            messageItem = it,
+        )
+    },
+    trailingContent: @Composable RowScope.(MessageItem) -> Unit = {
+        DefaultMessageItemTrailingContent(
+            messageItem = it,
+            modifier = Modifier.width(8.dp)
+        )
+    },
+    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemContent(
+            messageItem = it,
+            onLongItemClick = onLongItemClick,
+            onImagePreviewResult = onImagePreviewResult,
+            modifier = Modifier.widthIn(max = 250.dp)
+        )
+    },
 ) {
     when (messageListItem) {
-        is DateSeparator -> MessageDateSeparator(messageListItem)
+        is DateSeparator -> MessageDateSeparator(
+            modifier = Modifier.fillMaxWidth(),
+            dateSeparator = messageListItem
+        )
+        is ThreadSeparator -> MessageThreadSeparator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding),
+            threadSeparator = messageListItem
+        )
         is MessageItem -> DefaultMessageContainer(
             modifier = modifier,
             messageItem = messageListItem,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            leadingContent = leadingContent,
+            headerContent = headerContent,
+            footerContent = footerContent,
+            trailingContent = trailingContent,
+            content = content,
         )
     }
 }
@@ -113,12 +179,14 @@ public fun DefaultMessageItem(
  * Represents a date separator item that shows whenever messages are too far apart in time.
  *
  * @param dateSeparator The data used to show the separator text.
+ * @param modifier Modifier for styling.
  */
 @Composable
 public fun MessageDateSeparator(
     dateSeparator: DateSeparator,
+    modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Center) {
+    Box(modifier = modifier, contentAlignment = Center) {
         Surface(
             modifier = Modifier
                 .padding(vertical = 8.dp),
@@ -141,6 +209,44 @@ public fun MessageDateSeparator(
 }
 
 /**
+ * Represents a thread separator item that is displayed in thread mode to separate a parent message
+ * from thread replies.
+ *
+ * @param threadSeparator The data used to show the separator text.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun MessageThreadSeparator(
+    threadSeparator: ThreadSeparator,
+    modifier: Modifier = Modifier,
+) {
+    val backgroundGradient = Brush.verticalGradient(
+        listOf(
+            ChatTheme.colors.threadSeparatorGradientStart,
+            ChatTheme.colors.threadSeparatorGradientEnd
+        )
+    )
+    val replyCount = threadSeparator.replyCount
+
+    Box(
+        modifier = modifier
+            .background(brush = backgroundGradient),
+        contentAlignment = Center
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding),
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_separator,
+                replyCount,
+                replyCount
+            ),
+            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.body
+        )
+    }
+}
+
+/**
  * The default message container for all messages in the Conversation/Messages screen.
  *
  * It shows the avatar and the message details, which can have a header (reactions), the content which
@@ -156,6 +262,17 @@ public fun MessageDateSeparator(
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ * @param leadingContent The content shown at the start of a message list item. By default, we provide
+ * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
+ * current user.
+ * @param headerContent The content shown at the top of a message list item. By default, we provide
+ * [DefaultMessageItemHeaderContent], which shows a list of reactions for the message.
+ * @param footerContent The content shown at the bottom of a message list item. By default, we provide
+ * [DefaultMessageItemFooterContent], which shows the information like thread participants, upload status, etc.
+ * @param trailingContent The content shown at the end of a message list item. By default, we provide
+ * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
+ * @param content The content shown at the center of a message list item. By default, we provide
+ * [DefaultMessageItemContent], which shows the message bubble with text and attachments.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -165,24 +282,51 @@ public fun DefaultMessageContainer(
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    leadingContent: @Composable RowScope.(MessageItem) -> Unit = {
+        DefaultMessageItemLeadingContent(
+            messageItem = it,
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .size(24.dp)
+                .align(Alignment.Bottom)
+        )
+    },
+    headerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemHeaderContent(
+            messageItem = it,
+            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
+        )
+    },
+    footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemFooterContent(
+            messageItem = it,
+        )
+    },
+    trailingContent: @Composable RowScope.(MessageItem) -> Unit = {
+        DefaultMessageItemTrailingContent(
+            messageItem = it,
+            modifier = Modifier.width(8.dp)
+        )
+    },
+    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemContent(
+            messageItem = it,
+            onLongItemClick = onLongItemClick,
+            onImagePreviewResult = onImagePreviewResult,
+            modifier = Modifier.widthIn(max = 250.dp)
+        )
+    },
 ) {
-    val (message, position, parentMessageId, ownsMessage, isFocused) = messageItem
+    val (message, _, _, ownsMessage, isFocused) = messageItem
 
-    val isDeleted = message.deletedAt != null
-    val hasThread = message.threadParticipants.isNotEmpty()
-    val isUploading = message.attachments.any { it.isUploading() }
-
-    val messageCardColor =
-        if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
-
-    val clickModifier = if (isDeleted) {
+    val clickModifier = if (message.isDeleted()) {
         Modifier
     } else {
         Modifier.combinedClickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
             onClick = {
-                if (hasThread) {
+                if (message.hasThread()) {
                     onThreadClick(message)
                 }
             },
@@ -190,12 +334,15 @@ public fun DefaultMessageContainer(
         )
     }
 
-    val backgroundColorAnimationDuration =
-        if (isFocused) AnimationConstants.DefaultDurationMillis else HIGHLIGHT_FADE_OUT_DURATION_MILLIS
-
     val backgroundColor by animateColorAsState(
         targetValue = if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground,
-        animationSpec = tween(durationMillis = backgroundColorAnimationDuration)
+        animationSpec = tween(
+            durationMillis = if (isFocused) {
+                AnimationConstants.DefaultDurationMillis
+            } else {
+                HIGHLIGHT_FADE_OUT_DURATION_MILLIS
+            }
+        )
     )
 
     Box(
@@ -211,126 +358,227 @@ public fun DefaultMessageContainer(
                 .then(clickModifier)
         ) {
 
-            if (!ownsMessage) {
-                MessageAvatar(position, message.user)
-            }
+            leadingContent(messageItem)
 
             Column(horizontalAlignment = if (ownsMessage) End else Start) {
-                val ownReactions = message.ownReactions
-                val supportedReactions = ChatTheme.reactionTypes
+                headerContent(messageItem)
 
-                if (!isDeleted) {
-                    // reactions
-                    val reactions = message.reactionCounts
-                        .map { it.key }
-                        .filter { supportedReactions[it] != null }
-                        .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
+                content(messageItem)
 
-                    if (reactions.isNotEmpty()) {
-                        MessageReactions(
-                            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp),
-                            reactions = reactions
-                        )
-                    }
-                }
-
-                val bubbleShape = if (message.id == parentMessageId) {
-                    ChatTheme.shapes.myMessageBubble
-                } else {
-                    when (position) {
-                        Top, Middle -> RoundedCornerShape(16.dp)
-                        else -> {
-                            if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-                        }
-                    }
-                }
-
-                // content
-                MessageBubble(
-                    modifier = Modifier.widthIn(max = 250.dp),
-                    shape = bubbleShape,
-                    color = messageCardColor,
-                    content = {
-                        if (isDeleted) {
-                            DeletedMessageContent()
-                        } else {
-                            Column {
-                                MessageAttachmentsContent(
-                                    message = messageItem.message,
-                                    onLongItemClick = onLongItemClick,
-                                    onImagePreviewResult = onImagePreviewResult,
-                                )
-
-                                if (message.text.isNotEmpty()) {
-                                    DefaultMessageContent(message = message)
-                                }
-                            }
-                        }
-                    }
-                )
-
-                if (isUploading) {
-                    UploadingFooter(
-                        modifier = Modifier.align(End),
-                        message = message
-                    )
-                } else if (isDeleted && ownsMessage) {
-                    OwnedMessageVisibilityContent(
-                        modifier = Modifier,
-                        message = message
-                    )
-                } else if (!isDeleted) {
-                    MessageFooter(messageItem)
-                }
-
-                val spacerSize = if (position == None || position == Bottom) 4.dp else 2.dp
-
-                Spacer(Modifier.size(spacerSize))
+                footerContent(messageItem)
             }
 
-            if (ownsMessage) {
-                Spacer(modifier = Modifier.width(8.dp))
-            }
+            trailingContent(messageItem)
         }
     }
 }
 
 /**
- * Represents the section of each message where the [Avatar] resides. In case we don't need to show an avatar, we instead
- * add a spacer, to keep messages aligned the same way.
+ * Represents the default content shown at the start of the message list item.
  *
- * @param position Position of the message in a group. This determines if we should show the user image or a spacer.
- * @param user The user that owns the message.
+ * By default, we show a user avatar if the message doesn't belong to the current user.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
  */
 @Composable
-private fun RowScope.MessageAvatar(
-    position: MessageItemGroupPosition,
-    user: User,
+public fun DefaultMessageItemLeadingContent(
+    messageItem: MessageItem,
+    modifier: Modifier = Modifier,
 ) {
-    if (position == Bottom || position == None) {
-        UserAvatar(
-            modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp)
-                .size(24.dp)
-                .align(Alignment.Bottom),
-            user = user,
-            showOnlineIndicator = false
-        )
-    } else {
-        Spacer(modifier = Modifier.width(40.dp))
+    if (!messageItem.isMine) {
+        val position = messageItem.groupPosition
+        if (position == Bottom || position == None) {
+            UserAvatar(
+                modifier = modifier,
+                user = messageItem.message.user,
+                showOnlineIndicator = false
+            )
+        } else {
+            Spacer(modifier = modifier)
+        }
     }
 }
 
 /**
- * Container for all the reactions this message has.
+ * Represents the default content shown at the top of the message list item.
  *
+ * By default, we show a list of reactions for the message.
+ *
+ * @param messageItem The message item to show the content for.
  * @param modifier Modifier for styling.
- * @param reactions Map of reactions and their count.
  */
 @Composable
-private fun MessageReactions(
-    reactions: List<Pair<Int, Boolean>>,
+public fun DefaultMessageItemHeaderContent(
+    messageItem: MessageItem,
+    modifier: Modifier,
+) {
+    val message = messageItem.message
+
+    if (!message.isDeleted()) {
+        val ownReactions = message.ownReactions
+        val supportedReactions = ChatTheme.reactionTypes
+
+        val reactionCounts = message.reactionCounts.ifEmpty { return }
+        reactionCounts
+            .filter { supportedReactions.containsKey(it.key) }
+            .takeIf { it.isNotEmpty() }
+            ?.map { it.key }
+            ?.map { type ->
+                ReactionOption(
+                    painter = painterResource(requireNotNull(supportedReactions[type])),
+                    isSelected = ownReactions.any { it.type == type },
+                    type = type
+                )
+            }
+            ?.let { options ->
+                MessageReactions(
+                    modifier = modifier,
+                    options = options
+                )
+            }
+    }
+}
+
+/**
+ * Represents the default content shown at the bottom of the message list item.
+ *
+ * By default, the following can be shown in the footer:
+ * - uploading status
+ * - thread participants
+ * - message timestamp
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun ColumnScope.DefaultMessageItemFooterContent(
+    messageItem: MessageItem,
     modifier: Modifier = Modifier,
+) {
+    val message = messageItem.message
+    when {
+        message.isUploading() -> {
+            UploadingFooter(
+                modifier = modifier.align(End),
+                message = message
+            )
+        }
+        message.isDeleted() && messageItem.isMine -> {
+            OwnedMessageVisibilityContent(
+                modifier = modifier,
+                message = message
+            )
+        }
+        !message.isDeleted() -> {
+            MessageFooter(
+                messageItem = messageItem,
+                modifier = modifier
+            )
+        }
+    }
+
+    val position = messageItem.groupPosition
+    val spacerSize = if (position == None || position == Bottom) 4.dp else 2.dp
+
+    Spacer(Modifier.size(spacerSize))
+}
+
+/**
+ * Represents the default content shown at the end of the message list item.
+ *
+ * By default, we show an extra spacing at the end of the message list item.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun DefaultMessageItemTrailingContent(
+    messageItem: MessageItem,
+    modifier: Modifier = Modifier,
+) {
+    if (messageItem.isMine) {
+        Spacer(modifier = modifier)
+    }
+}
+
+/**
+ * Represents the default content shown at the center of the message list item.
+ *
+ * By default, we show a message bubble with attachments.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun DefaultMessageItemContent(
+    messageItem: MessageItem,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val (message, position, parentMessageId, ownsMessage, _) = messageItem
+
+    val bubbleShape = if (message.id == parentMessageId) {
+        ChatTheme.shapes.myMessageBubble
+    } else {
+        when (position) {
+            Top, Middle -> RoundedCornerShape(16.dp)
+            else -> {
+                if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+            }
+        }
+    }
+
+    val messageCardColor = when {
+        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackground
+        ownsMessage -> ChatTheme.colors.ownMessagesBackground
+        else -> ChatTheme.colors.otherMessagesBackground
+    }
+
+    MessageBubble(
+        modifier = modifier,
+        shape = bubbleShape,
+        color = messageCardColor,
+        content = {
+            if (message.isDeleted()) {
+                DeletedMessageContent()
+            } else {
+                Column {
+                    MessageAttachmentsContent(
+                        message = messageItem.message,
+                        onLongItemClick = onLongItemClick,
+                        onImagePreviewResult = onImagePreviewResult,
+                    )
+
+                    if (message.text.isNotEmpty()) {
+                        DefaultMessageContent(message = message)
+                    }
+                }
+            }
+        }
+    )
+}
+
+/**
+ * Represents a reaction bubble with a list of reactions this message has.
+ *
+ * @param options The list of reactions to display.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun MessageReactions(
+    options: List<ReactionOption>,
+    modifier: Modifier = Modifier,
+    itemContent: @Composable RowScope.(ReactionOption) -> Unit = { option ->
+        MessageReactionsItem(
+            modifier = Modifier
+                .size(20.dp)
+                .padding(2.dp)
+                .align(CenterVertically),
+            option = option
+        )
+    },
 ) {
     Row(
         modifier = modifier
@@ -338,18 +586,29 @@ private fun MessageReactions(
             .padding(4.dp),
         verticalAlignment = CenterVertically
     ) {
-        for ((icon, ownReaction) in reactions) {
-            Icon(
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(2.dp)
-                    .align(CenterVertically),
-                painter = painterResource(icon),
-                tint = if (ownReaction) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-                contentDescription = null
-            )
+        options.forEach { option ->
+            itemContent(option)
         }
     }
+}
+
+/**
+ * Represents a reaction item in the reaction bubble.
+ *
+ * @param option The reaction to display.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun MessageReactionsItem(
+    option: ReactionOption,
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier,
+        painter = option.painter,
+        tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
+        contentDescription = null
+    )
 }
 
 /**
@@ -642,11 +901,16 @@ internal fun MessageFooter(
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
 
-    if (hasThread) {
+    if (hasThread && !messageItem.isInThread) {
+        val replyCount = message.replyCount
         ThreadParticipants(
             modifier = modifier,
             participants = message.threadParticipants,
-            text = stringResource(id = R.string.stream_compose_thread_footnote)
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_footnote,
+                replyCount,
+                replyCount
+            )
         )
     } else if (!hasThread && (position == Bottom || position == None)) {
         Row(
@@ -695,5 +959,21 @@ private fun OwnedMessageVisibilityContent(
             modifier = Modifier.padding(8.dp),
             date = message.updatedAt ?: message.createdAt ?: Date()
         )
+    }
+}
+
+@Preview
+@Composable
+private fun OneMessageReactionPreview() {
+    ChatTheme {
+        MessageReactions(options = PreviewReactionData.oneReaction())
+    }
+}
+
+@Preview
+@Composable
+private fun ManyMessageReactionsPreview() {
+    ChatTheme {
+        MessageReactions(options = PreviewReactionData.manyReactions())
     }
 }

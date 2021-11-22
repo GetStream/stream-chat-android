@@ -13,7 +13,8 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -54,6 +55,12 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
             }
             val sut = Fixture(chatDomainImpl, data.filter1)
+                .givenChannelEventsHandler { event, _ ->
+                    when (event) {
+                        is NotificationAddedToChannelEvent -> EventHandlingResult.Add(event.channel)
+                        else -> EventHandlingResult.Skip
+                    }
+                }
                 .givenChannelsInOfflineStorage(data.channel1)
                 .givenMessageInOfflineStorage(data.message1)
                 .withCounter(counter)
@@ -80,15 +87,15 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
     @Test
     fun `Given channel events handler When handle channel events Should invoke channel events handler`(): Unit =
         runBlocking {
-            val channelEventsHandler = object : ChannelEventsHandler {
+            val chatEventHandler = object : ChatEventHandler {
                 var didHandle = false
-                override fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+                override fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult {
                     didHandle = true
-                    return EventHandlingResult.SKIP
+                    return EventHandlingResult.Skip
                 }
             }
             val sut = Fixture(chatDomainImpl, data.filter1).givenChannelsInOfflineStorage(data.channel1).get()
-            sut.channelEventsHandler = channelEventsHandler
+            sut.chatEventHandler = chatEventHandler
 
             sut.handleEvent(
                 ChannelUpdatedByUserEvent(
@@ -103,11 +110,11 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 )
             )
 
-            channelEventsHandler.didHandle shouldBe true
+            chatEventHandler.didHandle shouldBe true
         }
 
     @Test
-    fun `Given two channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = runBlocking {
+    fun `Given three channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = runBlocking {
         val sut = Fixture(chatDomainImpl, data.filter1)
             .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
             .get()
@@ -130,9 +137,9 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
                 .givenChannelEventsHandler { event, _ ->
                     if (event is NotificationMessageNewEvent) {
-                        EventHandlingResult.ADD
+                        EventHandlingResult.Add(event.channel)
                     } else {
-                        EventHandlingResult.SKIP
+                        EventHandlingResult.Skip
                     }
                 }
                 .get()
@@ -158,7 +165,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         runBlocking {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1, data.channel2)
-                .givenChannelEventsHandler(DefaultChannelEventsHandler(client, queryControllerImpl.channels))
+                .givenChannelEventsHandler(DefaultChatEventHandler(client, queryControllerImpl.channels))
                 .get()
             sut.query()
             reset(client)
@@ -178,12 +185,12 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         runBlocking {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1)
-                .givenChannelEventsHandler(DefaultChannelEventsHandler(client, queryControllerImpl.channels))
+                .givenChannelEventsHandler(DefaultChatEventHandler(client, queryControllerImpl.channels))
                 .get()
             sut.query()
             reset(client)
             whenever(client.channel(any())) doReturn channelClientMock
-            whenever(client.queryChannels(any())) doReturn emptyList<Channel>().asCall()
+            whenever(client.queryChannelsInternal(any())) doReturn emptyList<Channel>().asCall()
 
             sut.handleEvent(
                 mock<NotificationMessageNewEvent> {
@@ -192,21 +199,19 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 }
             )
 
-            verify(client).queryChannels(any())
+            verify(client).queryChannelsInternal(any())
         }
 
     private class Fixture(
         private val chatDomainImpl: ChatDomainImpl,
         private val filter: FilterObject,
     ) {
-        private val queryChannelsControllerImpl = chatDomainImpl.queryChannels(filter, QuerySort()).apply {
-            newChannelEventFilter = { _, _ -> true }
-        }
+        private val queryChannelsControllerImpl = chatDomainImpl.queryChannels(filter, QuerySort())
 
         fun givenChannelsInOfflineStorage(vararg channels: Channel): Fixture {
             runBlocking {
                 val channelList = channels.toList()
-                val query = QueryChannelsSpec(filter).apply { cids = channelList.map(Channel::cid).toSet() }
+                val query = QueryChannelsSpec(filter, QuerySort()).apply { cids = channelList.map(Channel::cid).toSet() }
                 chatDomainImpl.repos.insertChannels(channelList)
                 chatDomainImpl.repos.insertQueryChannels(query)
                 whenever(chatDomainImpl.client.queryChannelsInternal(any())) doReturn channelList.asCall()
@@ -232,8 +237,8 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             return this
         }
 
-        fun givenChannelEventsHandler(eventsHandler: ChannelEventsHandler) = apply {
-            queryChannelsControllerImpl.channelEventsHandler = eventsHandler
+        fun givenChannelEventsHandler(eventHandler: ChatEventHandler) = apply {
+            queryChannelsControllerImpl.chatEventHandler = eventHandler
         }
 
         fun get(): QueryChannelsController = queryChannelsControllerImpl

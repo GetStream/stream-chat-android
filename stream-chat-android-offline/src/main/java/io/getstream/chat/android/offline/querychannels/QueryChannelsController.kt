@@ -3,17 +3,14 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
@@ -49,26 +46,26 @@ public class QueryChannelsController internal constructor(
     public val sort: QuerySort<Channel> by mutableState::sort
 
     /**
-     * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     * Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var channelEventsHandler: ChannelEventsHandler? by mutableState::channelEventsHandler
-
-    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
-    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
-
-    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
-    public var checkFilterOnChannelUpdatedEvent: Boolean by mutableState::checkFilterOnChannelUpdatedEvent
+    public var chatEventHandler: ChatEventHandler? by mutableState::chatEventHandler
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
     private val _channels = mutableState._channels
-    private val _mutedChannelIds = mutableState._mutedChannelIds
 
     public val loading: StateFlow<Boolean> = mutableState.loading
     public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
     public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
     public val channels: StateFlow<List<Channel>> = mutableState.channels
-    public val mutedChannelIds: StateFlow<List<String>> = mutableState.mutedChannelIds
+    @Deprecated(
+        message = "Use ChatDomain.channelMutes instead",
+        replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
+        level = DeprecationLevel.WARNING,
+    )
+    public val mutedChannelIds: StateFlow<List<String>> =
+        domainImpl.channelMutes.map { channelMutes -> channelMutes.map { channelMute -> channelMute.channel.id } }
+            .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     public val channelsState: StateFlow<ChannelsState> = mutableState.channelsStateData.map { state ->
         when (state) {
@@ -97,16 +94,16 @@ public class QueryChannelsController internal constructor(
         )
     }
 
-    internal suspend fun updateQueryChannelSpec(channel: Channel) {
-        if (mutableState.defaultChannelEventsHandler.newChannelEventFilter(channel, filter)) {
+    /**
+     * Updates the collection of channels by some channel. If the channels passes filter it's added to collection,
+     * otherwise it gets removed.
+     */
+    internal suspend fun updateQueryChannelCollectionByNewChannel(channel: Channel) {
+        if (mutableState.defaultChatEventHandler.channelFilter(channel.cid, filter)) {
             addChannel(channel)
         } else {
             removeChannel(channel.cid)
         }
-    }
-
-    internal fun updateMutedChannels(mutedChannels: List<ChannelMute>) {
-        _mutedChannelIds.value = mutedChannels.map { it.channel.id }
     }
 
     internal suspend fun handleEvents(events: List<ChatEvent>) {
@@ -115,14 +112,13 @@ public class QueryChannelsController internal constructor(
         }
     }
 
+    /** Handles updates by WS events. Keeps synchronized data of [QueryChannelsMutableState]. */
     internal suspend fun handleEvent(event: ChatEvent) {
-        if (event is HasChannel) {
-            when (mutableState.eventsHandler.onChannelEvent(event, filter)) {
-                EventHandlingResult.ADD -> addChannel(event.channel)
-                EventHandlingResult.REMOVE -> removeChannel(event.channel.cid)
-                EventHandlingResult.SKIP -> Unit
-            }.exhaustive
-        }
+        when (val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter)) {
+            is EventHandlingResult.Add -> addChannel(handlingResult.channel)
+            is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
+            is EventHandlingResult.Skip -> Unit
+        }.exhaustive
 
         if (event is MarkAllReadEvent) {
             refreshAllChannels()
@@ -132,9 +128,6 @@ public class QueryChannelsController internal constructor(
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
-            }
-            if (event is ChannelHiddenEvent) {
-                removeChannel(event.cid)
             }
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
@@ -210,7 +203,7 @@ public class QueryChannelsController internal constructor(
 
     private suspend fun addChannel(channel: Channel) = queryChannelsLogic.addChannel(channel)
 
-    internal suspend fun removeChannel(cid: String) = queryChannelsLogic.removeChannel(cid)
+    private suspend fun removeChannel(cid: String) = queryChannelsLogic.removeChannel(cid)
 
     internal suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val request = pagination.toQueryChannelsRequest(filter, domainImpl.userPresence)

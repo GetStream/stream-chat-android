@@ -141,7 +141,7 @@ class ChannelActivity : AppCompatActivity() {
             },
             detailsContent = {
                 Text(
-                    text = ChatTheme.channelNameFormatter.format(channel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(channel),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
@@ -164,7 +164,7 @@ class ChannelActivity : AppCompatActivity() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel = listViewModel.selectedChannel
+        val selectedChannel by remember { listViewModel.selectedChannel }
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -202,8 +202,8 @@ class ChannelActivity : AppCompatActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    selectedChannel = selectedChannel,
-                    user = user,
+                    selectedChannel = selectedChannel!!,
+                    currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )
             }

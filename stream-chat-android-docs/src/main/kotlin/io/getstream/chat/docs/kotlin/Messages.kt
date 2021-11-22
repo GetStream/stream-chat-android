@@ -445,7 +445,7 @@ class Messages(
         private inner class CustomAttachmentViewFactory : AttachmentViewFactory() {
             override fun createAttachmentView(
                 data: MessageListItem.MessageItem,
-                listeners: MessageListListenerContainer,
+                listeners: MessageListListenerContainer?,
                 style: MessageListItemStyle,
                 parent: ViewGroup,
             ): View {
@@ -464,7 +464,7 @@ class Messages(
             private val MY_URL_ADDRESS = "https://myurl.com"
             override fun createAttachmentView(
                 data: MessageListItem.MessageItem,
-                listeners: MessageListListenerContainer,
+                listeners: MessageListListenerContainer?,
                 style: MessageListItemStyle,
                 parent: ViewGroup,
             ): View {

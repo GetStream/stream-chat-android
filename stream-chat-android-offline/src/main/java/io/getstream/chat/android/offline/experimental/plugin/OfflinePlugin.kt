@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -35,6 +36,7 @@ public class OfflinePlugin(private val config: Config) : Plugin {
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
             if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
             recoveryEnabled()
+            retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
         initState(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl, chatClient)

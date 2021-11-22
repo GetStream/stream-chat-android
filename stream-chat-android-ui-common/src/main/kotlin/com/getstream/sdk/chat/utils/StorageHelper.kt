@@ -153,10 +153,14 @@ public class StorageHelper {
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {
     val extension = title?.substringAfterLast('.')
+    val newTitle = title
+        ?.replace(" ", "_")
+        ?.replace("(", "_")
+        ?.replace(")", "_")
     return if (extension.isNullOrEmpty() && !mimeType.isNullOrEmpty()) {
-        "$title.${MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)}"
+        "$newTitle.${MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)}"
     } else {
         // TODO: Attachment's title should never be null. Review AttachmentMetaData class
-        title ?: ""
+        newTitle ?: ""
     }
 }
