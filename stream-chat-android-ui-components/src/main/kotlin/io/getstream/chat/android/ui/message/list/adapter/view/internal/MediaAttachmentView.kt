@@ -82,14 +82,9 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         if (attachment.type == ModelType.attach_giphy) {
             attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
-                binding.imageView.updateLayoutParams {
+                containerView?.updateLayoutParams {
                     height = parseHeight(giphyInfo)
                     width = parseWidth(giphyInfo)
-                }
-
-                containerView?.updateLayoutParams {
-                    height = parseHeight(giphyInfo) + DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-                    width = parseWidth(giphyInfo) + DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
                 }
             }
         }
