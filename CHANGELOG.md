@@ -73,7 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Removed ripple effect for attachements in message options.
 ### ⬆️ Improved
-- More customization for AvatarView. Now it is possible to choose between Square and Circle for avatar and between pictures from BE or colors defined by the users. Use new fields in AvatarStyle to customize AvatarView the way you prefer. 
+- More customization for AvatarView. Now it is possible to choose between Square and Circle. Use new fields in AvatarStyle to customize AvatarView the way you prefer. 
 ### ✅ Added
 - Added setter `MessageListView.setMessageBackgroundFactory` to set a factory to provide a background for messages. 
 - Added `MessageInputViewModel::sendMessageWithCustomAttachments` function allowing to send message with custom attachments list.
