@@ -116,15 +116,15 @@ public class AvatarView : AppCompatImageView {
             AvatarType.PICTURE -> {
                 if (drawable != null) {
                     super.onDraw(canvas)
-                    drawBorder(canvas)
-                    drawOnlineStatus(canvas)
+                    drawBorder(canvas, avatarStyle, borderPaint)
+                    drawOnlineStatus(canvas, isOnline, avatarStyle)
                 }
             }
             AvatarType.COLOR -> {
-                drawColor(canvas, avatarStyle)
+                drawColor(canvas, avatarStyle, backgroundPaint)
                 drawInitials(canvas, avatarInitials)
-                drawBorder(canvas)
-                drawOnlineStatus(canvas)
+                drawBorder(canvas, avatarStyle, borderPaint)
+                drawOnlineStatus(canvas, isOnline, avatarStyle)
             }
         }
     }
@@ -144,7 +144,7 @@ public class AvatarView : AppCompatImageView {
         backgroundPaint.color = avatarStyle.avatarColor
     }
 
-    private fun drawOnlineStatus(canvas: Canvas) {
+    private fun drawOnlineStatus(canvas: Canvas, isOnline: Boolean, avatarStyle: AvatarStyle) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
             val cx: Float = when (avatarStyle.onlineIndicatorPosition) {
                 OnlineIndicatorPosition.TOP_LEFT,
@@ -184,7 +184,7 @@ public class AvatarView : AppCompatImageView {
         )
     }
 
-    private fun drawColor(canvas: Canvas, avatarStyle: AvatarStyle) {
+    private fun drawColor(canvas: Canvas, avatarStyle: AvatarStyle, backgroundPaint: Paint) {
         if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
             canvas.drawRoundRect(
                 0F,
@@ -205,7 +205,7 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    private fun drawBorder(canvas: Canvas) {
+    private fun drawBorder(canvas: Canvas, avatarStyle: AvatarStyle, borderPaint: Paint) {
         if (avatarStyle.avatarBorderWidth != 0) {
             if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
                 canvas.drawRoundRect(
