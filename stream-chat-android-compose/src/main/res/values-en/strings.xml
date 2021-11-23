@@ -25,9 +25,10 @@
     <string name="stream_compose_channel_info_dismiss">Cancel</string>
 
     <!-- Common -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d Member, %2d Online</item>
-        <item quantity="other">%1d Members, %2d Online</item>
+    <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="one">%1d Member</item>
+        <item quantity="other">%1d Members</item>
     </plurals>
     <string name="stream_compose_ok">OK</string>
     <string name="stream_compose_cancel">Cancel</string>
