@@ -75,12 +75,20 @@ public class MessageComposerController(
         get() = activeAction is Edit
 
     /**
+     * Gets the parent message id if we are in thread mode, or null otherwise.
+     */
+    private val parentMessageId: String?
+        get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
+
+    /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
         this.input.value = value
+
+        setTyping(value.isNotEmpty())
     }
 
     /**
@@ -190,6 +198,7 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
+        setTyping(false)
 
         sendMessageCall.enqueue()
     }
@@ -210,11 +219,9 @@ public class MessageComposerController(
         attachments: List<Attachment> = emptyList(),
     ): Message {
         val activeAction = activeAction
-        val messageMode = messageMode
 
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
-        val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
 
         return if (isInEditMode) {
             actionMessage.copy(
@@ -242,5 +249,18 @@ public class MessageComposerController(
     public fun leaveThread() {
         setMessageMode(MessageMode.Normal)
         dismissMessageActions()
+    }
+
+    /**
+     * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
+     *
+     * @param isTyping If the user is currently typing.
+     */
+    private fun setTyping(isTyping: Boolean) {
+        if (isTyping) {
+            chatDomain.keystroke(channelId, parentMessageId)
+        } else {
+            chatDomain.stopTyping(channelId, parentMessageId)
+        }.enqueue()
     }
 }

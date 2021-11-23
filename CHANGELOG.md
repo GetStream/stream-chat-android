@@ -73,7 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Removed ripple effect for attachements in message options.
 ### ⬆️ Improved
-
+- More customization for AvatarView. Now it is possible to choose between Square and Circle. Use new fields in AvatarStyle to customize AvatarView the way you prefer. 
 ### ✅ Added
 - Added setter `MessageListView.setMessageBackgroundFactory` to set a factory to provide a background for messages. 
 - Added `MessageInputViewModel::sendMessageWithCustomAttachments` function allowing to send message with custom attachments list.
@@ -91,6 +91,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⬆️ Improved
 - Updated a lot of documentation around the Messages features
+- Improved the subtitle text in the `MessageListHeader` component.
+- Now, the `MessageComposer` component supports sending `typing.start` and `typing.stop` events when a user starts or stops typing.
 - Made the `ChannelNameFormatter`, `ClipboardHandler` and `MessagePreviewFormatter` interfaces functional for ease of use.
 
 ### ✅ Added
