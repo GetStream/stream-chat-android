@@ -86,6 +86,11 @@ internal class MediaAttachmentView : ConstraintLayout {
                     height = parseHeight(giphyInfo)
                     width = parseWidth(giphyInfo)
                 }
+
+                binding.imageView.updateLayoutParams {
+                    height = parseHeight(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                    width = parseWidth(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                }
             }
         }
 
