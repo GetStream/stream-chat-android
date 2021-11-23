@@ -25,9 +25,10 @@
     <string name="stream_compose_channel_info_dismiss">रद्द करें</string>
 
     <!-- Common -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d सदस्य, %2d ऑनलाइन</item>
-        <item quantity="other">%1d सदस्य, %2d ऑनलाइन</item>
+    <string name="stream_compose_member_count_online">%1$s, %2$d ऑनलाइन</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="one">%1d सदस्य</item>
+        <item quantity="other">%1d सदस्य</item>
     </plurals>
     <string name="stream_compose_ok">ठीक</string>
     <string name="stream_compose_cancel">रद्द करें</string>

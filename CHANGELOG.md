@@ -92,6 +92,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⬆️ Improved
 - Updated a lot of documentation around the Messages features
+- Improved the subtitle text in the `MessageListHeader` component.
+- Now, the `MessageComposer` component supports sending `typing.start` and `typing.stop` events when a user starts or stops typing.
+- Made the `ChannelNameFormatter`, `ClipboardHandler` and `MessagePreviewFormatter` interfaces functional for ease of use.
 
 ### ✅ Added
 - Added the "mute" option to the `ChannelInfo` action dialog.
@@ -102,6 +105,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the `threadSeparatorVerticalPadding` and `threadSeparatorTextVerticalPadding` options to `StreamDimens`, to make it possible to customize the dimensions of thread separator via `ChatTheme`.
 - Added a typing indicator to the `MessageListHeader` component. 
 - Added the `messageOverlayActionItemHeight` option to `StreamDimens`, to make it possible to customize the height of an action item on the selected message overlay via `ChatTheme`.
+- Added the `messageAlignmentProvider` field to the `ChatTheme` that allows to customize message horizontal alignment. 
 
 ### ⚠️ Changed
 - Made the MessageMode subtypes to the parent class, to make it easier to understand when importing
