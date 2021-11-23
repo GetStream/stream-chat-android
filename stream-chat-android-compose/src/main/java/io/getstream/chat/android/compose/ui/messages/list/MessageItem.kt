@@ -351,7 +351,7 @@ public fun DefaultMessageContainer(
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = backgroundColor),
-        contentAlignment = messageAlignment.messageAlignment
+        contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(
             modifier
@@ -361,7 +361,7 @@ public fun DefaultMessageContainer(
 
             leadingContent(messageItem)
 
-            Column(horizontalAlignment = messageAlignment.messageContentAlignment) {
+            Column(horizontalAlignment = messageAlignment.contentAlignment) {
                 headerContent(messageItem)
 
                 content(messageItem)
@@ -964,12 +964,12 @@ private fun OwnedMessageVisibilityContent(
 /**
  * Represents the horizontal alignment of messages in the message list.
  *
- * @param messageAlignment The alignment of message.
- * @param messageContentAlignment The alignment of the inner content.
+ * @param itemAlignment The alignment of the message item.
+ * @param contentAlignment The alignment of the inner content.
  */
 public enum class MessageAlignment(
-    public val messageAlignment: Alignment,
-    public val messageContentAlignment: Alignment.Horizontal,
+    public val itemAlignment: Alignment,
+    public val contentAlignment: Alignment.Horizontal,
 ) {
     Start(CenterStart, Alignment.Start),
     End(CenterEnd, Alignment.End),

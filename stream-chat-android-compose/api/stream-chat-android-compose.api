@@ -724,8 +724,8 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageAlignment : java/lang/Enum {
 	public static final field End Lio/getstream/chat/android/compose/ui/messages/list/MessageAlignment;
 	public static final field Start Lio/getstream/chat/android/compose/ui/messages/list/MessageAlignment;
-	public final fun getMessageAlignment ()Landroidx/compose/ui/Alignment;
-	public final fun getMessageContentAlignment ()Landroidx/compose/ui/Alignment$Horizontal;
+	public final fun getContentAlignment ()Landroidx/compose/ui/Alignment$Horizontal;
+	public final fun getItemAlignment ()Landroidx/compose/ui/Alignment;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/messages/list/MessageAlignment;
 	public static fun values ()[Lio/getstream/chat/android/compose/ui/messages/list/MessageAlignment;
 }
