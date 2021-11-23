@@ -79,7 +79,11 @@ public fun ChatTheme(
     reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
-    messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(LocalContext.current),
+    messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
+        context = LocalContext.current,
+        typography = typography,
+        attachmentFactories = attachmentFactories
+    ),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {

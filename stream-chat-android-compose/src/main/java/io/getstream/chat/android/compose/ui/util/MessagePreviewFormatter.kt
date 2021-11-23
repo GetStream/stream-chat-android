@@ -1,15 +1,15 @@
 package io.getstream.chat.android.compose.ui.util
 
-import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.theme.StreamTypography
 
 /**
  *  An interface that allows to generate a preview text for the given message.
@@ -23,7 +23,6 @@ public fun interface MessagePreviewFormatter {
      * @param currentUser The currently logged in user.
      * @return The formatted text representation for the given message.
      */
-    @Composable
     public fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString
 
     public companion object {
@@ -35,8 +34,18 @@ public fun interface MessagePreviewFormatter {
          *
          * @see [DefaultMessagePreviewFormatter]
          */
-        public fun defaultFormatter(context: Context): MessagePreviewFormatter {
-            return DefaultMessagePreviewFormatter(context)
+        public fun defaultFormatter(
+            context: Context,
+            typography: StreamTypography,
+            attachmentFactories: List<AttachmentFactory>,
+        ): MessagePreviewFormatter {
+            return DefaultMessagePreviewFormatter(
+                context = context,
+                messageTextStyle = typography.bodyBold,
+                senderNameTextStyle = typography.bodyBold,
+                attachmentTextFontStyle = typography.bodyItalic,
+                attachmentFactories = attachmentFactories
+            )
         }
     }
 }
@@ -49,6 +58,10 @@ public fun interface MessagePreviewFormatter {
  */
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
+    private val messageTextStyle: TextStyle,
+    private val senderNameTextStyle: TextStyle,
+    private val attachmentTextFontStyle: TextStyle,
+    private val attachmentFactories: List<AttachmentFactory>,
 ) : MessagePreviewFormatter {
 
     /**
@@ -58,8 +71,10 @@ private class DefaultMessagePreviewFormatter(
      * @param currentUser The currently logged in user.
      * @return The formatted text representation for the given message.
      */
-    @Composable
-    override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
+    override fun formatMessagePreview(
+        message: Message,
+        currentUser: User?,
+    ): AnnotatedString {
         return buildAnnotatedString {
             message.let { message ->
                 val messageText = message.text.trim()
@@ -67,9 +82,20 @@ private class DefaultMessagePreviewFormatter(
                 if (message.isSystem()) {
                     append(messageText)
                 } else {
-                    appendSenderName(message, currentUser)
-                    appendMessageText(messageText)
-                    appendAttachmentText(message.attachments)
+                    appendSenderName(
+                        message = message,
+                        currentUser = currentUser,
+                        senderNameTextStyle = senderNameTextStyle
+                    )
+                    appendMessageText(
+                        messageText = messageText,
+                        messageTextStyle = messageTextStyle
+                    )
+                    appendAttachmentText(
+                        attachments = message.attachments,
+                        attachmentFactories = attachmentFactories,
+                        attachmentTextStyle = attachmentTextFontStyle
+                    )
                 }
             }
         }
@@ -78,9 +104,11 @@ private class DefaultMessagePreviewFormatter(
     /**
      * Appends the sender name to the [AnnotatedString].
      */
-    @SuppressLint("ComposableNaming")
-    @Composable
-    private fun AnnotatedString.Builder.appendSenderName(message: Message, currentUser: User?) {
+    private fun AnnotatedString.Builder.appendSenderName(
+        message: Message,
+        currentUser: User?,
+        senderNameTextStyle: TextStyle,
+    ) {
         val sender = message.getSenderDisplayName(context, currentUser)
 
         if (sender != null) {
@@ -88,7 +116,9 @@ private class DefaultMessagePreviewFormatter(
 
             addStyle(
                 SpanStyle(
-                    fontStyle = ChatTheme.typography.bodyBold.fontStyle
+                    fontStyle = senderNameTextStyle.fontStyle,
+                    fontWeight = senderNameTextStyle.fontWeight,
+                    fontFamily = senderNameTextStyle.fontFamily
                 ),
                 start = 0,
                 end = sender.length
@@ -99,16 +129,18 @@ private class DefaultMessagePreviewFormatter(
     /**
      * Appends the message text to the [AnnotatedString].
      */
-    @SuppressLint("ComposableNaming")
-    @Composable
-    private fun AnnotatedString.Builder.appendMessageText(messageText: String) {
+    private fun AnnotatedString.Builder.appendMessageText(
+        messageText: String,
+        messageTextStyle: TextStyle,
+    ) {
         if (messageText.isNotEmpty()) {
             val startIndex = this.length
             append("$messageText ")
 
             addStyle(
                 SpanStyle(
-                    fontStyle = ChatTheme.typography.bodyBold.fontStyle
+                    fontStyle = messageTextStyle.fontStyle,
+                    fontFamily = messageTextStyle.fontFamily
                 ),
                 start = startIndex,
                 end = startIndex + messageText.length
@@ -119,11 +151,13 @@ private class DefaultMessagePreviewFormatter(
     /**
      * Appends a string representations of [attachments] to the [AnnotatedString].
      */
-    @SuppressLint("ComposableNaming")
-    @Composable
-    private fun AnnotatedString.Builder.appendAttachmentText(attachments: List<Attachment>) {
+    private fun AnnotatedString.Builder.appendAttachmentText(
+        attachments: List<Attachment>,
+        attachmentFactories: List<AttachmentFactory>,
+        attachmentTextStyle: TextStyle,
+    ) {
         if (attachments.isNotEmpty()) {
-            ChatTheme.attachmentFactories
+            attachmentFactories
                 .firstOrNull { it.canHandle(attachments) }
                 ?.textFormatter
                 ?.let { textFormatter ->
@@ -139,7 +173,8 @@ private class DefaultMessagePreviewFormatter(
 
                     addStyle(
                         SpanStyle(
-                            fontStyle = ChatTheme.typography.bodyItalic.fontStyle
+                            fontStyle = attachmentTextStyle.fontStyle,
+                            fontFamily = attachmentTextStyle.fontFamily
                         ),
                         start = startIndex,
                         end = startIndex + attachmentText.length
