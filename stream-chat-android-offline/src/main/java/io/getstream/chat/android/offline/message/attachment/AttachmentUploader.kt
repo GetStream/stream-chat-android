@@ -47,6 +47,15 @@ internal class AttachmentUploader(
         }
     }
 
+    /**
+     * Augment an attachment instance with data from uploaded file, mimeType, attachmentType and obtained from backend
+     * url.
+     *
+     * @param file A file that has been uploaded.
+     * @param mimeType MimeType of uploaded attachment.
+     * @param attachmentType File, video or picture enum instance.
+     * @param url URL obtained from BE.
+     */
     private fun Attachment.augmentAttachmentOnSuccess(
         file: File,
         mimeType: String,
@@ -69,6 +78,9 @@ internal class AttachmentUploader(
                 imageUrl = url
             } else {
                 assetUrl = url
+            }
+            if (title.isNullOrBlank()) {
+                title = file.name
             }
         }
     }
