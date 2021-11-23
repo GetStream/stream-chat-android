@@ -25,8 +25,9 @@
     <string name="stream_compose_channel_info_dismiss">キャンセル</string>
 
     <!-- Common -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="other">%1d人のメンバー, %2d人がオンライン</item>
+    <string name="stream_compose_member_count_online">%s, %d人がオンライン</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="other">%1d人のメンバー</item>
     </plurals>
     <string name="stream_compose_ok">よし</string>
     <string name="stream_compose_cancel">キャンセル</string>
