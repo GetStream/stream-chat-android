@@ -6,6 +6,7 @@ import android.view.View
 import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
@@ -82,21 +83,35 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         if (attachment.type == ModelType.attach_giphy) {
             attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
-                containerView?.updateLayoutParams {
-                    height = parseHeight(giphyInfo)
-                    width = parseWidth(giphyInfo)
-                }
+                containerView?.doOnPreDraw { container ->
+                    val replyView = containerView.findViewById<MessageReplyView>(R.id.replyView)
 
-                binding.imageView.updateLayoutParams {
-                    height = parseHeight(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-                    width = parseWidth(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                    container.updateLayoutParams {
+                        height = parseHeight(giphyInfo) + parseReplyHeight(replyView)
+                        width = parseWidth(giphyInfo)
+                    }
+
+                    binding.imageView.updateLayoutParams {
+                        height = parseHeight(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                        width = parseWidth(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                    }
+
+                    showImageByUrl(url) {
+                        showMore()
+                        showGiphyLabel()
+                    }
+                }
+            } ?: run {
+                showImageByUrl(url) {
+                    showMore()
+                    showGiphyLabel()
                 }
             }
-        }
-
-        showImageByUrl(url) {
-            showMore()
-            showGiphyLabel()
+        } else {
+            showImageByUrl(url) {
+                showMore()
+                showGiphyLabel()
+            }
         }
 
         if (attachment.type != ModelType.attach_giphy) {
@@ -106,6 +121,10 @@ internal class MediaAttachmentView : ConstraintLayout {
                 true
             }
         }
+    }
+
+    private fun parseReplyHeight(replyView: View) : Int {
+        return replyView.height
     }
 
     private fun parseWidth(giphyInfo: GiphyInfo): Int {
