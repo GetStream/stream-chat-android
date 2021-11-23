@@ -92,6 +92,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 - Updated a lot of documentation around the Messages features
 - Improved the subtitle text in the `MessageListHeader` component.
+- Now, the `MessageComposer` component supports sending `typing.start` and `typing.stop` events when a user starts or stops typing.
 
 ### ✅ Added
 - Added the "mute" option to the `ChannelInfo` action dialog.
