@@ -78,7 +78,7 @@ public fun MessageComposer(
     val value by viewModel.input.collectAsState()
     val selectedAttachments by viewModel.selectedAttachments.collectAsState()
     val activeAction by viewModel.lastActiveAction.collectAsState(null)
-    val maxMessageLength by viewModel.maxMessageLength.collectAsState()
+    val validationErrors by viewModel.validationErrors.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -93,7 +93,7 @@ public fun MessageComposer(
             inputValue = value,
             attachments = selectedAttachments,
             action = activeAction,
-            maxMessageLength = maxMessageLength
+            validationErrors = validationErrors
         ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
@@ -122,7 +122,7 @@ public fun MessageComposer(
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction, maxMessageLength) = messageInputState
+    val (value, attachments, activeAction, validationErrors) = messageInputState
 
     Surface(
         modifier = modifier,
@@ -158,7 +158,7 @@ public fun MessageComposer(
 
                 input(messageInputState)
 
-                val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && value.length < maxMessageLength
+                val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
 
                 IconButton(
                     enabled = isInputValid,
