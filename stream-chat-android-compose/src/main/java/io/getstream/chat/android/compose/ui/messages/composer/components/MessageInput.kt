@@ -166,4 +166,8 @@ private fun MessageInputAttachments(
     previewFactory?.previewContent?.invoke(modifier, attachments, onAttachmentRemoved)
 }
 
+/**
+ * The default number of lines allowed in the input. The message input will become scrollable after
+ * this threshold is exceeded.
+ */
 private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6

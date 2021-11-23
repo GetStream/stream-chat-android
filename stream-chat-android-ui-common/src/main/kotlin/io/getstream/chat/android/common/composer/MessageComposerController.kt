@@ -33,12 +33,16 @@ import kotlinx.coroutines.launch
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
  * @param chatDomain The domain used to communicate to the API and store data offline.
+ * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
+ * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
 @InternalStreamChatApi
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val chatDomain: ChatDomain = ChatDomain.instance(),
+    private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
+    private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
@@ -62,19 +66,9 @@ public class MessageComposerController(
     public val validationErrors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(emptyList())
 
     /**
-     *
+     * Represents the maximum allowed message length in the message input.
      */
     private var maxMessageLength: Int = DEFAULT_MAX_MESSAGE_LENGTH
-
-    /**
-     *
-     */
-    private var maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT
-
-    /**
-     *
-     */
-    private var maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
 
     /**
      * Sets up the data loading operations such as observing the maximum allowed message length.

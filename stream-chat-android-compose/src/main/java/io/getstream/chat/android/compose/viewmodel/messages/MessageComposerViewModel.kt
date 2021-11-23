@@ -40,7 +40,6 @@ public class MessageComposerViewModel(
      */
     public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
 
-
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
