@@ -1,10 +1,12 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
+import android.text.Editable
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -19,7 +21,7 @@ public class MessageComposerView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageComposerBinding
 
-    private val messageInputState: MessageInputState = MessageInputState()
+    public var messageInputState: MessageInputState = MessageInputState()
 
     /**
      * @param onSendMessageAction Handler when the user taps on the send message button.
@@ -56,6 +58,11 @@ public class MessageComposerView : ConstraintLayout {
             binding.trailingContent,
             false
         )
+        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
+            override fun afterTextChanged(s: Editable) {
+                messageInputState = messageInputState.copy(inputValue = s.toString())
+            }
+        })
         binding.root
     }
     public var centerContent: MessageComposerView.() -> View = {
@@ -77,10 +84,12 @@ public class MessageComposerView : ConstraintLayout {
         ).apply {
             sendMessageButtonDisabled.isVisible = true
             sendMessageButtonEnabled.isVisible = false
+            sendMessageButtonEnabled.setOnClickListener {
+                onSendMessageAction()
+            }
         }
         binding.root
     }
-
     public var trailingContent: MessageComposerView.() -> View = { defaultTrailingContent }
         set(value) {
             field = value
