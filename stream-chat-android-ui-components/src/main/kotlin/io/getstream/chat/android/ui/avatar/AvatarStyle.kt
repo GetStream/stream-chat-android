@@ -8,6 +8,8 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -21,6 +23,8 @@ public data class AvatarStyle(
     public val onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition,
     @ColorInt public val onlineIndicatorColor: Int,
     @ColorInt public val onlineIndicatorBorderColor: Int,
+    public val avatarShape: AvatarView.AvatarShape,
+    @Px public val borderRadius: Float
 ) {
 
     internal companion object {
@@ -37,7 +41,7 @@ public data class AvatarStyle(
                 )
                 val avatarBorderColor = it.getColor(
                     R.styleable.AvatarView_streamUiAvatarBorderColor,
-                    Color.WHITE
+                    context.getColorCompat(R.color.stream_ui_black)
                 )
                 val avatarInitialText = TextStyle.Builder(it)
                     .size(
@@ -46,7 +50,7 @@ public data class AvatarStyle(
                     )
                     .color(
                         R.styleable.AvatarView_streamUiAvatarTextColor,
-                        Color.WHITE
+                        context.getColorCompat(R.color.stream_ui_white)
                     )
                     .font(
                         R.styleable.AvatarView_streamUiAvatarTextFontAssets,
@@ -65,8 +69,23 @@ public data class AvatarStyle(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
                     AvatarView.OnlineIndicatorPosition.TOP_RIGHT
                 )
-                val onlineIndicatorColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
-                val onlineIndicatorBorderColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)
+                val onlineIndicatorColor =
+                    it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
+                val onlineIndicatorBorderColor =
+                    it.getColor(
+                        R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+
+                val avatarShape =
+                    it.getEnum(R.styleable.AvatarView_streamUiAvatarShape, AvatarView.AvatarShape.CIRCLE)
+
+                val borderRadius =
+                    it.getDimensionPixelSize(
+                        R.styleable.AvatarView_streamUiAvatarBorderRadius,
+                        4.dpToPx()
+                    ).toFloat()
+
                 return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
@@ -75,6 +94,8 @@ public data class AvatarStyle(
                     onlineIndicatorPosition = onlineIndicatorPosition,
                     onlineIndicatorColor = onlineIndicatorColor,
                     onlineIndicatorBorderColor = onlineIndicatorBorderColor,
+                    avatarShape = avatarShape,
+                    borderRadius = borderRadius,
                 ).let(TransformStyle.avatarStyleTransformer::transform)
             }
         }
