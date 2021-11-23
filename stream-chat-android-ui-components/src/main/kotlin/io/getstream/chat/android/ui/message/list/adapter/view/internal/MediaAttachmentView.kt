@@ -75,55 +75,48 @@ internal class MediaAttachmentView : ConstraintLayout {
                 showMoreCount(andMoreCount)
             }
         }
-        val showGiphyLabel = {
-            if (giphyBadgeEnabled && attachment.type == ModelType.attach_giphy) {
-                binding.giphyLabel.isVisible = true
-            }
+
+        showImageByUrl(url) {
+            showMore()
         }
 
-        if (attachment.type == ModelType.attach_giphy) {
-            attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
-                containerView?.doOnPreDraw { container ->
-                    val replyView = containerView.findViewById<MessageReplyView>(R.id.replyView)
+        setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
+        setOnLongClickListener {
+            attachmentLongClickListener?.onAttachmentLongClick()
+            true
+        }
+    }
 
-                    container.updateLayoutParams {
-                        height = parseHeight(giphyInfo) + parseReplyHeight(replyView)
-                        width = parseWidth(giphyInfo)
-                    }
+    fun showGiphy(attachment: Attachment, containerView: View?) {
+        val url = attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.url
+            ?: attachment.imagePreviewUrl
+            ?: attachment.titleLink
+            ?: attachment.ogUrl
+            ?: return
 
-                    binding.imageView.updateLayoutParams {
-                        height = parseHeight(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-                        width = parseWidth(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-                    }
+        binding.giphyLabel.isVisible = true
 
-                    showImageByUrl(url) {
-                        showMore()
-                        showGiphyLabel()
-                    }
-                }
-            } ?: run {
-                showImageByUrl(url) {
-                    showMore()
-                    showGiphyLabel()
-                }
-            }
-        } else {
-            showImageByUrl(url) {
-                showMore()
-                showGiphyLabel()
-            }
+        containerView?.let { container ->
+            giphyLayoutUpdate(attachment, container)
         }
 
-        if (attachment.type != ModelType.attach_giphy) {
-            setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
-            setOnLongClickListener {
-                attachmentLongClickListener?.onAttachmentLongClick()
-                true
+        showImageByUrl(url) {}
+    }
+
+    private fun giphyLayoutUpdate(attachment: Attachment, containerView: View) {
+        attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
+            containerView.updateLayoutParams {
+                width = parseWidth(giphyInfo)
+            }
+
+            binding.imageView.updateLayoutParams {
+                height = parseHeight(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                width = parseWidth(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
             }
         }
     }
 
-    private fun parseReplyHeight(replyView: View) : Int {
+    private fun parseReplyHeight(replyView: View): Int {
         return replyView.height
     }
 
@@ -187,7 +180,8 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
-        val giphyInfoMap = (extraData[ModelType.attach_giphy] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
+        val giphyInfoMap =
+            (extraData[ModelType.attach_giphy] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
 
         return giphyInfoMap?.let { map ->
             GiphyInfo(

@@ -1,12 +1,14 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.isError
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.common.extensions.isSystem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -32,12 +34,18 @@ internal object MessageListItemViewTypeMapper {
     }
 
     private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): Int {
+        val message = messageItem.message
+
+        val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
+        val (giphy, _) = linksAndGiphy.partition { attachment -> attachment.type == "giphy" }
+
         return when {
-            messageItem.message.isError() -> ERROR_MESSAGE
-            messageItem.message.isSystem() -> SYSTEM_MESSAGE
-            messageItem.message.deletedAt != null -> MESSAGE_DELETED
-            messageItem.message.isGiphyEphemeral() -> GIPHY
-            messageItem.message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
+            message.isError() -> ERROR_MESSAGE
+            message.isSystem() -> SYSTEM_MESSAGE
+            message.deletedAt != null -> MESSAGE_DELETED
+            message.isGiphyEphemeral() -> GIPHY
+            giphy.isNotEmpty() -> GIPHY_ATTACHMENT
+            message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
     }
