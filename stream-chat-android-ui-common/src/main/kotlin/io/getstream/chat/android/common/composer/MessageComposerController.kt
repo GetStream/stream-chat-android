@@ -301,7 +301,7 @@ public class MessageComposerController(
     }
 
     /**
-     *
+     * Checks the current input for validation errors.
      */
     private fun validateInput() {
         validationErrors.value = mutableListOf<ValidationError>().apply {

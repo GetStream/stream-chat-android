@@ -3,7 +3,7 @@ package io.getstream.chat.android.common.state
 import io.getstream.chat.android.client.models.Attachment
 
 /**
- * Represents the list of validation errors for the current text input and currently selected attachments.
+ * Represents a validation error for the user input.
  */
 public sealed class ValidationError {
     /**
