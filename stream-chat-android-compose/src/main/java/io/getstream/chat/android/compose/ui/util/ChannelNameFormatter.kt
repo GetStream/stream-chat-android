@@ -8,7 +8,7 @@ import io.getstream.chat.android.compose.R
 /**
  *  An interface that allows to generate a name for the given channel.
  */
-public interface ChannelNameFormatter {
+public fun interface ChannelNameFormatter {
 
     /**
      * Generates a name for the given channel.

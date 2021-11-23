@@ -972,11 +972,11 @@ public final class io/getstream/chat/android/compose/ui/util/DefaultReactionType
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion;
-	public abstract fun formatMessagePreview (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/AnnotatedString;
+	public abstract fun formatMessagePreview (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;)Landroidx/compose/ui/text/AnnotatedString;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion {
-	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
+	public final fun defaultFormatter (Landroid/content/Context;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Ljava/util/List;)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrapper {
