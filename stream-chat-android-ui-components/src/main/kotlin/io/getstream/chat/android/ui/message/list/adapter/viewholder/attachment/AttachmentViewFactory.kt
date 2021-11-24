@@ -8,7 +8,6 @@ import androidx.core.view.setPadding
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
@@ -113,7 +112,7 @@ public open class AttachmentViewFactory {
     ): View {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
-                is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data, parent)
+                is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
                 is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
         }
@@ -169,11 +168,9 @@ public open class AttachmentViewFactory {
         attachments: List<Attachment>,
         listeners: MessageListListenerContainer?,
         data: MessageListItem.MessageItem,
-        parent: View,
     ) = mediaAttachmentsGroupView.run {
         setPadding(MEDIA_ATTACHMENT_VIEW_PADDING)
         setupBackground(data)
-        setMessageContainerView(parent.findViewById(R.id.messageContainer))
         attachmentClickListener = AttachmentClickListener {
             listeners?.attachmentClickListener?.onAttachmentClick(data.message, it)
         }
