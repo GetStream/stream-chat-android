@@ -201,9 +201,9 @@ internal fun DefaultComposerLabel() {
 /**
  * Shows a [Toast] with an error if one of the following constraints are violated:
  *
- * - The message length exceed the maximum allowed message length.
+ * - The message length exceeds the maximum allowed message length.
  * - The number of selected attachments is too big.
- * - One of the attachments is too big.
+ * - At least one of the attachments is too big.
  *
  * @param validationErrors The list of validation errors for the current user input.
  */
