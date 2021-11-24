@@ -9,4 +9,5 @@ public fun MessageComposerViewModel.bindView(view: MessageComposerView, lifecycl
         val message = buildNewMessage(text, attachments)
         sendMessage(message)
     }
+    view.onInputTextChanged = { setMessageInput(it) }
 }

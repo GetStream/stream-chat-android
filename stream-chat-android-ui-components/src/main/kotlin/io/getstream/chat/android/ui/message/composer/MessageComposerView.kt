@@ -26,12 +26,14 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * @param onSendMessageAction Handler when the user taps on the send message button.
      */
-    public var onSendMessageAction: () -> Unit = {}// TODO make required
+    public var onSendMessageAction: () -> Unit = {}
 
     /**
      * @param onCancelAction Handler invoked when the user cancels the active action (in Reply or Edit modes).
      */
     public var onCancelAction: () -> Unit = {}
+
+    public var onInputTextChanged: (String) -> Unit = {}
 
     private val defaultLeadingContent: View by lazy {
         val binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(
@@ -60,7 +62,7 @@ public class MessageComposerView : ConstraintLayout {
         )
         binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
             override fun afterTextChanged(s: Editable) {
-                messageInputState = messageInputState.copy(inputValue = s.toString())
+                onInputTextChanged(s.toString())
             }
         })
         binding.root
@@ -82,8 +84,8 @@ public class MessageComposerView : ConstraintLayout {
             binding.trailingContent,
             false
         ).apply {
-            sendMessageButtonDisabled.isVisible = true
-            sendMessageButtonEnabled.isVisible = false
+            sendMessageButtonDisabled.isVisible = false
+            sendMessageButtonEnabled.isVisible = true
             sendMessageButtonEnabled.setOnClickListener {
                 onSendMessageAction()
             }
