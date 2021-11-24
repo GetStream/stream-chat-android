@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -160,6 +161,7 @@ public class ChannelController internal constructor(
     public val loadingNewerMessages: StateFlow<Boolean> by mutableState::loadingNewerMessages
     public val endOfOlderMessages: StateFlow<Boolean> by mutableState::endOfOlderMessages
     public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
+    public val channelConfig: StateFlow<Config> by mutableState::channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {

@@ -106,6 +106,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added a typing indicator to the `MessageListHeader` component. 
 - Added the `messageOverlayActionItemHeight` option to `StreamDimens`, to make it possible to customize the height of an action item on the selected message overlay via `ChatTheme`.
 - Added the `messageAlignmentProvider` field to the `ChatTheme` that allows to customize message horizontal alignment. 
+- Added the `maxAttachmentCount` and `maxAttachmentSize` parameters to the `MessagesViewModelFactory`, to make it possible to customize the allowed number and size of attachments that can be sent via the `MessageComposer` component.
 
 ### ⚠️ Changed
 - Made the MessageMode subtypes to the parent class, to make it easier to understand when importing

@@ -317,6 +317,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$DefaultImpls {
 
 public final class io/getstream/chat/android/offline/channel/ChannelController {
 	public final fun clean ()V
+	public final fun getChannelConfig ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelData ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getChannelType ()Ljava/lang/String;
