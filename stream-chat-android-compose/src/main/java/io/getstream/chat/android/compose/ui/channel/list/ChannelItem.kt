@@ -181,6 +181,7 @@ public fun ChannelDetails(
                         .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_mute),
                     contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
                 )
             }
         } else {
