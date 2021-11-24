@@ -173,6 +173,7 @@ internal class WhenSendNewMessage {
             on(it.user) doReturn MutableStateFlow(randomUser())
             on(it.repos) doReturn repositoryFacade
             on(it.scope) doReturn TestCoroutineScope()
+            @Suppress("DEPRECATION_ERROR")
             on(it.online) doReturn MutableStateFlow(false)
             on { generateMessageId() } doReturn randomString()
             on { getActiveQueries() } doReturn emptyList()
