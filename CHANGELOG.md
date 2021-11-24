@@ -74,7 +74,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Removed ripple effect for attachements in message options.
 ### ⬆️ Improved
-- Giphys are auto sizable, there's no need to set a predefined size for then as they will follow the size of the sent giphy, respecting the limits of the message size. 
+- Giphys are now auto sizable, there's no need to set a predefined size for then as they will follow the size of the sent giphy, respecting the limits of the message size. You can also choose to stay with constant size by setting `streamUiMediaAttachmentConstantSize` to true and setting the desired height with `streamUiMediaAttachmentGiphyHeight`
 - streamUiMediaAttachmentGiphyHeight removed as it is no longer necessary.
 - More customization for AvatarView. Now it is possible to choose between Square and Circle. Use new fields in AvatarStyle to customize AvatarView the way you prefer. 
 ### ✅ Added
