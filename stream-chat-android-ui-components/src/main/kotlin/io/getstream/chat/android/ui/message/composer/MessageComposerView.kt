@@ -15,25 +15,44 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 @ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageComposerBinding
 
-    public var messageInputState: MessageInputState = MessageInputState()
+    /**
+     * @property messageInputState The current state of the [MessageComposerView] distributed using [Flow] API.
+     *
+     * Whenever the value of this property changes updated the [MessageComposerView] re-renders automatically.
+     * If you are using custom [View] implementation for [leadingContent], [centerContent], or [trailingContent] you may
+     * want to collect this data stream to update them when the state changes.
+     */
+    public val messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
     /**
-     * @param onSendMessageAction Handler when the user taps on the send message button.
+     * @property onSendMessageAction Handler invoked when the user taps on the send message button.
      */
     public var onSendMessageAction: () -> Unit = {}
 
     /**
-     * @param onCancelAction Handler invoked when the user cancels the active action (in Reply or Edit modes).
+     * @property onCancelAction Handler invoked when the user cancels the active action (in Reply or Edit modes).
      */
     public var onCancelAction: () -> Unit = {}
 
+    /**
+     * @property onInputTextChanged Handler invoked when the user enters text in message input field.
+     */
     public var onInputTextChanged: (String) -> Unit = {}
+
+
 
     private val defaultLeadingContent: View by lazy {
         val binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(
@@ -65,6 +84,17 @@ public class MessageComposerView : ConstraintLayout {
                 onInputTextChanged(s.toString())
             }
         })
+        CoroutineScope(Dispatchers.Main).launch {
+            messageInputState.collect {
+                binding.messageEditText.apply {
+                    val currentValue = text.toString()
+                    val newValue = it.inputValue
+                    if (newValue != currentValue) {
+                        setText(it.inputValue)
+                    }
+                }
+            }
+        }
         binding.root
     }
     public var centerContent: MessageComposerView.() -> View = {
@@ -127,6 +157,8 @@ public class MessageComposerView : ConstraintLayout {
         }
         invalidate()
     }
+
+
 }
 
 /**
