@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -20,6 +21,8 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param chatDomain The domain used to fetch data.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
+ * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
+ * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -28,6 +31,8 @@ public class MessagesViewModelFactory(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val enforceUniqueReactions: Boolean = true,
     private val messageLimit: Int = 30,
+    private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
+    private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
@@ -36,7 +41,9 @@ public class MessagesViewModelFactory(
                 MessageComposerController(
                     chatClient = chatClient,
                     chatDomain = chatDomain,
-                    channelId = channelId
+                    channelId = channelId,
+                    maxAttachmentCount = maxAttachmentCount,
+                    maxAttachmentSize = maxAttachmentSize
                 )
             )
         },

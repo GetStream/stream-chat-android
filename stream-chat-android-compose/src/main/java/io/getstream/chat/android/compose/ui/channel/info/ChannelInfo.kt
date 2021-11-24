@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isDistinct
 import io.getstream.chat.android.compose.ui.util.isMuted
+import io.getstream.chat.android.compose.ui.util.isOneToOne
 
 /**
  * Shows special UI when an item is selected.
@@ -78,8 +79,11 @@ public fun ChannelInfo(
         ?.role
         ?.let { it == "admin" || it == "owner" }
         ?: false
-
-    val otherMembers = channelMembers.filter { it.user.id != currentUser?.id }
+    val membersToDisplay = if (selectedChannel.isOneToOne(currentUser)) {
+        channelMembers.filter { it.user.id != currentUser?.id }
+    } else {
+        channelMembers
+    }
 
     val channelOptions = listOfNotNull(
         ChannelOption(
@@ -174,7 +178,7 @@ public fun ChannelInfo(
                     color = ChatTheme.colors.textLowEmphasis,
                 )
 
-                ChannelMembers(otherMembers)
+                ChannelMembers(membersToDisplay)
 
                 ChannelOptions(channelOptions, onChannelOptionClick)
             }

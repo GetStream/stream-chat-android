@@ -64,7 +64,10 @@ public sealed interface ChatDomain {
     /**
      * StateFlow<Boolean> that indicates if we are currently online, connecting or offline.
      */
-    @Deprecated("Use connectionState instead")
+    @Deprecated(
+        message = "Use connectionState instead",
+        level = DeprecationLevel.ERROR
+    )
     public val online: StateFlow<Boolean>
 
     /**

@@ -8,6 +8,7 @@ import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -33,6 +34,11 @@ public class MessageComposerViewModel(
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
+
+    /**
+     * Represents the list of validation errors for the current text input and the currently selected attachments.
+     */
+    public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
@@ -122,4 +128,12 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    /**
+     * Disposes the inner [MessageComposerController].
+     */
+    override fun onCleared() {
+        super.onCleared()
+        messageComposerController.onCleared()
+    }
 }

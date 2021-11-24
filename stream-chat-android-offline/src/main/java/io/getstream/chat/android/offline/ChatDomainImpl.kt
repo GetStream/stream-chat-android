@@ -205,7 +205,10 @@ internal class ChatDomainImpl internal constructor(
      */
     override val connectionState: StateFlow<ConnectionState> = _connectionState
 
-    @Deprecated("Use connectionState instead")
+    @Deprecated(
+        message = "Use connectionState instead",
+        level = DeprecationLevel.ERROR
+    )
     override val online: StateFlow<Boolean> =
         _connectionState.map { state -> state == ConnectionState.CONNECTED }
             .stateIn(scope, SharingStarted.Eagerly, false)

@@ -14,7 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,6 +66,7 @@ public fun MessageComposer(
         MessageInput(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(vertical = 8.dp)
                 .weight(1f),
             label = label,
             messageInputState = inputState,
@@ -77,6 +78,7 @@ public fun MessageComposer(
     val value by viewModel.input.collectAsState()
     val selectedAttachments by viewModel.selectedAttachments.collectAsState()
     val activeAction by viewModel.lastActiveAction.collectAsState(null)
+    val validationErrors by viewModel.validationErrors.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -87,7 +89,12 @@ public fun MessageComposer(
         },
         integrations = integrations,
         input = input,
-        messageInputState = MessageInputState(value, selectedAttachments, activeAction),
+        messageInputState = MessageInputState(
+            inputValue = value,
+            attachments = selectedAttachments,
+            action = activeAction,
+            validationErrors = validationErrors
+        ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
     )
@@ -115,7 +122,7 @@ public fun MessageComposer(
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction) = messageInputState
+    val (value, attachments, activeAction, validationErrors) = messageInputState
 
     Surface(
         modifier = modifier,
@@ -137,24 +144,21 @@ public fun MessageComposer(
             }
 
             Row(
-                Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = CenterVertically
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Bottom
             ) {
 
                 if (shouldShowIntegrations && activeAction !is Edit) {
                     integrations()
                 } else {
                     Spacer(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .align(CenterVertically)
+                        modifier = Modifier.size(16.dp)
                     )
                 }
 
                 input(messageInputState)
 
-                val isInputValid = value.isNotEmpty() || attachments.isNotEmpty()
+                val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
 
                 IconButton(
                     enabled = isInputValid,

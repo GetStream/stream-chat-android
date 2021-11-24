@@ -1,6 +1,8 @@
 package io.getstream.chat.android.common.composer
 
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Edit
@@ -8,11 +10,17 @@ import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
+import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * Controller responsible for handling the composing and sending of messages.
@@ -25,13 +33,22 @@ import kotlinx.coroutines.flow.map
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
  * @param chatDomain The domain used to communicate to the API and store data offline.
+ * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
+ * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
 @InternalStreamChatApi
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val chatDomain: ChatDomain = ChatDomain.instance(),
+    private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
+    private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
+    /**
+     * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
+     * ViewModel is disposed.
+     */
+    private val scope = CoroutineScope(DispatcherProvider.Main)
 
     /**
      * UI state of the current composer input.
@@ -42,6 +59,32 @@ public class MessageComposerController(
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
+
+    /**
+     * Represents the list of validation errors for the current text input and the currently selected attachments.
+     */
+    public val validationErrors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(emptyList())
+
+    /**
+     * Represents the maximum allowed message length in the message input.
+     */
+    private var maxMessageLength: Int = DEFAULT_MAX_MESSAGE_LENGTH
+
+    /**
+     * Sets up the data loading operations such as observing the maximum allowed message length.
+     */
+    init {
+        scope.launch {
+            val result = chatDomain.watchChannel(channelId, 0).await()
+
+            if (result.isSuccess) {
+                val channelController = result.data()
+                channelController.channelConfig.collect {
+                    maxMessageLength = it.maxMessageLength
+                }
+            }
+        }
+    }
 
     /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
@@ -75,12 +118,22 @@ public class MessageComposerController(
         get() = activeAction is Edit
 
     /**
+     * Gets the parent message id if we are in thread mode, or null otherwise.
+     */
+    private val parentMessageId: String?
+        get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
+
+    /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
         this.input.value = value
+
+        setTyping(value.isNotEmpty())
+
+        validateInput()
     }
 
     /**
@@ -149,8 +202,9 @@ public class MessageComposerController(
                 it
             }
         }
-
         selectedAttachments.value = newAttachments
+
+        validateInput()
     }
 
     /**
@@ -162,6 +216,8 @@ public class MessageComposerController(
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
         selectedAttachments.value = selectedAttachments.value - attachment
+
+        validateInput()
     }
 
     /**
@@ -171,6 +227,7 @@ public class MessageComposerController(
     private fun clearData() {
         input.value = ""
         selectedAttachments.value = emptyList()
+        validationErrors.value = emptyList()
     }
 
     /**
@@ -190,6 +247,7 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
+        setTyping(false)
 
         sendMessageCall.enqueue()
     }
@@ -210,11 +268,9 @@ public class MessageComposerController(
         attachments: List<Attachment> = emptyList(),
     ): Message {
         val activeAction = activeAction
-        val messageMode = messageMode
 
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
-        val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
 
         return if (isInEditMode) {
             actionMessage.copy(
@@ -242,5 +298,70 @@ public class MessageComposerController(
     public fun leaveThread() {
         setMessageMode(MessageMode.Normal)
         dismissMessageActions()
+    }
+
+    /**
+     * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
+     *
+     * @param isTyping If the user is currently typing.
+     */
+    private fun setTyping(isTyping: Boolean) {
+        if (isTyping) {
+            chatDomain.keystroke(channelId, parentMessageId)
+        } else {
+            chatDomain.stopTyping(channelId, parentMessageId)
+        }.enqueue()
+    }
+
+    /**
+     * Cancels any pending work when the parent ViewModel is about to be destroyed.
+     */
+    public fun onCleared() {
+        scope.cancel()
+    }
+
+    /**
+     * Checks the current input for validation errors.
+     */
+    private fun validateInput() {
+        validationErrors.value = mutableListOf<ValidationError>().apply {
+            val messageLength = input.value.length
+            if (messageLength > maxMessageLength) {
+                add(
+                    ValidationError.MessageLengthExceeded(
+                        messageLength = messageLength,
+                        maxMessageLength = maxMessageLength
+                    )
+                )
+            }
+
+            val attachmentCount = selectedAttachments.value.size
+            if (attachmentCount > maxAttachmentCount) {
+                add(
+                    ValidationError.AttachmentCountExceeded(
+                        attachmentCount = attachmentCount,
+                        maxAttachmentCount = maxAttachmentCount
+                    )
+                )
+            }
+
+            val attachments: List<Attachment> = selectedAttachments.value
+                .filter { it.fileSize > maxAttachmentSize }
+            if (attachments.isNotEmpty()) {
+                add(
+                    ValidationError.AttachmentSizeExceeded(
+                        attachments = attachments,
+                        maxAttachmentSize = maxAttachmentSize
+                    )
+                )
+            }
+        }
+    }
+
+    private companion object {
+        /**
+         * The default allowed number of characters in a message.
+         */
+        private const val DEFAULT_MAX_MESSAGE_LENGTH: Int = 5000
     }
 }
