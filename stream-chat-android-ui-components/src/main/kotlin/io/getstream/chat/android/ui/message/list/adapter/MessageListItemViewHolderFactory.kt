@@ -147,7 +147,7 @@ public open class MessageListItemViewHolderFactory {
     protected fun createGiphyAttachmentViewHolder(
         parentView: ViewGroup
     ): BaseMessageItemViewHolder<out MessageListItem> {
-        return GiphyAttachmentViewHolder(parentView, decoratorProvider.decorators)
+        return GiphyAttachmentViewHolder(parentView, decoratorProvider.decorators, listenerContainer, markdown)
     }
 
     protected fun createDateDividerViewHolder(
