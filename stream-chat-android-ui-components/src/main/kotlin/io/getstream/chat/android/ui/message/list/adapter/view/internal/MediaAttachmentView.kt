@@ -210,7 +210,6 @@ internal class MediaAttachmentView : ConstraintLayout {
     companion object {
         private const val NO_MORE_COUNT = 0
         private const val DEFAULT_MARGIN_FOR_CONTAINER_DP = 4
-        private const val MAX_WIDTH_PERCENTAGE = .75
 
         private const val GIPHY_INFO_DEFAULT_WIDTH_DP = 200
         private const val GIPHY_INFO_DEFAULT_HEIGHT_DP = 200
