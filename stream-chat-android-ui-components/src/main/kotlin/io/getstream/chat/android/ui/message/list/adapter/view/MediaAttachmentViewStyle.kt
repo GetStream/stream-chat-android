@@ -32,8 +32,12 @@ public data class MediaAttachmentViewStyle(
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
+    @DimenRes public val giphyHeight: Int,
+    public val constantSize: Boolean,
 ) {
     internal companion object {
+        private const val DEFAULT_HEIGHT_DP = 200
+
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -80,6 +84,14 @@ public data class MediaAttachmentViewStyle(
                     a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
+                val giphyHeight =
+                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
+                        DEFAULT_HEIGHT_DP.dpToPx())
+
+                val constantSize =
+                    a.getBoolean(R.styleable.MediaAttachmentView_streamUiMediaAttachmentConstantSize,
+                        false)
+
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     giphyIcon = giphyIcon,
@@ -87,6 +99,8 @@ public data class MediaAttachmentViewStyle(
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
+                    giphyHeight = giphyHeight,
+                    constantSize = constantSize,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

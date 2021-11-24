@@ -67,7 +67,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         binding.giphyLabel.setImageDrawable(style.giphyIcon)
     }
 
-    fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT, containerView: View? = null) {
+    fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
@@ -96,7 +96,13 @@ internal class MediaAttachmentView : ConstraintLayout {
         binding.giphyLabel.isVisible = true
 
         containerView?.let { container ->
-            giphyLayoutUpdate(attachment, container)
+            if (style.constantSize) {
+                binding.imageView.updateLayoutParams {
+                    height = style.giphyHeight
+                }
+            } else {
+                giphyLayoutUpdate(attachment, container)
+            }
         }
 
         showImageByUrl(url) {}
@@ -115,19 +121,15 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
     }
 
-    private fun parseReplyHeight(replyView: View): Int {
-        return replyView.height
-    }
-
     private fun parseWidth(giphyInfo: GiphyInfo): Int {
         return min(maxMediaAttachmentWidth, giphyInfo.width)
     }
 
     private fun parseHeight(giphyInfo: GiphyInfo): Int {
-        return if (giphyInfo.width > maxMediaAttachmentWidth) {
-            giphyInfo.height * (maxMediaAttachmentWidth / giphyInfo.width)
-        } else {
-            giphyInfo.height
+        return when {
+            giphyInfo.width > maxMediaAttachmentWidth -> giphyInfo.height * (maxMediaAttachmentWidth / giphyInfo.width)
+
+            else -> giphyInfo.height
         }
     }
 

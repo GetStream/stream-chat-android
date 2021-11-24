@@ -27,5 +27,8 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <attr name="streamUiMediaAttachmentConstantSize" format="boolean" />
+        <attr name="streamUiMediaAttachmentGiphyHeight" format="dimension|reference" />
     </declare-styleable>
 </resources>
