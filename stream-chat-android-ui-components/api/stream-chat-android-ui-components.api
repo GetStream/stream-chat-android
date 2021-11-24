@@ -2004,6 +2004,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemVi
 	public fun <init> ()V
 	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createErrorMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createGiphyAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
@@ -2020,6 +2021,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public static final field DATE_DIVIDER I
 	public static final field ERROR_MESSAGE I
 	public static final field GIPHY I
+	public static final field GIPHY_ATTACHMENT I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewType;
 	public static final field LOADING_INDICATOR I
 	public static final field MESSAGE_DELETED I
@@ -2045,16 +2047,20 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ZI)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component4 ()I
 	public final fun component5 ()I
 	public final fun component6 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public final fun component7 ()Z
+	public final fun component8 ()I
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ZI)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ZIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGiphyConstantSize ()Z
+	public final fun getGiphyHeight ()I
 	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getImageBackgroundColor ()I
 	public final fun getMoreCountOverlayColor ()I
