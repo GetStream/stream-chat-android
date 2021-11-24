@@ -213,19 +213,19 @@ private fun showValidationErrorIfNecessary(validationErrors: List<ValidationErro
         val errorMessage = when (val validationError = validationErrors.first()) {
             is ValidationError.MessageLengthExceeded -> {
                 stringResource(
-                    R.string.stream_compose_message_composer_error_max_length,
+                    R.string.stream_compose_message_composer_error_message_length,
                     validationError.maxMessageLength
                 )
             }
             is ValidationError.AttachmentCountExceeded -> {
                 stringResource(
-                    R.string.stream_compose_message_composer_error_max_attachments_count_exceeded,
+                    R.string.stream_compose_message_composer_error_attachment_count,
                     validationError.maxAttachmentCount
                 )
             }
             is ValidationError.AttachmentSizeExceeded -> {
                 stringResource(
-                    R.string.stream_compose_message_composer_error_file_large_size,
+                    R.string.stream_compose_message_composer_error_file_size,
                     MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
                 )
             }

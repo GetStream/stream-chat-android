@@ -64,7 +64,7 @@
     <string name="stream_compose_mute_user">Silenzia Utente</string>
 
     <!-- Message Composer -->
-    <string name="stream_compose_message_composer_error_max_length">La lunghezza massima del messaggio (%1$d) è stata superata.</string>
-    <string name="stream_compose_message_composer_error_file_large_size">File troppo grande - max %1$s.</string>
-    <string name="stream_compose_message_composer_error_max_attachments_count_exceeded">Attenzione: il limite massimo di %1$d file è stato superato.</string>
+    <string name="stream_compose_message_composer_error_message_length">La lunghezza massima del messaggio (%1$d) è stata superata.</string>
+    <string name="stream_compose_message_composer_error_file_size">File troppo grande - max %1$s.</string>
+    <string name="stream_compose_message_composer_error_attachment_count">Attenzione: il limite massimo di %1$d file è stato superato.</string>
 </resources>
