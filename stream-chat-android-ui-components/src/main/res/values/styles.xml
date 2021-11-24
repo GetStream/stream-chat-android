@@ -13,7 +13,7 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
-        <item name="streamUiAvatarBorderWidth">1dp</item>
+        <item name="streamUiAvatarBorderWidth">0dp</item>
     </style>
 
     <style name="StreamUiBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
@@ -241,7 +241,7 @@
         <item name="streamUiAvatarTextColor">?attr/streamUiGlobalAvatarTextColor</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
         <item name="streamUiAvatarOnlineIndicatorPosition">topRight</item>
-        <item name="streamUiAvatarBorderWidth">2dp</item>
+        <item name="streamUiAvatarBorderWidth">0dp</item>
         <item name="streamUiAvatarOnlineIndicatorColor">?attr/streamUiGlobalAvatarOnlineIndicatorColor</item>
         <item name="streamUiAvatarOnlineIndicatorBorderColor">@color/stream_ui_white</item>
         <item name="streamUiAvatarShape">circle</item>
@@ -640,7 +640,7 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
-        <item name="streamUiAvatarBorderWidth">1dp</item>
+        <item name="streamUiAvatarBorderWidth">0dp</item>
     </style>
 
     <style name="StreamUi.SuggestionListView.Mention.Avatar" parent="StreamUi.BaseAvatar">
