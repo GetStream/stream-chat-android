@@ -32,7 +32,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     var giphyBadgeEnabled: Boolean = true
 
     private val maxMediaAttachmentWidth: Int by lazy(LazyThreadSafetyMode.NONE) {
-        (displayMetrics().widthPixels * MAX_WIDTH_PERCENTAGE).toInt()
+        (displayMetrics().widthPixels)
     }
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
@@ -96,7 +96,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         binding.giphyLabel.isVisible = true
 
         containerView?.let { container ->
-            if (style.constantSize) {
+            if (style.giphyConstantSize) {
                 binding.imageView.updateLayoutParams {
                     height = style.giphyHeight
                 }
