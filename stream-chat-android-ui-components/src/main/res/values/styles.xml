@@ -640,7 +640,7 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
-        <item name="streamUiAvatarBorderWidth">1dp</item>
+        <item name="streamUiAvatarBorderWidth">0dp</item>
     </style>
 
     <style name="StreamUi.SuggestionListView.Mention.Avatar" parent="StreamUi.BaseAvatar">
