@@ -185,7 +185,7 @@ fun CustomChannelListItem(channelItem: ChannelItem, user: User?) {
         },
         detailsContent = { // Replace the details content with a simple Text
             Text(
-                text = ChatTheme.channelNameFormatter.format(channelItem.channel),
+                text = ChatTheme.channelNameFormatter.format(it.channel),
                 style = ChatTheme.typography.bodyBold
             )
         }

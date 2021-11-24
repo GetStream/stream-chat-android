@@ -142,7 +142,7 @@ class ChannelActivity : AppCompatActivity() {
             },
             detailsContent = {
                 Text(
-                    text = ChatTheme.channelNameFormatter.formatChannelName(channelItem.channel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
