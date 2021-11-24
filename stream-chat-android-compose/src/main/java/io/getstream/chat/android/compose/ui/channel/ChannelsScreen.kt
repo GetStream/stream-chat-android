@@ -141,6 +141,7 @@ public fun ChannelsScreen(
                     .align(Alignment.BottomCenter),
                 selectedChannel = selectedChannel!!,
                 currentUser = user,
+                isMuted = listViewModel.isChannelMuted(selectedChannel!!.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)

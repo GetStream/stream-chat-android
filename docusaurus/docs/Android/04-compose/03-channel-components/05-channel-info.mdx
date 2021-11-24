@@ -21,6 +21,7 @@ fun MyCustomUi() {
     // Data for the component
     val user by listViewModel.user.collectAsState()
     val selectedChannel = listViewModel.selectedChannel
+    val isMuted = listViewModel.isChannelMuted(selectedChannel.cid)
 
     Box(modifier = Modifier.fillMaxSize()) {
         // The rest of your content
@@ -32,6 +33,7 @@ fun MyCustomUi() {
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
                 selectedChannel = selectedChannel,
+                isMuted = isMuted,
                 user = user,
                 onChannelOptionClick = { listViewModel.onChannelAction(it) },
             )
