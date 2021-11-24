@@ -62,4 +62,9 @@
     <string name="stream_compose_edit_message">मैसेज एडिट करें</string>
     <string name="stream_compose_delete_message">मैसेज मिटायें</string>
     <string name="stream_compose_mute_user">यूजर को म्यूट करें</string>
+
+    <!-- Message Composer -->
+    <string name="stream_compose_message_composer_error_max_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>
+    <string name="stream_compose_message_composer_error_file_large_size">फ़ाइल बहुत बड़ी है - अधिकतम %1$s एमबी.</string>
+    <string name="stream_compose_message_composer_error_max_attachments_count_exceeded">अटैचमेंट्स संख्या (%1$d) पार हो गयी</string>
 </resources>

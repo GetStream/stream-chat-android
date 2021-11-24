@@ -63,6 +63,11 @@
     <string name="stream_compose_delete_message">Delete Message</string>
     <string name="stream_compose_mute_user">Mute User</string>
 
+    <!-- Message Composer -->
+    <string name="stream_compose_message_composer_error_max_length">Max message length (%1$d) exceeded.</string>
+    <string name="stream_compose_message_composer_error_file_large_size">File is too large - max %1$s.</string>
+    <string name="stream_compose_message_composer_error_max_attachments_count_exceeded">Attachments count (%1$d) exceeded.</string>
+
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_send_message">Send</string>
     <string name="stream_compose_attachments">Attachments</string>
