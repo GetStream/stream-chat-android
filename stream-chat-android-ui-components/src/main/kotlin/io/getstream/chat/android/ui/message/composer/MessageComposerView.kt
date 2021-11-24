@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
 
 @ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
@@ -114,8 +113,14 @@ public class MessageComposerView : ConstraintLayout {
             binding.trailingContent,
             false
         ).apply {
-            sendMessageButtonDisabled.isVisible = false
-            sendMessageButtonEnabled.isVisible = true
+            CoroutineScope(Dispatchers.Main).launch {
+                messageInputState.collect {
+                    val sendButtonEnabled = it.inputValue.isNotEmpty()
+                    sendMessageButtonDisabled.isVisible = !sendButtonEnabled
+                    sendMessageButtonEnabled.isVisible = sendButtonEnabled
+                }
+            }
+
             sendMessageButtonEnabled.setOnClickListener {
                 onSendMessageAction()
             }
