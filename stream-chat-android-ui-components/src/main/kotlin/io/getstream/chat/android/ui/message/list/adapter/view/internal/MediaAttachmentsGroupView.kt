@@ -35,7 +35,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     private var state: State = State.Empty
-    private var containerView: View? = null
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
@@ -49,10 +48,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         defStyleAttr,
         defStyleRes
     )
-
-    fun setMessageContainerView(containerView: View) {
-        this.containerView = containerView
-    }
 
     fun showAttachments(attachments: List<Attachment>) {
         when (attachments.size) {
@@ -84,7 +79,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
             applyTo(this@MediaAttachmentsGroupView)
         }
-        mediaAttachmentView.showAttachment(first, containerView = containerView)
+        mediaAttachmentView.showAttachment(first)
     }
 
     private fun showTwo(first: Attachment, second: Attachment) {
