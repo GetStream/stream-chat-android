@@ -56,7 +56,10 @@ public sealed interface ChatDomain {
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    @Deprecated("Use connectionState instead")
+    @Deprecated(
+        message = "Use connectionState instead",
+        level = DeprecationLevel.ERROR
+    )
     public val online: LiveData<Boolean>
 
     /**
@@ -641,7 +644,12 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
+            instance?.run {
+                Log.e(
+                    "Chat",
+                    "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]"
+                )
+            }
             val offlineChatDomain = offlineChatDomainBuilder.build()
             instance = buildImpl(offlineChatDomain)
             return instance()
