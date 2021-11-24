@@ -115,6 +115,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Moved common state to the `io.getstream.chat.android.common` package
 - Made the `AttachmentFactory.previewContent` field nullable.
 - Exposed `MessageReactions` as a public component so users can use it to display a message reactions bubble in their custom UI.
+- Changed the type of the inner channel items in the `ChannelsState` class from `Channel` to `ChannelItem`.
 
 ### ❌ Removed
 
