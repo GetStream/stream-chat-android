@@ -167,12 +167,15 @@ public fun DefaultMessageHeaderTitle(
             color = ChatTheme.colors.textHighEmphasis,
         )
 
+        val subtitleTextColor = ChatTheme.colors.textLowEmphasis
+        val subtitleTextStyle = ChatTheme.typography.footnote
+
         if (connectionState == ConnectionState.CONNECTED) {
             if (typingUsers.isEmpty()) {
                 Text(
                     text = subtitle,
-                    color = ChatTheme.colors.textLowEmphasis,
-                    style = ChatTheme.typography.footnote,
+                    color = subtitleTextColor,
+                    style = subtitleTextStyle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -193,8 +196,8 @@ public fun DefaultMessageHeaderTitle(
 
                     Text(
                         text = typingUsersText,
-                        color = ChatTheme.colors.textLowEmphasis,
-                        style = ChatTheme.typography.footnote,
+                        color = subtitleTextColor,
+                        style = subtitleTextStyle,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -204,6 +207,8 @@ public fun DefaultMessageHeaderTitle(
             NetworkLoadingView(
                 modifier = Modifier.wrapContentHeight(),
                 spinnerSize = 12.dp,
+                textColor = subtitleTextColor,
+                textStyle = subtitleTextStyle
             )
         }
     }
