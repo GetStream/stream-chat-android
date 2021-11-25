@@ -89,6 +89,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the information about channel members shown in the `MessageListHeader` subtitle.
+- Fixed the bug where the channel icon did not appear because of a lengthy title.
 
 ### ⬆️ Improved
 - Updated a lot of documentation around the Messages features
