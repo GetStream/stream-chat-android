@@ -57,6 +57,8 @@ public class MessageComposerView : ConstraintLayout {
             binding.trailingContent,
             false
         )
+        binding.attachmentsButton.isVisible = false
+        binding.commandsButton.isVisible = false
         binding.root
     }
 
@@ -85,6 +87,10 @@ public class MessageComposerView : ConstraintLayout {
                 onInputTextChanged(s.toString())
             }
         })
+        binding.clearCommandButton.isVisible = false
+        binding.selectedAttachmentsContainer.isVisible = false
+        binding.commandBadge.isVisible = false
+        binding.messageReplyView.isVisible = false
         CoroutineScope(Dispatchers.Main).launch {
             messageInputState.collect {
                 binding.messageEditText.apply {
@@ -94,6 +100,7 @@ public class MessageComposerView : ConstraintLayout {
                         setText(it.inputValue)
                     }
                 }
+                binding.clearCommandButton.isVisible = it.inputValue.isNotEmpty()
             }
         }
         binding.root
