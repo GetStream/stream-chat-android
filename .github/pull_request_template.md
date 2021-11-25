@@ -35,7 +35,6 @@ _Explain how this change can be tested (or why it can't be tested)_
 - [ ] Affected documentation updated (KDocs, docusaurus, tutorial)
 
 ### ☑️Reviewer Checklist
-- [ ] Project builds in Android Studio
 - [ ] UI Components sample runs & works
 - [ ] Compose sample runs & works
 - [ ] UI Changes correct (before & after images)
