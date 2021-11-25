@@ -32,7 +32,7 @@ public class MessageComposerView : ConstraintLayout {
      *
      * Whenever the value of this property changes updated the [MessageComposerView] re-renders automatically.
      * If you are using custom [View] implementation for [leadingContent], [centerContent], or [trailingContent] you may
-     * want to collect this data stream to update them when the state changes.
+     * want to collect [messageInputState] items to update them when the state changes.
      */
     public val messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
@@ -51,8 +51,6 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var onInputTextChanged: (String) -> Unit = {}
 
-
-
     private val defaultLeadingContent: View by lazy {
         val binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(
             streamThemeInflater,
@@ -61,6 +59,10 @@ public class MessageComposerView : ConstraintLayout {
         )
         binding.root
     }
+
+    /**
+     * @property leadingContent A function returning content visible on the left.
+     */
     public var leadingContent: MessageComposerView.() -> View = {
         defaultLeadingContent
     }
@@ -96,6 +98,10 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.root
     }
+
+    /**
+     * @property centerContent A function returning content visible in the middle.
+     */
     public var centerContent: MessageComposerView.() -> View = {
         defaultCenterContent
     }
@@ -127,6 +133,10 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.root
     }
+
+    /**
+     * @property trailingContent A function returning content visible on the right.
+     */
     public var trailingContent: MessageComposerView.() -> View = { defaultTrailingContent }
         set(value) {
             field = value
@@ -162,8 +172,6 @@ public class MessageComposerView : ConstraintLayout {
         }
         invalidate()
     }
-
-
 }
 
 /**
