@@ -59,4 +59,9 @@
     <string name="stream_compose_edit_message">メッセージを編集する</string>
     <string name="stream_compose_delete_message">メッセージを削除する</string>
     <string name="stream_compose_mute_user">ユーザーをミュートする</string>
+
+    <!-- Message Composer -->
+    <string name="stream_compose_message_composer_error_message_length">"最大メッセージ長（%1$d)字を超えました"</string>
+    <string name="stream_compose_message_composer_error_file_size">ファイルが大きすぎます- 最大%1$s。</string>
+    <string name="stream_compose_message_composer_error_attachment_count">添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません</string>
 </resources>

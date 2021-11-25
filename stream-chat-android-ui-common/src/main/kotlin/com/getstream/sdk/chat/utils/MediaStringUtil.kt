@@ -16,7 +16,7 @@ public object MediaStringUtil {
 
     @JvmStatic
     public fun convertFileSizeByteCount(bytes: Long): String {
-        val unit = 1000
+        val unit = 1024
         if (bytes <= 0) return 0.toString() + " B"
         if (bytes < unit) return "$bytes B"
         val exp = (ln(bytes.toDouble()) / ln(unit.toDouble())).toInt()
