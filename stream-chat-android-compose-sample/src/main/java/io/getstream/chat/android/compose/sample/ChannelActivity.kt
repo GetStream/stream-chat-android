@@ -195,7 +195,8 @@ class ChannelActivity : AppCompatActivity() {
                 )
             }
 
-            if (selectedChannel != null) {
+            val currentSelectedChannel = selectedChannel
+            if (currentSelectedChannel != null) {
                 ChannelInfo(
                     modifier = Modifier
                         .padding(16.dp)
@@ -203,8 +204,8 @@ class ChannelActivity : AppCompatActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    isMuted = listViewModel.isChannelMuted(selectedChannel!!.cid),
-                    selectedChannel = selectedChannel!!,
+                    isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
+                    selectedChannel = currentSelectedChannel,
                     currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )

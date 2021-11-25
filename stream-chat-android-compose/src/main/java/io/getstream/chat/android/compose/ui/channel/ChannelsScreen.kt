@@ -133,15 +133,16 @@ public fun ChannelsScreen(
             )
         }
 
-        if (selectedChannel != null) {
+        val currentSelectedChannel = selectedChannel
+        if (currentSelectedChannel != null) {
             ChannelInfo(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                selectedChannel = selectedChannel!!,
+                selectedChannel = currentSelectedChannel,
                 currentUser = user,
-                isMuted = listViewModel.isChannelMuted(selectedChannel!!.cid),
+                isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
