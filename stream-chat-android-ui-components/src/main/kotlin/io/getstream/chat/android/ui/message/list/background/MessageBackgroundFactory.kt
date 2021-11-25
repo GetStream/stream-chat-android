@@ -3,12 +3,11 @@ package io.getstream.chat.android.ui.message.list.background
 import android.content.Context
 import android.graphics.drawable.Drawable
 import com.getstream.sdk.chat.adapter.MessageListItem
-import java.io.Serializable
 
 /**
  * Drawer of background of message items
  */
-public interface MessageBackgroundFactory : Serializable {
+public interface MessageBackgroundFactory {
 
     /**
      * Background for message of plain text
