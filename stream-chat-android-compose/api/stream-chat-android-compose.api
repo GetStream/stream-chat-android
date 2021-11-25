@@ -546,7 +546,7 @@ public final class io/getstream/chat/android/compose/ui/common/MessageBubbleKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/NetworkLoadingViewKt {
-	public static final fun NetworkLoadingView-rAjV9yQ (Landroidx/compose/ui/Modifier;FLandroidx/compose/runtime/Composer;II)V
+	public static final fun NetworkLoadingView-vlEVYhg (Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/text/TextStyle;JLandroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/SearchInputKt {

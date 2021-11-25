@@ -9,7 +9,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -20,11 +22,15 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param modifier Styling for the [Row].
  * @param spinnerSize The size of the spinner.
+ * @param textStyle The text style of the inner text.
+ * @param textColor The text color of the inner text.
  */
 @Composable
 public fun NetworkLoadingView(
     modifier: Modifier = Modifier,
-    spinnerSize: Dp = 18.dp
+    spinnerSize: Dp = 18.dp,
+    textStyle: TextStyle = ChatTheme.typography.title3Bold,
+    textColor: Color = ChatTheme.colors.textHighEmphasis,
 ) {
     Row(
         modifier,
@@ -41,8 +47,8 @@ public fun NetworkLoadingView(
 
         Text(
             text = stringResource(id = R.string.stream_compose_waiting_for_network),
-            style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = textStyle,
+            color = textColor,
         )
     }
 }
