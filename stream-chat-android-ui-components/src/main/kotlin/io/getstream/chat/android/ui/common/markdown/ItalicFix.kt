@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.common.markdown
 import java.util.Stack
 
 internal fun fixItalicAtEnd(text: String): String {
-    return if (text.last() == '*' || text.last() == '_') {
+    return if (text.isNotEmpty() && (text.last() == '*' || text.last() == '_')) {
         //This check is down here to emphasise that this check must be run last, otherwise there's a performance drop when setting text
         if (endsWithItalic(text)) "$text&#x200A;" else text
     } else {

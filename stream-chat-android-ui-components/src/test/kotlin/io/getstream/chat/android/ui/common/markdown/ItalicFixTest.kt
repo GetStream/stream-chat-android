@@ -31,4 +31,12 @@ internal class ItalicFixTest {
 
         assertEquals(expected, response)
     }
+
+    @Test
+    fun emptyStringsShouldNotBeAffected() {
+        val text = ""
+        val response = fixItalicAtEnd(text)
+
+        assertEquals(text, response)
+    }
 }
