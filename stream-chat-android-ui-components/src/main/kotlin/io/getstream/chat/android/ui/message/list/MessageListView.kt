@@ -275,6 +275,21 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_MESSAGE_CLICK_LISTENER =
         MessageClickListener { message ->
+            when {
+                message.replyCount > 0 -> {
+                    threadStartHandler.onStartThread(message)
+                }
+
+                message.replyMessageId != null -> {
+                    val replyId = message.replyMessageId
+
+                    adapter.currentList
+                        .filterIsInstance<MessageListItem.MessageItem>()
+                        .find { messageItem -> messageItem.message.id == replyId }
+                        ?.let { messageItem -> scrollToMessage(messageItem.message) }
+                }
+            }
+
             if (message.replyCount > 0) {
                 threadStartHandler.onStartThread(message)
             }
