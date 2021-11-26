@@ -57,9 +57,10 @@ public class MessageComposerView : ConstraintLayout {
             binding.trailingContent,
             false
         )
-        binding.attachmentsButton.isVisible = false
-        binding.commandsButton.isVisible = false
-        binding.root
+        binding.apply {
+            attachmentsButton.isVisible = false
+            commandsButton.isVisible = false
+        }.root
     }
 
     /**
@@ -177,7 +178,6 @@ public class MessageComposerView : ConstraintLayout {
             removeAllViews()
             addView(trailingContent())
         }
-        invalidate()
     }
 }
 
