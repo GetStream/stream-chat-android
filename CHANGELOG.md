@@ -65,6 +65,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed crash related with creation of MessageOptionsDialogFragment
+- Removed cut from text when text end with Italic
 ### ⬆️ Improved
 
 ### ✅ Added
