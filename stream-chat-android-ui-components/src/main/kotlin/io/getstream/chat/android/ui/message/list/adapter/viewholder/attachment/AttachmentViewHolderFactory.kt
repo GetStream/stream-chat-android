@@ -72,7 +72,7 @@ public open class AttachmentViewHolderFactory(
                 StreamUiItemFileAttachmentGroupBinding
                     .inflate(parent.streamThemeInflater, parent, false)
                     .let {
-                        FileGroupAttachmentViewHolder(
+                        FileAttachmentsViewHolder(
                             it,
                             attachmentClickListener,
                             attachmentLongClickListener,

@@ -6,7 +6,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.Attachmen
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
 
-internal class FileGroupAttachmentViewHolder(
+internal class FileAttachmentsViewHolder(
     private val binding: StreamUiItemFileAttachmentGroupBinding,
     attachmentClickListener: AttachmentClickListener,
     attachmentLongClickListener: AttachmentLongClickListener,
