@@ -21,6 +21,7 @@ internal interface MessageRepository {
     suspend fun deleteChannelMessage(message: Message)
     suspend fun selectMessagesSyncNeeded(): List<Message>
     suspend fun selectMessagesWaitForAttachments(): List<Message>
+    suspend fun selectMessagesNewerThan(messageId: String): List<Message>
 }
 
 internal class MessageRepositoryImpl(
@@ -144,6 +145,32 @@ internal class MessageRepositoryImpl(
                 .filter { it.deletedAt == null }
                 .toMutableList()
         }
+    }
+
+    override suspend fun selectMessagesNewerThan(messageId: String): List<Message> {
+        return messageDao.select(messageId)?.let { messageEntity ->
+            val innerEntity = messageEntity.messageInnerEntity
+
+            messageDao.messagesForChannelNewerThan(
+                cid = innerEntity.cid,
+                limit = 1000,
+                dateFilter = innerEntity.createdAt ?: innerEntity.createdLocallyAt ?: return emptyList()
+            )
+        }?.map { messageEntity ->
+            messageEntity.toModel(getUser, ::selectMessage)
+        } ?: emptyList()
+    }
+
+    suspend fun messagesNewThanMessageById(id: String): List<MessageEntity> {
+        return messageDao.select(id)?.let { messageEntity ->
+            val innerEntity = messageEntity.messageInnerEntity
+
+            messageDao.messagesForChannelNewerThan(
+                cid = innerEntity.cid,
+                limit = 1000,
+                dateFilter = innerEntity.createdAt ?: innerEntity.createdLocallyAt ?: return emptyList()
+            )
+        } ?: emptyList()
     }
 
     private companion object {

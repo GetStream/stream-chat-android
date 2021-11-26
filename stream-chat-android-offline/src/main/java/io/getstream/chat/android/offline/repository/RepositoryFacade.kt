@@ -123,6 +123,10 @@ internal class RepositoryFacade constructor(
         insertMessages(messages, cacheForMessages)
     }
 
+    internal suspend fun messagesNewerThanId(messageId: String): List<Message> {
+        return messageRepository.selectMessagesNewerThan(messageId)
+    }
+
     internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
         selectChannelWithoutMessages(cid)?.also { channel ->
             val messageCreatedAt = checkNotNull(

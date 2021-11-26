@@ -130,6 +130,18 @@ internal abstract class MessageDao {
         return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
 
+    suspend fun messagesNewThanMessageById(id: String): List<MessageEntity> {
+        return select(id)?.let { messageEntity ->
+            val innerEntity = messageEntity.messageInnerEntity
+
+            messagesForChannelNewerThan(
+                cid = innerEntity.cid,
+                limit = 1000,
+                dateFilter = innerEntity.createdAt ?: innerEntity.createdLocallyAt ?: return emptyList()
+            )
+        } ?: emptyList()
+    }
+
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")
     @Transaction
     protected abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>

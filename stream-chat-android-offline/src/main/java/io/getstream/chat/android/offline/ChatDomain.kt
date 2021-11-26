@@ -42,7 +42,7 @@ import io.getstream.chat.android.offline.experimental.plugin.Config as OfflinePl
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat.
  */
-public sealed interface ChatDomain {
+public sealed interface     ChatDomain {
 
     /** The current user on the chatDomain object */
     public val user: StateFlow<User?>
@@ -596,6 +596,8 @@ public sealed interface ChatDomain {
         sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
         members: List<Member> = emptyList(),
     ): Call<List<Member>>
+
+    public suspend fun selectMessagesNewerThanId(messageId: String): List<Message>
 
     public data class Builder(
         private val appContext: Context,

@@ -886,6 +886,10 @@ internal class ChatDomainImpl internal constructor(
         pagination: AnyChannelPaginationRequest,
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
+    override suspend fun selectMessagesNewerThanId(messageId: String): List<Message> {
+        return repos.messagesNewerThanId(messageId)
+    }
+
     override fun clean() {
         for (channelController in activeChannelMapImpl.values.toList()) {
             channelController.clean()
