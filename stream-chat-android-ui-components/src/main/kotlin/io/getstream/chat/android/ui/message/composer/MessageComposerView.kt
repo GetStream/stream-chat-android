@@ -17,21 +17,6 @@ public class MessageComposerView : ConstraintLayout {
     private lateinit var binding: StreamUiMessageComposerBinding
 
     /**
-     * @property onSendMessageAction Handler invoked when the user taps on the send message button.
-     */
-    public var onSendMessageAction: () -> Unit = {}
-
-    /**
-     * @property onCancelAction Handler invoked when the user cancels the active action (in Reply or Edit modes).
-     */
-    public var onCancelAction: () -> Unit = {}
-
-    /**
-     * @property onInputTextChanged Handler invoked when the user enters text in message input field.
-     */
-    public var onInputTextChanged: (String) -> Unit = {}
-
-    /**
      * @property leadingContent A function returning content visible on the left.
      */
     public var leadingContent: MessageComposerView.(ViewGroup) -> View = { emptyView() }

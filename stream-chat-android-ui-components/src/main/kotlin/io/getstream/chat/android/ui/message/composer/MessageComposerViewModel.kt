@@ -118,8 +118,8 @@ public class MessageComposerViewModel(
      * @return [Message] object, with all the data required to send it to the API.
      */
     public fun buildNewMessage(
-        message: String,
-        attachments: List<Attachment> = emptyList(),
+        message: String = input.value,
+        attachments: List<Attachment> = selectedAttachments.value,
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 
     /**
