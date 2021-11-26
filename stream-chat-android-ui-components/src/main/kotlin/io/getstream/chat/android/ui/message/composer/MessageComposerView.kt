@@ -1,40 +1,20 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
-import android.text.Editable
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
-import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 @ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageComposerBinding
-
-    /**
-     * @property messageInputState The current state of the [MessageComposerView] distributed using [Flow] API.
-     *
-     * Whenever the value of this property changes updated the [MessageComposerView] re-renders automatically.
-     * If you are using custom [View] implementation for [leadingContent], [centerContent], or [trailingContent] you may
-     * want to collect [messageInputState] items to update them when the state changes.
-     */
-    public val messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
     /**
      * @property onSendMessageAction Handler invoked when the user taps on the send message button.
@@ -51,106 +31,39 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var onInputTextChanged: (String) -> Unit = {}
 
-    private val defaultLeadingContent: View by lazy {
-        val binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(
-            streamThemeInflater,
-            binding.trailingContent,
-            false
-        )
-        binding.apply {
-            attachmentsButton.isVisible = false
-            commandsButton.isVisible = false
-        }.root
-    }
-
     /**
      * @property leadingContent A function returning content visible on the left.
      */
-    public var leadingContent: MessageComposerView.() -> View = {
-        defaultLeadingContent
-    }
+    public var leadingContent: MessageComposerView.(ViewGroup) -> View = { emptyView() }
         set(value) {
             field = value
             binding.leadingContent.apply {
                 removeAllViews()
-                addView(value())
+                addView(value(this))
             }
         }
-
-    private val defaultCenterContent: View by lazy {
-        val binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(
-            streamThemeInflater,
-            binding.trailingContent,
-            false
-        )
-        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
-            override fun afterTextChanged(s: Editable) {
-                onInputTextChanged(s.toString())
-            }
-        })
-        binding.clearCommandButton.isVisible = false
-        binding.selectedAttachmentsContainer.isVisible = false
-        binding.commandBadge.isVisible = false
-        binding.messageReplyView.isVisible = false
-        CoroutineScope(Dispatchers.Main).launch {
-            messageInputState.collect {
-                binding.messageEditText.apply {
-                    val currentValue = text.toString()
-                    val newValue = it.inputValue
-                    if (newValue != currentValue) {
-                        setText(it.inputValue)
-                    }
-                }
-                binding.clearCommandButton.isVisible = it.inputValue.isNotEmpty()
-            }
-        }
-        binding.root
-    }
 
     /**
      * @property centerContent A function returning content visible in the middle.
      */
-    public var centerContent: MessageComposerView.() -> View = {
-        defaultCenterContent
-    }
+    public var centerContent: MessageComposerView.(ViewGroup) -> View = { emptyView() }
         set(value) {
             field = value
             binding.centerContent.apply {
                 removeAllViews()
-                addView(value())
+                addView(value(this))
             }
         }
-
-    private val defaultTrailingContent: View by lazy {
-        val binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(
-            streamThemeInflater,
-            binding.trailingContent,
-            false
-        ).apply {
-            CoroutineScope(Dispatchers.Main).launch {
-                messageInputState.collect {
-                    val sendButtonEnabled = it.inputValue.isNotEmpty()
-                    sendMessageButtonDisabled.isVisible = !sendButtonEnabled
-                    sendMessageButtonEnabled.isVisible = sendButtonEnabled
-                }
-            }
-
-            sendMessageButtonEnabled.setOnClickListener {
-                onSendMessageAction()
-            }
-        }
-        binding.root
-    }
 
     /**
      * @property trailingContent A function returning content visible on the right.
      */
-    public var trailingContent: MessageComposerView.() -> View = { defaultTrailingContent }
+    public var trailingContent: MessageComposerView.(ViewGroup) -> View = { emptyView() }
         set(value) {
             field = value
             binding.trailingContent.apply {
                 removeAllViews()
-                addView(value())
+                addView(value(this))
             }
         }
 
@@ -168,17 +81,19 @@ public class MessageComposerView : ConstraintLayout {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
             removeAllViews()
-            addView(leadingContent())
+            addView(leadingContent(this))
         }
         binding.centerContent.apply {
             removeAllViews()
-            addView(centerContent())
+            addView(centerContent(this))
         }
         binding.trailingContent.apply {
             removeAllViews()
-            addView(trailingContent())
+            addView(trailingContent(this))
         }
     }
+
+    private fun emptyView() = View(context)
 }
 
 /**

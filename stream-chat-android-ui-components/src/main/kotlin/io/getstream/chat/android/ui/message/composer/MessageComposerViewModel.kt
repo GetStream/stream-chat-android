@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.composer
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -10,6 +11,9 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -23,6 +27,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
+
+    private val _messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
+
+    public val messageInputState: StateFlow<MessageInputState> = _messageInputState
 
     /**
      * UI state of the current composer input.
@@ -122,4 +130,12 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    init {
+        viewModelScope.launch {
+            input.collect {
+                _messageInputState.value = _messageInputState.value.copy(inputValue = it)
+            }
+        }
+    }
 }

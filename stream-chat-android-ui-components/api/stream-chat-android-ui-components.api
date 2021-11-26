@@ -1081,19 +1081,18 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getCenterContent ()Lkotlin/jvm/functions/Function1;
-	public final fun getLeadingContent ()Lkotlin/jvm/functions/Function1;
-	public final fun getMessageInputState ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getCenterContent ()Lkotlin/jvm/functions/Function2;
+	public final fun getLeadingContent ()Lkotlin/jvm/functions/Function2;
 	public final fun getOnCancelAction ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnInputTextChanged ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnSendMessageAction ()Lkotlin/jvm/functions/Function0;
-	public final fun getTrailingContent ()Lkotlin/jvm/functions/Function1;
-	public final fun setCenterContent (Lkotlin/jvm/functions/Function1;)V
-	public final fun setLeadingContent (Lkotlin/jvm/functions/Function1;)V
+	public final fun getTrailingContent ()Lkotlin/jvm/functions/Function2;
+	public final fun setCenterContent (Lkotlin/jvm/functions/Function2;)V
+	public final fun setLeadingContent (Lkotlin/jvm/functions/Function2;)V
 	public final fun setOnCancelAction (Lkotlin/jvm/functions/Function0;)V
 	public final fun setOnInputTextChanged (Lkotlin/jvm/functions/Function1;)V
 	public final fun setOnSendMessageAction (Lkotlin/jvm/functions/Function0;)V
-	public final fun setTrailingContent (Lkotlin/jvm/functions/Function1;)V
+	public final fun setTrailingContent (Lkotlin/jvm/functions/Function2;)V
 }
 
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerViewModel : androidx/lifecycle/ViewModel {
@@ -1104,6 +1103,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun dismissMessageActions ()V
 	public final fun getInput ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getLastActiveAction ()Lkotlinx/coroutines/flow/Flow;
+	public final fun getMessageInputState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSelectedAttachments ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun leaveThread ()V
 	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
