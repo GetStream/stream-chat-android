@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.state.channel.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
@@ -111,7 +112,7 @@ class ChannelActivity : AppCompatActivity() {
 
             ChannelList(
                 itemContent = {
-                    CustomChannelListItem(channel = it, user = user)
+                    CustomChannelListItem(channelItem = it, user = user)
                 }
             )
         }
@@ -121,9 +122,9 @@ class ChannelActivity : AppCompatActivity() {
      * An example of a customized DefaultChannelItem component.
      */
     @Composable
-    private fun CustomChannelListItem(channel: Channel, user: User?) {
+    private fun CustomChannelListItem(channelItem: ChannelItem, user: User?) {
         DefaultChannelItem(
-            channel = channel,
+            channelItem = channelItem,
             currentUser = user,
             onChannelLongClick = { },
             onChannelClick = { },
@@ -141,7 +142,7 @@ class ChannelActivity : AppCompatActivity() {
             },
             detailsContent = {
                 Text(
-                    text = ChatTheme.channelNameFormatter.formatChannelName(channel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
@@ -194,7 +195,8 @@ class ChannelActivity : AppCompatActivity() {
                 )
             }
 
-            if (selectedChannel != null) {
+            val currentSelectedChannel = selectedChannel
+            if (currentSelectedChannel != null) {
                 ChannelInfo(
                     modifier = Modifier
                         .padding(16.dp)
@@ -202,7 +204,8 @@ class ChannelActivity : AppCompatActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    selectedChannel = selectedChannel!!,
+                    isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
+                    selectedChannel = currentSelectedChannel,
                     currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )

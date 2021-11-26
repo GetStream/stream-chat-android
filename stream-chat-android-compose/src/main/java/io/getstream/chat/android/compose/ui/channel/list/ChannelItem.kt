@@ -40,19 +40,19 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.channel.list.ChannelItem
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
-import io.getstream.chat.android.compose.ui.util.isMuted
 
 private const val UNREAD_COUNT_MANY = "99+"
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
  *
- * @param channel The channel data to show.
+ * @param channelItem The channel data to show.
  * @param currentUser The user that's currently logged in.
  * @param onChannelClick Handler for a single tap on an item.
  * @param onChannelLongClick Handler for a long tap on an item.
@@ -68,32 +68,33 @@ private const val UNREAD_COUNT_MANY = "99+"
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun DefaultChannelItem(
-    channel: Channel,
+    channelItem: ChannelItem,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
-    leadingContent: @Composable RowScope.(Channel) -> Unit = {
+    leadingContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelAvatar(
             modifier = Modifier
                 .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
                 .size(ChatTheme.dimens.channelAvatarSize),
-            channel = it,
+            channel = it.channel,
             currentUser = currentUser
         )
     },
-    detailsContent: @Composable RowScope.(Channel) -> Unit = {
+    detailsContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelDetails(
-            channel = it,
+            channel = it.channel,
+            isMuted = it.isMuted,
             currentUser = currentUser,
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight()
         )
     },
-    trailingContent: @Composable RowScope.(Channel) -> Unit = {
+    trailingContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelLastMessageInfo(
-            channel = it,
+            channel = it.channel,
             currentUser = currentUser,
             modifier = Modifier
                 .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
@@ -110,6 +111,8 @@ public fun DefaultChannelItem(
         )
     },
 ) {
+    val channel = channelItem.channel
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -131,11 +134,11 @@ public fun DefaultChannelItem(
                 ),
             verticalAlignment = CenterVertically,
         ) {
-            leadingContent(channel)
+            leadingContent(channelItem)
 
-            detailsContent(channel)
+            detailsContent(channelItem)
 
-            trailingContent(channel)
+            trailingContent(channelItem)
         }
 
         divider()
@@ -147,12 +150,14 @@ public fun DefaultChannelItem(
  * preview.
  *
  * @param channel The channel to show the info for.
+ * @param isMuted If the channel is muted for the current user.
  * @param currentUser The currently logged in user, used for data handling.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun ChannelDetails(
     channel: Channel,
+    isMuted: Boolean,
     currentUser: User?,
     modifier: Modifier = Modifier,
 ) {
@@ -172,7 +177,7 @@ public fun ChannelDetails(
             )
         }
 
-        if (channel.isMuted) {
+        if (isMuted) {
             Row(verticalAlignment = CenterVertically) {
                 channelName(Modifier.weight(weight = 1f, fill = false))
 
