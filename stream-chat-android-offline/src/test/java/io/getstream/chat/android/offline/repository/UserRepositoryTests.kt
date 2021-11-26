@@ -106,4 +106,30 @@ internal class UserRepositoryTests {
         result.shouldNotBeNull()
         result.id shouldBeEqualTo "userId"
     }
+
+    @Test
+    fun `When insert user Should propagate updates to flow`() = runBlockingTest {
+        val newUser = randomUser()
+        val flow = sut.observeLastUsers()
+
+        sut.insertUser(newUser)
+
+        val userMapFlow = flow.value
+        userMapFlow.size shouldBeEqualTo 1
+        userMapFlow[newUser.id] shouldBeEqualTo newUser
+    }
+
+    @Test
+    fun `When insert users Should propagate updates to flow`() = runBlockingTest {
+        val newUser1 = randomUser()
+        val newUser2 = randomUser()
+        val flow = sut.observeLastUsers()
+
+        sut.insertUsers(listOf(newUser1, newUser2))
+
+        val userMapFlow = flow.value
+        userMapFlow.size shouldBeEqualTo 2
+        userMapFlow[newUser1.id] shouldBeEqualTo newUser1
+        userMapFlow[newUser2.id] shouldBeEqualTo newUser2
+    }
 }
