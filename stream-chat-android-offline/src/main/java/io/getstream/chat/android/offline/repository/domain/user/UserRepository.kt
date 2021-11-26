@@ -2,6 +2,8 @@ package io.getstream.chat.android.offline.repository.domain.user
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)
@@ -13,6 +15,11 @@ internal interface UserRepository {
     suspend fun selectUserMap(userIds: List<String>): Map<String, User>
     suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
     suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
+
+    /**
+     * Returns flow of latest updated users.
+     */
+    fun observeLastUsers(): StateFlow<Map<String, User>>
 }
 
 internal class UserRepositoryImpl(
@@ -24,6 +31,10 @@ internal class UserRepositoryImpl(
     private val userCache = LruCache<String, User>(cacheSize)
     private val currentUserMap: Map<String, User> = currentUser?.let { mapOf(it.id to it) } ?: emptyMap()
 
+    private val lastUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+
+    override fun observeLastUsers(): StateFlow<Map<String, User>> = lastUsersFlow
+
     override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
         cacheUsers(users)
@@ -34,9 +45,11 @@ internal class UserRepositoryImpl(
         for (userEntity in users) {
             userCache.put(userEntity.id, userEntity)
         }
+        lastUsersFlow.value = userCache.snapshot()
     }
 
     override suspend fun insertUser(user: User) {
+        cacheUsers(listOf(user))
         userDao.insert(toEntity(user))
     }
 

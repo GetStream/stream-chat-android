@@ -74,6 +74,13 @@ object AppConfig {
         ),
         SampleUser(
             apiKey = apiKey,
+            id = "oleg",
+            name = "NotOleg Kuzmin",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U019BEATNCD-bad2dcf654ef-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU"
+        ),
+        SampleUser(
+            apiKey = apiKey,
             id = "rafal",
             name = "Rafal Adasiewicz",
             image = "https://ca.slack-edge.com/T02RM6X6B-U0177N46AFN-a4e664d1960d-128",
