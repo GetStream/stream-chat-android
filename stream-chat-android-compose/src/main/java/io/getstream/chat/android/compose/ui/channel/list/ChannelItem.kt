@@ -160,8 +160,9 @@ public fun ChannelDetails(
         modifier = modifier,
         verticalArrangement = Arrangement.Center
     ) {
-        val channelName: (@Composable () -> Unit) = @Composable {
+        val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
             Text(
+                modifier = it,
                 text = ChatTheme.channelNameFormatter.formatChannelName(channel),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
@@ -173,7 +174,7 @@ public fun ChannelDetails(
 
         if (channel.isMuted) {
             Row(verticalAlignment = CenterVertically) {
-                channelName()
+                channelName(Modifier.weight(weight = 1f, fill = false))
 
                 Icon(
                     modifier = Modifier
@@ -181,10 +182,11 @@ public fun ChannelDetails(
                         .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_mute),
                     contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
                 )
             }
         } else {
-            channelName()
+            channelName(Modifier)
         }
 
         val lastMessageText = channel.getLastMessage(currentUser)?.let { lastMessage ->

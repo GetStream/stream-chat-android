@@ -25,9 +25,10 @@
     <string name="stream_compose_channel_info_dismiss">Annulla</string>
 
     <!-- Common -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d Membro, %2d Online</item>
-        <item quantity="other">%1d Membri, %2d Online</item>
+    <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="one">%1d Membro</item>
+        <item quantity="other">%1d Membri</item>
     </plurals>
     <string name="stream_compose_ok">OK</string>
     <string name="stream_compose_cancel">Annulla</string>
@@ -37,6 +38,33 @@
     <string name="stream_compose_user_status_last_seen">Ultimo accesso %1$s fa</string>
     <string name="stream_compose_user_status_last_seen_just_now">Ultimo accesso di recente</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s sta scrivendo</item>
+        <item quantity="other">%s e altri %d stanno scrivendo</item>
+    </plurals>
+
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">%d Risposta nella Conversazione</item>
+        <item quantity="other">%d Risposte nella Conversazione</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d Risposta</item>
+        <item quantity="other">%d Risposte</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">Nessun messaggio</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">Rispondi</string>
+    <string name="stream_compose_thread_reply">Rispondi nella conversazione</string>
+    <string name="stream_compose_copy_message">Copia messaggio</string>
+    <string name="stream_compose_edit_message">Modifica messaggio</string>
+    <string name="stream_compose_delete_message">Cancella messaggio</string>
+    <string name="stream_compose_mute_user">Silenzia Utente</string>
+
+    <!-- Message Composer -->
+    <string name="stream_compose_message_composer_error_message_length">La lunghezza massima del messaggio (%1$d) è stata superata.</string>
+    <string name="stream_compose_message_composer_error_file_size">File troppo grande - max %1$s.</string>
+    <string name="stream_compose_message_composer_error_attachment_count">Attenzione: il limite massimo di %1$d file è stato superato.</string>
 </resources>

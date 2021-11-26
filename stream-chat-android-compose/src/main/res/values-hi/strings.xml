@@ -25,9 +25,10 @@
     <string name="stream_compose_channel_info_dismiss">रद्द करें</string>
 
     <!-- Common -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d सदस्य, %2d ऑनलाइन</item>
-        <item quantity="other">%1d सदस्य, %2d ऑनलाइन</item>
+    <string name="stream_compose_member_count_online">%1$s, %2$d ऑनलाइन</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="one">%1d सदस्य</item>
+        <item quantity="other">%1d सदस्य</item>
     </plurals>
     <string name="stream_compose_ok">ठीक</string>
     <string name="stream_compose_cancel">रद्द करें</string>
@@ -37,6 +38,33 @@
     <string name="stream_compose_user_status_last_seen">पिछली बार देखा %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">अंतिम बार अभी देखा</string>
 
+    <!-- Message List Header -->
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s लिख रहे/रहीं हैं</item>
+        <item quantity="other">%s and %d अन्य लिख रहें हैं</item>
+    </plurals>
+
     <!-- Message List -->
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
     <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>
+
+    <!-- Selected Message Overlay -->
+    <string name="stream_compose_reply">जवाब दें</string>
+    <string name="stream_compose_thread_reply">चर्चा पर जवाब दें</string>
+    <string name="stream_compose_copy_message">मैसेज कॉपी करें</string>
+    <string name="stream_compose_edit_message">मैसेज एडिट करें</string>
+    <string name="stream_compose_delete_message">मैसेज मिटायें</string>
+    <string name="stream_compose_mute_user">यूजर को म्यूट करें</string>
+
+    <!-- Message Composer -->
+    <string name="stream_compose_message_composer_error_message_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>
+    <string name="stream_compose_message_composer_error_file_size">फ़ाइल बहुत बड़ी है - अधिकतम %1$s एमबी.</string>
+    <string name="stream_compose_message_composer_error_attachment_count">अटैचमेंट्स संख्या (%1$d) पार हो गयी</string>
 </resources>

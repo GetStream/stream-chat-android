@@ -39,8 +39,8 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,6 +66,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
@@ -148,7 +149,16 @@ public fun DefaultMessageItem(
     },
 ) {
     when (messageListItem) {
-        is DateSeparator -> MessageDateSeparator(messageListItem)
+        is DateSeparator -> MessageDateSeparator(
+            modifier = Modifier.fillMaxWidth(),
+            dateSeparator = messageListItem
+        )
+        is ThreadSeparator -> MessageThreadSeparator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding),
+            threadSeparator = messageListItem
+        )
         is MessageItem -> DefaultMessageContainer(
             modifier = modifier,
             messageItem = messageListItem,
@@ -168,12 +178,14 @@ public fun DefaultMessageItem(
  * Represents a date separator item that shows whenever messages are too far apart in time.
  *
  * @param dateSeparator The data used to show the separator text.
+ * @param modifier Modifier for styling.
  */
 @Composable
 public fun MessageDateSeparator(
     dateSeparator: DateSeparator,
+    modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Center) {
+    Box(modifier = modifier, contentAlignment = Center) {
         Surface(
             modifier = Modifier
                 .padding(vertical = 8.dp),
@@ -192,6 +204,44 @@ public fun MessageDateSeparator(
                 style = ChatTheme.typography.body
             )
         }
+    }
+}
+
+/**
+ * Represents a thread separator item that is displayed in thread mode to separate a parent message
+ * from thread replies.
+ *
+ * @param threadSeparator The data used to show the separator text.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun MessageThreadSeparator(
+    threadSeparator: ThreadSeparator,
+    modifier: Modifier = Modifier,
+) {
+    val backgroundGradient = Brush.verticalGradient(
+        listOf(
+            ChatTheme.colors.threadSeparatorGradientStart,
+            ChatTheme.colors.threadSeparatorGradientEnd
+        )
+    )
+    val replyCount = threadSeparator.replyCount
+
+    Box(
+        modifier = modifier
+            .background(brush = backgroundGradient),
+        contentAlignment = Center
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding),
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_separator,
+                replyCount,
+                replyCount
+            ),
+            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.body
+        )
     }
 }
 
@@ -266,7 +316,7 @@ public fun DefaultMessageContainer(
         )
     },
 ) {
-    val (message, _, _, ownsMessage, isFocused) = messageItem
+    val (message, _, _, _, isFocused) = messageItem
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -294,12 +344,14 @@ public fun DefaultMessageContainer(
         )
     )
 
+    val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = backgroundColor),
-        contentAlignment = if (ownsMessage) CenterEnd else CenterStart
+        contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(
             modifier
@@ -309,7 +361,7 @@ public fun DefaultMessageContainer(
 
             leadingContent(messageItem)
 
-            Column(horizontalAlignment = if (ownsMessage) End else Start) {
+            Column(horizontalAlignment = messageAlignment.contentAlignment) {
                 headerContent(messageItem)
 
                 content(messageItem)
@@ -335,17 +387,15 @@ public fun DefaultMessageItemLeadingContent(
     messageItem: MessageItem,
     modifier: Modifier = Modifier,
 ) {
-    if (!messageItem.isMine) {
-        val position = messageItem.groupPosition
-        if (position == Bottom || position == None) {
-            UserAvatar(
-                modifier = modifier,
-                user = messageItem.message.user,
-                showOnlineIndicator = false
-            )
-        } else {
-            Spacer(modifier = modifier)
-        }
+    val position = messageItem.groupPosition
+    if (!messageItem.isMine && (position == Bottom || position == None)) {
+        UserAvatar(
+            modifier = modifier,
+            user = messageItem.message.user,
+            showOnlineIndicator = false
+        )
+    } else {
+        Spacer(modifier = modifier)
     }
 }
 
@@ -480,7 +530,7 @@ public fun DefaultMessageItemContent(
     }
 
     val messageCardColor = when {
-        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackgroundColor
+        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackground
         ownsMessage -> ChatTheme.colors.ownMessagesBackground
         else -> ChatTheme.colors.otherMessagesBackground
     }
@@ -850,11 +900,16 @@ internal fun MessageFooter(
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
 
-    if (hasThread) {
+    if (hasThread && !messageItem.isInThread) {
+        val replyCount = message.replyCount
         ThreadParticipants(
             modifier = modifier,
             participants = message.threadParticipants,
-            text = stringResource(id = R.string.stream_compose_thread_footnote)
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_footnote,
+                replyCount,
+                replyCount
+            )
         )
     } else if (!hasThread && (position == Bottom || position == None)) {
         Row(
@@ -904,6 +959,20 @@ private fun OwnedMessageVisibilityContent(
             date = message.updatedAt ?: message.createdAt ?: Date()
         )
     }
+}
+
+/**
+ * Represents the horizontal alignment of messages in the message list.
+ *
+ * @param itemAlignment The alignment of the message item.
+ * @param contentAlignment The alignment of the inner content.
+ */
+public enum class MessageAlignment(
+    public val itemAlignment: Alignment,
+    public val contentAlignment: Alignment.Horizontal,
+) {
+    Start(CenterStart, Alignment.Start),
+    End(CenterEnd, Alignment.End),
 }
 
 @Preview

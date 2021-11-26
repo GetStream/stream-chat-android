@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
  * @param attachmentsContentLinkWidth The with of link attachments in the message list.
  * @param attachmentsContentFileWidth The width of file attachments in the message list.
  * @param attachmentsContentFileUploadWidth The width of uploading file attachments in the message list.
+ * @param threadSeparatorVerticalPadding The vertical content padding inside thread separator item.
+ * @param threadSeparatorTextVerticalPadding The vertical padding inside thread separator text.
+ * @param messageOverlayActionItemHeight The height of an action item on the selected message overlay.
  */
 @Immutable
 public data class StreamDimens(
@@ -36,6 +39,9 @@ public data class StreamDimens(
     public val attachmentsContentLinkWidth: Dp,
     public val attachmentsContentFileWidth: Dp,
     public val attachmentsContentFileUploadWidth: Dp,
+    public val threadSeparatorVerticalPadding: Dp,
+    public val threadSeparatorTextVerticalPadding: Dp,
+    public val messageOverlayActionItemHeight: Dp,
 ) {
     public companion object {
         public fun defaultDimens(): StreamDimens = StreamDimens(
@@ -52,6 +58,9 @@ public data class StreamDimens(
             attachmentsContentLinkWidth = 250.dp,
             attachmentsContentFileWidth = 250.dp,
             attachmentsContentFileUploadWidth = 250.dp,
+            threadSeparatorVerticalPadding = 8.dp,
+            threadSeparatorTextVerticalPadding = 2.dp,
+            messageOverlayActionItemHeight = 40.dp
         )
     }
 }

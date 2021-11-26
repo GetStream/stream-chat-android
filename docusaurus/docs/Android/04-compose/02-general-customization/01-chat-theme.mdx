@@ -10,6 +10,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **DateFormatter**: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
 * **ChannelNameFormatter**: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
 * **MessagePreviewFormatter**: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
+* **MessageAlignmentProvider** Used to provide an alignment for a particular message. You can use the default implementation, which aligns the messages of the current user to the right, or customize it according to your needs.
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 

@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -95,6 +96,12 @@ public class MessageListViewModel(
      * The information for the current [Channel].
      */
     public var channel: Channel by mutableStateOf(Channel())
+        private set
+
+    /**
+     * The list of typing users.
+     */
+    public var typingUsers: List<User> by mutableStateOf(emptyList())
         private set
 
     /**
@@ -169,6 +176,7 @@ public class MessageListViewModel(
                 val controller = result.data()
 
                 observeConversation(controller)
+                observeTypingUsers(controller)
             } else {
                 result.error().cause?.printStackTrace()
                 showEmptyState()
@@ -230,6 +238,17 @@ public class MessageListViewModel(
                         setCurrentChannel(channel)
                     }
                 }
+        }
+    }
+
+    /**
+     * Starts observing the list of typing users.
+     */
+    private fun observeTypingUsers(controller: ChannelController) {
+        viewModelScope.launch {
+            controller.typing.collect {
+                typingUsers = it.users
+            }
         }
     }
 
@@ -545,9 +564,14 @@ public class MessageListViewModel(
                     message = message,
                     groupPosition = position,
                     parentMessageId = parentMessageId,
-                    isMine = user.id == currentUser?.id
+                    isMine = user.id == currentUser?.id,
+                    isInThread = isInThread
                 )
             )
+
+            if (index == 0 && isInThread) {
+                groupedMessages.add(ThreadSeparator(message.replyCount))
+            }
         }
 
         return groupedMessages.reversed()

@@ -1,10 +1,8 @@
 package io.getstream.chat.android.compose.ui.messages.composer.components
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,13 +18,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun RowScope.DefaultComposerIntegrations(
+internal fun DefaultComposerIntegrations(
     onAttachmentsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier
-            .align(CenterVertically),
+        modifier = modifier,
         content = {
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
