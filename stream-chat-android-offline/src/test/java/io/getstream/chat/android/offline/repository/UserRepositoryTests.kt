@@ -158,7 +158,7 @@ internal class UserRepositoryTests {
         }
 
     @Test
-    fun `Given users were inserted already When insert users Shouldn't be propagated value to flow again`() =
+    fun `Given users were inserted already When insert a user Shouldn't be propagated value to flow again`() =
         runBlockingTest {
             val newUser1 = randomUser()
             val newUser2 = randomUser()
@@ -173,6 +173,29 @@ internal class UserRepositoryTests {
                     sut.insertUser(newUser1)
 
                     observedTimes shouldBeEqualTo 1
+                    cancelAndConsumeRemainingEvents()
+                }
+        }
+
+    @Test
+    fun `Given users were inserted already When insert an updated user Should propagate value to flow`() =
+        runBlockingTest {
+            val newUser1 = randomUser()
+            val newUser2 = randomUser()
+            val updatedUser1 = newUser1.copy(extraData = mutableMapOf()).apply {
+                name = "newUserName"
+            }
+            var observedTimes = 0
+
+            sut.observeLastUsers()
+                .drop(1) // empty initial value
+                .onEach { observedTimes += 1 }
+                .test {
+                    sut.insertUsers(listOf(newUser1, newUser2))
+
+                    sut.insertUser(updatedUser1)
+
+                    observedTimes shouldBeEqualTo 2
                     cancelAndConsumeRemainingEvents()
                 }
         }
