@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -125,7 +124,6 @@ public fun MessageComposer(
  * @param integrations Composable that represents integrations for the composer, such as Attachments.
  * @param input Composable that represents the input field in the composer.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageComposer(
     messageInputState: MessageInputState,

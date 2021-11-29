@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.suggestions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -26,7 +25,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param headerContent The content shown at the top of a suggestion list popup.
  * @param content The content shown inside the suggestion list popup.
  */
-@ExperimentalFoundationApi
 @Composable
 public fun SuggestionList(
     modifier: Modifier = Modifier,
