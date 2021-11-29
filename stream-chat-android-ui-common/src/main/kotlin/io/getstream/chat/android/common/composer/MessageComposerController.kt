@@ -19,8 +19,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
@@ -135,17 +136,13 @@ public class MessageComposerController(
             if (result.isSuccess) {
                 val channelController = result.data()
 
-                scope.launch {
-                    channelController.channelConfig.collect {
-                        maxMessageLength = it.maxMessageLength
-                    }
-                }
+                channelController.channelConfig.onEach {
+                    maxMessageLength = it.maxMessageLength
+                }.launchIn(scope)
 
-                scope.launch {
-                    channelController.members.collect {
-                        users = it.map { it.user }
-                    }
-                }
+                channelController.members.onEach { members ->
+                    users = members.map { it.user }
+                }.launchIn(scope)
             }
         }
     }
