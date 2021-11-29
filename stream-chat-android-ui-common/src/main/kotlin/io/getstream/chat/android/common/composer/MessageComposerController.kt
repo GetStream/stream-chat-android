@@ -4,7 +4,6 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
@@ -73,8 +72,10 @@ public class MessageComposerController(
      */
     public val mentionSuggestions: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
 
-
-    private var users: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
+    /**
+     * Represents the list of users in the channel.
+     */
+    private var users: List<User> = emptyList()
 
     /**
      * Represents the maximum allowed message length in the message input.
@@ -119,6 +120,12 @@ public class MessageComposerController(
         get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
 
     /**
+     * Gets the current text input in the message composer..
+     */
+    private val messageText: String
+        get() = input.value
+
+    /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
@@ -136,7 +143,7 @@ public class MessageComposerController(
 
                 scope.launch {
                     channelController.members.collect {
-                        users.value = it.map { it.user }
+                        users = it.map { it.user }
                     }
                 }
             }
@@ -151,22 +158,9 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        setTyping(value.isNotEmpty())
-        showSuggestions()
-        validateInput()
-    }
-
-
-    private fun showSuggestions() {
-        val messageText = input.value
-
-        val containsMention = MENTION_PATTERN.matcher(messageText).find()
-        if (containsMention) {
-            mentionSuggestions.value =  users.value
-                .filter { it.name.contains(messageText.substringAfterLast("@"), true) }
-        } else {
-            mentionSuggestions.value = emptyList()
-        }
+        sendTypingEventIfNecessary(isTyping = value.isNotEmpty())
+        showMentionSuggestionsIfNecessary()
+        showValidationErrorsIfNecessary()
     }
 
     /**
@@ -237,7 +231,7 @@ public class MessageComposerController(
         }
         selectedAttachments.value = newAttachments
 
-        validateInput()
+        showValidationErrorsIfNecessary()
     }
 
     /**
@@ -250,7 +244,7 @@ public class MessageComposerController(
     public fun removeSelectedAttachment(attachment: Attachment) {
         selectedAttachments.value = selectedAttachments.value - attachment
 
-        validateInput()
+        showValidationErrorsIfNecessary()
     }
 
     /**
@@ -280,7 +274,7 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
-        setTyping(false)
+        sendTypingEventIfNecessary(isTyping = false)
 
         sendMessageCall.enqueue()
     }
@@ -336,9 +330,12 @@ public class MessageComposerController(
     /**
      * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
      *
+     * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
+     * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
+     *
      * @param isTyping If the user is currently typing.
      */
-    private fun setTyping(isTyping: Boolean) {
+    private fun sendTypingEventIfNecessary(isTyping: Boolean) {
         if (isTyping) {
             chatDomain.keystroke(channelId, parentMessageId)
         } else {
@@ -356,7 +353,7 @@ public class MessageComposerController(
     /**
      * Checks the current input for validation errors.
      */
-    private fun validateInput() {
+    private fun showValidationErrorsIfNecessary() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
             val messageLength = input.value.length
             if (messageLength > maxMessageLength) {
@@ -391,11 +388,28 @@ public class MessageComposerController(
         }
     }
 
-    public fun autoCompleteMention(user: User) {
-        val value = this.input.value
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMentionSuggestion(user: User) {
+        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
 
-        val  messageText = "${value.substringBeforeLast("@")}@${user.name} "
-        setMessageInput(messageText)
+        setMessageInput(augmentedMessageText)
+    }
+
+    /**
+     * Shows the mention suggestion list popup if necessary.
+     */
+    private fun showMentionSuggestionsIfNecessary() {
+        val containsMention = MENTION_PATTERN.matcher(messageText).find()
+
+        mentionSuggestions.value = if (containsMention) {
+            users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
+        } else {
+            emptyList()
+        }
     }
 
     private companion object {
@@ -405,7 +419,7 @@ public class MessageComposerController(
         private const val DEFAULT_MAX_MESSAGE_LENGTH: Int = 5000
 
         /**
-         *
+         * The regex pattern used to check if the message ends with incomplete mention.
          */
         private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
     }

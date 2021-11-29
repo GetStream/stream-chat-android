@@ -69,5 +69,3 @@ private class SuggestionListPositionProvider : PopupPositionProvider {
         )
     }
 }
-
-

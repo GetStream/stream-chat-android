@@ -36,7 +36,7 @@ public fun MentionSuggestionList(
         val listState = rememberLazyListState()
 
         LazyColumn(
-            contentPadding = PaddingValues(vertical= 8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp),
             modifier = modifier,
             state = listState,
             horizontalAlignment = Alignment.CenterHorizontally,

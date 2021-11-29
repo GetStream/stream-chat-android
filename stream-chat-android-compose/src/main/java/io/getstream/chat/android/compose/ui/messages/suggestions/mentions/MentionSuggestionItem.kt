@@ -48,7 +48,6 @@ public fun DefaultMentionSuggestionItem(
                 .padding(end = 8.dp)
                 .size(40.dp)
         )
-
     },
     detailsContent: @Composable RowScope.(User) -> Unit = {
         DefaultMentionSuggestionItemDetailsContent(
@@ -154,4 +153,3 @@ public fun DefaultMentionSuggestionItemTrailingContent(
         tint = ChatTheme.colors.primaryAccent
     )
 }
-
