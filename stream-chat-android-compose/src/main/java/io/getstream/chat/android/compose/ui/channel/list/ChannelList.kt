@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
+import io.getstream.chat.android.compose.state.channel.list.ChannelItem
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.common.EmptyView
 import io.getstream.chat.android.compose.ui.common.LoadingFooter
@@ -68,9 +69,9 @@ public fun ChannelList(
             modifier = modifier
         )
     },
-    itemContent: @Composable (Channel) -> Unit = { channel ->
+    itemContent: @Composable (ChannelItem) -> Unit = { channelItem ->
         DefaultChannelItem(
-            channel = channel,
+            channelItem = channelItem,
             currentUser = viewModel.user.value,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
@@ -133,9 +134,9 @@ public fun ChannelList(
             modifier = modifier
         )
     },
-    itemContent: @Composable (Channel) -> Unit = { channel ->
+    itemContent: @Composable (ChannelItem) -> Unit = { channelItem ->
         DefaultChannelItem(
-            channel = channel,
+            channelItem = channelItem,
             currentUser = currentUser,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
@@ -171,9 +172,9 @@ public fun Channels(
     channelsState: ChannelsState,
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable (Channel) -> Unit,
+    itemContent: @Composable (ChannelItem) -> Unit,
 ) {
-    val (_, isLoadingMore, endOfChannels, channels) = channelsState
+    val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -182,8 +183,8 @@ public fun Channels(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(
-            items = channels,
-            key = Channel::cid
+            items = channelItems,
+            key = { it.channel.cid }
         ) { item ->
             itemContent(item)
         }
@@ -195,7 +196,7 @@ public fun Channels(
         }
     }
 
-    if (!endOfChannels && channels.isNotEmpty()) {
+    if (!endOfChannels && channelItems.isNotEmpty()) {
         LoadMoreHandler(listState) {
             onLastItemReached()
         }
