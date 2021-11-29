@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
-import io.getstream.chat.android.ui.utils.elipseText
+import io.getstream.chat.android.ui.utils.ellipsizeText
 
 internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
@@ -173,12 +173,17 @@ internal class MessageReplyView : FrameLayout {
                 attachment.title ?: attachment.name
             }
         }
-        if (isLink(message)) {
-            configureLinkTextStyle(isMine, style)
-        } else if (isMine) {
-            style?.textStyleMine?.apply(binding.replyText)
-        } else {
-            style?.textStyleTheirs?.apply(binding.replyText)
+
+        when {
+            isLink(message) -> {
+                configureLinkTextStyle(isMine, style)
+            }
+            isMine -> {
+                style?.textStyleMine?.apply(binding.replyText)
+            }
+            else -> {
+                style?.textStyleTheirs?.apply(binding.replyText)
+            }
         }
     }
 
@@ -194,7 +199,7 @@ internal class MessageReplyView : FrameLayout {
     }
 
     private fun ellipsize(text: String): String {
-        return elipseText(text, MAX_ELLIPSIZE_CHAR_COUNT)
+        return ellipsizeText(text, MAX_ELLIPSIZE_CHAR_COUNT)
     }
 
     private fun showAttachmentThumb(url: String?) {
