@@ -76,7 +76,7 @@ public fun DefaultChannelItem(
     leadingContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelAvatar(
             modifier = Modifier
-                .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
+                .padding(end = ChatTheme.dimens.channelItemHorizontalPadding)
                 .size(ChatTheme.dimens.channelAvatarSize),
             channel = it.channel,
             currentUser = currentUser
@@ -97,7 +97,7 @@ public fun DefaultChannelItem(
             channel = it.channel,
             currentUser = currentUser,
             modifier = Modifier
-                .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
+                .padding(start = ChatTheme.dimens.channelItemHorizontalPadding)
                 .wrapContentHeight()
                 .align(Alignment.Bottom)
         )
@@ -234,7 +234,10 @@ public fun ChannelLastMessageInfo(
             val unreadCount = channel.unreadCount
 
             if (unreadCount != null && unreadCount > 0) {
-                UnreadCountIndicator(unreadCount = unreadCount)
+                UnreadCountIndicator(
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    unreadCount = unreadCount
+                )
             }
 
             Row(verticalAlignment = CenterVertically) {
