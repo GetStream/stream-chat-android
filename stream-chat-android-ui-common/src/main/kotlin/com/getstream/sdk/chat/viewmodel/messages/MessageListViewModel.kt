@@ -8,6 +8,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
@@ -367,17 +368,28 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.ShowMessage -> {
-                domain.loadMessageById(
-                    cid,
-                    event.messageId,
-                    MESSAGES_LIMIT,
-                    MESSAGES_LIMIT
-                ).enqueue { result ->
-                    if (result.isSuccess) {
-                        _targetMessage.value = result.data()
-                    } else {
-                        val error = result.error()
-                        logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
+                val message = messageListData?.value
+                    ?.items
+                    ?.asSequence()
+                    ?.filterIsInstance<MessageListItem.MessageItem>()
+                    ?.find { messageItem -> messageItem.message.id == event.messageId }
+                    ?.message
+
+                if (message != null) {
+                    _targetMessage.value = message
+                } else {
+                    domain.loadMessageById(
+                        cid,
+                        event.messageId,
+                        MESSAGES_LIMIT,
+                        MESSAGES_LIMIT
+                    ).enqueue { result ->
+                        if (result.isSuccess) {
+                            _targetMessage.value = result.data()
+                        } else {
+                            val error = result.error()
+                            logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
+                        }
                     }
                 }
             }
