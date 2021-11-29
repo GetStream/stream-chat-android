@@ -75,10 +75,8 @@ internal class MessageOptionsView : FrameLayout {
 
         binding.flagTV.configureListItem(textStyle, style.flagIcon)
         binding.muteTV.configureListItem(textStyle, style.muteIcon)
-        binding.blockTV.configureListItem(textStyle, style.blockIcon)
         binding.editTV.isVisible = false
         binding.deleteTV.isVisible = false
-        binding.blockTV.isVisible = true
         configureMute(
             configuration = configuration,
             style = style,
@@ -90,6 +88,7 @@ internal class MessageOptionsView : FrameLayout {
             style = style,
             isMessagePinned = isMessagePinned
         )
+        configureBlock(configuration = configuration, style = style)
     }
 
     private fun configureMineMessage(
@@ -200,6 +199,9 @@ internal class MessageOptionsView : FrameLayout {
 
     private fun configureBlock(configuration: Configuration, style: MessageListViewStyle) {
         binding.blockTV.isVisible = configuration.blockEnabled
+        if(configuration.blockEnabled) {
+            binding.blockTV.configureListItem(style.messageOptionsText, style.blockIcon)
+        }
     }
 
     private fun configureCopyMessage(configuration: Configuration, style: MessageListViewStyle) {
