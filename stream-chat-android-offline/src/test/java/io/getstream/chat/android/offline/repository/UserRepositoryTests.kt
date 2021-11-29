@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.repository
 
+import app.cash.turbine.test
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
@@ -14,6 +15,8 @@ import io.getstream.chat.android.offline.repository.domain.user.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.repository.domain.user.UserRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
@@ -132,4 +135,45 @@ internal class UserRepositoryTests {
         userMapFlow[newUser1.id] shouldBeEqualTo newUser1
         userMapFlow[newUser2.id] shouldBeEqualTo newUser2
     }
+
+    @Test
+    fun `Given users were inserted When insert a new user Should propagated new value to flow`() =
+        runBlockingTest {
+            val newUser1 = randomUser()
+            val newUser2 = randomUser()
+            val newUser3 = randomUser()
+            var observedTimes = 0
+
+            sut.observeLastUsers()
+                .drop(1) // empty initial value
+                .onEach { observedTimes += 1 }
+                .test {
+                    sut.insertUsers(listOf(newUser1, newUser2))
+
+                    sut.insertUser(newUser3)
+
+                    observedTimes shouldBeEqualTo 2
+                    cancelAndConsumeRemainingEvents()
+                }
+        }
+
+    @Test
+    fun `Given users were inserted already When insert users Shouldn't be propagated value to flow again`() =
+        runBlockingTest {
+            val newUser1 = randomUser()
+            val newUser2 = randomUser()
+            var observedTimes = 0
+
+            sut.observeLastUsers()
+                .drop(1) // empty initial value
+                .onEach { observedTimes += 1 }
+                .test {
+                    sut.insertUsers(listOf(newUser1, newUser2))
+
+                    sut.insertUser(newUser1)
+
+                    observedTimes shouldBeEqualTo 1
+                    cancelAndConsumeRemainingEvents()
+                }
+        }
 }
