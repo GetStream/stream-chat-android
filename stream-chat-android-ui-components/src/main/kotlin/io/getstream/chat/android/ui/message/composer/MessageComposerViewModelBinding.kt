@@ -1,80 +1,30 @@
 package io.getstream.chat.android.ui.message.composer
 
-import android.text.Editable
-import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.viewModelScope
-import com.google.android.material.internal.TextWatcherAdapter
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-public fun MessageComposerViewModel.bindView(view: MessageComposerView, lifecycleOwner: LifecycleOwner) {
-    view.leadingContent = { container: ViewGroup ->
-        val binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(
-            view.streamThemeInflater,
-            container,
-            false
-        )
-        binding.apply {
-            attachmentsButton.isVisible = false
-            commandsButton.isVisible = false
-        }.root
+public fun MessageComposerViewModel.bindView(
+    view: MessageComposerView,
+    lifecycleOwner: LifecycleOwner,
+) {
+    view.onSendMessage = {
+        val message = this.buildNewMessage()
+        sendMessage(message)
     }
 
-    view.centerContent = { container ->
-        val binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(
-            streamThemeInflater,
-            container,
-            false
-        )
-        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
-            override fun afterTextChanged(s: Editable) {
-                setMessageInput(s.toString())
-            }
-        })
-        binding.clearCommandButton.isVisible = false
-        binding.selectedAttachmentsContainer.isVisible = false
-        binding.commandBadge.isVisible = false
-        binding.messageReplyView.isVisible = false
-        viewModelScope.launch {
-            messageInputState.collect {
-                binding.messageEditText.apply {
-                    val currentValue = text.toString()
-                    val newValue = it.inputValue
-                    if (newValue != currentValue) {
-                        setText(it.inputValue)
-                    }
-                }
-                binding.clearCommandButton.isVisible = it.inputValue.isNotEmpty()
-            }
-        }
-        binding.root
+    view.onInputChanged = {
+        this.input.value = it
     }
 
-    view.trailingContent = { container ->
-        val binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(
-            streamThemeInflater,
-            container,
-            false
-        ).apply {
-            viewModelScope.launch {
-                messageInputState.collect {
-                    val sendButtonEnabled = it.inputValue.isNotEmpty()
-                    sendMessageButtonDisabled.isVisible = !sendButtonEnabled
-                    sendMessageButtonEnabled.isVisible = sendButtonEnabled
-                }
-            }
+    view.onClearInput = {
+        this.setMessageInput("")
+    }
 
-            sendMessageButtonEnabled.setOnClickListener {
-                val message = buildNewMessage()
-                sendMessage(message)
-            }
+    lifecycleOwner.lifecycleScope.launch {
+        messageInputState.collect {
+            view.renderState(it)
         }
-        binding.root
     }
 }

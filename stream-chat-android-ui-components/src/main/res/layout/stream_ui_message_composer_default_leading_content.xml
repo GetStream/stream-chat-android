@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="horizontal"
     >
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/attachmentsButton"
-        android:layout_width="@dimen/stream_ui_attachment_button_size"
-        android:layout_height="@dimen/stream_ui_attachment_button_size"
-        android:background="?selectableItemBackgroundBorderless"
-        android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/stream_ui_ic_attach"
-        app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
-        />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/commandsButton"
-        android:layout_width="@dimen/stream_ui_command_button_size"
-        android:layout_height="@dimen/stream_ui_command_button_size"
-        android:background="?selectableItemBackgroundBorderless"
-        android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/stream_ui_ic_command"
-        app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
-        app:layout_constraintStart_toEndOf="@id/attachmentsButton"
-        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
-        />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/attachmentsButton"
+            android:layout_width="@dimen/stream_ui_attachment_button_size"
+            android:layout_height="@dimen/stream_ui_attachment_button_size"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:src="@drawable/stream_ui_ic_attach"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
+            />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/commandsButton"
+            android:layout_width="@dimen/stream_ui_command_button_size"
+            android:layout_height="@dimen/stream_ui_command_button_size"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:src="@drawable/stream_ui_ic_command"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
+            app:layout_constraintStart_toEndOf="@id/attachmentsButton"
+            app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</merge>

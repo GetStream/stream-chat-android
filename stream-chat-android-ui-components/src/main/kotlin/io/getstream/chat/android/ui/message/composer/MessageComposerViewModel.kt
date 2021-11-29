@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,9 @@ public class MessageComposerViewModel(
 
     private val _messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
+    /**
+     * UI state of the message input component.
+     */
     public val messageInputState: StateFlow<MessageInputState> = _messageInputState
 
     /**
@@ -46,6 +50,15 @@ public class MessageComposerViewModel(
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
+
+    init {
+        viewModelScope.launch {
+            input.collect {
+                val oldState = _messageInputState.value
+                _messageInputState.value = oldState.copy(it)
+            }
+        }
+    }
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -130,12 +143,4 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
-
-    init {
-        viewModelScope.launch {
-            input.collect {
-                _messageInputState.value = _messageInputState.value.copy(inputValue = it)
-            }
-        }
-    }
 }

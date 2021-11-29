@@ -1,31 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sendButtonContainer"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
     >
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/sendMessageButtonDisabled"
+    <FrameLayout
+        android:id="@+id/sendButtonContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/stream_ui_ic_filled_right_arrow"
-        />
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
+        >
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/sendMessageButtonEnabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/stream_ui_ic_filled_up_arrow"
-        />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/sendMessageButtonDisabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:src="@drawable/stream_ui_ic_filled_right_arrow"
+            />
 
-</FrameLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/sendMessageButtonEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:src="@drawable/stream_ui_ic_filled_up_arrow"
+            />
+    </FrameLayout>
+</merge>
