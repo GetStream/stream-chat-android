@@ -107,3 +107,23 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 @CheckResult
 public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
     DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)
+
+/**
+ * StopTyping should be called when the user submits the text and finishes typing.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+ *
+ * @return Executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
+ * false if it wasn't sent.
+ */
+@CheckResult
+public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
+    validateCid(cid)
+
+    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val channelController = chatDomain.channel(cid)
+    return CoroutineCall(chatDomain.scope) {
+        channelController.stopTyping(parentId)
+    }
+}
