@@ -136,12 +136,17 @@ public class MessageComposerViewModel(
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
 
     /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
+
+    /**
      * Disposes the inner [MessageComposerController].
      */
     override fun onCleared() {
         super.onCleared()
         messageComposerController.onCleared()
     }
-
-    public fun autocompleteMention(user: User): Unit = messageComposerController.autoCompleteMention(user)
 }

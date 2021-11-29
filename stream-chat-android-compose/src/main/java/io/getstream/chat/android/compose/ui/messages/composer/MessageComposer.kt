@@ -66,10 +66,10 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
+    onMentionClick: (User) -> Unit = { viewModel.selectMention(it) },
     integrations: @Composable RowScope.() -> Unit = {
         DefaultComposerIntegrations(onAttachmentsClick)
     },
-    onMentionSelected: (User) -> Unit = { viewModel.autocompleteMention(it) },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
     input: @Composable RowScope.(MessageInputState) -> Unit = { inputState ->
         MessageInput(
@@ -97,9 +97,9 @@ public fun MessageComposer(
 
             onSendMessage(messageWithData)
         },
+        onMentionClick = onMentionClick,
         integrations = integrations,
         input = input,
-        onMentionSelected = onMentionSelected,
         messageInputState = MessageInputState(
             inputValue = value,
             attachments = selectedAttachments,
@@ -119,6 +119,7 @@ public fun MessageComposer(
  * @param messageInputState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
+ * @param onMentionSelected
  * @param modifier Modifier for styling.
  * @param shouldShowIntegrations If we should show or hide integrations.
  * @param integrations Composable that represents integrations for the composer, such as Attachments.
@@ -130,7 +131,7 @@ public fun MessageComposer(
     messageInputState: MessageInputState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
-    onMentionSelected: (User) -> Unit,
+    onMentionClick: (User) -> Unit,
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
@@ -145,15 +146,6 @@ public fun MessageComposer(
         elevation = 4.dp,
         color = ChatTheme.colors.barsBackground,
     ) {
-        if (users.isNotEmpty()) {
-            MentionSuggestionList(
-                users = users,
-                onUserClick = {
-                    onMentionSelected(it)
-                }
-            )
-        }
-
         Column(
             Modifier
                 .padding(vertical = 6.dp)
@@ -201,6 +193,13 @@ public fun MessageComposer(
                     }
                 )
             }
+        }
+
+        if (users.isNotEmpty()) {
+            MentionSuggestionList(
+                users = users,
+                onMentionClick = { onMentionClick(it) }
+            )
         }
     }
 }

@@ -26,11 +26,11 @@ import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
+ * Represents the default mention suggestion item in the mention suggestion list popup.
  *
- *
- * @param user The user to show.
+ * @param user The user that will be used to autocomplete the mention.
  * @param modifier Modifier for styling.
- * @param onUserClick Handler for a single tap on an item.
+ * @param onMentionClick Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a mention item.
  * @param detailsContent Customizable composable function that represents the center content of a mention item.
  * @param trailingContent Customizable composable function that represents the trailing content of the a mention item.
@@ -40,7 +40,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun DefaultMentionSuggestionItem(
     user: User,
     modifier: Modifier = Modifier,
-    onUserClick: (User) -> Unit,
+    onMentionClick: (User) -> Unit,
     leadingContent: @Composable RowScope.(User) -> Unit = {
         DefaultMentionSuggestionItemLeadingContent(
             user = it,
@@ -71,7 +71,7 @@ public fun DefaultMentionSuggestionItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .combinedClickable(
-                onClick = { onUserClick(user) },
+                onClick = { onMentionClick(user) },
                 indication = rememberRipple(),
                 interactionSource = remember { MutableInteractionSource() }
             )

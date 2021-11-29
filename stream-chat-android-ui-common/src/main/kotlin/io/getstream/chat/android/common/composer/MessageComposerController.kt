@@ -393,7 +393,7 @@ public class MessageComposerController(
      *
      * @param user The user that is used to autocomplete the mention.
      */
-    public fun selectMentionSuggestion(user: User) {
+    public fun selectMention(user: User) {
         val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
 
         setMessageInput(augmentedMessageText)

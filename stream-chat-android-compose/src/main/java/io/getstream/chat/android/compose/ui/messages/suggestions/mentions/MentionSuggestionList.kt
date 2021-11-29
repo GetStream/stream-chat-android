@@ -13,22 +13,23 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.messages.suggestions.SuggestionList
 
 /**
+ * Represents the mention suggestion list popup.
  *
- * @param users
+ * @param users The list of users that will be displayed in the popup.
  * @param modifier Modifier for styling.
- * @param onUserClick
- * @param itemContent
+ * @param onMentionClick Handler when the user taps on an item.
+ * @param itemContent Customizable composable function that represents a single mention item.
  */
 @ExperimentalFoundationApi
 @Composable
 public fun MentionSuggestionList(
     users: List<User>,
     modifier: Modifier = Modifier,
-    onUserClick: (User) -> Unit = {},
+    onMentionClick: (User) -> Unit = {},
     itemContent: @Composable (User) -> Unit = { user ->
         DefaultMentionSuggestionItem(
             user = user,
-            onUserClick = onUserClick,
+            onMentionClick = onMentionClick,
         )
     },
 ) {
