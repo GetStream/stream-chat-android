@@ -46,7 +46,7 @@ public fun DefaultMentionSuggestionItem(
             user = it,
             modifier = Modifier
                 .padding(end = 8.dp)
-                .size(40.dp)
+                .size(ChatTheme.dimens.mentionSuggestionItemAvatarSize)
         )
     },
     detailsContent: @Composable RowScope.(User) -> Unit = {
@@ -76,8 +76,8 @@ public fun DefaultMentionSuggestionItem(
                 interactionSource = remember { MutableInteractionSource() }
             )
             .padding(
-                vertical = 8.dp,
-                horizontal = 16.dp
+                vertical = ChatTheme.dimens.mentionSuggestionItemVerticalPadding,
+                horizontal = ChatTheme.dimens.mentionSuggestionItemHorizontalPadding
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {

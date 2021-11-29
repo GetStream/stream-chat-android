@@ -119,7 +119,7 @@ public fun MessageComposer(
  * @param messageInputState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
- * @param onMentionSelected
+ * @param onMentionClick Handler when the user taps on a mention suggestion item.
  * @param modifier Modifier for styling.
  * @param shouldShowIntegrations If we should show or hide integrations.
  * @param integrations Composable that represents integrations for the composer, such as Attachments.
@@ -137,7 +137,7 @@ public fun MessageComposer(
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors, users) = messageInputState
+    val (value, attachments, activeAction, validationErrors, mentionSuggestions) = messageInputState
 
     showValidationErrorIfNecessary(validationErrors)
 
@@ -195,9 +195,9 @@ public fun MessageComposer(
             }
         }
 
-        if (users.isNotEmpty()) {
+        if (mentionSuggestions.isNotEmpty()) {
             MentionSuggestionList(
-                users = users,
+                users = mentionSuggestions,
                 onMentionClick = { onMentionClick(it) }
             )
         }

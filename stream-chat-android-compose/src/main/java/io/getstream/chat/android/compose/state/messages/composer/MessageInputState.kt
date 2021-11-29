@@ -12,7 +12,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param attachments The currently selected attachments.
  * @param action The currently active [MessageAction].
  * @param validationErrors The list of validation errors.
- * @param mentionSuggestions
+ * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
  */
 public data class MessageInputState(
     val inputValue: String = "",
