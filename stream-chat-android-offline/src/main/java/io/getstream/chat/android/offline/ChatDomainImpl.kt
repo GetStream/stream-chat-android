@@ -271,6 +271,8 @@ internal class ChatDomainImpl internal constructor(
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
+    private var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+
     private fun clearState() {
         _initialized.value = false
         _connectionState.value = ConnectionState.OFFLINE
@@ -280,6 +282,7 @@ internal class ChatDomainImpl internal constructor(
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
+        latestUsers = MutableStateFlow(emptyMap())
     }
 
     internal fun setUser(user: User) {
@@ -296,6 +299,7 @@ internal class ChatDomainImpl internal constructor(
             setOfflineEnabled(offlineEnabled)
         }.build()
 
+        latestUsers = repos.observeLastUsers()
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
