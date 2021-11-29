@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
@@ -32,6 +34,7 @@ import io.getstream.chat.android.compose.state.messages.composer.MessageInputSta
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
+import io.getstream.chat.android.compose.ui.messages.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -66,6 +69,7 @@ public fun MessageComposer(
     integrations: @Composable RowScope.() -> Unit = {
         DefaultComposerIntegrations(onAttachmentsClick)
     },
+    onMentionSelected: (User) -> Unit = { viewModel.autocompleteMention(it) },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
     input: @Composable RowScope.(MessageInputState) -> Unit = { inputState ->
         MessageInput(
@@ -84,6 +88,7 @@ public fun MessageComposer(
     val selectedAttachments by viewModel.selectedAttachments.collectAsState()
     val activeAction by viewModel.lastActiveAction.collectAsState(null)
     val validationErrors by viewModel.validationErrors.collectAsState()
+    val mentionSuggestions by viewModel.mentionSuggestions.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -94,11 +99,13 @@ public fun MessageComposer(
         },
         integrations = integrations,
         input = input,
+        onMentionSelected = onMentionSelected,
         messageInputState = MessageInputState(
             inputValue = value,
             attachments = selectedAttachments,
             action = activeAction,
-            validationErrors = validationErrors
+            validationErrors = validationErrors,
+            mentionSuggestions = mentionSuggestions
         ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
@@ -117,17 +124,19 @@ public fun MessageComposer(
  * @param integrations Composable that represents integrations for the composer, such as Attachments.
  * @param input Composable that represents the input field in the composer.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageComposer(
     messageInputState: MessageInputState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
+    onMentionSelected: (User) -> Unit,
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors) = messageInputState
+    val (value, attachments, activeAction, validationErrors, users) = messageInputState
 
     showValidationErrorIfNecessary(validationErrors)
 
@@ -136,6 +145,15 @@ public fun MessageComposer(
         elevation = 4.dp,
         color = ChatTheme.colors.barsBackground,
     ) {
+        if (users.isNotEmpty()) {
+            MentionSuggestionList(
+                users = users,
+                onUserClick = {
+                    onMentionSelected(it)
+                }
+            )
+        }
+
         Column(
             Modifier
                 .padding(vertical = 6.dp)
