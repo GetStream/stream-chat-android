@@ -66,7 +66,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Fixed crash related with creation of MessageOptionsDialogFragment
 ### ⬆️ Improved
-
+- Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
 ### ✅ Added
 
 ### ⚠️ Changed
