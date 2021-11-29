@@ -65,10 +65,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed crash related with creation of MessageOptionsDialogFragment
+- Fixed behaviour related to search messages, when message was not already loaded from database MessageListView could not scroll to searched message.
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added scroll to original message when clicking in a reply message. Use `ReplyMessageClickListener` to change the behaviour of click in reply messages.
 ### ⚠️ Changed
 
 ### ❌ Removed
