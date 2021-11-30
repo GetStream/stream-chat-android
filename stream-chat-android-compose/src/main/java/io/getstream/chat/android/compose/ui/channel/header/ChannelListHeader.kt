@@ -103,7 +103,7 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val size = Modifier.size(36.dp)
+    val size = Modifier.size(40.dp)
 
     if (currentUser != null) {
         UserAvatar(
@@ -161,7 +161,7 @@ internal fun DefaultChannelListHeaderAction(
 ) {
     Surface(
         modifier = modifier
-            .size(36.dp)
+            .size(40.dp)
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },

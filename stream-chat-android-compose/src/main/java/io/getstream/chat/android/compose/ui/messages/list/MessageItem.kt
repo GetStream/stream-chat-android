@@ -916,12 +916,14 @@ internal fun MessageFooter(
             modifier = modifier.padding(top = 4.dp),
             verticalAlignment = CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(end = 8.dp),
-                text = message.user.name,
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis
-            )
+            if (!messageItem.isMine) {
+                Text(
+                    modifier = Modifier.padding(end = 8.dp),
+                    text = message.user.name,
+                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textLowEmphasis
+                )
+            }
 
             Timestamp(date = message.updatedAt ?: message.createdAt)
         }
