@@ -28,7 +28,8 @@ public class RepliesQueryReference(
 
     /**
      * Returns [ThreadState] for the thread replies of a message with id equal to [messageId]. And fill it by data from
-     * [ChatClient.getReplies].
+     * [ChatClient.getReplies]. We use a coroutine instead of a simple enqueue() call, to have control over the
+     * lifecycle of the request.
      *
      * @param scope Coroutine scope where initial data filling action is being invoked.
      */
