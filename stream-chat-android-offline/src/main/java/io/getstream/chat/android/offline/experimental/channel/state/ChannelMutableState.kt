@@ -29,6 +29,7 @@ internal class ChannelMutableState(
     override val channelId: String,
     private val scope: CoroutineScope,
     private val userFlow: StateFlow<User?>,
+    private val latestUsers: StateFlow<Map<String, User>>,
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)

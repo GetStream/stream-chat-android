@@ -38,7 +38,13 @@ public class StateRegistry internal constructor(
 
     public fun channel(channelType: String, channelId: String): ChannelState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, chatDomainImpl.scope, chatDomainImpl.user)
+            ChannelMutableState(
+                channelType,
+                channelId,
+                chatDomainImpl.scope,
+                chatDomainImpl.user,
+                chatDomainImpl.latestUsers
+            )
         }
     }
 

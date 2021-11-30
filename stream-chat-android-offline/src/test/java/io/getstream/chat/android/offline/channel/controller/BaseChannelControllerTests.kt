@@ -50,7 +50,13 @@ internal open class BaseChannelControllerTests {
             on { repos } doReturn repos
         }
         mutableState =
-            ChannelMutableState(channelType, channelId, chatDomainImpl.scope, MutableStateFlow(randomUser()))
+            ChannelMutableState(
+                channelType,
+                channelId,
+                chatDomainImpl.scope,
+                MutableStateFlow(randomUser()),
+                MutableStateFlow(emptyMap())
+            )
         sut = ChannelController(
             mutableState,
             ChannelLogic(mutableState, chatDomainImpl),
