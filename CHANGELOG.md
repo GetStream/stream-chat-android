@@ -47,6 +47,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added new extension function `ChatClient::keystroke`.
+- Added new extension function `ChatClient::stopTyping`.
 
 ### ⚠️ Changed
 
