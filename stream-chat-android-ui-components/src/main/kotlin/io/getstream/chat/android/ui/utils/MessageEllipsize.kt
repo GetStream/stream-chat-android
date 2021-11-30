@@ -1,10 +1,11 @@
 package io.getstream.chat.android.ui.utils
 
 private const val MAX_LINE_BREAKS = 8
+private const val ELLIPSIS = "..."
 
 internal fun ellipsizeText(text: String, textLimit: Int, maxLineBreaks: Int = MAX_LINE_BREAKS): String {
     return when {
-        text.length > textLimit -> "${text.substring(0..textLimit)}..."
+        text.length > textLimit -> "${text.substring(0..textLimit)}$ELLIPSIS"
 
         textIsTooHeight(text, maxLineBreaks) -> parseTooHeightText(text, maxLineBreaks)
 
@@ -30,6 +31,6 @@ private fun parseTooHeightText(text: String, maxLineBreaks: Int): String {
             i++
         }
 
-        appendLine("...")
+        appendLine(ELLIPSIS)
     }
 }
