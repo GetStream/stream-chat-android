@@ -271,7 +271,8 @@ internal class ChatDomainImpl internal constructor(
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
-    private var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+    internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+        private set
 
     private fun clearState() {
         _initialized.value = false

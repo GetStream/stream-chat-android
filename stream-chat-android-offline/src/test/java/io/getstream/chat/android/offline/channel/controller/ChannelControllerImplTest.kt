@@ -19,6 +19,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.shouldBeEqualTo
@@ -36,7 +37,13 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
 
     override fun setup() {
         super.setup()
-        val mutableState = ChannelMutableState(channelType, channelId, chatDomainImpl.scope, chatDomainImpl.user)
+        val mutableState = ChannelMutableState(
+            channelType,
+            channelId,
+            chatDomainImpl.scope,
+            chatDomainImpl.user,
+            MutableStateFlow(emptyMap())
+        )
         channelController =
             ChannelController(
                 mutableState,

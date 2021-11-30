@@ -72,7 +72,7 @@ internal class WhenHandleEvent {
             invocation.arguments[0] as List<Message>
         }
 
-        val mutableState = ChannelMutableState("type1", channelId, scope, userFlow)
+        val mutableState = ChannelMutableState("type1", channelId, scope, userFlow, MutableStateFlow(emptyMap()))
 
         channelController = ChannelController(
             mutableState,
