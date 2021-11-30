@@ -2069,18 +2069,6 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaA
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentClickListener {
-	public abstract fun onAttachmentClick (Lio/getstream/chat/android/client/models/Attachment;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentDownloadClickListener {
-	public abstract fun onAttachmentDownloadClick (Lio/getstream/chat/android/client/models/Attachment;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentLongClickListener {
-	public abstract fun onAttachmentLongClick ()V
-}
-
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
 	public fun <init> ()V
 	public fun createAttachmentView (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/ViewGroup;)Landroid/view/View;
@@ -2091,7 +2079,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 
 public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
 	public fun <init> (Landroid/view/View;)V
-	public abstract fun bind (Ljava/util/List;)V
+	public abstract fun bind (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
 	public fun unbind ()V
 }
 
@@ -2099,9 +2087,10 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory$Companion;
 	public static final field FILE I
 	public static final field MEDIA I
-	public fun <init> (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentClickListener;Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentLongClickListener;Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentDownloadClickListener;)V
+	public fun <init> ()V
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder;
-	public fun getItemViewType (Ljava/util/List;)I
+	public fun getItemViewType (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)I
+	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory$Companion {
