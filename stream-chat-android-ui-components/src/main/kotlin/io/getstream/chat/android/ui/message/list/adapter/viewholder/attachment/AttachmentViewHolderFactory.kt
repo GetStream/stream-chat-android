@@ -28,17 +28,17 @@ public open class AttachmentViewHolderFactory {
     }
 
     public companion object {
-        private const val BUILT_IN_TYPES = 9000
+        private const val BUILT_IN_TYPE_OFFSET = 9000
 
         /**
          * The media attachment type.
          */
-        public const val MEDIA: Int = BUILT_IN_TYPES + 1
+        public const val MEDIA: Int = BUILT_IN_TYPE_OFFSET + 1
 
         /**
          * The file attachment type.
          */
-        public const val FILE: Int = BUILT_IN_TYPES + 2
+        public const val FILE: Int = BUILT_IN_TYPE_OFFSET + 2
     }
 
     /**
