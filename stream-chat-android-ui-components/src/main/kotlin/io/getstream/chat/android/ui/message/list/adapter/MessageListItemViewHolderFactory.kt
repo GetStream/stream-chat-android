@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
+import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
@@ -66,7 +66,7 @@ public open class MessageListItemViewHolderFactory {
         this.giphyViewHolderStyle = style
     }
 
-    private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
+    private val textTransfomer: ChatMessageTextTransformer by lazy { ChatUI.messageTextTransformer }
 
     /*
     * This is necessary to maintain the configuration of this factory, but without sharing the instance. Please use
@@ -135,7 +135,7 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown,
+            textTransfomer,
             attachmentViewFactory,
             style
         )
@@ -160,7 +160,7 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown,
+            textTransfomer,
         )
     }
 

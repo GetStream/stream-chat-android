@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -23,7 +24,7 @@ internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
-    private val markdown: ChatMarkdown,
+    private val messageTextTransformer: ChatMessageTextTransformer,
     private val attachmentViewFactory: AttachmentViewFactory,
     private val style: MessageListItemStyle,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
@@ -98,7 +99,7 @@ internal class TextAndAttachmentsViewHolder(
         super.bindData(data, diff)
 
         binding.messageText.isVisible = data.message.text.isNotEmpty()
-        markdown.setText(binding.messageText, data.message.text)
+        messageTextTransformer.transform(binding.messageText, data.message.text)
 
         if (diff?.attachments != false) {
             setupAttachment(data)

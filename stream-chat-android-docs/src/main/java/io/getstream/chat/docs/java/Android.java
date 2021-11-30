@@ -52,7 +52,6 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
-import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -937,7 +936,7 @@ public class Android {
                 textView.setText(applyMarkdown(text));
             };
 
-            ChatUI.INSTANCE.setMarkdown(markdown);
+            ChatUI.INSTANCE.setMessageTextTransformer(markdown);
         }
 
         private String applyMarkdown(String text) {

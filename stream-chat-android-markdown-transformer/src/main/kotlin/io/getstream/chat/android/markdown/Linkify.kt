@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.utils
+package io.getstream.chat.android.markdown
 
 import android.annotation.SuppressLint
 import android.text.Spannable

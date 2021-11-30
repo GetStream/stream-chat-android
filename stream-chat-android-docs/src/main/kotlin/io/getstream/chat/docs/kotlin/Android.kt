@@ -948,7 +948,7 @@ class Android {
                 textView.text = applyMarkdown(text)
             }
 
-            ChatUI.markdown = markdown
+            ChatUI.messageTextTransformer = markdown
         }
 
         private fun applyMarkdown(text: String): String = text

@@ -669,6 +669,10 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/ChatMessageTextTransformer {
+	public abstract fun transform (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem;)V
+}
+
 public final class io/getstream/chat/android/ui/common/ChatUIInitializer : androidx/startup/Initializer {
 	public fun <init> ()V
 	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;

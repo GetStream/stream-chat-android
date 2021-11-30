@@ -1,8 +1,9 @@
-package io.getstream.chat.android.ui.common.markdown
+package io.getstream.chat.android.markdown
 
 import android.content.Context
 import android.widget.TextView
-import com.getstream.sdk.chat.utils.Linkify
+import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.CorePlugin
@@ -10,7 +11,7 @@ import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 
-internal class ChatMarkdownImpl(context: Context) : ChatMarkdown {
+public class MarkdownTextTransformer(context: Context) : ChatMessageTextTransformer {
     private val markwon: Markwon = Markwon.builder(context)
         .usePlugin(CorePlugin.create())
         .usePlugin(LinkifyPlugin.create())
@@ -19,8 +20,8 @@ internal class ChatMarkdownImpl(context: Context) : ChatMarkdown {
         .usePlugin(SoftBreakAddsNewLinePlugin.create())
         .build()
 
-    override fun setText(textView: TextView, text: String) {
-        markwon.setMarkdown(textView, fixItalicAtEnd(text))
+    override fun transform(textView: TextView, messageItem: MessageListItem.MessageItem) {
+        markwon.setMarkdown(textView, fixItalicAtEnd(messageItem.message.text))
         Linkify.addLinks(textView)
     }
 }

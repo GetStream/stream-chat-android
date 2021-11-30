@@ -18,6 +18,46 @@ public final class io/getstream/chat/android/client/call/CallKt {
 	public static synthetic fun enqueue$default (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
+public final class io/getstream/chat/android/client/call/DoOnResultCall : io/getstream/chat/android/client/call/Call {
+	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function2;)V
+	public fun cancel ()V
+	public fun enqueue ()V
+	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
+	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/call/DoOnStartCall : io/getstream/chat/android/client/call/Call {
+	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function1;)V
+	public fun cancel ()V
+	public fun enqueue ()V
+	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
+	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/call/MapCall : io/getstream/chat/android/client/call/Call {
+	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;)V
+	public fun cancel ()V
+	public fun enqueue ()V
+	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
+	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/call/WithPreconditionCall : io/getstream/chat/android/client/call/Call {
+	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function1;)V
+	public fun cancel ()V
+	public fun enqueue ()V
+	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
+	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/call/ZipCall : io/getstream/chat/android/client/call/Call {
+	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/call/Call;)V
+	public fun cancel ()V
+	public fun enqueue ()V
+	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
+	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
+}
+
 public class io/getstream/chat/android/client/errors/ChatError {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
@@ -74,5 +114,8 @@ public abstract interface annotation class io/getstream/chat/android/core/intern
 
 public final class io/getstream/chat/android/core/internal/fsm/FiniteStateMachine$Companion {
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/core/internal/fsm/FiniteStateMachine;
+}
+
+public final class io/getstream/chat/android/core/internal/fsm/StateFunctionKt {
 }
 

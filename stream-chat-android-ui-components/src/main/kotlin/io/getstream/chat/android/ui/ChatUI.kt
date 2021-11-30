@@ -6,8 +6,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
+import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.common.DefaultMessageTextTransformer
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdownImpl
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
@@ -46,12 +47,12 @@ public object ChatUI {
             fontsOverride = value
         }
 
-    private var markdownOverride: ChatMarkdown? = null
-    private val defaultMarkdown: ChatMarkdown by lazy { ChatMarkdownImpl(appContext) }
-    public var markdown: ChatMarkdown
-        get() = markdownOverride ?: defaultMarkdown
+    private var textTransformerOverride: ChatMessageTextTransformer? = null
+    private val defaultTextTransformer: ChatMessageTextTransformer by lazy { DefaultMessageTextTransformer() }
+    public var messageTextTransformer: ChatMessageTextTransformer
+        get() = textTransformerOverride ?: defaultTextTransformer
         set(value) {
-            markdownOverride = value
+            textTransformerOverride = value
         }
 
     private var avatarBitmapFactoryOverride: AvatarBitmapFactory? = null
