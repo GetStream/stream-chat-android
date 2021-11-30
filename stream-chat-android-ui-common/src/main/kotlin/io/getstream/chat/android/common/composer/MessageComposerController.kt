@@ -155,9 +155,9 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        sendTypingEventIfNecessary(isTyping = value.isNotEmpty())
-        showMentionSuggestionsIfNecessary()
-        showValidationErrorsIfNecessary()
+        handleTypingEvent(isTyping = value.isNotEmpty())
+        handleMentionSuggestions()
+        handleValidationErrors()
     }
 
     /**
@@ -228,7 +228,7 @@ public class MessageComposerController(
         }
         selectedAttachments.value = newAttachments
 
-        showValidationErrorsIfNecessary()
+        handleValidationErrors()
     }
 
     /**
@@ -241,7 +241,7 @@ public class MessageComposerController(
     public fun removeSelectedAttachment(attachment: Attachment) {
         selectedAttachments.value = selectedAttachments.value - attachment
 
-        showValidationErrorsIfNecessary()
+        handleValidationErrors()
     }
 
     /**
@@ -271,7 +271,7 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
-        sendTypingEventIfNecessary(isTyping = false)
+        handleTypingEvent(isTyping = false)
 
         sendMessageCall.enqueue()
     }
@@ -332,7 +332,7 @@ public class MessageComposerController(
      *
      * @param isTyping If the user is currently typing.
      */
-    private fun sendTypingEventIfNecessary(isTyping: Boolean) {
+    private fun handleTypingEvent(isTyping: Boolean) {
         if (isTyping) {
             chatDomain.keystroke(channelId, parentMessageId)
         } else {
@@ -350,7 +350,7 @@ public class MessageComposerController(
     /**
      * Checks the current input for validation errors.
      */
-    private fun showValidationErrorsIfNecessary() {
+    private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
             val messageLength = input.value.length
             if (messageLength > maxMessageLength) {
@@ -399,7 +399,7 @@ public class MessageComposerController(
     /**
      * Shows the mention suggestion list popup if necessary.
      */
-    private fun showMentionSuggestionsIfNecessary() {
+    private fun handleMentionSuggestions() {
         val containsMention = MENTION_PATTERN.matcher(messageText).find()
 
         mentionSuggestions.value = if (containsMention) {
