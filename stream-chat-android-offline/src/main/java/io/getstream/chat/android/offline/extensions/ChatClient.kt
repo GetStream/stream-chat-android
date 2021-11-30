@@ -109,6 +109,26 @@ public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
     DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)
 
 /**
+ * Keystroke should be called whenever a user enters text into the message input.
+ * It automatically calls stopTyping when the user stops typing after 5 seconds.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+ *
+ * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
+ */
+@CheckResult
+public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
+    validateCid(cid)
+
+    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val channelController = chatDomain.channel(cid)
+    return CoroutineCall(chatDomain.scope) {
+        channelController.keystroke(parentId)
+    }
+}
+
+/**
  * StopTyping should be called when the user submits the text and finishes typing.
  *
  * @param cid The full channel id i. e. messaging:123.
