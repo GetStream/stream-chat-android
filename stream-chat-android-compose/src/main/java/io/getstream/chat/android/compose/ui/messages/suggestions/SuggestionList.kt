@@ -1,9 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.suggestions
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,10 +30,7 @@ public fun SuggestionList(
 ) {
     Popup(popupPositionProvider = SuggestionListPositionProvider()) {
         Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
-                .padding(ChatTheme.dimens.suggestionListPadding),
+            modifier = modifier,
             elevation = ChatTheme.dimens.suggestionListElevation,
             shape = shape,
             backgroundColor = ChatTheme.colors.barsBackground,
