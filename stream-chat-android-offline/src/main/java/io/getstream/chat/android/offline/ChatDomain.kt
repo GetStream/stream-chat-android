@@ -463,6 +463,14 @@ public sealed interface ChatDomain {
      * false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "stopTyping is deprecated. Use extension function ChatClient::stopTyping instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().stopTyping(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**

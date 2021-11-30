@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2021.12.29<br/>⌛ | 2022.01.29 ⌛ | Use `ChatClient#stopTyping` instead |
 | `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2021.12.29<br/>⌛ | 2022.01.29 ⌛ | Use `ChatClient#keystroke` instead |
 | `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.07<br/>⌛ | 2022.12.21 ⌛ | Use ChatDomain.mutedChannels instead |
 | `ChatDomain#downloadAttachment` | 2021.11.23<br/>4.23.0 | 2021.12.21<br/>⌛ | 2022.01.18 ⌛ | Use `ChatClient#downloadAttachment` instead |

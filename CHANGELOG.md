@@ -47,6 +47,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added new extension function `ChatClient::keystroke`.
+- Added new extension function `ChatClient::stopTyping`.
 
 ### ⚠️ Changed
 
@@ -67,6 +68,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Fixed crash related with creation of MessageOptionsDialogFragment
 - Fixed behaviour related to search messages, when message was not already loaded from database MessageListView could not scroll to searched message.
+- Removed cut from text when text end with Italic
 - Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
 ### ⬆️ Improved
 

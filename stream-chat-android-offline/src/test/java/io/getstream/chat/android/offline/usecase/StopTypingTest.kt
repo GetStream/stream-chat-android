@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeFalse
@@ -16,11 +17,11 @@ internal class StopTypingTest : BaseConnectedIntegrationTest() {
         chatDomain.watchChannel(data.channel1.cid, 10).execute()
         val result = chatDomain.keystroke(data.channel1.cid, null).execute()
         result.data().shouldBeTrue()
-        val result2 = chatDomain.stopTyping(data.channel1.cid).execute()
+        val result2 = client.stopTyping(data.channel1.cid).execute()
         result2.data().shouldBeTrue()
 
         // this shouldnt trigger an event since nobody is typing
-        val result3 = chatDomain.stopTyping(data.channel1.cid).execute()
+        val result3 = client.stopTyping(data.channel1.cid).execute()
         result3.data().shouldBeFalse()
     }
 }
