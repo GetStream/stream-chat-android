@@ -788,10 +788,8 @@ public final class io/getstream/chat/android/compose/ui/messages/overlay/Selecte
 public final class io/getstream/chat/android/compose/ui/messages/suggestions/ComposableSingletons$SuggestionListKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/suggestions/ComposableSingletons$SuggestionListKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/suggestions/SuggestionListKt {
@@ -810,9 +808,9 @@ public final class io/getstream/chat/android/compose/ui/messages/suggestions/men
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/suggestions/mentions/MentionSuggestionItemKt {
-	public static final fun DefaultMentionSuggestionItem (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
-	public static final fun DefaultMentionSuggestionItemDetailsContent (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
-	public static final fun DefaultMentionSuggestionItemLeadingContent (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static final fun DefaultMentionSuggestionItem (Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMentionSuggestionItemDetailsContent (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMentionSuggestionItemLeadingContent (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun DefaultMentionSuggestionItemTrailingContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 

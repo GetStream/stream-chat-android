@@ -39,8 +39,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun DefaultMentionSuggestionItem(
     user: User,
-    modifier: Modifier = Modifier,
     onMentionClick: (User) -> Unit,
+    modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(User) -> Unit = {
         DefaultMentionSuggestionItemLeadingContent(
             user = it,
@@ -99,7 +99,7 @@ public fun DefaultMentionSuggestionItem(
 @Composable
 public fun DefaultMentionSuggestionItemLeadingContent(
     user: User,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     UserAvatar(
         modifier = modifier,
@@ -117,7 +117,7 @@ public fun DefaultMentionSuggestionItemLeadingContent(
 @Composable
 public fun DefaultMentionSuggestionItemDetailsContent(
     user: User,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
