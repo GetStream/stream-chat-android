@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.composer
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -13,8 +12,6 @@ import io.getstream.chat.android.common.state.Reply
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -51,21 +48,15 @@ public class MessageComposerViewModel(
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
 
-    init {
-        viewModelScope.launch {
-            input.collect {
-                val oldState = _messageInputState.value
-                _messageInputState.value = oldState.copy(it)
-            }
-        }
-    }
-
     /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.
      */
-    public fun setMessageInput(value: String): Unit = messageComposerController.setMessageInput(value)
+    public fun setMessageInput(value: String): Unit {
+        messageComposerController.setMessageInput(value)
+        _messageInputState.value = _messageInputState.value.copy(value)
+    }
 
     /**
      * Called when the message mode changes and the internal state needs to be updated.
