@@ -12,7 +12,7 @@ internal class MediaAttachmentsViewHolder(
     container: MessageListListenerContainer?,
 ) : AttachmentViewHolder(binding.root) {
 
-    private val mediaAttachmentsView = binding.mediaAttachmentView
+    private val mediaAttachmentGroupView = binding.mediaAttachmentGroupView
     private var message: Message? = null
 
     init {
@@ -22,12 +22,12 @@ internal class MediaAttachmentsViewHolder(
     }
 
     private fun setupListeners(container: MessageListListenerContainer) {
-        mediaAttachmentsView.attachmentClickListener = AttachmentClickListener { attachment ->
+        mediaAttachmentGroupView.attachmentClickListener = AttachmentClickListener { attachment ->
             message?.let { message ->
                 container.attachmentClickListener.onAttachmentClick(message, attachment)
             }
         }
-        mediaAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
+        mediaAttachmentGroupView.attachmentLongClickListener = AttachmentLongClickListener {
             message?.let { message ->
                 container.messageLongClickListener.onMessageLongClick(message)
             }
@@ -36,7 +36,7 @@ internal class MediaAttachmentsViewHolder(
 
     override fun bind(data: MessageListItem.MessageItem) {
         this.message = data.message
-        mediaAttachmentsView.setupBackground(data)
-        binding.mediaAttachmentView.showAttachments(data.message.attachments)
+        mediaAttachmentGroupView.setupBackground(data)
+        binding.mediaAttachmentGroupView.showAttachments(data.message.attachments)
     }
 }
