@@ -16,7 +16,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -59,6 +61,11 @@ public class MessageComposerController(
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
+     * Represents the remaining time until the user is allowed to send the next message.
+     */
+    public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
+
+    /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
@@ -82,6 +89,18 @@ public class MessageComposerController(
      * Represents the maximum allowed message length in the message input.
      */
     private var maxMessageLength: Int = DEFAULT_MAX_MESSAGE_LENGTH
+
+    /**
+     * Represents the coroutine [Job] used to update the countdown
+     */
+    private var cooldownTimerJob: Job? = null
+
+    /**
+     * Represents the cooldown interval in seconds.
+     *
+     * When slow mode is enabled, users can only send messages every [cooldownInterval] time interval.
+     */
+    private var cooldownInterval: Int = 0
 
     /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
@@ -142,6 +161,10 @@ public class MessageComposerController(
 
                 channelController.members.onEach { members ->
                     users = members.map { it.user }
+                }.launchIn(scope)
+
+                channelController.channelData.onEach {
+                    cooldownInterval = it.cooldown
                 }.launchIn(scope)
             }
         }
@@ -272,6 +295,7 @@ public class MessageComposerController(
         dismissMessageActions()
         clearData()
         handleTypingEvent(isTyping = false)
+        handleCooldownTimer()
 
         sendMessageCall.enqueue()
     }
@@ -406,6 +430,21 @@ public class MessageComposerController(
             users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
         } else {
             emptyList()
+        }
+    }
+
+    /**
+     * Shows cooldown countdown timer instead of send button when slow mode is enabled.
+     */
+    private fun handleCooldownTimer() {
+        if (cooldownInterval > 0) {
+            cooldownTimerJob?.cancel()
+            cooldownTimerJob = scope.launch {
+                for (timeRemaining in cooldownInterval downTo 0) {
+                    cooldownTimer.value = timeRemaining
+                    delay(1000)
+                }
+            }
         }
     }
 

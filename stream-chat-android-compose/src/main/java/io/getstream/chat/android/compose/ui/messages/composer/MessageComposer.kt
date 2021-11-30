@@ -1,6 +1,8 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -16,11 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
@@ -96,6 +102,7 @@ public fun MessageComposer(
     val activeAction by viewModel.lastActiveAction.collectAsState(null)
     val validationErrors by viewModel.validationErrors.collectAsState()
     val mentionSuggestions by viewModel.mentionSuggestions.collectAsState()
+    val cooldownTimer by viewModel.cooldownTimer.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -113,7 +120,8 @@ public fun MessageComposer(
             attachments = selectedAttachments,
             action = activeAction,
             validationErrors = validationErrors,
-            mentionSuggestions = mentionSuggestions
+            mentionSuggestions = mentionSuggestions,
+            cooldownTimer = cooldownTimer,
         ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
@@ -151,7 +159,7 @@ public fun MessageComposer(
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors, mentionSuggestions) = messageInputState
+    val (value, attachments, activeAction, validationErrors, mentionSuggestions, cooldownTimer) = messageInputState
 
     showValidationErrorIfNecessary(validationErrors)
 
@@ -189,29 +197,61 @@ public fun MessageComposer(
 
                 input(messageInputState)
 
-                val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
+                if (cooldownTimer > 0) {
+                    CooldownIndicator(cooldownTimer = cooldownTimer)
+                } else {
+                    val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
 
-                IconButton(
-                    enabled = isInputValid,
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                            contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                            tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
-                        )
-                    },
-                    onClick = {
-                        if (isInputValid) {
-                            onSendMessage(value, attachments)
+                    IconButton(
+                        enabled = isInputValid,
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                                contentDescription = stringResource(id = R.string.stream_compose_send_message),
+                                tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                            )
+                        },
+                        onClick = {
+                            if (isInputValid) {
+                                onSendMessage(value, attachments)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
 
         if (mentionSuggestions.isNotEmpty()) {
             mentionPopupContent(mentionSuggestions)
         }
+    }
+}
+
+/**
+ * Represent a timer that show the remaining time until the user is allowed to send the next message.
+ *
+ * @param cooldownTimer The amount of time left until the user is allowed to sent the next message.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun CooldownIndicator(
+    cooldownTimer: Int,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(48.dp)
+            .padding(12.dp)
+            .background(shape = RoundedCornerShape(24.dp), color = ChatTheme.colors.disabled),
+
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = cooldownTimer.toString(),
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            style = ChatTheme.typography.bodyBold
+        )
     }
 }
 
