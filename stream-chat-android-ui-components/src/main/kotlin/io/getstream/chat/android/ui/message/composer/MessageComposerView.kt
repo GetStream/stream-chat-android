@@ -17,11 +17,20 @@ public class MessageComposerView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageComposerBinding
 
-    public var onSendMessage: () -> Unit = {}
+    /**
+     * Callback invoked when send button is clicked
+     */
+    public var onSendMessageClick: () -> Unit = {}
 
+    /**
+     * Callback invoked when text input is modified
+     */
     public var onInputChanged: (String) -> Unit = {}
 
-    public var onClearInput: () -> Unit = {}
+    /**
+    * Callback invoked when clear button is clicked
+    */
+    public var onClearInputClick: () -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -43,14 +52,14 @@ public class MessageComposerView : ConstraintLayout {
         binding.centerContent.apply {
             val defaultCenterContent = DefaultCenterContent(context).apply {
                 onTextChangedListener = { onInputChanged(it) }
-                onClearButtonClickListener = { onClearInput() }
+                onClearButtonClickListener = { onClearInputClick() }
             }
             removeAllViews()
             addView(defaultCenterContent)
         }
         binding.trailingContent.apply {
             val defaultTrailingContent = DefaultTrailingContent(context).apply {
-                this.onSendButtonClickListener = { onSendMessage() }
+                this.onSendButtonClickListener = { onSendMessageClick() }
             }
             removeAllViews()
             addView(defaultTrailingContent)

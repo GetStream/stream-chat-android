@@ -9,7 +9,7 @@ public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    view.onSendMessage = {
+    view.onSendMessageClick = {
         val message = this.buildNewMessage()
         sendMessage(message)
     }
@@ -18,7 +18,7 @@ public fun MessageComposerViewModel.bindView(
         this.input.value = it
     }
 
-    view.onClearInput = {
+    view.onClearInputClick = {
         this.setMessageInput("")
     }
 
