@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.content.res.ColorStateList
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -60,7 +61,7 @@ internal class GiphyViewHolder(
 
     private fun applyStyle() {
         binding.apply {
-            cardView.setCardBackgroundColor(style.cardBackgroundColor)
+            cardView.backgroundTintList = ColorStateList.valueOf(style.cardBackgroundColor)
             cardView.elevation = style.cardElevation
 
             horizontalDivider.setBackgroundColor(style.cardButtonDividerColor)
