@@ -12,7 +12,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param action The currently active [MessageAction].
  * @param validationErrors The list of validation errors.
  */
-public data class MessageInputState(
+public data class MessageComposerState(
     val inputValue: String = "",
     val attachments: List<Attachment> = emptyList(),
     val action: MessageAction? = null,

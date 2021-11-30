@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,6 +28,8 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,9 +47,8 @@ import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.MessageOption
-import io.getstream.chat.android.compose.state.messages.list.buildMessageOption
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
+import io.getstream.chat.android.compose.state.messages.list.MessageOptionState
+import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
@@ -61,7 +63,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * currently selected message in the middle of these options.
  *
  * @param reactionTypes The types of reactions the user can use to react to messages.
- * @param messageOptions The [buildMessageOption] the user can select to trigger on the message.
+ * @param messageOptions The [MessageOptionState] that represents actions the user can trigger on the message.
  * @param message Selected message.
  * @param onMessageAction Handler for any of the available message actions (options + reactions).
  * @param onDismiss Handler when the user dismisses the UI.
@@ -69,8 +71,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun SelectedMessageOverlay(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    messageOptions: List<MessageOption>,
+    messageOptions: List<MessageOptionState>,
     message: Message,
+    currentUser: User?,
     onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -78,7 +81,7 @@ public fun SelectedMessageOverlay(
 
     val reactionOptions = reactionTypes.entries
         .map { (type, drawable) ->
-            ReactionOption(
+            ReactionOptionItemState(
                 painter = painterResource(drawable),
                 isSelected = ownReactions.any { it.type == type },
                 type = type
@@ -96,7 +99,14 @@ public fun SelectedMessageOverlay(
             ),
         contentAlignment = Alignment.CenterStart
     ) {
-        Column(Modifier.padding(16.dp)) {
+        val isMine = message.user.id == currentUser?.id
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = if (isMine) End else Start
+        ) {
             ReactionOptions(
                 options = reactionOptions,
                 onReactionClick = {
@@ -114,7 +124,10 @@ public fun SelectedMessageOverlay(
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            SelectedMessage(message)
+            SelectedMessage(
+                message = message,
+                isMine = isMine
+            )
 
             Spacer(modifier = Modifier.size(8.dp))
 
@@ -133,16 +146,17 @@ public fun SelectedMessageOverlay(
  * @param onReactionClick Handler when the user clicks on any reaction.
  */
 @Composable
-internal fun ReactionOptions(
-    options: List<ReactionOption>,
-    onReactionClick: (ReactionOption) -> Unit,
+public fun ReactionOptions(
+    options: List<ReactionOptionItemState>,
+    onReactionClick: (ReactionOptionItemState) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = ChatTheme.colors.barsBackground,
     ) {
         LazyRow(
-            modifier = Modifier
+            modifier = modifier
                 .wrapContentWidth()
                 .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -165,8 +179,8 @@ internal fun ReactionOptions(
  */
 @Composable
 internal fun ReactionOptionItem(
-    option: ReactionOption,
-    onReactionClick: (ReactionOption) -> Unit,
+    option: ReactionOptionItemState,
+    onReactionClick: (ReactionOptionItemState) -> Unit,
 ) {
     Icon(
         modifier = Modifier
@@ -187,24 +201,36 @@ internal fun ReactionOptionItem(
  * in the list, as those are not as important.
  *
  * @param message Message to show.
+ * @param isMine If the message is owned by the current user.
  */
 @Composable
-private fun SelectedMessage(message: Message) {
+private fun SelectedMessage(
+    message: Message,
+    isMine: Boolean,
+    modifier: Modifier = Modifier,
+) {
     Row(
-        Modifier.widthIn(max = 300.dp)
+        modifier.widthIn(max = 300.dp)
     ) {
         val authorImage = rememberImagePainter(data = message.user.image)
 
-        Avatar(
-            modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp)
-                .size(24.dp)
-                .align(Alignment.Bottom),
-            painter = authorImage
-        )
+        if (!isMine) {
+            Avatar(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .size(24.dp)
+                    .align(Alignment.Bottom),
+                painter = authorImage
+            )
+        }
+
+        val messageBubbleShape = if (isMine) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+        val messageBubbleColor =
+            if (isMine) ChatTheme.colors.ownMessagesBackground else ChatTheme.colors.otherMessagesBackground
 
         MessageBubble(
-            shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
+            shape = messageBubbleShape,
+            color = messageBubbleColor,
             content = {
                 if (message.deletedAt != null) {
                     DeletedMessageContent()
@@ -219,6 +245,16 @@ private fun SelectedMessage(message: Message) {
                 }
             }
         )
+
+        if (isMine) {
+            Avatar(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .size(24.dp)
+                    .align(Alignment.Bottom),
+                painter = authorImage
+            )
+        }
     }
 }
 
@@ -230,13 +266,17 @@ private fun SelectedMessage(message: Message) {
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun MessageOptions(
-    options: List<MessageOption>,
+public fun MessageOptions(
+    options: List<MessageOptionState>,
     onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.sizeIn(
+            maxHeight = ChatTheme.dimens.messageOptionsMaxHeight,
+            maxWidth = ChatTheme.dimens.messageOptionsMaxWidth
+        ),
+        shape = RoundedCornerShape(ChatTheme.dimens.messageOptionsRoundedCorners),
         color = ChatTheme.colors.barsBackground,
     ) {
         LazyColumn(modifier) {
@@ -265,8 +305,8 @@ internal fun MessageOptions(
  */
 @Composable
 internal fun MessageOptionItem(
-    option: MessageOption,
-    onMessageOptionClick: (MessageOption) -> Unit,
+    option: MessageOptionState,
+    onMessageOptionClick: (MessageOptionState) -> Unit,
 ) {
     val title = stringResource(id = option.title)
 
@@ -305,43 +345,51 @@ internal fun MessageOptionItem(
  * @param isInThread If the message is in a thread or not, to block off some options.
  */
 @Composable
-public fun defaultMessageOptions(
+public fun defaultMessageOptionsState(
     selectedMessage: Message,
     currentUser: User?,
     isInThread: Boolean,
-): List<MessageOption> {
+): List<MessageOptionState> {
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
     val isOwnMessage = selectedMessage.user.id == currentUser?.id
 
     return listOfNotNull(
-        buildMessageOption(
+        MessageOptionState(
             title = R.string.stream_compose_reply,
             iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
-            action = Reply(selectedMessage)
+            action = Reply(selectedMessage),
+            titleColor = ChatTheme.colors.textHighEmphasis,
+            iconColor = ChatTheme.colors.textLowEmphasis,
         ),
         if (!isInThread) {
-            buildMessageOption(
+            MessageOptionState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread_reply),
-                action = ThreadReply(selectedMessage)
+                action = ThreadReply(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
         if (isTextOnlyMessage) {
-            buildMessageOption(
+            MessageOptionState(
                 title = R.string.stream_compose_copy_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
-                action = Copy(selectedMessage)
+                action = Copy(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
         if (isOwnMessage) {
-            buildMessageOption(
+            MessageOptionState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
-                action = Edit(selectedMessage)
+                action = Edit(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
         if (isOwnMessage) {
-            MessageOption(
+            MessageOptionState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
                 action = Delete(selectedMessage),
@@ -350,10 +398,12 @@ public fun defaultMessageOptions(
             )
         } else null,
         if (!isOwnMessage) {
-            buildMessageOption(
+            MessageOptionState(
                 title = R.string.stream_compose_mute_user,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_mute),
-                action = MuteUser(selectedMessage)
+                action = MuteUser(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null
     )

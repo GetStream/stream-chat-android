@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.dp
  * @param threadSeparatorVerticalPadding The vertical content padding inside thread separator item.
  * @param threadSeparatorTextVerticalPadding The vertical padding inside thread separator text.
  * @param messageOverlayActionItemHeight The height of an action item on the selected message overlay.
+ * @param messageOptionsMaxHeight The max height of the message options section when we select a message in the list.
+ * @param messageOptionsMaxWidth The max width of the message options section when we select a message in the list.
+ * @param messageOptionsRoundedCorners The rounded corners size of the message options shape.
  */
 @Immutable
 public data class StreamDimens(
@@ -42,6 +45,9 @@ public data class StreamDimens(
     public val threadSeparatorVerticalPadding: Dp,
     public val threadSeparatorTextVerticalPadding: Dp,
     public val messageOverlayActionItemHeight: Dp,
+    public val messageOptionsMaxWidth: Dp,
+    public val messageOptionsMaxHeight: Dp,
+    public val messageOptionsRoundedCorners: Dp
 ) {
     public companion object {
         public fun defaultDimens(): StreamDimens = StreamDimens(
@@ -60,7 +66,10 @@ public data class StreamDimens(
             attachmentsContentFileUploadWidth = 250.dp,
             threadSeparatorVerticalPadding = 8.dp,
             threadSeparatorTextVerticalPadding = 2.dp,
-            messageOverlayActionItemHeight = 40.dp
+            messageOverlayActionItemHeight = 40.dp,
+            messageOptionsMaxWidth = 200.dp,
+            messageOptionsMaxHeight = 300.dp,
+            messageOptionsRoundedCorners = 16.dp
         )
     }
 }

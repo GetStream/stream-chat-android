@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.composer.MessageInputState
+import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
@@ -67,14 +67,14 @@ public fun MessageComposer(
         DefaultComposerIntegrations(onAttachmentsClick)
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
-    input: @Composable RowScope.(MessageInputState) -> Unit = { inputState ->
+    input: @Composable RowScope.(MessageComposerState) -> Unit = { inputState ->
         MessageInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
                 .weight(1f),
             label = label,
-            messageInputState = inputState,
+            messageComposerState = inputState,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved
         )
@@ -94,7 +94,7 @@ public fun MessageComposer(
         },
         integrations = integrations,
         input = input,
-        messageInputState = MessageInputState(
+        messageComposerState = MessageComposerState(
             inputValue = value,
             attachments = selectedAttachments,
             action = activeAction,
@@ -109,7 +109,7 @@ public fun MessageComposer(
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
  * manual way to handle and represent data and various operations.
  *
- * @param messageInputState The state of the message input.
+ * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
  * @param modifier Modifier for styling.
@@ -119,15 +119,15 @@ public fun MessageComposer(
  */
 @Composable
 public fun MessageComposer(
-    messageInputState: MessageInputState,
+    messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
-    input: @Composable RowScope.(MessageInputState) -> Unit,
+    input: @Composable RowScope.(MessageComposerState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors) = messageInputState
+    val (value, attachments, activeAction, validationErrors) = messageComposerState
 
     showValidationErrorIfNecessary(validationErrors)
 
@@ -163,7 +163,7 @@ public fun MessageComposer(
                     )
                 }
 
-                input(messageInputState)
+                input(messageComposerState)
 
                 val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
 

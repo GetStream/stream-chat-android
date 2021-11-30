@@ -59,15 +59,15 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
-import io.getstream.chat.android.compose.state.messages.items.DateSeparator
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
-import io.getstream.chat.android.compose.state.messages.items.MessageListItem
-import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
+import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
@@ -87,7 +87,7 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
 /**
  * Represents the default message item that's shown for each item in the list.
  *
- * Detects if we're dealing with a [DateSeparator] or a [MessageItem] and shows the required UI.
+ * Detects if we're dealing with a [DateSeparatorState] or a [MessageItemState] and shows the required UI.
  *
  * @param messageListItem The item that holds the data.
  * @param modifier Modifier for styling.
@@ -108,12 +108,12 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  */
 @Composable
 public fun DefaultMessageItem(
-    messageListItem: MessageListItem,
+    messageListItem: MessageListItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    leadingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
             messageItem = it,
             modifier = Modifier
@@ -122,24 +122,24 @@ public fun DefaultMessageItem(
                 .align(Alignment.Bottom)
         )
     },
-    headerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+    headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
             messageItem = it,
             modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
         )
     },
-    footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
             messageItem = it,
         )
     },
-    trailingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(
             messageItem = it,
             modifier = Modifier.width(8.dp)
         )
     },
-    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+    content: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
@@ -149,17 +149,17 @@ public fun DefaultMessageItem(
     },
 ) {
     when (messageListItem) {
-        is DateSeparator -> MessageDateSeparator(
+        is DateSeparatorState -> MessageDateSeparator(
             modifier = Modifier.fillMaxWidth(),
             dateSeparator = messageListItem
         )
-        is ThreadSeparator -> MessageThreadSeparator(
+        is ThreadSeparatorState -> MessageThreadSeparator(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding),
             threadSeparator = messageListItem
         )
-        is MessageItem -> DefaultMessageContainer(
+        is MessageItemState -> DefaultMessageContainer(
             modifier = modifier,
             messageItem = messageListItem,
             onLongItemClick = onLongItemClick,
@@ -182,7 +182,7 @@ public fun DefaultMessageItem(
  */
 @Composable
 public fun MessageDateSeparator(
-    dateSeparator: DateSeparator,
+    dateSeparator: DateSeparatorState,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier, contentAlignment = Center) {
@@ -216,7 +216,7 @@ public fun MessageDateSeparator(
  */
 @Composable
 public fun MessageThreadSeparator(
-    threadSeparator: ThreadSeparator,
+    threadSeparator: ThreadSeparatorState,
     modifier: Modifier = Modifier,
 ) {
     val backgroundGradient = Brush.verticalGradient(
@@ -276,12 +276,12 @@ public fun MessageThreadSeparator(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun DefaultMessageContainer(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    leadingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
             messageItem = it,
             modifier = Modifier
@@ -290,24 +290,24 @@ public fun DefaultMessageContainer(
                 .align(Alignment.Bottom)
         )
     },
-    headerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+    headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
             messageItem = it,
             modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
         )
     },
-    footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
             messageItem = it,
         )
     },
-    trailingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(
             messageItem = it,
             modifier = Modifier.width(8.dp)
         )
     },
-    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+    content: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
@@ -384,7 +384,7 @@ public fun DefaultMessageContainer(
  */
 @Composable
 public fun DefaultMessageItemLeadingContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     val position = messageItem.groupPosition
@@ -409,7 +409,7 @@ public fun DefaultMessageItemLeadingContent(
  */
 @Composable
 public fun DefaultMessageItemHeaderContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier,
 ) {
     val message = messageItem.message
@@ -424,7 +424,7 @@ public fun DefaultMessageItemHeaderContent(
             .takeIf { it.isNotEmpty() }
             ?.map { it.key }
             ?.map { type ->
-                ReactionOption(
+                ReactionOptionItemState(
                     painter = painterResource(requireNotNull(supportedReactions[type])),
                     isSelected = ownReactions.any { it.type == type },
                     type = type
@@ -452,7 +452,7 @@ public fun DefaultMessageItemHeaderContent(
  */
 @Composable
 public fun ColumnScope.DefaultMessageItemFooterContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     val message = messageItem.message
@@ -493,7 +493,7 @@ public fun ColumnScope.DefaultMessageItemFooterContent(
  */
 @Composable
 public fun DefaultMessageItemTrailingContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     if (messageItem.isMine) {
@@ -511,7 +511,7 @@ public fun DefaultMessageItemTrailingContent(
  */
 @Composable
 public fun DefaultMessageItemContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -567,9 +567,9 @@ public fun DefaultMessageItemContent(
  */
 @Composable
 public fun MessageReactions(
-    options: List<ReactionOption>,
+    options: List<ReactionOptionItemState>,
     modifier: Modifier = Modifier,
-    itemContent: @Composable RowScope.(ReactionOption) -> Unit = { option ->
+    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         MessageReactionsItem(
             modifier = Modifier
                 .size(20.dp)
@@ -599,7 +599,7 @@ public fun MessageReactions(
  */
 @Composable
 public fun MessageReactionsItem(
-    option: ReactionOption,
+    option: ReactionOptionItemState,
     modifier: Modifier = Modifier,
 ) {
     Icon(
@@ -894,7 +894,7 @@ public fun UploadingFooter(
  */
 @Composable
 internal fun MessageFooter(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     val (message, position) = messageItem
