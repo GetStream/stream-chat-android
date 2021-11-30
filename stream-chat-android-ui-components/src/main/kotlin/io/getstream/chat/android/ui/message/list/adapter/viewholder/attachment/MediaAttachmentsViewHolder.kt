@@ -36,6 +36,7 @@ internal class MediaAttachmentsViewHolder(
 
     override fun bind(data: MessageListItem.MessageItem) {
         this.message = data.message
+        mediaAttachmentsView.setupBackground(data)
         binding.mediaAttachmentView.showAttachments(data.message.attachments)
     }
 }
