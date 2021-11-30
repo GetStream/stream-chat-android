@@ -51,7 +51,6 @@ internal class TextAndAttachmentsViewHolder(
      * of the Message are unchanged. However, other properties (like reactions) might
      * change, and these listeners should receive a fully up-to-date Message.
      */
-    // TODO do we need the same thing for the new attachment implementation?
     private fun modifiedListeners(listeners: MessageListListenerContainer?): MessageListListenerContainer? {
         return listeners?.let { container ->
             MessageListListenerContainerImpl(
@@ -75,6 +74,7 @@ internal class TextAndAttachmentsViewHolder(
 
     // TODO make non-nullable when AttachmentViewFactory is removed
     private val attachmentsAdapter: AttachmentsAdapter? = attachmentViewHolderFactory?.let { factory ->
+        factory.setListenerContainer(modifiedListeners(listeners))
         AttachmentsAdapter(factory)
     }
 

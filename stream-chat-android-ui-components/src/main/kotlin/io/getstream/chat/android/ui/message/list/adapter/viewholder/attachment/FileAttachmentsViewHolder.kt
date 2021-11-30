@@ -10,14 +10,20 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.Attachmen
 
 internal class FileAttachmentsViewHolder(
     private val binding: StreamUiItemFileAttachmentGroupBinding,
-    private val container: MessageListListenerContainer,
+    container: MessageListListenerContainer?,
 ) : AttachmentViewHolder(binding.root) {
 
-    val fileAttachmentsView = binding.fileAttachmentsView
+    private val fileAttachmentsView = binding.fileAttachmentsView
 
     private var message: Message? = null
 
     init {
+        if (container != null) {
+            setupListeners(container)
+        }
+    }
+
+    private fun setupListeners(container: MessageListListenerContainer) {
         fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
             message?.let { message ->
                 container.messageLongClickListener.onMessageLongClick(message)

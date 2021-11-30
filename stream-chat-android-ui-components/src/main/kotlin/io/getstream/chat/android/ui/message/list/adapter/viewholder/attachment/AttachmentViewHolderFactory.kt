@@ -20,10 +20,10 @@ public open class AttachmentViewHolderFactory {
      * Listeners set on [MessageListView] that should be invoked when the user interacts with
      * list items.
      */
-    protected lateinit var listenerContainer: MessageListListenerContainer
+    protected var listenerContainer: MessageListListenerContainer? = null
         private set
 
-    internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
+    internal fun setListenerContainer(listenerContainer: MessageListListenerContainer?) {
         this.listenerContainer = listenerContainer
     }
 
