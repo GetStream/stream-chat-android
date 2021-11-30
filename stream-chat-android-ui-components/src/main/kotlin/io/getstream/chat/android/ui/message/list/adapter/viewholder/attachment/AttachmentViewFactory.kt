@@ -23,6 +23,9 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAtta
 /**
  * Factory for creating a content view for links attachments and other types of attachments.
  */
+@Deprecated(
+    message = "Use AttachmentViewHolderFactory instead"
+)
 public open class AttachmentViewFactory {
 
     /**
