@@ -1,5 +1,7 @@
 package io.getstream.chat.android.ui.message.input.internal
 
+import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be`
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -10,7 +12,7 @@ internal class TextValidatorTest {
         val message = "/giphy"
         val result = isMessageTextValid(message)
 
-        assertFalse(result)
+        result `should be` (false)
     }
 
     @Test
@@ -18,7 +20,7 @@ internal class TextValidatorTest {
         val message = "/giphy      "
         val result = isMessageTextValid(message)
 
-        assertFalse(result)
+        result `should be` (false)
     }
 
     @Test
@@ -26,7 +28,7 @@ internal class TextValidatorTest {
         val message = "/giphy hi"
         val result = isMessageTextValid(message)
 
-        assertTrue(result)
+        result `should be` (true)
     }
 
     @Test
@@ -34,6 +36,6 @@ internal class TextValidatorTest {
         val message = "hi"
         val result = isMessageTextValid(message)
 
-        assertTrue(result)
+        result `should be` (true)
     }
 }
