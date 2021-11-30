@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -72,6 +73,28 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         channelId: String,
         request: QueryChannelRequest,
     ): Unit = logic.channel(channelType, channelId).onQueryChannelResult(result, channelType, channelId, request)
+
+    override fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> =
+        logic.thread(messageId).onGetRepliesPrecondition(messageId, limit)
+
+    override fun onGetRepliesRequest(messageId: String, limit: Int): Unit =
+        logic.thread(messageId).onGetRepliesRequest(messageId, limit)
+
+    override fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int): Unit =
+        logic.thread(messageId).onGetRepliesResult(result, messageId, limit)
+
+    override fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int): Result<Unit> =
+        logic.thread(messageId).onGetRepliesMorePrecondition(messageId, firstId, limit)
+
+    override fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int): Unit =
+        logic.thread(messageId).onGetRepliesMoreRequest(messageId, firstId, limit)
+
+    override fun onGetRepliesMoreResult(
+        result: Result<List<Message>>,
+        messageId: String,
+        firstId: String,
+        limit: Int,
+    ): Unit = logic.thread(messageId).onGetRepliesMoreResult(result, messageId, firstId, limit)
 
     internal fun clear() {
         logic.clear()
