@@ -96,10 +96,9 @@ internal class MessageInputController(
             false -> view.sendAttachments(
                 message,
                 attachmentsController.selectedAttachments.map { metaData ->
-                    storageHelper.getCachedFileFromUri(
-                        view.context,
-                        metaData
-                    ) to metaData.mimeType
+                    metaData.apply {
+                        file = storageHelper.getCachedFileFromUri(view.context, metaData)
+                    }
                 }
             )
         }
@@ -112,10 +111,9 @@ internal class MessageInputController(
                 message,
                 binding.cbSendAlsoToChannel.isChecked,
                 attachmentsController.selectedAttachments.map { metaData ->
-                    storageHelper.getCachedFileFromUri(
-                        view.context,
-                        metaData
-                    ) to metaData.mimeType
+                    metaData.apply {
+                        file = storageHelper.getCachedFileFromUri(view.context, metaData)
+                    }
                 }
             )
         }

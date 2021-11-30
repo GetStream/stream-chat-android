@@ -59,7 +59,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
-import java.io.File
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
@@ -770,7 +769,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun doSend(
-        attachmentSender: (List<Pair<File, String?>>) -> Unit,
+        attachmentSender: (List<AttachmentMetaData>) -> Unit,
         simpleSender: () -> Unit,
         customAttachmentsSender: (List<Attachment>) -> Unit,
     ) {
@@ -828,7 +827,7 @@ public class MessageInputView : ConstraintLayout {
 
             override fun sendMessageWithAttachments(
                 message: String,
-                attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                attachmentsWithMimeTypes: List<AttachmentMetaData>,
                 messageReplyTo: Message?,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -854,7 +853,7 @@ public class MessageInputView : ConstraintLayout {
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                attachmentsWithMimeTypes: List<AttachmentMetaData>,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -916,7 +915,7 @@ public class MessageInputView : ConstraintLayout {
 
         public fun sendMessageWithAttachments(
             message: String,
-            attachmentsWithMimeTypes: List<Pair<File, String?>>,
+            attachmentsWithMimeTypes: List<AttachmentMetaData>,
             messageReplyTo: Message? = null,
         )
 
@@ -936,7 +935,7 @@ public class MessageInputView : ConstraintLayout {
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsWithMimeTypes: List<Pair<File, String?>>,
+            attachmentsWithMimeTypes: List<AttachmentMetaData>,
         )
 
         public fun sendToThreadWithCustomAttachments(

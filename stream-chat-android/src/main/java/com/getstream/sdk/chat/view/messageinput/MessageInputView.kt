@@ -75,7 +75,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
         override fun sendMessageWithAttachments(
             message: String,
-            attachmentsFilesWithMimeType: List<Pair<File, String?>>
+            attachmentsFilesWithMimeType: List<AttachmentMetaData>
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -92,7 +92,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<Pair<File, String?>>,
+            attachmentsFiles: List<AttachmentMetaData>,
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -289,7 +289,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         messageSendHandler.sendMessage(message)
     }
 
-    internal fun sendAttachments(message: String, attachmentFilesWithMimeType: List<Pair<File, String?>>) {
+    internal fun sendAttachments(message: String, attachmentFilesWithMimeType: List<AttachmentMetaData>) {
         messageSendHandler.sendMessageWithAttachments(message, attachmentFilesWithMimeType)
     }
 
@@ -301,7 +301,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         parentMessage: Message,
         message: String,
         alsoSendToChannel: Boolean,
-        attachmentFilesWithMimeType: List<Pair<File, String?>>,
+        attachmentFilesWithMimeType: List<AttachmentMetaData>,
     ) {
         messageSendHandler.sendToThreadWithAttachments(
             parentMessage,
@@ -445,13 +445,13 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     public interface MessageSendHandler {
         public fun sendMessage(messageText: String)
-        public fun sendMessageWithAttachments(message: String, attachmentsFilesWithMimeType: List<Pair<File, String?>>)
+        public fun sendMessageWithAttachments(message: String, attachmentsFilesWithMimeType: List<AttachmentMetaData>)
         public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
         public fun sendToThreadWithAttachments(
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFilesWithMimeType: List<Pair<File, String?>>,
+            attachmentsFilesWithMimeType: List<AttachmentMetaData>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)

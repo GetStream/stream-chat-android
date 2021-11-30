@@ -3,9 +3,9 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import io.getstream.chat.android.client.models.Message
-import java.io.File
 
 /**
  * Binds [MessageInputView] with [MessageInputViewModel], updating the view's state
@@ -21,7 +21,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
 
         override fun sendMessageWithAttachments(
             message: String,
-            attachmentsFilesWithMimeType: List<Pair<File, String?>>
+            attachmentsFilesWithMimeType: List<AttachmentMetaData>
         ) {
             this@bindView.sendMessageWithAttachments(message, attachmentsFilesWithMimeType)
         }
@@ -41,7 +41,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFilesWithMimeType: List<Pair<File, String?>>,
+            attachmentsFilesWithMimeType: List<AttachmentMetaData>,
         ) {
             this@bindView.sendMessageWithAttachments(message, attachmentsFilesWithMimeType) {
                 this.parentId = parentMessage.id

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.ChatClient
@@ -17,7 +18,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.extensions.setMessageForReply
-import java.io.File
 
 /**
  * ViewModel class for MessageInputView. Responsible for sending and updating chat messages.
@@ -110,12 +110,12 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
     public fun sendMessageWithAttachments(
         messageText: String,
-        attachmentsWithMimeTypes: List<Pair<File, String?>>,
+        attachmentsWithMimeTypes: List<AttachmentMetaData>,
         messageTransformer: Message.() -> Unit = { },
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
-        val attachments = attachmentsWithMimeTypes.map { (file, mimeType) ->
-            Attachment(upload = file, mimeType = mimeType)
+        val attachments = attachmentsWithMimeTypes.map { attachmentMetaData ->
+            Attachment(upload = attachmentMetaData.file, mimeType = attachmentMetaData.mimeType)
         }.toMutableList()
 
         val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)

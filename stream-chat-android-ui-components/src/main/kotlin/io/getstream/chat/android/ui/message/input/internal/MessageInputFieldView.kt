@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.input.internal
 
 import android.annotation.TargetApi
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
@@ -194,13 +195,20 @@ internal class MessageInputFieldView : FrameLayout {
         messageText = "${messageText.substringBeforeLast("@")}@${user.name} "
     }
 
-    fun getAttachedFiles(): List<Pair<File, String?>> {
+    fun getAttachedFiles(): List<AttachmentMetaData> {
         return selectedAttachments.map { metaData ->
-            storageHelper.getCachedFileFromUri(context, metaData) to metaData.mimeType
+            val file = storageHelper.getCachedFileFromUri(context, metaData)
+            val (width, height) = imageDimensions(file)
+
+            metaData.apply {
+                this.file = file
+                this.width = width
+                this.heigth = height
+            }
         }
     }
 
-    fun getCustomAttachments() = selectedCustomAttachments
+    fun getCustomAttachments(): List<Attachment> = selectedCustomAttachments
 
     fun onReply(replyMessage: Message) {
         mode = Mode.ReplyMessageMode(replyMessage)
@@ -258,6 +266,13 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
+    private fun imageDimensions(file: File): Pair<Int, Int>{
+        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.absolutePath, options)
+
+        return options.outWidth to options.outHeight
+    }
+
     private fun clearSelectedAttachments() {
         selectedAttachments = emptyList()
         selectedCustomAttachments = emptyList()
@@ -296,7 +311,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
         binding.messageEditText.hint = attachmentModeHint
-        selectedAttachments = mode.attachments.toList()
+        selectedAttachments = mode.attachments
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
         selectedMediaAttachmentAdapter.clear()
         binding.selectedCustomAttachmentsRecyclerView.isVisible = false
@@ -308,7 +323,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun switchToMediaAttachmentMode(mode: Mode.MediaAttachmentMode) {
         binding.messageEditText.hint = attachmentModeHint
-        selectedAttachments += mode.attachments.toList()
+        selectedAttachments += mode.attachments
         binding.selectedFileAttachmentsRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
         binding.selectedCustomAttachmentsRecyclerView.isVisible = false

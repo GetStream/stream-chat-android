@@ -18,6 +18,7 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -82,7 +83,6 @@ import io.getstream.chat.docs.databinding.CustomAttachmentItemBinding
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
-import java.io.File
 import java.util.Date
 
 class Android {
@@ -260,7 +260,7 @@ class Android {
 
                     override fun sendMessageWithAttachments(
                         message: String,
-                        attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                        attachmentsWithMimeTypes: List<AttachmentMetaData>,
                         messageReplyTo: Message?,
                     ) {
                         // Handle message with attachments
@@ -278,7 +278,7 @@ class Android {
                         parentMessage: Message,
                         message: String,
                         alsoSendToChannel: Boolean,
-                        attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                        attachmentsWithMimeTypes: List<AttachmentMetaData>,
                     ) {
                         // Handle message to thread with attachments
                     }

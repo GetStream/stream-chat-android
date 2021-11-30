@@ -3,15 +3,14 @@
 package io.getstream.chat.android.ui.message.input.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.DIRECT_CHAT
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.GROUP_CHAT
-import java.io.File
 
 /**
  * Binds [MessageInputView] with [MessageInputViewModel], updating the view's state
@@ -55,7 +54,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
 
             override fun sendMessageWithAttachments(
                 message: String,
-                attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                attachmentsWithMimeTypes: List<AttachmentMetaData>,
                 messageReplyTo: Message?,
             ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsWithMimeTypes) {
@@ -75,7 +74,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                attachmentsWithMimeTypes: List<AttachmentMetaData>,
             ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsWithMimeTypes) {
                     this.parentId = parentMessage.id

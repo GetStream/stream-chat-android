@@ -20,6 +20,8 @@ public data class AttachmentMetaData(
     var isSelected: Boolean = false
     var selectedPosition: Int = 0
     var videoLength: Long = 0
+    var width: Int = 0
+    var heigth: Int = 0
 
     public constructor(attachment: Attachment) : this(
         type = attachment.type,
