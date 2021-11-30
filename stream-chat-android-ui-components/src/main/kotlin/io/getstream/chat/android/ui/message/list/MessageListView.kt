@@ -1150,7 +1150,10 @@ public class MessageListView : ConstraintLayout {
         this.userReactionClickListener = userReactionClickListener ?: DEFAULT_USER_REACTION_CLICK_LISTENER
     }
 
-    /* Documentation: Todo*/
+    /* Set the click listener to be used when a message that is a reply is clicked
+    *
+    * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
+    */
     public fun setReplyMessageClickListener(replyMessageClickListener: ReplyMessageClickListener) {
         this.replyMessageClickListener = replyMessageClickListener
     }
