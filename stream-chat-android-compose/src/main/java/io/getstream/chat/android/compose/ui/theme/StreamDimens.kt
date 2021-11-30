@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
  * @param messageOverlayActionItemHeight The height of an action item on the selected message overlay.
  * @param suggestionListMaxHeight The maximum height of the suggestion list popup.
  * @param suggestionListPadding The outer padding of the suggestion list popup.
+ * @param suggestionListElevation THe elevation of the suggestion list popup.
  * @param mentionSuggestionItemHorizontalPadding The horizontal content padding inside mention list item.
  * @param mentionSuggestionItemVerticalPadding The vertical content padding inside mention list item.
  * @param mentionSuggestionItemAvatarSize The size of a channel avatar in the suggestion list popup.
@@ -49,6 +50,7 @@ public data class StreamDimens(
     public val messageOverlayActionItemHeight: Dp,
     public val suggestionListMaxHeight: Dp,
     public val suggestionListPadding: Dp,
+    public val suggestionListElevation: Dp,
     public val mentionSuggestionItemHorizontalPadding: Dp,
     public val mentionSuggestionItemVerticalPadding: Dp,
     public val mentionSuggestionItemAvatarSize: Dp,
@@ -73,6 +75,7 @@ public data class StreamDimens(
             messageOverlayActionItemHeight = 40.dp,
             suggestionListMaxHeight = 256.dp,
             suggestionListPadding = 8.dp,
+            suggestionListElevation = 4.dp,
             mentionSuggestionItemHorizontalPadding = 16.dp,
             mentionSuggestionItemVerticalPadding = 8.dp,
             mentionSuggestionItemAvatarSize = 40.dp,

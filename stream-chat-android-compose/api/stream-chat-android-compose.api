@@ -892,7 +892,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDimens$Companion;
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
 	public final fun component10-D9Ej5fM ()F
 	public final fun component11-D9Ej5fM ()F
@@ -907,6 +907,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun component2-D9Ej5fM ()F
 	public final fun component20-D9Ej5fM ()F
 	public final fun component21-D9Ej5fM ()F
+	public final fun component22-D9Ej5fM ()F
 	public final fun component3-D9Ej5fM ()F
 	public final fun component4-D9Ej5fM ()F
 	public final fun component5-D9Ej5fM ()F
@@ -914,8 +915,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun component7-D9Ej5fM ()F
 	public final fun component8-D9Ej5fM ()F
 	public final fun component9-D9Ej5fM ()F
-	public final fun copy-gTUPTQ0 (FFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
-	public static synthetic fun copy-gTUPTQ0$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun copy-QqPiwLw (FFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public static synthetic fun copy-QqPiwLw$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachmentsContentFileUploadWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentFileWidth-D9Ej5fM ()F
@@ -934,6 +935,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun getMentionSuggestionItemHorizontalPadding-D9Ej5fM ()F
 	public final fun getMentionSuggestionItemVerticalPadding-D9Ej5fM ()F
 	public final fun getMessageOverlayActionItemHeight-D9Ej5fM ()F
+	public final fun getSuggestionListElevation-D9Ej5fM ()F
 	public final fun getSuggestionListMaxHeight-D9Ej5fM ()F
 	public final fun getSuggestionListPadding-D9Ej5fM ()F
 	public final fun getThreadSeparatorTextVerticalPadding-D9Ej5fM ()F

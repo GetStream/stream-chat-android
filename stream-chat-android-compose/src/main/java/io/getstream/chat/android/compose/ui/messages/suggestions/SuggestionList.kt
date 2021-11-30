@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,7 +37,7 @@ public fun SuggestionList(
                 .fillMaxWidth()
                 .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
                 .padding(ChatTheme.dimens.suggestionListPadding),
-            elevation = 4.dp,
+            elevation = ChatTheme.dimens.suggestionListElevation,
             shape = shape,
             backgroundColor = ChatTheme.colors.barsBackground,
         ) {
