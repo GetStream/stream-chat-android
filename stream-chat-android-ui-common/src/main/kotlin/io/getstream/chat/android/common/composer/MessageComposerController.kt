@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -18,9 +19,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 
 /**
  * Controller responsible for handling the composing and sending of messages.
@@ -66,25 +69,19 @@ public class MessageComposerController(
     public val validationErrors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the list of users that can be used to autocomplete the current mention input.
+     */
+    public val mentionSuggestions: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
+
+    /**
+     * Represents the list of users in the channel.
+     */
+    private var users: List<User> = emptyList()
+
+    /**
      * Represents the maximum allowed message length in the message input.
      */
     private var maxMessageLength: Int = DEFAULT_MAX_MESSAGE_LENGTH
-
-    /**
-     * Sets up the data loading operations such as observing the maximum allowed message length.
-     */
-    init {
-        scope.launch {
-            val result = chatDomain.watchChannel(channelId, 0).await()
-
-            if (result.isSuccess) {
-                val channelController = result.data()
-                channelController.channelConfig.collect {
-                    maxMessageLength = it.maxMessageLength
-                }
-            }
-        }
-    }
 
     /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
@@ -124,6 +121,33 @@ public class MessageComposerController(
         get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
 
     /**
+     * Gets the current text input in the message composer..
+     */
+    private val messageText: String
+        get() = input.value
+
+    /**
+     * Sets up the data loading operations such as observing the maximum allowed message length.
+     */
+    init {
+        scope.launch {
+            val result = chatDomain.watchChannel(channelId, 0).await()
+
+            if (result.isSuccess) {
+                val channelController = result.data()
+
+                channelController.channelConfig.onEach {
+                    maxMessageLength = it.maxMessageLength
+                }.launchIn(scope)
+
+                channelController.members.onEach { members ->
+                    users = members.map { it.user }
+                }.launchIn(scope)
+            }
+        }
+    }
+
+    /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.
@@ -131,9 +155,9 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        setTyping(value.isNotEmpty())
-
-        validateInput()
+        handleTypingEvent(isTyping = value.isNotEmpty())
+        handleMentionSuggestions()
+        handleValidationErrors()
     }
 
     /**
@@ -204,7 +228,7 @@ public class MessageComposerController(
         }
         selectedAttachments.value = newAttachments
 
-        validateInput()
+        handleValidationErrors()
     }
 
     /**
@@ -217,7 +241,7 @@ public class MessageComposerController(
     public fun removeSelectedAttachment(attachment: Attachment) {
         selectedAttachments.value = selectedAttachments.value - attachment
 
-        validateInput()
+        handleValidationErrors()
     }
 
     /**
@@ -247,7 +271,7 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
-        setTyping(false)
+        handleTypingEvent(isTyping = false)
 
         sendMessageCall.enqueue()
     }
@@ -303,9 +327,12 @@ public class MessageComposerController(
     /**
      * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
      *
+     * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
+     * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
+     *
      * @param isTyping If the user is currently typing.
      */
-    private fun setTyping(isTyping: Boolean) {
+    private fun handleTypingEvent(isTyping: Boolean) {
         if (isTyping) {
             chatDomain.keystroke(channelId, parentMessageId)
         } else {
@@ -323,7 +350,7 @@ public class MessageComposerController(
     /**
      * Checks the current input for validation errors.
      */
-    private fun validateInput() {
+    private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
             val messageLength = input.value.length
             if (messageLength > maxMessageLength) {
@@ -358,10 +385,39 @@ public class MessageComposerController(
         }
     }
 
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User) {
+        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
+
+        setMessageInput(augmentedMessageText)
+    }
+
+    /**
+     * Shows the mention suggestion list popup if necessary.
+     */
+    private fun handleMentionSuggestions() {
+        val containsMention = MENTION_PATTERN.matcher(messageText).find()
+
+        mentionSuggestions.value = if (containsMention) {
+            users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
+        } else {
+            emptyList()
+        }
+    }
+
     private companion object {
         /**
          * The default allowed number of characters in a message.
          */
         private const val DEFAULT_MAX_MESSAGE_LENGTH: Int = 5000
+
+        /**
+         * The regex pattern used to check if the message ends with incomplete mention.
+         */
+        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
     }
 }

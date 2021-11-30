@@ -6,9 +6,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,14 +44,33 @@ public fun InputField(
     innerPadding: Dp = 8.dp,
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
+    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
+
+    // Workaround to move cursor to the end after selecting a suggestion
+    val selection = if (textFieldValueState.isCursorAtTheEnd()) {
+        TextRange(value.length)
+    } else {
+        textFieldValueState.selection
+    }
+
+    val textFieldValue = textFieldValueState.copy(
+        text = value,
+        selection = selection
+    )
+
     BasicTextField(
         modifier = modifier
             .border(border = border, shape = ChatTheme.shapes.inputField)
             .clip(ChatTheme.shapes.inputField)
             .background(ChatTheme.colors.inputBackground)
             .padding(innerPadding),
-        value = value,
-        onValueChange = onValueChange,
+        value = textFieldValue,
+        onValueChange = {
+            textFieldValueState = it
+            if (value != it.text) {
+                onValueChange(it.text)
+            }
+        },
         textStyle = ChatTheme.typography.body.copy(
             color = ChatTheme.colors.textHighEmphasis,
         ),
@@ -54,4 +79,17 @@ public fun InputField(
         maxLines = maxLines,
         singleLine = maxLines == 1
     )
+}
+
+/**
+ * Check if the [TextFieldValue] state represents a UI with the cursor at the end of the input.
+ *
+ * @return True if the cursor is at the end of the input.
+ */
+private fun TextFieldValue.isCursorAtTheEnd(): Boolean {
+    val textLength = text.length
+    val selectionStart = selection.start
+    val selectionEnd = selection.end
+
+    return textLength == selectionStart && textLength == selectionEnd
 }

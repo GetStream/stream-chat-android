@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
@@ -39,6 +40,11 @@ public class MessageComposerViewModel(
      * Represents the list of validation errors for the current text input and the currently selected attachments.
      */
     public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
+
+    /**
+     * Represents the list of users that can be used to autocomplete the current mention input.
+     */
+    public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
@@ -128,6 +134,13 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
 
     /**
      * Disposes the inner [MessageComposerController].

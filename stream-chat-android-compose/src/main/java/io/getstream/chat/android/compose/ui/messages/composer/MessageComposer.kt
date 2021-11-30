@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
@@ -32,6 +33,7 @@ import io.getstream.chat.android.compose.state.messages.composer.MessageInputSta
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
+import io.getstream.chat.android.compose.ui.messages.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -48,6 +50,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ * @param onMentionClick @param onMentionClick Handler when the user taps on a mention suggestion item.
+ * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param integrations A view that represents custom integrations. By default, we provide
  * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
  * their own integrations, which they need to hook up to their own data providers and UI.
@@ -63,6 +67,13 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
+    onMentionClick: (User) -> Unit = { viewModel.selectMention(it) },
+    mentionPopupContent: @Composable (List<User>) -> Unit = {
+        DefaultMentionPopupContent(
+            mentionSuggestions = it,
+            onMentionClick = onMentionClick
+        )
+    },
     integrations: @Composable RowScope.() -> Unit = {
         DefaultComposerIntegrations(onAttachmentsClick)
     },
@@ -84,6 +95,7 @@ public fun MessageComposer(
     val selectedAttachments by viewModel.selectedAttachments.collectAsState()
     val activeAction by viewModel.lastActiveAction.collectAsState(null)
     val validationErrors by viewModel.validationErrors.collectAsState()
+    val mentionSuggestions by viewModel.mentionSuggestions.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -92,13 +104,16 @@ public fun MessageComposer(
 
             onSendMessage(messageWithData)
         },
+        onMentionClick = onMentionClick,
+        mentionPopupContent = mentionPopupContent,
         integrations = integrations,
         input = input,
         messageInputState = MessageInputState(
             inputValue = value,
             attachments = selectedAttachments,
             action = activeAction,
-            validationErrors = validationErrors
+            validationErrors = validationErrors,
+            mentionSuggestions = mentionSuggestions
         ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
@@ -112,6 +127,8 @@ public fun MessageComposer(
  * @param messageInputState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
+ * @param onMentionClick Handler when the user taps on a mention suggestion item.
+ * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param modifier Modifier for styling.
  * @param shouldShowIntegrations If we should show or hide integrations.
  * @param integrations Composable that represents integrations for the composer, such as Attachments.
@@ -122,12 +139,19 @@ public fun MessageComposer(
     messageInputState: MessageInputState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
+    onMentionClick: (User) -> Unit,
+    mentionPopupContent: @Composable (List<User>) -> Unit = {
+        DefaultMentionPopupContent(
+            mentionSuggestions = it,
+            onMentionClick = onMentionClick
+        )
+    },
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors) = messageInputState
+    val (value, attachments, activeAction, validationErrors, mentionSuggestions) = messageInputState
 
     showValidationErrorIfNecessary(validationErrors)
 
@@ -184,7 +208,28 @@ public fun MessageComposer(
                 )
             }
         }
+
+        if (mentionSuggestions.isNotEmpty()) {
+            mentionPopupContent(mentionSuggestions)
+        }
     }
+}
+
+/**
+ * Represents the default mention suggestion list popup shown above the message composer.
+ *
+ * @param mentionSuggestions The list of users that can be used to autocomplete the current mention input.
+ * @param onMentionClick Handler when the user taps on a mention suggestion item.
+ */
+@Composable
+internal fun DefaultMentionPopupContent(
+    mentionSuggestions: List<User>,
+    onMentionClick: (User) -> Unit,
+) {
+    MentionSuggestionList(
+        users = mentionSuggestions,
+        onMentionClick = { onMentionClick(it) }
+    )
 }
 
 /**
