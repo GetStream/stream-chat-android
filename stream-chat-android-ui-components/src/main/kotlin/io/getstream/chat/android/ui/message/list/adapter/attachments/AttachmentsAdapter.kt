@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.message.list.adapter.attachments
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import io.getstream.chat.android.client.models.Attachment
+import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 
@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
  */
 internal class AttachmentsAdapter(
     private val viewHolderFactory: AttachmentViewHolderFactory,
-) : ListAdapter<List<Attachment>, AttachmentViewHolder>(DiffCallback) {
+) : ListAdapter<MessageItem, AttachmentViewHolder>(DiffCallback) {
 
     override fun getItemViewType(position: Int): Int {
         return viewHolderFactory.getItemViewType(getItem(0))
@@ -27,13 +27,12 @@ internal class AttachmentsAdapter(
         holder.bind(getItem(position))
     }
 
-    // TODO improve diffing?
-    object DiffCallback  : DiffUtil.ItemCallback<List<Attachment>>() {
-        override fun areItemsTheSame(oldItem: List<Attachment>, newItem: List<Attachment>): Boolean {
-            return oldItem == newItem
+    object DiffCallback : DiffUtil.ItemCallback<MessageItem>() {
+        override fun areItemsTheSame(oldItem: MessageItem, newItem: MessageItem): Boolean {
+            return oldItem.message.id == newItem.message.id
         }
 
-        override fun areContentsTheSame(oldItem: List<Attachment>, newItem: List<Attachment>): Boolean {
+        override fun areContentsTheSame(oldItem: MessageItem, newItem: MessageItem): Boolean {
             return oldItem == newItem
         }
     }

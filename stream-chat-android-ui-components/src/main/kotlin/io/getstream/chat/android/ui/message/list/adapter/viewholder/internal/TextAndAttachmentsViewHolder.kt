@@ -131,9 +131,8 @@ internal class TextAndAttachmentsViewHolder(
                 addView(attachmentViewFactory.createAttachmentView(data, modifiedListeners(listeners), style, binding.root))
             }
         } else {
-            val attachments = data.message.attachments
             // TODO remove this safe call when AttachmentViewFactory is removed
-            attachmentsAdapter?.submitList(listOf(attachments))
+            attachmentsAdapter?.submitList(listOf(data))
         }
     }
 

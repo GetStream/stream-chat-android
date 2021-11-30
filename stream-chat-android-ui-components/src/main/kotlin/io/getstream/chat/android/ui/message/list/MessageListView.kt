@@ -635,11 +635,7 @@ public class MessageListView : ConstraintLayout {
 
         if (::attachmentViewFactory.isInitialized.not() && ::attachmentViewHolderFactory.isInitialized.not()) {
             // Create a default instance if neither (old or new) attachment factory has been set by the user
-            attachmentViewHolderFactory = AttachmentViewHolderFactory(
-                attachmentClickListener = {},
-                attachmentLongClickListener = {},
-                attachmentDownloadClickListener = {}
-            )
+            attachmentViewHolderFactory = AttachmentViewHolderFactory()
         }
 
         // Create default ViewHolderFactory if needed
@@ -659,7 +655,7 @@ public class MessageListView : ConstraintLayout {
             messageBackgroundFactory
         )
 
-        messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
+        messageListItemViewHolderFactory.setListenerContainer(listenerContainer)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
 
@@ -668,6 +664,7 @@ public class MessageListView : ConstraintLayout {
             messageListItemViewHolderFactory.setAttachmentViewFactory(attachmentViewFactory)
         } else {
             // Use the new attachment impl otherwise
+            attachmentViewHolderFactory.setListenerContainer(listenerContainer)
             messageListItemViewHolderFactory.setAttachmentViewHolderFactory(attachmentViewHolderFactory)
         }
 

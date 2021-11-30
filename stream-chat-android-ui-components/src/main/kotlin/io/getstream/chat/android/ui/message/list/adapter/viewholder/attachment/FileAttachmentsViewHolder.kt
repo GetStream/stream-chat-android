@@ -1,31 +1,39 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
-import io.getstream.chat.android.client.models.Attachment
+import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentGroupBinding
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
 
 internal class FileAttachmentsViewHolder(
     private val binding: StreamUiItemFileAttachmentGroupBinding,
-    attachmentClickListener: AttachmentClickListener,
-    attachmentLongClickListener: AttachmentLongClickListener,
-    attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    private val container: MessageListListenerContainer,
 ) : AttachmentViewHolder(binding.root) {
 
-    // init {
-    // attachmentLongClickListener = AttachmentLongClickListener {
-    //     this@FileAttachmentViewHolder.onMessageLongClick(message)
-    // }
-    // attachmentClickListener = AttachmentClickListener {
-    //     attachmentClickListener.onAttachmentClick(message, it)
-    // }
-    // attachmentDownloadClickListener = AttachmentDownloadClickListener {
-    //     attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-    // }    }
-    // }
+    val fileAttachmentsView = binding.fileAttachmentsView
 
-    override fun bind(attachments: List<Attachment>) {
-        binding.fileAttachmentsView.setAttachments(attachments)
+    private var message: Message? = null
+
+    init {
+        fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
+            message?.let { message ->
+                container.messageLongClickListener.onMessageLongClick(message)
+            }
+        }
+        fileAttachmentsView.attachmentClickListener = AttachmentClickListener { attachment ->
+            message?.let { message ->
+                container.attachmentClickListener.onAttachmentClick(message, attachment)
+            }
+        }
+        fileAttachmentsView.attachmentDownloadClickListener =
+            AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)
+    }
+
+    override fun bind(data: MessageListItem.MessageItem) {
+        this.message = data.message
+        binding.fileAttachmentsView.setAttachments(data.message.attachments)
     }
 }
