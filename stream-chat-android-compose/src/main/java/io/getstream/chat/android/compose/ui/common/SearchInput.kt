@@ -46,7 +46,7 @@ public fun SearchInput(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onSearchStarted: () -> Unit = {},
-    leadingIcon: @Composable RowScope.() -> Unit = { DefaultSearchLeadingIcon(empty = query.isEmpty()) },
+    leadingIcon: @Composable RowScope.() -> Unit = { DefaultSearchLeadingIcon() },
     label: @Composable () -> Unit = { DefaultSearchLabel() },
 ) {
     var isFocused by remember { mutableStateOf(false) }
@@ -109,7 +109,7 @@ public fun SearchInput(
  * Default search input field leading "search" icon.
  */
 @Composable
-internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
+internal fun RowScope.DefaultSearchLeadingIcon() {
     Icon(
         modifier = Modifier.weight(1f),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
