@@ -20,17 +20,17 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Callback invoked when send button is clicked
      */
-    public var onSendMessageClick: () -> Unit = {}
+    public var onSendMessageClickHandler: () -> Unit = {}
 
     /**
      * Callback invoked when text input is modified
      */
-    public var onInputChanged: (String) -> Unit = {}
+    public var onInputChangedHandler: (String) -> Unit = {}
 
     /**
     * Callback invoked when clear button is clicked
     */
-    public var onClearInputClick: () -> Unit = {}
+    public var onDismissMessageHandler: () -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -51,15 +51,15 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.centerContent.apply {
             val defaultCenterContent = DefaultCenterContent(context).apply {
-                onTextChangedListener = { onInputChanged(it) }
-                onClearButtonClickListener = { onClearInputClick() }
+                onTextChangedListener = { onInputChangedHandler(it) }
+                onClearButtonClickListener = { onDismissMessageHandler() }
             }
             removeAllViews()
             addView(defaultCenterContent)
         }
         binding.trailingContent.apply {
             val defaultTrailingContent = DefaultTrailingContent(context).apply {
-                this.onSendButtonClickListener = { onSendMessageClick() }
+                this.onSendButtonClickListener = { onSendMessageClickHandler() }
             }
             removeAllViews()
             addView(defaultTrailingContent)
