@@ -52,7 +52,6 @@ internal class MessageOptionsView : FrameLayout {
                 isMessagePinned = isMessagePinned,
             )
         }
-        binding.blockTV.isVisible = false
         binding.messageOptionsContainer.setCardBackgroundColor(style.messageOptionsBackgroundColor)
     }
 
@@ -76,10 +75,8 @@ internal class MessageOptionsView : FrameLayout {
 
         binding.flagTV.configureListItem(textStyle, style.flagIcon)
         binding.muteTV.configureListItem(textStyle, style.muteIcon)
-        binding.blockTV.configureListItem(textStyle, style.blockIcon)
         binding.editTV.isVisible = false
         binding.deleteTV.isVisible = false
-        configureBlock(configuration = configuration, style = style)
         configureMute(
             configuration = configuration,
             style = style,
@@ -91,6 +88,7 @@ internal class MessageOptionsView : FrameLayout {
             style = style,
             isMessagePinned = isMessagePinned
         )
+        configureBlock(configuration = configuration, style = style)
     }
 
     private fun configureMineMessage(
@@ -200,10 +198,9 @@ internal class MessageOptionsView : FrameLayout {
     }
 
     private fun configureBlock(configuration: Configuration, style: MessageListViewStyle) {
-        if (configuration.blockEnabled) {
-            binding.blockTV.configureListItem(style.messageOptionsText, style.replyIcon)
-        } else {
-            binding.blockTV.isVisible = false
+        binding.blockTV.isVisible = configuration.blockEnabled
+        if(configuration.blockEnabled) {
+            binding.blockTV.configureListItem(style.messageOptionsText, style.blockIcon)
         }
     }
 

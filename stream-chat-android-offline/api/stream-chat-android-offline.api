@@ -441,6 +441,14 @@ public final class io/getstream/chat/android/offline/experimental/channel/state/
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState {
+	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getOldestInThread ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getParentId ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
 }
 
