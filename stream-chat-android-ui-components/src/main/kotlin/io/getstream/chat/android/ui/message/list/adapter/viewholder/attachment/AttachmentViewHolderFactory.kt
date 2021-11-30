@@ -72,16 +72,21 @@ public open class AttachmentViewHolderFactory {
             MEDIA -> {
                 StreamUiItemImageAttachmentBinding
                     .inflate(parent.streamThemeInflater, parent, false)
-                    .let(::MediaAttachmentsViewHolder)
+                    .let { binding ->
+                        MediaAttachmentsViewHolder(
+                            binding = binding,
+                            container = listenerContainer,
+                        )
+                    }
             }
 
             FILE -> {
                 StreamUiItemFileAttachmentGroupBinding
                     .inflate(parent.streamThemeInflater, parent, false)
-                    .let {
+                    .let { binding ->
                         FileAttachmentsViewHolder(
-                            it,
-                            listenerContainer
+                            binding = binding,
+                            container = listenerContainer
                         )
                     }
             }
