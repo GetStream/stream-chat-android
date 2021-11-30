@@ -46,6 +46,7 @@ public fun InputField(
 ) {
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
 
+    // Workaround to move cursor to the end after selecting a suggestion
     val selection = if (textFieldValueState.isCursorAtTheEnd()) {
         TextRange(value.length)
     } else {
@@ -82,6 +83,8 @@ public fun InputField(
 
 /**
  * Check if the [TextFieldValue] state represents a UI with the cursor at the end of the input.
+ *
+ * @return True if the cursor is at the end of the input.
  */
 private fun TextFieldValue.isCursorAtTheEnd(): Boolean {
     val textLength = text.length

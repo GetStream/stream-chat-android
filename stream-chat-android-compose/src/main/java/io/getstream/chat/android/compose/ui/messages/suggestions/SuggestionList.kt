@@ -30,7 +30,7 @@ public fun SuggestionList(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.suggestionList,
     headerContent: @Composable () -> Unit = {},
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     Popup(popupPositionProvider = SuggestionListPositionProvider()) {
         Card(
