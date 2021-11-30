@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.exhaustive
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
@@ -54,7 +53,7 @@ internal class MessageInputController(
             is InputMode.Normal -> configureNormalInputMode()
             is InputMode.Thread -> configureThreadInputMode()
             is InputMode.Edit -> configureEditInputMode(newValue.oldMessage)
-        }.exhaustive
+        }
     }
 
     private fun configureThreadInputMode() {

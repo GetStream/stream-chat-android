@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
@@ -131,7 +130,7 @@ public class ChannelListViewModel(
     public fun onAction(action: Action) {
         when (action) {
             is Action.ReachedEndOfList -> requestMoreChannels()
-        }.exhaustive
+        }
     }
 
     public fun leaveChannel(channel: Channel) {
