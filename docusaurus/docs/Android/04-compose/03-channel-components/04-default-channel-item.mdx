@@ -23,9 +23,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
         ChatTheme {
             ChannelList(
-                itemContent = { channel -> // Customize the channel items
+                itemContent = { channelItem -> // Customize the channel items
                     DefaultChannelItem(
-                        channel = channel,
+                        channelItem = channelItem,
                         currentUser = user,
                         onChannelLongClick = { },
                         onChannelClick = { },
@@ -70,11 +70,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
     setContent {
         ChatTheme {
             ChannelList(
-                itemContent = { channel ->
+                itemContent = { channelItem ->
                     DefaultChannelItem(
-                        channel = channel,
+                        channelItem = channelItem,
                         currentUser = user,
-                        onChannelLongClick = { viewModel.selectChannel(it) },
+                        onChannelLongClick = { viewModel.selectChannel(it.channel) },
                         onChannelClick = ::openMessages,
                     )
                 }
@@ -99,27 +99,28 @@ If you're looking to customize the UI of the `DefaultChannelItem`, there are a f
 fun DefaultChannelItem(
     ..., // state and action handlers
     modifier: Modifier = Modifier,
-    leadingContent: @Composable RowScope.(Channel) -> Unit = {
+    leadingContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelAvatar(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .size(40.dp),
-            channel = it,
+            channel = it.channel,
             currentUser = currentUser
         )
     },
-    detailsContent: @Composable RowScope.(Channel) -> Unit = {
+    detailsContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelDetails(
-            channel = it,
+            channel = it.channel,
+            isMuted = it.isMuted,
             currentUser = currentUser,
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight()
         )
     },
-    trailingContent: @Composable RowScope.(Channel) -> Unit = {
+    trailingContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelLastMessageInfo(
-            channel = it,
+            channel = it.channel,
             currentUser = currentUser,
             modifier = Modifier
                 .padding(horizontal = 8.dp)
@@ -155,8 +156,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
         ChatTheme {
             ChannelList(
-                itemContent = { channel -> // Customize the channel items
-                    CustomChannelListItem(channel = channel, user = user)
+                itemContent = { channelItem -> // Customize the channel items
+                    CustomChannelListItem(channelItem = channelItem, user = user)
                 }
             )
         }
@@ -164,9 +165,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 
 @Composable
-fun CustomChannelListItem(channel: Channel, user: User?) {
+fun CustomChannelListItem(channelItem: ChannelItem, user: User?) {
     DefaultChannelItem(
-        channel = channel,
+        channelItem = channelItem,
         currentUser = user,
         onChannelLongClick = { },
         onChannelClick = { },
@@ -184,7 +185,7 @@ fun CustomChannelListItem(channel: Channel, user: User?) {
         },
         detailsContent = { // Replace the details content with a simple Text
             Text(
-                text = ChatTheme.channelNameFormatter.format(it),
+                text = ChatTheme.channelNameFormatter.format(it.channel),
                 style = ChatTheme.typography.bodyBold
             )
         }

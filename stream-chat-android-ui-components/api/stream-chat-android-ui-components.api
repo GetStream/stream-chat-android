@@ -2107,7 +2107,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory$Companion {
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory : java/io/Serializable {
+public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
 	public abstract fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun giphyAppearanceModel (Landroid/content/Context;)Landroid/graphics/drawable/Drawable;
 	public abstract fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;

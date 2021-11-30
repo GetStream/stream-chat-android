@@ -49,6 +49,20 @@ public final class io/getstream/chat/android/compose/state/channel/list/Cancel :
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/channel/list/Cancel;
 }
 
+public final class io/getstream/chat/android/compose/state/channel/list/ChannelItem {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;Z)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun component2 ()Z
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;Z)Lio/getstream/chat/android/compose/state/channel/list/ChannelItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channel/list/ChannelItem;Lio/getstream/chat/android/client/models/Channel;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channel/list/ChannelItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public final fun isMuted ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class io/getstream/chat/android/compose/state/channel/list/ChannelListAction {
 	public static final field $stable I
 	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Channel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -78,7 +92,7 @@ public final class io/getstream/chat/android/compose/state/channel/list/Channels
 	public final fun copy (ZZZLjava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;ZZZLjava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannels ()Ljava/util/List;
+	public final fun getChannelItems ()Ljava/util/List;
 	public final fun getEndOfChannels ()Z
 	public final fun getSearchQuery ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -468,13 +482,13 @@ public final class io/getstream/chat/android/compose/ui/channel/header/Composabl
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/info/ChannelInfoKt {
-	public static final fun ChannelInfo (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelInfo (Lio/getstream/chat/android/client/models/Channel;ZLio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/list/ChannelItemKt {
-	public static final fun ChannelDetails (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelDetails (Lio/getstream/chat/android/client/models/Channel;ZLio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ChannelLastMessageInfo (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun DefaultChannelItem (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultChannelItem (Lio/getstream/chat/android/compose/state/channel/list/ChannelItem;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageReadStatusIcon (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun UnreadCountIndicator-FNF3uiM (ILandroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V
 }
@@ -971,9 +985,7 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 	public static final fun getReadStatuses (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/util/List;
 	public static final fun isDistinct (Lio/getstream/chat/android/client/models/Channel;)Z
-	public static final fun isMuted (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isOneToOne (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
-	public static final fun setMuted (Lio/getstream/chat/android/client/models/Channel;Z)V
 }
 
 public final class io/getstream/chat/android/compose/ui/util/DefaultReactionTypes {
@@ -1019,12 +1031,14 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 	public final fun deleteConversation (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun dismissChannelAction ()V
 	public final fun getActiveChannelAction ()Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;
+	public final fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelsState ()Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSelectedChannel ()Landroidx/compose/runtime/MutableState;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun isChannelMuted (Ljava/lang/String;)Z
 	public final fun isOnline ()Lkotlinx/coroutines/flow/Flow;
 	public final fun leaveGroup (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun loadMore ()V

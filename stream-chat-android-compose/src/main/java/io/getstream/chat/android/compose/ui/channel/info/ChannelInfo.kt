@@ -50,7 +50,6 @@ import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isDistinct
-import io.getstream.chat.android.compose.ui.util.isMuted
 import io.getstream.chat.android.compose.ui.util.isOneToOne
 
 /**
@@ -58,6 +57,7 @@ import io.getstream.chat.android.compose.ui.util.isOneToOne
  * It also prepares the available options for the channel, based on if we're an admin or not.
  *
  * @param selectedChannel The channel the user selected.
+ * @param isMuted If the channel is muted for the current user.
  * @param currentUser The currently logged-in user data.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  * @param modifier Modifier for styling.
@@ -66,6 +66,7 @@ import io.getstream.chat.android.compose.ui.util.isOneToOne
 @Composable
 public fun ChannelInfo(
     selectedChannel: Channel,
+    isMuted: Boolean,
     currentUser: User?,
     onChannelOptionClick: (ChannelListAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -74,7 +75,6 @@ public fun ChannelInfo(
     val channelMembers = selectedChannel.members
 
     val canLeaveChannel = !selectedChannel.isDistinct()
-    val isChannelMuted = selectedChannel.isMuted
     val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
         ?.role
         ?.let { it == "admin" || it == "owner" }
@@ -102,7 +102,7 @@ public fun ChannelInfo(
                 action = LeaveGroup(selectedChannel)
             )
         } else null,
-        if (isChannelMuted) {
+        if (isMuted) {
             ChannelOption(
                 title = stringResource(id = R.string.stream_compose_channel_info_unmute_channel),
                 titleColor = ChatTheme.colors.textHighEmphasis,

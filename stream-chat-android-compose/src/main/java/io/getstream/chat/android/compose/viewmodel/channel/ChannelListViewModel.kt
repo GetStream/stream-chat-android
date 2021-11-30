@@ -16,9 +16,9 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
+import io.getstream.chat.android.compose.state.channel.list.ChannelItem
 import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
-import io.getstream.chat.android.compose.ui.util.isMuted
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -96,6 +96,21 @@ public class ChannelListViewModel(
     public val user: StateFlow<User?> = chatDomain.user
 
     /**
+     * Gives us the information about the list of channels mutes by the current user.
+     */
+    public val channelMutes: StateFlow<List<ChannelMute>> = chatDomain.channelMutes
+
+    /**
+     * Checks if the channel is muted for the current user.
+     *
+     * @param cid The CID of the channel that needs to be checked.
+     * @return True if the channel is muted for the current user.
+     */
+    public fun isChannelMuted(cid: String): Boolean {
+        return channelMutes.value.any { cid == it.channel.cid }
+    }
+
+    /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
@@ -111,7 +126,7 @@ public class ChannelListViewModel(
                         observeChannels(controller = result.data(), searchQuery = query)
                     } else {
                         result.error().cause?.printStackTrace()
-                        channelsState = channelsState.copy(isLoading = false, channels = emptyList())
+                        channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
                     }
                 }
         }
@@ -163,14 +178,14 @@ public class ChannelListViewModel(
                     QueryChannelsController.ChannelsState.OfflineNoResults -> {
                         channelsState.copy(
                             isLoading = false,
-                            channels = emptyList(),
+                            channelItems = emptyList(),
                             searchQuery = searchQuery
                         )
                     }
                     is QueryChannelsController.ChannelsState.Result -> {
                         channelsState.copy(
                             isLoading = false,
-                            channels = enrichMutedChannels(state.channels, channelMutes),
+                            channelItems = createChannelItems(state.channels, channelMutes),
                             isLoadingMore = false,
                             endOfChannels = controller.endOfChannels.value,
                             searchQuery = searchQuery
@@ -242,7 +257,7 @@ public class ChannelListViewModel(
      * Clears the active action if we've chosen [Cancel], otherwise, stores the selected action as
      * the currently active action, in [activeChannelAction].
      *
-     * It also removes the [selectedChannel] if the action is [Cancel].
+     * It also removes the [selectedChannelItem] if the action is [Cancel].
      *
      * @param channelListAction The selected action.
      */
@@ -313,26 +328,14 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Uses [Channel.isMuted] property to store additional flag for each channel if the channel is muted
-     * for the current user.
+     * Creates a list of [ChannelItem] that represents channel items we show in the list of channels.
      *
-     * @param channels The list of channels channels without the information about channel mutes.
-     * @param channelMutes The list of [ChannelMute] that represent muted channels for the current user.
-     * @return The list of channels enriched with the information about channel mutes.
+     * @param channels The channels to show.
+     * @param channelMutes The list of channels muted for the current user.
      *
-     * @see [Channel.isMuted]
      */
-    private fun enrichMutedChannels(channels: List<Channel>, channelMutes: List<ChannelMute>): List<Channel> {
-        val mutedChannelIdsSet = channelMutes.map { channelMute -> channelMute.channel.id }.toSet()
-        return channels.map { channel ->
-            val isMuted = channel.id in mutedChannelIdsSet
-
-            if (channel.isMuted != isMuted) {
-                channel.copy(extraData = channel.extraData.toMutableMap())
-                    .also { it.isMuted = isMuted }
-            } else {
-                channel
-            }
-        }
+    private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItem> {
+        val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
+        return channels.map { ChannelItem(it, it.cid in mutedChannelIds) }
     }
 }
