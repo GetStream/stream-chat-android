@@ -95,6 +95,7 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onThreadClick Handler when the user taps on a thread in a message item.
  * @param onImagePreviewResult Handler when the user receives a result from previewing message attachments.
+ * @param systemMessageContent Customizable composable function that represents the system message item.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
  * current user.
