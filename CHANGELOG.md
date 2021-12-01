@@ -66,6 +66,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
 
