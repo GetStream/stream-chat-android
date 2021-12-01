@@ -11,8 +11,10 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelData
+import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.message.wasCreatedAfter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
@@ -29,7 +32,7 @@ internal class ChannelMutableState(
     override val channelId: String,
     private val scope: CoroutineScope,
     private val userFlow: StateFlow<User?>,
-    private val latestUsers: StateFlow<Map<String, User>>,
+    latestUsers: StateFlow<Map<String, User>>,
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
@@ -55,12 +58,17 @@ internal class ChannelMutableState(
     internal val _unreadCount = MutableStateFlow(0)
 
     internal var hideMessagesBefore: Date? = null
-    internal val unfilteredMessages: StateFlow<List<Message>> =
-        _messages.map { it.values.toList() }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+
+    var countTime = 0
+
+    /** The raw message list updated by recent users value. */
+    internal val messageList: StateFlow<List<Message>> = _messages.combine(latestUsers) { messageMap, userMap ->
+        messageMap.values.updateUsers(userMap)
+    }.onEach { countTime += 1 }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =
-        messagesTransformation(_messages).stateIn(scope, SharingStarted.Eagerly, emptyList())
+        messagesTransformation(messageList).stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     private val _messagesState: StateFlow<MessagesState> =
         _loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
@@ -71,10 +79,9 @@ internal class ChannelMutableState(
             }
         }.stateIn(scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
 
-    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): StateFlow<List<Message>> {
-        return messages.map { messageMap ->
-            messageMap.values
-                .asSequence()
+    private fun messagesTransformation(messages: Flow<Collection<Message>>): StateFlow<List<Message>> {
+        return messages.map { messageCollection ->
+            messageCollection.asSequence()
                 .filter { it.parentId == null || it.showInChannel }
                 .filter { it.user.id == userFlow.value?.id || !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
@@ -87,11 +94,10 @@ internal class ChannelMutableState(
     internal var lastKeystrokeAt: Date? = null
     internal var lastStartTypingEvent: Date? = null
 
-    internal val sortedMessages: StateFlow<List<Message>> = _messages.map { it.values }
-        .map {
-            it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
-                .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
-        }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+    internal val sortedMessages: StateFlow<List<Message>> = messageList.map {
+        it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
+            .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+    }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     /** Channel configuration data. */
     internal val channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
@@ -100,10 +106,12 @@ internal class ChannelMutableState(
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
     override val messagesState: StateFlow<MessagesState> = _messagesState
-    override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages)
+    override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages.map { it.values })
     override val watcherCount: StateFlow<Int> = _watcherCount
     override val watchers: StateFlow<List<User>> =
-        _watchers.map { it.values.sortedBy(User::createdAt) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+        _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
+            .map { it.sortedBy(User::createdAt) }
+            .stateIn(scope, SharingStarted.Eagerly, emptyList())
     override val typing: StateFlow<TypingEvent> = userFlow
         .filterNotNull()
         .flatMapConcat { currentUser ->
@@ -134,11 +142,19 @@ internal class ChannelMutableState(
     override val unreadCount: StateFlow<Int?> = _unreadCount
 
     override val members: StateFlow<List<Member>> = _members
-        .map { it.values.sortedBy(Member::createdAt) }
+        .combine(latestUsers) { membersMap, usersMap -> membersMap.values.updateUsers(usersMap) }
+        .map { it.sortedBy(Member::createdAt) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val channelData: StateFlow<ChannelData> = _channelData.filterNotNull()
-        .stateIn(scope, SharingStarted.Eagerly, ChannelData(type = channelType, channelId = channelId))
+    override val channelData: StateFlow<ChannelData> =
+        _channelData.filterNotNull().combine(latestUsers) { channelData, users ->
+            if (users.containsKey(channelData.createdBy.id)) {
+                channelData.copy(createdBy = users[channelData.createdBy.id] ?: channelData.createdBy)
+            } else {
+                channelData
+            }
+        }
+            .stateIn(scope, SharingStarted.Eagerly, ChannelData(type = channelType, channelId = channelId))
 
     override val hidden: StateFlow<Boolean> = _hidden
     override val muted: StateFlow<Boolean> = _muted
@@ -162,7 +178,8 @@ internal class ChannelMutableState(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = channelConfig.value
         channel.unreadCount = _unreadCount.value
-        channel.lastMessageAt = lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.lastMessageAt =
+            lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
 
         return channel

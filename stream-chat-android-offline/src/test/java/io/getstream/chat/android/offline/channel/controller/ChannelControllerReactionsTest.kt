@@ -252,7 +252,7 @@ internal class ChannelControllerReactionsTest {
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
             val mutableState =
-                ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(emptyMap()))
+                ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(mapOf(user.id to user)))
             channelControllerImpl = ChannelController(
                 mutableState,
                 ChannelLogic(mutableState, chatDomainImpl),

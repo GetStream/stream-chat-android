@@ -149,7 +149,7 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
-    private val offlinePlugin: OfflinePlugin,
+    internal val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
     override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
 ) : ChatDomain {
