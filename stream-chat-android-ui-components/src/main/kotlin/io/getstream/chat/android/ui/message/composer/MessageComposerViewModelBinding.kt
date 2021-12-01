@@ -10,8 +10,8 @@ public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
     onSendMessage: (Message) -> Unit = { sendMessage(it) },
-    onInputChanged: (String) -> Unit = { this.input.value = it },
-    onDismissMessage: () -> Unit = { this.input.value = "" }
+    onInputChanged: (String) -> Unit = { setMessageInput(it) },
+    onDismissMessage: () -> Unit = { setMessageInput("") }
 ) {
     view.onSendMessageClickHandler = {
         val message = buildNewMessage()
