@@ -33,7 +33,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
-import io.getstream.chat.android.compose.state.messages.items.SystemMessageItem
+import io.getstream.chat.android.compose.state.messages.items.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
@@ -563,7 +563,7 @@ public class MessageListViewModel(
             }
 
             if (message.isSystem() || message.isError()) {
-                groupedMessages.add(SystemMessageItem(message = message))
+                groupedMessages.add(SystemMessageState(message = message))
             } else {
                 groupedMessages.add(
                     MessageItem(

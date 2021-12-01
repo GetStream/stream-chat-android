@@ -27,7 +27,7 @@ public data class ThreadSeparator(val replyCount: Int) : MessageListItem()
  *
  * @param message The message to show.
  */
-public data class SystemMessageItem(val message: Message) : MessageListItem()
+public data class SystemMessageState(val message: Message) : MessageListItem()
 
 /**
  * Represents each message item we show in the list of messages.

@@ -322,12 +322,12 @@ public abstract class io/getstream/chat/android/compose/state/messages/items/Mes
 	public static final field $stable I
 }
 
-public final class io/getstream/chat/android/compose/state/messages/items/SystemMessageItem : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
+public final class io/getstream/chat/android/compose/state/messages/items/SystemMessageState : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/compose/state/messages/items/SystemMessageItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/SystemMessageItem;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/SystemMessageItem;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/compose/state/messages/items/SystemMessageState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/SystemMessageState;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/SystemMessageState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
@@ -775,7 +775,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageIte
 	public static final fun MessageReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageReactionsItem (Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOption;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageThreadSeparator (Lio/getstream/chat/android/compose/state/messages/items/ThreadSeparator;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun SystemMessage (Lio/getstream/chat/android/compose/state/messages/items/SystemMessageItem;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun SystemMessage (Lio/getstream/chat/android/compose/state/messages/items/SystemMessageState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ThreadParticipants (Ljava/util/List;Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
 	public static final fun UploadingFooter (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
