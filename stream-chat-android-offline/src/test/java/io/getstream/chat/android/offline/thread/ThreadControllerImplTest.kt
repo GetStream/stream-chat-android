@@ -13,6 +13,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.Threa
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
@@ -38,9 +39,15 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         threadMessage = data.createMessage().apply { id = threadId }
         threadReply = data.createMessage().apply { parentId = threadId }
         channelMessages = listOf(data.message1, threadMessage, threadReply)
-        channelMutableState = ChannelMutableState("channelType", "channelId", chatDomainImpl.scope, chatDomainImpl.user).apply {
-            hideMessagesBefore = null
-        }
+        channelMutableState =
+            ChannelMutableState(
+                "channelType", "channelId", chatDomainImpl.scope, chatDomainImpl.user,
+                MutableStateFlow(
+                    emptyMap()
+                )
+            ).apply {
+                hideMessagesBefore = null
+            }
         setMessages(channelMessages)
 
         val channelLogic = ChannelLogic(channelMutableState, chatDomainImpl)
