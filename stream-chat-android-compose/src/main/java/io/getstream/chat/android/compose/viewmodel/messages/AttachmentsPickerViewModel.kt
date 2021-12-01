@@ -58,10 +58,6 @@ public class AttachmentsPickerViewModel(
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
 
-    init {
-        loadData()
-    }
-
     /**
      * Loads all the items based on the current type.
      */
@@ -88,11 +84,8 @@ public class AttachmentsPickerViewModel(
     public fun changeAttachmentState(showAttachments: Boolean) {
         isShowingAttachments = showAttachments
 
-        if (!showAttachments) {
+        if (!showAttachments)
             dismissAttachments()
-        } else {
-            loadData()
-        }
     }
 
     /**
