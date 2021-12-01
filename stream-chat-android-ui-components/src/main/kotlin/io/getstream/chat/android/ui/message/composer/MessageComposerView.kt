@@ -12,6 +12,9 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 
+/**
+ * UI component designed for message handling message text input, attachments, actions, and sending the message.
+ */
 @ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
 

@@ -6,6 +6,16 @@ import io.getstream.chat.android.client.models.Message
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+/**
+ * Function which connects [MessageComposerView] to [MessageComposerViewModel]. As a result the view renders the state
+ * delivered by view model, and view model intercepts user's actions automatically.
+ *
+ * @param view Instance of [MessageComposerView]
+ * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param onSendMessage Callback invoked when send button is clicked. Default implementation calls view model to send the message.
+ * @param onInputChanged Callback invoked after the text in message input has changed. Default implementation updates text input value in view model.
+ * @param onDismissMessage Callback invoked when user dismisses the message. Default implementation clears input value in view model.
+ */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
