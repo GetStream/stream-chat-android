@@ -118,7 +118,7 @@ public fun DefaultMessageItem(
         SystemMessage(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 16.dp),
             systemMessageItem = it
         )
     },
@@ -196,7 +196,7 @@ public fun SystemMessage(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        modifier = modifier.padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
+        modifier = modifier,
         text = systemMessageItem.message.text,
         color = ChatTheme.colors.textLowEmphasis,
         style = ChatTheme.typography.footnoteBold,

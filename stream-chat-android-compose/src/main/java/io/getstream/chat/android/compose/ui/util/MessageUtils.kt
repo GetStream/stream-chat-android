@@ -33,7 +33,7 @@ internal fun Message.isSystem(): Boolean = type == ModelType.message_system
 /**
  * @return If the message type is error.
  */
-public fun Message.isError(): Boolean = type == ModelType.message_error
+internal fun Message.isError(): Boolean = type == ModelType.message_error
 
 /**
  * @return If the message is deleted.

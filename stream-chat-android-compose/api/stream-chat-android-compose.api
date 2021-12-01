@@ -1076,10 +1076,6 @@ public final class io/getstream/chat/android/compose/ui/util/MessagePreviewForma
 	public final fun defaultFormatter (Landroid/content/Context;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Ljava/util/List;)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
 }
 
-public final class io/getstream/chat/android/compose/ui/util/MessageUtilsKt {
-	public static final fun isError (Lio/getstream/chat/android/client/models/Message;)Z
-}
-
 public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrapper {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;Lcom/getstream/sdk/chat/utils/StorageHelper;)V
