@@ -85,6 +85,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 - Added the mention suggestion popup to the `MessageComposer` component, that allows to autocomplete a mention from a list of users.
 - Added support for slowdown mode. Users are no longer able to send messages during the cooldown interval.
+- Added support for system messages.
 
 ### ⚠️ Changed
 
