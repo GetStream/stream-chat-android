@@ -15,7 +15,7 @@
     </plurals>
     <plurals name="stream_ui_message_list_header_typing_users">
         <item quantity="one">%s 입력중</item>
-        <item quantity="other">%1$s 및 %2$d명 입력중</item>
+        <item quantity="other">%1$s 및 %2$d명 입력 중</item>
     </plurals>
 
     <string name="stream_ui_message_list_header_back_button_content_description">뒤로 가기</string>

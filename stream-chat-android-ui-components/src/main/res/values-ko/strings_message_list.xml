@@ -11,7 +11,7 @@
     <string name="stream_ui_message_list_ephemeral_message">나만 볼 수 있습니다</string>
     <string name="stream_ui_message_list_deleted_message">메시지가 삭제되었습니다</string>
     <string name="stream_ui_message_list_attachment_more_count">+%d</string>
-    <string name="stream_ui_message_list_attachment_uploading">%1$d / %2$dmb를 업로드중…</string>
+    <string name="stream_ui_message_list_attachment_uploading">%1$d / %2$d개 업로드 중…</string>
     <string name="stream_ui_message_list_attachment_upload_complete">업로드 완료, 처리 중…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
     <string name="stream_ui_message_list_pinned_message">%s의 고정</string>
