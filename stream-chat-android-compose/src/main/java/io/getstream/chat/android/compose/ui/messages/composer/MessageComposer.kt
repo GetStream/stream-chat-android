@@ -243,7 +243,6 @@ internal fun CooldownIndicator(
             .size(48.dp)
             .padding(12.dp)
             .background(shape = RoundedCornerShape(24.dp), color = ChatTheme.colors.disabled),
-
         contentAlignment = Alignment.Center
     ) {
         Text(

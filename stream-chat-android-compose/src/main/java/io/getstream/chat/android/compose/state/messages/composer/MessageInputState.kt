@@ -21,5 +21,5 @@ public data class MessageInputState(
     val action: MessageAction? = null,
     val validationErrors: List<ValidationError> = emptyList(),
     val mentionSuggestions: List<User> = emptyList(),
-    val cooldownTimer: Int,
+    val cooldownTimer: Int = 0,
 )
