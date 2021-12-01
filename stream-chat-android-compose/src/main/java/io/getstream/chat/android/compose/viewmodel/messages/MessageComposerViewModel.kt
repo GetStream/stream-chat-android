@@ -32,6 +32,11 @@ public class MessageComposerViewModel(
     public val input: MutableStateFlow<String> = messageComposerController.input
 
     /**
+     * Represents the remaining time until the user is allowed to send the next message.
+     */
+    public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
+
+    /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
