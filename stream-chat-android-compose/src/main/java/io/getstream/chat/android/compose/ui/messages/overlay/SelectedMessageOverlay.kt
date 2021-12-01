@@ -43,6 +43,7 @@ import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
@@ -388,6 +389,13 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
+        MessageOptionState(
+            title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
+            action = Pin(selectedMessage),
+            iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
+            iconColor = ChatTheme.colors.textLowEmphasis,
+            titleColor = ChatTheme.colors.textHighEmphasis
+        ),
         if (isOwnMessage) {
             MessageOptionState(
                 title = R.string.stream_compose_delete_message,

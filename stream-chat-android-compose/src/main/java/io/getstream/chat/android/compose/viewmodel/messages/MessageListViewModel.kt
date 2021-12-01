@@ -18,6 +18,7 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
@@ -27,6 +28,8 @@ import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.FocusRemoved
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
@@ -475,6 +478,7 @@ public class MessageListViewModel(
             is Copy -> copyMessage(messageAction.message)
             is MuteUser -> muteUser(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
+            is Pin -> updateMessagePin(messageAction.message)
             else -> {
                 // no op, custom user action
             }
@@ -562,6 +566,7 @@ public class MessageListViewModel(
             groupedMessages.add(
                 MessageItemState(
                     message = message,
+                    currentUser = currentUser,
                     groupPosition = position,
                     parentMessageId = parentMessageId,
                     isMine = user.id == currentUser?.id,
@@ -637,6 +642,21 @@ public class MessageListViewModel(
     }
 
     /**
+     * Pins or unpins the message from the current channel based on its state.
+     *
+     * @param message The message to update the pin state of.
+     */
+    private fun updateMessagePin(message: Message) {
+        val updateCall = if (message.pinned) {
+            chatClient.unpinMessage(message)
+        } else {
+            chatClient.pinMessage(message = message, expirationDate = null)
+        }
+
+        updateCall.enqueue()
+    }
+
+    /**
      * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessagesState]s.
      *
      * It also cancels the [threadJob] to clean up resources.
@@ -675,7 +695,7 @@ public class MessageListViewModel(
     public fun focusMessage(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
             if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(isFocused = true)
+                it.copy(focusState = MessageFocused)
             } else {
                 it
             }
@@ -689,14 +709,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Removes the focus flag from the message with the given ID.
+     * Removes the focus from the message with the given ID.
      *
      * @param messageId The ID of the message.
      */
     private fun removeMessageFocus(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
             if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(isFocused = false)
+                it.copy(focusState = FocusRemoved)
             } else {
                 it
             }

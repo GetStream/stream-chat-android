@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.common.LoadingView
@@ -231,7 +232,7 @@ public fun Messages(
                 }
             }
         }
-        val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.isFocused }
+        val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
         if (focusedItemIndex != -1) {
             coroutineScope.launch {

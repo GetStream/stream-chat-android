@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.state.messages.list
 
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import java.util.Date
 
 /**
@@ -29,14 +30,16 @@ public data class ThreadSeparatorState(val replyCount: Int) : MessageListItemSta
  * @param groupPosition The position of this message in a group, if it belongs to one.
  * @param parentMessageId The id of the parent message, when we're in a thread.
  * @param isMine If the message is of the current user or someone else.
- * @param isFocused If the message is being focused currently.
+ * @param focusState The focus state of the message.
  * @param isInThread If the message is being displayed in a thread.
+ * @param currentUser The currently logged in user.
  */
 public data class MessageItemState(
     val message: Message,
     val groupPosition: MessageItemGroupPosition = MessageItemGroupPosition.None,
     val parentMessageId: String? = null,
     val isMine: Boolean = false,
-    val isFocused: Boolean = false,
+    val focusState: MessageFocusState? = null,
     val isInThread: Boolean = false,
+    val currentUser: User? = null,
 ) : MessageListItemState()

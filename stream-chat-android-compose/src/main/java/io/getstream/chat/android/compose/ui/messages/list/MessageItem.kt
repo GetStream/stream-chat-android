@@ -31,7 +31,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -60,6 +59,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
@@ -123,10 +123,7 @@ public fun DefaultMessageItem(
         )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemHeaderContent(
-            messageItem = it,
-            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
-        )
+        DefaultMessageItemHeaderContent(messageItem = it)
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
@@ -291,10 +288,7 @@ public fun DefaultMessageContainer(
         )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemHeaderContent(
-            messageItem = it,
-            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
-        )
+        DefaultMessageItemHeaderContent(messageItem = it)
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
@@ -316,7 +310,7 @@ public fun DefaultMessageContainer(
         )
     },
 ) {
-    val (message, _, _, _, isFocused) = messageItem
+    val (message, _, _, _, focusState) = messageItem
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -333,16 +327,20 @@ public fun DefaultMessageContainer(
         )
     }
 
-    val backgroundColor by animateColorAsState(
-        targetValue = if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground,
+    val backgroundColor =
+        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else ChatTheme.colors.appBackground
+    val shouldAnimateBackground = !message.pinned && focusState != null
+
+    val color = if (shouldAnimateBackground) animateColorAsState(
+        targetValue = backgroundColor,
         animationSpec = tween(
-            durationMillis = if (isFocused) {
+            durationMillis = if (focusState is MessageFocused) {
                 AnimationConstants.DefaultDurationMillis
             } else {
                 HIGHLIGHT_FADE_OUT_DURATION_MILLIS
             }
         )
-    )
+    ).value else backgroundColor
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
@@ -350,7 +348,7 @@ public fun DefaultMessageContainer(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = backgroundColor),
+            .background(color = color),
         contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(
@@ -402,17 +400,41 @@ public fun DefaultMessageItemLeadingContent(
 /**
  * Represents the default content shown at the top of the message list item.
  *
- * By default, we show a list of reactions for the message.
+ * By default, we show if the message is pinned and a list of reactions for the message.
  *
  * @param messageItem The message item to show the content for.
- * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultMessageItemHeaderContent(
-    messageItem: MessageItemState,
-    modifier: Modifier,
-) {
+public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
     val message = messageItem.message
+    val currentUser = messageItem.currentUser
+
+    if (message.pinned) {
+        val userWhoPinned =
+            if (message.pinnedBy?.id == currentUser?.id) stringResource(id = R.string.stream_compose_message_list_you) else message.pinnedBy?.name
+
+        Row(
+            modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(end = 2.dp)
+                    .size(14.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
+                contentDescription = null,
+                tint = ChatTheme.colors.textLowEmphasis
+            )
+
+            if (userWhoPinned != null) {
+                Text(
+                    text = stringResource(id = R.string.stream_compose_pinned_to_channel_by, userWhoPinned),
+                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textLowEmphasis
+                )
+            }
+        }
+    }
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
@@ -432,7 +454,7 @@ public fun DefaultMessageItemHeaderContent(
             }
             ?.let { options ->
                 MessageReactions(
-                    modifier = modifier,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
                     options = options
                 )
             }
@@ -973,7 +995,14 @@ public enum class MessageAlignment(
     public val itemAlignment: Alignment,
     public val contentAlignment: Alignment.Horizontal,
 ) {
+    /**
+     * Represents the alignment at the start of the screen, by default for other people's messages.
+     */
     Start(CenterStart, Alignment.Start),
+
+    /**
+     * Represents the alignment at the end of the screen, by default for owned messages.
+     */
     End(CenterEnd, Alignment.End),
 }
 

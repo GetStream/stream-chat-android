@@ -806,6 +806,10 @@ public final class io/getstream/chat/android/common/state/MuteUser : io/getstrea
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public final class io/getstream/chat/android/common/state/Pin : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public final class io/getstream/chat/android/common/state/React : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Reaction;Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getReaction ()Lio/getstream/chat/android/client/models/Reaction;
