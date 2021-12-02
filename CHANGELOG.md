@@ -69,6 +69,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed crash related with creation of MessageOptionsDialogFragment
 - Removed cut from text when text end with Italic
 - Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
+- Fixed bug related of not removing channels when filter selects channels where the the current user is not a member
 ### ⬆️ Improved
 
 ### ✅ Added
