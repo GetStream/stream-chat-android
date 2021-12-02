@@ -399,6 +399,10 @@ internal class EventHandlerImpl(
     }
 
     internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+        events.forEach { chatEvent ->
+            logger.logD("Received event: $chatEvent")
+        }
+
         val sortedEvents = events.sortedBy { it.createdAt }
         updateOfflineStorageFromEvents(sortedEvents)
 

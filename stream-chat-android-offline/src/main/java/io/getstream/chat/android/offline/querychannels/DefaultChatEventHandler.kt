@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -47,12 +48,16 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.channel, filter)
+    ): EventHandlingResult {
+        return handleMemberUpdate(event, event.cid, filter)
+    }
 
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
+    ): EventHandlingResult {
+        return handleMemberUpdate(event, event.cid, filter)
+    }
 
     override fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
         EventHandlingResult.Skip
@@ -90,17 +95,39 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult {
-        return if (channels.value.any { it.cid == event.cid }.not()) {
-            EventHandlingResult.Skip
-        } else {
-            checkCidByChannelFilter(event.cid, filter, EventHandlingResult.Skip)
+        return handleMemberUpdate(event, event.cid, filter)
+    }
+
+    private fun handleMemberUpdate(
+        event: HasChannel,
+        cid: String,
+        filter: FilterObject,
+    ): EventHandlingResult {
+        val channel = event.channel
+
+        return runBlocking {
+            val hasChannel = channels.value.any { it.cid == channel.cid }
+            val filterPassed = channelFilter(channel.cid, filter)
+
+            when {
+                filterPassed && !hasChannel -> EventHandlingResult.Add(channel)
+
+                !filterPassed && hasChannel -> EventHandlingResult.Remove(cid)
+
+                else -> EventHandlingResult.Skip
+            }
         }
     }
 
+
     /**
-     * Run filter request. If filter is passed then it returns [filterPositiveResult], otherwise it returns [EventHandlingResult.Skip].
+     * Run filter request. If filter is passed then it returns [filterPositiveResult], otherwise it returns [EventHandlingResult.Remove].
      */
-    private fun checkCidByChannelFilter(cid: String, filter: FilterObject, filterPositiveResult: EventHandlingResult): EventHandlingResult {
+    private fun checkCidByChannelFilter(
+        cid: String,
+        filter: FilterObject,
+        filterPositiveResult: EventHandlingResult,
+    ): EventHandlingResult {
         return runBlocking {
             if (channelFilter(cid, filter)) {
                 filterPositiveResult
