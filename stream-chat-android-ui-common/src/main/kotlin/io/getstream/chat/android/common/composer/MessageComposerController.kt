@@ -443,6 +443,15 @@ public class MessageComposerController(
     }
 
     /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility() {
+        val isHidden = commandSuggestions.value.isEmpty()
+
+        commandSuggestions.value = if (isHidden) commands else emptyList()
+    }
+
+    /**
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {

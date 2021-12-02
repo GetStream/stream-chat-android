@@ -1241,6 +1241,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/common/state/MessageMode;)V
+	public final fun toggleCommandsVisibility ()V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {

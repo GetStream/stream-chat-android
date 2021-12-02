@@ -161,6 +161,12 @@ public class MessageComposerViewModel(
     public fun selectCommand(command: Command): Unit = messageComposerController.selectCommand(command)
 
     /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility(): Unit =
+        messageComposerController.toggleCommandsVisibility()
+
+    /**
      * Disposes the inner [MessageComposerController].
      */
     override fun onCleared() {

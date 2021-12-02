@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -753,6 +754,6 @@ public class MessageListViewModel(
             is SendGiphy -> chatDomain.sendGiphy(message)
             is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
             is CancelGiphy -> chatDomain.cancelMessage(message)
-        }.enqueue()
+        }.exhaustive.enqueue()
     }
 }

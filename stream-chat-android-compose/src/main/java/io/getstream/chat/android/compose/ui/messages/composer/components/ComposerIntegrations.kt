@@ -50,18 +50,27 @@ internal fun DefaultComposerIntegrations(
             onClick = onAttachmentsClick
         )
 
-        val enabled = messageInputState.inputValue.length < 2
+        val commandsPopupVisible = messageInputState.commandSuggestions.isNotEmpty()
+        val commandsButtonEnabled = messageInputState.inputValue.isEmpty()
+
+        val commandsButtonTint = if (commandsPopupVisible && commandsButtonEnabled) {
+            ChatTheme.colors.primaryAccent
+        } else if (commandsButtonEnabled) {
+            ChatTheme.colors.textLowEmphasis
+        } else {
+            ChatTheme.colors.disabled
+        }
 
         IconButton(
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
-            enabled = enabled,
+            enabled = commandsButtonEnabled,
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
                     contentDescription = null,
-                    tint = if (enabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+                    tint = commandsButtonTint,
                 )
             },
             onClick = onCommandsClick
