@@ -441,7 +441,7 @@ public fun DefaultMessageItemLeadingContent(
 @Composable
 public fun DefaultMessageItemHeaderContent(
     messageItem: MessageItem,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     val message = messageItem.message
 
@@ -547,20 +547,16 @@ public fun DefaultMessageItemContent(
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
-    val (message, position, parentMessageId, ownsMessage, _) = messageItem
+    val (message, position, _, ownsMessage, _) = messageItem
 
-    val bubbleShape = if (message.id == parentMessageId) {
-        ChatTheme.shapes.myMessageBubble
-    } else {
-        when (position) {
-            Top, Middle -> RoundedCornerShape(16.dp)
-            else -> {
-                if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-            }
+    val messageBubbleShape = when (position) {
+        Top, Middle -> RoundedCornerShape(16.dp)
+        else -> {
+            if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
         }
     }
 
-    val messageCardColor = when {
+    val messageBubbleColor = when {
         message.isDeleted() -> ChatTheme.colors.deletedMessagesBackground
         ownsMessage -> ChatTheme.colors.ownMessagesBackground
         else -> ChatTheme.colors.otherMessagesBackground
@@ -568,8 +564,8 @@ public fun DefaultMessageItemContent(
 
     MessageBubble(
         modifier = modifier,
-        shape = bubbleShape,
-        color = messageCardColor,
+        shape = messageBubbleShape,
+        color = messageBubbleColor,
         content = {
             if (message.isDeleted()) {
                 DeletedMessageContent()
