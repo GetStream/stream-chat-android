@@ -89,7 +89,7 @@ jobs:
 
   ui_test:
     name: UI tests
-    runs-on: macos-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
