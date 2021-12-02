@@ -32,11 +32,16 @@ internal fun DefaultComposerIntegrations(
     onCommandsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val hasTextInput = messageInputState.inputValue.isNotEmpty()
+    val hasCommandInput = messageInputState.inputValue.startsWith("/")
+    val hasCommandSuggestions = messageInputState.commandSuggestions.isNotEmpty()
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
+            enabled = !hasCommandInput,
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
@@ -44,18 +49,15 @@ internal fun DefaultComposerIntegrations(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
                     contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = if (hasCommandInput) ChatTheme.colors.disabled else ChatTheme.colors.textLowEmphasis,
                 )
             },
             onClick = onAttachmentsClick
         )
 
-        val commandsPopupVisible = messageInputState.commandSuggestions.isNotEmpty()
-        val commandsButtonEnabled = messageInputState.inputValue.isEmpty()
-
-        val commandsButtonTint = if (commandsPopupVisible && commandsButtonEnabled) {
+        val commandsButtonTint = if (hasCommandSuggestions && !hasTextInput) {
             ChatTheme.colors.primaryAccent
-        } else if (commandsButtonEnabled) {
+        } else if (!hasTextInput) {
             ChatTheme.colors.textLowEmphasis
         } else {
             ChatTheme.colors.disabled
@@ -65,7 +67,7 @@ internal fun DefaultComposerIntegrations(
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
-            enabled = commandsButtonEnabled,
+            enabled = !hasTextInput,
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
