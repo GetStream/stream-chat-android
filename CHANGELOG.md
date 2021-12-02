@@ -80,6 +80,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Removed preemptive attachment loading that was resulting in crashes on certain Android API versions
+- Fixed incorrect message shape for theirs messages in threads.
 
 ### ⬆️ Improved
 
