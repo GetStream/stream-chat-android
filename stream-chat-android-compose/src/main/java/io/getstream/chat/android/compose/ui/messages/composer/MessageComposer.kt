@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,6 +56,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
  * @param onAttachmentsClick Handler for the default Attachments integration.
+ * @param onCommandsClick Handler for the default Commands integration.
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
@@ -72,6 +74,7 @@ public fun MessageComposer(
     modifier: Modifier = Modifier,
     onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
+    onCommandsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
@@ -89,18 +92,23 @@ public fun MessageComposer(
             onCommandClick = onCommandClick
         )
     },
-    integrations: @Composable RowScope.() -> Unit = {
-        DefaultComposerIntegrations(onAttachmentsClick)
+    integrations: @Composable RowScope.(MessageInputState) -> Unit = {
+        DefaultComposerIntegrations(
+            modifier = Modifier.height(44.dp).padding(horizontal = 4.dp),
+            messageInputState = it,
+            onAttachmentsClick = onAttachmentsClick,
+            onCommandsClick = onCommandsClick
+        )
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
-    input: @Composable RowScope.(MessageInputState) -> Unit = { inputState ->
+    input: @Composable RowScope.(MessageInputState) -> Unit = {
         MessageInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
                 .weight(1f),
             label = label,
-            messageInputState = inputState,
+            messageInputState = it,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved
         )
@@ -176,7 +184,7 @@ public fun MessageComposer(
     },
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
-    integrations: @Composable RowScope.() -> Unit,
+    integrations: @Composable RowScope.(MessageInputState) -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
     val (value, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions, cooldownTimer) = messageInputState
@@ -208,7 +216,7 @@ public fun MessageComposer(
             ) {
 
                 if (shouldShowIntegrations && activeAction !is Edit) {
-                    integrations()
+                    integrations(messageInputState)
                 } else {
                     Spacer(
                         modifier = Modifier.size(16.dp)

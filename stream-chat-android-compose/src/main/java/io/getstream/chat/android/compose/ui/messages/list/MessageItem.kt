@@ -936,7 +936,7 @@ internal fun GiphyMessageContent(
                 .fillMaxWidth()
                 .height(40.dp)
                 .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = CenterVertically
         ) {
             Image(
                 modifier = Modifier.size(24.dp),
@@ -982,9 +982,9 @@ internal fun GiphyMessageContent(
             modifier = Modifier
                 .height(48.dp)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = CenterVertically
         ) {
-            GuphyButton(
+            GiphyButton(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
@@ -1000,7 +1000,7 @@ internal fun GiphyMessageContent(
                     .background(color = ChatTheme.colors.borders)
             )
 
-            GuphyButton(
+            GiphyButton(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
@@ -1016,7 +1016,7 @@ internal fun GiphyMessageContent(
                     .background(color = ChatTheme.colors.borders)
             )
 
-            GuphyButton(
+            GiphyButton(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
@@ -1037,7 +1037,7 @@ internal fun GiphyMessageContent(
  * @param modifier Modifier for styling.
  */
 @Composable
-private fun GuphyButton(
+private fun GiphyButton(
     text: String,
     textColor: Color,
     onClick: () -> Unit,
