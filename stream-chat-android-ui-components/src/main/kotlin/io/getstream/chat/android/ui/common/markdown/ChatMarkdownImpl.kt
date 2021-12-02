@@ -20,7 +20,7 @@ internal class ChatMarkdownImpl(context: Context) : ChatMarkdown {
         .build()
 
     override fun setText(textView: TextView, text: String) {
-        markwon.setMarkdown(textView, text)
+        markwon.setMarkdown(textView, fixItalicAtEnd(text))
         Linkify.addLinks(textView)
     }
 }

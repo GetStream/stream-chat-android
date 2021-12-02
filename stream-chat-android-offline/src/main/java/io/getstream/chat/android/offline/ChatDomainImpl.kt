@@ -46,8 +46,10 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -71,7 +73,6 @@ import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
-import io.getstream.chat.android.offline.usecase.Keystroke
 import io.getstream.chat.android.offline.usecase.LeaveChannel
 import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
@@ -87,7 +88,6 @@ import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.ShuffleGiphy
-import io.getstream.chat.android.offline.usecase.StopTyping
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
@@ -1004,11 +1004,9 @@ internal class ChatDomainImpl internal constructor(
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         DeleteReaction(this).invoke(cid, reaction)
 
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
-        Keystroke(this).invoke(cid, parentId)
+    override fun keystroke(cid: String, parentId: String?): Call<Boolean> = client.keystroke(cid, parentId)
 
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
-        StopTyping(this).invoke(cid, parentId)
+    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> = client.stopTyping(cid, parentId)
 
     override fun markRead(cid: String): Call<Boolean> = MarkRead(this).invoke(cid)
 

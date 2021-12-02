@@ -36,7 +36,10 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPos
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.ui.util.isError
+import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -563,16 +566,20 @@ public class MessageListViewModel(
                 groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
             }
 
-            groupedMessages.add(
-                MessageItemState(
-                    message = message,
-                    currentUser = currentUser,
-                    groupPosition = position,
-                    parentMessageId = parentMessageId,
-                    isMine = user.id == currentUser?.id,
-                    isInThread = isInThread
+            if (message.isSystem() || message.isError()) {
+                groupedMessages.add(SystemMessageState(message = message))
+            } else {
+                groupedMessages.add(
+                    MessageItemState(
+                        message = message,
+                        currentUser = currentUser,
+                        groupPosition = position,
+                        parentMessageId = parentMessageId,
+                        isMine = user.id == currentUser?.id,
+                        isInThread = isInThread
+                    )
                 )
-            )
+            }
 
             if (index == 0 && isInThread) {
                 groupedMessages.add(ThreadSeparatorState(message.replyCount))
