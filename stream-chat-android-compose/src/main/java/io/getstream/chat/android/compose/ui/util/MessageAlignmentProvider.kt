@@ -1,20 +1,20 @@
 package io.getstream.chat.android.compose.ui.util
 
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.messages.list.MessageAlignment
 
 /**
- *  An interface that allows to return the desired horizontal alignment for a particular [MessageItem].
+ *  An interface that allows to return the desired horizontal alignment for a particular [MessageItemState].
  */
 public fun interface MessageAlignmentProvider {
 
     /**
-     * Returns [MessageAlignment] for a particular [MessageItem].
+     * Returns [MessageAlignment] for a particular [MessageItemState].
      *
      * @param messageItem The message whose data is used to decide which alignment to use.
      * @return The [MessageAlignment] for the provided message.
      */
-    public fun provideMessageAlignment(messageItem: MessageItem): MessageAlignment
+    public fun provideMessageAlignment(messageItem: MessageItemState): MessageAlignment
 
     public companion object {
         /**
@@ -36,12 +36,12 @@ public fun interface MessageAlignmentProvider {
 private class DefaultMessageAlignmentProvider : MessageAlignmentProvider {
 
     /**
-     * Returns [MessageAlignment] for a particular [MessageItem].
+     * Returns [MessageAlignment] for a particular [MessageItemState].
      *
      * @param messageItem The message whose data is used to decide which alignment to use.
      * @return The [MessageAlignment] for the provided message.
      */
-    override fun provideMessageAlignment(messageItem: MessageItem): MessageAlignment {
+    override fun provideMessageAlignment(messageItem: MessageItemState): MessageAlignment {
         return if (messageItem.isMine) MessageAlignment.End else MessageAlignment.Start
     }
 }

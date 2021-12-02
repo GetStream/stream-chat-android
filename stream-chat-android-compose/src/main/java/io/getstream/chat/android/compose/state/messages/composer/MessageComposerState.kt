@@ -15,7 +15,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
  * @param cooldownTimer The amount of time left until the user is allowed to send the next message.
  */
-public data class MessageInputState(
+public data class MessageComposerState(
     val inputValue: String = "",
     val attachments: List<Attachment> = emptyList(),
     val action: MessageAction? = null,

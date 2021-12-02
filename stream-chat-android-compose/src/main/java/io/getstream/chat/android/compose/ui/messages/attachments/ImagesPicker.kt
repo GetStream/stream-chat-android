@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentItem
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -40,8 +40,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ImagesPicker(
-    images: List<AttachmentItem>,
-    onImageSelected: (AttachmentItem) -> Unit,
+    images: List<AttachmentPickerItemState>,
+    onImageSelected: (AttachmentPickerItemState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -61,8 +61,8 @@ internal fun ImagesPicker(
  */
 @Composable
 internal fun ImageGridItem(
-    imageItem: AttachmentItem,
-    onImageSelected: (AttachmentItem) -> Unit,
+    imageItem: AttachmentPickerItemState,
+    onImageSelected: (AttachmentPickerItemState) -> Unit,
 ) {
     val painter = rememberImagePainter(data = imageItem.attachmentMetaData.uri.toString())
 

@@ -15,6 +15,8 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.stopTyping
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -358,9 +360,9 @@ public class MessageComposerController(
      */
     private fun handleTypingEvent(isTyping: Boolean) {
         if (isTyping) {
-            chatDomain.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(channelId, parentMessageId)
         } else {
-            chatDomain.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(channelId, parentMessageId)
         }.enqueue()
     }
 

@@ -18,6 +18,7 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
@@ -26,15 +27,17 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.items.DateSeparator
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
-import io.getstream.chat.android.compose.state.messages.items.MessageListItem
-import io.getstream.chat.android.compose.state.messages.items.SystemMessageState
-import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
+import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
+import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.offline.ChatDomain
@@ -219,7 +222,7 @@ public class MessageListViewModel(
                     }
                 }.collect { newState ->
                     val newLastMessage =
-                        (newState.messageItems.firstOrNull { it is MessageItem } as? MessageItem)?.message
+                        (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
                     val hasNewMessage = lastLoadedMessage != null &&
                         messagesState.messageItems.isNotEmpty() &&
@@ -314,7 +317,7 @@ public class MessageListViewModel(
         for (i in 0..lastSeenMessagePosition) {
             val messageItem = messageItems[i]
 
-            if (messageItem is MessageItem && !messageItem.isMine && messageItem.message.deletedAt == null) {
+            if (messageItem is MessageItemState && !messageItem.isMine && messageItem.message.deletedAt == null) {
                 unreadCount++
             }
         }
@@ -332,7 +335,7 @@ public class MessageListViewModel(
         if (lastSeenMessage == null) return 0
 
         return currentMessagesState.messageItems.indexOfFirst {
-            it is MessageItem && it.message.id == lastSeenMessage.id
+            it is MessageItemState && it.message.id == lastSeenMessage.id
         }
     }
 
@@ -361,9 +364,9 @@ public class MessageListViewModel(
         val messages = currentMessagesState.messageItems
 
         val currentMessagePosition =
-            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
+            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
         val lastSeenMessagePosition =
-            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
+            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
 
         if (currentMessagePosition < lastSeenMessagePosition) {
             updateLastSeenMessageState(message)
@@ -478,6 +481,7 @@ public class MessageListViewModel(
             is Copy -> copyMessage(messageAction.message)
             is MuteUser -> muteUser(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
+            is Pin -> updateMessagePin(messageAction.message)
             else -> {
                 // no op, custom user action
             }
@@ -537,12 +541,12 @@ public class MessageListViewModel(
      * group, where the positions can be [Top], [Middle], [Bottom] or [None] if the message isn't in a group.
      *
      * @param messages The messages we need to group.
-     * @return A list of [MessageItem]s, each containing a position.
+     * @return A list of [MessageItemState]s, each containing a position.
      */
-    private fun groupMessages(messages: List<Message>): List<MessageListItem> {
+    private fun groupMessages(messages: List<Message>): List<MessageListItemState> {
         val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
-        val groupedMessages = mutableListOf<MessageListItem>()
+        val groupedMessages = mutableListOf<MessageListItemState>()
 
         messages.forEachIndexed { index, message ->
             val user = message.user
@@ -559,15 +563,16 @@ public class MessageListViewModel(
             }
 
             if (shouldAddDateSeparator(previousMessage, message)) {
-                groupedMessages.add(DateSeparator(message.getCreatedAtOrThrow()))
+                groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
             }
 
             if (message.isSystem() || message.isError()) {
                 groupedMessages.add(SystemMessageState(message = message))
             } else {
                 groupedMessages.add(
-                    MessageItem(
+                    MessageItemState(
                         message = message,
+                        currentUser = currentUser,
                         groupPosition = position,
                         parentMessageId = parentMessageId,
                         isMine = user.id == currentUser?.id,
@@ -577,7 +582,7 @@ public class MessageListViewModel(
             }
 
             if (index == 0 && isInThread) {
-                groupedMessages.add(ThreadSeparator(message.replyCount))
+                groupedMessages.add(ThreadSeparatorState(message.replyCount))
             }
         }
 
@@ -644,6 +649,21 @@ public class MessageListViewModel(
     }
 
     /**
+     * Pins or unpins the message from the current channel based on its state.
+     *
+     * @param message The message to update the pin state of.
+     */
+    private fun updateMessagePin(message: Message) {
+        val updateCall = if (message.pinned) {
+            chatClient.unpinMessage(message)
+        } else {
+            chatClient.pinMessage(message = message, expirationDate = null)
+        }
+
+        updateCall.enqueue()
+    }
+
+    /**
      * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessagesState]s.
      *
      * It also cancels the [threadJob] to clean up resources.
@@ -681,8 +701,8 @@ public class MessageListViewModel(
      */
     public fun focusMessage(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
-            if (it is MessageItem && it.message.id == messageId) {
-                it.copy(isFocused = true)
+            if (it is MessageItemState && it.message.id == messageId) {
+                it.copy(focusState = MessageFocused)
             } else {
                 it
             }
@@ -696,14 +716,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Removes the focus flag from the message with the given ID.
+     * Removes the focus from the message with the given ID.
      *
      * @param messageId The ID of the message.
      */
     private fun removeMessageFocus(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
-            if (it is MessageItem && it.message.id == messageId) {
-                it.copy(isFocused = false)
+            if (it is MessageItemState && it.message.id == messageId) {
+                it.copy(focusState = MessageFocusRemoved)
             } else {
                 it
             }
@@ -717,7 +737,7 @@ public class MessageListViewModel(
      *
      * @param messages The list of new message items.
      */
-    private fun updateMessages(messages: List<MessageListItem>) {
+    private fun updateMessages(messages: List<MessageListItemState>) {
         if (isInThread) {
             this.threadMessagesState = threadMessagesState.copy(messageItems = messages)
         } else {
@@ -733,8 +753,8 @@ public class MessageListViewModel(
      */
     public fun getMessageWithId(messageId: String): Message? {
         val messageItem =
-            currentMessagesState.messageItems.firstOrNull { it is MessageItem && it.message.id == messageId }
+            currentMessagesState.messageItems.firstOrNull { it is MessageItemState && it.message.id == messageId }
 
-        return (messageItem as? MessageItem)?.message
+        return (messageItem as? MessageItemState)?.message
     }
 }

@@ -31,7 +31,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -59,16 +58,17 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
-import io.getstream.chat.android.compose.state.messages.items.DateSeparator
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
-import io.getstream.chat.android.compose.state.messages.items.MessageListItem
-import io.getstream.chat.android.compose.state.messages.items.SystemMessageState
-import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
+import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
+import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
@@ -88,7 +88,7 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
 /**
  * Represents the default message item that's shown for each item in the list.
  *
- * Detects if we're dealing with a [DateSeparator] or a [MessageItem] and shows the required UI.
+ * Detects if we're dealing with a [DateSeparatorState] or a [MessageItemState] and shows the required UI.
  *
  * @param messageListItem The item that holds the data.
  * @param modifier Modifier for styling.
@@ -110,7 +110,7 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  */
 @Composable
 public fun DefaultMessageItem(
-    messageListItem: MessageListItem,
+    messageListItem: MessageListItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -123,7 +123,7 @@ public fun DefaultMessageItem(
             systemMessageState = it
         )
     },
-    leadingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
             messageItem = it,
             modifier = Modifier
@@ -132,24 +132,21 @@ public fun DefaultMessageItem(
                 .align(Alignment.Bottom)
         )
     },
-    headerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
-        DefaultMessageItemHeaderContent(
-            messageItem = it,
-            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
-        )
+    headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
+        DefaultMessageItemHeaderContent(messageItem = it)
     },
-    footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
             messageItem = it,
         )
     },
-    trailingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(
             messageItem = it,
             modifier = Modifier.width(8.dp)
         )
     },
-    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+    content: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
@@ -159,18 +156,18 @@ public fun DefaultMessageItem(
     },
 ) {
     when (messageListItem) {
-        is DateSeparator -> MessageDateSeparator(
+        is DateSeparatorState -> MessageDateSeparator(
             modifier = Modifier.fillMaxWidth(),
             dateSeparator = messageListItem
         )
-        is ThreadSeparator -> MessageThreadSeparator(
+        is ThreadSeparatorState -> MessageThreadSeparator(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding),
             threadSeparator = messageListItem
         )
         is SystemMessageState -> systemMessageContent(messageListItem)
-        is MessageItem -> DefaultMessageContainer(
+        is MessageItemState -> DefaultMessageContainer(
             modifier = modifier,
             messageItem = messageListItem,
             onLongItemClick = onLongItemClick,
@@ -213,7 +210,7 @@ public fun SystemMessage(
  */
 @Composable
 public fun MessageDateSeparator(
-    dateSeparator: DateSeparator,
+    dateSeparator: DateSeparatorState,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier, contentAlignment = Center) {
@@ -247,7 +244,7 @@ public fun MessageDateSeparator(
  */
 @Composable
 public fun MessageThreadSeparator(
-    threadSeparator: ThreadSeparator,
+    threadSeparator: ThreadSeparatorState,
     modifier: Modifier = Modifier,
 ) {
     val backgroundGradient = Brush.verticalGradient(
@@ -307,12 +304,12 @@ public fun MessageThreadSeparator(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun DefaultMessageContainer(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    leadingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
             messageItem = it,
             modifier = Modifier
@@ -321,24 +318,21 @@ public fun DefaultMessageContainer(
                 .align(Alignment.Bottom)
         )
     },
-    headerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
-        DefaultMessageItemHeaderContent(
-            messageItem = it,
-            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
-        )
+    headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
+        DefaultMessageItemHeaderContent(messageItem = it)
     },
-    footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
+    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
             messageItem = it,
         )
     },
-    trailingContent: @Composable RowScope.(MessageItem) -> Unit = {
+    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(
             messageItem = it,
             modifier = Modifier.width(8.dp)
         )
     },
-    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+    content: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
@@ -347,7 +341,7 @@ public fun DefaultMessageContainer(
         )
     },
 ) {
-    val (message, _, _, _, isFocused) = messageItem
+    val (message, _, _, _, focusState) = messageItem
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -364,16 +358,20 @@ public fun DefaultMessageContainer(
         )
     }
 
-    val backgroundColor by animateColorAsState(
-        targetValue = if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground,
+    val backgroundColor =
+        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else ChatTheme.colors.appBackground
+    val shouldAnimateBackground = !message.pinned && focusState != null
+
+    val color = if (shouldAnimateBackground) animateColorAsState(
+        targetValue = backgroundColor,
         animationSpec = tween(
-            durationMillis = if (isFocused) {
+            durationMillis = if (focusState is MessageFocused) {
                 AnimationConstants.DefaultDurationMillis
             } else {
                 HIGHLIGHT_FADE_OUT_DURATION_MILLIS
             }
         )
-    )
+    ).value else backgroundColor
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
@@ -381,7 +379,7 @@ public fun DefaultMessageContainer(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = backgroundColor),
+            .background(color = color),
         contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(
@@ -415,7 +413,7 @@ public fun DefaultMessageContainer(
  */
 @Composable
 public fun DefaultMessageItemLeadingContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     val position = messageItem.groupPosition
@@ -433,17 +431,41 @@ public fun DefaultMessageItemLeadingContent(
 /**
  * Represents the default content shown at the top of the message list item.
  *
- * By default, we show a list of reactions for the message.
+ * By default, we show if the message is pinned and a list of reactions for the message.
  *
  * @param messageItem The message item to show the content for.
- * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultMessageItemHeaderContent(
-    messageItem: MessageItem,
-    modifier: Modifier = Modifier,
-) {
+public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
     val message = messageItem.message
+    val currentUser = messageItem.currentUser
+
+    if (message.pinned) {
+        val userWhoPinned =
+            if (message.pinnedBy?.id == currentUser?.id) stringResource(id = R.string.stream_compose_message_list_you) else message.pinnedBy?.name
+
+        Row(
+            modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(end = 2.dp)
+                    .size(14.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
+                contentDescription = null,
+                tint = ChatTheme.colors.textLowEmphasis
+            )
+
+            if (userWhoPinned != null) {
+                Text(
+                    text = stringResource(id = R.string.stream_compose_pinned_to_channel_by, userWhoPinned),
+                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textLowEmphasis
+                )
+            }
+        }
+    }
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
@@ -455,7 +477,7 @@ public fun DefaultMessageItemHeaderContent(
             .takeIf { it.isNotEmpty() }
             ?.map { it.key }
             ?.map { type ->
-                ReactionOption(
+                ReactionOptionItemState(
                     painter = painterResource(requireNotNull(supportedReactions[type])),
                     isSelected = ownReactions.any { it.type == type },
                     type = type
@@ -463,7 +485,7 @@ public fun DefaultMessageItemHeaderContent(
             }
             ?.let { options ->
                 MessageReactions(
-                    modifier = modifier,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
                     options = options
                 )
             }
@@ -483,7 +505,7 @@ public fun DefaultMessageItemHeaderContent(
  */
 @Composable
 public fun ColumnScope.DefaultMessageItemFooterContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     val message = messageItem.message
@@ -524,7 +546,7 @@ public fun ColumnScope.DefaultMessageItemFooterContent(
  */
 @Composable
 public fun DefaultMessageItemTrailingContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     if (messageItem.isMine) {
@@ -542,7 +564,7 @@ public fun DefaultMessageItemTrailingContent(
  */
 @Composable
 public fun DefaultMessageItemContent(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -594,9 +616,9 @@ public fun DefaultMessageItemContent(
  */
 @Composable
 public fun MessageReactions(
-    options: List<ReactionOption>,
+    options: List<ReactionOptionItemState>,
     modifier: Modifier = Modifier,
-    itemContent: @Composable RowScope.(ReactionOption) -> Unit = { option ->
+    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         MessageReactionsItem(
             modifier = Modifier
                 .size(20.dp)
@@ -626,7 +648,7 @@ public fun MessageReactions(
  */
 @Composable
 public fun MessageReactionsItem(
-    option: ReactionOption,
+    option: ReactionOptionItemState,
     modifier: Modifier = Modifier,
 ) {
     Icon(
@@ -921,7 +943,7 @@ public fun UploadingFooter(
  */
 @Composable
 internal fun MessageFooter(
-    messageItem: MessageItem,
+    messageItem: MessageItemState,
     modifier: Modifier = Modifier,
 ) {
     val (message, position) = messageItem
@@ -1000,7 +1022,14 @@ public enum class MessageAlignment(
     public val itemAlignment: Alignment,
     public val contentAlignment: Alignment.Horizontal,
 ) {
+    /**
+     * Represents the alignment at the start of the screen, by default for other people's messages.
+     */
     Start(CenterStart, Alignment.Start),
+
+    /**
+     * Represents the alignment at the end of the screen, by default for owned messages.
+     */
     End(CenterEnd, Alignment.End),
 }
 

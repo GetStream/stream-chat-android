@@ -35,7 +35,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.composer.MessageInputState
+import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
@@ -84,14 +84,14 @@ public fun MessageComposer(
         DefaultComposerIntegrations(onAttachmentsClick)
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
-    input: @Composable RowScope.(MessageInputState) -> Unit = { inputState ->
+    input: @Composable RowScope.(MessageComposerState) -> Unit = { inputState ->
         MessageInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
                 .weight(1f),
             label = label,
-            messageInputState = inputState,
+            messageComposerState = inputState,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved
         )
@@ -115,7 +115,7 @@ public fun MessageComposer(
         mentionPopupContent = mentionPopupContent,
         integrations = integrations,
         input = input,
-        messageInputState = MessageInputState(
+        messageComposerState = MessageComposerState(
             inputValue = value,
             attachments = selectedAttachments,
             action = activeAction,
@@ -132,36 +132,36 @@ public fun MessageComposer(
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
  * manual way to handle and represent data and various operations.
  *
- * @param messageInputState The state of the message input.
+ * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
  * @param onMentionClick Handler when the user taps on a mention suggestion item.
- * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param modifier Modifier for styling.
+ * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param shouldShowIntegrations If we should show or hide integrations.
  * @param integrations Composable that represents integrations for the composer, such as Attachments.
  * @param input Composable that represents the input field in the composer.
  */
 @Composable
 public fun MessageComposer(
-    messageInputState: MessageInputState,
+    messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
     onMentionClick: (User) -> Unit,
+    modifier: Modifier = Modifier,
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
             onMentionClick = onMentionClick
         )
     },
-    modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
-    input: @Composable RowScope.(MessageInputState) -> Unit,
+    input: @Composable RowScope.(MessageComposerState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors, mentionSuggestions, cooldownTimer) = messageInputState
+    val (value, attachments, activeAction, validationErrors, mentionSuggestions, cooldownTimer) = messageComposerState
 
-    showValidationErrorIfNecessary(validationErrors)
+    MessageInputValidationError(validationErrors)
 
     Surface(
         modifier = modifier,
@@ -195,7 +195,7 @@ public fun MessageComposer(
                     )
                 }
 
-                input(messageInputState)
+                input(messageComposerState)
 
                 if (cooldownTimer > 0) {
                     CooldownIndicator(cooldownTimer = cooldownTimer)
@@ -292,7 +292,7 @@ internal fun DefaultComposerLabel() {
  * @param validationErrors The list of validation errors for the current user input.
  */
 @Composable
-private fun showValidationErrorIfNecessary(validationErrors: List<ValidationError>) {
+private fun MessageInputValidationError(validationErrors: List<ValidationError>) {
     if (validationErrors.isNotEmpty()) {
         val errorMessage = when (val validationError = validationErrors.first()) {
             is ValidationError.MessageLengthExceeded -> {
