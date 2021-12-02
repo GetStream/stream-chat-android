@@ -203,6 +203,7 @@ internal fun ReactionOptionItem(
  *
  * @param message Message to show.
  * @param isMine If the message is owned by the current user.
+ * @param modifier Modifier for styling.
  */
 @Composable
 private fun SelectedMessage(

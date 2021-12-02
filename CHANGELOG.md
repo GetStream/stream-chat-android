@@ -77,6 +77,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Minor UI improvements to the message overlay
 
 ### ✅ Added
 - Added message pinning to the list of message options
@@ -85,6 +86,13 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⚠️ Changed
 - Changed the way focus state works for focused messages.
 - Added the Pin type to the MessageAction sealed class
+- Renamed a bunch of state classes for Compose component, to have the `State` prefix, general renaming, imports and other quality of life improvements
+- Renamed `ReactionOption` state wrapper to `ReactionOptionItemState`
+- Renamed `MessageListItem` state wrapper to `MessageListItemState` and its children now have a `State` suffix
+- Renamed `AttachmentItem` state wrapper to `AttachmentPickerItemState`
+- Renamed `MessageInputState` to `MessageComposerState`
+- Renamed `MessageOption` to `MessageOptionState`
+- Renamed `defaultMessageOptions()` to `defaultMessageOptionsState()`
 
 ### ❌ Removed
 
