@@ -44,6 +44,10 @@
     </plurals>
 
     <!-- Message List -->
+    <string name="stream_compose_message_list_giphy_title">ギフィー</string>
+    <string name="stream_compose_message_list_giphy_send">送信</string>
+    <string name="stream_compose_message_list_giphy_cancel">キャンセル</string>
+    <string name="stream_compose_message_list_giphy_shuffle">ミックス</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="other">%dスレッド返信</item>
     </plurals>
@@ -64,4 +68,6 @@
     <string name="stream_compose_message_composer_error_message_length">"最大メッセージ長（%1$d)字を超えました"</string>
     <string name="stream_compose_message_composer_error_file_size">ファイルが大きすぎます- 最大%1$s。</string>
     <string name="stream_compose_message_composer_error_attachment_count">添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません</string>
+    <string name="stream_compose_message_composer_instant_commands">インスタントコマンド</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
 </resources>

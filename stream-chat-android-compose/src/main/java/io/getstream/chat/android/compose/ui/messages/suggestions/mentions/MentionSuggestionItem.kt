@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.suggestions.mentions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +34,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param detailsContent Customizable composable function that represents the center content of a mention item.
  * @param trailingContent Customizable composable function that represents the trailing content of the a mention item.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun DefaultMentionSuggestionItem(
     user: User,
@@ -70,7 +68,7 @@ public fun DefaultMentionSuggestionItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .combinedClickable(
+            .clickable(
                 onClick = { onMentionClick(user) },
                 indication = rememberRipple(),
                 interactionSource = remember { MutableInteractionSource() }

@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.dp
  * @param mentionSuggestionItemHorizontalPadding The horizontal content padding inside mention list item.
  * @param mentionSuggestionItemVerticalPadding The vertical content padding inside mention list item.
  * @param mentionSuggestionItemAvatarSize The size of a channel avatar in the suggestion list popup.
+ * @param commandSuggestionItemHorizontalPadding The horizontal content padding inside command list item.
+ * @param commandSuggestionItemVerticalPadding The vertical content padding inside command list item.
+ * @param commandSuggestionItemIconSize The size of a command icon in the suggestion list popup.
  */
 @Immutable
 public data class StreamDimens(
@@ -54,6 +57,9 @@ public data class StreamDimens(
     public val mentionSuggestionItemHorizontalPadding: Dp,
     public val mentionSuggestionItemVerticalPadding: Dp,
     public val mentionSuggestionItemAvatarSize: Dp,
+    public val commandSuggestionItemHorizontalPadding: Dp,
+    public val commandSuggestionItemVerticalPadding: Dp,
+    public val commandSuggestionItemIconSize: Dp,
 ) {
     public companion object {
         public fun defaultDimens(): StreamDimens = StreamDimens(
@@ -79,6 +85,9 @@ public data class StreamDimens(
             mentionSuggestionItemHorizontalPadding = 16.dp,
             mentionSuggestionItemVerticalPadding = 8.dp,
             mentionSuggestionItemAvatarSize = 40.dp,
+            commandSuggestionItemHorizontalPadding = 8.dp,
+            commandSuggestionItemVerticalPadding = 8.dp,
+            commandSuggestionItemIconSize = 24.dp,
         )
     }
 }

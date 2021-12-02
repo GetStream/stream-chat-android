@@ -35,6 +35,10 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.state.messages.items.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.items.ThreadSeparator
+import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
+import io.getstream.chat.android.compose.state.messages.list.GiphyAction
+import io.getstream.chat.android.compose.state.messages.list.SendGiphy
+import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.offline.ChatDomain
@@ -736,5 +740,19 @@ public class MessageListViewModel(
             currentMessagesState.messageItems.firstOrNull { it is MessageItem && it.message.id == messageId }
 
         return (messageItem as? MessageItem)?.message
+    }
+
+    /**
+     * Executes one of the actions for the given ephemeral giphy message.
+     *
+     * @param action The action to be executed.
+     */
+    public fun performGiphyAction(action: GiphyAction) {
+        val message = action.message
+        when (action) {
+            is SendGiphy -> chatDomain.sendGiphy(message)
+            is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
+            is CancelGiphy -> chatDomain.cancelMessage(message)
+        }.enqueue()
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
@@ -39,6 +40,7 @@ import io.getstream.chat.android.compose.state.messages.composer.MessageInputSta
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
+import io.getstream.chat.android.compose.ui.messages.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.messages.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -74,10 +76,17 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onMentionClick: (User) -> Unit = { viewModel.selectMention(it) },
+    onCommandClick: (Command) -> Unit = { viewModel.selectCommand(it) },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
             onMentionClick = onMentionClick
+        )
+    },
+    commandPopupContent: @Composable (List<Command>) -> Unit = {
+        DefaultCommandPopupContent(
+            commandSuggestions = it,
+            onCommandClick = onCommandClick
         )
     },
     integrations: @Composable RowScope.() -> Unit = {
@@ -102,6 +111,7 @@ public fun MessageComposer(
     val activeAction by viewModel.lastActiveAction.collectAsState(null)
     val validationErrors by viewModel.validationErrors.collectAsState()
     val mentionSuggestions by viewModel.mentionSuggestions.collectAsState()
+    val commandSuggestions by viewModel.commandSuggestions.collectAsState()
     val cooldownTimer by viewModel.cooldownTimer.collectAsState()
 
     MessageComposer(
@@ -112,7 +122,9 @@ public fun MessageComposer(
             onSendMessage(messageWithData)
         },
         onMentionClick = onMentionClick,
+        onCommandClick = onCommandClick,
         mentionPopupContent = mentionPopupContent,
+        commandPopupContent = commandPopupContent,
         integrations = integrations,
         input = input,
         messageInputState = MessageInputState(
@@ -121,6 +133,7 @@ public fun MessageComposer(
             action = activeAction,
             validationErrors = validationErrors,
             mentionSuggestions = mentionSuggestions,
+            commandSuggestions = commandSuggestions,
             cooldownTimer = cooldownTimer,
         ),
         shouldShowIntegrations = true,
@@ -148,10 +161,17 @@ public fun MessageComposer(
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
     onMentionClick: (User) -> Unit,
+    onCommandClick: (Command) -> Unit,
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
             onMentionClick = onMentionClick
+        )
+    },
+    commandPopupContent: @Composable (List<Command>) -> Unit = {
+        DefaultCommandPopupContent(
+            commandSuggestions = it,
+            onCommandClick = onCommandClick
         )
     },
     modifier: Modifier = Modifier,
@@ -159,7 +179,7 @@ public fun MessageComposer(
     integrations: @Composable RowScope.() -> Unit,
     input: @Composable RowScope.(MessageInputState) -> Unit,
 ) {
-    val (value, attachments, activeAction, validationErrors, mentionSuggestions, cooldownTimer) = messageInputState
+    val (value, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions, cooldownTimer) = messageInputState
 
     showValidationErrorIfNecessary(validationErrors)
 
@@ -224,6 +244,10 @@ public fun MessageComposer(
         if (mentionSuggestions.isNotEmpty()) {
             mentionPopupContent(mentionSuggestions)
         }
+
+        if (commandSuggestions.isNotEmpty()) {
+            commandPopupContent(commandSuggestions)
+        }
     }
 }
 
@@ -268,6 +292,23 @@ internal fun DefaultMentionPopupContent(
     MentionSuggestionList(
         users = mentionSuggestions,
         onMentionClick = { onMentionClick(it) }
+    )
+}
+
+/**
+ * Represents the default command suggestion list popup shown above the message composer.
+ *
+ * @param commandSuggestions The list of available commands in the channel.
+ * @param onCommandClick Handler when the user taps on a command suggestion item.
+ */
+@Composable
+internal fun DefaultCommandPopupContent(
+    commandSuggestions: List<Command>,
+    onCommandClick: (Command) -> Unit,
+) {
+    CommandSuggestionList(
+        commands = commandSuggestions,
+        onCommandClick = { onCommandClick(it) }
     )
 }
 

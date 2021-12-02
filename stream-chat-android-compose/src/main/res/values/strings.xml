@@ -45,6 +45,10 @@
     </plurals>
 
     <!-- Message List -->
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">Send</string>
+    <string name="stream_compose_message_list_giphy_cancel">Cancel</string>
+    <string name="stream_compose_message_list_giphy_shuffle">Shuffle</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
@@ -67,11 +71,12 @@
     <string name="stream_compose_message_composer_error_message_length">Max message length (%1$d) exceeded.</string>
     <string name="stream_compose_message_composer_error_file_size">File is too large - max %1$s.</string>
     <string name="stream_compose_message_composer_error_attachment_count">Attachments count (%1$d) exceeded.</string>
+    <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
 
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_send_message">Send</string>
     <string name="stream_compose_attachments">Attachments</string>
-    <string name="stream_compose_instant_commands">Instant Commands</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
     <string name="stream_compose_capture_option">Media capture</string>

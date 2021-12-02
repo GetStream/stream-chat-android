@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -76,6 +77,7 @@ public fun MessageList(
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
         if (it?.resultType == ImagePreviewResultType.SHOW_IN_CHAT) {
             viewModel.focusMessage(it.messageId)
@@ -88,6 +90,7 @@ public fun MessageList(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
+            onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult
         )
     },
@@ -133,6 +136,7 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyView(modifier) },
     itemContent: @Composable (MessageListItem) -> Unit = {
@@ -140,6 +144,7 @@ public fun MessageList(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
+            onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult
         )
     },
