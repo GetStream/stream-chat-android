@@ -159,6 +159,7 @@ public final class com/getstream/sdk/chat/model/AttachmentMetaData {
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/model/AttachmentMetaData;Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;ILjava/lang/Object;)Lcom/getstream/sdk/chat/model/AttachmentMetaData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFile ()Ljava/io/File;
+	public final fun getHeigth ()I
 	public final fun getMimeType ()Ljava/lang/String;
 	public final fun getSelectedPosition ()I
 	public final fun getSize ()J
@@ -166,9 +167,11 @@ public final class com/getstream/sdk/chat/model/AttachmentMetaData {
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUri ()Landroid/net/Uri;
 	public final fun getVideoLength ()J
+	public final fun getWidth ()I
 	public fun hashCode ()I
 	public final fun isSelected ()Z
 	public final fun setFile (Ljava/io/File;)V
+	public final fun setHeigth (I)V
 	public final fun setMimeType (Ljava/lang/String;)V
 	public final fun setSelected (Z)V
 	public final fun setSelectedPosition (I)V
@@ -177,6 +180,7 @@ public final class com/getstream/sdk/chat/model/AttachmentMetaData {
 	public final fun setType (Ljava/lang/String;)V
 	public final fun setUri (Landroid/net/Uri;)V
 	public final fun setVideoLength (J)V
+	public final fun setWidth (I)V
 	public fun toString ()Ljava/lang/String;
 }
 
