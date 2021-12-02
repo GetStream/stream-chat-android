@@ -70,6 +70,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Removed cut from text when text end with Italic
 - Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
 
