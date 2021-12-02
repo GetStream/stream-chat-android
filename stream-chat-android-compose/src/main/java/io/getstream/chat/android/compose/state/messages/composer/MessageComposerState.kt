@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.state.messages.composer
 
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.ValidationError
@@ -13,6 +14,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param action The currently active [MessageAction].
  * @param validationErrors The list of validation errors.
  * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
+ * @param commandSuggestions The list of commands to be displayed in the command suggestion popup.
  * @param cooldownTimer The amount of time left until the user is allowed to send the next message.
  */
 public data class MessageComposerState(
@@ -21,5 +23,6 @@ public data class MessageComposerState(
     val action: MessageAction? = null,
     val validationErrors: List<ValidationError> = emptyList(),
     val mentionSuggestions: List<User> = emptyList(),
+    val commandSuggestions: List<Command> = emptyList(),
     val cooldownTimer: Int = 0,
 )

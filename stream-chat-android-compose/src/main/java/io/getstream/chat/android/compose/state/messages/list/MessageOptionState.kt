@@ -14,7 +14,6 @@ import io.getstream.chat.android.common.state.MessageAction
  * @param iconColor The color of the icon.
  * @param action The [MessageAction] the option represents.
  */
-
 public class MessageOptionState(
     @StringRes public val title: Int,
     public val titleColor: Color,

@@ -1,6 +1,8 @@
 package io.getstream.chat.android.compose.ui.messages.suggestions
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param modifier Modifier for styling.
  * @param shape The shape of suggestion list popup.
+ * @param contentPadding The inner content padding inside the popup.
  * @param headerContent The content shown at the top of a suggestion list popup.
  * @param content The content shown inside the suggestion list popup.
  */
@@ -25,6 +28,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun SuggestionList(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.suggestionList,
+    contentPadding: PaddingValues = PaddingValues(vertical = ChatTheme.dimens.suggestionListPadding),
     headerContent: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -35,7 +39,7 @@ public fun SuggestionList(
             shape = shape,
             backgroundColor = ChatTheme.colors.barsBackground,
         ) {
-            Column {
+            Column(Modifier.padding(contentPadding)) {
                 headerContent()
 
                 content()

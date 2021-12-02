@@ -27,19 +27,21 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.SendGiphy
+import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -538,10 +540,11 @@ public class MessageListViewModel(
 
     /**
      * Takes in the available messages for a [Channel] and groups them based on the sender ID. We put the message in a
-     * group, where the positions can be [Top], [Middle], [Bottom] or [None] if the message isn't in a group.
+     * group, where the positions can be [MessageItemGroupPosition.Top], [MessageItemGroupPosition.Middle],
+     * [MessageItemGroupPosition.Bottom] or [MessageItemGroupPosition.None] if the message isn't in a group.
      *
      * @param messages The messages we need to group.
-     * @return A list of [MessageItemState]s, each containing a position.
+     * @return A list of [MessageListItemState]s, each containing a position.
      */
     private fun groupMessages(messages: List<Message>): List<MessageListItemState> {
         val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
@@ -556,10 +559,10 @@ public class MessageListViewModel(
             val nextUser = messages.getOrNull(index + 1)?.user
 
             val position = when {
-                previousUser != user && nextUser == user -> Top
-                previousUser == user && nextUser == user -> Middle
-                previousUser == user && nextUser != user -> Bottom
-                else -> None
+                previousUser != user && nextUser == user -> MessageItemGroupPosition.Top
+                previousUser == user && nextUser == user -> MessageItemGroupPosition.Middle
+                previousUser == user && nextUser != user -> MessageItemGroupPosition.Bottom
+                else -> MessageItemGroupPosition.None
             }
 
             if (shouldAddDateSeparator(previousMessage, message)) {
@@ -756,5 +759,19 @@ public class MessageListViewModel(
             currentMessagesState.messageItems.firstOrNull { it is MessageItemState && it.message.id == messageId }
 
         return (messageItem as? MessageItemState)?.message
+    }
+
+    /**
+     * Executes one of the actions for the given ephemeral giphy message.
+     *
+     * @param action The action to be executed.
+     */
+    public fun performGiphyAction(action: GiphyAction) {
+        val message = action.message
+        when (action) {
+            is SendGiphy -> chatDomain.sendGiphy(message)
+            is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
+            is CancelGiphy -> chatDomain.cancelMessage(message)
+        }.exhaustive.enqueue()
     }
 }

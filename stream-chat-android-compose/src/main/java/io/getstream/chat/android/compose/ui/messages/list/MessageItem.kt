@@ -8,7 +8,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -17,7 +19,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +34,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,6 +45,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +54,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
@@ -58,7 +65,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
@@ -66,6 +75,8 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPos
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.SendGiphy
+import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
@@ -77,6 +88,7 @@ import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasThread
 import io.getstream.chat.android.compose.ui.util.isDeleted
+import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.util.isUploading
 import java.util.Date
 
@@ -94,6 +106,7 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onThreadClick Handler when the user taps on a thread in a message item.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user receives a result from previewing message attachments.
  * @param systemMessageContent Customizable composable function that represents the system message item.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
@@ -114,6 +127,7 @@ public fun DefaultMessageItem(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     systemMessageContent: @Composable (SystemMessageState) -> Unit = {
         SystemMessage(
@@ -150,6 +164,7 @@ public fun DefaultMessageItem(
         DefaultMessageItemContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
             modifier = Modifier.widthIn(max = 250.dp)
         )
@@ -288,6 +303,7 @@ public fun MessageThreadSeparator(
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
@@ -308,6 +324,7 @@ public fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
@@ -337,6 +354,7 @@ public fun DefaultMessageContainer(
             messageItem = it,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
+            onGiphyActionClick = onGiphyActionClick,
             modifier = Modifier.widthIn(max = 250.dp)
         )
     },
@@ -561,12 +579,16 @@ public fun DefaultMessageItemTrailingContent(
  *
  * @param messageItem The message item to show the content for.
  * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @Composable
 public fun DefaultMessageItemContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
     val (message, position, _, ownsMessage, _) = messageItem
@@ -579,6 +601,7 @@ public fun DefaultMessageItemContent(
     }
 
     val messageBubbleColor = when {
+        message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
         message.isDeleted() -> ChatTheme.colors.deletedMessagesBackground
         ownsMessage -> ChatTheme.colors.ownMessagesBackground
         else -> ChatTheme.colors.otherMessagesBackground
@@ -589,18 +612,25 @@ public fun DefaultMessageItemContent(
         shape = messageBubbleShape,
         color = messageBubbleColor,
         content = {
-            if (message.isDeleted()) {
-                DeletedMessageContent()
-            } else {
-                Column {
-                    MessageAttachmentsContent(
+            when {
+                message.isGiphyEphemeral() -> {
+                    GiphyMessageContent(
                         message = messageItem.message,
-                        onLongItemClick = onLongItemClick,
-                        onImagePreviewResult = onImagePreviewResult,
+                        onGiphyActionClick = onGiphyActionClick
                     )
+                }
+                message.isDeleted() -> DeletedMessageContent()
+                else -> {
+                    Column {
+                        MessageAttachmentsContent(
+                            message = messageItem.message,
+                            onLongItemClick = onLongItemClick,
+                            onImagePreviewResult = onImagePreviewResult,
+                        )
 
-                    if (message.text.isNotEmpty()) {
-                        DefaultMessageContent(message = message)
+                        if (message.text.isNotEmpty()) {
+                            DefaultMessageContent(message = message)
+                        }
                     }
                 }
             }
@@ -903,6 +933,152 @@ internal fun DeletedMessageContent(
         color = ChatTheme.colors.textLowEmphasis,
         style = ChatTheme.typography.footnoteItalic
     )
+}
+
+/**
+ * Represents the content of an ephemeral giphy message.
+ *
+ * @param message The ephemeral giphy message.
+ * @param modifier Modifier for styling.
+ * @param onGiphyActionClick Handler when the user clicks on action button.
+ */
+@Composable
+internal fun GiphyMessageContent(
+    message: Message,
+    modifier: Modifier = Modifier,
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+) {
+    Column(modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .padding(horizontal = 8.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Image(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_giphy),
+                contentDescription = null
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.stream_compose_message_list_giphy_title),
+                style = ChatTheme.typography.bodyBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = message.text,
+                style = ChatTheme.typography.body,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        }
+
+        MessageAttachmentsContent(
+            message = message,
+            onLongItemClick = { },
+            onImagePreviewResult = { },
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(color = ChatTheme.colors.borders)
+        )
+
+        Row(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+            verticalAlignment = CenterVertically
+        ) {
+            GiphyButton(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                text = stringResource(id = R.string.stream_compose_message_list_giphy_cancel),
+                textColor = ChatTheme.colors.textLowEmphasis,
+                onClick = { onGiphyActionClick(CancelGiphy(message)) }
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .background(color = ChatTheme.colors.borders)
+            )
+
+            GiphyButton(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                text = stringResource(id = R.string.stream_compose_message_list_giphy_shuffle),
+                textColor = ChatTheme.colors.textLowEmphasis,
+                onClick = { onGiphyActionClick(ShuffleGiphy(message)) }
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .background(color = ChatTheme.colors.borders)
+            )
+
+            GiphyButton(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                text = stringResource(id = R.string.stream_compose_message_list_giphy_send),
+                textColor = ChatTheme.colors.primaryAccent,
+                onClick = { onGiphyActionClick(SendGiphy(message)) }
+            )
+        }
+    }
+}
+
+/**
+ * Represents an action button in the ephemeral giphy message.
+ *
+ * @param text The text displayed on the button.
+ * @param textColor The color applied to the text.
+ * @param onClick Handler when the user clicks on action button.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun GiphyButton(
+    text: String,
+    textColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .clickable(
+                onClick = onClick,
+                indication = rememberRipple(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
+    ) {
+        Text(
+            modifier = Modifier.align(Center),
+            text = text,
+            style = ChatTheme.typography.bodyBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = textColor,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 /**

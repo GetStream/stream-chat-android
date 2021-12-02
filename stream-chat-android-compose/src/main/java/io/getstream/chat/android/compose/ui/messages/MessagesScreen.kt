@@ -132,6 +132,7 @@ public fun MessagesScreen(
                         .align(Alignment.Center),
                     viewModel = composerViewModel,
                     onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
+                    onCommandsClick = { composerViewModel.toggleCommandsVisibility() },
                     onCancelAction = {
                         listViewModel.dismissAllMessageActions()
                         composerViewModel.dismissMessageActions()

@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -50,6 +51,11 @@ public class MessageComposerViewModel(
      * Represents the list of users that can be used to autocomplete the current mention input.
      */
     public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
+
+    /**
+     * Represents the list of commands to be displayed in the command suggestion list popup.
+     */
+    public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
@@ -146,6 +152,19 @@ public class MessageComposerViewModel(
      * @param user The user that is used to autocomplete the mention.
      */
     public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
+
+    /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected in the command suggestion list popup.
+     */
+    public fun selectCommand(command: Command): Unit = messageComposerController.selectCommand(command)
+
+    /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility(): Unit =
+        messageComposerController.toggleCommandsVisibility()
 
     /**
      * Disposes the inner [MessageComposerController].

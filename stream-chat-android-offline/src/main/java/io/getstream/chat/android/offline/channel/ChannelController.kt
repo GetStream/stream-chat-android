@@ -517,7 +517,7 @@ public class ChannelController internal constructor(
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
         val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
-        removeLocalMessage(message)
+
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
             processedMessage.apply {

@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
@@ -83,9 +84,19 @@ public class MessageComposerController(
     public val mentionSuggestions: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the list of commands that can be executed for the channel.
+     */
+    public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
+
+    /**
      * Represents the list of users in the channel.
      */
     private var users: List<User> = emptyList()
+
+    /**
+     * Represents the list of available commands in the channel.
+     */
+    private var commands: List<Command> = emptyList()
 
     /**
      * Represents the maximum allowed message length in the message input.
@@ -159,6 +170,7 @@ public class MessageComposerController(
 
                 channelController.channelConfig.onEach {
                     maxMessageLength = it.maxMessageLength
+                    commands = it.commands
                 }.launchIn(scope)
 
                 channelController.members.onEach { members ->
@@ -182,6 +194,7 @@ public class MessageComposerController(
 
         handleTypingEvent(isTyping = value.isNotEmpty())
         handleMentionSuggestions()
+        handleCommandSuggestions()
         handleValidationErrors()
     }
 
@@ -423,6 +436,24 @@ public class MessageComposerController(
     }
 
     /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected.
+     */
+    public fun selectCommand(command: Command) {
+        setMessageInput("/${command.name} ")
+    }
+
+    /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility() {
+        val isHidden = commandSuggestions.value.isEmpty()
+
+        commandSuggestions.value = if (isHidden) commands else emptyList()
+    }
+
+    /**
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
@@ -430,6 +461,20 @@ public class MessageComposerController(
 
         mentionSuggestions.value = if (containsMention) {
             users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
+        } else {
+            emptyList()
+        }
+    }
+
+    /**
+     * Shows the command suggestion list popup if necessary.
+     */
+    private fun handleCommandSuggestions() {
+        val containsCommand = COMMAND_PATTERN.matcher(messageText).find()
+
+        commandSuggestions.value = if (containsCommand) {
+            val commandPattern = messageText.removePrefix("/")
+            commands.filter { it.name.startsWith(commandPattern) }
         } else {
             emptyList()
         }
@@ -460,5 +505,10 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete mention.
          */
         private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
+
+        /**
+         * The regex pattern used to check if the message ends with incomplete command.
+         */
+        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
     }
 }

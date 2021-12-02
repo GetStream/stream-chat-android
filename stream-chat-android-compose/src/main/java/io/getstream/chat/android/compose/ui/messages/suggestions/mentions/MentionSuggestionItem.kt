@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.suggestions.mentions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,16 +29,15 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param user The user that will be used to autocomplete the mention.
  * @param modifier Modifier for styling.
- * @param onMentionClick Handler when the user taps on an item.
+ * @param onMentionSelected Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a mention item.
  * @param detailsContent Customizable composable function that represents the center content of a mention item.
  * @param trailingContent Customizable composable function that represents the trailing content of the a mention item.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun DefaultMentionSuggestionItem(
     user: User,
-    onMentionClick: (User) -> Unit,
+    onMentionSelected: (User) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(User) -> Unit = {
         DefaultMentionSuggestionItemLeadingContent(
@@ -70,8 +68,8 @@ public fun DefaultMentionSuggestionItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .combinedClickable(
-                onClick = { onMentionClick(user) },
+            .clickable(
+                onClick = { onMentionSelected(user) },
                 indication = rememberRipple(),
                 interactionSource = remember { MutableInteractionSource() }
             )
