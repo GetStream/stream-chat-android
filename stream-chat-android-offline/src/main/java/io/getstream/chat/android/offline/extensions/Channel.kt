@@ -12,7 +12,8 @@ internal fun Channel.users(): List<User> {
     return members.map(Member::user) +
         read.map(ChannelUserRead::user) +
         createdBy +
-        messages.flatMap { it.users() }
+        messages.flatMap { it.users() } +
+        watchers
 }
 
 internal val Channel.lastMessage: Message?
