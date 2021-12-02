@@ -66,6 +66,8 @@
     <string name="stream_compose_edit_message">Edit Message</string>
     <string name="stream_compose_delete_message">Delete Message</string>
     <string name="stream_compose_mute_user">Mute User</string>
+    <string name="stream_compose_unpin_message">Unpin from this Chat</string>
+    <string name="stream_compose_pin_message">Pin to this Chat</string>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">Max message length (%1$d) exceeded.</string>
@@ -102,6 +104,8 @@
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
     <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
+    <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>
+    <string name="stream_compose_message_list_you">You</string>
 
     <!--  Image Preview  -->
     <string name="stream_compose_image_options">Image options</string>

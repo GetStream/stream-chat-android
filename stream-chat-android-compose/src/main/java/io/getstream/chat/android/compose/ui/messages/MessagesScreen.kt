@@ -40,7 +40,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
+import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -171,8 +171,9 @@ public fun MessagesScreen(
 
         if (selectedMessage != null) {
             SelectedMessageOverlay(
-                messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
+                messageOptions = defaultMessageOptionsState(selectedMessage, user, listViewModel.isInThread),
                 message = selectedMessage,
+                currentUser = user,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)
                     listViewModel.performMessageAction(action)

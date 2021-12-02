@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.composer.MessageInputState
+import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -27,7 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @Composable
 internal fun DefaultComposerIntegrations(
-    messageInputState: MessageInputState,
+    messageInputState: MessageComposerState,
     onAttachmentsClick: () -> Unit,
     onCommandsClick: () -> Unit,
     modifier: Modifier = Modifier,

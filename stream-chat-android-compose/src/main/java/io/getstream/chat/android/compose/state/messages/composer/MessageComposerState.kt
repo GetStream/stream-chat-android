@@ -17,7 +17,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param commandSuggestions The list of commands to be displayed in the command suggestion popup.
  * @param cooldownTimer The amount of time left until the user is allowed to send the next message.
  */
-public data class MessageInputState(
+public data class MessageComposerState(
     val inputValue: String = "",
     val attachments: List<Attachment> = emptyList(),
     val action: MessageAction? = null,

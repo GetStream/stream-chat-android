@@ -38,9 +38,10 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -85,7 +86,7 @@ public fun MessageList(
     },
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyView(modifier) },
-    itemContent: @Composable (MessageListItem) -> Unit = {
+    itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageItem(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
@@ -139,7 +140,7 @@ public fun MessageList(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyView(modifier) },
-    itemContent: @Composable (MessageListItem) -> Unit = {
+    itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageItem(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
@@ -187,7 +188,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable (MessageListItem) -> Unit,
+    itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState, parentMessageId) = messagesState
     val state = rememberLazyListState()
@@ -207,12 +208,12 @@ public fun Messages(
             itemsIndexed(
                 messages,
                 key = { _, item ->
-                    if (item is MessageItem) item.message.id else item.toString()
+                    if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
                 itemContent(item)
 
-                if (item is MessageItem) {
+                if (item is MessageItemState) {
                     onLastVisibleMessageChanged(item.message)
                 }
 
@@ -236,7 +237,7 @@ public fun Messages(
                 }
             }
         }
-        val focusedItemIndex = messages.indexOfFirst { it is MessageItem && it.isFocused }
+        val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
         if (focusedItemIndex != -1) {
             coroutineScope.launch {

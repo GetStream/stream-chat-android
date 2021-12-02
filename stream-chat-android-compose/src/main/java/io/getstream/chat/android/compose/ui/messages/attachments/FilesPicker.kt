@@ -35,7 +35,7 @@ import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentItem
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 
@@ -50,8 +50,8 @@ import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
  */
 @Composable
 internal fun FilesPicker(
-    files: List<AttachmentItem>,
-    onItemSelected: (AttachmentItem) -> Unit,
+    files: List<AttachmentPickerItemState>,
+    onItemSelected: (AttachmentPickerItemState) -> Unit,
     onBrowseFilesResult: (List<Uri>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -96,8 +96,8 @@ internal fun FilesPicker(
  */
 @Composable
 public fun FileListItem(
-    fileItem: AttachmentItem,
-    onItemSelected: (AttachmentItem) -> Unit,
+    fileItem: AttachmentPickerItemState,
+    onItemSelected: (AttachmentPickerItemState) -> Unit,
 ) {
     Row(
         Modifier
@@ -167,7 +167,7 @@ public fun FileListItem(
  */
 @Composable
 public fun FileItemImage(
-    fileItem: AttachmentItem,
+    fileItem: AttachmentPickerItemState,
     modifier: Modifier = Modifier,
 ) {
     val attachment = fileItem.attachmentMetaData
