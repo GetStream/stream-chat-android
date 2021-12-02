@@ -33,11 +33,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun CommandSuggestionList(
     commands: List<Command>,
     modifier: Modifier = Modifier,
-    onCommandClick: (Command) -> Unit = {},
+    onCommandSelected: (Command) -> Unit = {},
     itemContent: @Composable (Command) -> Unit = { command ->
         DefaultCommandSuggestionItem(
             command = command,
-            onCommandClick = onCommandClick,
+            onCommandSelected = onCommandSelected,
         )
     },
 ) {

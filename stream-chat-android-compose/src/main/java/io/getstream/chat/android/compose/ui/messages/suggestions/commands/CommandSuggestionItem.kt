@@ -30,7 +30,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param command The command to display.
  * @param modifier Modifier for styling.
- * @param onCommandClick Handler when the user taps on an item.
+ * @param onCommandSelected Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a command item.
  * @param detailsContent Customizable composable function that represents the details content of a command item.
  */
@@ -38,7 +38,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun DefaultCommandSuggestionItem(
     command: Command,
     modifier: Modifier = Modifier,
-    onCommandClick: (Command) -> Unit = {},
+    onCommandSelected: (Command) -> Unit = {},
     leadingContent: @Composable RowScope.(Command) -> Unit = {
         DefaultCommandSuggestionItemLeadingContent(
             modifier = Modifier
@@ -60,7 +60,7 @@ public fun DefaultCommandSuggestionItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable(
-                onClick = { onCommandClick(command) },
+                onClick = { onCommandSelected(command) },
                 indication = rememberRipple(),
                 interactionSource = remember { MutableInteractionSource() }
             )

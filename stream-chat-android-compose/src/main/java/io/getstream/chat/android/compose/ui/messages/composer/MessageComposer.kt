@@ -60,8 +60,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
- * @param onMentionClick Handler when the user taps on a mention suggestion item.
- * @param onCommandClick Handler when the user taps on a command suggestion item.
+ * @param onMentionSelected Handler when the user taps on a mention suggestion item.
+ * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param integrations A view that represents custom integrations. By default, we provide
  * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
@@ -79,18 +79,18 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
-    onMentionClick: (User) -> Unit = { viewModel.selectMention(it) },
-    onCommandClick: (Command) -> Unit = { viewModel.selectCommand(it) },
+    onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
+    onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
-            onMentionClick = onMentionClick
+            onMentionSelected = onMentionSelected
         )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
         DefaultCommandPopupContent(
             commandSuggestions = it,
-            onCommandClick = onCommandClick
+            onCommandSelected = onCommandSelected
         )
     },
     integrations: @Composable RowScope.(MessageInputState) -> Unit = {
@@ -132,8 +132,8 @@ public fun MessageComposer(
 
             onSendMessage(messageWithData)
         },
-        onMentionClick = onMentionClick,
-        onCommandClick = onCommandClick,
+        onMentionSelected = onMentionSelected,
+        onCommandSelected = onCommandSelected,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
         integrations = integrations,
@@ -159,7 +159,8 @@ public fun MessageComposer(
  * @param messageInputState The state of the message input.
  * @param onSendMessage Handler when the user taps on the send message button.
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
- * @param onMentionClick Handler when the user taps on a mention suggestion item.
+ * @param onMentionSelected Handler when the user taps on a mention suggestion item.
+ * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param modifier Modifier for styling.
  * @param shouldShowIntegrations If we should show or hide integrations.
@@ -171,18 +172,18 @@ public fun MessageComposer(
     messageInputState: MessageInputState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
-    onMentionClick: (User) -> Unit,
-    onCommandClick: (Command) -> Unit,
+    onMentionSelected: (User) -> Unit,
+    onCommandSelected: (Command) -> Unit,
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
-            onMentionClick = onMentionClick
+            onMentionSelected = onMentionSelected
         )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
         DefaultCommandPopupContent(
             commandSuggestions = it,
-            onCommandClick = onCommandClick
+            onCommandSelected = onCommandSelected
         )
     },
     modifier: Modifier = Modifier,
@@ -293,16 +294,16 @@ internal fun CooldownIndicator(
  * Represents the default mention suggestion list popup shown above the message composer.
  *
  * @param mentionSuggestions The list of users that can be used to autocomplete the current mention input.
- * @param onMentionClick Handler when the user taps on a mention suggestion item.
+ * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  */
 @Composable
 internal fun DefaultMentionPopupContent(
     mentionSuggestions: List<User>,
-    onMentionClick: (User) -> Unit,
+    onMentionSelected: (User) -> Unit,
 ) {
     MentionSuggestionList(
         users = mentionSuggestions,
-        onMentionClick = { onMentionClick(it) }
+        onMentionSelected = { onMentionSelected(it) }
     )
 }
 
@@ -315,11 +316,11 @@ internal fun DefaultMentionPopupContent(
 @Composable
 internal fun DefaultCommandPopupContent(
     commandSuggestions: List<Command>,
-    onCommandClick: (Command) -> Unit,
+    onCommandSelected: (Command) -> Unit,
 ) {
     CommandSuggestionList(
         commands = commandSuggestions,
-        onCommandClick = { onCommandClick(it) }
+        onCommandSelected = { onCommandSelected(it) }
     )
 }
 

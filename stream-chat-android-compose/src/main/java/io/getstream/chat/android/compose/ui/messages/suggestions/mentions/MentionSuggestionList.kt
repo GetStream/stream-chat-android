@@ -16,18 +16,18 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param users The list of users that will be displayed in the popup.
  * @param modifier Modifier for styling.
- * @param onMentionClick Handler when the user taps on an item.
+ * @param onMentionSelected Handler when the user taps on an item.
  * @param itemContent Customizable composable function that represents a single mention item.
  */
 @Composable
 public fun MentionSuggestionList(
     users: List<User>,
     modifier: Modifier = Modifier,
-    onMentionClick: (User) -> Unit = {},
+    onMentionSelected: (User) -> Unit = {},
     itemContent: @Composable (User) -> Unit = { user ->
         DefaultMentionSuggestionItem(
             user = user,
-            onMentionClick = onMentionClick,
+            onMentionSelected = onMentionSelected,
         )
     },
 ) {
