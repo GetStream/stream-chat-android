@@ -10,12 +10,12 @@ import io.getstream.chat.android.client.models.Message
 public sealed class GiphyAction(public val message: Message)
 
 /**
- * Send selected giphy message to the channel.
+ * Send the selected giphy message to the channel.
  */
 public class SendGiphy(message: Message) : GiphyAction(message)
 
 /**
- * Perform giphy shuffle operation.
+ * Perform the giphy shuffle operation.
  */
 public class ShuffleGiphy(message: Message) : GiphyAction(message)
 

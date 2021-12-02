@@ -60,7 +60,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
- * @param onMentionClick @param onMentionClick Handler when the user taps on a mention suggestion item.
+ * @param onMentionClick Handler when the user taps on a mention suggestion item.
+ * @param onCommandClick Handler when the user taps on a command suggestion item.
  * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param integrations A view that represents custom integrations. By default, we provide
  * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
@@ -94,7 +95,9 @@ public fun MessageComposer(
     },
     integrations: @Composable RowScope.(MessageInputState) -> Unit = {
         DefaultComposerIntegrations(
-            modifier = Modifier.height(44.dp).padding(horizontal = 4.dp),
+            modifier = Modifier
+                .height(44.dp)
+                .padding(horizontal = 4.dp),
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
             onCommandsClick = onCommandsClick

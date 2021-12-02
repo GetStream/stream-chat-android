@@ -1037,7 +1037,7 @@ internal fun GiphyMessageContent(
  * @param modifier Modifier for styling.
  */
 @Composable
-private fun GiphyButton(
+internal fun GiphyButton(
     text: String,
     textColor: Color,
     onClick: () -> Unit,

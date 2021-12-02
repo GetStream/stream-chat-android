@@ -32,7 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param onCommandClick Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a command item.
- * @param detailsContent Customizable composable function that represents the center content of a command item.
+ * @param detailsContent Customizable composable function that represents the details content of a command item.
  */
 @Composable
 public fun DefaultCommandSuggestionItem(
