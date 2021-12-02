@@ -119,7 +119,6 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
         }
     }
 
-
     /**
      * Run filter request. If filter is passed then it returns [filterPositiveResult], otherwise it returns [EventHandlingResult.Remove].
      */
