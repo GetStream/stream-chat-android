@@ -79,8 +79,12 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added message pinning to the list of message options
+- Added pinned message UI
 
 ### ⚠️ Changed
+- Changed the way focus state works for focused messages.
+- Added the Pin type to the MessageAction sealed class
 
 ### ❌ Removed
 

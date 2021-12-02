@@ -269,6 +269,20 @@ public final class io/getstream/chat/android/compose/state/messages/list/DateSep
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved;
+}
+
+public abstract class io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/compose/state/messages/list/MessageFocused : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageFocused;
+}
+
 public abstract class io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition {
 	public static final field $stable I
 }
@@ -295,22 +309,24 @@ public final class io/getstream/chat/android/compose/state/messages/list/Message
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageItemState : io/getstream/chat/android/compose/state/messages/list/MessageListItemState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZZZ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/messages/list/MessageFocusState;ZLio/getstream/chat/android/client/models/User;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/messages/list/MessageFocusState;ZLio/getstream/chat/android/client/models/User;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
 	public final fun component2 ()Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
-	public final fun component5 ()Z
+	public final fun component5 ()Lio/getstream/chat/android/compose/state/messages/list/MessageFocusState;
 	public final fun component6 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZZZ)Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;
+	public final fun component7 ()Lio/getstream/chat/android/client/models/User;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/messages/list/MessageFocusState;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/messages/list/MessageFocusState;ZLio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getFocusState ()Lio/getstream/chat/android/compose/state/messages/list/MessageFocusState;
 	public final fun getGroupPosition ()Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
-	public final fun isFocused ()Z
 	public final fun isInThread ()Z
 	public final fun isMine ()Z
 	public fun toString ()Ljava/lang/String;
@@ -748,7 +764,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageIte
 	public static final fun DefaultMessageItem (Lio/getstream/chat/android/compose/state/messages/list/MessageListItemState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 	public static final fun DefaultMessageItemContent (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 	public static final fun DefaultMessageItemFooterContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun DefaultMessageItemHeaderContent (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static final fun DefaultMessageItemHeaderContent (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
 	public static final fun DefaultMessageItemLeadingContent (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun DefaultMessageItemTrailingContent (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageDateSeparator (Lio/getstream/chat/android/compose/state/messages/list/DateSeparatorState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
