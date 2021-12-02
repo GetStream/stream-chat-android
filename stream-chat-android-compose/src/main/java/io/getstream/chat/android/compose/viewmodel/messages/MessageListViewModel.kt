@@ -28,7 +28,7 @@ import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
-import io.getstream.chat.android.compose.state.messages.list.FocusRemoved
+import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
@@ -716,7 +716,7 @@ public class MessageListViewModel(
     private fun removeMessageFocus(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
             if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(focusState = FocusRemoved)
+                it.copy(focusState = MessageFocusRemoved)
             } else {
                 it
             }

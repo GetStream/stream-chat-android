@@ -269,9 +269,9 @@ public final class io/getstream/chat/android/compose/state/messages/list/DateSep
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/list/FocusRemoved : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
+public final class io/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/FocusRemoved;
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved;
 }
 
 public abstract class io/getstream/chat/android/compose/state/messages/list/MessageFocusState {

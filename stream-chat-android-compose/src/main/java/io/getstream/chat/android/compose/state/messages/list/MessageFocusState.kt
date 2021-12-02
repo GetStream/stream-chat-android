@@ -13,4 +13,4 @@ public object MessageFocused : MessageFocusState()
 /**
  * Represents the state when we've removed the focus from the message.
  */
-public object FocusRemoved : MessageFocusState()
+public object MessageFocusRemoved : MessageFocusState()
