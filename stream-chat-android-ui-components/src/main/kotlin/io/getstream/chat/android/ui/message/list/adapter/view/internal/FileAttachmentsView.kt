@@ -26,6 +26,8 @@ import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 
+private const val SPACE_HEIGHT_DP = 1
+
 internal class FileAttachmentsView : RecyclerView {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
@@ -49,7 +51,7 @@ internal class FileAttachmentsView : RecyclerView {
 
     init {
         layoutManager = LinearLayoutManager(context)
-        addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
+        addItemDecoration(VerticalSpaceItemDecorator(SPACE_HEIGHT_DP.dpToPx()))
     }
 
     private fun init(attrs: AttributeSet?) {
@@ -73,7 +75,7 @@ internal class FileAttachmentsView : RecyclerView {
 
             adapter = fileAttachmentsAdapter
         }
-        
+
         fileAttachmentsAdapter.setItems(attachments)
     }
 
@@ -153,15 +155,15 @@ private class FileAttachmentViewHolder(
     }
 
     private fun setupBackground() {
-        val shapeAppearanceModel = ShapeAppearanceModel.Builder()
+        val bgShapeDrawable = ShapeAppearanceModel.Builder()
             .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
             .build()
-        val bgShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-        bgShapeDrawable.apply {
-            fillColor = ColorStateList.valueOf(style.backgroundColor)
-            strokeColor = ColorStateList.valueOf(style.strokeColor)
-            strokeWidth = style.strokeWidth.toFloat()
-        }
+            .let(::MaterialShapeDrawable)
+            .apply {
+                fillColor = ColorStateList.valueOf(style.backgroundColor)
+                strokeColor = ColorStateList.valueOf(style.strokeColor)
+                strokeWidth = style.strokeWidth.toFloat()
+            }
 
         binding.root.background = bgShapeDrawable
     }
