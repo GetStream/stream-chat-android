@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +19,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
@@ -150,6 +148,8 @@ private class FileAttachmentViewHolder(
                 attachment?.let(listener::onAttachmentDownloadClick)
             }
         }
+
+        setupBackground()
     }
 
     private fun setupBackground() {
@@ -164,20 +164,6 @@ private class FileAttachmentViewHolder(
         }
 
         binding.root.background = bgShapeDrawable
-    }
-
-    init {
-        binding.root.background = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(CORNER_SIZE_PX)
-            .build()
-            .let(::MaterialShapeDrawable)
-            .apply {
-                setStroke(
-                    STROKE_WIDTH_PX,
-                    ContextCompat.getColor(itemView.context, R.color.stream_ui_grey_whisper)
-                )
-                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
-            }
     }
 
     fun restartJob() {
@@ -221,7 +207,6 @@ private class FileAttachmentViewHolder(
             binding.progressBar.isVisible = item.uploadState is Attachment.UploadState.InProgress
 
             subscribeForProgressIfNeeded(item)
-            setupBackground()
         }
     }
 
@@ -234,10 +219,5 @@ private class FileAttachmentViewHolder(
                 MediaStringUtil.convertFileSizeByteCount(bytesRead),
                 totalValue
             )
-    }
-
-    private companion object {
-        private val CORNER_SIZE_PX = 12.dpToPxPrecise()
-        private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
     }
 }
