@@ -66,6 +66,13 @@
     <string name="stream_compose_edit_message">Modifica messaggio</string>
     <string name="stream_compose_delete_message">Cancella messaggio</string>
     <string name="stream_compose_mute_user">Silenzia Utente</string>
+    <string name="stream_compose_flag_message">Segnala messaggio</string>
+
+    <!-- Message Action Confirmations -->
+    <string name="stream_compose_delete_message_title">Cancella messaggio</string>
+    <string name="stream_compose_delete_message_text">Sei sicuro di voler definitivamente cancellare questo messaggio?</string>
+    <string name="stream_compose_flag_message_title">Segnala messaggio</string>
+    <string name="stream_compose_flag_message_text">Vuoi mandare una copia di questo messaggio ad un moderatore?</string>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">La lunghezza massima del messaggio (%1$d) è stata superata.</string>
