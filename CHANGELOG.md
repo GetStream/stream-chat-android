@@ -85,6 +85,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⬆️ Improved
 - Minor UI improvements to the message overlay
+- Enabled scrolling behavior in SelectedMessageOverlay
 
 ### ✅ Added
 - Added the mention suggestion popup to the `MessageComposer` component, that allows to autocomplete a mention from a list of users.
