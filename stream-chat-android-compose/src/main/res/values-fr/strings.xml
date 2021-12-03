@@ -45,6 +45,10 @@
     </plurals>
 
     <!-- Message List -->
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">Envoyer</string>
+    <string name="stream_compose_message_list_giphy_cancel">Annuler</string>
+    <string name="stream_compose_message_list_giphy_shuffle">Mélanger</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">%d Réponse au fil de discussion</item>
         <item quantity="other">%d Réponses au fil de discussion</item>
@@ -67,4 +71,6 @@
     <string name="stream_compose_message_composer_error_message_length">Longueur maximale du message (%1$d) dépassée.</string>
     <string name="stream_compose_message_composer_error_file_size">Le fichier est trop volumineux - %1$s maximum.</string>
     <string name="stream_compose_message_composer_error_attachment_count">Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %1$d pièces jointes</string>
+    <string name="stream_compose_message_composer_instant_commands">Commandes instantanées</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
 </resources>

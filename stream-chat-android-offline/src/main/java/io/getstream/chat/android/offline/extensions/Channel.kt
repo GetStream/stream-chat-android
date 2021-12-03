@@ -8,11 +8,15 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 
+/**
+ * Returns all users including watchers of a channel that are associated with it.
+ */
 internal fun Channel.users(): List<User> {
     return members.map(Member::user) +
         read.map(ChannelUserRead::user) +
         createdBy +
-        messages.flatMap { it.users() }
+        messages.flatMap { it.users() } +
+        watchers
 }
 
 internal val Channel.lastMessage: Message?
