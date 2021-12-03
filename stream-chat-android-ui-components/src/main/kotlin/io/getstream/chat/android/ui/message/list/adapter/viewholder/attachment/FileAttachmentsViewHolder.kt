@@ -25,9 +25,7 @@ internal class FileAttachmentsViewHolder(
 
     private fun setupListeners(container: MessageListListenerContainer) {
         fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
-            message?.let { message ->
-                container.messageLongClickListener.onMessageLongClick(message)
-            }
+            message?.let(container.messageLongClickListener::onMessageLongClick)
         }
         fileAttachmentsView.attachmentClickListener = AttachmentClickListener { attachment ->
             message?.let { message ->

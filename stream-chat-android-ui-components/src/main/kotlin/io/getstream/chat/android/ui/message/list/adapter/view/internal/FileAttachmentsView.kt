@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
@@ -20,11 +21,14 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
+import io.getstream.chat.android.ui.message.list.adapter.AttachmentItemPayloadDiff
+import io.getstream.chat.android.ui.message.list.adapter.EMPTY_ATTACHMENT_ITEM_PAYLOAD_DIFF
+import io.getstream.chat.android.ui.message.list.adapter.FULL_ATTACHMENT_ITEM_PAYLOAD_DIFF
+import io.getstream.chat.android.ui.message.list.adapter.internal.AttachmentItemDiffCallback
 
 private const val SPACE_HEIGHT_DP = 4
 
@@ -76,7 +80,7 @@ internal class FileAttachmentsView : RecyclerView {
             adapter = fileAttachmentsAdapter
         }
 
-        fileAttachmentsAdapter.setItems(attachments)
+        fileAttachmentsAdapter.submitList(attachments)
     }
 
     override fun onDetachedFromWindow() {
@@ -95,12 +99,29 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
     }
 }
 
+/*
+ * We can't use SimpleListAdapter adapter here. Other wise we are always going to redraw the hold attachment item instead
+ * of updating only the necessary data. This would cause all the animations to start over when any update is made in the list.
+ */
 private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener?,
     private val attachmentLongClickListener: AttachmentLongClickListener?,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener?,
     private val style: FileAttachmentViewStyle,
-) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
+) : ListAdapter<Attachment, FileAttachmentViewHolder>(AttachmentItemDiffCallback) {
+
+    override fun onBindViewHolder(holder: FileAttachmentViewHolder, position: Int) {
+        holder.bindData(getItem(position), FULL_ATTACHMENT_ITEM_PAYLOAD_DIFF)
+    }
+
+    override fun onBindViewHolder(holder: FileAttachmentViewHolder, position: Int, payloads: MutableList<Any>) {
+        val diff = payloads.filterIsInstance<AttachmentItemPayloadDiff>()
+            .takeIf { it.isNotEmpty() }
+            .let { it ?: listOf(FULL_ATTACHMENT_ITEM_PAYLOAD_DIFF) }
+            .fold(EMPTY_ATTACHMENT_ITEM_PAYLOAD_DIFF, AttachmentItemPayloadDiff::plus)
+
+        holder.bindData(getItem(position), diff)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
         return StreamUiItemFileAttachmentBinding
@@ -128,7 +149,7 @@ private class FileAttachmentViewHolder(
     attachmentLongClickListener: AttachmentLongClickListener?,
     attachmentDownloadClickListener: AttachmentDownloadClickListener?,
     private val style: FileAttachmentViewStyle,
-) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
+) : RecyclerView.ViewHolder(binding.root) {
     private var attachment: Attachment? = null
 
     init {
@@ -168,10 +189,6 @@ private class FileAttachmentViewHolder(
         binding.root.background = bgShapeDrawable
     }
 
-    fun restartJob() {
-        attachment?.let(::subscribeForProgressIfNeeded)
-    }
-
     private fun subscribeForProgressIfNeeded(attachment: Attachment) {
         val uploadState = attachment.uploadState
         if (uploadState is Attachment.UploadState.Idle) {
@@ -181,45 +198,71 @@ private class FileAttachmentViewHolder(
         }
     }
 
-    override fun bind(item: Attachment) {
-        this.attachment = item
-
-        binding.apply {
-            fileTitle.setTextStyle(style.titleTextStyle)
-            fileSize.setTextStyle(style.fileSizeTextStyle)
-
-            fileTypeIcon.loadAttachmentThumb(item)
-            fileTitle.text = item.getDisplayableName()
-
-            if (item.uploadState is Attachment.UploadState.Idle
-                || item.uploadState is Attachment.UploadState.InProgress
-                || (item.uploadState is Attachment.UploadState.Success && item.fileSize == 0)
-            ) {
-                actionButton.setImageDrawable(null)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
-            } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
-                actionButton.setImageDrawable(style.failedAttachmentIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
-            } else {
-                actionButton.setImageDrawable(style.actionButtonIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
-            }
-
-            binding.progressBar.indeterminateDrawable = style.progressBarDrawable
-            binding.progressBar.isVisible = item.uploadState is Attachment.UploadState.InProgress
-
-            subscribeForProgressIfNeeded(item)
-        }
-    }
-
     private fun handleInProgressAttachment(fileSizeView: TextView, bytesRead: Long, totalBytes: Long) {
         val totalValue = MediaStringUtil.convertFileSizeByteCount(totalBytes)
 
         fileSizeView.text =
-            context.getString(
+            itemView.context.getString(
                 R.string.stream_ui_message_list_attachment_upload_progress,
                 MediaStringUtil.convertFileSizeByteCount(bytesRead),
                 totalValue
             )
+    }
+
+    fun restartJob() {
+        attachment?.let(::subscribeForProgressIfNeeded)
+    }
+
+    fun bindData(data: Attachment, diff: AttachmentItemPayloadDiff) {
+        this.attachment = data
+
+        binding.apply {
+            fileSize.setTextStyle(style.fileSizeTextStyle)
+
+            if (shouldChangeThumb(diff)) fileTypeIcon.loadAttachmentThumb(data)
+            if (shouldChangeTitle(diff)) {
+                fileTitle.setTextStyle(style.titleTextStyle)
+                fileTitle.text = data.getDisplayableName()
+            }
+
+            if (diff.uploadState) {
+                renderUploadState(data)
+            }
+
+            subscribeForProgressIfNeeded(data)
+        }
+    }
+
+    private fun renderUploadState(data: Attachment) {
+        binding.run {
+            if (data.uploadState is Attachment.UploadState.Idle
+                || data.uploadState is Attachment.UploadState.InProgress
+                || (data.uploadState is Attachment.UploadState.Success && data.fileSize == 0)
+            ) {
+                actionButton.setImageDrawable(null)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(data.upload?.length() ?: 0L)
+            } else if (data.uploadState is Attachment.UploadState.Failed || data.fileSize == 0) {
+                actionButton.setImageDrawable(style.failedAttachmentIcon)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(data.upload?.length() ?: 0L)
+            } else {
+                actionButton.setImageDrawable(style.actionButtonIcon)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(data.fileSize.toLong())
+            }
+        }
+
+        binding.progressBar.indeterminateDrawable = style.progressBarDrawable
+        binding.progressBar.isVisible = data.uploadState is Attachment.UploadState.InProgress
+    }
+
+    private fun shouldChangeTitle(diff: AttachmentItemPayloadDiff): Boolean {
+        return diff.run {
+            title || name || upload
+        }
+    }
+
+    private fun shouldChangeThumb(diff: AttachmentItemPayloadDiff): Boolean {
+        return diff.run {
+            type || thumbUrl || imageUrl || mimeType || title || name || upload
+        }
     }
 }

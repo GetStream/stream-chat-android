@@ -25,12 +25,12 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment) {
             else -> {
                 // The mime type, or a best guess based on the extension
                 val actualMimeType = mimeType ?: MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(attachment.getDisplayableName()?.substringAfterLast('.'))
+                    .getMimeTypeFromExtension(getDisplayableName()?.substringAfterLast('.'))
 
                 // We don't have icons for image types, but we can load the actual image in this case
-                if (actualMimeType?.startsWith("image") == true && attachment.upload != null) {
+                if (actualMimeType?.startsWith("image") == true && upload != null) {
                     load(
-                        data = StreamFileUtil.getUriForFile(context, attachment.upload!!),
+                        data = StreamFileUtil.getUriForFile(context, upload!!),
                         transformation = FILE_THUMB_TRANSFORMATION
                     )
                 } else {

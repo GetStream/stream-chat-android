@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF
+import io.getstream.chat.android.ui.message.list.adapter.FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 
@@ -37,15 +39,12 @@ internal class MessageListItemAdapter(
         position: Int,
         payloads: MutableList<Any>,
     ) {
-        val diff = (
+        val diff =
             payloads
                 .filterIsInstance<MessageListItemPayloadDiff>()
                 .takeIf { it.isNotEmpty() }
-                ?: listOf(FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
-            )
-            .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
-                acc + messageListItemPayloadDiff
-            }
+                .let { it ?: listOf(FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) }
+                .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF, MessageListItemPayloadDiff::plus)
 
         holder.bindListItem(getItem(position), diff)
     }
@@ -73,28 +72,5 @@ internal class MessageListItemAdapter(
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         doForAllViewHolders(recyclerView) { it.onDetachedFromWindow() }
         super.onDetachedFromRecyclerView(recyclerView)
-    }
-
-    companion object {
-        private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
-            text = true,
-            reactions = true,
-            attachments = true,
-            replies = true,
-            syncStatus = true,
-            deleted = true,
-            positions = true,
-            pinned = true,
-        )
-        private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
-            text = false,
-            reactions = false,
-            attachments = false,
-            replies = false,
-            syncStatus = false,
-            deleted = false,
-            positions = false,
-            pinned = false,
-        )
     }
 }
