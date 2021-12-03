@@ -28,17 +28,21 @@ internal class ChannelExtensionsTest {
         val channelsFile = File(this.javaClass.classLoader!!.getResource("channels.json").toURI())
         val moshi = Moshi.Builder()
             .add(DateAdapter())
-            .add(File::class.java, object : JsonAdapter<File>() {
-                // Dummy adapter because reflective serialization can't deal with platform types
-                override fun fromJson(reader: JsonReader): File? = null
-                override fun toJson(writer: JsonWriter, value: File?) = TODO("Not implemented")
-            }
+            .add(
+                File::class.java,
+                object : JsonAdapter<File>() {
+                    // Dummy adapter because reflective serialization can't deal with platform types
+                    override fun fromJson(reader: JsonReader): File? = null
+                    override fun toJson(writer: JsonWriter, value: File?) = TODO("Not implemented")
+                }
             )
-            .add(Attachment.UploadState::class.java, object : JsonAdapter<Attachment.UploadState>() {
-                // Dummy adapter because reflective serialization can't deal with sealed classes
-                override fun fromJson(reader: JsonReader): Attachment.UploadState? = null
-                override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
-            }
+            .add(
+                Attachment.UploadState::class.java,
+                object : JsonAdapter<Attachment.UploadState>() {
+                    // Dummy adapter because reflective serialization can't deal with sealed classes
+                    override fun fromJson(reader: JsonReader): Attachment.UploadState? = null
+                    override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
+                }
             )
             .add(KotlinJsonAdapterFactory())
             .build()
