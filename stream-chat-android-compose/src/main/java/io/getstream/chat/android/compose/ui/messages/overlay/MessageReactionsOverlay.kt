@@ -118,7 +118,7 @@ public fun ReactionsInfo(
     val reactions = message.latestReactions
     val reactionCount = reactions.size
 
-    val title = LocalContext.current.resources.getQuantityString(
+    val reactionCountText = LocalContext.current.resources.getQuantityString(
         R.plurals.stream_compose_message_reactions,
         reactionCount,
         reactionCount
@@ -136,7 +136,7 @@ public fun ReactionsInfo(
             modifier = Modifier.padding(vertical = 16.dp)
         ) {
             Text(
-                text = title,
+                text = reactionCountText,
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

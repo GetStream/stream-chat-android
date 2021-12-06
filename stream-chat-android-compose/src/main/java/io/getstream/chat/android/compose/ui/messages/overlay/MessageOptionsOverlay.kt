@@ -155,7 +155,7 @@ public fun MessageOptions(
  * @param onMessageOptionClick Handler when the user selects the option.
  */
 @Composable
-internal fun MessageOptionItem(
+private fun MessageOptionItem(
     option: MessageOptionState,
     onMessageOptionClick: (MessageOptionState) -> Unit,
 ) {
