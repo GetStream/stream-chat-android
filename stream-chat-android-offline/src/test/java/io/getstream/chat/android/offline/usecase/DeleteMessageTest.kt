@@ -34,7 +34,7 @@ internal class DeleteMessageTest : BaseConnectedMockedTest() {
             chatDomain.sendMessage(message).execute()
             chatDomain.deleteMessage(message).execute()
 
-            val deletedMessage = channelController.messages.value.last()
+            val deletedMessage = channelController.mutableState._messages.value.values.last()
 
             deletedMessage.id `should be equal to` message.id
             deletedMessage.deletedAt `should not be` null

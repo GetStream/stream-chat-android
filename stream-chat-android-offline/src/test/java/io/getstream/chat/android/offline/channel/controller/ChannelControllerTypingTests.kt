@@ -90,17 +90,16 @@ internal class ChannelControllerTypingTests {
         }
 
     @Test
-    fun `When a message is successfully marked as read Then the second invocation should be ignored`() =
-        runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, randomUser())
-                .givenReadEventsEnabled()
-                .get()
+    fun `When a message is successfully marked as read Then the second invocation should be ignored`() = testCoroutines.scope.runBlockingTest {
+        val sut = Fixture(testCoroutines.scope, randomUser())
+            .givenReadEventsEnabled()
+            .get()
 
-            sut.upsertMessage(randomMessage())
+        sut.upsertMessage(randomMessage())
 
-            sut.markRead() `should be equal to` true
-            sut.markRead() `should be equal to` false
-        }
+        sut.markRead() `should be equal to` true
+        sut.markRead() `should be equal to` false
+    }
 
     private class Fixture(private val scope: CoroutineScope, user: User) {
         private val repos: RepositoryFacade = mock()

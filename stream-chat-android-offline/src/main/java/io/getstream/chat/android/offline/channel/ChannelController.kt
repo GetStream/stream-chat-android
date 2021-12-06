@@ -103,7 +103,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStreamChatApi::class)
 public class ChannelController internal constructor(
-    private val mutableState: ChannelMutableState,
+    @VisibleForTesting
+    internal val mutableState: ChannelMutableState,
     private val channelLogic: ChannelLogic,
     private val client: ChatClient,
     @VisibleForTesting

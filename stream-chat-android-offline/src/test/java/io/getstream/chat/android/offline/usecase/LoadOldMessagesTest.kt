@@ -35,13 +35,13 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
 
         whenever(channelClientMock.sendMessage(any())) doReturn newMessage.asCall()
 
-        val channelState = chatDomain.watchChannel(data.channel1.cid, 0).execute().data()
-        val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
+        val channelController = chatDomain.watchChannel(data.channel1.cid, 0).execute().data()
+        chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
 
-        val messages1: List<Message> = channelState.messages.value
+        val messages1: Collection<Message> = channelController.mutableState._messages.value.values
         chatDomain.sendMessage(newMessage).execute()
 
-        val messages2 = channelState.messages.value
+        val messages2 = channelController.mutableState._messages.value.values
 
         messages2 shouldNotBeEqualTo messages1
         messages2.last() shouldBeEqualTo newMessage
