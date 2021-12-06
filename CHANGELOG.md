@@ -94,6 +94,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added support for Giphy command.
 - Added message pinning to the list of message options
 - Added pinned message UI
+- Added the `ReactionsInfo` component that shows a list of reactions for a particular message.
 
 ### ⚠️ Changed
 - Changed the way focus state works for focused messages.
