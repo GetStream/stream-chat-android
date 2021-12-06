@@ -7,7 +7,7 @@ internal fun ellipsizeText(text: String, textLimit: Int, maxLineBreaks: Int = MA
     return when {
         text.length > textLimit -> "${text.substring(0..textLimit)}$ELLIPSIS"
 
-        textIsTooHeight(text, maxLineBreaks) -> parseTooHeightText(text, maxLineBreaks)
+        textIsTooTall(text, maxLineBreaks) -> parseTooTallText(text, maxLineBreaks)
 
         else -> text
     }
@@ -17,7 +17,7 @@ private fun textIsTooTall(text: String, maxLineBreaks: Int): Boolean {
     return text.count { char -> char == '\n' } > maxLineBreaks
 }
 
-private fun parseTooHeightText(text: String, maxLineBreaks: Int): String {
+private fun parseTooTallText(text: String, maxLineBreaks: Int): String {
     var acc = 0
     var i = 0
 
