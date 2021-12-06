@@ -709,7 +709,7 @@ public class MessageInputView : ConstraintLayout {
     private fun refreshControlsState() {
         with(binding) {
             val commandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
-            val hasContent = messageInputFieldView.hasContent()
+            val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
             attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !commandMode
