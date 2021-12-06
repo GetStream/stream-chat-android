@@ -13,7 +13,7 @@ internal fun ellipsizeText(text: String, textLimit: Int, maxLineBreaks: Int = MA
     }
 }
 
-private fun textIsTooHeight(text: String, maxLineBreaks: Int): Boolean {
+private fun textIsTooTall(text: String, maxLineBreaks: Int): Boolean {
     return text.count { char -> char == '\n' } > maxLineBreaks
 }
 
