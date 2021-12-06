@@ -1648,6 +1648,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
 	public final fun setRepliesEnabled (Z)V
+	public final fun setReplyMessageClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReplyMessageClickListener;)V
 	public final fun setScrollToBottomButtonEnabled (Z)V
 	public final fun setShowAvatarPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate;)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;)V
@@ -1783,6 +1784,10 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView$New
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener {
 	public abstract fun onReactionViewClick (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ReplyMessageClickListener {
+	public abstract fun onReplyClick (Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate {

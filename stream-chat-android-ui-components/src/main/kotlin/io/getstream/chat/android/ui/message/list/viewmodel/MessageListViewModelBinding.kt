@@ -51,6 +51,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
     view.setAttachmentDownloadHandler { attachment -> onEvent(DownloadAttachment(attachment)) }
+    view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
 
     state.observe(lifecycleOwner) { state ->
         when (state) {
