@@ -75,6 +75,8 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
@@ -109,7 +111,6 @@ public class ChannelController internal constructor(
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
     messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
-
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
     public val cid: String by mutableState::cid
@@ -164,10 +165,14 @@ public class ChannelController internal constructor(
     public val channelConfig: StateFlow<Config> by mutableState::channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
-    internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
-        ThreadController(threadId, this, domainImpl)
-            .also { domainImpl.scope.launch { it.loadOlderMessages() } }
-    }
+    internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
+        threadControllerMap.getOrPut(threadState.parentId) {
+            ThreadController(
+                threadState,
+                threadLogic,
+                client
+            ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
+        }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
         if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
@@ -512,7 +517,7 @@ public class ChannelController internal constructor(
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
         val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
-        removeLocalMessage(message)
+
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
             processedMessage.apply {
@@ -1035,24 +1040,6 @@ public class ChannelController internal constructor(
         channel.hidden = mutableState._hidden.value
 
         return channel
-    }
-
-    internal suspend fun loadOlderThreadMessages(
-        threadId: String,
-        limit: Int,
-        firstMessage: Message? = null,
-    ): Result<List<Message>> {
-        val result = if (firstMessage != null) {
-            client.getRepliesMore(threadId, firstMessage.id, limit).await()
-        } else {
-            client.getReplies(threadId, limit).await()
-        }
-        if (result.isSuccess) {
-            val newMessages = result.data()
-            channelLogic.upsertMessages(newMessages)
-            // Note that we don't handle offline storage for threads at the moment.
-        }
-        return result
     }
 
     internal suspend fun loadMessageById(

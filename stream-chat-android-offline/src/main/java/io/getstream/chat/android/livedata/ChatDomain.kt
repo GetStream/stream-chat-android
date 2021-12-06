@@ -439,6 +439,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "keystroke is deprecated. Use extension function ChatClient::keystroke instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().keystroke(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
     /**
@@ -451,6 +459,14 @@ public sealed interface ChatDomain {
      * false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "stopTyping is deprecated. Use extension function ChatClient::stopTyping instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().stopTyping(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**

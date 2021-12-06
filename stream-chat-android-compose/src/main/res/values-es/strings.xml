@@ -45,6 +45,10 @@
     </plurals>
 
     <!-- Message List -->
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">Enviar</string>
+    <string name="stream_compose_message_list_giphy_cancel">Cancelar</string>
+    <string name="stream_compose_message_list_giphy_shuffle">Aleatorio</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">Respuesta al hilo</item>
         <item quantity="other">%1$d Respuestas en el hilo</item>
@@ -67,4 +71,6 @@
     <string name="stream_compose_message_composer_error_message_length">Tamaño máximo de mensaje (%1$d) excedido.</string>
     <string name="stream_compose_message_composer_error_file_size">El fichero es demasiado grande - Máximo %1$s.</string>
     <string name="stream_compose_message_composer_error_attachment_count">No es posible añadir más de %1$d archivos adjuntos.</string>
+    <string name="stream_compose_message_composer_instant_commands">Comandos instantáneos</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
 </resources>

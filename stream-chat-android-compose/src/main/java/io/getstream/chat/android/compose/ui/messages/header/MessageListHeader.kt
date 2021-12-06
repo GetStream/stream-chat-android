@@ -85,7 +85,7 @@ public fun MessageListHeader(
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChannelAvatar(
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier.size(40.dp),
             channel = channel,
             currentUser = currentUser,
             contentDescription = channel.name,

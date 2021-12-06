@@ -182,7 +182,7 @@ public fun AttachmentsPicker(
                     }
 
                     LaunchedEffect(storagePermissionState.hasPermission) {
-                        if (storagePermissionState.permissionRequested && storagePermissionState.hasPermission) {
+                        if (storagePermissionState.hasPermission) {
                             attachmentsPickerViewModel.loadData()
                         }
                     }

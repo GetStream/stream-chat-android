@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
  * @param attachmentMetaData The metadata for the item, holding the links, size, types, name etc.
  * @param isSelected If the item is selected or not.
  */
-public data class AttachmentItem(
+public data class AttachmentPickerItemState(
     val attachmentMetaData: AttachmentMetaData,
     val isSelected: Boolean,
 )

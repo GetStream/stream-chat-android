@@ -46,6 +46,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::keystroke`.
+- Added new extension function `ChatClient::stopTyping`.
 
 ### ⚠️ Changed
 
@@ -65,8 +67,12 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed crash related with creation of MessageOptionsDialogFragment
+- Removed cut from text when text end with Italic
+- Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
 ### ⬆️ Improved
 - Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
+- Improved Korean 🇰🇷 translations.
+
 ### ✅ Added
 
 ### ⚠️ Changed
@@ -75,12 +81,31 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Removed preemptive attachment loading that was resulting in crashes on certain Android API versions
+- Fixed incorrect message shape for theirs messages in threads.
 
 ### ⬆️ Improved
+- Minor UI improvements to the message overlay
+- Enabled scrolling behavior in SelectedMessageOverlay
 
 ### ✅ Added
+- Added the mention suggestion popup to the `MessageComposer` component, that allows to autocomplete a mention from a list of users.
+- Added support for slowdown mode. Users are no longer able to send messages during the cooldown interval.
+- Added support for system messages.
+- Added support for Giphy command.
+- Added message pinning to the list of message options
+- Added pinned message UI
 
 ### ⚠️ Changed
+- Changed the way focus state works for focused messages.
+- Added the Pin type to the MessageAction sealed class
+- Renamed a bunch of state classes for Compose component, to have the `State` prefix, general renaming, imports and other quality of life improvements
+- Renamed `ReactionOption` state wrapper to `ReactionOptionItemState`
+- Renamed `MessageListItem` state wrapper to `MessageListItemState` and its children now have a `State` suffix
+- Renamed `AttachmentItem` state wrapper to `AttachmentPickerItemState`
+- Renamed `MessageInputState` to `MessageComposerState`
+- Renamed `MessageOption` to `MessageOptionState`
+- Renamed `defaultMessageOptions()` to `defaultMessageOptionsState()`
 
 ### ❌ Removed
 
