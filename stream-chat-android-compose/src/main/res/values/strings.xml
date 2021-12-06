@@ -68,6 +68,10 @@
     <string name="stream_compose_mute_user">Mute User</string>
     <string name="stream_compose_unpin_message">Unpin from this Chat</string>
     <string name="stream_compose_pin_message">Pin to this Chat</string>
+    <plurals name="stream_compose_message_reactions">
+        <item quantity="one">%d Message Reaction</item>
+        <item quantity="other">%d Message Reactions</item>
+    </plurals>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">Max message length (%1$d) exceeded.</string>

@@ -27,6 +27,8 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -129,7 +131,7 @@ public class MessageListViewModel(
      * Gives us information if we're showing the selected message overlay.
      */
     public val isShowingOverlay: Boolean
-        get() = messagesState.selectedMessage != null || threadMessagesState.selectedMessage != null
+        get() = messagesState.selectedMessageState != null || threadMessagesState.selectedMessageState != null
 
     /**
      * Gives us information about the online state of the device.
@@ -425,10 +427,26 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
+        val selectedMessageState = message?.let(::SelectedMessageOptionsState)
         if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(selectedMessage = message)
+            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
         } else {
-            messagesState = messagesState.copy(selectedMessage = message)
+            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
+        }
+    }
+
+    /**
+     * Triggered when the user taps on message reactions. This updates the internal state
+     * and allows our UI to re-render it and show an overlay.
+     *
+     * @param message The message that contains the reactions.
+     */
+    public fun selectReactions(message: Message?) {
+        val selectedMessageState = message?.let(::SelectedMessageReactionsState)
+        if (isInThread) {
+            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
+        } else {
+            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
         }
     }
 
@@ -673,7 +691,7 @@ public class MessageListViewModel(
      */
     public fun leaveThread() {
         messageMode = MessageMode.Normal
-        messagesState = messagesState.copy(selectedMessage = null)
+        messagesState = messagesState.copy(selectedMessageState = null)
         threadMessagesState = MessagesState()
         lastSeenThreadMessage = null
         threadJob?.cancel()
@@ -683,8 +701,8 @@ public class MessageListViewModel(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
      */
     public fun removeOverlay() {
-        threadMessagesState = threadMessagesState.copy(selectedMessage = null)
-        messagesState = messagesState.copy(selectedMessage = null)
+        threadMessagesState = threadMessagesState.copy(selectedMessageState = null)
+        messagesState = messagesState.copy(selectedMessageState = null)
     }
 
     /**

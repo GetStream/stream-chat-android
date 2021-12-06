@@ -4,24 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -36,9 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
@@ -46,229 +35,82 @@ import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
-import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageOptionState
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
-import io.getstream.chat.android.compose.ui.common.MessageBubble
-import io.getstream.chat.android.compose.ui.common.avatar.Avatar
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
-import io.getstream.chat.android.compose.ui.messages.list.DeletedMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * The overlays that's shown when the user selects a message, in the ConversationScreen.
+ * The message options overlays that's shown when the user selects a message.
  *
  * It shows various message options, as well as reactions, that the user can take. It also shows the
  * currently selected message in the middle of these options.
  *
- * @param reactionTypes The types of reactions the user can use to react to messages.
- * @param messageOptions The [MessageOptionState] that represents actions the user can trigger on the message.
- * @param message Selected message.
+ * @param messageOptions Actions the user can trigger on the message.
+ * @param message The selected message.
+ * @param currentUser The currently logged in user.
  * @param onMessageAction Handler for any of the available message actions (options + reactions).
  * @param onDismiss Handler when the user dismisses the UI.
  */
 @Composable
-public fun SelectedMessageOverlay(
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+public fun MessageOptionsOverlay(
     messageOptions: List<MessageOptionState>,
     message: Message,
     currentUser: User?,
     onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val boxScrollState = rememberScrollState()
+    val isMine = message.user.id == currentUser?.id
 
-    val ownReactions = message.ownReactions
-
-    val reactionOptions = reactionTypes.entries
-        .map { (type, drawable) ->
-            ReactionOptionItemState(
-                painter = painterResource(drawable),
-                isSelected = ownReactions.any { it.type == type },
-                type = type
-            )
-        }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
-            .verticalScroll(boxScrollState)
-            .clickable(
-                onClick = onDismiss,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        val isMine = message.user.id == currentUser?.id
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = if (isMine) End else Start
-        ) {
-            ReactionOptions(
-                options = reactionOptions,
-                onReactionClick = {
-                    onMessageAction(
-                        React(
-                            Reaction(
-                                messageId = message.id,
-                                type = it.type,
-                            ),
-                            message
-                        )
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.size(8.dp))
-
-            SelectedMessage(
+    MessageOverlay(
+        message = message,
+        horizontalAlignment = if (isMine) End else Start,
+        onDismiss = onDismiss,
+        headerContent = {
+            DefaultMessageOverlayHeaderContent(
                 message = message,
-                isMine = isMine
+                onMessageAction = onMessageAction
             )
-
-            Spacer(modifier = Modifier.size(8.dp))
-
-            MessageOptions(
+        },
+        centerContent = {
+            DefaultMessageOverlayCenterContent(
+                message = message,
+                currentUser = currentUser
+            )
+        },
+        footerContent = {
+            DefaultMessageOptionsOverlayFooterContent(
                 options = messageOptions,
                 onMessageAction = onMessageAction
             )
         }
-    }
-}
-
-/**
- * A row of selectable reactions on a message. Users can provide their own, or use the default.
- *
- * @param options The options to show.
- * @param onReactionClick Handler when the user clicks on any reaction.
- */
-@Composable
-public fun ReactionOptions(
-    options: List<ReactionOptionItemState>,
-    onReactionClick: (ReactionOptionItemState) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = ChatTheme.colors.barsBackground,
-    ) {
-        LazyRow(
-            modifier = modifier
-                .wrapContentWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item { Spacer(modifier = Modifier.width(2.dp)) }
-            items(options) { option ->
-                ReactionOptionItem(option = option, onReactionClick = onReactionClick)
-            }
-
-            item { Spacer(modifier = Modifier.width(2.dp)) }
-        }
-    }
-}
-
-/**
- * Each reaction item in the row of reactions.
- *
- * @param option The reaction to show.
- * @param onReactionClick Handler when the user clicks on the reaction.
- */
-@Composable
-internal fun ReactionOptionItem(
-    option: ReactionOptionItemState,
-    onReactionClick: (ReactionOptionItemState) -> Unit,
-) {
-    Icon(
-        modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false),
-                onClick = { onReactionClick(option) }
-            )
-            .padding(2.dp),
-        painter = option.painter,
-        contentDescription = option.type,
-        tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
     )
 }
 
 /**
- * The UI for a basic text message that's selected. It doesn't have all the components as a message
- * in the list, as those are not as important.
+ * Represent the default footer content of the message options overlay.
  *
- * @param message Message to show.
- * @param isMine If the message is owned by the current user.
- * @param modifier Modifier for styling.
+ * @param options The options to show.
+ * @param onMessageAction Handler when the user selects an action.
  */
 @Composable
-private fun SelectedMessage(
-    message: Message,
-    isMine: Boolean,
-    modifier: Modifier = Modifier,
+private fun DefaultMessageOptionsOverlayFooterContent(
+    options: List<MessageOptionState>,
+    onMessageAction: (MessageAction) -> Unit,
 ) {
-    Row(
-        modifier.widthIn(max = 300.dp)
-    ) {
-        val authorImage = rememberImagePainter(data = message.user.image)
+    Spacer(modifier = Modifier.size(8.dp))
 
-        if (!isMine) {
-            Avatar(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp)
-                    .size(24.dp)
-                    .align(Alignment.Bottom),
-                painter = authorImage
-            )
-        }
-
-        val messageBubbleShape = if (isMine) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-        val messageBubbleColor =
-            if (isMine) ChatTheme.colors.ownMessagesBackground else ChatTheme.colors.otherMessagesBackground
-
-        MessageBubble(
-            shape = messageBubbleShape,
-            color = messageBubbleColor,
-            content = {
-                if (message.deletedAt != null) {
-                    DeletedMessageContent()
-                } else {
-                    Column {
-                        MessageAttachmentsContent(message = message, onLongItemClick = {})
-
-                        if (message.text.isNotEmpty()) {
-                            DefaultMessageContent(message = message)
-                        }
-                    }
-                }
-            }
-        )
-
-        if (isMine) {
-            Avatar(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp)
-                    .size(24.dp)
-                    .align(Alignment.Bottom),
-                painter = authorImage
-            )
-        }
-    }
+    MessageOptions(
+        options = options,
+        onMessageAction = onMessageAction
+    )
 }
 
 /**
  * List of options the user can choose from, when selecting a message.
  *
- * @param options The options to show, default or user-provided.
+ * @param options The options to show.
  * @param onMessageAction Handler when the user selects an action.
  * @param modifier Modifier for styling.
  */

@@ -32,12 +32,15 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
+import io.getstream.chat.android.compose.ui.messages.overlay.MessageOptionsOverlay
+import io.getstream.chat.android.compose.ui.messages.overlay.MessageReactionsOverlay
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -83,7 +86,7 @@ class MessagesActivity : AppCompatActivity() {
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
-        val selectedMessage = listViewModel.currentMessagesState.selectedMessage
+        val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -138,17 +141,34 @@ class MessagesActivity : AppCompatActivity() {
                 )
             }
 
-            if (selectedMessage != null) {
-                SelectedMessageOverlay(
-                    messageOptions = defaultMessageOptionsState(selectedMessage, user, listViewModel.isInThread),
-                    message = selectedMessage,
-                    currentUser = user,
-                    onMessageAction = { action ->
-                        composerViewModel.performMessageAction(action)
-                        listViewModel.performMessageAction(action)
-                    },
-                    onDismiss = { listViewModel.removeOverlay() }
-                )
+            if (selectedMessageState != null) {
+                val selectedMessage = selectedMessageState.message
+                if (selectedMessageState is SelectedMessageOptionsState) {
+                    MessageOptionsOverlay(
+                        messageOptions = defaultMessageOptionsState(
+                            selectedMessage = selectedMessage,
+                            currentUser = user,
+                            isInThread = listViewModel.isInThread
+                        ),
+                        message = selectedMessage,
+                        currentUser = user,
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
+                        onDismiss = { listViewModel.removeOverlay() }
+                    )
+                } else if (selectedMessageState is SelectedMessageReactionsState) {
+                    MessageReactionsOverlay(
+                        message = selectedMessage,
+                        currentUser = user,
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
+                        onDismiss = { listViewModel.removeOverlay() }
+                    )
+                }
             }
         }
     }

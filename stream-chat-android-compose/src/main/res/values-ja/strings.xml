@@ -63,6 +63,9 @@
     <string name="stream_compose_edit_message">メッセージを編集する</string>
     <string name="stream_compose_delete_message">メッセージを削除する</string>
     <string name="stream_compose_mute_user">ユーザーをミュートする</string>
+    <plurals name="stream_compose_message_reactions">
+        <item quantity="other">%dメッセージのリアクション</item>
+    </plurals>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">"最大メッセージ長（%1$d)字を超えました"</string>

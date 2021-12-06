@@ -66,6 +66,10 @@
     <string name="stream_compose_edit_message">Editar Mensaje</string>
     <string name="stream_compose_delete_message">Eliminar mensaje</string>
     <string name="stream_compose_mute_user">Silenciar usuario</string>
+    <plurals name="stream_compose_message_reactions">
+        <item quantity="one">%d Reación de mensaje</item>
+        <item quantity="other">%d Reaciones de mensaje</item>
+    </plurals>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">Tamaño máximo de mensaje (%1$d) excedido.</string>
