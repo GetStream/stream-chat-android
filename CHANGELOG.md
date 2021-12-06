@@ -71,6 +71,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Removed cut from text when text end with Italic
 - Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
 ### ⬆️ Improved
+- Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
 - Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
