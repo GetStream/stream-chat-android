@@ -26,7 +26,7 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
-        var messages = channelControllerImpl.messages.value
+        var messages = channelControllerImpl.mutableState._messages.value.values
         val lastMessage = messages.last()
         lastMessage.id shouldBeEqualTo originalMessage.id
 
@@ -37,7 +37,7 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
         val result2 = channelControllerImpl.editMessage(updatedMessage)
 
         assertSuccess(result2)
-        messages = channelControllerImpl.messages.value
+        messages = channelControllerImpl.mutableState._messages.value.values
         val liveLastMessage = messages.last()
         liveLastMessage.id shouldBeEqualTo originalMessage.id
         liveLastMessage.extraData shouldContainAll updatedMessage.extraData

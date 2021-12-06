@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.thread
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.cash.turbine.test
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
@@ -59,35 +60,38 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     @Test
     fun `the correct messages on the channelController should be shown on the thread`() =
         testCoroutines.scope.runBlockingTest {
-            val messages = threadController.messages.value
-
-            // verify we see the correct 2 messages
-            val expectedMessages = listOf(threadMessage, threadReply)
-            messages shouldBeEqualTo expectedMessages
+            threadController.messages.test {
+                awaitItem()
+                // verify we see the correct 2 messages
+                val expectedMessages = listOf(threadMessage, threadReply)
+                awaitItem() shouldBeEqualTo expectedMessages
+            }
         }
 
     @Test
     fun `new messages on the channel controller should show up on the thread`() = testCoroutines.scope.runBlockingTest {
         // add an extra message
         val threadReply2 = data.createMessage().apply { parentId = threadId }
-        setMessages(listOf(data.message1, threadMessage, threadReply, threadReply2))
-        val messages = threadController.messages.value
-
-        // verify we see the correct 3 messages
-        val expectedMessages = listOf(threadMessage, threadReply, threadReply2)
-        messages shouldBeEqualTo expectedMessages
+        threadController.messages.test {
+            awaitItem()
+            setMessages(listOf(data.message1, threadMessage, threadReply, threadReply2))
+            // verify we see the correct 3 messages
+            val expectedMessages = listOf(threadMessage, threadReply, threadReply2)
+            awaitItem() shouldBeEqualTo expectedMessages
+        }
     }
 
     @Test
     fun `removing messages on the channel controller should remove them from the thread`() =
         testCoroutines.scope.runBlockingTest {
             // remove a message
-            setMessages(listOf(data.message1, threadMessage))
-            val messages = threadController.messages.value
-
-            // verify we see the correct message
-            val expectedMessages = listOf(threadMessage)
-            messages shouldBeEqualTo expectedMessages
+            threadController.messages.test {
+                awaitItem()
+                setMessages(listOf(data.message1, threadMessage))
+                // verify we see the correct message
+                val expectedMessages = listOf(threadMessage)
+                awaitItem() shouldBeEqualTo expectedMessages
+            }
         }
 
     @Test

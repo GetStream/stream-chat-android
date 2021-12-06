@@ -28,11 +28,11 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
                 .get()
 
             // check that current state is empty
-            channelController.messages.value.size `should be equal to` 0
+            channelController.mutableState._messages.value.size `should be equal to` 0
 
             chatDomain.sendMessage(message).execute()
 
-            channelController.messages.value.last() `should be equal to` message
+            channelController.mutableState._messages.value.values.last() `should be equal to` message
         }
     }
 

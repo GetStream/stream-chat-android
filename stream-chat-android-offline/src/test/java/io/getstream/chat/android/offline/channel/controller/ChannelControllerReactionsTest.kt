@@ -77,7 +77,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = false)
 
-            val result = sut.messages.value.first()
+            val result = sut.mutableState._messages.value.values.first()
             result.ownReactions.size `should be equal to` myReactions.size + 1
             result.ownReactions.contains(newReaction) `should be equal to` true
             result.latestReactions.size `should be equal to` myReactions.size + 1
@@ -94,7 +94,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.messages.value.first()
+            val result = sut.mutableState._messages.value.values.first()
             result.ownReactions.size `should be equal to` 1
             result.ownReactions.first() `should be equal to` newReaction
             result.latestReactions.size `should be equal to` 1
@@ -111,7 +111,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.messages.value.first()
+            val result = sut.mutableState._messages.value.values.first()
             result.reactionCounts[newReaction.type] `should be equal to` 1
         }
 
@@ -125,7 +125,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.messages.value.first()
+            val result = sut.mutableState._messages.value.values.first()
             result.reactionScores[newReaction.type] `should be equal to` newReaction.score
         }
 
@@ -141,7 +141,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.deleteReaction(deletedReaction)
 
-            val result = sut.messages.value.first()
+            val result = sut.mutableState._messages.value.values.first()
             result.ownReactions.size `should be equal to` myReactions.size - 1
             result.ownReactions.contains(deletedReaction) `should be equal to` false
             result.latestReactions.contains(deletedReaction) `should be equal to` false
