@@ -208,7 +208,12 @@ internal class WhenQuery {
             whenever(chatDomainImpl.repos) doReturn repositories
             whenever(chatDomainImpl.client) doReturn chatClient
             val filter = Filters.neutral()
-            val mutableState = QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope)
+            val mutableState = QueryChannelsMutableState(
+                filter, querySort, chatClient, chatDomainImpl.scope,
+                MutableStateFlow(
+                    mapOf(user.id to user)
+                )
+            )
 
             return QueryChannelsController(
                 chatDomainImpl,

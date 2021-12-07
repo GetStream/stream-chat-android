@@ -422,7 +422,8 @@ private class Fixture {
     @OptIn(ExperimentalStreamChatApi::class)
     fun get(): QueryChannelsController {
         val filter = Filters.neutral()
-        val mutableState = QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope)
+        val mutableState =
+            QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope, MutableStateFlow(emptyMap()))
         return QueryChannelsController(
             chatDomainImpl,
             mutableState,
