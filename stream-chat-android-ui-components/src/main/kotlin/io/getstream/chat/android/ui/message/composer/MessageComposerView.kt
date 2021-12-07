@@ -48,12 +48,12 @@ public class MessageComposerView : ConstraintLayout {
     private fun init() {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
-            val defaultLeadingContent = DefaultLeadingContent(context)
+            val defaultLeadingContent = MessageComposerDefaultLeadingContent(context)
             removeAllViews()
             addView(defaultLeadingContent)
         }
         binding.centerContent.apply {
-            val defaultCenterContent = DefaultCenterContent(context).apply {
+            val defaultCenterContent = MessageComposerDefaultCenterContent(context).apply {
                 onTextChangedListener = { onInputChangedHandler(it) }
                 onClearButtonClickListener = { onDismissMessageHandler() }
             }
@@ -61,7 +61,7 @@ public class MessageComposerView : ConstraintLayout {
             addView(defaultCenterContent)
         }
         binding.trailingContent.apply {
-            val defaultTrailingContent = DefaultTrailingContent(context).apply {
+            val defaultTrailingContent = MessageComposerDefaultTrailingContent(context).apply {
                 this.onSendButtonClickListener = { onSendMessageClickHandler() }
             }
             removeAllViews()
@@ -84,18 +84,18 @@ public class MessageComposerView : ConstraintLayout {
      * @param state [MessageInputState] instance representing current UI state
      */
     public fun renderState(state: MessageInputState) {
-        (binding.trailingContent.children.first() as? DefaultTrailingContent)?.renderState(state)
-        (binding.centerContent.children.first() as? DefaultCenterContent)?.renderState(state)
-        (binding.leadingContent.children.first() as? DefaultLeadingContent)?.renderState(state)
+        (binding.trailingContent.children.first() as? MessageComposerChild)?.renderState(state)
+        (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
+        (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
     }
 
     /**
      * Sets custom leading content view.
      *
-     * @param view The [View] which replaces default leading content of [MessageComposerView]
+     * @param view The [View] which replaces default leading content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
      */
-    public fun setLeadingContent(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
+    public fun <V> setLeadingContent(view: V, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) where V: View, V: MessageComposerChild {
         binding.leadingContent.removeAllViews()
         binding.leadingContent.addView(view, layoutParams)
     }
@@ -103,10 +103,10 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Sets custom center content view.
      *
-     * @param view The [View] which replaces default center content of [MessageComposerView]
+     * @param view The [View] which replaces default center content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
      */
-    public fun setCenterContent(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
+    public fun <V> setCenterContent(view: V, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) where V: View, V: MessageComposerChild {
         binding.centerContent.removeAllViews()
         binding.centerContent.addView(view, layoutParams)
     }
@@ -114,10 +114,10 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Sets custom trailing content view.
      *
-     * @param view The [View] which replaces default trailing content of [MessageComposerView]
+     * @param view The [View] which replaces default trailing content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
      */
-    public fun setTrailingContent(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
+    public fun <V> setTrailingContent(view: V, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) where V: View, V: MessageComposerChild {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(view, layoutParams)
     }
@@ -131,4 +131,14 @@ public class MessageComposerView : ConstraintLayout {
             )
         }
     }
+}
+
+/**
+ * Interface implemented by MessageComposerView children set by [MessageComposerView.setLeadingContent],
+ * [MessageComposerView.setCenterContent], and [MessageComposerView.setTrailingContent] functions.
+ *
+ * The [renderState] hook function is invoked when the state changes. You should update the UI of the view inside this function implementation.
+ */
+public interface MessageComposerChild {
+    public fun renderState(state: MessageInputState)
 }

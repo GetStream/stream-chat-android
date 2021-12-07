@@ -7,7 +7,10 @@ import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 
-internal class DefaultLeadingContent : FrameLayout {
+/**
+ * Default leading content of [MessageComposerView]
+ */
+internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     constructor(context: Context) : this(context, null)
@@ -20,10 +23,16 @@ internal class DefaultLeadingContent : FrameLayout {
         init()
     }
 
+    /**
+     * Initial UI rendering and setting up callbacks
+     */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
     }
 
-    fun renderState(state: MessageInputState) {
+    /**
+     * Re-rendering the UI according to the new state
+     */
+    override fun renderState(state: MessageInputState) {
     }
 }

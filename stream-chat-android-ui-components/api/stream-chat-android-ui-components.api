@@ -1077,6 +1077,10 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Comp
 	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerChild {
+	public abstract fun renderState (Lio/getstream/chat/android/common/state/MessageInputState;)V
+}
+
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
