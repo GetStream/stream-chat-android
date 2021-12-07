@@ -75,6 +75,7 @@
     <string name="stream_compose_message_composer_error_attachment_count">Attachments count (%1$d) exceeded.</string>
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
 
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_send_message">Send</string>
@@ -106,6 +107,8 @@
     <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
     <string name="stream_compose_pinned_to_channel_by">Pinned by %1$s</string>
     <string name="stream_compose_message_list_you">You</string>
+    <string name="stream_compose_also_sent_to_channel">Also sent to the channel</string>
+    <string name="stream_compose_replied_to_thread">Replied to a thread</string>
 
     <!--  Image Preview  -->
     <string name="stream_compose_image_options">Image options</string>

@@ -33,6 +33,11 @@ public class MessageComposerViewModel(
     public val input: MutableStateFlow<String> = messageComposerController.input
 
     /**
+     * If the message will be shown in the channel after it is sent.
+     */
+    public val showInChannel: MutableStateFlow<Boolean> = messageComposerController.showInChannel
+
+    /**
      * Represents the remaining time until the user is allowed to send the next message.
      */
     public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
@@ -58,6 +63,12 @@ public class MessageComposerViewModel(
     public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
 
     /**
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
+     * reply or a regular message.
+     */
+    public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
+
+    /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
@@ -68,6 +79,14 @@ public class MessageComposerViewModel(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String): Unit = messageComposerController.setMessageInput(value)
+
+    /**
+     * Called when the "Also send as a direct message" checkbox is checked or unchecked.
+     *
+     * @param showInChannel If the message will be shown in the channel after it is sent.
+     */
+    public fun setShowInChannel(showInChannel: Boolean): Unit =
+        messageComposerController.setShowInChannel(showInChannel)
 
     /**
      * Called when the message mode changes and the internal state needs to be updated.

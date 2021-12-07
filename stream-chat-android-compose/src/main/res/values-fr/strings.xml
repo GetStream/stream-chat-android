@@ -73,4 +73,5 @@
     <string name="stream_compose_message_composer_error_attachment_count">Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %1$d pièces jointes</string>
     <string name="stream_compose_message_composer_instant_commands">Commandes instantanées</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">Envoyer aussi comme message direct</string>
 </resources>

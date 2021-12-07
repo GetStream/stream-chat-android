@@ -70,4 +70,5 @@
     <string name="stream_compose_message_composer_error_attachment_count">添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません</string>
     <string name="stream_compose_message_composer_instant_commands">インスタントコマンド</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">ダイレクトメッセージでも送信</string>
 </resources>

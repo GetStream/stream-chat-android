@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -35,6 +37,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
@@ -62,6 +65,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
+ * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
+ * @param headerContent The content shown at the top of the message composer.
+ * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable function that represents the instant command suggestions popup.
  * @param integrations A view that represents custom integrations. By default, we provide
@@ -82,6 +88,19 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
+    onShowInChannelChecked: (Boolean) -> Unit = { viewModel.setShowInChannel(it) },
+    headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
+        DefaultMessageComposerHeaderContent(
+            messageComposerState = it,
+            onCancelAction = onCancelAction
+        )
+    },
+    footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
+        DefaultMessageComposerFooterContent(
+            messageComposerState = it,
+            onShowInChannelChecked = onShowInChannelChecked
+        )
+    },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
@@ -125,6 +144,8 @@ public fun MessageComposer(
     val mentionSuggestions by viewModel.mentionSuggestions.collectAsState()
     val commandSuggestions by viewModel.commandSuggestions.collectAsState()
     val cooldownTimer by viewModel.cooldownTimer.collectAsState()
+    val messageMode by viewModel.messageMode.collectAsState()
+    val showInChannel by viewModel.showInChannel.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -135,6 +156,9 @@ public fun MessageComposer(
         },
         onMentionSelected = onMentionSelected,
         onCommandSelected = onCommandSelected,
+        onShowInChannelChecked = onShowInChannelChecked,
+        headerContent = headerContent,
+        footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
         integrations = integrations,
@@ -147,10 +171,68 @@ public fun MessageComposer(
             mentionSuggestions = mentionSuggestions,
             commandSuggestions = commandSuggestions,
             cooldownTimer = cooldownTimer,
+            messageMode = messageMode,
+            showInChannel = showInChannel,
         ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
     )
+}
+
+/**
+ * Represents the default content shown at the top of the message composer component.
+ *
+ * @param messageComposerState The state of the message composer.
+ * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ */
+@Composable
+public fun DefaultMessageComposerHeaderContent(
+    messageComposerState: MessageComposerState,
+    onCancelAction: () -> Unit,
+) {
+    val activeAction = messageComposerState.action
+
+    if (activeAction != null) {
+        MessageInputOptions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
+            activeAction = activeAction,
+            onCancelAction = onCancelAction
+        )
+    }
+}
+
+/**
+ * Represents the default content shown at the bottom of the message composer component.
+ *
+ * @param messageComposerState The state of the message composer.
+ * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
+ */
+@Composable
+public fun DefaultMessageComposerFooterContent(
+    messageComposerState: MessageComposerState,
+    onShowInChannelChecked: (Boolean) -> Unit,
+) {
+    if (messageComposerState.messageMode is MessageMode.MessageThread) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+        ) {
+            Checkbox(
+                checked = messageComposerState.showInChannel,
+                onCheckedChange = { onShowInChannelChecked(it) }
+            )
+
+            Text(
+                text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                style = ChatTheme.typography.bodyBold
+            )
+        }
+    }
 }
 
 /**
@@ -162,7 +244,10 @@ public fun MessageComposer(
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
+ * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
  * @param modifier Modifier for styling.
+ * @param headerContent The content shown at the top of the message composer.
+ * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable function that represents the instant command suggestions popup.
  * @param shouldShowIntegrations If we should show or hide integrations.
@@ -176,7 +261,20 @@ public fun MessageComposer(
     onCancelAction: () -> Unit,
     onMentionSelected: (User) -> Unit,
     onCommandSelected: (Command) -> Unit,
+    onShowInChannelChecked: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
+        DefaultMessageComposerHeaderContent(
+            messageComposerState = it,
+            onCancelAction = onCancelAction,
+        )
+    },
+    footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
+        DefaultMessageComposerFooterContent(
+            messageComposerState = it,
+            onShowInChannelChecked = onShowInChannelChecked,
+        )
+    },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
@@ -202,19 +300,8 @@ public fun MessageComposer(
         elevation = 4.dp,
         color = ChatTheme.colors.barsBackground,
     ) {
-        Column(
-            Modifier
-                .padding(vertical = 6.dp)
-        ) {
-            if (activeAction != null) {
-                MessageInputOptions(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
-                    activeAction = activeAction,
-                    onCancelAction = onCancelAction
-                )
-            }
+        Column(Modifier.padding(vertical = 6.dp)) {
+            headerContent(messageComposerState)
 
             Row(
                 Modifier.fillMaxWidth(),
@@ -253,6 +340,8 @@ public fun MessageComposer(
                     )
                 }
             }
+
+            footerContent(messageComposerState)
         }
 
         if (mentionSuggestions.isNotEmpty()) {

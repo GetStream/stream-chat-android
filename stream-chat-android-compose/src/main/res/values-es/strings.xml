@@ -73,4 +73,5 @@
     <string name="stream_compose_message_composer_error_attachment_count">No es posible añadir más de %1$d archivos adjuntos.</string>
     <string name="stream_compose_message_composer_instant_commands">Comandos instantáneos</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">También enviar cómo mensaje directo</string>
 </resources>
