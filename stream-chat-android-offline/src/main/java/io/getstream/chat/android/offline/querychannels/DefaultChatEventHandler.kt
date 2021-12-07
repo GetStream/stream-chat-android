@@ -48,16 +48,12 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return handleMemberUpdate(event, event.cid, filter)
-    }
+    ): EventHandlingResult = handleMemberUpdate(event, event.cid, filter)
 
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return handleMemberUpdate(event, event.cid, filter)
-    }
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     override fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
         EventHandlingResult.Skip
@@ -94,9 +90,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return handleMemberUpdate(event, event.cid, filter)
-    }
+    ): EventHandlingResult = handleMemberUpdate(event, event.cid, filter)
 
     private fun handleMemberUpdate(
         event: HasChannel,
