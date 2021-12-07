@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.channel.controller
 
+import app.cash.turbine.test
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -95,10 +96,15 @@ internal class ChannelControllerTypingTests {
             .givenReadEventsEnabled()
             .get()
 
-        sut.upsertMessage(randomMessage())
+        sut.mutableState.sortedMessages.test {
+            awaitItem()
 
-        sut.markRead() `should be equal to` true
-        sut.markRead() `should be equal to` false
+            sut.upsertMessage(randomMessage())
+
+            awaitItem()
+            sut.markRead() `should be equal to` true
+            sut.markRead() `should be equal to` false
+        }
     }
 
     private class Fixture(private val scope: CoroutineScope, user: User) {
