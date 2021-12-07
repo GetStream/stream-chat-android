@@ -67,16 +67,16 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     ): EventHandlingResult
 
     /** Handles [MemberAddedEvent] event. It runs in background. */
-    public abstract fun handleMemberAddedEvent(
+    public open fun handleMemberAddedEvent(
         event: MemberAddedEvent,
         filter: FilterObject,
-    ): EventHandlingResult
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     /** Handles [MemberRemovedEvent] event. It runs in background. */
-    public abstract fun handleMemberRemovedEvent(
+    public open fun handleMemberRemovedEvent(
         event: MemberRemovedEvent,
         filter: FilterObject,
-    ): EventHandlingResult
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
     public abstract fun handleChannelUpdatedByUserEvent(
