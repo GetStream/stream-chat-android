@@ -70,6 +70,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed behaviour related to search messages, when message was not already loaded from database MessageListView could not scroll to searched message.
 - Removed cut from text when text end with Italic
 - Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
+- Fixed bug related of not removing channels when filter selects channels where the the current user is not a member
 ### ⬆️ Improved
 - Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
 - Improved Korean 🇰🇷 translations.

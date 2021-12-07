@@ -114,7 +114,11 @@ public class QueryChannelsController internal constructor(
 
     /** Handles updates by WS events. Keeps synchronized data of [QueryChannelsMutableState]. */
     internal suspend fun handleEvent(event: ChatEvent) {
-        when (val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter)) {
+        // update the info for that channel from the channel repo
+        logger.logI("received channel event $event")
+
+        val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter)
+        when (handlingResult) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
             is EventHandlingResult.Skip -> Unit
@@ -129,8 +133,6 @@ public class QueryChannelsController internal constructor(
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
             }
-            // update the info for that channel from the channel repo
-            logger.logI("received channel event $event")
             refreshChannel(event.cid)
         }
 
