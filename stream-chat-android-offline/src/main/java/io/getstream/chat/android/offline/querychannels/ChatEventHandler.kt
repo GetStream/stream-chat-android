@@ -115,7 +115,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     public open fun handleCidEvent(event: CidEvent, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
-            is MemberRemovedEvent -> EventHandlingResult.Remove(event.cid)
+            is MemberRemovedEvent -> handleMemberRemovedEvent(event, filter)
             is MemberAddedEvent -> handleMemberAddedEvent(event, filter)
             else -> EventHandlingResult.Skip
         }
