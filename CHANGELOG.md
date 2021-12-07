@@ -96,6 +96,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added support for Giphy command.
 - Added message pinning to the list of message options
 - Added pinned message UI
+- Added a checkbox to the `MessageComposer` component, that allows to display a thread message in the parent channel.
 
 ### ⚠️ Changed
 - Changed the way focus state works for focused messages.
