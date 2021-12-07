@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -180,62 +182,6 @@ public fun MessageComposer(
 }
 
 /**
- * Represents the default content shown at the top of the message composer component.
- *
- * @param messageComposerState The state of the message composer.
- * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
- */
-@Composable
-public fun DefaultMessageComposerHeaderContent(
-    messageComposerState: MessageComposerState,
-    onCancelAction: () -> Unit,
-) {
-    val activeAction = messageComposerState.action
-
-    if (activeAction != null) {
-        MessageInputOptions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
-            activeAction = activeAction,
-            onCancelAction = onCancelAction
-        )
-    }
-}
-
-/**
- * Represents the default content shown at the bottom of the message composer component.
- *
- * @param messageComposerState The state of the message composer.
- * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
- */
-@Composable
-public fun DefaultMessageComposerFooterContent(
-    messageComposerState: MessageComposerState,
-    onShowInChannelChecked: (Boolean) -> Unit,
-) {
-    if (messageComposerState.messageMode is MessageMode.MessageThread) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-        ) {
-            Checkbox(
-                checked = messageComposerState.showInChannel,
-                onCheckedChange = { onShowInChannelChecked(it) }
-            )
-
-            Text(
-                text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                style = ChatTheme.typography.bodyBold
-            )
-        }
-    }
-}
-
-/**
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
  * manual way to handle and represent data and various operations.
  *
@@ -350,6 +296,66 @@ public fun MessageComposer(
 
         if (commandSuggestions.isNotEmpty()) {
             commandPopupContent(commandSuggestions)
+        }
+    }
+}
+
+/**
+ * Represents the default content shown at the top of the message composer component.
+ *
+ * @param messageComposerState The state of the message composer.
+ * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ */
+@Composable
+public fun DefaultMessageComposerHeaderContent(
+    messageComposerState: MessageComposerState,
+    onCancelAction: () -> Unit,
+) {
+    val activeAction = messageComposerState.action
+
+    if (activeAction != null) {
+        MessageInputOptions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
+            activeAction = activeAction,
+            onCancelAction = onCancelAction
+        )
+    }
+}
+
+/**
+ * Represents the default content shown at the bottom of the message composer component.
+ *
+ * @param messageComposerState The state of the message composer.
+ * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
+ */
+@Composable
+public fun DefaultMessageComposerFooterContent(
+    messageComposerState: MessageComposerState,
+    onShowInChannelChecked: (Boolean) -> Unit,
+) {
+    if (messageComposerState.messageMode is MessageMode.MessageThread) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = messageComposerState.showInChannel,
+                onCheckedChange = { onShowInChannelChecked(it) },
+                colors = CheckboxDefaults.colors(ChatTheme.colors.primaryAccent)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
+                color = ChatTheme.colors.textLowEmphasis,
+                textAlign = TextAlign.Center,
+                style = ChatTheme.typography.body
+            )
         }
     }
 }

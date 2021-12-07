@@ -309,6 +309,7 @@ public class MessageComposerController(
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
+        showInChannel.value = false
     }
 
     /**
