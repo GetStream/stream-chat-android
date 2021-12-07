@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stream_ui_shape_edit_text_round"
+        >
+
+        <FrameLayout
+            android:id="@+id/selectedAttachmentsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/messageReplyView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/attachmentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="@dimen/stream_ui_spacing_medium"
+                android:layout_marginEnd="1dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                />
+
+        </FrameLayout>
+
+        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
+            android:id="@+id/messageReplyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@id/messageEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/selectedAttachmentsContainer"
+            app:streamUiEllipsize="true"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:id="@+id/commandBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="@dimen/stream_ui_spacing_small"
+            android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
+            android:background="@drawable/stream_ui_shape_command_background"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/stream_ui_spacing_tiny"
+            android:paddingEnd="@dimen/stream_ui_spacing_small"
+            android:textAllCaps="true"
+            android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
+            android:textColor="@color/stream_ui_literal_white"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/stream_ui_ic_command_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/messageEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="giphy"
+            />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/messageEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="7"
+            android:paddingStart="@dimen/stream_ui_spacing_medium"
+            android:paddingTop="18dp"
+            android:paddingEnd="@dimen/stream_ui_spacing_medium"
+            android:paddingBottom="18dp"
+            android:scrollbars="vertical"
+            android:textAppearance="@style/StreamUiTextAppearance.Body"
+            android:textColorHint="@color/stream_ui_text_color_hint"
+            android:textCursorDrawable="@drawable/stream_ui_message_input_cursor"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/clearCommandButton"
+            app:layout_constraintStart_toEndOf="@id/commandBadge"
+            app:layout_constraintTop_toBottomOf="@id/messageReplyView"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/clearCommandButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+            android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
+            android:src="@drawable/stream_ui_ic_clear"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
