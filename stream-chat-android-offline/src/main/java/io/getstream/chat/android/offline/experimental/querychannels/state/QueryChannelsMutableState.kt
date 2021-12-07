@@ -5,7 +5,9 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -23,6 +25,7 @@ internal class QueryChannelsMutableState(
     override val sort: QuerySort<Channel>,
     client: ChatClient,
     scope: CoroutineScope,
+    latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
@@ -32,7 +35,9 @@ internal class QueryChannelsMutableState(
     internal val _loadingMore = MutableStateFlow(false)
     internal val _endOfChannels = MutableStateFlow(false)
     internal val _sortedChannels =
-        _channels.map { it.values.sortedWith(sort.comparator) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+        _channels.combine(latestUsers) { channelMap, userMap ->
+            channelMap.values.updateUsers(userMap)
+        }.map { it.sortedWith(sort.comparator) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
