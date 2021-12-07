@@ -87,6 +87,7 @@ internal data class MemberAddedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
+    val channel: DownstreamChannelDto,
     val member: DownstreamMemberDto,
 ) : ChatEventDto()
 
@@ -98,6 +99,7 @@ internal data class MemberRemovedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
+    val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

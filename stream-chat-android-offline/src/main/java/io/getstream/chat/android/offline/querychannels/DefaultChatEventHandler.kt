@@ -7,6 +7,8 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -50,6 +52,11 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
         filter: FilterObject,
     ): EventHandlingResult = handleMemberUpdate(event, event.cid, filter)
 
+    override fun handleMemberAddedEvent(
+        event: MemberAddedEvent,
+        filter: FilterObject,
+    ): EventHandlingResult = handleMemberUpdate(event, event.cid, filter)
+
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
@@ -80,6 +87,17 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
             checkCidByChannelFilter(channel.cid, filter, EventHandlingResult.Add(channel))
         }
     }
+
+    /**
+     * Handles [MemberRemovedEvent]. It makes a request to API to define outcome of handling.
+     *
+     * @param event Instance of [MemberRemovedEvent] that is being handled.
+     * @param filter [FilterObject] which is used to define an outcome.
+     */
+    override fun handleMemberRemovedEvent(
+        event: MemberRemovedEvent,
+        filter: FilterObject
+    ): EventHandlingResult = handleMemberUpdate(event, event.cid, filter)
 
     /**
      * Handles [NotificationRemovedFromChannelEvent]. It makes a request to API to define outcome of handling.

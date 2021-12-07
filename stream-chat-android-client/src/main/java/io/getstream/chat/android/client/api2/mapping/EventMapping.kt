@@ -241,6 +241,7 @@ private fun MemberAddedEventDto.toDomain(): MemberAddedEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        channel = channel.toDomain(),
         member = member.toDomain(),
     )
 }
@@ -253,6 +254,7 @@ private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        channel = channel.toDomain(),
     )
 }
 

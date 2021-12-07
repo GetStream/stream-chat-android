@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -64,6 +66,18 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         filter: FilterObject,
     ): EventHandlingResult
 
+    /** Handles [MemberAddedEvent] event. It runs in background. */
+    public abstract fun handleMemberAddedEvent(
+        event: MemberAddedEvent,
+        filter: FilterObject,
+    ): EventHandlingResult
+
+    /** Handles [MemberRemovedEvent] event. It runs in background. */
+    public abstract fun handleMemberRemovedEvent(
+        event: MemberRemovedEvent,
+        filter: FilterObject,
+    ): EventHandlingResult
+
     /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
     public abstract fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
@@ -94,6 +108,8 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
             is ChannelUpdatedByUserEvent -> handleChannelUpdatedByUserEvent(event, filter)
             is ChannelUpdatedEvent -> handleChannelUpdatedEvent(event, filter)
             is NotificationMessageNewEvent -> handleNotificationMessageNewEvent(event, filter)
+            is MemberAddedEvent -> handleMemberAddedEvent(event, filter)
+            is MemberRemovedEvent -> handleMemberRemovedEvent(event, filter)
             else -> EventHandlingResult.Skip
         }
     }
