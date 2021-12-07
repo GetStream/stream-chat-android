@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
@@ -59,12 +58,10 @@ internal class ChannelMutableState(
 
     internal var hideMessagesBefore: Date? = null
 
-    var countTime = 0
-
     /** The raw message list updated by recent users value. */
-    internal val messageList: StateFlow<List<Message>> = _messages.combine(latestUsers) { messageMap, userMap ->
-        messageMap.values.updateUsers(userMap)
-    }.onEach { countTime += 1 }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+    internal val messageList: StateFlow<List<Message>> =
+        _messages.combine(latestUsers) { messageMap, userMap -> messageMap.values.updateUsers(userMap) }
+            .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =

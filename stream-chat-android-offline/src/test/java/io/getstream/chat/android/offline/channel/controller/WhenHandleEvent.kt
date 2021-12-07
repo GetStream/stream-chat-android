@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.channel.controller
 
+import app.cash.turbine.test
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -30,16 +31,18 @@ import io.getstream.chat.android.offline.randomReactionNewEvent
 import io.getstream.chat.android.offline.randomTypingStartEvent
 import io.getstream.chat.android.offline.randomTypingStopEvent
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo
+import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
@@ -47,9 +50,10 @@ import java.util.Date
 @ExperimentalCoroutinesApi
 internal class WhenHandleEvent {
 
+    @get:Rule
+    val testCoroutines = TestCoroutineRule()
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
-    private val scope = TestCoroutineScope()
     private val userFlow = MutableStateFlow(currentUser)
 
     private val chatClient: ChatClient = mock {
@@ -57,7 +61,7 @@ internal class WhenHandleEvent {
     }
     private val chatDomain: ChatDomainImpl = mock {
         on(it.appContext) doReturn mock()
-        on(it.scope) doReturn scope
+        on(it.scope) doReturn testCoroutines.scope
         on(it.user) doReturn userFlow
         on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
     }
@@ -72,7 +76,12 @@ internal class WhenHandleEvent {
             invocation.arguments[0] as List<Message>
         }
 
-        val mutableState = ChannelMutableState("type1", channelId, scope, userFlow, MutableStateFlow(emptyMap()))
+        val mutableState = ChannelMutableState(
+            "type1", channelId, testCoroutines.scope, userFlow,
+            MutableStateFlow(
+                mapOf(currentUser.id to currentUser)
+            )
+        )
 
         channelController = ChannelController(
             mutableState,
@@ -105,25 +114,29 @@ internal class WhenHandleEvent {
 
     // New message event
     @Test
-    fun `when new message event arrives, messages should be propagated correctly`() {
-        val user = User(id = CURRENT_USER_ID)
-        val message = randomMessage(
-            createdAt = Date(1000L),
-            user = user,
-            silent = false,
-            showInChannel = true
-        )
-        val newMessageEvent = randomNewMessageEvent(user = user, message = message)
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+    fun `when new message event arrives, messages should be propagated correctly`(): Unit = testCoroutines.scope.runBlockingTest {
+        channelController.messages.test {
+            awaitItem()
 
-        channelController.handleEvent(newMessageEvent)
+            val user = User(id = CURRENT_USER_ID)
+            val message = randomMessage(
+                createdAt = Date(1000L),
+                user = user,
+                silent = false,
+                showInChannel = true
+            )
+            val newMessageEvent = randomNewMessageEvent(user = user, message = message)
+            whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        // Message is propagated
-        channelController.messages.value shouldBeEqualTo listOf(message)
-        // Unread count should not be propagated, because it is a message form the same user
-        channelController.unreadCount.value shouldBeEqualTo 0
-        // Last message is updated
-        channelController.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
+            channelController.handleEvent(newMessageEvent)
+
+            // Message is propagated
+            awaitItem() shouldBeEqualTo listOf(message)
+            // Unread count should not be propagated, because it is a message form the same user
+            channelController.unreadCount.value shouldBeEqualTo 0
+            // Last message is updated
+            channelController.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
+        }
     }
 
     @Test
@@ -141,7 +154,7 @@ internal class WhenHandleEvent {
         channelController.handleEvent(newMessageEvent)
 
         // Message is propagated
-        channelController.messages.value shouldBeEqualTo listOf(message)
+        channelController.mutableState._messages.value.values.toList() shouldBeEqualTo listOf(message)
 
         // Unread count should be propagated, because it is a message form another user
         channelController.unreadCount.value shouldBeEqualTo 1
@@ -165,7 +178,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(messageUpdateEvent)
 
-        channelController.messages.value.first() shouldBeEqualTo message
+        channelController.mutableState._messages.value.values.first() shouldBeEqualTo message
     }
 
     @Test
@@ -202,20 +215,23 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(messageUpdateEvent)
 
-        channelController.messages.value shouldBeEqualTo listOf(recentMessage)
-        channelController.messages.value shouldNotBeEqualTo listOf(oldMessage)
+        channelController.mutableState._messages.value.values.toList() shouldBeEqualTo listOf(recentMessage)
+        channelController.mutableState._messages.value.values.toList() shouldNotBeEqualTo listOf(oldMessage)
     }
 
     // Member added event
     @Test
-    fun `when member is added, it should be propagated`() {
-        val user = randomUser()
-        val member = randomMember(user = user)
-        val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
+    fun `when member is added, it should be propagated`(): Unit = testCoroutines.scope.runBlockingTest {
+        channelController.members.test {
+            awaitItem()
+            val user = randomUser()
+            val member = randomMember(user = user)
+            val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
 
-        channelController.handleEvent(memberAddedEvent)
+            channelController.handleEvent(memberAddedEvent)
 
-        channelController.members.value shouldBeEqualTo listOf(member)
+            awaitItem() shouldBeEqualTo listOf(member)
+        }
     }
 
     // Typing events
@@ -262,18 +278,22 @@ internal class WhenHandleEvent {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, the message of the event should be upsert`() {
-        val message = randomMessage(
-            showInChannel = true,
-            silent = false,
-        )
-        val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = testCoroutines.scope.runBlockingTest {
+        channelController.messages.test {
+            awaitItem()
 
-        channelController.handleEvent(reactionEvent)
+            val message = randomMessage(
+                showInChannel = true,
+                silent = false,
+            )
+            val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
+            whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        // Message is propagated
-        channelController.messages.value shouldBeEqualTo listOf(message)
+            channelController.handleEvent(reactionEvent)
+
+            // Message is propagated
+            awaitItem() shouldBeEqualTo listOf(message)
+        }
     }
 
     // Channel deleted event
@@ -287,17 +307,22 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when channel is deleted, the status is updated`() {
-        val channel = randomChannel()
-        val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
-        val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
+    fun `when channel is deleted, the status is updated`() = testCoroutines.scope.runBlockingTest {
+        channelController.channelData.test {
+            awaitItem()
 
-        channelController.handleEvent(updateChannelEvent)
-        channelController.handleEvent(deleteChannelEvent)
+            val channel = randomChannel()
+            val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
+            val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
 
-        val channelFlowValue = channelController.channelData.value
-        channelFlowValue.channelId shouldBeEqualTo channel.id
-        channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
+            channelController.handleEvent(updateChannelEvent)
+            awaitItem()
+            channelController.handleEvent(deleteChannelEvent)
+
+            val channelFlowValue = awaitItem()
+            channelFlowValue.channelId shouldBeEqualTo channel.id
+            channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
+        }
     }
 
     private companion object {
