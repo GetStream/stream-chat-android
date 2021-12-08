@@ -65,7 +65,7 @@
     <string name="stream_compose_mute_user">ユーザーをミュートする</string>
     <string name="stream_compose_flag_message">メッセージをフラグする</string>
 
-    <!-- Message Action Confirmations -->
+    <!-- Message Action Prompts -->
     <string name="stream_compose_delete_message_title">メッセージを削除する</string>
     <string name="stream_compose_delete_message_text">このメッセージを完全に削除してもよろしいですか？</string>
     <string name="stream_compose_flag_message_title">メッセージをフラグする</string>
