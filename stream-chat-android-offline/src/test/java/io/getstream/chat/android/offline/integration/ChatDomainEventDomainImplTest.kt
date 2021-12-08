@@ -4,7 +4,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
+import io.getstream.chat.android.offline.randomMember
+import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.randomUserStartWatchingEvent
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -216,4 +221,33 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         channel.members.size shouldBeEqualTo 1
     }
+
+    @Test
+    fun `Given channel stored in DB and in controller When handle UserStartWatchingEvent Should update user value for channel in controller`() =
+        coroutineTest {
+            val userMember = randomUser(id = "user99")
+            val updateUserMember = userMember.copy(extraData = mutableMapOf()).apply { name = "updatedName" }
+            val message = randomMessage(user = userMember)
+            val channel = data.channel1.copy(
+                createdBy = userMember,
+                messages = listOf(message),
+                members = listOf(randomMember(chatDomainImpl.user.value!!), randomMember(userMember))
+            )
+            chatDomainImpl.repos.insertChannel(channel)
+            queryControllerImpl.query()
+
+            queryControllerImpl.channels.value.first() shouldBeEqualTo channel
+
+            chatDomainImpl.eventHandler.handleEvent(
+                randomUserStartWatchingEvent(
+                    user = updateUserMember,
+                    cid = channel.cid
+                )
+            )
+
+            val updatedChannel = queryControllerImpl.channels.value.first()
+            updatedChannel.createdBy.name shouldBeEqualTo "user99"
+            updatedChannel.messages.first().user.name shouldBeEqualTo "user99"
+            updatedChannel.members.any { it.user.name == "user99" } shouldBe true
+        }
 }

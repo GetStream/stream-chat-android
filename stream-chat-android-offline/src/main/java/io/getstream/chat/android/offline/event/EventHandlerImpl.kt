@@ -314,9 +314,6 @@ internal class EventHandlerImpl(
                 is NotificationChannelTruncatedEvent -> {
                     batch.addChannel(event.channel)
                 }
-                is UserPresenceChangedEvent -> {
-                    batch.addUser(event.user)
-                }
 
                 // we use syncState to store the last markAllRead date for a given
                 // user since it makes more sense to write to the database once instead of N times.
