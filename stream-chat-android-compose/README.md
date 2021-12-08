@@ -17,3 +17,9 @@ To start using this library in your project, see [Dependencies](https://getstrea
 ## Sample app
 
 To see these components in action, check out our [sample app](../stream-chat-android-compose-sample), which implements a messaging application based on these components.
+
+## Project management and milestones
+
+We keep all of our project planning, management, milestones and ticket tracking open and public, in GitHub projects.
+
+To see what we're working on at the moment, what we have planned for the future and what milestones we have, check out the [Compose Planning](https://github.com/orgs/GetStream/projects/6) project board.
