@@ -863,7 +863,7 @@ public class MessageInputView : ConstraintLayout {
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachments: List<Attachment>,
+                attachmentsWithMimeTypes: List<Attachment>,
             ) {
                 throw IllegalStateException("MessageInputView#sendToThreadWithCustomAttachments needs to be configured to send messages")
             }

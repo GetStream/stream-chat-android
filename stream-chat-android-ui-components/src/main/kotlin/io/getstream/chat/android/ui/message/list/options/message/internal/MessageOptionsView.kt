@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
@@ -122,7 +121,7 @@ internal class MessageOptionsView : FrameLayout {
             SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS, SyncStatus.AWAITING_ATTACHMENTS -> {
                 binding.threadReplyTV.isVisible = false
             }
-        }.exhaustive
+        }
 
         configureCopyMessage(configuration, style)
 

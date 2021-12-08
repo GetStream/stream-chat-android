@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
@@ -438,7 +437,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     }
                 }
             }
-        }.exhaustive
+        }
     }
 
     /**
@@ -490,7 +489,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     }
                 )
             }
-        }.exhaustive
+        }
     }
 
     private fun onEndRegionReached() {
@@ -509,7 +508,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                             threadListData?.loadingMoreChanged(false)
                         }
                 }
-            }.exhaustive
+            }
         }
     }
 
@@ -522,7 +521,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 is Mode.Thread -> {
                     onNormalModeEntered()
                 }
-            }.exhaustive
+            }
         }
     }
 
