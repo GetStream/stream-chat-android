@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -27,19 +28,22 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-internal class ChannelControllerReactionsTest {
+internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
 
     companion object {
         @JvmField
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
+
+    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
     private val currentUser = User()
     private val myReactions: List<Reaction> = listOf(
@@ -69,7 +73,7 @@ internal class ChannelControllerReactionsTest {
 
     @Test
     fun `when add reaction should add it to own and latest reactions`() =
-        runBlockingTest {
+        coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
@@ -77,7 +81,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = false)
 
-            val result = sut.mutableState._messages.value.values.first()
+            val result = sut.messages.value.first()
             result.ownReactions.size `should be equal to` myReactions.size + 1
             result.ownReactions.contains(newReaction) `should be equal to` true
             result.latestReactions.size `should be equal to` myReactions.size + 1
@@ -86,7 +90,7 @@ internal class ChannelControllerReactionsTest {
 
     @Test
     fun `when add reaction with enforce unique should remove current user other reactions`() =
-        runBlockingTest {
+        coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
@@ -94,7 +98,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.mutableState._messages.value.values.first()
+            val result = sut.messages.value.first()
             result.ownReactions.size `should be equal to` 1
             result.ownReactions.first() `should be equal to` newReaction
             result.latestReactions.size `should be equal to` 1
@@ -103,7 +107,7 @@ internal class ChannelControllerReactionsTest {
 
     @Test
     fun `when add reaction with enforce unique should update reactions count`() =
-        runBlockingTest {
+        coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
@@ -111,13 +115,13 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.mutableState._messages.value.values.first()
+            val result = sut.messages.value.first()
             result.reactionCounts[newReaction.type] `should be equal to` 1
         }
 
     @Test
     fun `when add reaction with enforce unique should update reactions score`() =
-        runBlockingTest {
+        coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
@@ -125,13 +129,13 @@ internal class ChannelControllerReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.mutableState._messages.value.values.first()
+            val result = sut.messages.value.first()
             result.reactionScores[newReaction.type] `should be equal to` newReaction.score
         }
 
     @Test
     fun `when delete reaction should remove it from own and latest reactions`() =
-        runBlockingTest {
+        coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
@@ -141,7 +145,7 @@ internal class ChannelControllerReactionsTest {
 
             sut.deleteReaction(deletedReaction)
 
-            val result = sut.mutableState._messages.value.values.first()
+            val result = sut.messages.value.first()
             result.ownReactions.size `should be equal to` myReactions.size - 1
             result.ownReactions.contains(deletedReaction) `should be equal to` false
             result.latestReactions.contains(deletedReaction) `should be equal to` false

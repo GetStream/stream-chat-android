@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import app.cash.turbine.test
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -13,6 +12,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -38,7 +38,7 @@ import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo
@@ -48,13 +48,15 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-internal class WhenHandleEvent {
+internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     @get:Rule
     val testCoroutines = TestCoroutineRule()
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
     private val userFlow = MutableStateFlow(currentUser)
+
+    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
     private val chatClient: ChatClient = mock {
         on(it.channel(any())) doReturn mock()
@@ -114,33 +116,29 @@ internal class WhenHandleEvent {
 
     // New message event
     @Test
-    fun `when new message event arrives, messages should be propagated correctly`(): Unit = testCoroutines.scope.runBlockingTest {
-        channelController.messages.test {
-            awaitItem()
+    fun `when new message event arrives, messages should be propagated correctly`(): Unit = coroutineTest {
+        val user = User(id = CURRENT_USER_ID)
+        val message = randomMessage(
+            createdAt = Date(1000L),
+            user = user,
+            silent = false,
+            showInChannel = true
+        )
+        val newMessageEvent = randomNewMessageEvent(user = user, message = message)
+        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-            val user = User(id = CURRENT_USER_ID)
-            val message = randomMessage(
-                createdAt = Date(1000L),
-                user = user,
-                silent = false,
-                showInChannel = true
-            )
-            val newMessageEvent = randomNewMessageEvent(user = user, message = message)
-            whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+        channelController.handleEvent(newMessageEvent)
 
-            channelController.handleEvent(newMessageEvent)
-
-            // Message is propagated
-            awaitItem() shouldBeEqualTo listOf(message)
-            // Unread count should not be propagated, because it is a message form the same user
-            channelController.unreadCount.value shouldBeEqualTo 0
-            // Last message is updated
-            channelController.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
-        }
+        // Message is propagated
+        channelController.messages.value shouldBeEqualTo listOf(message)
+        // Unread count should not be propagated, because it is a message form the same user
+        channelController.unreadCount.value shouldBeEqualTo 0
+        // Last message is updated
+        channelController.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
     }
 
     @Test
-    fun `when new message event arrives from other user, unread number should be updated`() {
+    fun `when new message event arrives from other user, unread number should be updated`() = coroutineTest {
         val createdAt = Date()
         val message = randomMessage(
             createdAt = createdAt,
@@ -154,7 +152,7 @@ internal class WhenHandleEvent {
         channelController.handleEvent(newMessageEvent)
 
         // Message is propagated
-        channelController.mutableState._messages.value.values.toList() shouldBeEqualTo listOf(message)
+        channelController.messages.value shouldBeEqualTo listOf(message)
 
         // Unread count should be propagated, because it is a message form another user
         channelController.unreadCount.value shouldBeEqualTo 1
@@ -165,7 +163,7 @@ internal class WhenHandleEvent {
 
     // Message update
     @Test
-    fun `when a message update for a non existing message arrives, it is added`() {
+    fun `when a message update for a non existing message arrives, it is added`() = coroutineTest {
         val messageId = randomString()
         val message = randomMessage(
             id = messageId,
@@ -178,11 +176,11 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(messageUpdateEvent)
 
-        channelController.mutableState._messages.value.values.first() shouldBeEqualTo message
+        channelController.messages.value.first() shouldBeEqualTo message
     }
 
     @Test
-    fun `when a message update event is outdated, it should be ignored`() {
+    fun `when a message update event is outdated, it should be ignored`() = coroutineTest {
         val messageId = randomString()
         val createdAt = randomDate()
         val createdLocallyAt = randomDateBefore(createdAt.time)
@@ -215,23 +213,20 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(messageUpdateEvent)
 
-        channelController.mutableState._messages.value.values.toList() shouldBeEqualTo listOf(recentMessage)
-        channelController.mutableState._messages.value.values.toList() shouldNotBeEqualTo listOf(oldMessage)
+        channelController.messages.value shouldBeEqualTo listOf(recentMessage)
+        channelController.messages.value shouldNotBeEqualTo listOf(oldMessage)
     }
 
     // Member added event
     @Test
-    fun `when member is added, it should be propagated`(): Unit = testCoroutines.scope.runBlockingTest {
-        channelController.members.test {
-            awaitItem()
-            val user = randomUser()
-            val member = randomMember(user = user)
-            val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
+    fun `when member is added, it should be propagated`(): Unit = coroutineTest {
+        val user = randomUser()
+        val member = randomMember(user = user)
+        val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
 
-            channelController.handleEvent(memberAddedEvent)
+        channelController.handleEvent(memberAddedEvent)
 
-            awaitItem() shouldBeEqualTo listOf(member)
-        }
+        channelController.members.value shouldBeEqualTo listOf(member)
     }
 
     // Typing events
@@ -278,22 +273,18 @@ internal class WhenHandleEvent {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = testCoroutines.scope.runBlockingTest {
-        channelController.messages.test {
-            awaitItem()
+    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = coroutineTest {
+        val message = randomMessage(
+            showInChannel = true,
+            silent = false,
+        )
+        val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
+        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-            val message = randomMessage(
-                showInChannel = true,
-                silent = false,
-            )
-            val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
-            whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+        channelController.handleEvent(reactionEvent)
 
-            channelController.handleEvent(reactionEvent)
-
-            // Message is propagated
-            awaitItem() shouldBeEqualTo listOf(message)
-        }
+        // Message is propagated
+        channelController.messages.value shouldBeEqualTo listOf(message)
     }
 
     // Channel deleted event
@@ -307,22 +298,17 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when channel is deleted, the status is updated`() = testCoroutines.scope.runBlockingTest {
-        channelController.channelData.test {
-            awaitItem()
+    fun `when channel is deleted, the status is updated`() = coroutineTest {
+        val channel = randomChannel()
+        val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
+        val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
 
-            val channel = randomChannel()
-            val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
-            val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
+        channelController.handleEvent(updateChannelEvent)
+        channelController.handleEvent(deleteChannelEvent)
 
-            channelController.handleEvent(updateChannelEvent)
-            awaitItem()
-            channelController.handleEvent(deleteChannelEvent)
-
-            val channelFlowValue = awaitItem()
-            channelFlowValue.channelId shouldBeEqualTo channel.id
-            channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
-        }
+        val channelFlowValue = channelController.channelData.value
+        channelFlowValue.channelId shouldBeEqualTo channel.id
+        channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
     }
 
     private companion object {

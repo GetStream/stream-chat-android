@@ -7,7 +7,6 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
-import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContainAll
 import org.amshove.kluent.shouldNotBe
@@ -18,7 +17,7 @@ import org.junit.runner.RunWith
 internal class EditMessageUseCaseTest : BaseDomainTest2() {
 
     @Test
-    fun `edit message use case full example`(): Unit = runBlocking {
+    fun `edit message use case full example`(): Unit = coroutineTest {
         // TODO: this test is slow for unknown reasons
         val originalMessage = data.createMessage()
 
@@ -26,7 +25,7 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
-        var messages = channelControllerImpl.mutableState._messages.value.values
+        var messages = channelControllerImpl.messages.value
         val lastMessage = messages.last()
         lastMessage.id shouldBeEqualTo originalMessage.id
 
@@ -37,7 +36,7 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
         val result2 = channelControllerImpl.editMessage(updatedMessage)
 
         assertSuccess(result2)
-        messages = channelControllerImpl.mutableState._messages.value.values
+        messages = channelControllerImpl.messages.value
         val liveLastMessage = messages.last()
         liveLastMessage.id shouldBeEqualTo originalMessage.id
         liveLastMessage.extraData shouldContainAll updatedMessage.extraData

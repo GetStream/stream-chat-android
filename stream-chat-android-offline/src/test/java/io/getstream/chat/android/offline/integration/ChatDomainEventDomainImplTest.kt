@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.integration
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
 import kotlinx.coroutines.runBlocking
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith
 /**
  * Verify that all events correctly update state in room.
  */
+@OptIn(ExperimentalStreamChatApi::class)
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
@@ -43,14 +45,12 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `channel controller edit message event`(): Unit = runBlocking {
+    fun `channel controller edit message event`(): Unit = coroutineTest {
         // setup the queryControllerImpl
         queryControllerImpl.query(10)
 
         // update the last message
         chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-        // channelControllerImpl.handleEvent(data.messageUpdatedEvent)
-        // queryControllerImpl.handleEvent(data.messageUpdatedEvent)
 
         // verify that the last message is now updated
         val channelMap = queryControllerImpl.channels.value.associateBy { it.cid }
@@ -101,7 +101,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Test
     fun `verify that a channel is correctly deleted when channel deleted event is received`(): Unit =
-        runBlocking {
+        coroutineTest {
             queryControllerImpl.chatEventHandler = ChatEventHandler { _, _ -> EventHandlingResult.Skip }
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
