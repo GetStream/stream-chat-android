@@ -37,13 +37,13 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.state.channel.list.ChannelItem
+import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
 import io.getstream.chat.android.compose.ui.channel.list.DefaultChannelItem
-import io.getstream.chat.android.compose.ui.common.SearchInput
+import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
@@ -111,7 +111,16 @@ class ChannelActivity : AppCompatActivity() {
             ChannelList(
                 itemContent = {
                     CustomChannelListItem(channelItem = it, user = user)
-                }
+                },
+                divider = {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .height(0.5.dp)
+                            .align(CenterHorizontally)
+                            .background(color = ChatTheme.colors.textLowEmphasis)
+                    )
+                },
             )
         }
     }
@@ -120,21 +129,12 @@ class ChannelActivity : AppCompatActivity() {
      * An example of a customized DefaultChannelItem component.
      */
     @Composable
-    private fun CustomChannelListItem(channelItem: ChannelItem, user: User?) {
+    private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
         DefaultChannelItem(
             channelItem = channelItem,
             currentUser = user,
             onChannelLongClick = { },
             onChannelClick = { },
-            divider = {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(0.5.dp)
-                        .align(CenterHorizontally)
-                        .background(color = ChatTheme.colors.textLowEmphasis)
-                )
-            },
             trailingContent = {
                 Spacer(modifier = Modifier.width(8.dp))
             },

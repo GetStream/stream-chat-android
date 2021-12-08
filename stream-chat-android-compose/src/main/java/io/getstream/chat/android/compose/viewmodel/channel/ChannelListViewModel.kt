@@ -16,8 +16,8 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
-import io.getstream.chat.android.compose.state.channel.list.ChannelItem
-import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
+import io.getstream.chat.android.compose.state.channel.list.ChannelAction
+import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -76,7 +76,7 @@ public class ChannelListViewModel(
      * Currently active channel action, if any. Used to show a dialog for deleting or leaving a
      * channel/conversation.
      */
-    public var activeChannelAction: ChannelListAction? by mutableStateOf(null)
+    public var activeChannelAction: ChannelAction? by mutableStateOf(null)
         private set
 
     /**
@@ -257,19 +257,19 @@ public class ChannelListViewModel(
      * Clears the active action if we've chosen [Cancel], otherwise, stores the selected action as
      * the currently active action, in [activeChannelAction].
      *
-     * It also removes the [selectedChannelItem] if the action is [Cancel].
+     * It also removes the [selectedChannel] if the action is [Cancel].
      *
-     * @param channelListAction The selected action.
+     * @param channelAction The selected action.
      */
-    public fun performChannelAction(channelListAction: ChannelListAction) {
-        if (channelListAction is Cancel) {
+    public fun performChannelAction(channelAction: ChannelAction) {
+        if (channelAction is Cancel) {
             selectedChannel.value = null
         }
 
-        activeChannelAction = if (channelListAction == Cancel) {
+        activeChannelAction = if (channelAction == Cancel) {
             null
         } else {
-            channelListAction
+            channelAction
         }
     }
 
@@ -296,7 +296,7 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Deletes a channel, after the user chooses the delete [ChannelListAction]. It also removes the
+     * Deletes a channel, after the user chooses the delete [ChannelAction]. It also removes the
      * [activeChannelAction], to remove the dialog from the UI.
      *
      * @param channel The channel to delete.
@@ -308,7 +308,7 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Leaves a channel, after the user chooses the leave [ChannelListAction]. It also removes the
+     * Leaves a channel, after the user chooses the leave [ChannelAction]. It also removes the
      * [activeChannelAction], to remove the dialog from the UI.
      *
      * @param channel The channel to leave.
@@ -328,14 +328,14 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Creates a list of [ChannelItem] that represents channel items we show in the list of channels.
+     * Creates a list of [ChannelItemState] that represents channel items we show in the list of channels.
      *
      * @param channels The channels to show.
      * @param channelMutes The list of channels muted for the current user.
      *
      */
-    private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItem> {
+    private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
-        return channels.map { ChannelItem(it, it.cid in mutedChannelIds) }
+        return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
     }
 }

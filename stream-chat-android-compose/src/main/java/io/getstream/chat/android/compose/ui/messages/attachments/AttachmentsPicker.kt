@@ -50,6 +50,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsP
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
+import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
+import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import java.io.File
