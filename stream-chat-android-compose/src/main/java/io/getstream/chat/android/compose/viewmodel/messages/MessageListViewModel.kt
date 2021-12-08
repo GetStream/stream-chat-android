@@ -218,7 +218,10 @@ public class MessageListViewModel(
                         is ChannelController.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
-                                messageItems = groupMessages(filterDeletedMessages(state.messages)),
+                                messageItems = groupMessages(
+                                    messages = filterDeletedMessages(state.messages),
+                                    isInThread = false
+                                ),
                                 isLoadingMore = false,
                                 endOfMessages = controller.endOfOlderMessages.value,
                                 currentUser = user
@@ -556,7 +559,10 @@ public class MessageListViewModel(
                 .combine(endOfOlderMessages) { (messages, user), endOfOlderMessages ->
                     threadMessagesState.copy(
                         isLoading = false,
-                        messageItems = groupMessages(filterDeletedMessages(messages)),
+                        messageItems = groupMessages(
+                            messages = filterDeletedMessages(messages),
+                            isInThread = true
+                        ),
                         isLoadingMore = false,
                         endOfMessages = endOfOlderMessages,
                         currentUser = user,
@@ -572,9 +578,10 @@ public class MessageListViewModel(
      * [MessageItemGroupPosition.Bottom] or [MessageItemGroupPosition.None] if the message isn't in a group.
      *
      * @param messages The messages we need to group.
+     * @param isInThread If we are in inside a thread.
      * @return A list of [MessageListItemState]s, each containing a position.
      */
-    private fun groupMessages(messages: List<Message>): List<MessageListItemState> {
+    private fun groupMessages(messages: List<Message>, isInThread: Boolean): List<MessageListItemState> {
         val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
         val groupedMessages = mutableListOf<MessageListItemState>()

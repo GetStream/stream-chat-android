@@ -71,6 +71,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Removed cut from text when text end with Italic
 - Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
 - Fixed bug related of not removing channels when filter selects channels where the the current user is not a member
+
 ### ⬆️ Improved
 - Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
 - Improved Korean 🇰🇷 translations.
@@ -97,6 +98,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added support for Giphy command.
 - Added message pinning to the list of message options
 - Added pinned message UI
+- Added a checkbox to the `MessageComposer` component, that allows to display a thread message in the parent channel.
 - Added an option to flag a message to the message options overlay. 
 
 ### ⚠️ Changed
