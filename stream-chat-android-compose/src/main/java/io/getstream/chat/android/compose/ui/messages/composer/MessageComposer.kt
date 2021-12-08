@@ -67,7 +67,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
- * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
+ * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
@@ -90,7 +90,7 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
-    onShowInChannelChecked: (Boolean) -> Unit = { viewModel.setShowInChannel(it) },
+    onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
@@ -100,7 +100,7 @@ public fun MessageComposer(
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerFooterContent(
             messageComposerState = it,
-            onShowInChannelChecked = onShowInChannelChecked
+            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected
         )
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
@@ -147,7 +147,7 @@ public fun MessageComposer(
     val commandSuggestions by viewModel.commandSuggestions.collectAsState()
     val cooldownTimer by viewModel.cooldownTimer.collectAsState()
     val messageMode by viewModel.messageMode.collectAsState()
-    val showInChannel by viewModel.showInChannel.collectAsState()
+    val alsoSendToChannel by viewModel.alsoSendToChannel.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -158,7 +158,7 @@ public fun MessageComposer(
         },
         onMentionSelected = onMentionSelected,
         onCommandSelected = onCommandSelected,
-        onShowInChannelChecked = onShowInChannelChecked,
+        onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
         headerContent = headerContent,
         footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
@@ -174,7 +174,7 @@ public fun MessageComposer(
             commandSuggestions = commandSuggestions,
             cooldownTimer = cooldownTimer,
             messageMode = messageMode,
-            showInChannel = showInChannel,
+            alsoSendToChannel = alsoSendToChannel,
         ),
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
@@ -190,7 +190,7 @@ public fun MessageComposer(
  * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
- * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
+ * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param modifier Modifier for styling.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
@@ -207,7 +207,7 @@ public fun MessageComposer(
     onCancelAction: () -> Unit,
     onMentionSelected: (User) -> Unit,
     onCommandSelected: (Command) -> Unit,
-    onShowInChannelChecked: (Boolean) -> Unit,
+    onAlsoSendToChannelSelected: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
@@ -218,7 +218,7 @@ public fun MessageComposer(
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerFooterContent(
             messageComposerState = it,
-            onShowInChannelChecked = onShowInChannelChecked,
+            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
         )
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
@@ -328,12 +328,12 @@ public fun DefaultMessageComposerHeaderContent(
  * Represents the default content shown at the bottom of the message composer component.
  *
  * @param messageComposerState The state of the message composer.
- * @param onShowInChannelChecked Handler when the user checks the also send to channel checkbox.
+ * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  */
 @Composable
 public fun DefaultMessageComposerFooterContent(
     messageComposerState: MessageComposerState,
-    onShowInChannelChecked: (Boolean) -> Unit,
+    onAlsoSendToChannelSelected: (Boolean) -> Unit,
 ) {
     if (messageComposerState.messageMode is MessageMode.MessageThread) {
         Row(
@@ -343,8 +343,8 @@ public fun DefaultMessageComposerFooterContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
-                checked = messageComposerState.showInChannel,
-                onCheckedChange = { onShowInChannelChecked(it) },
+                checked = messageComposerState.alsoSendToChannel,
+                onCheckedChange = { onAlsoSendToChannelSelected(it) },
                 colors = CheckboxDefaults.colors(ChatTheme.colors.primaryAccent)
             )
 

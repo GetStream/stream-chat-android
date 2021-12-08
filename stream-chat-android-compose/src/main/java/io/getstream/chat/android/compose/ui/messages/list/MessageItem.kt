@@ -478,7 +478,7 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
     }
 
     if (message.showInChannel) {
-        val showInChannelTextRes = if (messageItem.isInThread) {
+        val alsoSendToChannelTextRes = if (messageItem.isInThread) {
             R.string.stream_compose_also_sent_to_channel
         } else {
             R.string.stream_compose_replied_to_thread
@@ -486,7 +486,7 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
 
         MessageHeaderLabel(
             painter = painterResource(id = R.drawable.stream_compose_ic_thread_reply),
-            text = stringResource(showInChannelTextRes)
+            text = stringResource(alsoSendToChannelTextRes)
         )
     }
 

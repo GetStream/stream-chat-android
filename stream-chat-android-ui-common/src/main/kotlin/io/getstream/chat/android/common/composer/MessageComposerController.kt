@@ -66,7 +66,7 @@ public class MessageComposerController(
     /**
      * If the message will be shown in the channel after it is sent.
      */
-    public val showInChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    public val alsoSendToChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     /**
      * Represents the remaining time until the user is allowed to send the next message.
@@ -222,10 +222,10 @@ public class MessageComposerController(
     /**
      * Called when the "Also send as a direct message" checkbox is checked or unchecked.
      *
-     * @param showInChannel If the message will be shown in the channel after it is sent.
+     * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
      */
-    public fun setShowInChannel(showInChannel: Boolean) {
-        this.showInChannel.value = showInChannel
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
+        this.alsoSendToChannel.value = alsoSendToChannel
     }
 
     /**
@@ -309,7 +309,7 @@ public class MessageComposerController(
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
-        showInChannel.value = false
+        alsoSendToChannel.value = false
     }
 
     /**
@@ -324,7 +324,7 @@ public class MessageComposerController(
         val sendMessageCall = if (isInEditMode) {
             chatDomain.editMessage(message)
         } else {
-            message.showInChannel = isInThread && showInChannel.value
+            message.showInChannel = isInThread && alsoSendToChannel.value
             chatDomain.sendMessage(message)
         }
 

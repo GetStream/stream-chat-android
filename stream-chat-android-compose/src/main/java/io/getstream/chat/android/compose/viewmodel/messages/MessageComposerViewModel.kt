@@ -35,7 +35,7 @@ public class MessageComposerViewModel(
     /**
      * If the message will be shown in the channel after it is sent.
      */
-    public val showInChannel: MutableStateFlow<Boolean> = messageComposerController.showInChannel
+    public val alsoSendToChannel: MutableStateFlow<Boolean> = messageComposerController.alsoSendToChannel
 
     /**
      * Represents the remaining time until the user is allowed to send the next message.
@@ -83,10 +83,10 @@ public class MessageComposerViewModel(
     /**
      * Called when the "Also send as a direct message" checkbox is checked or unchecked.
      *
-     * @param showInChannel If the message will be shown in the channel after it is sent.
+     * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
      */
-    public fun setShowInChannel(showInChannel: Boolean): Unit =
-        messageComposerController.setShowInChannel(showInChannel)
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean): Unit =
+        messageComposerController.setAlsoSendToChannel(alsoSendToChannel)
 
     /**
      * Called when the message mode changes and the internal state needs to be updated.

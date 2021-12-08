@@ -18,7 +18,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param commandSuggestions The list of commands to be displayed in the command suggestion popup.
  * @param cooldownTimer The amount of time left until the user is allowed to send the next message.
  * @param messageMode The message mode that's currently active.
- * @param showInChannel If the message will be shown in the channel after it is sent.
+ * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
  */
 public data class MessageComposerState(
     val inputValue: String = "",
@@ -29,5 +29,5 @@ public data class MessageComposerState(
     val commandSuggestions: List<Command> = emptyList(),
     val cooldownTimer: Int = 0,
     val messageMode: MessageMode = MessageMode.Normal,
-    val showInChannel: Boolean = false,
+    val alsoSendToChannel: Boolean = false,
 )
