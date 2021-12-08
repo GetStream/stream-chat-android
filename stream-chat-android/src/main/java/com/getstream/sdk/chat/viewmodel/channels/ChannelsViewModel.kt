@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 
@@ -84,13 +83,12 @@ public class ChannelsViewModel(
 
     public fun onEvent(event: Event) {
         when (event) {
-
             is Event.ReachedEndOfList -> requestMoreChannels()
             is Event.LogoutClicked -> {
                 ChatClient.instance().disconnect()
                 stateMerger.postValue(State.NavigateToLoginScreen)
             }
-        }.exhaustive
+        }
     }
 
     public fun leaveChannel(channel: Channel) {

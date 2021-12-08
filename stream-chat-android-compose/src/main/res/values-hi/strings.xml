@@ -66,6 +66,13 @@
     <string name="stream_compose_edit_message">मैसेज एडिट करें</string>
     <string name="stream_compose_delete_message">मैसेज मिटायें</string>
     <string name="stream_compose_mute_user">यूजर को म्यूट करें</string>
+    <string name="stream_compose_flag_message">मैसेज चिह्नित करें</string>
+
+    <!-- Message Action Prompts -->
+    <string name="stream_compose_delete_message_title">मैसेज मिटायें</string>
+    <string name="stream_compose_delete_message_text">क्या आप वाकई इस मैसेज को स्थायी रूप से मिटाना चाहते हैं?</string>
+    <string name="stream_compose_flag_message_title">मैसेज चिह्नित करें</string>
+    <string name="stream_compose_flag_message_text">क्या आप आगे की जांच के लिए इस संदेश की एक कॉपी मॉडरेटर को भेजना चाहते हैं?</string>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>

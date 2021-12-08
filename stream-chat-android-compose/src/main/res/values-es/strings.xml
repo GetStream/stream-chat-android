@@ -66,6 +66,13 @@
     <string name="stream_compose_edit_message">Editar Mensaje</string>
     <string name="stream_compose_delete_message">Eliminar mensaje</string>
     <string name="stream_compose_mute_user">Silenciar usuario</string>
+    <string name="stream_compose_flag_message">Marcar Mensaje</string>
+
+    <!-- Message Action Prompts -->
+    <string name="stream_compose_delete_message_title">Eliminar mensaje</string>
+    <string name="stream_compose_delete_message_text">¿Estás seguro de que quieres eliminar permanentemente el mensaje?</string>
+    <string name="stream_compose_flag_message_title">Marcar Mensaje</string>
+    <string name="stream_compose_flag_message_text">¿Quieres enviar una copia de este mensaje al moderador para una mejor investigación?</string>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">Tamaño máximo de mensaje (%1$d) excedido.</string>

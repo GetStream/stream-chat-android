@@ -90,7 +90,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -163,7 +162,7 @@ public class ChatClient internal constructor(
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
                         }
-                    }.exhaustive
+                    }
                 }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
@@ -551,7 +550,7 @@ public class ChatClient internal constructor(
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
-        }.exhaustive
+        }
     }
 
     public fun addSocketListener(listener: SocketListener) {

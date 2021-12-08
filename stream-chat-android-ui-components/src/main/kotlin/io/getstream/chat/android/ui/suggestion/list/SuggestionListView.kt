@@ -7,7 +7,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -90,7 +89,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
                 }
             }
             is Suggestions.EmptySuggestions -> hideSuggestionList()
-        }.exhaustive
+        }
     }
 
     override fun isSuggestionListVisible(): Boolean {

@@ -1,8 +1,9 @@
 package io.getstream.chat.android.compose.ui.common
 
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -44,12 +45,18 @@ public fun SimpleDialog(
             )
         },
         confirmButton = {
-            Button(onClick = { onPositiveAction() }) {
+            TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                onClick = { onPositiveAction() }
+            ) {
                 Text(text = stringResource(id = R.string.stream_compose_ok))
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss) {
+            TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                onClick = onDismiss
+            ) {
                 Text(text = stringResource(id = R.string.stream_compose_cancel))
             }
         },
