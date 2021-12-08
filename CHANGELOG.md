@@ -42,6 +42,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix the issue when users' data can be outdated until restart SDK.
 
 ### ⬆️ Improved
 
