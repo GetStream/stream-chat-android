@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
@@ -393,6 +394,15 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
                 action = Edit(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (!isOwnMessage) {
+            MessageOptionState(
+                title = R.string.stream_compose_flag_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
+                action = Flag(selectedMessage),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )

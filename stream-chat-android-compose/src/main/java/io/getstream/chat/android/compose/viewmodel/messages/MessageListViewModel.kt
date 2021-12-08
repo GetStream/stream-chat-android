@@ -617,6 +617,19 @@ public class MessageListViewModel(
     }
 
     /**
+     * Removes the flag actions from our [messageActions], as well as the overlay, before flagging
+     * the selected message.
+     *
+     * @param message Message to delete.
+     */
+    public fun flagMessage(message: Message) {
+        messageActions = messageActions - messageActions.filterIsInstance<Flag>()
+        removeOverlay()
+
+        chatClient.flagMessage(message.id).enqueue()
+    }
+
+    /**
      * Copies the message content using the [ClipboardHandler] we provide. This can copy both
      * attachment and text messages.
      *
