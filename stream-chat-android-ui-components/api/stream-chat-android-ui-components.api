@@ -1077,6 +1077,11 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Comp
 	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }
 
+public class io/getstream/chat/android/ui/message/composer/AttachmentViewFactory {
+	public fun <init> ()V
+	public fun createViewForAttachment (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerChild {
 	public abstract fun renderState (Lio/getstream/chat/android/common/state/MessageInputState;)V
 }
@@ -1089,6 +1094,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun getOnInputChangedHandler ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnSendMessageClickHandler ()Lkotlin/jvm/functions/Function0;
 	public final fun renderState (Lio/getstream/chat/android/common/state/MessageInputState;)V
+	public final fun setAttachmentViewFactory (Lio/getstream/chat/android/ui/message/composer/AttachmentViewFactory;)V
 	public final fun setCenterContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setCenterContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setLeadingContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V

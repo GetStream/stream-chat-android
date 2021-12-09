@@ -4,12 +4,18 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 
 /**
@@ -31,9 +37,11 @@ public class MessageComposerView : ConstraintLayout {
     public var onInputChangedHandler: (String) -> Unit = {}
 
     /**
-    * Callback invoked when clear button is clicked
-    */
+     * Callback invoked when clear button is clicked
+     */
     public var onDismissMessageHandler: () -> Unit = {}
+
+    private val attachmentsAdapter: MessageComposerAttachmentsAdapter = MessageComposerAttachmentsAdapter()
 
     public constructor(context: Context) : this(context, null)
 
@@ -95,7 +103,10 @@ public class MessageComposerView : ConstraintLayout {
      * @param view The [View] which replaces default leading content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
      */
-    public fun <V> setLeadingContent(view: V, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) where V: View, V: MessageComposerChild {
+    public fun <V> setLeadingContent(
+        view: V,
+        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
+    ) where V : View, V : MessageComposerChild {
         binding.leadingContent.removeAllViews()
         binding.leadingContent.addView(view, layoutParams)
     }
@@ -106,7 +117,10 @@ public class MessageComposerView : ConstraintLayout {
      * @param view The [View] which replaces default center content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
      */
-    public fun <V> setCenterContent(view: V, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) where V: View, V: MessageComposerChild {
+    public fun <V> setCenterContent(
+        view: V,
+        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
+    ) where V : View, V : MessageComposerChild {
         binding.centerContent.removeAllViews()
         binding.centerContent.addView(view, layoutParams)
     }
@@ -117,9 +131,17 @@ public class MessageComposerView : ConstraintLayout {
      * @param view The [View] which replaces default trailing content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
      */
-    public fun <V> setTrailingContent(view: V, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) where V: View, V: MessageComposerChild {
+    public fun <V> setTrailingContent(
+        view: V,
+        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
+    ) where V : View, V : MessageComposerChild {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(view, layoutParams)
+    }
+
+    public fun setAttachmentViewFactory(factory: AttachmentViewFactory) {
+        attachmentsAdapter.viewFactory = factory
+        attachmentsAdapter.notifyDataSetChanged()
     }
 
     private companion object {
@@ -141,4 +163,68 @@ public class MessageComposerView : ConstraintLayout {
  */
 public interface MessageComposerChild {
     public fun renderState(state: MessageInputState)
+}
+
+internal class MessageComposerAttachmentsAdapter(
+    private val attachmentClearedListener: (Attachment) -> Unit = {},
+) : RecyclerView.Adapter<MessageComposerViewHolder>() {
+    private val attachments: MutableList<Attachment> = mutableListOf()
+
+    public var viewFactory: AttachmentViewFactory = AttachmentViewFactory()
+
+    internal fun setAttachments(attachments: List<Attachment>) {
+        this.attachments.apply {
+            clear()
+            addAll(attachments)
+            notifyDataSetChanged()
+        }
+    }
+
+    fun removeItem(attachment: Attachment) {
+        val position = attachments.indexOf(attachment)
+        attachments -= attachment
+        notifyItemRemoved(position)
+    }
+
+    fun clear() {
+        attachments.clear()
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerViewHolder {
+        return MessageComposerViewHolder(parent, viewFactory, attachmentClearedListener)
+    }
+
+    override fun onBindViewHolder(holder: MessageComposerViewHolder, position: Int) {
+        holder.bindData(attachments[position])
+    }
+
+    override fun getItemCount(): Int = attachments.size
+}
+
+internal class MessageComposerViewHolder(
+    private val parent: ViewGroup,
+    private val attachmentViewFactory: AttachmentViewFactory,
+    private val onAttachmentClearedListener: (Attachment) -> Unit,
+) : RecyclerView.ViewHolder(parent) {
+
+    internal val binding: StreamUiMessageComposerAttachmentContainerBinding =
+        StreamUiMessageComposerAttachmentContainerBinding.inflate(context.streamThemeInflater, parent, false)
+
+    fun bindData(attachment: Attachment) {
+        val attachmentContainer = binding.root
+        val view = attachmentViewFactory.createViewForAttachment(parent, attachment, onAttachmentClearedListener)
+        attachmentContainer.removeAllViews()
+        attachmentContainer.addView(view)
+    }
+}
+
+public open class AttachmentViewFactory {
+    public open fun createViewForAttachment(
+        parent: ViewGroup,
+        attachment: Attachment,
+        attachmentRemoveListener: (Attachment) -> Unit,
+    ): View {
+        return TextView(parent.context).apply { text = "attachment" }
+    }
 }
