@@ -1619,8 +1619,6 @@ public class ChatClient internal constructor(
 
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
-        private var baseTimeout = 30_000L
-        private var cdnTimeout = 30_000L
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
@@ -1696,24 +1694,6 @@ public class ChatClient internal constructor(
          */
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
-            return this
-        }
-
-        @Deprecated(
-            message = "Use okHttpClient() to set the timeouts",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun baseTimeout(timeout: Long): Builder {
-            baseTimeout = timeout
-            return this
-        }
-
-        @Deprecated(
-            message = "Use okHttpClient() to set the timeouts",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun cdnTimeout(timeout: Long): Builder {
-            cdnTimeout = timeout
             return this
         }
 
@@ -1811,8 +1791,6 @@ public class ChatClient internal constructor(
                 httpUrl = "https://$baseUrl/",
                 cdnHttpUrl = "https://$cdnUrl/",
                 wssUrl = "wss://$baseUrl/",
-                baseTimeout = baseTimeout,
-                cdnTimeout = cdnTimeout,
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )
