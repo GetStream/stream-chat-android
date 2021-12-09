@@ -113,7 +113,7 @@ internal class UserRepositoryTests {
     @Test
     fun `When insert user Should propagate updates to flow`() = runBlockingTest {
         val newUser = randomUser()
-        val flow = sut.observeLastUsers()
+        val flow = sut.observeLatestUsers()
 
         sut.insertUser(newUser)
 
@@ -126,7 +126,7 @@ internal class UserRepositoryTests {
     fun `When insert users Should propagate updates to flow`() = runBlockingTest {
         val newUser1 = randomUser()
         val newUser2 = randomUser()
-        val flow = sut.observeLastUsers()
+        val flow = sut.observeLatestUsers()
 
         sut.insertUsers(listOf(newUser1, newUser2))
 
@@ -144,7 +144,7 @@ internal class UserRepositoryTests {
             val newUser3 = randomUser()
             var observedTimes = 0
 
-            sut.observeLastUsers()
+            sut.observeLatestUsers()
                 .drop(1) // empty initial value
                 .onEach { observedTimes += 1 }
                 .test {
@@ -164,7 +164,7 @@ internal class UserRepositoryTests {
             val newUser2 = randomUser()
             var observedTimes = 0
 
-            sut.observeLastUsers()
+            sut.observeLatestUsers()
                 .drop(1) // empty initial value
                 .onEach { observedTimes += 1 }
                 .test {
@@ -187,7 +187,7 @@ internal class UserRepositoryTests {
             }
             var observedTimes = 0
 
-            sut.observeLastUsers()
+            sut.observeLatestUsers()
                 .drop(1) // empty initial value
                 .onEach { observedTimes += 1 }
                 .test {

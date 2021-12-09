@@ -16,10 +16,8 @@ internal interface UserRepository {
     suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
     suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 
-    /**
-     * Returns flow of latest updated users.
-     */
-    fun observeLastUsers(): StateFlow<Map<String, User>>
+    /** Returns flow of latest updated users. */
+    fun observeLatestUsers(): StateFlow<Map<String, User>>
 }
 
 internal class UserRepositoryImpl(
@@ -31,9 +29,9 @@ internal class UserRepositoryImpl(
     private val userCache = LruCache<String, User>(cacheSize)
     private val currentUserMap: Map<String, User> = currentUser?.let { mapOf(it.id to it) } ?: emptyMap()
 
-    private val lastUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+    private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
 
-    override fun observeLastUsers(): StateFlow<Map<String, User>> = lastUsersFlow
+    override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
     override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
@@ -45,7 +43,7 @@ internal class UserRepositoryImpl(
         for (userEntity in users) {
             userCache.put(userEntity.id, userEntity)
         }
-        lastUsersFlow.value = userCache.snapshot()
+        latestUsersFlow.value = userCache.snapshot()
     }
 
     override suspend fun insertUser(user: User) {

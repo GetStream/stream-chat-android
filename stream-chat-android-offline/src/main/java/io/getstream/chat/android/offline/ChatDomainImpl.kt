@@ -60,6 +60,7 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -271,6 +272,7 @@ internal class ChatDomainImpl internal constructor(
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
+    /** State flow of latest cached users. Usually it has size of 100 as max size of LRU cache in [UserRepository].*/
     internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
         private set
 
@@ -300,7 +302,7 @@ internal class ChatDomainImpl internal constructor(
             setOfflineEnabled(offlineEnabled)
         }.build()
 
-        latestUsers = repos.observeLastUsers()
+        latestUsers = repos.observeLatestUsers()
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
