@@ -392,6 +392,12 @@ internal class EventHandlerImpl(
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+                is MessageDeletedEvent -> {
+                    if (event.hardDelete) {
+                        domainImpl.repos.deleteChannelMessage(event.message)
+                        domainImpl.repos.evictChannelMessage(event.cid, event.message.id)
+                    }
+                }
                 else -> Unit // Ignore other events
             }
         }

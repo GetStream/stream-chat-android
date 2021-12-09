@@ -22,6 +22,7 @@ internal interface ChannelRepository {
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
     suspend fun selectMembersForChannel(cid: String): List<Member>
     suspend fun updateMembersForChannel(cid: String, members: List<Member>)
+    suspend fun evictChannelMessage(cid: String, messageId: String)
     @VisibleForTesting
     fun clearChannelCache()
 }
@@ -106,6 +107,13 @@ internal class ChannelRepositoryImpl(
     private fun updateCache(channels: Collection<Channel>) {
         for (channel in channels) {
             channelCache.put(channel.cid, channel)
+        }
+    }
+
+    override suspend fun evictChannelMessage(cid: String, messageId: String) {
+        val channel = channelCache.get(cid)
+        if (channel != null) {
+            channel.messages = channel.messages.filter { it.id != messageId }
         }
     }
 
