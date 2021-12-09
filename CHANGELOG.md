@@ -73,6 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed bug related of not removing channels when filter selects channels where the the current user is not a member
 
 ### ⬆️ Improved
+- Improved KDocs of UI components such as `ChannelListHeaderView` and `AvatarView`.
 - Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
 - Improved Korean 🇰🇷 translations.
 
