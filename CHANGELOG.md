@@ -55,6 +55,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed `MessageInputFieldView#mode` not being reset after custom attachments were cleared
 
 ### ⬆️ Improved
 
