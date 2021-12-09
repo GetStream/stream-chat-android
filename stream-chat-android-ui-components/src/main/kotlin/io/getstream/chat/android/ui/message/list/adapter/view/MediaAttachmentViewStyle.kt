@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
- * @param giphyConstantSize Boolean to choose if giphy has constant size or auto sizes accordingly with the images size.
+ * @param giphyConstantSizeEnabled Boolean to choose if giphy has constant size or auto sizes accordingly with the images size.
  * @param giphyHeight If giphyConstantSize is true, it is possible to choose its height with this field. Width is the max width of messages.
  */
 public data class MediaAttachmentViewStyle(
@@ -34,7 +34,7 @@ public data class MediaAttachmentViewStyle(
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
-    public val giphyConstantSize: Boolean,
+    public val giphyConstantSizeEnabled: Boolean,
     @DimenRes public val giphyHeight: Int,
 ) {
     internal companion object {
@@ -102,7 +102,7 @@ public data class MediaAttachmentViewStyle(
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
                     giphyHeight = giphyHeight,
-                    giphyConstantSize = constantSize,
+                    giphyConstantSizeEnabled = constantSize,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

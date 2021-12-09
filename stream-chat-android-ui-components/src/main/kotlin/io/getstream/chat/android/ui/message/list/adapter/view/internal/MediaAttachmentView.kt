@@ -69,14 +69,11 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
-        val showMore = {
+
+        showImageByUrl(url) {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
             }
-        }
-
-        showImageByUrl(url) {
-            showMore()
         }
 
         setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
@@ -86,24 +83,20 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
     }
 
-    fun showGiphy(attachment: Attachment, containerView: View?) {
-        val url = attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.url
-            ?: attachment.imagePreviewUrl
-            ?: attachment.titleLink
-            ?: attachment.ogUrl
-            ?: return
+    fun showGiphy(attachment: Attachment, containerView: View) {
+        val url = attachment.giphyUrl ?: return
 
         binding.giphyLabel.isVisible = true
 
-        containerView?.let { container ->
-            if (style.giphyConstantSize) {
-                binding.imageView.updateLayoutParams {
-                    height = style.giphyHeight
-                }
-            } else {
-                giphyLayoutUpdate(attachment, container)
+
+        if (style.giphyConstantSizeEnabled) {
+            binding.imageView.updateLayoutParams {
+                height = style.giphyHeight
             }
+        } else {
+            giphyLayoutUpdate(attachment, containerView)
         }
+
 
         showImageByUrl(url) {}
     }
@@ -182,15 +175,13 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
         val giphyInfoMap =
-            (extraData[ModelType.attach_giphy] as Map<String, Any>?)?.get(field.value) as Map<String, String>?
+            (extraData[ModelType.attach_giphy] as? Map<String, Any>?)?.get(field.value) as? Map<String, String>?
 
         return giphyInfoMap?.let { map ->
             GiphyInfo(
                 url = map["url"] ?: this.thumbUrl ?: "",
                 width = map["width"]?.toInt() ?: GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx(),
-                height = map["height"]?.toInt() ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx(),
-                size = map["size"]?.toInt() ?: 0,
-                frames = map["frames"]?.toInt() ?: 0
+                height = map["height"]?.toInt() ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
             )
         }
     }
@@ -203,9 +194,13 @@ internal class MediaAttachmentView : ConstraintLayout {
         val url: String,
         @Px val width: Int,
         @Px val height: Int,
-        val size: Int,
-        val frames: Int,
     )
+
+    private val Attachment.giphyUrl: String?
+        get() = giphyInfo(GiphyInfoType.ORIGINAL)?.url
+            ?: imagePreviewUrl
+            ?: titleLink
+            ?: ogUrl
 
     companion object {
         private const val NO_MORE_COUNT = 0

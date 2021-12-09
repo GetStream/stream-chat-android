@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.isError
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
@@ -37,7 +38,7 @@ internal object MessageListItemViewTypeMapper {
         val message = messageItem.message
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
-        val (giphy, _) = linksAndGiphy.partition { attachment -> attachment.type == "giphy" }
+        val (giphy, _) = linksAndGiphy.partition { attachment -> attachment.type == ModelType.attach_giphy }
 
         return when {
             message.isError() -> ERROR_MESSAGE

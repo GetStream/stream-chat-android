@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.setPadding
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -45,7 +46,7 @@ public open class AttachmentViewFactory {
         parent: ViewGroup
     ): View {
         val (linksAndGiphy, attachments) = data.message.attachments.partition { attachment -> attachment.hasLink() }
-        val links = linksAndGiphy.filter { attachment -> attachment.type != "link" }
+        val links = linksAndGiphy.filter { attachment -> attachment.type != ModelType.attach_link }
 
         return when {
             links.isNotEmpty() && attachments.isNotEmpty() -> createLinkAndAttachmentsContent(
