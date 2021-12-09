@@ -163,6 +163,7 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/app
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun setChannelData (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setUserData (Lio/getstream/chat/android/client/models/User;)V
 }

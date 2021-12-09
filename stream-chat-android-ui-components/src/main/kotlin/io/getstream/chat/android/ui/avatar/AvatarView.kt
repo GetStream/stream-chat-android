@@ -17,7 +17,12 @@ import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 
-public class AvatarView : AppCompatImageView {
+public class AvatarView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : AppCompatImageView(context.createStreamThemeWrapper(), attrs, defStyleAttr) {
+
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
     private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
@@ -26,20 +31,8 @@ public class AvatarView : AppCompatImageView {
     private var isOnline: Boolean = false
     private var avatarViewSize: Int = 0
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(context, null)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(context, attrs)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context.createStreamThemeWrapper(),
-        attrs,
-        defStyleAttr
-    ) {
-        init(context, attrs)
+    init {
+        setStyle(AvatarStyle(context, attrs))
     }
 
     public fun setChannelData(channel: Channel) {
@@ -79,10 +72,6 @@ public class AvatarView : AppCompatImageView {
             drawBorder(canvas, avatarStyle, borderPaint)
             drawOnlineStatus(canvas, isOnline, avatarStyle)
         }
-    }
-
-    private fun init(context: Context, attrs: AttributeSet?) {
-        setStyle(AvatarStyle(context, attrs))
     }
 
     private fun setStyle(avatarStyle: AvatarStyle) {
