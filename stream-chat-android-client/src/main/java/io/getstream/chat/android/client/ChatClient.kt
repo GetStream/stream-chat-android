@@ -307,7 +307,6 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        @Suppress("DEPRECATION_ERROR")
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
