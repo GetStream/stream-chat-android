@@ -457,7 +457,7 @@ internal class EventHandlerImpl(
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == user!!.id },
+                latestReactions.filter { it.userId == domainImpl.user.value?.id ?: "" },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
