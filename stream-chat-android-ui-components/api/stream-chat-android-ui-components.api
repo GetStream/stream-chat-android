@@ -531,6 +531,7 @@ public final class io/getstream/chat/android/ui/channel/list/header/ChannelListH
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;II)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun setOnActionButtonClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$ActionButtonClickListener;)V
 	public final fun setOnUserAvatarClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$UserAvatarClickListener;)V
 	public final fun setOnlineTitle (Ljava/lang/String;)V

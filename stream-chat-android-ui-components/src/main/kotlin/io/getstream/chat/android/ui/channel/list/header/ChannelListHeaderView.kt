@@ -19,36 +19,16 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 
-public class ChannelListHeaderView : ConstraintLayout {
-
-    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(null)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(attrs)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context.createStreamThemeWrapper(),
-        attrs,
-        defStyleAttr
-    ) {
-        init(attrs)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
-        context.createStreamThemeWrapper(),
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    ) {
-        init(attrs)
-    }
+public class ChannelListHeaderView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0,
+) : ConstraintLayout(context.createStreamThemeWrapper(), attrs, defStyleAttr, defStyleRes) {
 
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(streamThemeInflater, this, true)
 
-    private fun init(attrs: AttributeSet?) {
+    init {
         context.obtainStyledAttributes(
             attrs,
             R.styleable.ChannelListHeaderView,
@@ -101,7 +81,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             setImageDrawable(drawable)
             backgroundTintList =
                 typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
-                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
+                    ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
         }
     }
 
