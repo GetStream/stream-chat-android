@@ -90,7 +90,7 @@ public data class MediaAttachmentViewStyle(
                     a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
                         DEFAULT_HEIGHT_DP.dpToPx())
 
-                val constantSize =
+                val constantSizeEnabled =
                     a.getBoolean(R.styleable.MediaAttachmentView_streamUiMediaAttachmentConstantSize,
                         false)
 
@@ -102,7 +102,7 @@ public data class MediaAttachmentViewStyle(
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
                     giphyHeight = giphyHeight,
-                    giphyConstantSizeEnabled = constantSize,
+                    giphyConstantSizeEnabled = constantSizeEnabled,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

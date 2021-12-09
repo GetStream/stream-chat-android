@@ -18,7 +18,6 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -30,10 +29,6 @@ internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
-
-    private val maxMediaAttachmentWidth: Int by lazy(LazyThreadSafetyMode.NONE) {
-        (displayMetrics().widthPixels)
-    }
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
@@ -83,44 +78,44 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
     }
 
-    fun showGiphy(attachment: Attachment, containerView: View) {
+    fun showGiphy(attachment: Attachment, containerView: View, maxWidth: Int) {
         val url = attachment.giphyUrl ?: return
 
         binding.giphyLabel.isVisible = true
-
 
         if (style.giphyConstantSizeEnabled) {
             binding.imageView.updateLayoutParams {
                 height = style.giphyHeight
             }
         } else {
-            giphyLayoutUpdate(attachment, containerView)
+            giphyLayoutUpdate(attachment, containerView, maxWidth)
         }
 
 
         showImageByUrl(url) {}
     }
 
-    private fun giphyLayoutUpdate(attachment: Attachment, containerView: View) {
+    private fun giphyLayoutUpdate(attachment: Attachment, containerView: View, maxWidth: Int) {
         attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
             containerView.updateLayoutParams {
-                width = parseWidth(giphyInfo)
+                width = parseWidth(giphyInfo, maxWidth)
+                height = parseHeight(giphyInfo, maxWidth)
             }
 
             binding.imageView.updateLayoutParams {
-                height = parseHeight(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-                width = parseWidth(giphyInfo) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                height = parseHeight(giphyInfo, maxWidth) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
+                width = parseWidth(giphyInfo, maxWidth) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
             }
         }
     }
 
-    private fun parseWidth(giphyInfo: GiphyInfo): Int {
-        return min(maxMediaAttachmentWidth, giphyInfo.width)
+    private fun parseWidth(giphyInfo: GiphyInfo, maxWidth: Int): Int {
+        return min(maxWidth, giphyInfo.width)
     }
 
-    private fun parseHeight(giphyInfo: GiphyInfo): Int {
+    private fun parseHeight(giphyInfo: GiphyInfo, maxWidth: Int): Int {
         return when {
-            giphyInfo.width > maxMediaAttachmentWidth -> giphyInfo.height * (maxMediaAttachmentWidth / giphyInfo.width)
+            giphyInfo.width > maxWidth -> giphyInfo.height.times(maxWidth.toFloat()).div(giphyInfo.width).toInt()
 
             else -> giphyInfo.height
         }
