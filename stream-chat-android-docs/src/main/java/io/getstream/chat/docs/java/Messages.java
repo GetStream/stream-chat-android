@@ -169,10 +169,6 @@ public class Messages {
                 }
 
                 @Override
-                public void onProgress(long progress) {
-                    // You can render the uploading progress here
-                }
-                @Override
                 public void onProgress(long bytesUploaded, long totalBytes) {
                     // You can render the uploading progress here
                 }
