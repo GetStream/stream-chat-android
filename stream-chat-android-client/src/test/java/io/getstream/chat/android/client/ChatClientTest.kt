@@ -59,8 +59,6 @@ internal class ChatClientTest {
             "hello.http",
             "cdn.http",
             "socket.url",
-            1000,
-            1000,
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
         )
