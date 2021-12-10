@@ -482,6 +482,7 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun keystroke (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun replayEventsForActiveChannels (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;

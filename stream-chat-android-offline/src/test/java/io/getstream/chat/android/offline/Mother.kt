@@ -77,7 +77,7 @@ internal fun randomUserStartWatchingEvent(
     watcherCount = watcherCount,
     channelType = channelType,
     channelId = channelId,
-    user = randomUser()
+    user = user,
 )
 
 internal fun randomChannelDeletedEvent(

@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -145,5 +146,21 @@ public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Bo
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.stopTyping(parentId)
+    }
+}
+
+/**
+ * Loads older messages for the channel.
+ *
+ * @param cid The full channel id i.e. "messaging:123".
+ * @param messageLimit How many new messages to load.
+ */
+public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
+    validateCid(cid)
+
+    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.loadOlderMessages(messageLimit)
     }
 }

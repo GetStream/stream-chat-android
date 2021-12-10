@@ -353,10 +353,8 @@ public class ChannelController internal constructor(
         )
     }
 
-    /**
-     *  Loads a list of messages before the message with particular message id.
-     */
-    internal suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
+    /** Loads a list of messages before the message with particular message id. */
+    private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(
             QueryChannelPaginationRequest(limit).apply {
                 messageFilterDirection = Pagination.LESS_THAN

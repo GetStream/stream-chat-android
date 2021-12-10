@@ -47,6 +47,7 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.stopTyping
@@ -77,7 +78,6 @@ import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
 import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
-import io.getstream.chat.android.offline.usecase.LoadOlderMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
@@ -940,8 +940,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        LoadOlderMessages(this).invoke(cid, messageLimit)
+    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> = client.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)
