@@ -57,7 +57,7 @@ internal class QueryChannelsMutableState(
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
-    internal val defaultChatEventHandler: DefaultChatEventHandler = DefaultChatEventHandler(_sortedChannels, true)
+    internal val defaultChatEventHandler: DefaultChatEventHandler = DefaultChatEventHandler(_sortedChannels)
 
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null

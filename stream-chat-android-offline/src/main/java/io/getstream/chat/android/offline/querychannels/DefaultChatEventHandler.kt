@@ -16,19 +16,13 @@ import kotlinx.coroutines.flow.StateFlow
  * and makes an API request if a channel wasn't yet handled before when receives [NotificationAddedToChannelEvent],
  * [NotificationMessageNewEvent], [NotificationRemovedFromChannelEvent].
  */
-public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>, private val isMember: Boolean) :
+public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>) :
     BaseChatEventHandler() {
 
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return if (isMember) {
-            addIfChannelIsAbsent(event.channel)
-        } else {
-            removeIfChannelIsPresent(event.channel)
-        }
-    }
+    ): EventHandlingResult = addIfChannelIsAbsent(event.channel)
 
     override fun handleMemberAddedEvent(
         event: MemberAddedEvent,
@@ -54,13 +48,7 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     override fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return if (isMember) {
-            addIfChannelIsAbsent(event.channel)
-        } else {
-            removeIfChannelIsPresent(event.channel)
-        }
-    }
+    ): EventHandlingResult = addIfChannelIsAbsent(event.channel)
 
     /**
      * Handles [MemberRemovedEvent]. It makes a request to API to define outcome of handling.
@@ -82,13 +70,7 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return if (isMember) {
-            removeIfChannelIsPresent(event.channel)
-        } else {
-            addIfChannelIsAbsent(event.channel)
-        }
-    }
+    ): EventHandlingResult = removeIfChannelIsPresent(event.channel)
 
     /**
      * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
