@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.failedCall
@@ -36,7 +37,7 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
         whenever(channelClientMock.sendMessage(any())) doReturn newMessage.asCall()
 
         val channelController = chatDomain.watchChannel(data.channel1.cid, 0).execute().data()
-        chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
+        clientMock.loadOlderMessages(data.channel1.cid, 10).execute()
 
         val messages1: Collection<Message> = channelController.messages.value
         chatDomain.sendMessage(newMessage).execute()
@@ -55,7 +56,7 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
 
         whenever(clientMock.queryChannelInternal(eq(type), eq(id), any())) doReturn Channel(cid = desiredCid).asCall()
 
-        val result = chatDomainImpl.loadOlderMessages(desiredCid, 10).execute()
+        val result = clientMock.loadOlderMessages(desiredCid, 10).execute()
 
         result.isSuccess.shouldBeTrue()
         result.data().cid shouldBeEqualTo desiredCid
@@ -68,7 +69,7 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn queryChannelCall
 
         // Load older messages using backend.
-        chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
+        clientMock.loadOlderMessages(data.channel1.cid, 10).execute()
 
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn failedCall("the call failed")
 
