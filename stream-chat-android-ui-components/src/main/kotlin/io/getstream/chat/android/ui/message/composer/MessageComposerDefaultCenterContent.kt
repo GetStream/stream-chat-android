@@ -6,13 +6,22 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.images.loadVideoThumbnail
+import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 
@@ -151,21 +160,55 @@ internal class MessageComposerViewHolder(
     }
 }
 
-public open class DefaultMessageComposerAttachmentPreviewFactory : MessageComposerAttachmentPreviewFactory {
+/**
+ *
+ */
+public open class DefaultMessageComposerAttachmentPreviewFactory(
+    private val attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE, // TODO: pass from view model
+) : MessageComposerAttachmentPreviewFactory {
     public override fun createViewForAttachment(
         parent: ViewGroup,
         attachment: Attachment,
         onAttachmentRemovedCallback: (Attachment) -> Unit,
     ): View {
-        return TextView(parent.context).apply {
-            text = "attachment"
-            setOnClickListener {
-                onAttachmentRemovedCallback(attachment)
+        val context = parent.context
+        return when {
+            attachment.isMedia() -> {
+                StreamUiFileAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
+                    .apply {
+                        ivFileThumb.loadAttachmentThumb(attachment)
+                        tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+                        if (attachment.fileSize > attachmentMaxFileSize) {
+                            tvFileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
+                            tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+                        } else {
+                            tvFileTitle.text = attachment.title
+                            tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
+                        }
+                        tvClose.setOnClickListener { onAttachmentRemovedCallback(attachment) }
+                    }.root
+            }
+            attachment.upload != null -> {
+                StreamUiMediaAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
+                    .apply {
+                        if (attachment.type == ModelType.attach_video) {
+
+                        } else {
+
+                        }
+                        removeButton.setOnClickListener { onAttachmentRemovedCallback(attachment) }
+                    }.root
+            }
+            else -> {
+                throw IllegalStateException("DefaultMessageComposerAttachmentPreviewFactory is not able to provide preview for this attachment. If this is a custom attachment please set custom factory for rendering its preview using MessageComposerDefaultCenterContent::setAttachmentViewFactory")
             }
         }
     }
 }
 
+/**
+ *
+ */
 public interface MessageComposerAttachmentPreviewFactory {
     public fun createViewForAttachment(
         parent: ViewGroup,

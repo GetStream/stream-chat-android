@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/stream_ui_selected_attachment_media_height"
+    android:layout_height="@dimen/stream_ui_selected_attachment_media_height"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    >
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/mediaImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/removeButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/stream_ui_attachment_cancel_background"
+        android:cropToPadding="true"
+        android:padding="6dp"
+        android:src="@drawable/stream_ui_ic_close_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:textColor="@color/stream_ui_white"
+        android:background="@drawable/stream_ui_attachment_error_background"
+        android:textSize="12sp"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="File too big"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

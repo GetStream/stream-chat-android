@@ -80,7 +80,7 @@ public class MessageComposerView : ConstraintLayout {
                                                 type = it.type,
                                                 name = it.title ?: fileFromUri.name ?: "",
                                                 fileSize = it.size.toInt(),
-                                                mimeType = it.mimeType
+                                                mimeType = it.mimeType,
                                             )
                                         }.also {
                                             onAttachmentsSelectedHandler(it)

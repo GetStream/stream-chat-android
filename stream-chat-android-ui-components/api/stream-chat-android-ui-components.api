@@ -1079,6 +1079,8 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Comp
 
 public class io/getstream/chat/android/ui/message/composer/DefaultMessageComposerAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
 	public fun <init> ()V
+	public fun <init> (J)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun createViewForAttachment (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
 }
 
