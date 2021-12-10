@@ -216,4 +216,33 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         channel.members.size shouldBeEqualTo 1
     }
+
+    @Test
+    fun `Given a message was sent to a channel When the message is soft deleted Should contain deleted date`(): Unit = runBlocking {
+        chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
+        chatDomainImpl.eventHandler.handleEvent(data.messageDeletedEvent)
+
+        val messageId = data.newMessageEvent.message.id
+        val message = chatDomainImpl.repos.selectMessage(messageId)
+        message.shouldNotBeNull()
+        message.deletedAt.shouldNotBeNull()
+
+        val channelController = chatDomainImpl.channel(data.channel1)
+        val messages = channelController.messages.value
+        messages.size shouldBeEqualTo 1
+    }
+
+    @Test
+    fun `Given a message was sent to a channel When the message is hard deleted Should be completely deleted`(): Unit = runBlocking {
+        chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
+        chatDomainImpl.eventHandler.handleEvent(data.messageHardDeletedEvent)
+
+        val messageId = data.newMessageEvent.message.id
+        val message = chatDomainImpl.repos.selectMessage(messageId)
+        message.shouldBeNull()
+
+        val channelController = chatDomainImpl.channel(data.channel1)
+        val messages = channelController.messages.value
+        messages.shouldBeEmpty()
+    }
 }
