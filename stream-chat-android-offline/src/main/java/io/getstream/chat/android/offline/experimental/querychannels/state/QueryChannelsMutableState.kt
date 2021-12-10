@@ -4,7 +4,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
@@ -27,6 +30,23 @@ internal class QueryChannelsMutableState(
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
 
+    internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
+        client.queryChannelsInternal(
+            QueryChannelsRequest(
+                filter = Filters.and(
+                    filter,
+                    Filters.eq("cid", cid)
+                ),
+                offset = 0,
+                limit = 1,
+                messageLimit = 0,
+                memberLimit = 0,
+            )
+        ).await()
+            .map { channels -> channels.any { it.cid == cid } }
+            .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
+    }
+
     internal val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
@@ -37,7 +57,7 @@ internal class QueryChannelsMutableState(
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
-    internal val defaultChatEventHandler: DefaultChatEventHandler = DefaultChatEventHandler(client, _sortedChannels)
+    internal val defaultChatEventHandler: DefaultChatEventHandler = DefaultChatEventHandler(_sortedChannels, true)
 
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null
