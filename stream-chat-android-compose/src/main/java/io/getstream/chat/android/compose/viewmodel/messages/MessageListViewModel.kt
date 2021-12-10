@@ -47,6 +47,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -437,7 +438,7 @@ public class MessageListViewModel(
                 .enqueue()
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
-            chatDomain.loadOlderMessages(channelId, messageLimit).enqueue()
+            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
         }
     }
 
