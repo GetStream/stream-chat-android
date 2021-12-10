@@ -252,31 +252,33 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         }
 
     @Test
-    fun `Given a message was sent to a channel When the message is soft deleted Should contain deleted date`(): Unit = runBlocking {
-        chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        chatDomainImpl.eventHandler.handleEvent(data.messageDeletedEvent)
+    fun `Given a message was sent to a channel When the message is soft deleted Should contain deleted date`(): Unit =
+        coroutineTest {
+            chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
+            chatDomainImpl.eventHandler.handleEvent(data.messageDeletedEvent)
 
-        val messageId = data.newMessageEvent.message.id
-        val message = chatDomainImpl.repos.selectMessage(messageId)
-        message.shouldNotBeNull()
-        message.deletedAt.shouldNotBeNull()
+            val messageId = data.newMessageEvent.message.id
+            val message = chatDomainImpl.repos.selectMessage(messageId)
+            message.shouldNotBeNull()
+            message.deletedAt.shouldNotBeNull()
 
-        val channelController = chatDomainImpl.channel(data.channel1)
-        val messages = channelController.messages.value
-        messages.size shouldBeEqualTo 1
-    }
+            val channelController = chatDomainImpl.channel(data.channel1)
+            val messages = channelController.messages.value
+            messages.size shouldBeEqualTo 1
+        }
 
     @Test
-    fun `Given a message was sent to a channel When the message is hard deleted Should be completely deleted`(): Unit = runBlocking {
-        chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        chatDomainImpl.eventHandler.handleEvent(data.messageHardDeletedEvent)
+    fun `Given a message was sent to a channel When the message is hard deleted Should be completely deleted`(): Unit =
+        coroutineTest {
+            chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
+            chatDomainImpl.eventHandler.handleEvent(data.messageHardDeletedEvent)
 
-        val messageId = data.newMessageEvent.message.id
-        val message = chatDomainImpl.repos.selectMessage(messageId)
-        message.shouldBeNull()
+            val messageId = data.newMessageEvent.message.id
+            val message = chatDomainImpl.repos.selectMessage(messageId)
+            message.shouldBeNull()
 
-        val channelController = chatDomainImpl.channel(data.channel1)
-        val messages = channelController.messages.value
-        messages.shouldBeEmpty()
-    }
+            val channelController = chatDomainImpl.channel(data.channel1)
+            val messages = channelController.messages.value
+            messages.shouldBeEmpty()
+        }
 }
