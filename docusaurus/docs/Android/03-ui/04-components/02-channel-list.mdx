@@ -446,3 +446,41 @@ public sealed class EventHandlingResult {
 
 You can also use `BaseChatEventHandler` - a more detailed implementation that covers the most generic cases and forces you to implement the required ones.
 
+To inject the ChatEventHandler to `ChannelListViewModel`, use `ChatEventHandlerFactory`, inside `ChannelListViewModelFactory`: 
+
+```
+public class ChannelListViewModelFactory @JvmOverloads constructor(
+    private val filter: FilterObject? = null,
+    private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
+    private val limit: Int = 30,
+    private val messageLimit: Int = 1,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+) 
+```
+
+There's a default implementation of `ChatEventHandler` for a ChannelListView listing channels that the current user is not a member. You can override the factory and inject it:
+
+```
+public open class NonMemberChatEventHandlerFactory : ChatEventHandlerFactory() {
+
+    public override fun chatEventHandler(channels: StateFlow<List<Channel>>): ChatEventHandler {
+        return NonMemberChatEventHandler(ChatClient.instance(), channels = channels)
+    }
+}
+```
+
+Then use the factory in you ChannelListViewModel
+
+```
+private val viewModel: ChannelListViewModel by viewModels {
+    ChannelListViewModelFactory(
+        filter = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
+            Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+        ),
+        chatEventHandlerFactory = NonMemberChatEventHandlerFactory()
+    )
+}
+
+```
