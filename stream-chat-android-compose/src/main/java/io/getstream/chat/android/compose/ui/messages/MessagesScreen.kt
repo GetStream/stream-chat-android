@@ -36,12 +36,12 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.ui.common.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -170,17 +170,37 @@ public fun MessagesScreen(
             )
         }
 
-        if (selectedMessage != null) {
-            SelectedMessageOverlay(
-                messageOptions = defaultMessageOptionsState(selectedMessage, user, listViewModel.isInThread),
-                message = selectedMessage,
-                currentUser = user,
-                onMessageAction = { action ->
-                    composerViewModel.performMessageAction(action)
-                    listViewModel.performMessageAction(action)
-                },
-                onDismiss = { listViewModel.removeOverlay() }
-            )
+        AnimatedVisibility(
+            visible = selectedMessage != null,
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
+            if (selectedMessage != null) {
+                SelectedMessageMenu(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .animateEnterExit(
+                            enter = slideInVertically(
+                                initialOffsetY = { height -> height },
+                                animationSpec = tween()
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { height -> height },
+                                animationSpec = tween()
+                            )
+                        ),
+                    messageOptions = defaultMessageOptionsState(selectedMessage = selectedMessage,
+                        currentUser = user,
+                        isInThread = listViewModel.isInThread),
+                    message = selectedMessage,
+                    onMessageAction = { action ->
+                        composerViewModel.performMessageAction(action)
+                        listViewModel.performMessageAction(action)
+                        listViewModel.removeOverlay()
+                    },
+                    onDismiss = { listViewModel.removeOverlay() }
+                )
+            }
         }
 
         AnimatedVisibility(
