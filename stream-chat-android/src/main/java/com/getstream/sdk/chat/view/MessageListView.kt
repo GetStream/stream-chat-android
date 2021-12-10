@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.exhaustive
 import kotlin.math.max
 import kotlin.math.min
 
@@ -664,7 +663,7 @@ public class MessageListView : ConstraintLayout {
         when (adapter.isThread) {
             true -> lastSeenMessageInThread = messageListItem
             false -> lastSeenMessageInChannel = messageListItem
-        }.exhaustive
+        }
     }
 
     /**

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
@@ -222,6 +223,18 @@ public fun MessagesScreen(
                 message = stringResource(id = R.string.stream_compose_delete_message_text),
                 onPositiveAction = { listViewModel.deleteMessage(deleteAction.message) },
                 onDismiss = { listViewModel.dismissMessageAction(deleteAction) }
+            )
+        }
+
+        val flagAction = messageActions.firstOrNull { it is Flag }
+
+        if (flagAction != null) {
+            SimpleDialog(
+                modifier = Modifier.padding(16.dp),
+                title = stringResource(id = R.string.stream_compose_flag_message_title),
+                message = stringResource(id = R.string.stream_compose_flag_message_text),
+                onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
+                onDismiss = { listViewModel.dismissMessageAction(flagAction) }
             )
         }
     }

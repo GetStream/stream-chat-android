@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -265,7 +264,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             SyncStatus.FAILED_PERMANENTLY -> {
                 // no direction on this yet
             }
-        }.exhaustive
+        }
     }
 
     private fun StreamUiChannelListItemBackgroundViewBinding.applyStyle(style: ChannelListViewStyle) {

@@ -66,6 +66,13 @@
     <string name="stream_compose_edit_message">Modifier le message</string>
     <string name="stream_compose_delete_message">Supprimer le message</string>
     <string name="stream_compose_mute_user">Mettre en sourdine l\'utilisateur</string>
+    <string name="stream_compose_flag_message">Signaler un message</string>
+
+    <!-- Message Action Prompts -->
+    <string name="stream_compose_delete_message_title">Supprimer le message</string>
+    <string name="stream_compose_delete_message_text">Êtes-vous sûr de vouloir supprimer définitivement ce message ?</string>
+    <string name="stream_compose_flag_message_title">Signaler un message</string>
+    <string name="stream_compose_flag_message_text">Voulez-vous envoyer une copie de ce message à un nmodérateur pour une enquête plus approfondie?</string>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">Longueur maximale du message (%1$d) dépassée.</string>
@@ -73,4 +80,5 @@
     <string name="stream_compose_message_composer_error_attachment_count">Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %1$d pièces jointes</string>
     <string name="stream_compose_message_composer_instant_commands">Commandes instantanées</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">Envoyer aussi comme message direct</string>
 </resources>

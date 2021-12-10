@@ -53,8 +53,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
 import kotlinx.coroutines.launch
@@ -181,7 +181,7 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is NotificationMessageNewEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is ReactionUpdateEvent -> batchBuilder.addToFetchMessages(event.message.id)
-            }.exhaustive
+            }
         }
         // actually fetch the data
         val batch = batchBuilder.build(domainImpl)
@@ -374,7 +374,7 @@ internal class EventHandlerImpl(
                 is UserStopWatchingEvent,
                 is UserPresenceChangedEvent,
                 -> Unit
-            }.exhaustive
+            }
         }
 
         // execute the batch
@@ -453,10 +453,13 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        if (user != null && domainImpl.user.value?.id != user.id) {
-            ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
+        ownReactions = if (user != null && domainImpl.user.value?.id != user.id) {
+            batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
-            // for events of current user we keep "ownReactions" from the event
+            mergeReactions(
+                latestReactions.filter { it.userId == domainImpl.user.value?.id ?: "" },
+                batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
+            ).toMutableList()
         }
     }
 

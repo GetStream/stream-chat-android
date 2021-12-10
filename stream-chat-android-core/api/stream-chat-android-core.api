@@ -40,6 +40,7 @@ public final class io/getstream/chat/android/client/utils/Result {
 	public final fun isError ()Z
 	public final fun isSuccess ()Z
 	public static final fun success (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/utils/Result$Companion {

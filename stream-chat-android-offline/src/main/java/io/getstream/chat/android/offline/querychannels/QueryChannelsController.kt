@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -61,7 +60,7 @@ public class QueryChannelsController internal constructor(
     @Deprecated(
         message = "Use ChatDomain.channelMutes instead",
         replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public val mutedChannelIds: StateFlow<List<String>> =
         domainImpl.channelMutes.map { channelMutes -> channelMutes.map { channelMute -> channelMute.channel.id } }
@@ -122,7 +121,7 @@ public class QueryChannelsController internal constructor(
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
             is EventHandlingResult.Skip -> Unit
-        }.exhaustive
+        }
 
         if (event is MarkAllReadEvent) {
             refreshAllChannels()

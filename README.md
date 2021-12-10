@@ -24,7 +24,8 @@ The SDK supports both Kotlin and Java, but *we strongly recommend using Kotlin*.
 * [Client Documentation](https://getstream.io/chat/docs/android/?language=kotlin)
 * [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/)
 * [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
-* [API docs](https://getstream.github.io/stream-chat-android/): Full generated docs from Dokka 
+* [API docs](https://getstream.github.io/stream-chat-android/): Full generated docs from Dokka
+* [Jetpack Compose Planning](https://github.com/orgs/GetStream/projects/6): Jetpack Compose public project management board and milestone overview
 
 ## 👩‍💻 Free for Makers 👨‍💻
 

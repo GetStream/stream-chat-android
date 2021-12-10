@@ -6,6 +6,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
 - [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
 - [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
+
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
@@ -46,8 +47,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new extension function `ChatClient::keystroke`.
-- Added new extension function `ChatClient::stopTyping`.
 
 ### ⚠️ Changed
 
@@ -66,48 +65,23 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed crash related with creation of MessageOptionsDialogFragment
-- Fixed behaviour related to search messages, when message was not already loaded from database MessageListView could not scroll to searched message.
-- Removed cut from text when text end with Italic
-- Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
-- Fixed bug related of not removing channels when filter selects channels where the the current user is not a member
+
 ### ⬆️ Improved
-- Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
-- Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
-- Added scroll to original message when clicking in a reply message. Use `ReplyMessageClickListener` to change the behaviour of click in reply messages.
+
 ### ⚠️ Changed
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Removed preemptive attachment loading that was resulting in crashes on certain Android API versions
-- Fixed incorrect message shape for theirs messages in threads.
 
 ### ⬆️ Improved
-- Minor UI improvements to the message overlay
-- Enabled scrolling behavior in SelectedMessageOverlay
 
 ### ✅ Added
-- Added the mention suggestion popup to the `MessageComposer` component, that allows to autocomplete a mention from a list of users.
-- Added support for slowdown mode. Users are no longer able to send messages during the cooldown interval.
-- Added support for system messages.
-- Added support for Giphy command.
-- Added message pinning to the list of message options
-- Added pinned message UI
 
 ### ⚠️ Changed
-- Changed the way focus state works for focused messages.
-- Added the Pin type to the MessageAction sealed class
-- Renamed a bunch of state classes for Compose component, to have the `State` prefix, general renaming, imports and other quality of life improvements
-- Renamed `ReactionOption` state wrapper to `ReactionOptionItemState`
-- Renamed `MessageListItem` state wrapper to `MessageListItemState` and its children now have a `State` suffix
-- Renamed `AttachmentItem` state wrapper to `AttachmentPickerItemState`
-- Renamed `MessageInputState` to `MessageComposerState`
-- Renamed `MessageOption` to `MessageOptionState`
-- Renamed `defaultMessageOptions()` to `defaultMessageOptionsState()`
 
 ### ❌ Removed
 
@@ -133,68 +107,84 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 
+
+# December 9th, 2021 - 4.24.0
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fix the issue when users' data can be outdated until restart SDK.
+
+### ✅ Added
+- Added new extension function `ChatClient::keystroke`.
+- Added new extension function `ChatClient::stopTyping`.
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed `MessageInputFieldView#mode` not being reset after custom attachments were cleared
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed crash related with creation of MessageOptionsDialogFragment
+- Fixed behaviour related to search messages, when message was not already loaded from database MessageListView could not scroll to searched message.
+- Removed cut from text when text end with Italic
+- Fixed `GiphyViewHolderStyle#cardBackgroundColor` not getting applied
+- Fixed bug related of not removing channels when filter selects channels where the the current user is not a member
+
+### ⬆️ Improved
+- Replied messages now have a limit for size. The text will get cut if there's too many characters or too many line breaks.
+- Improved Korean 🇰🇷 translations.
+
+### ✅ Added
+- Added scroll to original message when clicking in a reply message. Use `ReplyMessageClickListener` to change the behaviour of click in reply messages.
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Removed preemptive attachment loading that was resulting in crashes on certain Android API versions
+- Fixed incorrect message shape for theirs messages in threads.
+
+### ⬆️ Improved
+- Minor UI improvements to the message overlay
+- Enabled scrolling behavior in SelectedMessageOverlay
+
+### ✅ Added
+- Added the mention suggestion popup to the `MessageComposer` component, that allows to autocomplete a mention from a list of users.
+- Added support for slowdown mode. Users are no longer able to send messages during the cooldown interval.
+- Added support for system messages.
+- Added support for Giphy command.
+- Added message pinning to the list of message options
+- Added pinned message UI
+- Added a checkbox to the `MessageComposer` component, that allows to display a thread message in the parent channel.
+- Added an option to flag a message to the message options overlay.
+
+### ⚠️ Changed
+- Changed the way focus state works for focused messages.
+- Added the Pin type to the MessageAction sealed class
+- Renamed a bunch of state classes for Compose component, to have the `State` prefix, general renaming, imports and other quality of life improvements
+- Renamed `ReactionOption` state wrapper to `ReactionOptionItemState`
+- Renamed `MessageListItem` state wrapper to `MessageListItemState` and its children now have a `State` suffix
+- Renamed `AttachmentItem` state wrapper to `AttachmentPickerItemState`
+- Renamed `MessageInputState` to `MessageComposerState`
+- Renamed `MessageOption` to `MessageOptionState`
+- Renamed `defaultMessageOptions()` to `defaultMessageOptionsState()`
+
+
 # November 25th, 2021 - 4.23.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improved logs for errors in the SDK.
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Deprecated `QueryChannelsController::mutedChannelsIds`. Use `ChatDomain.mutedChannels` instead
 - Fix issue when sent attachments from Android SDK don't show title in iOS.
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Added new extension function `ChatClient::replayEventsForActiveChannels`.
 - Added new extension function `ChatClient::setMessageForReply`.
 - Added new extension function `ChatClient::downloadAttachment` to download attachments without `ChatDomain`.
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Made `ThreeTenInitializer` public to allow manual invocations of it. See the new [documentation](https://getstream.io/chat/docs/sdk/android/ui/guides/app-startup-initializers/) for more details.
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -209,8 +199,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - Added `MessageSendHandler::sendMessageWithCustomAttachments` and `MessageSendHandler::sendToThreadWithCustomAttachments` allowing to intercept sending custom attachments actions.
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -246,29 +234,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Exposed `MessageReactions` as a public component so users can use it to display a message reactions bubble in their custom UI.
 - Changed the type of the inner channel items in the `ChannelsState` class from `Channel` to `ChannelItem`.
 
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 11th, 2021 - 4.22.0
 ## Common changes for all artifacts

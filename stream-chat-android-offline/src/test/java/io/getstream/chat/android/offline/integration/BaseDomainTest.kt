@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
@@ -43,6 +44,7 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
@@ -50,7 +52,7 @@ import org.junit.Before
 import org.junit.Rule
 import java.util.Date
 
-internal open class BaseDomainTest {
+internal open class BaseDomainTest : SynchronizedCoroutineTest {
     lateinit var channelClientMock: ChannelClient
     lateinit var database: ChatDatabase
     lateinit var chatDomainImpl: ChatDomainImpl
@@ -84,6 +86,8 @@ internal open class BaseDomainTest {
 
     @get:Rule
     val testCoroutines = TestCoroutineRule()
+
+    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
     protected fun setupWorkManager() {
         val config = Configuration.Builder()
