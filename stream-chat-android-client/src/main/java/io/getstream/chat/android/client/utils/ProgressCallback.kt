@@ -20,15 +20,6 @@ public interface ProgressCallback {
     public fun onError(error: ChatError)
 
     /**
-     * Called when the attachment upload is in progress with [progress] in percentage.
-     */
-    @Deprecated(
-        message = "onProgress with percentage progress is deprecated. Use onProgress(bytesUploaded: Long, totalLength: Long) instead.",
-        level = DeprecationLevel.ERROR
-    )
-    public fun onProgress(progress: Long) { }
-
-    /**
      * Called when the attachment upload is in progress with [bytesUploaded] count
      * and [totalBytes] in bytes of the file.
      */

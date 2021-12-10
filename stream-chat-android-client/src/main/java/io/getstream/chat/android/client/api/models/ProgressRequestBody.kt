@@ -31,8 +31,6 @@ internal class ProgressRequestBody(
             uploaded += byteCount
 
             callback.onProgress(uploaded, total)
-            @Suppress("DEPRECATION_ERROR")
-            callback.onProgress((100 * uploaded) / total) // Invoked for backwards compatibility.
         }
     }
 }

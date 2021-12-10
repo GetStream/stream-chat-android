@@ -42,5 +42,6 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         }
     }.asLiveData()
 
+    @Suppress("DEPRECATION_ERROR")
     override val mutedChannelIds: LiveData<List<String>> = queryChannels.mutedChannelIds.asLiveData()
 }

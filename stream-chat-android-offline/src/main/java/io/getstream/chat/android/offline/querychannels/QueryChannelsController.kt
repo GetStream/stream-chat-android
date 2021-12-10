@@ -60,7 +60,7 @@ public class QueryChannelsController internal constructor(
     @Deprecated(
         message = "Use ChatDomain.channelMutes instead",
         replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public val mutedChannelIds: StateFlow<List<String>> =
         domainImpl.channelMutes.map { channelMutes -> channelMutes.map { channelMute -> channelMute.channel.id } }
