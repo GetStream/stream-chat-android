@@ -13,6 +13,11 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLe
 internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
+    /**
+     * Lambda invoked whn attachments button is clicked
+     */
+    public var onAttachmentsButtonClick: () -> Unit = {}
+
     constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -28,6 +33,7 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
+        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClick() }
     }
 
     /**

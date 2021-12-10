@@ -87,8 +87,11 @@ public class MessageComposerViewModel(
      *
      * @param attachments The attachments to store and show in the composer.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
+    public fun addSelectedAttachments(attachments: List<Attachment>): Unit {
         messageComposerController.addSelectedAttachments(attachments)
+        val oldState = _messageInputState.value
+        _messageInputState.value = oldState.copy(attachments = oldState.attachments + attachments)
+    }
 
     /**
      * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
@@ -97,8 +100,11 @@ public class MessageComposerViewModel(
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
+    public fun removeSelectedAttachment(attachment: Attachment): Unit {
         messageComposerController.removeSelectedAttachment(attachment)
+        val oldState = _messageInputState.value
+        _messageInputState.value = oldState.copy(attachments = oldState.attachments - attachment)
+    }
 
     /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,

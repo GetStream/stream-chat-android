@@ -4,19 +4,21 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.common.extensions.internal.context
+import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 
 /**
  * UI component designed for message handling message text input, attachments, actions, and sending the message.
@@ -41,7 +43,15 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var onDismissMessageHandler: () -> Unit = {}
 
-    private val attachmentsAdapter: MessageComposerAttachmentsAdapter = MessageComposerAttachmentsAdapter()
+    /**
+     * Callback invoked when attachments were selected
+     */
+    public var onAttachmentsSelectedHandler: (List<Attachment>) -> Unit = {}
+
+    /**
+     * Callback invoked when attachment is removed
+     */
+    public var onAttachmentRemovedHandler: (Attachment) -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -56,7 +66,32 @@ public class MessageComposerView : ConstraintLayout {
     private fun init() {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
-            val defaultLeadingContent = MessageComposerDefaultLeadingContent(context)
+            val defaultLeadingContent = MessageComposerDefaultLeadingContent(context).apply {
+                onAttachmentsButtonClick = {
+                    context.getFragmentManager()?.let {
+                        AttachmentSelectionDialogFragment.newInstance(MessageInputViewStyle.createDefault(context))
+                            .apply {
+                                val listener =
+                                    AttachmentSelectionListener { attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource ->
+                                        attachments.map { // TODO move to view model
+                                            val fileFromUri = StorageHelper().getCachedFileFromUri(requireContext(), it)
+                                            Attachment(
+                                                upload = fileFromUri,
+                                                type = it.type,
+                                                name = it.title ?: fileFromUri.name ?: "",
+                                                fileSize = it.size.toInt(),
+                                                mimeType = it.mimeType
+                                            )
+                                        }.also {
+                                            onAttachmentsSelectedHandler(it)
+                                        }
+                                    }
+                                setAttachmentSelectionListener(listener)
+                                show(it, AttachmentSelectionDialogFragment.TAG)
+                            }
+                    }
+                }
+            }
             removeAllViews()
             addView(defaultLeadingContent)
         }
@@ -64,6 +99,7 @@ public class MessageComposerView : ConstraintLayout {
             val defaultCenterContent = MessageComposerDefaultCenterContent(context).apply {
                 onTextChangedListener = { onInputChangedHandler(it) }
                 onClearButtonClickListener = { onDismissMessageHandler() }
+                onAttachmentRemovedListener = { onAttachmentRemovedHandler(it) }
             }
             removeAllViews()
             addView(defaultCenterContent)
@@ -139,11 +175,6 @@ public class MessageComposerView : ConstraintLayout {
         binding.trailingContent.addView(view, layoutParams)
     }
 
-    public fun setAttachmentViewFactory(factory: AttachmentViewFactory) {
-        attachmentsAdapter.viewFactory = factory
-        attachmentsAdapter.notifyDataSetChanged()
-    }
-
     private companion object {
         private val defaultChildLayoutParams by lazy {
             FrameLayout.LayoutParams(
@@ -163,68 +194,4 @@ public class MessageComposerView : ConstraintLayout {
  */
 public interface MessageComposerChild {
     public fun renderState(state: MessageInputState)
-}
-
-internal class MessageComposerAttachmentsAdapter(
-    private val attachmentClearedListener: (Attachment) -> Unit = {},
-) : RecyclerView.Adapter<MessageComposerViewHolder>() {
-    private val attachments: MutableList<Attachment> = mutableListOf()
-
-    public var viewFactory: AttachmentViewFactory = AttachmentViewFactory()
-
-    internal fun setAttachments(attachments: List<Attachment>) {
-        this.attachments.apply {
-            clear()
-            addAll(attachments)
-            notifyDataSetChanged()
-        }
-    }
-
-    fun removeItem(attachment: Attachment) {
-        val position = attachments.indexOf(attachment)
-        attachments -= attachment
-        notifyItemRemoved(position)
-    }
-
-    fun clear() {
-        attachments.clear()
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerViewHolder {
-        return MessageComposerViewHolder(parent, viewFactory, attachmentClearedListener)
-    }
-
-    override fun onBindViewHolder(holder: MessageComposerViewHolder, position: Int) {
-        holder.bindData(attachments[position])
-    }
-
-    override fun getItemCount(): Int = attachments.size
-}
-
-internal class MessageComposerViewHolder(
-    private val parent: ViewGroup,
-    private val attachmentViewFactory: AttachmentViewFactory,
-    private val onAttachmentClearedListener: (Attachment) -> Unit,
-) : RecyclerView.ViewHolder(parent) {
-
-    internal val binding: StreamUiMessageComposerAttachmentContainerBinding =
-        StreamUiMessageComposerAttachmentContainerBinding.inflate(context.streamThemeInflater, parent, false)
-
-    fun bindData(attachment: Attachment) {
-        val attachmentContainer = binding.root
-        val view = attachmentViewFactory.createViewForAttachment(parent, attachment, onAttachmentClearedListener)
-        attachmentContainer.removeAllViews()
-        attachmentContainer.addView(view)
-    }
-}
-
-public open class AttachmentViewFactory {
-    public open fun createViewForAttachment(
-        parent: ViewGroup,
-        attachment: Attachment,
-        attachmentRemoveListener: (Attachment) -> Unit,
-    ): View {
-        return TextView(parent.context).apply { text = "attachment" }
-    }
 }
