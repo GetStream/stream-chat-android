@@ -23,8 +23,10 @@ import kotlinx.coroutines.runBlocking
  * and makes an API request if a channel wasn't yet handled before when receives [NotificationAddedToChannelEvent],
  * [NotificationMessageNewEvent], [NotificationRemovedFromChannelEvent].
  */
-public class NonMemberChatEventHandler(private val client: ChatClient, private val channels: StateFlow<List<Channel>>) :
-    BaseChatEventHandler() {
+public class NonMemberChatEventHandler(
+    private val client: ChatClient,
+    private val channels: StateFlow<List<Channel>>,
+) : BaseChatEventHandler() {
 
     /**
      * Channel filter function. It makes an API query channel request based on cid of a channel and a filter object to
@@ -134,6 +136,4 @@ public class NonMemberChatEventHandler(private val client: ChatClient, private v
 
             else -> EventHandlingResult.Skip
         }
-
 }
-
