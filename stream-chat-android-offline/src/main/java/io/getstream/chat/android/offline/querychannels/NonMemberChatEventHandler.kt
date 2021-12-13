@@ -2,8 +2,6 @@ package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
@@ -12,9 +10,6 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
@@ -26,21 +21,6 @@ public class NonMemberChatEventHandler(
     private val client: ChatClient,
     private val channels: StateFlow<List<Channel>>,
 ) : BaseChatEventHandler() {
-
-    private val channelsRequest: suspend (cid: String, FilterObject) -> Result<List<Channel>> = { cid, filter ->
-        client.queryChannelsInternal(
-            QueryChannelsRequest(
-                filter = Filters.and(
-                    filter,
-                    Filters.eq("cid", cid)
-                ),
-                offset = 0,
-                limit = 1,
-                messageLimit = 0,
-                memberLimit = 0,
-            )
-        ).await()
-    }
 
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
@@ -98,7 +78,7 @@ public class NonMemberChatEventHandler(
         filter: FilterObject,
     ): EventHandlingResult {
         val channel = runBlocking {
-            val request = channelsRequest(cid, filter)
+            val request = ChannelFilterRequest.filter(client, cid, filter)
             if (request.isSuccess) {
                 request.data().find { channel -> channel.cid == cid }
             } else {

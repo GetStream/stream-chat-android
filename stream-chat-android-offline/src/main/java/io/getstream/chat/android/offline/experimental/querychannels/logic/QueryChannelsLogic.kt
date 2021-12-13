@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -16,6 +15,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.querychannels.ChannelFilterRequest
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -31,18 +31,7 @@ internal class QueryChannelsLogic(
     private val logger = ChatLogger.get("QueryChannelsLogic")
 
     internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
-        client.queryChannelsInternal(
-            QueryChannelsRequest(
-                filter = Filters.and(
-                    filter,
-                    Filters.eq("cid", cid)
-                ),
-                offset = 0,
-                limit = 1,
-                messageLimit = 0,
-                memberLimit = 0,
-            )
-        ).await()
+        ChannelFilterRequest.filter(client, cid, filter)
             .map { channels -> channels.any { it.cid == cid } }
             .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
     }
