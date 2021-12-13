@@ -42,9 +42,9 @@ public fun MessageFooter(
                 replyCount
             )
         )
+    }
 
-        Timestamp(date = message.updatedAt ?: message.createdAt)
-    } else if (!hasThread && (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None)) {
+    if (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None) {
         Row(
             modifier = modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
