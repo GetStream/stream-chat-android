@@ -118,13 +118,24 @@ public open suspend fun createUserBitmap(
 
 This way use default avatar with gradient colors and initials for the users.
 
-**If you only would like to change the gradient colors for the default avatar**, you can use `stream_ui_avatar_gradient_colors`. You can override this color in your color xml file like: 
+**If you only would like to change the gradient colors for the default avatar**, you can use `stream_ui_avatar_gradient_colors`.
+
+The normal color set include a variaty of colors: 
+
+![Colorful avatars](../assets/colorful_avatars.png)
+
+You can override this color in your color xml file. And expand of reduce the number of supported color, like the example
 
 ```
 <array name="stream_ui_avatar_gradient_colors">
-    <item>@color/stream_ui_avatar_gradient_orange</item>
+    <item>@color/stream_ui_literal_white</item>
 </array>        
 ```
+
+Which creates:
+
+![White avatars](../assets/white_avatars.png)
+
 
 If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
 
