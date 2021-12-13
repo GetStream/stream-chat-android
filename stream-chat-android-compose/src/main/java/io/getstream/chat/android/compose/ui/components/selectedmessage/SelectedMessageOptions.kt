@@ -23,14 +23,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Uses slots [headerContent] and [bodyContent] to display it's content.
  * By default shows [ReactionOptions] as header content and [MessageOptions] as body content.
  *
- * @param message used to gather the necessary message information (such as ownership, id, etc.) in order to properly display [SelectedMessageOptions]
- * @param modifier Compose UI [Modifier] that is applied to the internally used [Column]
- * @param reactionTypes by default used to display all the available reaction options inside of [headerContent]
- * @param messageOptions by default used to display all available message options inside of [bodyContent]
- * @param onMessageAction by default a Handler used to propagate click events on individual reaction and message option elements
- * inside of the header and body content
- * @param headerContent leading vertical Composable slot
- * @param bodyContent trailing vertical Composable slot
+ * @param message Used to gather the necessary message information (such as ownership, id, etc.) in order to properly display [SelectedMessageOptions].
+ * @param modifier Compose UI [Modifier] that is applied to the internally used [Column].
+ * @param reactionTypes By default used to display all the available reaction options inside of [headerContent].
+ * @param messageOptions By default used to display all available message options inside of [bodyContent].
+ * @param onMessageAction By default a Handler used to propagate click events on individual reaction and message option elements
+ * inside of the header and body content.
+ * @param headerContent Leading vertical Composable slot
+ * @param bodyContent Trailing vertical Composable slot.
  */
 @Composable
 public fun SelectedMessageOptions(
@@ -72,7 +72,7 @@ public fun SelectedMessageOptions(
 }
 
 /**
- * Preview of [SelectedMessageOptions]
+ * Preview of [SelectedMessageOptions].
  */
 @Preview(showBackground = true, name = "SelectedMessageOptions Preview")
 @Composable

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -72,7 +73,7 @@ class MessagesActivity : AppCompatActivity() {
                     onHeaderActionClick = {}
                 )
 
-                // MyCustomUi()
+                //MyCustomUi()
             }
         }
     }
@@ -141,7 +142,10 @@ class MessagesActivity : AppCompatActivity() {
             if (selectedMessage != null) {
                 SelectedMessageMenu(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter),
+                        .align(Alignment.Center)
+                        .padding(horizontal = 20.dp)
+                        .wrapContentSize(),
+                    shape = ChatTheme.shapes.attachment,
                     messageOptions = defaultMessageOptionsState(selectedMessage = selectedMessage,
                         currentUser = user,
                         isInThread = listViewModel.isInThread),

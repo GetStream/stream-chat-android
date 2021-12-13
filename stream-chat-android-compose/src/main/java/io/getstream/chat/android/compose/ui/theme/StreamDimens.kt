@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
  * @param messageOptionsMaxHeight The max height of the message options section when we select a message in the list.
  * @param messageOptionsMaxWidth The max width of the message options section when we select a message in the list.
  * @param messageOptionsRoundedCorners The rounded corners size of the message options shape.
- * @param reactionOptionsItemPadding The padding used by ReactionOptionItem
  */
 @Immutable
 public data class StreamDimens(
@@ -67,7 +66,6 @@ public data class StreamDimens(
     public val messageOptionsMaxWidth: Dp,
     public val messageOptionsMaxHeight: Dp,
     public val messageOptionsRoundedCorners: Dp,
-    public val reactionOptionsItemPadding: Dp,
 ) {
     public companion object {
         public fun defaultDimens(): StreamDimens = StreamDimens(
@@ -99,7 +97,6 @@ public data class StreamDimens(
             messageOptionsMaxWidth = 200.dp,
             messageOptionsMaxHeight = 300.dp,
             messageOptionsRoundedCorners = 16.dp,
-            reactionOptionsItemPadding = 2.dp,
         )
     }
 }

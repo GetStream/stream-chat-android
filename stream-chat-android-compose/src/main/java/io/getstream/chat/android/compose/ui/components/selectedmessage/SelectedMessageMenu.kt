@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.messages.list.MessageOptionState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -28,19 +29,19 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionO
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * A Composable function that turns [SelectedMessageOptions] into a menu by wrapping it inside of [Surface]
+ * A Composable function that turns [SelectedMessageOptions] into a menu by wrapping it inside of [Surface].
  *
- * @param message used to gather the necessary message information (such as ownership, id, etc.) in order to properly display [SelectedMessageOptions]
- * @param modifier Compose UI [Modifier] that is applied to the internally used [Surface]
- * @param shape the shape applied to the internally used [Surface]
- * @param overlayColor the color applied to the internally used [Box] that wraps [Surface]
- * @param reactionTypes by default used to display all the available reaction options inside of [headerContent]
- * @param messageOptions by default used to display all available message options inside of [bodyContent]
- * @param onMessageAction by default a Handler used to propagate click events on individual reaction and message option elements
- * inside of the header and body content
- * @param onDismiss Handler called when the menu is dismissed
- * @param headerContent leading vertical Composable slot
- * @param bodyContent trailing vertical Composable slot
+ * @param message Used to gather the necessary message information (such as ownership, id, etc.) in order to properly display [SelectedMessageOptions].
+ * @param modifier Compose UI [Modifier] that is applied to the internally used [Surface].
+ * @param shape The [Shape] applied to the internally used [Surface].
+ * @param overlayColor The color applied to the internally used [Box] that wraps [Surface].
+ * @param reactionTypes By default used to display all the available reaction options inside of [headerContent].
+ * @param messageOptions By default used to display all available message options inside of [bodyContent].
+ * @param onMessageAction By default a Handler used to propagate click events on individual reaction and message option elements
+ * inside of the header and body content.
+ * @param onDismiss Handler called when the menu is dismissed.
+ * @param headerContent Leading vertical Composable slot.
+ * @param bodyContent Trailing vertical Composable slot.
  */
 @Composable
 public fun SelectedMessageMenu(
@@ -106,10 +107,14 @@ public fun SelectedMessageMenu(
             )
         }
     }
+
+    SystemBackPressedHandler(isEnabled = true) {
+        onDismiss()
+    }
 }
 
 /**
- * Preview of [SelectedMessageMenu]
+ * Preview of [SelectedMessageMenu].
  */
 @Preview(showBackground = true, name = "SelectedMessageMenu Preview")
 @Composable
