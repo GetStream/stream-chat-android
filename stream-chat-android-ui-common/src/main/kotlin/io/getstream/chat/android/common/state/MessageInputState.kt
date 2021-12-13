@@ -1,6 +1,7 @@
 package io.getstream.chat.android.common.state
 
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.User
 
 /**
  * Represents the state within the message input.
@@ -8,9 +9,15 @@ import io.getstream.chat.android.client.models.Attachment
  * @param inputValue The current text value that's within the input.
  * @param attachments The currently selected attachments.
  * @param action The currently active [MessageAction].
+ * @param validationErrors The list of validation errors.
+ * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
+ * @param cooldownTimer The amount of time left until the user is allowed to send the next message.
  */
 public data class MessageInputState(
     val inputValue: String = "",
     val attachments: List<Attachment> = emptyList(),
     val action: MessageAction? = null,
+    val validationErrors: List<ValidationError> = emptyList(),
+    val mentionSuggestions: List<User> = emptyList(),
+    val cooldownTimer: Int = 0,
 )
