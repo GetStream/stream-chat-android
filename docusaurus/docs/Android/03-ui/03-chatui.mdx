@@ -94,7 +94,7 @@ The factory has a pair of methods for both user and channel avatars, such as `cr
 The methods mentioned above are suspending functions. If you don't use coroutines, you'll find variants with `Blocking` in their name that you can use instead.
 :::
 
-**If you don't want to use avatars from internet and only use the default avatar**, you can call `createDefaultUserBitmap` inside `createUserBitmap` in your custom implementation of `AvatarBitmapFactory`
+**If you don't want to use avatars from the internet and only use the default avatar**, you can call `createDefaultUserBitmap` inside `createUserBitmap` in your custom implementation of `AvatarBitmapFactory`
 
 ```
 public open suspend fun createUserBitmap(
