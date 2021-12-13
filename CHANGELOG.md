@@ -69,6 +69,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added header with back button and attachment's title to `AttachmentMediaActivity` which displays playable attachments.
+  You can customize its appearance using `streamUiMediaActivityHeader`, `streamUiMediaActivityHeaderLeftActionButtonStyle` and `streamUiMediaActivityHeaderTitleStyle` attributes.
 
 ### ⚠️ Changed
 
