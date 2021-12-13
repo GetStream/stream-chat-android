@@ -19,24 +19,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
 /**
- * Default implementation of [ChatEventHandler] which is more generic than [MessagingChatEventHandler]. It skips updates
- * and makes an API request if a channel wasn't yet handled before when receives [NotificationAddedToChannelEvent],
- * [NotificationMessageNewEvent], [NotificationRemovedFromChannelEvent].
+ * Implementation of [ChatEventHandler] that handles events when ChannelListViewModel has a filter to show channels which
+ * the current user is not a member. BE AWARE that this implementation uses much more API calls than [DefaultChatEventHandler]
  */
 public class NonMemberChatEventHandler(
     private val client: ChatClient,
     private val channels: StateFlow<List<Channel>>,
 ) : BaseChatEventHandler() {
-
-    /**
-     * Channel filter function. It makes an API query channel request based on cid of a channel and a filter object to
-     * define should be the channel with such cid be in the list of channels or not.
-     */
-    internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
-        channelsRequest(cid, filter)
-            .map { channels -> channels.any { it.cid == cid } }
-            .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
-    }
 
     private val channelsRequest: suspend (cid: String, FilterObject) -> Result<List<Channel>> = { cid, filter ->
         client.queryChannelsInternal(
