@@ -196,7 +196,6 @@ public fun MessagesScreen(
                     onMessageAction = { action ->
                         composerViewModel.performMessageAction(action)
                         listViewModel.performMessageAction(action)
-                        listViewModel.removeOverlay()
                     },
                     onDismiss = { listViewModel.removeOverlay() }
                 )
