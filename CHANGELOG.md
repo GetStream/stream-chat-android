@@ -81,6 +81,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added preview screens for file attachments.
 
 ### ⚠️ Changed
 - Big changes to the structure of the project, making it easier to find all the components and building blocks - [#2752](https://github.com/GetStream/stream-chat-android/pull/2752)
