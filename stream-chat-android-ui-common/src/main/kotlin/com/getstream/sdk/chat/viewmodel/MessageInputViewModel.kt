@@ -16,7 +16,9 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.extensions.stopTyping
 import java.io.File
 
 /**
@@ -167,7 +169,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     @Synchronized
     public fun keystroke() {
         val parentId = activeThread.value?.id
-        chatDomain.keystroke(cid, parentId).enqueue(
+        ChatClient.instance().keystroke(cid, parentId).enqueue(
             onError = { chatError ->
                 logger.logE("Could not send keystroke cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }
@@ -179,7 +181,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     public fun stopTyping() {
         val parentId = activeThread.value?.id
-        chatDomain.stopTyping(cid, parentId).enqueue(
+        ChatClient.instance().stopTyping(cid, parentId).enqueue(
             onError = { chatError ->
                 logger.logE("Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }
