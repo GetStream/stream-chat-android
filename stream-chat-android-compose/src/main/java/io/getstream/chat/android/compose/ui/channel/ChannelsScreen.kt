@@ -35,8 +35,8 @@ import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
-import io.getstream.chat.android.compose.ui.common.SearchInput
-import io.getstream.chat.android.compose.ui.common.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
@@ -169,7 +169,7 @@ public fun ChannelsScreen(
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
-                    activeAction.channel.id
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel)
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
                 onDismiss = { listViewModel.dismissChannelAction() }
@@ -182,7 +182,7 @@ public fun ChannelsScreen(
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
-                    activeAction.channel.id
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel)
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },
                 onDismiss = { listViewModel.dismissChannelAction() }
