@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebResourceError;
@@ -29,6 +29,8 @@ import io.getstream.chat.android.ui.common.R;
 public class AttachmentDocumentActivity extends AppCompatActivity {
     private final static String TAG = AttachmentDocumentActivity.class.getSimpleName();
 
+    private static final String KEY_URL = "url";
+
     WebView webView;
     ProgressBar progressBar;
 
@@ -49,7 +51,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
     private void init() {
         Intent intent = getIntent();
-        String filePath = intent.getStringExtra("url");
+        String filePath = intent.getStringExtra(KEY_URL);
         loadDocument(filePath);
     }
 
@@ -119,5 +121,11 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
             Toast.makeText(AttachmentDocumentActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static Intent getIntent(Context context, String url) {
+        Intent intent = new Intent(context, AttachmentDocumentActivity.class);
+        intent.putExtra(KEY_URL, url);
+        return intent;
     }
 }

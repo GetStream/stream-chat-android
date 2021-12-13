@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.devbrackets.android.exomedia.ui.widget.VideoView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/videoView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    app:useDefaultControls="true"
+    />
