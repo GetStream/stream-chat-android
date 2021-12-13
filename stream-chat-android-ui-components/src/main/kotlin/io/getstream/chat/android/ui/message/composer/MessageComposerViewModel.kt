@@ -107,6 +107,15 @@ public class MessageComposerViewModel(
     }
 
     /**
+     * Removes all the selected attachments, e.g. when user taps clear input button, or after the message is sent
+     */
+    public fun clearSelectedAttachments(): Unit {
+        messageComposerController.selectedAttachments.value = emptyList()
+        val oldState = _messageInputState.value
+        _messageInputState.value = oldState.copy(attachments = selectedAttachments.value)
+    }
+
+    /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
      * or we send a new message, using our API.
      *
@@ -116,6 +125,7 @@ public class MessageComposerViewModel(
      */
     public fun sendMessage(message: Message): Unit = messageComposerController.sendMessage(message).also {
         setMessageInput("")
+        clearSelectedAttachments()
     }
 
     /**

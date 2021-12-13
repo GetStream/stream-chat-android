@@ -1077,15 +1077,9 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Comp
 	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }
 
-public class io/getstream/chat/android/ui/message/composer/DefaultMessageComposerAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
-	public fun <init> ()V
-	public fun <init> (J)V
-	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun createViewForAttachment (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
-}
-
 public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
-	public abstract fun createViewForAttachment (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public abstract fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerChild {
@@ -1096,14 +1090,22 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun addAttachmentViewFactory ([Lio/getstream/chat/android/ui/message/composer/MessageComposerImageAttachmentPreviewFactory;)V
 	public final fun getOnAttachmentRemovedListener ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnClearButtonClickListener ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnTextChangedListener ()Lkotlin/jvm/functions/Function1;
 	public fun renderState (Lio/getstream/chat/android/common/state/MessageInputState;)V
-	public final fun setAttachmentViewFactory (Lio/getstream/chat/android/ui/message/composer/DefaultMessageComposerAttachmentPreviewFactory;)V
 	public final fun setOnAttachmentRemovedListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setOnClearButtonClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setOnTextChangedListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public class io/getstream/chat/android/ui/message/composer/MessageComposerImageAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun <init> (J)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
 }
 
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerView : androidx/constraintlayout/widget/ConstraintLayout {
@@ -1134,6 +1136,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun addSelectedAttachments (Ljava/util/List;)V
 	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/models/Message;
 	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
+	public final fun clearSelectedAttachments ()V
 	public final fun dismissMessageActions ()V
 	public final fun getInput ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getLastActiveAction ()Lkotlinx/coroutines/flow/Flow;
