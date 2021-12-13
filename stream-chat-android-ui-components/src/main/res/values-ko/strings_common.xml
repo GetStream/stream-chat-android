@@ -10,5 +10,5 @@
 
     <!-- Message Preview (User in Mention List and Search Result List) -->
     <string name="stream_ui_message_preview_file">파일: %s</string>
-    <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt;에&lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; - &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>
