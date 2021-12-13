@@ -3,6 +3,7 @@ package io.getstream.chat.android.client
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
@@ -45,4 +46,10 @@ internal object Mother {
             token = token,
             pushProvider = pushProvider,
         )
+
+    fun randomUserPresenceChangedEvent(user: User = randomUser()): UserPresenceChangedEvent {
+        return KFixture(fixture) {
+            sameInstance(User::class.java, user)
+        }()
+    }
 }
