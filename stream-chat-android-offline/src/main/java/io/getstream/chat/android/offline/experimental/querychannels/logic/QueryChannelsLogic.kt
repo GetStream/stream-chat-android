@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val chatDomainImpl: ChatDomainImpl,
-    private val client: ChatClient
+    private val client: ChatClient,
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
@@ -35,7 +35,6 @@ internal class QueryChannelsLogic(
             .map { channels -> channels.any { it.cid == cid } }
             .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
     }
-
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         mutableState._currentRequest.value = request
@@ -59,7 +58,8 @@ internal class QueryChannelsLogic(
 
     private suspend fun fetchChannelsFromCache(pagination: AnyChannelPaginationRequest): List<Channel> {
         val queryChannelsSpec = mutableState.queryChannelsSpec
-        val query = chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
+        val query =
+            chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
 
         return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
