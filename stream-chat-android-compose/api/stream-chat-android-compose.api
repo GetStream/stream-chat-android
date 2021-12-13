@@ -30,6 +30,16 @@ public final class io/getstream/chat/android/compose/state/DateFormatType : java
 	public static fun values ()[Lio/getstream/chat/android/compose/state/DateFormatType;
 }
 
+public final class io/getstream/chat/android/compose/state/OnlineIndicatorAlignment : java/lang/Enum {
+	public static final field BottomEnd Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
+	public static final field BottomStart Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
+	public static final field TopEnd Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
+	public static final field TopStart Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
+	public final fun getAlignment ()Landroidx/compose/ui/Alignment;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
+	public static fun values ()[Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
+}
+
 public final class io/getstream/chat/android/compose/state/QueryConfig {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
@@ -610,6 +620,10 @@ public final class io/getstream/chat/android/compose/ui/components/NetworkLoadin
 	public static final fun NetworkLoadingIndicator-vlEVYhg (Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/text/TextStyle;JLandroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/OnlineIndicatorKt {
+	public static final fun OnlineIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/SearchInputKt {
 	public static final fun SearchInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
@@ -646,7 +660,7 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Avatar
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
-	public static final fun ChannelAvatar (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;ZLio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelAvatar (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/GroupAvatarKt {
@@ -657,19 +671,8 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Initia
 	public static final fun InitialsAvatar (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment : java/lang/Enum {
-	public static final field BottomEnd Lio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;
-	public static final field BottomStart Lio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;
-	public static final field TopEnd Lio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;
-	public static final field TopStart Lio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;
-	public final fun getAlignment ()Landroidx/compose/ui/Alignment;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;
-	public static fun values ()[Lio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;
-}
-
 public final class io/getstream/chat/android/compose/ui/components/avatar/UserAvatarKt {
-	public static final fun OnlineIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun UserAvatar (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Ljava/lang/String;ZLio/getstream/chat/android/compose/ui/components/avatar/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun UserAvatar (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ChannelDetailsKt {
@@ -724,6 +727,15 @@ public final class io/getstream/chat/android/compose/ui/components/composer/Mess
 	public static final fun MessageInputOptions (Lio/getstream/chat/android/common/state/MessageAction;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionItemKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionsKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionsKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function4;
@@ -760,6 +772,12 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageFooterKt {
 	public static final fun MessageFooter (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/messages/MessageReactionItemKt {
+	public static final fun MessageReactionItem (Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOptionItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageReactionItemNotSelectedPreview (Landroidx/compose/runtime/Composer;I)V
+	public static final fun MessageReactionItemSelectedPreview (Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageReactionsKt {

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,20 +20,19 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param options The list of reactions to display.
  * @param modifier Modifier for styling.
+ * @param itemContent Composable that represents each reaction item in the row of message reactions.
  */
 @Composable
 public fun MessageReactions(
     options: List<ReactionOptionItemState>,
     modifier: Modifier = Modifier,
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
-        Icon(
+        MessageReactionItem(
             modifier = Modifier
                 .size(20.dp)
                 .padding(2.dp)
                 .align(Alignment.CenterVertically),
-            painter = option.painter,
-            tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-            contentDescription = null
+            option = option
         )
     },
 ) {
@@ -50,6 +48,9 @@ public fun MessageReactions(
     }
 }
 
+/**
+ * Preview of the [MessageReactions] with one reaction.
+ */
 @Preview
 @Composable
 private fun OneMessageReactionPreview() {
@@ -58,6 +59,9 @@ private fun OneMessageReactionPreview() {
     }
 }
 
+/**
+ * Preview of the [MessageReactions] with many reactions.
+ */
 @Preview
 @Composable
 private fun ManyMessageReactionsPreview() {
