@@ -55,6 +55,7 @@ public class AvatarView @JvmOverloads constructor(
         style: AvatarStyle,
         generateAvatarDrawable: suspend () -> AvatarDrawable
     ) {
+        // TODO create a local scope that we actually cancel at some point?
         GlobalScope.launch(DispatcherProvider.Main) {
             layoutParams?.apply {
                 width = style.avatarWidth

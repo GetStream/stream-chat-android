@@ -79,6 +79,7 @@ object Versions {
     internal const val THREETENBP = "1.5.1"
     internal const val THREETENABP = "1.3.1"
     internal const val TIMBER = "5.0.0"
+    internal const val TURBINE = "0.7.0"
     internal const val WORK = "2.7.0"
 }
 
@@ -203,6 +204,7 @@ object Dependencies {
     const val threeTenBp = "org.threeten:threetenbp:${Versions.THREETENBP}"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:${Versions.THREETENABP}"
     const val timber = "com.jakewharton.timber:timber:${Versions.TIMBER}"
+    const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
 

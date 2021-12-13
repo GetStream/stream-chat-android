@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -15,6 +16,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
     fun observe() {
         if (isObserving.not()) {
             isObserving = true
+            @OptIn(DelicateCoroutinesApi::class)
             GlobalScope.launch(DispatcherProvider.Main) {
                 ProcessLifecycleOwner.get()
                     .lifecycle
@@ -24,6 +26,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
     }
 
     fun dispose() {
+        @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(DispatcherProvider.Main) {
             ProcessLifecycleOwner.get()
                 .lifecycle

@@ -15,7 +15,6 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
-	public final fun getUiMode ()Lio/getstream/chat/android/ui/UiMode;
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
@@ -24,7 +23,6 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
-	public final fun setUiMode (Lio/getstream/chat/android/ui/UiMode;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
@@ -133,7 +131,7 @@ public final class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Compa
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
-	public fun <init> (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;II)V
+	public fun <init> (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IILio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;F)V
 	public final fun component1 ()I
 	public final fun component2 ()I
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -141,12 +139,16 @@ public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
 	public final fun component5 ()Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public final fun component6 ()I
 	public final fun component7 ()I
-	public final fun copy (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;II)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public final fun component8 ()Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public final fun component9 ()F
+	public final fun copy (IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IILio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;F)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/avatar/AvatarStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ZLio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;IILio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;FILjava/lang/Object;)Lio/getstream/chat/android/ui/avatar/AvatarStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarBorderColor ()I
 	public final fun getAvatarBorderWidth ()I
 	public final fun getAvatarInitialText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getAvatarShape ()Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public final fun getBorderRadius ()F
 	public final fun getOnlineIndicatorBorderColor ()I
 	public final fun getOnlineIndicatorColor ()I
 	public final fun getOnlineIndicatorEnabled ()Z
@@ -161,6 +163,14 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/app
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setChannelData (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setUserData (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public final class io/getstream/chat/android/ui/avatar/AvatarView$AvatarShape : java/lang/Enum {
+	public static final field CIRCLE Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public static final field SQUARE Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
+	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$AvatarShape;
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
@@ -1614,6 +1624,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setLoadingView (Landroid/view/View;)V
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setMessageBackgroundFactory (Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory;)V
 	public final fun setMessageClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageClickListener;)V
 	public final fun setMessageDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setMessageDeleteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageDeleteHandler;)V
@@ -1635,6 +1646,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
 	public final fun setRepliesEnabled (Z)V
+	public final fun setReplyMessageClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReplyMessageClickListener;)V
 	public final fun setScrollToBottomButtonEnabled (Z)V
 	public final fun setShowAvatarPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate;)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;)V
@@ -1770,6 +1782,10 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView$New
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener {
 	public abstract fun onReactionViewClick (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ReplyMessageClickListener {
+	public abstract fun onReplyClick (Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate {
@@ -2062,7 +2078,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 	protected final fun createLinkContent (Lio/getstream/chat/android/client/models/Attachment;ZLio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory : java/io/Serializable {
+public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
 	public abstract fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun giphyAppearanceModel (Landroid/content/Context;)Landroid/graphics/drawable/Drawable;
 	public abstract fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;

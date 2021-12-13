@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -42,6 +43,7 @@ import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
@@ -54,7 +56,7 @@ import java.util.concurrent.Executors
  * Sets up a ChatDomain object with a mocked ChatClient.
  */
 @ExperimentalStreamChatApi
-internal open class BaseDomainTest2 {
+internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     /** a realistic set of chat data, please only add to this, don't update */
     var data = TestDataHelper()
@@ -89,6 +91,8 @@ internal open class BaseDomainTest2 {
     /** single threaded coroutines via DispatcherProvider */
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
     @Before
     @CallSuper

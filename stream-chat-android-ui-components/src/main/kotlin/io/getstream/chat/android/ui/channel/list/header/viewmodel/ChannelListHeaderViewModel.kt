@@ -18,6 +18,10 @@ public class ChannelListHeaderViewModel @JvmOverloads constructor(
 ) : ViewModel() {
     public val currentUser: LiveData<User?> = chatDomain.user
     public val connectionState: LiveData<ConnectionState> = chatDomain.connectionState
-    @Deprecated("Use connectionState instead")
+    @Deprecated(
+        message = "Use connectionState instead",
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("DEPRECATION_ERROR")
     public val online: LiveData<Boolean> = chatDomain.online
 }

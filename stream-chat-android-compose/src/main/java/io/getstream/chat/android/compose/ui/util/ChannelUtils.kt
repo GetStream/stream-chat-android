@@ -6,21 +6,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import java.util.Date
-
-private const val EXTRA_CHANNEL_MUTED: String = "isMuted"
-
-/**
- * Allows storing additional information if the channel is muted for the current user.
- *
- * @see [ChannelListViewModel.enrichMutedChannels]
- */
-public var Channel.isMuted: Boolean
-    get() = extraData[EXTRA_CHANNEL_MUTED] as Boolean? ?: false
-    set(value) {
-        extraData[EXTRA_CHANNEL_MUTED] = value
-    }
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -84,21 +70,26 @@ public fun Channel.isOneToOne(currentUser: User?): Boolean {
  * @return The text that represent the member status of the channel.
  */
 public fun Channel.getMembersStatusText(context: Context, currentUser: User?): String {
-    val otherMembers = members.filter { it.user.id != currentUser?.id }
-
     return when {
-        otherMembers.isEmpty() -> ""
-        isOneToOne(currentUser) -> otherMembers.first()
+        isOneToOne(currentUser) -> members.first { it.user.id != currentUser?.id }
             .user
             .getLastSeenText(context)
         else -> {
-            val count = otherMembers.count()
-            context.resources.getQuantityString(
-                R.plurals.stream_compose_channel_members,
-                count,
-                count,
-                otherMembers.count { it.user.online }
+            val memberCountString = context.resources.getQuantityString(
+                R.plurals.stream_compose_member_count,
+                memberCount,
+                memberCount
             )
+
+            return if (watcherCount > 0) {
+                context.getString(
+                    R.string.stream_compose_member_count_online,
+                    memberCountString,
+                    watcherCount
+                )
+            } else {
+                memberCountString
+            }
         }
     }
 }

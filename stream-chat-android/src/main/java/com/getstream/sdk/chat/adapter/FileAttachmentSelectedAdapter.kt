@@ -10,7 +10,9 @@ import com.getstream.sdk.chat.databinding.StreamItemAttachFileBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.UiUtils
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
+@OptIn(ExperimentalStreamChatApi::class)
 internal class FileAttachmentSelectedAdapter(
     private var attachments: List<AttachmentMetaData>,
     private val localAttach: Boolean,
@@ -28,8 +30,6 @@ internal class FileAttachmentSelectedAdapter(
         return view
     }
 
-    // endregion
-    // region Configure Attachments
     private fun configureFileAttach(binding: StreamItemAttachFileBinding, attachment: AttachmentMetaData) {
         binding.ivFileThumb.setImageResource(UiUtils.getIcon(attachment.mimeType))
         binding.tvFileTitle.text = attachment.title

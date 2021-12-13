@@ -10,13 +10,8 @@ import java.util.Date
 
 /**
  * ChannelEntity stores both the channel information as well as references
- * to all of the channel's state
- *
- * note that we don't store channel watchers or watcher_count.
- * as that information is likely to go stale when you go offline.
- *
- * messages are stored on their own table for easier pagination and updates
- *
+ * to all of the channel's state.
+ * Messages are stored on their own table for easier pagination and updates.
  */
 @Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
@@ -33,6 +28,12 @@ internal data class ChannelEntity(
     val hideMessagesBefore: Date?,
     /** till when the channel is muted */
     val members: Map<String, MemberEntity>,
+    /** Count of members for this channel. */
+    val memberCount: Int,
+    /** Id of watchers */
+    val watcherIds: List<String>,
+    /** Count of watchers */
+    val watcherCount: Int,
     /** list of how far each user has read */
     val reads: Map<String, ChannelUserReadEntity>,
     /** denormalize the last message date so we can sort on it */

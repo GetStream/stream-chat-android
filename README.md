@@ -24,12 +24,22 @@ The SDK supports both Kotlin and Java, but *we strongly recommend using Kotlin*.
 * [Client Documentation](https://getstream.io/chat/docs/android/?language=kotlin)
 * [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/)
 * [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
-* [API docs](https://getstream.github.io/stream-chat-android/): Full generated docs from Dokka 
+* [API docs](https://getstream.github.io/stream-chat-android/): Full generated docs from Dokka
+* [Jetpack Compose Planning](https://github.com/orgs/GetStream/projects/6): Jetpack Compose public project management board and milestone overview
 
 ## 👩‍💻 Free for Makers 👨‍💻
 
 Stream is free for most side and hobby projects. To qualify, your project/company needs to have < 5 team members and < $10k in monthly revenue.
 For complete pricing details, visit our [Chat Pricing Page](https://getstream.io/chat/pricing/).
+
+## 🚨 Old UI Module Deprecation 🚨
+`stream-chat-android` module will be deprecated by the end of December 2021. The module will continue working, but we won't be releasing new versions.
+Consider migrating to `stream-chat-android-ui-components` or `stream-chat-android-compose`. Here you can find a set of useful resources for migration:
+- [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
+- [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/)
+- [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
+- [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
+- [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
 
 ## 🗺️ Overview and Documentation 📚
 
@@ -54,6 +64,10 @@ Learn more about the modules by visiting [the documentation](https://getstream.i
 ## 📖 Tutorial
 
 The best place to start is the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/). It teaches you the basics of using this SDK and also shows how to make frequently required changes.
+
+## 🛠️ Installation and Getting Started 🚀
+
+See the [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/) and [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/) pages of the documentation.
 
 ## 📲 Sample App
 
@@ -97,10 +111,6 @@ Here are some of the features that the SDK supports out-of-the-box:
 - Unread message counts
 
 For more, see the [SDK's website](https://getstream.io/chat/sdk/android/).
-
-## 🛠️ Installation and Getting Started 🚀
-
-See the [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/) and [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/) pages of the documentation.
 
 ## 💼 We are hiring!
 

@@ -405,8 +405,9 @@ public data class NotificationRemovedFromChannelEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val channel: Channel,
     override val member: Member,
-) : CidEvent(), HasMember
+) : CidEvent(), HasMember, HasChannel
 
 /**
  * Triggered when a message reaction is deleted

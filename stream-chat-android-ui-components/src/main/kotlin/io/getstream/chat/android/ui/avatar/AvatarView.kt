@@ -5,7 +5,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
+import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
@@ -13,6 +15,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
@@ -46,8 +49,9 @@ public class AvatarView : AppCompatImageView {
         } else {
             load(
                 data = Avatar.ChannelAvatar(channel, avatarStyle),
-                transformation = Circle,
+                transformation = avatarShape(avatarStyle),
             )
+
             isOnline = false
         }
     }
@@ -55,8 +59,9 @@ public class AvatarView : AppCompatImageView {
     public fun setUserData(user: User) {
         load(
             data = Avatar.UserAvatar(user, avatarStyle),
-            transformation = Circle,
+            transformation = avatarShape(avatarStyle),
         )
+
         isOnline = user.online
     }
 
@@ -71,8 +76,8 @@ public class AvatarView : AppCompatImageView {
     override fun onDraw(canvas: Canvas) {
         if (drawable != null) {
             super.onDraw(canvas)
-            drawBorder(canvas)
-            drawOnlineStatus(canvas)
+            drawBorder(canvas, avatarStyle, borderPaint)
+            drawOnlineStatus(canvas, isOnline, avatarStyle)
         }
     }
 
@@ -90,7 +95,7 @@ public class AvatarView : AppCompatImageView {
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
     }
 
-    private fun drawOnlineStatus(canvas: Canvas) {
+    private fun drawOnlineStatus(canvas: Canvas, isOnline: Boolean, avatarStyle: AvatarStyle) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
             val cx: Float = when (avatarStyle.onlineIndicatorPosition) {
                 OnlineIndicatorPosition.TOP_LEFT,
@@ -114,14 +119,35 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
-    private fun drawBorder(canvas: Canvas) {
+    private fun avatarShape(style: AvatarStyle): StreamImageLoader.ImageTransformation {
+        return when (style.avatarShape) {
+            AvatarShape.CIRCLE -> Circle
+            AvatarShape.SQUARE -> RoundedCorners(style.borderRadius)
+        }
+    }
+
+    private fun drawBorder(canvas: Canvas, avatarStyle: AvatarStyle, borderPaint: Paint) {
         if (avatarStyle.avatarBorderWidth != 0) {
-            canvas.drawCircle(
-                width / 2f,
-                height / 2f,
-                width / 2f - avatarStyle.avatarBorderWidth / 2,
-                borderPaint
-            )
+            if (avatarStyle.avatarShape == AvatarShape.SQUARE) {
+                val dpOffset = SQUARE_BORDER_OFFSET.dpToPx().toFloat()
+
+                canvas.drawRoundRect(
+                    dpOffset,
+                    dpOffset,
+                    width.toFloat() - dpOffset,
+                    height.toFloat() - dpOffset,
+                    avatarStyle.borderRadius,
+                    avatarStyle.borderRadius,
+                    borderPaint
+                )
+            } else {
+                canvas.drawCircle(
+                    width / 2f,
+                    height / 2f,
+                    width / 2f - avatarStyle.avatarBorderWidth / 2,
+                    borderPaint
+                )
+            }
         }
     }
 
@@ -132,6 +158,10 @@ public class AvatarView : AppCompatImageView {
         BOTTOM_RIGHT
     }
 
+    public enum class AvatarShape(public val value: Int) {
+        CIRCLE(0), SQUARE(1)
+    }
+
     internal companion object {
         /**
          * A small extra added to the avatar size to prevent anti-aliasing issues.
@@ -139,5 +169,7 @@ public class AvatarView : AppCompatImageView {
         internal const val AVATAR_SIZE_EXTRA = 1
 
         internal const val MAX_AVATAR_SECTIONS = 4
+
+        private const val SQUARE_BORDER_OFFSET = 1
     }
 }

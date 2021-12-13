@@ -29,7 +29,7 @@ import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.composer.MessageInputState
+import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.common.InputField
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
@@ -90,25 +90,28 @@ public fun MessageInputOptions(
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
  * when the input changes.
  *
- * @param messageInputState The state of the input.
+ * @param messageComposerState The state of the input.
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param modifier Modifier for styling.
+ * @param maxLines The number of lines that are allowed in the input.
  * @param label Composable function that represents the label UI, when there's no input/focus.
  */
 @Composable
 public fun MessageInput(
-    messageInputState: MessageInputState,
+    messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
+    maxLines: Int = DEFAULT_MESSAGE_INPUT_MAX_LINES,
     label: @Composable () -> Unit = { DefaultComposerLabel() },
 ) {
-    val (value, attachments, activeAction) = messageInputState
+    val (value, attachments, activeAction) = messageComposerState
 
     InputField(
         modifier = modifier,
         value = value,
+        maxLines = maxLines,
         onValueChange = onValueChange,
         decorationBox = { innerTextField ->
             Column {
@@ -162,3 +165,9 @@ private fun MessageInputAttachments(
 
     previewFactory?.previewContent?.invoke(modifier, attachments, onAttachmentRemoved)
 }
+
+/**
+ * The default number of lines allowed in the input. The message input will become scrollable after
+ * this threshold is exceeded.
+ */
+private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6

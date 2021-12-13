@@ -1,67 +1,54 @@
 package io.getstream.chat.android.offline.thread
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.message.wasCreatedAfterOrAt
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
+@OptIn(ExperimentalStreamChatApi::class)
 public class ThreadController internal constructor(
-    public val threadId: String,
-    private val channelController: ChannelController,
-    domain: ChatDomainImpl,
+    private val threadMutableState: ThreadMutableState,
+    private val threadLogic: ThreadLogic,
+    private val client: ChatClient,
 ) {
-
-    private val _loadingOlderMessages = MutableStateFlow(false)
-    private val _endOfOlderMessages = MutableStateFlow(false)
-    private var firstMessage: Message? = null
-    private val logger = ChatLogger.get("ThreadController")
-
-    private val threadMessages: Flow<List<Message>> =
-        channelController.unfilteredMessages.map { messageList -> messageList.filter { it.id == threadId || it.parentId == threadId } }
-
-    private val sortedVisibleMessages: StateFlow<List<Message>> = threadMessages.map { threadMessages ->
-        threadMessages.sortedBy { m -> m.createdAt ?: m.createdLocallyAt }
-            .filter {
-                channelController.hideMessagesBefore == null ||
-                    it.wasCreatedAfterOrAt(channelController.hideMessagesBefore)
-            }
-    }.stateIn(domain.scope, SharingStarted.Eagerly, emptyList())
+    public val threadId: String by threadMutableState::parentId
 
     /** the sorted list of messages for this thread */
-    public val messages: StateFlow<List<Message>> = sortedVisibleMessages
+    public val messages: StateFlow<List<Message>> by threadMutableState::messages
 
     /** if we are currently loading older messages */
-    public val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
+    public val loadingOlderMessages: StateFlow<Boolean> by threadMutableState::loadingOlderMessages
 
     /** if we've reached the earliest point in this thread */
-    public val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
+    public val endOfOlderMessages: StateFlow<Boolean> by threadMutableState::endOfOlderMessages
 
     public fun getMessagesSorted(): List<Message> = messages.value
 
     internal suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
         // TODO: offline storage for thread load more
-        if (_loadingOlderMessages.value) {
-            val errorMsg = "already loading messages for this thread, ignoring the load more requests."
-            logger.logI(errorMsg)
-            return Result(ChatError(errorMsg))
+        val preconditionResult = threadLogic.precondition()
+        if (preconditionResult.isError) {
+            return Result(preconditionResult.error())
         }
-        _loadingOlderMessages.value = true
-        val result = channelController.loadOlderThreadMessages(threadId, limit, firstMessage)
-        if (result.isSuccess) {
-            _endOfOlderMessages.value = result.data().size < limit
-            firstMessage = result.data().sortedBy { it.createdAt }.firstOrNull() ?: firstMessage
-        }
+        threadLogic.onRequest()
 
-        _loadingOlderMessages.value = false
+        val result = doLoadMore(limit, threadMutableState.oldestInThread.value)
+
+        threadLogic.onResult(result, limit)
+
         return result
+    }
+
+    private suspend fun doLoadMore(
+        limit: Int,
+        firstMessage: Message? = null,
+    ): Result<List<Message>> = if (firstMessage != null) {
+        client.getRepliesMoreInternal(threadId, firstMessage.id, limit).await()
+    } else {
+        client.getRepliesInternal(threadId, limit).await()
     }
 }

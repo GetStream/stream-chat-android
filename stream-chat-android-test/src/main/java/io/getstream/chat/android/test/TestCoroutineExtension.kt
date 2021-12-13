@@ -27,10 +27,10 @@ public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Afte
 
     override fun afterEach(context: ExtensionContext) {
         check(beforeAllCalled) { "TestCoroutineExtension field must be static" }
-        scope.cleanupTestCoroutines()
     }
 
     override fun afterAll(context: ExtensionContext) {
         DispatcherProvider.reset()
+        dispatcher.cleanupTestCoroutines()
     }
 }

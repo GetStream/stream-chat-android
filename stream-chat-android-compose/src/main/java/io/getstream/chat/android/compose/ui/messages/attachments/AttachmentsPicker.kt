@@ -20,12 +20,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -182,7 +183,7 @@ public fun AttachmentsPicker(
                     }
 
                     LaunchedEffect(storagePermissionState.hasPermission) {
-                        if (storagePermissionState.permissionRequested && storagePermissionState.hasPermission) {
+                        if (storagePermissionState.hasPermission) {
                             attachmentsPickerViewModel.loadData()
                         }
                     }
@@ -253,7 +254,8 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
 
         Spacer(modifier = Modifier.size(16.dp))
 
-        Button(
+        TextButton(
+            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
             onClick = {
                 // TODO pull this out into a utility function
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -262,9 +264,10 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
                     data = uri
                 }
                 context.startActivity(intent)
-            },
-            content = { Text(stringResource(id = R.string.stream_compose_grant_permission)) }
-        )
+            }
+        ) {
+            Text(stringResource(id = R.string.stream_compose_grant_permission))
+        }
     }
 }
 

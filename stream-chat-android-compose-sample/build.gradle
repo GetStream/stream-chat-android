@@ -67,7 +67,6 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Versions.KOTLIN
         kotlinCompilerExtensionVersion Versions.COMPOSE
     }
 
@@ -78,6 +77,7 @@ android {
 
 dependencies {
     implementation project(':stream-chat-android-compose')
+    implementation project(":stream-chat-android-pushprovider-firebase")
 
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxAppCompat

@@ -317,6 +317,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$DefaultImpls {
 
 public final class io/getstream/chat/android/offline/channel/ChannelController {
 	public final fun clean ()V
+	public final fun getChannelConfig ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelData ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getChannelType ()Ljava/lang/String;
@@ -440,6 +441,14 @@ public final class io/getstream/chat/android/offline/experimental/channel/state/
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState {
+	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getOldestInThread ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getParentId ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
 }
 
@@ -471,6 +480,8 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
+	public static final fun keystroke (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun replayEventsForActiveChannels (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -481,6 +492,8 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static synthetic fun requestMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun searchUsersByName (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public static final fun stopTyping (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {

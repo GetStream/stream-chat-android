@@ -64,10 +64,10 @@ internal class GetDeletedOrMentionedTextTest {
         var fileSize: Long = 999
         convertFileSizeByteCount(fileSize) shouldBeEqualTo "999 B"
         fileSize = 110592
-        convertFileSizeByteCount(fileSize) shouldBeEqualTo "110.59 KB"
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "108 KB"
         fileSize = 452984832
-        convertFileSizeByteCount(fileSize) shouldBeEqualTo "452.98 MB"
-        fileSize = 900000
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "432 MB"
+        fileSize = 921600
         convertFileSizeByteCount(fileSize) shouldBeEqualTo "900 KB"
         fileSize = 0
         convertFileSizeByteCount(fileSize) shouldBeEqualTo "0 B"

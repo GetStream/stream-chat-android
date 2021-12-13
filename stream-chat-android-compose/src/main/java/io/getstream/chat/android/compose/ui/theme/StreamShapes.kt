@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
  * @param attachment The shape of attachments.
  * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
  * @param bottomSheet The shape of components used as bottom sheets.
+ * @param suggestionList The shape of suggestion list popup.
  */
 @Immutable
 public data class StreamShapes(
@@ -26,6 +27,7 @@ public data class StreamShapes(
     public val attachment: Shape,
     public val imageThumbnail: Shape,
     public val bottomSheet: Shape,
+    public val suggestionList: Shape,
 ) {
     public companion object {
         public fun defaultShapes(): StreamShapes = StreamShapes(
@@ -36,6 +38,7 @@ public data class StreamShapes(
             attachment = RoundedCornerShape(16.dp),
             imageThumbnail = RoundedCornerShape(8.dp),
             bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            suggestionList = RoundedCornerShape(16.dp),
         )
     }
 }

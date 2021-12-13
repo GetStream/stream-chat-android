@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -21,23 +22,25 @@ import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-internal class WhenQuery {
+internal class WhenQuery : SynchronizedCoroutineTest {
+
+    private val scope = TestCoroutineScope()
+
+    override fun getTestScope(): TestCoroutineScope = scope
 
     @Test
-    fun `Should request query channels spec in DB`() = runBlockingTest {
+    fun `Should request query channels spec in DB`() = coroutineTest {
         val repositories = mock<RepositoryFacade>()
-        val sut = Fixture()
+        val sut = Fixture(scope)
             .givenRepoFacade(repositories)
             .givenFailedNetworkRequest()
             .get()
@@ -48,9 +51,9 @@ internal class WhenQuery {
     }
 
     @Test
-    fun `Should request channels to chat client`() = runBlockingTest {
+    fun `Should request channels to chat client`() = coroutineTest {
         val chatClient = mock<ChatClient>()
-        val sut = Fixture()
+        val sut = Fixture(scope)
             .givenChatClient(chatClient)
             .givenFailedNetworkRequest()
             .get()
@@ -61,9 +64,9 @@ internal class WhenQuery {
     }
 
     @Test
-    fun `Given channels in DB and failed network request Should return channels from DB`() = runBlockingTest {
+    fun `Given channels in DB and failed network request Should return channels from DB`() = coroutineTest {
         val dbChannels = listOf(randomChannel(cid = "cid1"), randomChannel(cid = "cid2"))
-        val sut = Fixture()
+        val sut = Fixture(scope)
             .givenFailedNetworkRequest()
             .givenQueryChannelsSpec(QueryChannelsSpec(Filters.neutral(), QuerySort()))
             .givenDBChannels(dbChannels)
@@ -77,10 +80,10 @@ internal class WhenQuery {
 
     @Test
     fun `Given channels in DB and successful network request Should return channels from network response`() =
-        runBlockingTest {
+        coroutineTest {
             val dbChannel = randomChannel(cid = "cid", lastMessageAt = Date(1000L))
             val networkChannels = listOf(dbChannel.copy(lastMessageAt = Date(2000L)), randomChannel(cid = "cid2"))
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenQueryChannelsSpec(QueryChannelsSpec(Filters.neutral(), QuerySort()))
                 .givenDBChannels(listOf(dbChannel))
                 .givenNetworkChannels(networkChannels)
@@ -94,11 +97,11 @@ internal class WhenQuery {
 
     @Test
     fun `Given DB channels and failed network response Should set channels from db to channels flow in properly sorted order`() =
-        runBlockingTest {
+        coroutineTest {
             val dbChannel1 = randomChannel(cid = "cid1", lastMessageAt = Date(1000L))
             val dbChannel2 = randomChannel(cid = "cid2", lastMessageAt = Date(2000L))
             val querySort = QuerySort.desc(Channel::lastMessageAt)
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenFailedNetworkRequest()
                 .givenQuerySort(querySort)
                 .givenQueryChannelsSpec(
@@ -114,12 +117,12 @@ internal class WhenQuery {
 
     @Test
     fun `Given DB channels and network channels Should set channels from network to channels flow in properly sorted order`() =
-        runBlockingTest {
+        coroutineTest {
             val dbChannel = randomChannel(cid = "cid1", lastMessageAt = Date(1000L))
             val networkChannel1 = dbChannel.copy(lastMessageAt = Date(2000L))
             val networkChannel2 = randomChannel(cid = "cid2", lastMessageAt = Date(3000L))
             val querySort = QuerySort.desc(Channel::lastMessageAt)
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenQuerySort(querySort)
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(Filters.neutral(), QuerySort()).apply { cids = setOf("cid1", "cid2") }
@@ -133,10 +136,9 @@ internal class WhenQuery {
             sut.channels.value shouldBeEqualTo listOf(networkChannel2, networkChannel1)
         }
 
-    private class Fixture {
+    private class Fixture(val scope: TestCoroutineScope) {
         private var chatClient: ChatClient = mock()
         private var repositories: RepositoryFacade = mock()
-        private var scope: CoroutineScope = TestCoroutineScope()
         private var querySort: QuerySort<Channel> = QuerySort()
 
         private val user: User = randomUser()
@@ -208,7 +210,12 @@ internal class WhenQuery {
             whenever(chatDomainImpl.repos) doReturn repositories
             whenever(chatDomainImpl.client) doReturn chatClient
             val filter = Filters.neutral()
-            val mutableState = QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope)
+            val mutableState = QueryChannelsMutableState(
+                filter, querySort, chatClient, chatDomainImpl.scope,
+                MutableStateFlow(
+                    mapOf(user.id to user)
+                )
+            )
 
             return QueryChannelsController(
                 chatDomainImpl,

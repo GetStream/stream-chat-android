@@ -40,9 +40,9 @@ public open class AttachmentViewFactory {
      */
     public open fun createAttachmentView(
         data: MessageListItem.MessageItem,
-        listeners: MessageListListenerContainer,
+        listeners: MessageListListenerContainer?,
         style: MessageListItemStyle,
-        parent: ViewGroup,
+        parent: ViewGroup
     ): View {
         val (linksAndGiphy, attachments) = data.message.attachments.partition { attachment -> attachment.hasLink() }
         val (giphy, links) = linksAndGiphy.partition { attachment -> attachment.type == "giphy" }
@@ -75,14 +75,16 @@ public open class AttachmentViewFactory {
     protected fun createLinkContent(
         linkAttachment: Attachment,
         isMine: Boolean,
-        listeners: MessageListListenerContainer,
+        listeners: MessageListListenerContainer?,
         style: MessageListItemStyle,
         parent: View,
     ): View {
         val linkAttachmentView = createLinkAttachmentView(linkAttachment, parent.context)
         (linkAttachmentView as? LinkAttachmentView)?.run {
             setPadding(LINK_VIEW_PADDING)
-            setLinkPreviewClickListener(listeners.linkClickListener::onLinkClick)
+            setLinkPreviewClickListener {
+                listeners?.linkClickListener?.onLinkClick(it)
+            }
             setLongClickTarget(parent)
             setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
             showLinkAttachment(linkAttachment, style)
@@ -104,9 +106,9 @@ public open class AttachmentViewFactory {
      */
     protected fun createAttachmentsContent(
         data: MessageListItem.MessageItem,
-        listeners: MessageListListenerContainer,
+        listeners: MessageListListenerContainer?,
         attachments: List<Attachment>,
-        parent: View,
+        parent: View
     ): View {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
@@ -130,7 +132,7 @@ public open class AttachmentViewFactory {
         attachments: List<Attachment>,
         linkAttachment: Attachment,
         data: MessageListItem.MessageItem,
-        listeners: MessageListListenerContainer,
+        listeners: MessageListListenerContainer?,
         style: MessageListItemStyle,
         parent: View,
     ): View {
@@ -164,16 +166,16 @@ public open class AttachmentViewFactory {
     private fun setupMediaAttachmentView(
         mediaAttachmentsGroupView: MediaAttachmentsGroupView,
         attachments: List<Attachment>,
-        listeners: MessageListListenerContainer,
+        listeners: MessageListListenerContainer?,
         data: MessageListItem.MessageItem,
     ) = mediaAttachmentsGroupView.run {
         setPadding(MEDIA_ATTACHMENT_VIEW_PADDING)
         setupBackground(data)
         attachmentClickListener = AttachmentClickListener {
-            listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+            listeners?.attachmentClickListener?.onAttachmentClick(data.message, it)
         }
         attachmentLongClickListener = AttachmentLongClickListener {
-            listeners.messageLongClickListener.onMessageLongClick(data.message)
+            listeners?.messageLongClickListener?.onMessageLongClick(data.message)
         }
         showAttachments(attachments)
     }
@@ -181,19 +183,22 @@ public open class AttachmentViewFactory {
     private fun setupFileAttachmentsView(
         fileAttachmentsView: FileAttachmentsView,
         attachments: List<Attachment>,
-        listeners: MessageListListenerContainer,
-        message: Message,
+        listeners: MessageListListenerContainer?,
+        message: Message
     ) = fileAttachmentsView.run {
         setPadding(FILE_ATTACHMENT_VIEW_PADDING)
-        attachmentLongClickListener = AttachmentLongClickListener {
-            listeners.messageLongClickListener.onMessageLongClick(message)
+
+        listeners?.let { container ->
+            attachmentLongClickListener = AttachmentLongClickListener {
+                container.messageLongClickListener.onMessageLongClick(message)
+            }
+            attachmentClickListener = AttachmentClickListener {
+                container.attachmentClickListener.onAttachmentClick(message, it)
+            }
+            attachmentDownloadClickListener =
+                AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)
         }
-        attachmentClickListener = AttachmentClickListener {
-            listeners.attachmentClickListener.onAttachmentClick(message, it)
-        }
-        attachmentDownloadClickListener = AttachmentDownloadClickListener {
-            listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-        }
+
         setAttachments(attachments)
     }
 
