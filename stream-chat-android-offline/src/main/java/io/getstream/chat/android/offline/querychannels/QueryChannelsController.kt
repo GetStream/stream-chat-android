@@ -98,7 +98,7 @@ public class QueryChannelsController internal constructor(
      * otherwise it gets removed.
      */
     internal suspend fun updateQueryChannelCollectionByNewChannel(channel: Channel) {
-        if (mutableState.channelFilter(channel.cid, filter)) {
+        if (queryChannelsLogic.channelFilter(channel.cid, filter)) {
             addChannel(channel)
         } else {
             removeChannel(channel.cid)

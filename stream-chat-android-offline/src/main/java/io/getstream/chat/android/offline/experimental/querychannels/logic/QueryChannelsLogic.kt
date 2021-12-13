@@ -1,12 +1,16 @@
 package io.getstream.chat.android.offline.experimental.querychannels.logic
 
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -21,9 +25,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val chatDomainImpl: ChatDomainImpl,
+    private val client: ChatClient
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
+
+    internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
+        client.queryChannelsInternal(
+            QueryChannelsRequest(
+                filter = Filters.and(
+                    filter,
+                    Filters.eq("cid", cid)
+                ),
+                offset = 0,
+                limit = 1,
+                messageLimit = 0,
+                memberLimit = 0,
+            )
+        ).await()
+            .map { channels -> channels.any { it.cid == cid } }
+            .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
+    }
+
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         mutableState._currentRequest.value = request
@@ -121,9 +144,7 @@ internal class QueryChannelsLogic(
         if (isFirstPage) {
             (mutableState._channels.value - channels.map { it.cid }).values
                 .map(Channel::cid)
-                .filterNot { cid ->
-                    mutableState.channelFilter(cid, mutableState.filter)
-                }
+                .filterNot { cid -> channelFilter(cid, mutableState.filter) }
                 .let { removeChannels(it) }
         }
         mutableState.channelsOffset.value += channels.size
