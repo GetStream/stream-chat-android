@@ -131,7 +131,7 @@ public class ChannelController internal constructor(
     private val messageSendingService: MessageSendingService =
         messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
 
-    internal val unfilteredMessages by mutableState::unfilteredMessages
+    internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
 
     public val messages: StateFlow<List<Message>> = mutableState.messages
@@ -517,7 +517,7 @@ public class ChannelController internal constructor(
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
         val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
-        removeLocalMessage(message)
+
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
             processedMessage.apply {
@@ -1053,10 +1053,8 @@ public class ChannelController internal constructor(
             ?: domainImpl.repos.selectMessage(messageId)
             ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         upsertMessage(message)
-        domainImpl.scope.launch {
-            loadOlderMessages(messageId, newerMessagesOffset)
-            loadNewerMessages(messageId, olderMessagesOffset)
-        }
+        loadOlderMessages(messageId, newerMessagesOffset)
+        loadNewerMessages(messageId, olderMessagesOffset)
         return Result(message)
     }
 

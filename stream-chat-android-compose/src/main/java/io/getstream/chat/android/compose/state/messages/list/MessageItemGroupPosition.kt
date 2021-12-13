@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.messages.items
+package io.getstream.chat.android.compose.state.messages.list
 
 /**
  * Represents the group position of a message, if the message is in a group. Otherwise represented as [None].

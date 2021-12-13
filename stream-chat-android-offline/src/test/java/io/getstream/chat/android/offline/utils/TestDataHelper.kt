@@ -410,6 +410,7 @@ internal class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
+            channel1,
             member1
         )
 

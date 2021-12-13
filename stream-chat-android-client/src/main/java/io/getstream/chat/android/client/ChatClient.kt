@@ -90,7 +90,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -163,7 +162,7 @@ public class ChatClient internal constructor(
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
                         }
-                    }.exhaustive
+                    }
                 }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
@@ -308,7 +307,6 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        @Suppress("DEPRECATION_ERROR")
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -551,7 +549,7 @@ public class ChatClient internal constructor(
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
-        }.exhaustive
+        }
     }
 
     public fun addSocketListener(listener: SocketListener) {
@@ -1620,8 +1618,6 @@ public class ChatClient internal constructor(
 
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
-        private var baseTimeout = 30_000L
-        private var cdnTimeout = 30_000L
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
@@ -1697,24 +1693,6 @@ public class ChatClient internal constructor(
          */
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
-            return this
-        }
-
-        @Deprecated(
-            message = "Use okHttpClient() to set the timeouts",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun baseTimeout(timeout: Long): Builder {
-            baseTimeout = timeout
-            return this
-        }
-
-        @Deprecated(
-            message = "Use okHttpClient() to set the timeouts",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun cdnTimeout(timeout: Long): Builder {
-            cdnTimeout = timeout
             return this
         }
 
@@ -1812,8 +1790,6 @@ public class ChatClient internal constructor(
                 httpUrl = "https://$baseUrl/",
                 cdnHttpUrl = "https://$cdnUrl/",
                 wssUrl = "wss://$baseUrl/",
-                baseTimeout = baseTimeout,
-                cdnTimeout = cdnTimeout,
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )

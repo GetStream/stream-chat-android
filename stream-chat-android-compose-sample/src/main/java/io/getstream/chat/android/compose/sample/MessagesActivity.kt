@@ -38,7 +38,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
+import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -59,9 +59,6 @@ class MessagesActivity : AppCompatActivity() {
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-    @ExperimentalMaterialApi
-    @ExperimentalPermissionsApi
-    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
@@ -143,8 +140,9 @@ class MessagesActivity : AppCompatActivity() {
 
             if (selectedMessage != null) {
                 SelectedMessageOverlay(
-                    messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
+                    messageOptions = defaultMessageOptionsState(selectedMessage, user, listViewModel.isInThread),
                     message = selectedMessage,
+                    currentUser = user,
                     onMessageAction = { action ->
                         composerViewModel.performMessageAction(action)
                         listViewModel.performMessageAction(action)
@@ -170,7 +168,7 @@ class MessagesActivity : AppCompatActivity() {
                         .fillMaxWidth()
                         .weight(7f)
                         .padding(start = 8.dp),
-                    messageInputState = inputState,
+                    messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     label = {

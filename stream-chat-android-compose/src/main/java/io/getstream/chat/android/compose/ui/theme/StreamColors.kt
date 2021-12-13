@@ -26,6 +26,7 @@ import io.getstream.chat.android.compose.R
  * @param ownMessagesBackground Used as a background color for the messages sent by the current user.
  * @param otherMessagesBackground Used as a background color for the messages sent by other users.
  * @param deletedMessagesBackground Used as a background for deleted messages.
+ * @param giphyMessageBackground Used as a background for the ephemeral giphy messages.
  * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
  */
@@ -48,6 +49,7 @@ public data class StreamColors(
     public val ownMessagesBackground: Color,
     public val otherMessagesBackground: Color,
     public val deletedMessagesBackground: Color,
+    public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
 ) {
@@ -77,6 +79,7 @@ public data class StreamColors(
             ownMessagesBackground = colorResource(R.color.stream_compose_borders),
             otherMessagesBackground = colorResource(R.color.stream_compose_bars_background),
             deletedMessagesBackground = colorResource(R.color.stream_compose_input_background),
+            giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
         )
@@ -105,6 +108,7 @@ public data class StreamColors(
             ownMessagesBackground = colorResource(R.color.stream_compose_borders_dark),
             otherMessagesBackground = colorResource(R.color.stream_compose_bars_background_dark),
             deletedMessagesBackground = colorResource(R.color.stream_compose_input_background_dark),
+            giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
         )

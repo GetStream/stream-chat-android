@@ -44,6 +44,10 @@
     </plurals>
 
     <!-- Message List -->
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">보내기</string>
+    <string name="stream_compose_message_list_giphy_cancel">취소</string>
+    <string name="stream_compose_message_list_giphy_shuffle">섞기</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="other">%d개의 스레드 응답</item>
     </plurals>
@@ -59,9 +63,19 @@
     <string name="stream_compose_edit_message">메세지 수정</string>
     <string name="stream_compose_delete_message">메시지 삭제</string>
     <string name="stream_compose_mute_user">사용자 무시</string>
+    <string name="stream_compose_flag_message">메세지 신고</string>
+
+    <!-- Message Action Prompts -->
+    <string name="stream_compose_delete_message_title">메시지를 삭제합니다</string>
+    <string name="stream_compose_delete_message_text">이 메시지를 완전히 삭제하시겠습니까?</string>
+    <string name="stream_compose_flag_message_title">메시지를 신고합니다</string>
+    <string name="stream_compose_flag_message_text">추가 조사를 위해 관리자에게 해당 메시지의 복사본을 전송하시겠습니까?</string>
 
     <!-- Message Composer -->
     <string name="stream_compose_message_composer_error_message_length">"최대 메시지 길이(%d)를 초과했습니다"</string>
     <string name="stream_compose_message_composer_error_file_size">파일이 너무 큽니다 - 최대 %1$s입니다</string>
     <string name="stream_compose_message_composer_error_attachment_count">첨부파일 개수가 (%1$d) 개를 초과하였습니다.</string>
+    <string name="stream_compose_message_composer_instant_commands">인스턴트 명령어</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">상대방에게도 전송하기</string>
 </resources>
