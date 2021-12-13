@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.google.android.material.internal.TextWatcherAdapter
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.ui.R
@@ -19,6 +20,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 
@@ -43,12 +45,18 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
 
     private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
 
-    private val attachmentPreviewFactories: MutableList<MessageComposerAttachmentPreviewFactory> by lazy {
-        mutableListOf(
+    /**
+     * Default attachment preview factories. To
+     */
+    private var attachmentPreviewFactories: List<MessageComposerAttachmentPreviewFactory> =
+        listOf(
             MessageComposerImageAttachmentPreviewFactory(),
+            MessageComposerFileAttachmentPreviewFactory(),
         )
-    }
 
+    /**
+     * Adapter used to render attachments previews list
+     */
     private val attachmentsAdapter: MessageComposerAttachmentsAdapter by lazy {
         MessageComposerAttachmentsAdapter { onAttachmentRemovedListener(it) }
     }
@@ -104,7 +112,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Allows to override default attachment previews. Useful when you want to add support for custom attachments previews.
      */
     public fun addAttachmentViewFactory(vararg factory: MessageComposerImageAttachmentPreviewFactory) {
-        attachmentPreviewFactories.addAll(factory)
+        attachmentPreviewFactories = attachmentPreviewFactories + factory
         attachmentsAdapter.apply {
             viewFactories = attachmentPreviewFactories
             notifyDataSetChanged()
@@ -193,8 +201,37 @@ public open class MessageComposerImageAttachmentPreviewFactory(
     private val attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE, // TODO: pass from view model
 ) : MessageComposerAttachmentPreviewFactory {
 
-    override fun canHandle(attachment: Attachment): Boolean {
+    public override fun canHandle(attachment: Attachment): Boolean {
         return attachment.isMedia()
+    }
+
+    public override fun createAttachmentPreview(
+        parent: ViewGroup,
+        attachment: Attachment,
+        onAttachmentRemovedCallback: (Attachment) -> Unit,
+    ): View {
+        val context = parent.context
+        return StreamUiMediaAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
+            .apply {
+                mediaImage.loadAttachmentThumb(attachment)
+                if (attachment.fileSize > attachmentMaxFileSize) {
+                    errorTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
+                    errorTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+                }
+                removeButton.setOnClickListener { onAttachmentRemovedCallback(attachment) }
+            }.root
+    }
+}
+
+/**
+ * Default factory providing preview for [Attachment] of file type
+ */
+public open class MessageComposerFileAttachmentPreviewFactory(
+    private val attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE, // TODO: pass from view model
+) : MessageComposerAttachmentPreviewFactory {
+
+    public override fun canHandle(attachment: Attachment): Boolean {
+        return attachment.upload != null || attachment.uploadId != null
     }
 
     public override fun createAttachmentPreview(
@@ -205,16 +242,16 @@ public open class MessageComposerImageAttachmentPreviewFactory(
         val context = parent.context
         return StreamUiFileAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
             .apply {
-                ivFileThumb.loadAttachmentThumb(attachment)
-                tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+                fileThumb.loadAttachmentThumb(attachment)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
                 if (attachment.fileSize > attachmentMaxFileSize) {
-                    tvFileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
-                    tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
+                    fileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
+                    fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
                 } else {
-                    tvFileTitle.text = attachment.title
-                    tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
+                    fileTitle.text = attachment.title
+                    fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
                 }
-                tvClose.setOnClickListener { onAttachmentRemovedCallback(attachment) }
+                removeButton.setOnClickListener { onAttachmentRemovedCallback(attachment) }
             }.root
     }
 }
