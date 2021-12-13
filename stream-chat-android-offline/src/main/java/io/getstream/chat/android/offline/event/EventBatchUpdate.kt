@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateLastMessage
+import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.users
@@ -78,8 +79,8 @@ internal class EventBatchUpdate private constructor(
 
         domainImpl.repos.storeStateForChannels(
             users = userMap.values.toList(),
-            channels = channelMap.values,
-            messages = messageMap.values.toList(),
+            channels = channelMap.values.updateUsers(userMap),
+            messages = messageMap.values.toList().updateUsers(userMap),
             cacheForMessages = true
         )
     }

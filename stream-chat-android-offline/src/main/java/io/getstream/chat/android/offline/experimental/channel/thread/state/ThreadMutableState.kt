@@ -26,7 +26,7 @@ internal class ThreadMutableState(
     override val oldestInThread: StateFlow<Message?> = _oldestInThread
 
     internal val threadMessages: Flow<List<Message>> =
-        channelMutableState.unfilteredMessages.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }
+        channelMutableState.messageList.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }
     internal val sortedVisibleMessages: StateFlow<List<Message>> = threadMessages.map { threadMessages ->
         threadMessages.sortedBy { m -> m.createdAt ?: m.createdLocallyAt }
             .filter {

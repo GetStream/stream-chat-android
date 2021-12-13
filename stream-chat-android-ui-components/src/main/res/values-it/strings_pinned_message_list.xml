@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="stream_ui_pinned_message_list_empty_title">Nessun messaggio fissato</string>
-    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Premi a lungo un messaggio importante e scegli <b>Fissa messaggio</b>]]></string>
-    <string name="stream_ui_pinned_message_list_results_error">Si è verificato un errore</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Premi a lungo un messaggio importante e scegli <b>Fissa messaggio</b>]]></string>
+  <string name="stream_ui_pinned_message_list_empty_title">"Nessun messaggio fissato"</string>
+  <string name="stream_ui_pinned_message_list_results_error">"Si è verificato un errore"</string>
 </resources>

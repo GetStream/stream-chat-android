@@ -1,8 +1,6 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
@@ -76,21 +74,5 @@ public object ChatUI {
         get() = mimeTypeIconProviderOverride ?: defaultMimeTypeIconProvider
         set(value) {
             mimeTypeIconProviderOverride = value
-        }
-
-    @Deprecated(
-        message = "This property is not used anymore. The SDK already provide a Day/Night theme",
-        replaceWith = ReplaceWith("AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public var uiMode: UiMode = UiMode.SYSTEM
-        set(value) {
-            Log.e("ChatUI", "[ERROR] ChatUI.uiMode is deprecated, you should use `AppCompatDelegate.setDefaultNightMode` [ERROR]")
-            field = value
-            when (value) {
-                UiMode.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                UiMode.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                UiMode.SYSTEM -> { }
-            }
         }
 }

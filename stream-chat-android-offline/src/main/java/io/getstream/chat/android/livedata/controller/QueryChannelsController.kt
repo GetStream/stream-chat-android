@@ -72,7 +72,7 @@ public sealed interface QueryChannelsController {
     @Deprecated(
         message = "Use ChatDomain.mutedChannels instead",
         replaceWith = ReplaceWith("ChatDomain.instance().mutedChannels"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public val mutedChannelIds: LiveData<List<String>>
 

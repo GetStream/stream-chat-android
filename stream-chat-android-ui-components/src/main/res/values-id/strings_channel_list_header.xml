@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_channel_list_header_disconnected">"Menunggu jaringan"</string>
+  <string name="stream_ui_channel_list_header_offline">"Koneksi Terputus"</string>
+</resources>

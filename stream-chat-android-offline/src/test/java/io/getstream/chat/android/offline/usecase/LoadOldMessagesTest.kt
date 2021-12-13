@@ -30,18 +30,18 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `when watching a channel, new messages are updated correctly for the watcher`() = runBlockingTest {
+    fun `when watching a channel, new messages are updated correctly for the watcher`() = coroutineTest {
         val newMessage = data.createMessage()
 
         whenever(channelClientMock.sendMessage(any())) doReturn newMessage.asCall()
 
-        val channelState = chatDomain.watchChannel(data.channel1.cid, 0).execute().data()
-        val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
+        val channelController = chatDomain.watchChannel(data.channel1.cid, 0).execute().data()
+        chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
 
-        val messages1: List<Message> = channelState.messages.value
+        val messages1: Collection<Message> = channelController.messages.value
         chatDomain.sendMessage(newMessage).execute()
 
-        val messages2 = channelState.messages.value
+        val messages2 = channelController.messages.value
 
         messages2 shouldNotBeEqualTo messages1
         messages2.last() shouldBeEqualTo newMessage

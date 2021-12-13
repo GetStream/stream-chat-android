@@ -131,7 +131,7 @@ public class ChannelController internal constructor(
     private val messageSendingService: MessageSendingService =
         messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
 
-    internal val unfilteredMessages by mutableState::unfilteredMessages
+    internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
 
     public val messages: StateFlow<List<Message>> = mutableState.messages

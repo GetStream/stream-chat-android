@@ -23,7 +23,6 @@ public class TestCoroutineRule : TestWatcher() {
 
     override fun finished(description: Description) {
         super.finished(description)
-        scope.cleanupTestCoroutines()
         DispatcherProvider.reset()
     }
 }

@@ -102,7 +102,8 @@ internal class SendMessageOfflineTest {
         }
 
         fun get(): ChannelController {
-            val mutableState = ChannelMutableState("channelType", "channelId", scope, userFlow)
+            val mutableState =
+                ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(emptyMap()))
             return ChannelController(
                 mutableState,
                 ChannelLogic(mutableState, chatDomainImpl),
