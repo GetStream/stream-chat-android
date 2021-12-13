@@ -875,6 +875,37 @@ public final class io/getstream/chat/android/compose/ui/components/suggestions/m
 	public static final fun MentionSuggestionList (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
+public abstract interface class io/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler {
+	public static final field Companion Lio/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler$Companion;
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public abstract fun handleAttachmentPreview (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
+public final class io/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler$Companion {
+	public final fun defaultAttachmentHandlers (Landroid/content/Context;)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/compose/ui/filepreview/DocumentAttachmentPreviewHandler : io/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler {
+	public static final field $stable I
+	public fun <init> (Landroid/content/Context;)V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun handleAttachmentPreview (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
+public final class io/getstream/chat/android/compose/ui/filepreview/MediaAttachmentPreviewHandler : io/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler {
+	public static final field $stable I
+	public fun <init> (Landroid/content/Context;)V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun handleAttachmentPreview (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
+public final class io/getstream/chat/android/compose/ui/filepreview/UrlAttachmentPreviewHandler : io/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler {
+	public static final field $stable I
+	public fun <init> (Landroid/content/Context;)V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun handleAttachmentPreview (Lio/getstream/chat/android/client/models/Attachment;)V
+}
+
 public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePreviewActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/imagepreview/ImagePreviewActivity$Companion;
@@ -901,6 +932,17 @@ public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePrevie
 	public synthetic fun <init> (Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getInitialPosition ()I
 	public final fun getMessageId ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/imagepreview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity, com/devbrackets/android/exomedia/listener/OnPreparedListener {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/imagepreview/MediaPreviewActivity$Companion;
+	public fun <init> ()V
+	public fun onPrepared ()V
+}
+
+public final class io/getstream/chat/android/compose/ui/imagepreview/MediaPreviewActivity$Companion {
+	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
