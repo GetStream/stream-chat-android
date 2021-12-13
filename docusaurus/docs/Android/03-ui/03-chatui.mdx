@@ -76,6 +76,16 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
 ```
 
 ### Customizing Avatar
+The SDK uses `AvatarView` in the lists of channels, users and in the message lists. The avatar is a small picture that identifies an specific channel or user. 
+
+For `Channel`, it is used the property Channel.image and for User, it is used `User.image`. The image in the AvatarView, will be the image's url in those fields: 
+
+![Default avatar](../assets/default_channel.png)
+
+If there's no url to be displayed, the SDK falls back to a gradient color with initials for the channel or user: 
+
+![Default avatar](../assets/default_avatar.png)
+
 
 #### Customizing Avatar Using Styles
 You can configure avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android/src/main/java/com/getstream/sdk/chat/view/messages/AvatarStyle.kt). You can create this kind of avatar by changing the shape and border-radius: 
@@ -105,6 +115,8 @@ public open suspend fun createUserBitmap(
         return createDefaultUserBitmap(user, style, avatarSize)
     }
 ```
+
+This way use default avatar with gradient colors and initials for the users.
 
 **If you only would like to change the gradient colors for the default avatar**, you can use `stream_ui_avatar_gradient_colors`. You can override this color in your color xml file like: 
 
