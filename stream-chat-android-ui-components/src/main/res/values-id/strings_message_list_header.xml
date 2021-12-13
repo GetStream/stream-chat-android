@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <plurals name="stream_ui_message_list_header_member_count">
+    <item quantity="other">"%1d Anggota"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_header_typing_users">
+    <item quantity="one">"%s sedang mengetik"</item>
+    <item quantity="other">"%s dan %d lainnya sedang mengetik"</item>
+  </plurals>
+  <string name="stream_ui_message_list_header_back_button_content_description">"Tombol kembali"</string>
+  <string name="stream_ui_message_list_header_disconnected">"Mencari jaringan"</string>
+  <string name="stream_ui_message_list_header_retry">"Coba Lagi"</string>
+  <string name="stream_ui_message_list_header_thread_subtitle">"dengan %1$s"</string>
+  <string name="stream_ui_message_list_header_thread_title">"Balasan Utas"</string>
+  <string name="stream_ui_message_list_header_untitled_channel">"Grup Anonim"</string>
+</resources>

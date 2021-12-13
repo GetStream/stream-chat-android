@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="stream_ui_attachment_gallery_count">%1$d de %2$d</string>
-    <string name="stream_ui_attachment_gallery_date">Envoyé %1$s à %2$s</string>
-    <string name="stream_ui_attachment_gallery_reply">Réponse</string>
-    <string name="stream_ui_attachment_gallery_delete">Supprimer</string>
-    <string name="stream_ui_attachment_gallery_show_in_chat">Montrer dans le Chat</string>
-    <string name="stream_ui_attachment_gallery_save_image">Sauvegarder l\'image</string>
-    <string name="stream_ui_attachment_gallery_share">Partager l\'image</string>
-
-    <!-- Gallery Overview Dialog -->
-    <string name="stream_ui_attachment_gallery_overview_title">Photos</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_attachment_gallery_count">"%1$d de %2$d"</string>
+  <string name="stream_ui_attachment_gallery_date">"Envoyé %1$s à %2$s"</string>
+  <string name="stream_ui_attachment_gallery_delete">"Supprimer"</string>
+  <string name="stream_ui_attachment_gallery_reply">"Réponse"</string>
+  <string name="stream_ui_attachment_gallery_save_image">"Sauvegarder l\'image"</string>
+  <string name="stream_ui_attachment_gallery_share">"Partager l\'image"</string>
+  <string name="stream_ui_attachment_gallery_show_in_chat">"Montrer dans le Chat"</string>
 </resources>

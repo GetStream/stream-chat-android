@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="stream_ui_pinned_message_list_empty_title">No hay mensajes fijados</string>
-    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Mantenga presionado un mensaje importante y elija <b> Fijar a la conversación </b>]]></string>
-    <string name="stream_ui_pinned_message_list_results_error">Ocurrió un error</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Mantenga presionado un mensaje importante y elija <b> Fijar a la conversación </b>]]></string>
+  <string name="stream_ui_pinned_message_list_empty_title">"No hay mensajes fijados"</string>
+  <string name="stream_ui_pinned_message_list_results_error">"Ocurrió un error"</string>
 </resources>
