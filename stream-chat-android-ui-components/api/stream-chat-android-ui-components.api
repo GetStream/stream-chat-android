@@ -1100,6 +1100,14 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun setOnTextChangedListener (Lkotlin/jvm/functions/Function1;)V
 }
 
+public class io/getstream/chat/android/ui/message/composer/MessageComposerFileAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun <init> (J)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
+}
+
 public class io/getstream/chat/android/ui/message/composer/MessageComposerImageAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
 	public fun <init> ()V
 	public fun <init> (J)V
