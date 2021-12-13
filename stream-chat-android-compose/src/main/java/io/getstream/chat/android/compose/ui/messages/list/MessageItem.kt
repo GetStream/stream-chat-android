@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -341,30 +343,33 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
     val currentUser = messageItem.currentUser
 
     if (message.pinned) {
-        val userWhoPinned =
-            if (message.pinnedBy?.id == currentUser?.id) stringResource(id = R.string.stream_compose_message_list_you) else message.pinnedBy?.name
-
-        Row(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
-            verticalAlignment = CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .padding(end = 2.dp)
-                    .size(14.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
-                contentDescription = null,
-                tint = ChatTheme.colors.textLowEmphasis
-            )
-
-            if (userWhoPinned != null) {
-                Text(
-                    text = stringResource(id = R.string.stream_compose_pinned_to_channel_by, userWhoPinned),
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis
-                )
-            }
+        val pinnedByUser = if (message.pinnedBy?.id == currentUser?.id) {
+            stringResource(id = R.string.stream_compose_message_list_you)
+        } else {
+            message.pinnedBy?.name
         }
+
+        val pinnedByText = if (pinnedByUser != null) {
+            stringResource(id = R.string.stream_compose_pinned_to_channel_by, pinnedByUser)
+        } else null
+
+        MessageHeaderLabel(
+            painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
+            text = pinnedByText
+        )
+    }
+
+    if (message.showInChannel) {
+        val alsoSendToChannelTextRes = if (messageItem.isInThread) {
+            R.string.stream_compose_also_sent_to_channel
+        } else {
+            R.string.stream_compose_replied_to_thread
+        }
+
+        MessageHeaderLabel(
+            painter = painterResource(id = R.drawable.stream_compose_ic_thread_reply),
+            text = stringResource(alsoSendToChannelTextRes)
+        )
     }
 
     if (!message.isDeleted()) {
@@ -389,6 +394,44 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
                     options = options
                 )
             }
+    }
+}
+
+/**
+ * Represents a meta information about the message that is shown above the message bubble.
+ *
+ * @param painter The icon to be shown.
+ * @param text The text to be shown.
+ * @param modifier Modifier for styling.
+ * @param contentPadding The inner padding inside the component.
+ */
+@Composable
+private fun MessageHeaderLabel(
+    painter: Painter,
+    modifier: Modifier = Modifier,
+    text: String? = null,
+    contentPadding: PaddingValues = PaddingValues(vertical = 2.dp, horizontal = 4.dp),
+) {
+    Row(
+        modifier = modifier.padding(contentPadding),
+        verticalAlignment = CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(end = 2.dp)
+                .size(14.dp),
+            painter = painter,
+            contentDescription = null,
+            tint = ChatTheme.colors.textLowEmphasis
+        )
+
+        if (text != null) {
+            Text(
+                text = text,
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis
+            )
+        }
     }
 }
 

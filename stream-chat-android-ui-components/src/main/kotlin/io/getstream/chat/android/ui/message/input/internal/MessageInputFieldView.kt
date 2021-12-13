@@ -383,7 +383,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     private fun resetModeIfNecessary() {
-        if (!hasValidContent() && (mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)) {
+        if (!hasValidContent() && (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)) {
             resetMode()
         }
     }

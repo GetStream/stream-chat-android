@@ -77,4 +77,5 @@
     <string name="stream_compose_message_composer_error_attachment_count">첨부파일 개수가 (%1$d) 개를 초과하였습니다.</string>
     <string name="stream_compose_message_composer_instant_commands">인스턴트 명령어</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">상대방에게도 전송하기</string>
 </resources>

@@ -32,13 +32,19 @@ public class StateRegistry internal constructor(
 
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsMutableState(filter, sort, chatClient, chatDomainImpl.scope)
+            QueryChannelsMutableState(filter, sort, chatClient, chatDomainImpl.scope, chatDomainImpl.latestUsers)
         }
     }
 
     public fun channel(channelType: String, channelId: String): ChannelState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, chatDomainImpl.scope, chatDomainImpl.user)
+            ChannelMutableState(
+                channelType,
+                channelId,
+                chatDomainImpl.scope,
+                chatDomainImpl.user,
+                chatDomainImpl.latestUsers
+            )
         }
     }
 

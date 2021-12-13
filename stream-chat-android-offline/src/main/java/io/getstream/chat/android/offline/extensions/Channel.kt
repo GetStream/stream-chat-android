@@ -65,3 +65,24 @@ internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginatio
         .take(pagination.channelLimit)
         .toList()
 }
+
+/** Updates collection of channels with more recent data of [users]. */
+internal fun Collection<Channel>.updateUsers(users: Map<String, User>) = map { it.updateUsers(users) }
+
+/**
+ * Updates a channel with more recent data of [users]. It updates messages, members, watchers, createdBy and
+ * pinnedMessages of channel instance.
+ */
+internal fun Channel.updateUsers(users: Map<String, User>): Channel {
+    return if (users().map(User::id).any(users::containsKey)) {
+        copy(
+            messages = messages.updateUsers(users),
+            members = members.updateUsers(users).toList(),
+            watchers = watchers.updateUsers(users),
+            createdBy = users[createdBy.id] ?: createdBy,
+            pinnedMessages = pinnedMessages.updateUsers(users),
+        )
+    } else {
+        this
+    }
+}
