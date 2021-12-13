@@ -10,7 +10,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -21,15 +20,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,6 +51,7 @@ import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageCont
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageDateSeparator
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
+import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadSeparator
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
@@ -394,44 +391,6 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
                     options = options
                 )
             }
-    }
-}
-
-/**
- * Represents a meta information about the message that is shown above the message bubble.
- *
- * @param painter The icon to be shown.
- * @param text The text to be shown.
- * @param modifier Modifier for styling.
- * @param contentPadding The inner padding inside the component.
- */
-@Composable
-private fun MessageHeaderLabel(
-    painter: Painter,
-    modifier: Modifier = Modifier,
-    text: String? = null,
-    contentPadding: PaddingValues = PaddingValues(vertical = 2.dp, horizontal = 4.dp),
-) {
-    Row(
-        modifier = modifier.padding(contentPadding),
-        verticalAlignment = CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier
-                .padding(end = 2.dp)
-                .size(14.dp),
-            painter = painter,
-            contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis
-        )
-
-        if (text != null) {
-            Text(
-                text = text,
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis
-            )
-        }
     }
 }
 
