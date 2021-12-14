@@ -369,7 +369,7 @@ public fun defaultMessageOptionsState(
         if (!isInThread) {
             MessageOptionState(
                 title = R.string.stream_compose_thread_reply,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_thread_reply),
+                iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
                 action = ThreadReply(selectedMessage),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,

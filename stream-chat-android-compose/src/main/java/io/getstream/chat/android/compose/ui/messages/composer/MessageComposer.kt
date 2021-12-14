@@ -243,7 +243,7 @@ public fun MessageComposer(
         elevation = 4.dp,
         color = ChatTheme.colors.barsBackground,
     ) {
-        Column(Modifier.padding(vertical = 6.dp)) {
+        Column(Modifier.padding(vertical = 4.dp)) {
             headerContent(messageComposerState)
 
             Row(

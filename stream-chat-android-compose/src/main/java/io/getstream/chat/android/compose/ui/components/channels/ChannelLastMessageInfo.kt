@@ -51,7 +51,7 @@ public fun ChannelLastMessageInfo(
                     currentUser = currentUser,
                     modifier = Modifier
                         .padding(end = ChatTheme.dimens.channelItemHorizontalPadding)
-                        .size(12.dp)
+                        .size(16.dp)
                 )
 
                 Timestamp(date = channel.lastUpdated)

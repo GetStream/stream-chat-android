@@ -61,7 +61,7 @@ public fun ChannelDetails(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .size(16.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mute),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_muted),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
                 )
