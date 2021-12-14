@@ -14,7 +14,8 @@ import io.getstream.chat.android.client.models.User
 import java.util.UUID
 
 internal object Mother {
-    private val fixture = JFixture()
+    private val fixture: JFixture
+        get() = JFixture()
 
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
         return KFixture(fixture) {
