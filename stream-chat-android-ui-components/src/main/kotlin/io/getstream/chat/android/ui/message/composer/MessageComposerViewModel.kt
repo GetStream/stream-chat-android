@@ -101,7 +101,7 @@ public class MessageComposerViewModel(
         messageComposerController.addSelectedAttachments(attachments)
         val oldState = _messageInputState.value
         _messageInputState.value =
-            oldState.copy(attachments = oldState.attachments + attachments, validationErrors = validationErrors.value)
+            oldState.copy(attachments = messageComposerController.selectedAttachments.value, validationErrors = validationErrors.value)
     }
 
     /**
