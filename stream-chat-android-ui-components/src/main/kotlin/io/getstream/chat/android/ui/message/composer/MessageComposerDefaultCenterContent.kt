@@ -9,7 +9,6 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.extensions.uploadId
@@ -231,9 +230,7 @@ internal class MessageComposerViewHolder(
 /**
  * Default factory providing preview for [Attachment] of image type, e.g. gallery image, photo
  */
-public open class MessageComposerImageAttachmentPreviewFactory(
-    private val attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE, // TODO: pass from view model
-) : MessageComposerAttachmentPreviewFactory {
+public open class MessageComposerImageAttachmentPreviewFactory : MessageComposerAttachmentPreviewFactory {
 
     public override fun canHandle(attachment: Attachment): Boolean {
         return attachment.isMedia()
@@ -248,10 +245,6 @@ public open class MessageComposerImageAttachmentPreviewFactory(
         return StreamUiMediaAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
             .apply {
                 mediaImage.loadAttachmentThumb(attachment)
-                if (attachment.fileSize > attachmentMaxFileSize) {
-                    errorTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
-                    errorTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
-                }
                 removeButton.setOnClickListener { onAttachmentRemovedCallback(attachment) }
             }.root
     }
@@ -260,9 +253,7 @@ public open class MessageComposerImageAttachmentPreviewFactory(
 /**
  * Default factory providing preview for [Attachment] of file type
  */
-public open class MessageComposerFileAttachmentPreviewFactory(
-    private val attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE, // TODO: pass from view model
-) : MessageComposerAttachmentPreviewFactory {
+public open class MessageComposerFileAttachmentPreviewFactory : MessageComposerAttachmentPreviewFactory {
 
     public override fun canHandle(attachment: Attachment): Boolean {
         return attachment.upload != null || attachment.uploadId != null
@@ -278,13 +269,8 @@ public open class MessageComposerFileAttachmentPreviewFactory(
             .apply {
                 fileThumb.loadAttachmentThumb(attachment)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
-                if (attachment.fileSize > attachmentMaxFileSize) {
-                    fileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
-                    fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
-                } else {
-                    fileTitle.text = attachment.title
-                    fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
-                }
+                fileTitle.text = attachment.title
+                fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
                 removeButton.setOnClickListener { onAttachmentRemovedCallback(attachment) }
             }.root
     }

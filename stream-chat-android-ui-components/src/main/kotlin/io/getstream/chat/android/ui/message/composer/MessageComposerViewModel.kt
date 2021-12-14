@@ -27,6 +27,9 @@ public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
 
+    /**
+     * Current UI state of message input
+     */
     private val _messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
     /**
