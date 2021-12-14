@@ -938,14 +938,13 @@ public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePrevie
 	public final fun getMessageId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/imagepreview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity, com/devbrackets/android/exomedia/listener/OnPreparedListener {
+public final class io/getstream/chat/android/compose/ui/mediapreview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/imagepreview/MediaPreviewActivity$Companion;
+	public static final field Companion Lio/getstream/chat/android/compose/ui/mediapreview/MediaPreviewActivity$Companion;
 	public fun <init> ()V
-	public fun onPrepared ()V
 }
 
-public final class io/getstream/chat/android/compose/ui/imagepreview/MediaPreviewActivity$Companion {
+public final class io/getstream/chat/android/compose/ui/mediapreview/MediaPreviewActivity$Companion {
 	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 }
 

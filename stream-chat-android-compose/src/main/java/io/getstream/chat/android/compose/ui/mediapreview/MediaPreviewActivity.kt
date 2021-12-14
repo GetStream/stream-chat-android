@@ -1,47 +1,58 @@
-package io.getstream.chat.android.compose.ui.imagepreview
+package io.getstream.chat.android.compose.ui.mediapreview
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.viewinterop.AndroidView
 import com.devbrackets.android.exomedia.listener.OnPreparedListener
 import com.devbrackets.android.exomedia.ui.widget.VideoView
-import io.getstream.chat.android.compose.R
+import com.devbrackets.android.exomedia.ui.widget.controls.VideoControlsMobile
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * An Activity that is capable of playing video/audio stream.
  */
-public class MediaPreviewActivity : AppCompatActivity(), OnPreparedListener {
-
-    private lateinit var videoView: VideoView
+public class MediaPreviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.stream_compose_activity_media_preview)
-
         val url = intent.getStringExtra(KEY_URL)
+
         if (url.isNullOrEmpty()) {
             finish()
             return
         }
-        setupVideoView(url)
+
+        setContent {
+            ChatTheme {
+                MediaPreviewContentWrapper(url)
+            }
+        }
     }
 
-    override fun onPrepared() {
-        videoView.start()
-    }
-
-    /**
-     * Initializes the player with a media file to play.
-     *
-     * @param url The URL of the file to play.
-     */
-    private fun setupVideoView(url: String) {
-        videoView = findViewById(R.id.videoView)
-        videoView.isPlaying // workaround to init some internals of the library
+    @Composable
+    private fun MediaPreviewContentWrapper(url: String) {
+        val videoView = VideoView(this)
+        videoView.isPlaying // Workaround to init some internals of the library
+        videoView.videoControls = VideoControlsMobile(this)
+        videoView.setOnPreparedListener(
+            object : OnPreparedListener {
+                override fun onPrepared() {
+                    videoView.start()
+                }
+            }
+        )
         videoView.setVideoURI(Uri.parse(url))
-        videoView.setOnPreparedListener(this)
+
+        AndroidView(
+            factory = {
+                videoView
+            }
+        )
     }
 
     public companion object {

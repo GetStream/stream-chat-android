@@ -12,7 +12,7 @@
             android:exported="false"
             />
         <activity
-            android:name=".ui.imagepreview.MediaPreviewActivity"
+            android:name=".ui.mediapreview.MediaPreviewActivity"
             android:exported="false"
             />
     </application>
