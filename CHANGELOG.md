@@ -70,6 +70,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
 
 ### ✅ Added
+- Added `hard` flag to `MessageListViewModel.Event.DeleteMessage`.
+  You can use `MessageListView::setMessageDeleteHandler` and pass `MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true)` to hard delete messages using `MessageListViewModel`.
+  Check [MessageListViewModelBinding](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding.kt#L37) for further details.
 
 ### ⚠️ Changed
 
