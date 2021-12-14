@@ -77,10 +77,12 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the message grouping logic to now include date separators when splitting message groups [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a way to disable date separator and system message items in the message list [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 
 ### ⚠️ Changed
 - Big changes to the structure of the project, making it easier to find all the components and building blocks - [#2752](https://github.com/GetStream/stream-chat-android/pull/2752)
