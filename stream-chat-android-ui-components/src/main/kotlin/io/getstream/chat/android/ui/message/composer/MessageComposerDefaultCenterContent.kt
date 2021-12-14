@@ -94,7 +94,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Re-rendering the UI according to the new state
      */
     override fun renderState(state: MessageInputState) {
-        val isClearInputButtonVisible = state.inputValue.isNotEmpty() && state.validationErrors.isNotEmpty()
+        val isClearInputButtonVisible = state.inputValue.isNotEmpty()
         binding.clearCommandButton.isVisible = isClearInputButtonVisible
 
         binding.messageEditText.apply {
