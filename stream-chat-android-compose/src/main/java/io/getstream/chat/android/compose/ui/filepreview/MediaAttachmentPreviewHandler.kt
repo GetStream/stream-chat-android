@@ -26,7 +26,8 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
-        context.startActivity(MediaPreviewActivity.getIntent(context, attachment.assetUrl!!))
+        val url = requireNotNull(attachment.assetUrl)
+        context.startActivity(MediaPreviewActivity.getIntent(context, url))
     }
 
     private companion object {
