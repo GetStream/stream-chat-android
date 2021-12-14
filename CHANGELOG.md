@@ -66,6 +66,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Users' updates done in runtime are now propagated in the MessageListView component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
