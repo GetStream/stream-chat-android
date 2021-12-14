@@ -69,6 +69,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
+- Improved KDocs of UI components such as `ChannelListHeaderView` and `AvatarView`.
 
 ### ✅ Added
 
