@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,7 +32,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.filepreview.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
@@ -73,15 +71,14 @@ public fun FileAttachmentContent(
  */
 @Composable
 public fun FileAttachmentItem(attachment: Attachment) {
-    val context = LocalContext.current
+    val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Surface(
         modifier = Modifier
             .padding(2.dp)
             .fillMaxWidth()
             .clickable {
-                AttachmentPreviewHandler
-                    .defaultAttachmentHandlers(context)
+                previewHandlers
                     .firstOrNull { it.canHandle(attachment) }
                     ?.handleAttachmentPreview(attachment)
             },
