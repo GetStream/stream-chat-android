@@ -21,16 +21,18 @@ public class UrlAttachmentPreviewHandler(private val context: Context) : Attachm
     }
 
     private fun getAttachmentUrl(attachment: Attachment): String? {
-        return when (attachment.type) {
-            ModelType.attach_image -> {
-                when {
-                    attachment.titleLink != null || attachment.ogUrl != null || attachment.assetUrl != null -> {
-                        attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
+        with(attachment) {
+            return when (type) {
+                ModelType.attach_image -> {
+                    when {
+                        titleLink != null -> titleLink
+                        ogUrl != null -> ogUrl
+                        assetUrl != null -> assetUrl
+                        else -> imageUrl
                     }
-                    else -> attachment.imageUrl
                 }
+                else -> url
             }
-            else -> attachment.url
         }
     }
 }
