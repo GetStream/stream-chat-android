@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="stream_ui_message_composer_error_message_length">"最大メッセージ長（%d)字を超えました"</string>
-    <string name="stream_ui_message_composer_error_attachment_count">ファイルが大きすぎます- 最大%d。</string>
-    <string name="stream_ui_message_composer_error_file_size">添付ファイルの制限を超えました：%s個のファイル以上を添付することはできません</string>
+    <string name="stream_ui_message_composer_error_file_size">ファイルが大きすぎます- 最大%d。</string>
+    <string name="stream_ui_message_composer_error_attachment_count">添付ファイルの制限を超えました：%s個のファイル以上を添付することはできません</string>
 </resources>

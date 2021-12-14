@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="stream_ui_message_composer_error_message_length">Max message length (%d) exceeded.</string>
-    <string name="stream_ui_message_composer_error_attachment_count">File is too large - max %d.</string>
-    <string name="stream_ui_message_composer_error_file_size">Attachments count (%s) exceeded.</string>
+    <string name="stream_ui_message_composer_error_file_size">File is too large - max %d.</string>
+    <string name="stream_ui_message_composer_error_attachment_count">Attachments count (%s) exceeded.</string>
 </resources>
