@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -92,7 +94,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Re-rendering the UI according to the new state
      */
     override fun renderState(state: MessageInputState) {
-        val isClearInputButtonVisible = state.inputValue.isNotEmpty()
+        val isClearInputButtonVisible = state.inputValue.isNotEmpty() && state.validationErrors.isNotEmpty()
         binding.clearCommandButton.isVisible = isClearInputButtonVisible
 
         binding.messageEditText.apply {
@@ -110,34 +112,32 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Displays first of the validation errors received or clears error if there are no errors
+     * Displays first of the validation errors received using in Toast
      */
     private fun renderValidationErrors(validationErrors: List<ValidationError>) {
-        if (validationErrors.isEmpty()) {
-            binding.messageEditText.error = null
-        } else {
-            val errorMessage = when (val validationError = validationErrors.first()) {
-                is ValidationError.MessageLengthExceeded -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_error_message_length,
-                        validationError.maxMessageLength
-                    )
-                }
-                is ValidationError.AttachmentCountExceeded -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_error_attachment_count,
-                        validationError.maxAttachmentCount
-                    )
-                }
-                is ValidationError.AttachmentSizeExceeded -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_error_file_size,
-                        MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
-                    )
-                }
+        if (validationErrors.isEmpty()) return
+
+        val errorMessage = when (val validationError = validationErrors.first()) {
+            is ValidationError.MessageLengthExceeded -> {
+                context.getString(
+                    R.string.stream_ui_message_composer_error_message_length,
+                    validationError.maxMessageLength
+                )
             }
-            binding.messageEditText.error = errorMessage
+            is ValidationError.AttachmentCountExceeded -> {
+                context.getString(
+                    R.string.stream_ui_message_composer_error_attachment_count,
+                    validationError.maxAttachmentCount
+                )
+            }
+            is ValidationError.AttachmentSizeExceeded -> {
+                context.getString(
+                    R.string.stream_ui_message_composer_error_file_size,
+                    MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
+                )
+            }
         }
+        Toast.makeText(context, errorMessage, LENGTH_SHORT).show()
     }
 
     /**
