@@ -31,20 +31,4 @@
         tools:ignore="ContentDescription"
         />
 
-    <TextView
-        android:id="@+id/error_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/stream_ui_attachment_error_background"
-        android:paddingStart="7dp"
-        android:paddingEnd="7dp"
-        android:textColor="@color/stream_ui_white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="File too big"
-        />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
