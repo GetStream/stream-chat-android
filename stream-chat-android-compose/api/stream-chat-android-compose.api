@@ -813,7 +813,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Syst
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ThreadParticipantsKt {
-	public static final fun ThreadParticipants (Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/MessageAlignment;Landroidx/compose/ui/Modifier;ILandroidx/compose/runtime/Composer;II)V
+	public static final fun ThreadParticipants (Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/MessageAlignment;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;ILandroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/UploadingFooterKt {
