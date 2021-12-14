@@ -9,31 +9,37 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
-import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Default implementation of [ChatEventHandler] which is more generic than [MessagingChatEventHandler]. It skips updates
- * and makes an API request if a channel wasn't yet handled before when receives [NotificationAddedToChannelEvent],
+ * Default implementation of [ChatEventHandler] which covers the default filter of channels.
+ * It  adds or removes channels accordingly with the notification event received. Events handled are: [NotificationAddedToChannelEvent],
  * [NotificationMessageNewEvent], [NotificationRemovedFromChannelEvent].
+ * This Handler will skip the even if the channel is already added or absent and no interaction is needed.
+ *
+ * This handler expects that the list of channels are the channels that we user is a member.
  */
-public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>) :
+public class DefaultChatEventHandler(private val channels: List<Channel>) :
     BaseChatEventHandler() {
 
+    /** Handles [NotificationAddedToChannelEvent] event. It adds the channel, if it is absent. */
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = addIfChannelIsAbsent(event.channel)
 
+    /** Handles [MemberAddedEvent] event. The event is skipped and should not arrive to this handler. */
     override fun handleMemberAddedEvent(
         event: MemberAddedEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.Skip
 
+    /** Handles [ChannelUpdatedByUserEvent] event. The event is skipped. */
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.Skip
 
+    /** Handles [ChannelUpdatedEvent] event. The event is skipped. */
     override fun handleChannelUpdatedEvent(
         event: ChannelUpdatedEvent,
         filter: FilterObject
@@ -74,18 +80,21 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
 
     /**
      * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
-     * fires request by [channelFilter] to define outcome of handling.
+     * adds the channel.
      */
     private fun addIfChannelIsAbsent(channel: Channel): EventHandlingResult {
-        return if (channels.value.any { it.cid == channel.cid }) {
+        return if (channels.any { it.cid == channel.cid }) {
             EventHandlingResult.Skip
         } else {
             EventHandlingResult.Add(channel)
         }
     }
 
+    /**
+     * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise it simply skips the event
+     */
     private fun removeIfChannelIsPresent(channel: Channel): EventHandlingResult {
-        return if (channels.value.any { it.cid == channel.cid }) {
+        return if (channels.any { it.cid == channel.cid }) {
             EventHandlingResult.Remove(channel.cid)
         } else {
             EventHandlingResult.Skip
