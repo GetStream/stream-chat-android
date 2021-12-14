@@ -11,14 +11,22 @@ import io.getstream.chat.android.client.models.Attachment
 public class DocumentAttachmentPreviewHandler(private val context: Context) : AttachmentPreviewHandler {
 
     override fun canHandle(attachment: Attachment): Boolean {
-        if (attachment.assetUrl.isNullOrEmpty()) return false
-
+        val assetUrl = attachment.assetUrl
         val mimeType = attachment.mimeType
-        return mimeType == ModelType.attach_mime_doc ||
-            mimeType == ModelType.attach_mime_txt ||
-            mimeType == ModelType.attach_mime_pdf ||
-            mimeType == ModelType.attach_mime_html ||
-            mimeType?.contains(ModelType.attach_mime_vnd) == true
+
+        if (assetUrl.isNullOrEmpty()) return false
+        if (mimeType.isNullOrEmpty()) return false
+
+        val supportedMimeTypes = listOf(
+            ModelType.attach_mime_doc,
+            ModelType.attach_mime_txt,
+            ModelType.attach_mime_pdf,
+            ModelType.attach_mime_html,
+        )
+
+        return mimeType in supportedMimeTypes ||
+            // For compatibility with other client SDKs
+            mimeType.contains(ModelType.attach_mime_vnd)
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
