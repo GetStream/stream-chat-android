@@ -923,6 +923,7 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
+	public static final field HEADER_TITLE_KEY Ljava/lang/String;
 	public static final field TYPE_KEY Ljava/lang/String;
 	public static final field URL_KEY Ljava/lang/String;
 	public fun <init> ()V
