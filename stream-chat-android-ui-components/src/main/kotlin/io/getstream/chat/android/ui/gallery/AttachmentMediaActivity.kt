@@ -29,6 +29,15 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private fun init() {
         val type = intent.getStringExtra(TYPE_KEY)
         val url = intent.getStringExtra(URL_KEY)
+        binding.apply {
+            headerLeftActionButton.setOnClickListener {
+                onBackPressed()
+            }
+            intent.getStringExtra(HEADER_TITLE_KEY)?.let { title ->
+                headerTitleTextView.text = title
+            }
+        }
+
         if (type.isNullOrEmpty() || url.isNullOrEmpty()) {
             logger.logE("This file can't be displayed. The TYPE or the URL are null")
             Toast.makeText(
@@ -60,7 +69,17 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     }
 
     public companion object {
+        /**
+         * Key representing attachment's type put into the intent
+         */
         public const val TYPE_KEY: String = "type"
+        /**
+         * Key representing attachment's url put into the intent
+         */
         public const val URL_KEY: String = "url"
+        /**
+         * Key representing header title put into the intent
+         */
+        public const val HEADER_TITLE_KEY: String = "header_title"
     }
 }

@@ -2,5 +2,8 @@
 <resources>
     <declare-styleable name="MediaActivity">
         <attr name="streamUiMediaActivityIconStyle" format="reference" />
+        <attr name="streamUiMediaActivityHeader" format="reference" />
+        <attr name="streamUiMediaActivityHeaderLeftActionButtonStyle" format="reference" />
+        <attr name="streamUiMediaActivityHeaderTitleStyle" format="reference" />
     </declare-styleable>
 </resources>

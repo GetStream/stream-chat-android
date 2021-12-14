@@ -72,6 +72,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Improved KDocs of UI components such as `ChannelListHeaderView` and `AvatarView`.
 
 ### ✅ Added
+- Added header with back button and attachment's title to `AttachmentMediaActivity` which displays playable attachments.
+  You can customize its appearance using `streamUiMediaActivityHeader`, `streamUiMediaActivityHeaderLeftActionButtonStyle` and `streamUiMediaActivityHeaderTitleStyle` attributes.
 
 ### ⚠️ Changed
 
