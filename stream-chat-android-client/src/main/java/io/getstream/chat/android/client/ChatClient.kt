@@ -36,9 +36,11 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
@@ -146,10 +148,8 @@ public class ChatClient internal constructor(
                     val user = event.me
                     val connectionId = event.connectionId
                     socketStateService.onConnected(connectionId)
-                    userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
-                    storePushNotificationsConfig(user.id, user.name)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -168,6 +168,16 @@ public class ChatClient internal constructor(
                     notifications.onNewMessageEvent(event)
                 }
                 else -> Unit // Ignore other events
+            }
+
+            val currentUser = when {
+                event is HasOwnUser -> event.me
+                event is UserEvent && event.user.id == getCurrentUser()?.id ?: "" -> event.user
+                else -> null
+            }
+            currentUser?.let { updatedCurrentUser ->
+                userStateService.onUserUpdated(updatedCurrentUser)
+                storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
             }
         }
         logger.logI("Initialised: " + getVersion())

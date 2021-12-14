@@ -738,7 +738,11 @@ public class ChannelController internal constructor(
                 channelLogic.setHidden(false)
             }
             is MessageDeletedEvent -> {
-                upsertEventMessage(event.message)
+                if (event.hardDelete) {
+                    removeLocalMessage(event.message)
+                } else {
+                    upsertEventMessage(event.message)
+                }
                 channelLogic.setHidden(false)
             }
             is NotificationMessageNewEvent -> {

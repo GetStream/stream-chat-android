@@ -43,6 +43,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed a bug when hard deleted messages still remain in the UI. 
 
 ### ⬆️ Improved
 
@@ -65,11 +66,15 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Users' updates done in runtime are now propagated to the `MessageListView` component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
+- Improved KDocs of UI components such as `ChannelListHeaderView` and `AvatarView`.
 
 ### ✅ Added
+- Added header with back button and attachment's title to `AttachmentMediaActivity` which displays playable attachments.
+  You can customize its appearance using `streamUiMediaActivityHeader`, `streamUiMediaActivityHeaderLeftActionButtonStyle` and `streamUiMediaActivityHeaderTitleStyle` attributes.
 
 ### ⚠️ Changed
 
@@ -79,6 +84,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the UI for message footers to be more respective of thread replies [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
+- Fixed the orientation and UI of ThreadParticipants [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
 
 ### ✅ Added
 
