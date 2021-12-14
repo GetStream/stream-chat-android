@@ -1146,7 +1146,6 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun getLastActiveAction ()Lkotlinx/coroutines/flow/Flow;
 	public final fun getMessageInputState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSelectedAttachments ()Lkotlinx/coroutines/flow/MutableStateFlow;
-	public final fun getValidationErrors ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun leaveThread ()V
 	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V

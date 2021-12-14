@@ -9,7 +9,6 @@ import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,11 +47,6 @@ public class MessageComposerViewModel(
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
 
     /**
-     * Represents the list of validation errors for the current text input and the currently selected attachments.
-     */
-    public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
-
-    /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
@@ -65,7 +59,10 @@ public class MessageComposerViewModel(
     public fun setMessageInput(value: String): Unit {
         messageComposerController.setMessageInput(value)
         _messageInputState.value =
-            _messageInputState.value.copy(inputValue = value, validationErrors = validationErrors.value)
+            _messageInputState.value.copy(
+                inputValue = value,
+                validationErrors = messageComposerController.validationErrors.value,
+            )
     }
 
     /**
@@ -101,7 +98,8 @@ public class MessageComposerViewModel(
         messageComposerController.addSelectedAttachments(attachments)
         val oldState = _messageInputState.value
         _messageInputState.value =
-            oldState.copy(attachments = messageComposerController.selectedAttachments.value, validationErrors = validationErrors.value)
+            oldState.copy(attachments = messageComposerController.selectedAttachments.value,
+                validationErrors = messageComposerController.validationErrors.value)
     }
 
     /**
@@ -115,7 +113,8 @@ public class MessageComposerViewModel(
         messageComposerController.removeSelectedAttachment(attachment)
         val oldState = _messageInputState.value
         _messageInputState.value =
-            oldState.copy(attachments = oldState.attachments - attachment, validationErrors = validationErrors.value)
+            oldState.copy(attachments = oldState.attachments - attachment,
+                validationErrors = messageComposerController.validationErrors.value)
     }
 
     /**
@@ -125,7 +124,8 @@ public class MessageComposerViewModel(
         messageComposerController.selectedAttachments.value = emptyList()
         val oldState = _messageInputState.value
         _messageInputState.value =
-            oldState.copy(attachments = selectedAttachments.value, validationErrors = validationErrors.value)
+            oldState.copy(attachments = selectedAttachments.value,
+                validationErrors = messageComposerController.validationErrors.value)
     }
 
     /**
