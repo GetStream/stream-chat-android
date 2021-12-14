@@ -569,7 +569,7 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
         messageActionButtonsBackground = a.getDrawable(R.styleable.MessageListView_streamMessageActionButtonsBackground)
         messageActionButtonsIconTint =
             a.getColorStateList(R.styleable.MessageListView_streamMessageActionButtonsIconTint)
-            ?: ContextCompat.getColorStateList(c, R.color.stream_black_54)
+                ?: ContextCompat.getColorStateList(c, R.color.stream_black_54)
         messageActionButtonsTextStyle = TextStyle.Builder(a)
             .size(
                 R.styleable.MessageListView_streamMessageActionButtonsTextSize,
