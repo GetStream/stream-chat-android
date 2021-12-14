@@ -15,6 +15,7 @@ import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -106,6 +107,38 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
         attachmentsAdapter.setAttachments(state.attachments)
 
         binding.selectedAttachmentsContainer.isVisible = state.attachments.isNotEmpty()
+        renderValidationErrors(state.validationErrors)
+    }
+
+    /**
+     * Displays first of the validation errors received or clears error if there are no errors
+     */
+    private fun renderValidationErrors(validationErrors: List<ValidationError>) {
+        if (validationErrors.isEmpty()) {
+            binding.messageEditText.error = null
+        } else {
+            val errorMessage = when (val validationError = validationErrors.first()) {
+                is ValidationError.MessageLengthExceeded -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_error_message_length,
+                        validationError.maxMessageLength
+                    )
+                }
+                is ValidationError.AttachmentCountExceeded -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_error_attachment_count,
+                        validationError.maxAttachmentCount
+                    )
+                }
+                is ValidationError.AttachmentSizeExceeded -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_error_file_size,
+                        MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
+                    )
+                }
+            }
+            binding.messageEditText.error = errorMessage
+        }
     }
 
     /**
@@ -122,6 +155,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
 
 /**
  * [RecyclerView.Adapter] rendering attachments previews
+ *
  * @property onAttachmentRemovedCallback Callback invoked when specific [Attachment] gets removed by the user
  */
 internal class MessageComposerAttachmentsAdapter(

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_composer_error_message_length">Longueur maximale du message (%d) dépassée.</string>
+    <string name="stream_ui_message_composer_error_attachment_count">Le fichier est trop volumineux - %d maximum.</string>
+    <string name="stream_ui_message_composer_error_file_size">Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %s pièces jointes</string>
+</resources>

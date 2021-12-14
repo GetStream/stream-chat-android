@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_composer_error_message_length">La lunghezza massima del messaggio (%d) è stata superata.</string>
+    <string name="stream_ui_message_composer_error_attachment_count">File troppo grande - max %d.</string>
+    <string name="stream_ui_message_composer_error_file_size">Attenzione: il limite massimo di %s file è stato superato.</string>
+</resources>
