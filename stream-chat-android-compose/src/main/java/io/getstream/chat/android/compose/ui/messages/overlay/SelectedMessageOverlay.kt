@@ -54,10 +54,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageOptionState
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
-import io.getstream.chat.android.compose.ui.common.MessageBubble
-import io.getstream.chat.android.compose.ui.common.avatar.Avatar
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
-import io.getstream.chat.android.compose.ui.messages.list.DeletedMessageContent
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
+import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -240,15 +239,11 @@ private fun SelectedMessage(
             shape = messageBubbleShape,
             color = messageBubbleColor,
             content = {
-                if (message.deletedAt != null) {
-                    DeletedMessageContent()
-                } else {
-                    Column {
-                        MessageAttachmentsContent(message = message, onLongItemClick = {})
+                Column {
+                    MessageAttachmentsContent(message = message, onLongItemClick = {})
 
-                        if (message.text.isNotEmpty()) {
-                            DefaultMessageContent(message = message)
-                        }
+                    if (message.text.isNotEmpty()) {
+                        DefaultMessageContent(message = message)
                     }
                 }
             }

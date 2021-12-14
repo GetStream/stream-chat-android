@@ -1,8 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
@@ -27,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,11 +39,12 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
-import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
-import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
-import io.getstream.chat.android.compose.ui.messages.suggestions.commands.CommandSuggestionList
-import io.getstream.chat.android.compose.ui.messages.suggestions.mentions.MentionSuggestionList
+import io.getstream.chat.android.compose.ui.components.composer.CooldownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.DefaultComposerIntegrations
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -357,33 +354,6 @@ public fun DefaultMessageComposerFooterContent(
                 style = ChatTheme.typography.body
             )
         }
-    }
-}
-
-/**
- * Represent a timer that show the remaining time until the user is allowed to send the next message.
- *
- * @param cooldownTimer The amount of time left until the user is allowed to sent the next message.
- * @param modifier Modifier for styling.
- */
-@Composable
-internal fun CooldownIndicator(
-    cooldownTimer: Int,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(48.dp)
-            .padding(12.dp)
-            .background(shape = RoundedCornerShape(24.dp), color = ChatTheme.colors.disabled),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = cooldownTimer.toString(),
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyBold
-        )
     }
 }
 

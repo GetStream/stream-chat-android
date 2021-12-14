@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <plurals name="stream_ui_channel_list_member_info">
+    <item quantity="other">"%1d Anggota, %2d Online"</item>
+  </plurals>
+  <string name="stream_ui_channel_list_delete_channel">"Hapus percakapan"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_message">"Anda yakin ingin menghapus percakapan ini?"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_negative_button">"Batal"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_positive_button">"Hapus"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_title">"Hapus Grup"</string>
+  <string name="stream_ui_channel_list_dismiss_dialog">"Batalkan"</string>
+  <string name="stream_ui_channel_list_empty">"Tidak ada grup tersedia"</string>
+  <string name="stream_ui_channel_list_error_delete_channel">"Gagal menghapus grup"</string>
+  <string name="stream_ui_channel_list_error_hide_channel">"Gagal menyembunyikan grup"</string>
+  <string name="stream_ui_channel_list_error_leave_channel">"Gagal keluar dari grup"</string>
+  <string name="stream_ui_channel_list_leave_channel">"Keluar dari Grup"</string>
+  <string name="stream_ui_channel_list_untitled_channel">"Grup Anonim"</string>
+  <string name="stream_ui_channel_list_view_info">"Lihat info"</string>
+  <string name="stream_ui_channel_list_you">"Anda"</string>
+</resources>

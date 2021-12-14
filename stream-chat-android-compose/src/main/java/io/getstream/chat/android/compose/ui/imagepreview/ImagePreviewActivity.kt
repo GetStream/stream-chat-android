@@ -84,8 +84,8 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultTy
 import io.getstream.chat.android.compose.state.imagepreview.Reply
 import io.getstream.chat.android.compose.state.imagepreview.SaveImage
 import io.getstream.chat.android.compose.state.imagepreview.ShowInChat
-import io.getstream.chat.android.compose.ui.common.Timestamp
-import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory

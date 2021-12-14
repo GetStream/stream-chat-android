@@ -50,7 +50,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
 
     @Test
     fun `Given the same channels in cache and BE When observing channels Should receive the correct number of events with channels`(): Unit =
-        runBlocking {
+        coroutineTest {
             val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
                 DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
             }
@@ -114,7 +114,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         }
 
     @Test
-    fun `Given three channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = runBlocking {
+    fun `Given three channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = coroutineTest {
         val sut = Fixture(chatDomainImpl, data.filter1)
             .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
             .get()
@@ -132,7 +132,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
 
     @Test
     fun `Given hidden channel and channel events handler that add channel on new message When handle NotificationMessageNewEvent Should add channel to list`(): Unit =
-        runBlocking {
+        coroutineTest {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
                 .givenChannelEventsHandler { event, _ ->
@@ -163,21 +163,23 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
     @Test
     fun `Given channel in the list and default events handler When handle NotificationMessageNewEvent Should not make request to API`(): Unit =
         runBlocking {
-            val sut = Fixture(chatDomainImpl, data.filter1)
-                .givenChannelsInOfflineStorage(data.channel1, data.channel2)
-                .givenChannelEventsHandler(DefaultChatEventHandler(client, queryControllerImpl.channels))
-                .get()
-            sut.query()
-            reset(client)
+            testCoroutines.scope.launch {
+                val sut = Fixture(chatDomainImpl, data.filter1)
+                    .givenChannelsInOfflineStorage(data.channel1, data.channel2)
+                    .givenChannelEventsHandler(DefaultChatEventHandler(client, queryControllerImpl.channels))
+                    .get()
+                sut.query()
+                reset(client)
 
-            sut.handleEvent(
-                mock<NotificationMessageNewEvent> {
-                    on { it.channel } doReturn data.channel2
-                    on { it.cid } doReturn data.channel2.cid
-                }
-            )
+                sut.handleEvent(
+                    mock<NotificationMessageNewEvent> {
+                        on { it.channel } doReturn data.channel2
+                        on { it.cid } doReturn data.channel2.cid
+                    }
+                )
 
-            verifyZeroInteractions(client)
+                verifyZeroInteractions(client)
+            }.join()
         }
 
     @Test

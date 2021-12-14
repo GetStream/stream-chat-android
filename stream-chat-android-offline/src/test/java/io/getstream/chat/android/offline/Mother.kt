@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -60,6 +61,24 @@ import java.util.Date
 import java.util.concurrent.Executors
 
 private val fixture = JFixture()
+
+internal fun randomUserStartWatchingEvent(
+    type: String = randomString(),
+    createdAt: Date = randomDate(),
+    cid: String = randomString(),
+    watcherCount: Int = randomInt(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    user: User = randomUser(),
+) = UserStartWatchingEvent(
+    type = type,
+    createdAt = createdAt,
+    cid = cid,
+    watcherCount = watcherCount,
+    channelType = channelType,
+    channelId = channelId,
+    user = randomUser()
+)
 
 internal fun randomChannelDeletedEvent(
     type: String = randomString(),
@@ -291,7 +310,11 @@ internal fun randomMessageUpdateEvent(
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()).apply { uploadId = generateUploadId() } },
+    creationFunction: (Int) -> Attachment = {
+        Attachment(upload = randomFile()).apply {
+            uploadId = generateUploadId()
+        }
+    },
 ): List<Attachment> = (1..size).map(creationFunction)
 
 internal fun randomUser(
@@ -419,7 +442,7 @@ internal fun randomChannelInfo(
     id: String? = randomString(),
     type: String = randomString(),
     memberCount: Int = randomInt(),
-    name: String? = randomString()
+    name: String? = randomString(),
 ): ChannelInfo = ChannelInfo(
     cid = cid,
     id = id,
