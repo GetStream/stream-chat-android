@@ -40,9 +40,10 @@ public fun SelectedMessageOptions(
     messageOptions: List<MessageOptionState>,
     onMessageAction: (MessageAction) -> Unit,
     headerContent: @Composable ColumnScope.() -> Unit = {
-        ReactionOptions(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        ReactionOptions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             reactionTypes = reactionTypes,
             onReactionOptionClicked = {
                 onMessageAction(
@@ -55,14 +56,16 @@ public fun SelectedMessageOptions(
                     )
                 )
             },
-            ownReactions = message.ownReactions)
+            ownReactions = message.ownReactions
+        )
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
         MessageOptions(
             messageOptionStateList = messageOptions,
             onMessageItemOptionClicked = {
                 onMessageAction(it.action)
-            })
+            }
+        )
     },
 ) {
     Column(modifier = modifier) {

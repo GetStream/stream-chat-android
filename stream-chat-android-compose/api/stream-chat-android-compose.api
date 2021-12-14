@@ -731,6 +731,29 @@ public final class io/getstream/chat/android/compose/ui/components/composer/Mess
 	public static final fun MessageInputOptions (Lio/getstream/chat/android/common/state/MessageAction;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/messageoptions/ComposableSingletons$MessageOptionItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messageoptions/ComposableSingletons$MessageOptionItemKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/messageoptions/ComposableSingletons$MessageOptionsKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messageoptions/ComposableSingletons$MessageOptionsKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/messageoptions/MessageOptionItemKt {
+	public static final fun MessageOptionItem (Lio/getstream/chat/android/compose/state/messages/list/MessageOptionState;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/runtime/Composer;II)V
+	public static final fun defaultMessageOptionsState (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLandroidx/compose/runtime/Composer;I)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/messageoptions/MessageOptionsKt {
+	public static final fun MessageOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionItemKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionItemKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
@@ -814,6 +837,52 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Thre
 
 public final class io/getstream/chat/android/compose/ui/components/messages/UploadingFooterKt {
 	public static final fun UploadingFooter (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ReactionOptionItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ReactionOptionItemKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ReactionOptionsKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ReactionOptionsKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ReactionOptionItemKt {
+	public static final fun ReactionOptionItem (Lio/getstream/chat/android/compose/state/messages/reaction/ReactionOptionItemState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ReactionOptionsKt {
+	public static final fun ReactionOptions (Ljava/util/List;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageMenuKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageMenuKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageOptionsKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageOptionsKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenuKt {
+	public static final fun SelectedMessageMenu-hkzSW1g (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLjava/util/Map;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageOptionsKt {
+	public static final fun SelectedMessageOptions (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Ljava/util/Map;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/suggestions/ComposableSingletons$SuggestionListKt {
@@ -985,22 +1054,6 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageLis
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessagesKt {
 	public static final fun Messages (Lio/getstream/chat/android/compose/state/messages/MessagesState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-}
-
-public final class io/getstream/chat/android/compose/ui/messages/overlay/ComposableSingletons$SelectedMessageOverlayKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/overlay/ComposableSingletons$SelectedMessageOverlayKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function3;
-	public static field lambda-2 Lkotlin/jvm/functions/Function3;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-}
-
-public final class io/getstream/chat/android/compose/ui/messages/overlay/SelectedMessageOverlayKt {
-	public static final fun MessageOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun ReactionOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun SelectedMessageOverlay (Ljava/util/Map;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-	public static final fun defaultMessageOptionsState (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLandroidx/compose/runtime/Composer;I)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {

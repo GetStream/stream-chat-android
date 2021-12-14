@@ -33,9 +33,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -73,7 +73,7 @@ class MessagesActivity : AppCompatActivity() {
                     onHeaderActionClick = {}
                 )
 
-                //MyCustomUi()
+                // MyCustomUi()
             }
         }
     }
@@ -146,9 +146,11 @@ class MessagesActivity : AppCompatActivity() {
                         .padding(horizontal = 20.dp)
                         .wrapContentSize(),
                     shape = ChatTheme.shapes.attachment,
-                    messageOptions = defaultMessageOptionsState(selectedMessage = selectedMessage,
+                    messageOptions = defaultMessageOptionsState(
+                        selectedMessage = selectedMessage,
                         currentUser = user,
-                        isInThread = listViewModel.isInThread),
+                        isInThread = listViewModel.isInThread
+                    ),
                     message = selectedMessage,
                     onMessageAction = { action ->
                         composerViewModel.performMessageAction(action)

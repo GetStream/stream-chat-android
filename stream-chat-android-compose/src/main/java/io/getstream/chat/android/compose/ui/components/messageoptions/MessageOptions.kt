@@ -30,14 +30,17 @@ public fun MessageOptions(
     onMessageItemOptionClicked: (MessageOptionState) -> Unit,
     modifier: Modifier = Modifier,
     itemContent: @Composable ColumnScope.(MessageOptionState) -> Unit = { messageOptionsState ->
-        MessageOptionItem(modifier = Modifier
-            .fillMaxWidth()
-            .height(ChatTheme.dimens.messageOverlayActionItemHeight)
-            .clickable(
-                onClick = { onMessageItemOptionClicked(messageOptionsState) },
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple()
-            ), option = messageOptionsState)
+        MessageOptionItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(ChatTheme.dimens.messageOverlayActionItemHeight)
+                .clickable(
+                    onClick = { onMessageItemOptionClicked(messageOptionsState) },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple()
+                ),
+            option = messageOptionsState
+        )
     },
 ) {
     Column(modifier = modifier) {
@@ -54,9 +57,11 @@ public fun MessageOptions(
 @Composable
 private fun MessageOptionsPreview() {
     ChatTheme {
-        val messageOptionsStateList = defaultMessageOptionsState(selectedMessage = Message(),
+        val messageOptionsStateList = defaultMessageOptionsState(
+            selectedMessage = Message(),
             currentUser = User(),
-            isInThread = false)
+            isInThread = false
+        )
 
         MessageOptions(messageOptionStateList = messageOptionsStateList, onMessageItemOptionClicked = {})
     }

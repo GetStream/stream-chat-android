@@ -54,9 +54,10 @@ public fun SelectedMessageMenu(
     onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        ReactionOptions(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        ReactionOptions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             reactionTypes = reactionTypes,
             onReactionOptionClicked = {
                 onMessageAction(
@@ -69,24 +70,28 @@ public fun SelectedMessageMenu(
                     )
                 )
             },
-            ownReactions = message.ownReactions)
+            ownReactions = message.ownReactions
+        )
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
         MessageOptions(
             messageOptionStateList = messageOptions,
             onMessageItemOptionClicked = {
                 onMessageAction(it.action)
-            })
+            }
+        )
     },
 ) {
-    Box(modifier = Modifier
-        .background(overlayColor)
-        .fillMaxSize()
-        .clickable(
-            onClick = onDismiss,
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        )) {
+    Box(
+        modifier = Modifier
+            .background(overlayColor)
+            .fillMaxSize()
+            .clickable(
+                onClick = onDismiss,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
+    ) {
         Surface(
             modifier = modifier
                 .clickable(
@@ -94,7 +99,8 @@ public fun SelectedMessageMenu(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ),
-            shape = shape) {
+            shape = shape
+        ) {
             SelectedMessageOptions(
                 modifier = Modifier
                     .padding(top = 12.dp),
@@ -120,9 +126,11 @@ public fun SelectedMessageMenu(
 @Composable
 private fun SelectedMessageMenuPreview() {
     ChatTheme {
-        val messageOptionsStateList = defaultMessageOptionsState(selectedMessage = Message(),
+        val messageOptionsStateList = defaultMessageOptionsState(
+            selectedMessage = Message(),
             currentUser = User(),
-            isInThread = false)
+            isInThread = false
+        )
 
         SelectedMessageMenu(message = Message(), messageOptions = messageOptionsStateList, onMessageAction = {})
     }

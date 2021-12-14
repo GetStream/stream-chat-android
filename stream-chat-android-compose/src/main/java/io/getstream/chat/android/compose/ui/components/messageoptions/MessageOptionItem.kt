@@ -71,9 +71,11 @@ public fun MessageOptionItem(
 private fun MessageOptionItemPreview() {
     ChatTheme {
         val messageOptionsState =
-            defaultMessageOptionsState(selectedMessage = Message(),
+            defaultMessageOptionsState(
+                selectedMessage = Message(),
                 currentUser = User(),
-                isInThread = false).firstOrNull()
+                isInThread = false
+            ).firstOrNull()
 
         if (messageOptionsState != null)
             MessageOptionItem(option = messageOptionsState)

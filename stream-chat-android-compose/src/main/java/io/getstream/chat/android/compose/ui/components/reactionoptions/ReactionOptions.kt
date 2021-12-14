@@ -39,7 +39,8 @@ public fun ReactionOptions(
                 indication = rememberRipple(bounded = false),
                 onClick = { onReactionOptionClicked(reactionOptionItemState) }
             ),
-            option = reactionOptionItemState)
+            option = reactionOptionItemState
+        )
     }
 ) {
     val reactionOptionItemStateList = reactionTypes.entries.map { (type, drawable) ->
@@ -50,8 +51,10 @@ public fun ReactionOptions(
         )
     }
 
-    Row(modifier = modifier,
-        horizontalArrangement = horizontalArrangement) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = horizontalArrangement
+    ) {
         reactionOptionItemStateList.forEach { reactionOptionItemState ->
             itemContent(reactionOptionItemState)
         }
@@ -70,6 +73,7 @@ private fun ReactionOptionsPreview() {
         if (reactionType != null)
             ReactionOptions(
                 ownReactions = listOf(Reaction(reactionType)),
-                onReactionOptionClicked = {})
+                onReactionOptionClicked = {}
+            )
     }
 }
