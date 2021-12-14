@@ -1126,6 +1126,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public static synthetic fun setCenterContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setLeadingContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLeadingContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setMentionSuggestionsContent (Landroid/view/View;)V
 	public final fun setOnAttachmentRemovedHandler (Lkotlin/jvm/functions/Function1;)V
 	public final fun setOnAttachmentSelected (Lkotlin/jvm/functions/Function1;)V
 	public final fun setOnInputChanged (Lkotlin/jvm/functions/Function1;)V

@@ -58,11 +58,7 @@ public class MessageComposerViewModel(
      */
     public fun setMessageInput(value: String) {
         messageComposerController.setMessageInput(value)
-        _messageInputState.value =
-            _messageInputState.value.copy(
-                inputValue = value,
-                validationErrors = messageComposerController.validationErrors.value,
-            )
+        updateMessageInputState()
     }
 
     /**
@@ -96,10 +92,7 @@ public class MessageComposerViewModel(
      */
     public fun addSelectedAttachments(attachments: List<Attachment>) {
         messageComposerController.addSelectedAttachments(attachments)
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = messageComposerController.selectedAttachments.value,
-                validationErrors = messageComposerController.validationErrors.value)
+        updateMessageInputState()
     }
 
     /**
@@ -111,10 +104,15 @@ public class MessageComposerViewModel(
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
         messageComposerController.removeSelectedAttachment(attachment)
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = oldState.attachments - attachment,
-                validationErrors = messageComposerController.validationErrors.value)
+        updateMessageInputState()
+    }
+
+    /**
+     * Removes all the selected attachments, e.g. when user taps clear input button, or after the message is sent
+     */
+    public fun clearSelectedAttachments(): Unit {
+        messageComposerController.selectedAttachments.value = emptyList()
+        updateMessageInputState()
     }
 
     /**
@@ -165,4 +163,14 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    private fun updateMessageInputState() {
+        val oldState = _messageInputState.value
+        _messageInputState.value = oldState.copy(
+            inputValue = messageComposerController.input.value,
+            attachments = messageComposerController.selectedAttachments.value,
+            validationErrors = messageComposerController.validationErrors.value,
+            mentionSuggestions = messageComposerController.mentionSuggestions.value,
+        )
+    }
 }
