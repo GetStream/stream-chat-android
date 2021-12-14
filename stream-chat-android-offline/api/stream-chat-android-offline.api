@@ -531,6 +531,11 @@ public abstract class io/getstream/chat/android/offline/querychannels/BaseChatEv
 	public fun handleNotificationRemovedFromChannelEvent (Lio/getstream/chat/android/client/events/NotificationRemovedFromChannelEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 }
 
+public final class io/getstream/chat/android/offline/querychannels/ChannelFilterRequest {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/querychannels/ChannelFilterRequest;
+	public final fun filter (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/FilterObject;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/offline/querychannels/ChatEventHandler {
 	public abstract fun handleChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 }
@@ -556,12 +561,24 @@ public abstract class io/getstream/chat/android/offline/querychannels/EventHandl
 
 public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult$Add : io/getstream/chat/android/offline/querychannels/EventHandlingResult {
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Add;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Add;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Add;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult$Remove : io/getstream/chat/android/offline/querychannels/EventHandlingResult {
 	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Remove;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Remove;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Remove;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCid ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult$Skip : io/getstream/chat/android/offline/querychannels/EventHandlingResult {
@@ -569,7 +586,8 @@ public final class io/getstream/chat/android/offline/querychannels/EventHandling
 }
 
 public final class io/getstream/chat/android/offline/querychannels/NonMemberChatEventHandler : io/getstream/chat/android/offline/querychannels/BaseChatEventHandler {
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/util/List;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/offline/querychannels/ChannelFilterRequest;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/offline/querychannels/ChannelFilterRequest;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun handleChannelUpdatedByUserEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedByUserEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun handleChannelUpdatedEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun handleMemberAddedEvent (Lio/getstream/chat/android/client/events/MemberAddedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
