@@ -78,7 +78,7 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
 ### Customizing Avatar
 The `AvatarView` is used in the lists of channels, users, and messages. The avatar is a small picture that identifies a specific channel or user. 
 
-For `Channel`, it is used the property Channel.image and for User, it is used `User.image`. The image in the AvatarView, will be the image's url in those fields: 
+The image in the `AvatarView` is being displayed based on `image` property, present in both `Channel` and `User` objects:
 
 ![Default avatar](../assets/default_channel.png)
 
