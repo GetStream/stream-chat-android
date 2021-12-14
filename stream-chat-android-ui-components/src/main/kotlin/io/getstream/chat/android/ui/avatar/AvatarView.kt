@@ -21,12 +21,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
  * A component that shows the profile image of the [User] and [Channel] with the online indicator and border.
  * If the profile image does not exist, the initials will be shown up instead.
  */
-public class AvatarView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : AppCompatImageView(context.createStreamThemeWrapper(), attrs, defStyleAttr) {
-
+public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
     private val onlineIndicatorPaint = Paint().apply { style = Paint.Style.FILL }
@@ -35,8 +30,20 @@ public class AvatarView @JvmOverloads constructor(
     private var isOnline: Boolean = false
     private var avatarViewSize: Int = 0
 
-    init {
-        setStyle(AvatarStyle(context, attrs))
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
+        init(context, null)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
+        init(context, attrs)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
+        init(context, attrs)
     }
 
     /**
@@ -88,6 +95,10 @@ public class AvatarView @JvmOverloads constructor(
             drawBorder(canvas, avatarStyle, borderPaint)
             drawOnlineStatus(canvas, isOnline, avatarStyle)
         }
+    }
+
+    private fun init(context: Context, attrs: AttributeSet?) {
+        setStyle(AvatarStyle(context, attrs))
     }
 
     private fun setStyle(avatarStyle: AvatarStyle) {

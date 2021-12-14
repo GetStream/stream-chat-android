@@ -24,16 +24,36 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBin
  * the avatar of the current user, and provides an action button which can be used to create a new conversation.
  * It is designed to be displayed at the top of the channels screen of your app.
  */
-public class ChannelListHeaderView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0,
-) : ConstraintLayout(context.createStreamThemeWrapper(), attrs, defStyleAttr, defStyleRes) {
+public class ChannelListHeaderView : ConstraintLayout {
+
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
+        init(null)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
+        init(attrs)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
+        init(attrs)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr,
+        defStyleRes
+    ) {
+        init(attrs)
+    }
 
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(streamThemeInflater, this, true)
 
-    init {
+    private fun init(attrs: AttributeSet?) {
         context.obtainStyledAttributes(
             attrs,
             R.styleable.ChannelListHeaderView,
