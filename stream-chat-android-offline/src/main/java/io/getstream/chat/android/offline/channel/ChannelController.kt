@@ -305,52 +305,18 @@ public class ChannelController internal constructor(
         runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(domainImpl.userPresence))
     }
 
-    private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
-        val messages = mutableState.sortedMessages.value
-        return if (messages.isNotEmpty()) {
-            when (direction) {
-                Pagination.GREATER_THAN_OR_EQUAL,
-                Pagination.GREATER_THAN,
-                -> {
-                    messages.last().id
-                }
-                Pagination.LESS_THAN,
-                Pagination.LESS_THAN_OR_EQUAL,
-                -> {
-                    messages.first().id
-                }
-            }
-        } else {
-            null
-        }
-    }
-
     /**
      *  Loads a list of messages before the oldest message in the current list.
      */
     internal suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                getLoadMoreBaseMessageId(Pagination.LESS_THAN)?.let {
-                    messageFilterDirection = Pagination.LESS_THAN
-                    messageFilterValue = it
-                }
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit))
     }
 
     /**
      *  Loads a list of messages after the newest message in the current list.
      */
     internal suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                getLoadMoreBaseMessageId(Pagination.GREATER_THAN)?.let {
-                    messageFilterDirection = Pagination.GREATER_THAN
-                    messageFilterValue = it
-                }
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit))
     }
 
     /** Loads a list of messages before the message with particular message id. */
@@ -366,7 +332,7 @@ public class ChannelController internal constructor(
     /**
      *  Loads a list of messages after the message with particular message id.
      */
-    internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+    private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(
             QueryChannelPaginationRequest(limit).apply {
                 messageFilterDirection = Pagination.GREATER_THAN
