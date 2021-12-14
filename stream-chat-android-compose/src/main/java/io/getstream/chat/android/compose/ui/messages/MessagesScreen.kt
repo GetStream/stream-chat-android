@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
@@ -170,38 +171,38 @@ public fun MessagesScreen(
             )
         }
 
+        val currentlySelectedMessage = selectedMessage ?: Message()
+
         AnimatedVisibility(
-            visible = selectedMessage != null,
+            visible = currentlySelectedMessage.id.isNotEmpty(),
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2))
         ) {
-            if (selectedMessage != null) {
-                SelectedMessageMenu(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .animateEnterExit(
-                            enter = slideInVertically(
-                                initialOffsetY = { height -> height },
-                                animationSpec = tween()
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { height -> height },
-                                animationSpec = tween()
-                            )
+            SelectedMessageMenu(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .animateEnterExit(
+                        enter = slideInVertically(
+                            initialOffsetY = { height -> height },
+                            animationSpec = tween()
                         ),
-                    messageOptions = defaultMessageOptionsState(
-                        selectedMessage = selectedMessage,
-                        currentUser = user,
-                        isInThread = listViewModel.isInThread
+                        exit = slideOutVertically(
+                            targetOffsetY = { height -> height },
+                            animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)
+                        )
                     ),
-                    message = selectedMessage,
-                    onMessageAction = { action ->
-                        composerViewModel.performMessageAction(action)
-                        listViewModel.performMessageAction(action)
-                    },
-                    onDismiss = { listViewModel.removeOverlay() }
-                )
-            }
+                messageOptions = defaultMessageOptionsState(
+                    selectedMessage = currentlySelectedMessage,
+                    currentUser = user,
+                    isInThread = listViewModel.isInThread
+                ),
+                message = currentlySelectedMessage,
+                onMessageAction = { action ->
+                    composerViewModel.performMessageAction(action)
+                    listViewModel.performMessageAction(action)
+                },
+                onDismiss = { listViewModel.removeOverlay() }
+            )
         }
 
         AnimatedVisibility(
@@ -221,7 +222,7 @@ public fun MessagesScreen(
                         ),
                         exit = slideOutVertically(
                             targetOffsetY = { height -> height },
-                            animationSpec = tween()
+                            animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
                 onAttachmentsSelected = { attachments ->

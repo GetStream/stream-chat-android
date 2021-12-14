@@ -22,36 +22,37 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
-import io.getstream.chat.android.compose.state.messages.list.MessageOptionState
+import io.getstream.chat.android.compose.state.messages.list.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * A Composable function that turns [SelectedMessageOptions] into a menu by wrapping it inside of [Surface].
+ * Represents the options user can take after selecting a message.
  *
- * @param message Used to gather the necessary message information (such as ownership, id, etc.) in order to properly display [SelectedMessageOptions].
- * @param modifier Compose UI [Modifier] that is applied to the internally used [Surface].
- * @param shape The [Shape] applied to the internally used [Surface].
- * @param overlayColor The color applied to the internally used [Box] that wraps [Surface].
- * @param reactionTypes By default used to display all the available reaction options inside of [headerContent].
- * @param messageOptions By default used to display all available message options inside of [bodyContent].
- * @param onMessageAction By default a Handler used to propagate click events on individual reaction and message option elements
- * inside of the header and body content.
+ * @param message The selected message.
+ * @param messageOptions The available message options within the menu.
+ * @param onMessageAction Handler that propagates click events on each item.
+ * @param modifier Modifier for styling.
+ * @param shape Changes the shape of [SelectedMessageMenu].
+ * @param overlayColor The color applied to the overlay.
+ * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent Leading vertical Composable slot.
- * @param bodyContent Trailing vertical Composable slot.
+ * @param headerContent Leading vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
+ * By default [ReactionOptions].
+ * @param bodyContent Trailing vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
+ * By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(
     message: Message,
+    messageOptions: List<MessageOptionItemState>,
+    onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    messageOptions: List<MessageOptionState>,
-    onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
         ReactionOptions(
@@ -59,14 +60,11 @@ public fun SelectedMessageMenu(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             reactionTypes = reactionTypes,
-            onReactionOptionClicked = {
+            onReactionOptionSelected = {
                 onMessageAction(
                     React(
-                        Reaction(
-                            messageId = message.id,
-                            type = it.type,
-                        ),
-                        message
+                        reaction = Reaction(messageId = message.id, type = it.type),
+                        message = message
                     )
                 )
             },
@@ -75,8 +73,8 @@ public fun SelectedMessageMenu(
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
         MessageOptions(
-            messageOptionStateList = messageOptions,
-            onMessageItemOptionClicked = {
+            options = messageOptions,
+            onMessageOptionSelected = {
                 onMessageAction(it.action)
             }
         )

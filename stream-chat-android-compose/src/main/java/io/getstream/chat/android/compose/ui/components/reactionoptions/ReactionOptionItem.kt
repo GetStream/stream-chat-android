@@ -13,7 +13,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme.reactionTypes
  * Individual reaction item.
  *
  * @param option The reaction to show.
- * @param modifier Compose UI [Modifier] that is applied to the internally used [Icon].
+ * @param modifier Modifier for styling.
  */
 @Composable
 public fun ReactionOptionItem(
@@ -35,16 +35,16 @@ public fun ReactionOptionItem(
 @Composable
 private fun ReactionOptionItemNotSelectedPreview() {
     ChatTheme {
-        val reactionOptionItem = reactionTypes.entries.map { (type, drawable) ->
-            ReactionOptionItemState(
-                painter = painterResource(id = drawable),
-                isSelected = false,
-                type = type
-            )
-        }
+        val reactionTypeEntry = reactionTypes.entries.firstOrNull()
 
-        reactionOptionItem.firstOrNull()?.let {
-            ReactionOptionItem(option = it)
+        reactionTypeEntry?.let { (type, drawableRes) ->
+            ReactionOptionItem(
+                option = ReactionOptionItemState(
+                    painter = painterResource(id = drawableRes),
+                    isSelected = false,
+                    type = type
+                )
+            )
         }
     }
 }
@@ -56,16 +56,16 @@ private fun ReactionOptionItemNotSelectedPreview() {
 @Composable
 private fun ReactionOptionItemSelectedPreview() {
     ChatTheme {
-        val reactionOptionItem = reactionTypes.entries.map { (type, drawable) ->
-            ReactionOptionItemState(
-                painter = painterResource(id = drawable),
-                isSelected = true,
-                type = type
-            )
-        }
+        val reactionTypeEntry = reactionTypes.entries.firstOrNull()
 
-        reactionOptionItem.firstOrNull()?.let {
-            ReactionOptionItem(option = it)
+        reactionTypeEntry?.let { (type, drawableRes) ->
+            ReactionOptionItem(
+                option = ReactionOptionItemState(
+                    painter = painterResource(id = drawableRes),
+                    isSelected = true,
+                    type = type
+                )
+            )
         }
     }
 }

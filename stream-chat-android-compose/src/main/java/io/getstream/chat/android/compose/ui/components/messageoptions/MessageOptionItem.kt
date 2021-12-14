@@ -8,35 +8,25 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.Copy
-import io.getstream.chat.android.common.state.Delete
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.Flag
-import io.getstream.chat.android.common.state.MuteUser
-import io.getstream.chat.android.common.state.Pin
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.ThreadReply
-import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.MessageOptionState
+import io.getstream.chat.android.compose.state.messages.list.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Each option item in the column of options.
  *
  * @param option The option to show.
- * @param modifier Compose UI [Modifier] that is applied to the internally used [Row].
- * @param verticalAlignment Used to apply [Alignment.Vertical] to the internally used [Row].
- * @param horizontalArrangement Used to apply [Arrangement.Horizontal] to the internally used [Row].
+ * @param modifier Modifier for styling.
+ * @param verticalAlignment Used to apply vertical alignment.
+ * @param horizontalArrangement Used to apply horizontal arrangement.
  */
 @Composable
 public fun MessageOptionItem(
-    option: MessageOptionState,
+    option: MessageOptionItemState,
     modifier: Modifier = Modifier,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
@@ -80,92 +70,4 @@ private fun MessageOptionItemPreview() {
         if (messageOptionsState != null)
             MessageOptionItem(option = messageOptionsState)
     }
-}
-
-/**
- * Builds the default message options we show to our users.
- *
- * @param selectedMessage Currently selected message, used to callbacks.
- * @param currentUser Current user, used to expose different states for messages.
- * @param isInThread If the message is in a thread or not, to block off some options.
- */
-@Composable
-public fun defaultMessageOptionsState(
-    selectedMessage: Message,
-    currentUser: User?,
-    isInThread: Boolean,
-): List<MessageOptionState> {
-    val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
-    val isOwnMessage = selectedMessage.user.id == currentUser?.id
-
-    return listOfNotNull(
-        MessageOptionState(
-            title = R.string.stream_compose_reply,
-            iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
-            action = Reply(selectedMessage),
-            titleColor = ChatTheme.colors.textHighEmphasis,
-            iconColor = ChatTheme.colors.textLowEmphasis,
-        ),
-        if (!isInThread) {
-            MessageOptionState(
-                title = R.string.stream_compose_thread_reply,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
-                action = ThreadReply(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
-            )
-        } else null,
-        if (isTextOnlyMessage) {
-            MessageOptionState(
-                title = R.string.stream_compose_copy_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
-                action = Copy(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
-            )
-        } else null,
-        if (isOwnMessage) {
-            MessageOptionState(
-                title = R.string.stream_compose_edit_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
-                action = Edit(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
-            )
-        } else null,
-        if (!isOwnMessage) {
-            MessageOptionState(
-                title = R.string.stream_compose_flag_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
-                action = Flag(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
-            )
-        } else null,
-        MessageOptionState(
-            title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
-            action = Pin(selectedMessage),
-            iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
-            iconColor = ChatTheme.colors.textLowEmphasis,
-            titleColor = ChatTheme.colors.textHighEmphasis
-        ),
-        if (isOwnMessage) {
-            MessageOptionState(
-                title = R.string.stream_compose_delete_message,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
-                action = Delete(selectedMessage),
-                iconColor = ChatTheme.colors.errorAccent,
-                titleColor = ChatTheme.colors.errorAccent
-            )
-        } else null,
-        if (!isOwnMessage) {
-            MessageOptionState(
-                title = R.string.stream_compose_mute_user,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_mute),
-                action = MuteUser(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
-            )
-        } else null
-    )
 }

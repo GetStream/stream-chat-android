@@ -16,34 +16,35 @@ import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionI
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Displays all available reactions in a [Row].
+ * Displays all available reactions.
  *
- * @param ownReactions A list of user's own reactions. Each of these are by default highlighted using primaryAccent in [ChatTheme.colors].
- * @param modifier Compose UI [Modifier] that is applied to the internally used [Row].
- * @param horizontalArrangement Compose UI [Arrangement.Horizontal] that is applied to the internally used [Row].
- * @param reactionTypes A map of all available reactions that the user can click on.
- * @param onReactionOptionClicked Handler used to propagate click events that occur on individual [ReactionOptionItem].
- * @param itemContent Composable slot that represents an item inside the internally used [Row].
+ * @param ownReactions A list of user's own reactions
+ * @param onReactionOptionSelected Handler that propagates click events on each item.
+ * @param modifier Modifier for styling.
+ * @param horizontalArrangement Used for changing the arrangement.
+ * @param reactionTypes All available reactions.
+ * @param itemContent Composable that allows the user to customize the individual items shown in [ReactionOptions].
+ * By default shows individual reactions.
  */
 @Composable
 public fun ReactionOptions(
     ownReactions: List<Reaction>,
+    onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    onReactionOptionClicked: (ReactionOptionItemState) -> Unit,
-    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { reactionOptionItemState ->
+    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         ReactionOptionItem(
             modifier = Modifier.clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false),
-                onClick = { onReactionOptionClicked(reactionOptionItemState) }
+                onClick = { onReactionOptionSelected(option) }
             ),
-            option = reactionOptionItemState
+            option = option
         )
-    }
+    },
 ) {
-    val reactionOptionItemStateList = reactionTypes.entries.map { (type, drawable) ->
+    val options = reactionTypes.entries.map { (type, drawable) ->
         ReactionOptionItemState(
             painter = painterResource(id = drawable),
             isSelected = ownReactions.any { ownReaction -> ownReaction.type == type },
@@ -55,8 +56,8 @@ public fun ReactionOptions(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement
     ) {
-        reactionOptionItemStateList.forEach { reactionOptionItemState ->
-            itemContent(reactionOptionItemState)
+        options.forEach { option ->
+            itemContent(option)
         }
     }
 }
@@ -73,7 +74,7 @@ private fun ReactionOptionsPreview() {
         if (reactionType != null)
             ReactionOptions(
                 ownReactions = listOf(Reaction(reactionType)),
-                onReactionOptionClicked = {}
+                onReactionOptionSelected = {}
             )
     }
 }
