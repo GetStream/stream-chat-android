@@ -159,7 +159,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
  */
 internal class MessageComposerAttachmentsAdapter(
     private val onAttachmentRemovedCallback: (Attachment) -> Unit,
-) : RecyclerView.Adapter<MessageComposerViewHolder>() {
+) : RecyclerView.Adapter<MessageComposerAttachmentViewHolder>() {
     /**
      * List of attachments to render
      */
@@ -189,11 +189,11 @@ internal class MessageComposerAttachmentsAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerViewHolder {
-        return MessageComposerViewHolder(parent, viewFactories, { onAttachmentRemovedCallback(it) })
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerAttachmentViewHolder {
+        return MessageComposerAttachmentViewHolder(parent, viewFactories, { onAttachmentRemovedCallback(it) })
     }
 
-    override fun onBindViewHolder(holder: MessageComposerViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MessageComposerAttachmentViewHolder, position: Int) {
         holder.bindData(attachments[position])
     }
 
@@ -203,7 +203,7 @@ internal class MessageComposerAttachmentsAdapter(
 /**
  * [RecyclerView.ViewHolder] implementation responsible for rendering previews of various [Attachment] types
  */
-internal class MessageComposerViewHolder(
+internal class MessageComposerAttachmentViewHolder(
     private val parent: ViewGroup,
     private val attachmentViewFactories: List<MessageComposerAttachmentPreviewFactory>,
     private val onAttachmentRemovedCallback: (Attachment) -> Unit,
