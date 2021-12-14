@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Default implementation of [ChatEventHandler] which covers the default filter of channels.
@@ -18,7 +19,7 @@ import io.getstream.chat.android.client.models.Channel
  *
  * This handler expects that the list of channels are the channels that we user is a member.
  */
-public class DefaultChatEventHandler(private val channels: List<Channel>) :
+public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>) :
     BaseChatEventHandler() {
 
     /** Handles [NotificationAddedToChannelEvent] event. It adds the channel, if it is absent. */
@@ -83,7 +84,7 @@ public class DefaultChatEventHandler(private val channels: List<Channel>) :
      * adds the channel.
      */
     private fun addIfChannelIsAbsent(channel: Channel): EventHandlingResult {
-        return if (channels.any { it.cid == channel.cid }) {
+        return if (channels.value.any { it.cid == channel.cid }) {
             EventHandlingResult.Skip
         } else {
             EventHandlingResult.Add(channel)
@@ -94,7 +95,7 @@ public class DefaultChatEventHandler(private val channels: List<Channel>) :
      * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise it simply skips the event
      */
     private fun removeIfChannelIsPresent(channel: Channel): EventHandlingResult {
-        return if (channels.any { it.cid == channel.cid }) {
+        return if (channels.value.any { it.cid == channel.cid }) {
             EventHandlingResult.Remove(channel.cid)
         } else {
             EventHandlingResult.Skip

@@ -569,7 +569,7 @@ public final class io/getstream/chat/android/offline/querychannels/EventHandling
 }
 
 public final class io/getstream/chat/android/offline/querychannels/NonMemberChatEventHandler : io/getstream/chat/android/offline/querychannels/BaseChatEventHandler {
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/flow/StateFlow;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/util/List;)V
 	public fun handleChannelUpdatedByUserEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedByUserEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun handleChannelUpdatedEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun handleMemberAddedEvent (Lio/getstream/chat/android/client/events/MemberAddedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
