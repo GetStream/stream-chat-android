@@ -14,8 +14,8 @@ import io.getstream.chat.android.client.utils.Result
 * @param cid - The cid of the channel of the filter
 * @param filter - the filter to be included with the cid.
 */
-internal object ChannelFilterRequest {
-    suspend fun filter(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
+public object ChannelFilterRequest {
+    public suspend fun filter(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
         client.queryChannelsInternal(
             QueryChannelsRequest(
                 filter = Filters.and(

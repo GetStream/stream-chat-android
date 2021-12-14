@@ -39,7 +39,7 @@ public sealed class EventHandlingResult {
      *
      * @param channel Channel to be added.
      */
-    public class Add(public val channel: Channel) : EventHandlingResult()
+    public data class Add(public val channel: Channel) : EventHandlingResult()
 
     /**
      * Remove a channel from a query channels collection.
@@ -47,7 +47,7 @@ public sealed class EventHandlingResult {
      * @param cid cid of channel to remove.
      *
      */
-    public class Remove(public val cid: String) : EventHandlingResult()
+    public data class Remove(public val cid: String) : EventHandlingResult()
 
     /** Skip handling of this event. */
     public object Skip : EventHandlingResult()

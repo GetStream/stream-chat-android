@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -18,7 +19,8 @@ import kotlinx.coroutines.runBlocking
  */
 public class NonMemberChatEventHandler(
     private val client: ChatClient,
-    private val channels: List<Channel>,
+    private val channels: StateFlow<List<Channel>>,
+    private val channelFilter: ChannelFilterRequest = ChannelFilterRequest
 ) : BaseChatEventHandler() {
 
     override fun handleNotificationAddedToChannelEvent(
@@ -30,7 +32,7 @@ public class NonMemberChatEventHandler(
         event: MemberAddedEvent,
         filter: FilterObject,
     ): EventHandlingResult {
-        val hasChannel = channels.any { it.cid == event.cid }
+        val hasChannel = channels.value.any { it.cid == event.cid }
 
         return if (hasChannel) EventHandlingResult.Remove(event.cid) else EventHandlingResult.Skip
     }
@@ -65,7 +67,7 @@ public class NonMemberChatEventHandler(
         filter: FilterObject,
     ): EventHandlingResult {
         val channel = runBlocking {
-            val request = ChannelFilterRequest.filter(client, event.cid, filter)
+            val request = channelFilter.filter(client, event.cid, filter)
             if (request.isSuccess) {
                 request.data().find { channel -> channel.cid == event.cid }
             } else {
@@ -73,7 +75,7 @@ public class NonMemberChatEventHandler(
             }
         }
 
-        val hasChannel = channels.any { it.cid == event.cid }
+        val hasChannel = channels.value.any { it.cid == event.cid }
 
         return if (!hasChannel && channel != null) EventHandlingResult.Add(channel) else EventHandlingResult.Skip
     }
