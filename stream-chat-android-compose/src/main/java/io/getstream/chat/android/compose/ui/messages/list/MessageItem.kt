@@ -364,7 +364,7 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
         }
 
         MessageHeaderLabel(
-            painter = painterResource(id = R.drawable.stream_compose_ic_thread_reply),
+            painter = painterResource(id = R.drawable.stream_compose_ic_thread),
             text = stringResource(alsoSendToChannelTextRes)
         )
     }
