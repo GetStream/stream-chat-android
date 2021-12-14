@@ -281,25 +281,32 @@ internal class ChannelLogic(
      * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
      *
      * @param limit Message limit in this request.
+     * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
      */
-    internal fun olderWatchChannelRequest(limit: Int): WatchChannelRequest {
-        return QueryChannelPaginationRequest(limit).apply {
-            getLoadMoreBaseMessageId(Pagination.LESS_THAN)?.let {
-                messageFilterDirection = Pagination.LESS_THAN
-                messageFilterValue = it
-            }
-        }.toWatchChannelRequest(chatDomainImpl.userPresence)
-    }
+    internal fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+        watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
 
     /**
      * Returns instance of [WatchChannelRequest] to obtain newer messages of a channel.
      *
      * @param limit Message limit in this request.
+     * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
      */
-    internal fun newerWatchChannelRequest(limit: Int): WatchChannelRequest {
+    internal fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+        watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
+
+    /**
+     * Creates instance of [WatchChannelRequest] according [Pagination].
+     *
+     * @param pagination Pagination parameter which defines should we request older/newer messages.
+     * @param limit Message limit in this request.
+     * @param baseMessageId Message id of the last available. Can be null then it calculates the last available message.
+     */
+    private fun watchChannelRequest(pagination: Pagination, limit: Int, baseMessageId: String?): WatchChannelRequest {
+        val messageId = baseMessageId ?: getLoadMoreBaseMessageId(pagination)
         return QueryChannelPaginationRequest(limit).apply {
-            getLoadMoreBaseMessageId(Pagination.GREATER_THAN)?.let {
-                messageFilterDirection = Pagination.GREATER_THAN
+            messageId?.let {
+                messageFilterDirection = pagination
                 messageFilterValue = it
             }
         }.toWatchChannelRequest(chatDomainImpl.userPresence)
@@ -310,7 +317,8 @@ internal class ChannelLogic(
         val messages = mutableState.sortedMessages.value.takeUnless(Collection<Message>::isEmpty) ?: return null
         return when (direction) {
             Pagination.GREATER_THAN_OR_EQUAL,
-            Pagination.GREATER_THAN, -> messages.last().id
+            Pagination.GREATER_THAN,
+            -> messages.last().id
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
             -> messages.first().id

@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.channel
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
@@ -305,40 +304,24 @@ public class ChannelController internal constructor(
         runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(domainImpl.userPresence))
     }
 
-    /**
-     *  Loads a list of messages before the oldest message in the current list.
-     */
+    /** Loads a list of messages before the oldest message in the current list. */
     internal suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit))
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit, null))
     }
 
-    /**
-     *  Loads a list of messages after the newest message in the current list.
-     */
+    /** Loads a list of messages after the newest message in the current list. */
     internal suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit))
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit, null))
     }
 
     /** Loads a list of messages before the message with particular message id. */
     private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                messageFilterDirection = Pagination.LESS_THAN
-                messageFilterValue = messageId
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit, messageId))
     }
 
-    /**
-     *  Loads a list of messages after the message with particular message id.
-     */
+    /** Loads a list of messages after the message with particular message id. */
     private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                messageFilterDirection = Pagination.GREATER_THAN
-                messageFilterValue = messageId
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit, messageId))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
