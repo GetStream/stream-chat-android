@@ -11,18 +11,25 @@ import io.getstream.chat.android.compose.ui.mediapreview.MediaPreviewActivity
 public class MediaAttachmentPreviewHandler(private val context: Context) : AttachmentPreviewHandler {
 
     override fun canHandle(attachment: Attachment): Boolean {
-        if (attachment.assetUrl.isNullOrEmpty()) return false
-
-        val type = attachment.type
+        val assetUrl = attachment.assetUrl
         val mimeType = attachment.mimeType
+        val type = attachment.type
 
-        return type == ModelType.attach_audio ||
-            type == ModelType.attach_video ||
-            mimeType?.contains(MIME_TYPE_VIDEO) == true ||
-            mimeType?.contains(MIME_TYPE_AUDIO) == true ||
+        if (assetUrl.isNullOrEmpty()) return false
+        if (mimeType.isNullOrEmpty()) return false
+        if (type.isNullOrEmpty()) return false
+
+        val supportedMimeTypes = listOf(
+            MIME_TYPE_VIDEO,
+            MIME_TYPE_AUDIO,
             // For compatibility with other client SDKs
-            mimeType?.contains(MIME_SUBTYPE_MP4) == true ||
-            mimeType?.contains(MIME_SUBTYPE_QUICKTIME) == true
+            MIME_SUBTYPE_MP4,
+            MIME_SUBTYPE_QUICKTIME
+        )
+
+        return supportedMimeTypes.any { it.contains(mimeType) } ||
+            type == ModelType.attach_audio ||
+            type == ModelType.attach_video
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
