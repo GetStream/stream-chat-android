@@ -43,6 +43,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed a bug when hard deleted messages still remain in the UI. 
 
 ### ⬆️ Improved
 
