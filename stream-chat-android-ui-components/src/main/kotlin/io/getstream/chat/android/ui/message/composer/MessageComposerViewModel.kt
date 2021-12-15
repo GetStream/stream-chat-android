@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.composer
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
@@ -108,14 +109,6 @@ public class MessageComposerViewModel(
     }
 
     /**
-     * Removes all the selected attachments, e.g. when user taps clear input button, or after the message is sent
-     */
-    public fun clearSelectedAttachments(): Unit {
-        messageComposerController.selectedAttachments.value = emptyList()
-        updateMessageInputState()
-    }
-
-    /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
      * or we send a new message, using our API.
      *
@@ -133,10 +126,7 @@ public class MessageComposerViewModel(
      */
     private fun clearSelectedAttachments() {
         messageComposerController.selectedAttachments.value = emptyList()
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = selectedAttachments.value,
-                validationErrors = messageComposerController.validationErrors.value)
+        updateMessageInputState()
     }
 
     /**
@@ -163,6 +153,21 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
+
+    /**
+     * Disposes the inner [MessageComposerController].
+     */
+    override fun onCleared() {
+        super.onCleared()
+        messageComposerController.onCleared()
+    }
 
     private fun updateMessageInputState() {
         val oldState = _messageInputState.value

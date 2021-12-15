@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -26,7 +27,8 @@ public fun MessageComposerViewModel.bindView(
     onInputChanged: (String) -> Unit = { setMessageInput(it) },
     onDismissMessage: () -> Unit = { setMessageInput("") },
     onAttachmentsSelected: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
-    onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) }
+    onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) },
+    onMentionSuggestionSelected: (User) -> Unit = { selectMention(it) },
 ) {
     view.onSendMessageClicked = {
         val message = buildNewMessage()
@@ -40,6 +42,8 @@ public fun MessageComposerViewModel.bindView(
     view.onAttachmentSelected = onAttachmentsSelected
 
     view.onAttachmentRemovedHandler = onRemoveAttachment
+
+    view.onMentionSuggestionSelected = onMentionSuggestionSelected
 
     lifecycleOwner.lifecycleScope.launch {
         messageInputState.collect {
