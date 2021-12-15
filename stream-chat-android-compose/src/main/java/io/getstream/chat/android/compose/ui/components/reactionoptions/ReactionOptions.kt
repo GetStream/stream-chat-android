@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
+import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Displays all available reactions.
  *
- * @param ownReactions A list of user's own reactions
+ * @param ownReactions A list of user's own reactions.
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
  * @param horizontalArrangement Used for changing the arrangement.

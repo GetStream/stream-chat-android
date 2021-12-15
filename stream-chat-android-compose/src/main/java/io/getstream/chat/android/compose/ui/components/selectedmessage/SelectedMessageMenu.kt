@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
+import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
-import io.getstream.chat.android.compose.state.messages.list.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
@@ -90,14 +90,15 @@ public fun SelectedMessageMenu(
                 interactionSource = remember { MutableInteractionSource() }
             )
     ) {
-        Surface(
+        Card(
             modifier = modifier
                 .clickable(
                     onClick = {},
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ),
-            shape = shape
+            shape = shape,
+            backgroundColor = ChatTheme.colors.barsBackground
         ) {
             SelectedMessageOptions(
                 modifier = Modifier

@@ -43,7 +43,7 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
+import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent

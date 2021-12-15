@@ -176,7 +176,7 @@ public fun MessagesScreen(
         AnimatedVisibility(
             visible = currentlySelectedMessage.id.isNotEmpty(),
             enter = fadeIn(),
-            exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2))
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
         ) {
             SelectedMessageMenu(
                 modifier = Modifier
@@ -188,7 +188,7 @@ public fun MessagesScreen(
                         ),
                         exit = slideOutVertically(
                             targetOffsetY = { height -> height },
-                            animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)
+                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
                 messageOptions = defaultMessageOptionsState(

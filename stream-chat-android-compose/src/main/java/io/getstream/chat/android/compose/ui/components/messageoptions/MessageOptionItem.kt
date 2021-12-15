@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.state.messages.list.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -67,7 +67,8 @@ private fun MessageOptionItemPreview() {
                 isInThread = false
             ).firstOrNull()
 
-        if (messageOptionsState != null)
+        if (messageOptionsState != null) {
             MessageOptionItem(option = messageOptionsState)
+        }
     }
 }

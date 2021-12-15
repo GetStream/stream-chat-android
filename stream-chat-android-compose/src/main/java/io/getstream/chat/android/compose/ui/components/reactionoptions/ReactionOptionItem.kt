@@ -5,9 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOptionItemState
+import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.reactionTypes
 
 /**
  * Individual reaction item.
@@ -29,13 +28,13 @@ public fun ReactionOptionItem(
 }
 
 /**
- * Preview of [ReactionOptionItem] in it's non selected state.
+ * Preview of [ReactionOptionItem] in its non selected state.
  */
 @Preview(showBackground = true, name = "ReactionOptionItem Preview (Not Selected)")
 @Composable
 private fun ReactionOptionItemNotSelectedPreview() {
     ChatTheme {
-        val reactionTypeEntry = reactionTypes.entries.firstOrNull()
+        val reactionTypeEntry = ChatTheme.reactionTypes.entries.firstOrNull()
 
         reactionTypeEntry?.let { (type, drawableRes) ->
             ReactionOptionItem(
@@ -50,13 +49,13 @@ private fun ReactionOptionItemNotSelectedPreview() {
 }
 
 /**
- * Preview of [ReactionOptionItem] in it's selected state.
+ * Preview of [ReactionOptionItem] in its selected state.
  */
 @Preview(showBackground = true, name = "ReactionOptionItem Preview (Selected)")
 @Composable
 private fun ReactionOptionItemSelectedPreview() {
     ChatTheme {
-        val reactionTypeEntry = reactionTypes.entries.firstOrNull()
+        val reactionTypeEntry = ChatTheme.reactionTypes.entries.firstOrNull()
 
         reactionTypeEntry?.let { (type, drawableRes) ->
             ReactionOptionItem(

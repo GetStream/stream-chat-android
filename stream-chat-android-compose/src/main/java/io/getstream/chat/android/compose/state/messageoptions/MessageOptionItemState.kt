@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.messages.list
+package io.getstream.chat.android.compose.state.messageoptions
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color

@@ -23,7 +23,7 @@ import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
