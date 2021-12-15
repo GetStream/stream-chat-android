@@ -161,7 +161,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
  * @property onAttachmentRemovedCallback Callback invoked when specific [Attachment] gets removed by the user.
  */
 internal class MessageComposerAttachmentsAdapter(
-    private val onAttachmentRemovedCallback: (Attachment) -> Unit,
+    private inline val onAttachmentRemovedCallback: (Attachment) -> Unit,
 ) : RecyclerView.Adapter<MessageComposerAttachmentViewHolder>() {
     /**
      * List of attachments to render.
@@ -209,7 +209,7 @@ internal class MessageComposerAttachmentsAdapter(
 internal class MessageComposerAttachmentViewHolder(
     private val parent: ViewGroup,
     private val attachmentViewFactories: List<MessageComposerAttachmentPreviewFactory>,
-    private val onAttachmentRemovedCallback: (Attachment) -> Unit,
+    private inline val onAttachmentRemovedCallback: (Attachment) -> Unit,
     private val binding: StreamUiMessageComposerAttachmentContainerBinding =
         StreamUiMessageComposerAttachmentContainerBinding.inflate(parent.streamThemeInflater, parent, false),
 ) : RecyclerView.ViewHolder(binding.root) {
