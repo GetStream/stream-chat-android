@@ -88,7 +88,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed the orientation and UI of ThreadParticipants [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
 
 ### ✅ Added
-- Added preview screens for file attachments.
+- Added preview screens for file attachments [#2764](https://github.com/GetStream/stream-chat-android/pull/2764)
 
 ### ⚠️ Changed
 - Big changes to the structure of the project, making it easier to find all the components and building blocks - [#2752](https://github.com/GetStream/stream-chat-android/pull/2752)
