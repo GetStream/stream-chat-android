@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.messages.reaction
+package io.getstream.chat.android.compose.state.reactionoptions
 
 import androidx.compose.ui.graphics.painter.Painter
 

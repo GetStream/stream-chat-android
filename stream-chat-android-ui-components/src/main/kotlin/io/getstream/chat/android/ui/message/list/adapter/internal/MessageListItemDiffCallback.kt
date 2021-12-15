@@ -25,7 +25,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                     oldItem.isMessageRead == newItem.isMessageRead &&
                     oldItem.isThreadMode == newItem.isThreadMode &&
                     oldItem.message.extraData == newItem.message.extraData &&
-                    oldItem.message.pinned == newItem.message.pinned
+                    oldItem.message.pinned == newItem.message.pinned &&
+                    oldItem.message.user == newItem.message.user
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
@@ -48,6 +49,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 deleted = oldItem.message.deletedAt != newItem.message.deletedAt,
                 positions = oldItem.positions != newItem.positions,
                 pinned = oldItem.message.pinned != newItem.message.pinned,
+                user = oldItem.message.user != newItem.message.user,
             )
         } else {
             null

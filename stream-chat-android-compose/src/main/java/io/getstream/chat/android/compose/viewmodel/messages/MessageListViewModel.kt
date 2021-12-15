@@ -61,6 +61,12 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
+ * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
+ * we show a separator, if it's enabled in the list.
+ */
+private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+/**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
@@ -71,6 +77,7 @@ import java.util.concurrent.TimeUnit
  * @param enforceUniqueReactions Enables or disables unique message reactions per user.
  * @param showDateSeparators Enables or disables date separator items in the list.
  * @param showSystemMessages Enables or disables system messages in the list.
+ * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
@@ -81,6 +88,7 @@ public class MessageListViewModel(
     private val enforceUniqueReactions: Boolean = true,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD)
 ) : ViewModel() {
 
     /**
@@ -287,7 +295,7 @@ public class MessageListViewModel(
         val currentUser = user.value
 
         return messages.filter {
-            val isNotDeletedByOtherUser = !(it.user.id != currentUser?.id && it.deletedAt != null)
+            val isNotDeletedByOtherUser = !(it.deletedAt != null && it.user.id != currentUser?.id)
             val isSystemMessage = it.isSystem() || it.isError()
 
             isNotDeletedByOtherUser || (isSystemMessage && showSystemMessages)
@@ -648,7 +656,7 @@ public class MessageListViewModel(
         } else {
             val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
 
-            return timeDifference > TimeUnit.HOURS.toMillis(4)
+            return timeDifference > dateSeparatorThresholdMillis
         }
     }
 
