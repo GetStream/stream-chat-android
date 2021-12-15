@@ -32,6 +32,7 @@ public object ModelType {
     public const val attach_unknown: String = "unknown"
 
     // File Mime Type
+    public const val attach_mime_vnd: String = "application/vnd"
     public const val attach_mime_7z: String = "application/x-7z-compressed"
     public const val attach_mime_csv: String = "text/comma-separated-values"
     public const val attach_mime_doc: String = "application/msword"
