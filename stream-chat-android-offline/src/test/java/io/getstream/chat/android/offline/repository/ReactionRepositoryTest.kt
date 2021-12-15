@@ -17,8 +17,8 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.coInvoking
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

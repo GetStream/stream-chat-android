@@ -14,8 +14,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.test.asCall
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be`
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalStreamChatApi::class)
