@@ -61,22 +61,34 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
+ * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
+ * we show a separator, if it's enabled in the list.
+ */
+private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+/**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
  * @param chatDomain Used to connect to the API and fetch the domain status.
  * @param channelId The ID of the channel to load the messages for.
+ * @param clipboardHandler Used to copy data from message actions to the clipboard.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param enforceUniqueReactions Enables or disables unique message reactions per user.
- * @param clipboardHandler Used to copy data from message actions to the clipboard.
+ * @param showDateSeparators Enables or disables date separator items in the list.
+ * @param showSystemMessages Enables or disables system messages in the list.
+ * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
     private val channelId: String,
+    private val clipboardHandler: ClipboardHandler,
     private val messageLimit: Int = 0,
     private val enforceUniqueReactions: Boolean = true,
-    private val clipboardHandler: ClipboardHandler,
+    private val showDateSeparators: Boolean = true,
+    private val showSystemMessages: Boolean = true,
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD)
 ) : ViewModel() {
 
     /**
@@ -219,7 +231,7 @@ public class MessageListViewModel(
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
-                                    messages = filterDeletedMessages(state.messages),
+                                    messages = filterMessagesToShow(state.messages),
                                     isInThread = false
                                 ),
                                 isLoadingMore = false,
@@ -274,15 +286,20 @@ public class MessageListViewModel(
     }
 
     /**
-     * Used to filter messages deleted by other users.
+     * Used to filter messages which we should show to the current user.
      *
      * @param messages List of all messages.
      * @return Filtered messages.
      */
-    private fun filterDeletedMessages(messages: List<Message>): List<Message> {
+    private fun filterMessagesToShow(messages: List<Message>): List<Message> {
         val currentUser = user.value
 
-        return messages.filter { !(it.user.id != currentUser?.id && it.deletedAt != null) }
+        return messages.filter {
+            val isNotDeletedByOtherUser = !(it.deletedAt != null && it.user.id != currentUser?.id)
+            val isSystemMessage = it.isSystem() || it.isError()
+
+            isNotDeletedByOtherUser || (isSystemMessage && showSystemMessages)
+        }
     }
 
     /**
@@ -560,7 +577,7 @@ public class MessageListViewModel(
                     threadMessagesState.copy(
                         isLoading = false,
                         messageItems = groupMessages(
-                            messages = filterDeletedMessages(messages),
+                            messages = filterMessagesToShow(messages),
                             isInThread = true
                         ),
                         isLoadingMore = false,
@@ -589,13 +606,17 @@ public class MessageListViewModel(
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
+            val nextMessage = messages.getOrNull(index + 1)
 
             val previousUser = previousMessage?.user
-            val nextUser = messages.getOrNull(index + 1)?.user
+            val nextUser = nextMessage?.user
+
+            val willSeparateNextMessage =
+                nextMessage?.let { shouldAddDateSeparator(message, it) } ?: false
 
             val position = when {
-                previousUser != user && nextUser == user -> MessageItemGroupPosition.Top
-                previousUser == user && nextUser == user -> MessageItemGroupPosition.Middle
+                previousUser != user && nextUser == user && !willSeparateNextMessage -> MessageItemGroupPosition.Top
+                previousUser == user && nextUser == user && !willSeparateNextMessage -> MessageItemGroupPosition.Middle
                 previousUser == user && nextUser != user -> MessageItemGroupPosition.Bottom
                 else -> MessageItemGroupPosition.None
             }
@@ -628,12 +649,14 @@ public class MessageListViewModel(
     }
 
     private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
-        return if (previousMessage == null) {
+        return if (!showDateSeparators) {
+            false
+        } else if (previousMessage == null) {
             true
         } else {
             val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
 
-            return timeDifference > TimeUnit.HOURS.toMillis(4)
+            return timeDifference > dateSeparatorThresholdMillis
         }
     }
 

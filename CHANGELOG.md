@@ -90,6 +90,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the message grouping logic to now include date separators when splitting message groups [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 
 ### ⬆️ Improved
 - Improved the UI for message footers to be more respective of thread replies [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
@@ -97,6 +98,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added preview screens for file attachments [#2764](https://github.com/GetStream/stream-chat-android/pull/2764)
+- Added a way to disable date separator and system message items in the message list [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 
 ### ⚠️ Changed
 - Removed SelectedMessageOverlay and replaced it with SelectedMessageMenu - [#2768](https://github.com/GetStream/stream-chat-android/pull/2768)
