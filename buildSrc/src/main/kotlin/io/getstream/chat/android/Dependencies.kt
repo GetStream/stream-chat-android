@@ -122,6 +122,8 @@ object Dependencies {
     const val composeAccompanistPermissions =
         "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeAccompanistPager = "com.google.accompanist:accompanist-pager:${Versions.COMPOSE_ACCOMPANIST}"
+    const val composeAccompanistSystemUiController =
+        "com.google.accompanist:accompanist-systemuicontroller:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
     const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.COMPOSE_VIEW_MODEL}"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
@@ -177,7 +179,7 @@ object Dependencies {
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.MOCKITO_KOTLIN}"
     const val moshi = "com.squareup.moshi:moshi:${Versions.MOSHI}"
     const val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
-    const val moshiKotlin =  "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
+    const val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
     const val navigationFragmentKTX = "androidx.navigation:navigation-fragment-ktx:${Versions.NAVIGATION}"
     const val navigationSafeArgsGradlePlugin =
         "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}"

@@ -27,14 +27,19 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
             MIME_SUBTYPE_QUICKTIME
         )
 
-        return supportedMimeTypes.any { it.contains(mimeType) } ||
+        return supportedMimeTypes.any { mimeType.contains(it) } ||
             type == ModelType.attach_audio ||
             type == ModelType.attach_video
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
-        val url = requireNotNull(attachment.assetUrl)
-        context.startActivity(MediaPreviewActivity.getIntent(context, url))
+        context.startActivity(
+            MediaPreviewActivity.getIntent(
+                context = context,
+                url = requireNotNull(attachment.assetUrl),
+                title = attachment.title ?: attachment.name
+            )
+        )
     }
 
     private companion object {
