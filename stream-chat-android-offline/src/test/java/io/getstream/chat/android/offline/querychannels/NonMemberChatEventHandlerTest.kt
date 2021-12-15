@@ -4,27 +4,24 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.randomMemberAddedEvent
+import io.getstream.chat.android.offline.randomMemberRemovedEvent
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import java.util.Date
 
 internal class NonMemberChatEventHandlerTest {
 
     private val chatClient: ChatClient = mock()
 
     @Test
-    fun `When received MemberAddedEvent and the channel is present, it should be removed`() {
+    fun `Given channel is present, When received MemberAddedEvent, Should channel be removed`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
         val eventHandler = NonMemberChatEventHandler(chatClient, MutableStateFlow(listOf(channel)))
@@ -37,7 +34,7 @@ internal class NonMemberChatEventHandlerTest {
     }
 
     @Test
-    fun `When received MemberAddedEvent and the channel is absent, it should be skipped`() {
+    fun `Given channel is not present, When received MemberAddedEvent, Should event be skipped`() {
         val cid = randomString()
         val eventHandler = NonMemberChatEventHandler(chatClient, MutableStateFlow(emptyList()))
 
@@ -50,7 +47,7 @@ internal class NonMemberChatEventHandlerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `When received MemberRemovedEvent and the channel is absent, it should be added`() = runBlockingTest {
+    fun `Given channel is not present, When received MemberRemovedEvent, Should channel be added`() = runBlockingTest {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
         val eventHandler = NonMemberChatEventHandler(
@@ -69,7 +66,7 @@ internal class NonMemberChatEventHandlerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `When received MemberRemovedEvent and the channel is present, it should be skipped`() = runBlockingTest {
+    fun `Given channel is present, When received MemberRemovedEvent, Should channel be skipped`() = runBlockingTest {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
         val eventHandler = NonMemberChatEventHandler(
@@ -88,47 +85,21 @@ internal class NonMemberChatEventHandlerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `When received MemberRemovedEvent and the channel is present, but the filter fails, it should be skipped`() = runBlockingTest {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = NonMemberChatEventHandler(
-            chatClient,
-            MutableStateFlow(emptyList()),
-            mock {
-                on(it.filter(any(), any(), any())) doReturn Result.success(emptyList())
-            }
-        )
+    fun `Given channel is present, When received MemberRemovedEvent but the filter fails, Should event be skipped`() =
+        runBlockingTest {
+            val cid = randomString()
+            val channel = randomChannel(cid = cid)
+            val eventHandler = NonMemberChatEventHandler(
+                chatClient,
+                MutableStateFlow(emptyList()),
+                mock {
+                    on(it.filter(any(), any(), any())) doReturn Result.success(emptyList())
+                }
+            )
 
-        val event = randomMemberRemovedEvent(cid)
-        val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral())
+            val event = randomMemberRemovedEvent(cid)
+            val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral())
 
-        result `should be equal to` EventHandlingResult.Skip
-    }
-
-    private fun randomMemberAddedEvent(
-        cid: String = randomString(),
-    ): MemberAddedEvent {
-        return MemberAddedEvent(
-            type = randomString(),
-            createdAt = Date(),
-            user = randomUser(),
-            cid = cid,
-            channelType = randomString(),
-            channelId = randomString(),
-            member = randomMember()
-        )
-    }
-
-    private fun randomMemberRemovedEvent(
-        cid: String = randomString(),
-    ): MemberRemovedEvent {
-        return MemberRemovedEvent(
-            type = randomString(),
-            createdAt = Date(),
-            user = randomUser(),
-            cid = cid,
-            channelType = randomString(),
-            channelId = randomString(),
-        )
-    }
+            result `should be equal to` EventHandlingResult.Skip
+        }
 }
