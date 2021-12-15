@@ -99,6 +99,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added preview screens for file attachments [#2764](https://github.com/GetStream/stream-chat-android/pull/2764)
 
 ### ⚠️ Changed
+- Removed SelectedMessageOverlay and replaced it with SelectedMessageMenu - [#2768](https://github.com/GetStream/stream-chat-android/pull/2768)
 - Big changes to the structure of the project, making it easier to find all the components and building blocks - [#2752](https://github.com/GetStream/stream-chat-android/pull/2752)
 - Renamed the `common` package to `components` and added a logical structure to the components there
 - Decoupled many smaller components to the `components` package and their individual files, for ease of use
