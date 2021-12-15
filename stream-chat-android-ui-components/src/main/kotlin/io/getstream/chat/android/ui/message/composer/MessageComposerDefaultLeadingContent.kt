@@ -8,13 +8,16 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 
 /**
- * Default leading content of [MessageComposerView]
+ * Default leading content of [MessageComposerView].
  */
 internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
+    /**
+     * Handle to layout binding.
+     */
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     /**
-     * Lambda invoked whn attachments button is clicked
+     * Lambda invoked whn attachments button is clicked.
      */
     public var onAttachmentsButtonClick: () -> Unit = {}
 
@@ -29,7 +32,7 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
     }
 
     /**
-     * Initial UI rendering and setting up callbacks
+     * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
@@ -37,7 +40,7 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
     }
 
     /**
-     * Re-rendering the UI according to the new state
+     * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageInputState) {
     }

@@ -27,7 +27,7 @@ public class MessageComposerViewModel(
 ) : ViewModel() {
 
     /**
-     * Current UI state of message input
+     * Current UI state of message input.
      */
     private val _messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
@@ -56,7 +56,7 @@ public class MessageComposerViewModel(
      *
      * @param value Current state value.
      */
-    public fun setMessageInput(value: String): Unit {
+    public fun setMessageInput(value: String) {
         messageComposerController.setMessageInput(value)
         _messageInputState.value =
             _messageInputState.value.copy(
@@ -94,7 +94,7 @@ public class MessageComposerViewModel(
      *
      * @param attachments The attachments to store and show in the composer.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit {
+    public fun addSelectedAttachments(attachments: List<Attachment>) {
         messageComposerController.addSelectedAttachments(attachments)
         val oldState = _messageInputState.value
         _messageInputState.value =
@@ -109,22 +109,11 @@ public class MessageComposerViewModel(
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit {
+    public fun removeSelectedAttachment(attachment: Attachment) {
         messageComposerController.removeSelectedAttachment(attachment)
         val oldState = _messageInputState.value
         _messageInputState.value =
             oldState.copy(attachments = oldState.attachments - attachment,
-                validationErrors = messageComposerController.validationErrors.value)
-    }
-
-    /**
-     * Removes all the selected attachments, e.g. when user taps clear input button, or after the message is sent
-     */
-    public fun clearSelectedAttachments(): Unit {
-        messageComposerController.selectedAttachments.value = emptyList()
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = selectedAttachments.value,
                 validationErrors = messageComposerController.validationErrors.value)
     }
 
@@ -139,6 +128,17 @@ public class MessageComposerViewModel(
     public fun sendMessage(message: Message): Unit = messageComposerController.sendMessage(message).also {
         setMessageInput("")
         clearSelectedAttachments()
+    }
+
+    /**
+     * Removes all the selected attachments.
+     */
+    private fun clearSelectedAttachments() {
+        messageComposerController.selectedAttachments.value = emptyList()
+        val oldState = _messageInputState.value
+        _messageInputState.value =
+            oldState.copy(attachments = selectedAttachments.value,
+                validationErrors = messageComposerController.validationErrors.value)
     }
 
     /**

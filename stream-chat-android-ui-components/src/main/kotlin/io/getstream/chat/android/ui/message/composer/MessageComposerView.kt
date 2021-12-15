@@ -26,30 +26,33 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 @ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
 
+    /**
+     * Handle to layout binding.
+     */
     private lateinit var binding: StreamUiMessageComposerBinding
 
     /**
-     * Callback invoked when send button is clicked
+     * Callback invoked when send button is clicked.
      */
-    public var onSendMessageClickHandler: () -> Unit = {}
+    public var onSendMessageClicked: () -> Unit = {}
 
     /**
-     * Callback invoked when text input is modified
+     * Callback invoked when text input is modified.
      */
-    public var onInputChangedHandler: (String) -> Unit = {}
+    public var onInputChanged: (String) -> Unit = {}
 
     /**
-     * Callback invoked when clear button is clicked
+     * Callback invoked when clear button is clicked.
      */
-    public var onDismissMessageHandler: () -> Unit = {}
+    public var onMessageDismissed: () -> Unit = {}
 
     /**
-     * Callback invoked when attachments were selected
+     * Callback invoked when attachments are selected.
      */
-    public var onAttachmentsSelectedHandler: (List<Attachment>) -> Unit = {}
+    public var onAttachmentSelected: (List<Attachment>) -> Unit = {}
 
     /**
-     * Callback invoked when attachment is removed
+     * Callback invoked when attachment is removed.
      */
     public var onAttachmentRemovedHandler: (Attachment) -> Unit = {}
 
@@ -63,6 +66,9 @@ public class MessageComposerView : ConstraintLayout {
         init()
     }
 
+    /**
+     * Initializing the view with default contents.
+     */
     private fun init() {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
@@ -83,7 +89,7 @@ public class MessageComposerView : ConstraintLayout {
                                                 mimeType = it.mimeType,
                                             )
                                         }.also {
-                                            onAttachmentsSelectedHandler(it)
+                                            onAttachmentSelected(it)
                                         }
                                     }
                                 setAttachmentSelectionListener(listener)
@@ -97,8 +103,8 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.centerContent.apply {
             val defaultCenterContent = MessageComposerDefaultCenterContent(context).apply {
-                onTextChangedListener = { onInputChangedHandler(it) }
-                onClearButtonClickListener = { onDismissMessageHandler() }
+                onTextChangedListener = { onInputChanged(it) }
+                onClearButtonClickListener = { onMessageDismissed() }
                 onAttachmentRemovedListener = { onAttachmentRemovedHandler(it) }
             }
             removeAllViews()
@@ -106,7 +112,7 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.trailingContent.apply {
             val defaultTrailingContent = MessageComposerDefaultTrailingContent(context).apply {
-                this.onSendButtonClickListener = { onSendMessageClickHandler() }
+                this.onSendButtonClickListener = { onSendMessageClicked() }
             }
             removeAllViews()
             addView(defaultTrailingContent)
@@ -125,7 +131,7 @@ public class MessageComposerView : ConstraintLayout {
      * Note that when you override the default contents using [setLeadingContent], [setCenterContent], or
      * [setTrailingContent] calling this function will make no effect.
      *
-     * @param state [MessageInputState] instance representing current UI state
+     * @param state [MessageInputState] instance representing current UI state.
      */
     public fun renderState(state: MessageInputState) {
         (binding.trailingContent.children.first() as? MessageComposerChild)?.renderState(state)
@@ -137,7 +143,7 @@ public class MessageComposerView : ConstraintLayout {
      * Sets custom leading content view.
      *
      * @param view The [View] which replaces default leading content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
+     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
      */
     public fun <V> setLeadingContent(
         view: V,
@@ -151,7 +157,7 @@ public class MessageComposerView : ConstraintLayout {
      * Sets custom center content view.
      *
      * @param view The [View] which replaces default center content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
+     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
      */
     public fun <V> setCenterContent(
         view: V,
@@ -165,7 +171,7 @@ public class MessageComposerView : ConstraintLayout {
      * Sets custom trailing content view.
      *
      * @param view The [View] which replaces default trailing content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container
+     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
      */
     public fun <V> setTrailingContent(
         view: V,

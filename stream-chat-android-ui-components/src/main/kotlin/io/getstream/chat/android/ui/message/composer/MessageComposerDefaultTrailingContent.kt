@@ -9,14 +9,17 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 
 /**
- * Default trailing content of [MessageComposerView]
+ * Default trailing content of [MessageComposerView].
  */
 internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageComposerChild {
     /**
-     * Lambda invoked when send button is clicked
+     * Lambda invoked when send button is clicked.
      */
     var onSendButtonClickListener: () -> Unit = {}
 
+    /**
+     * Handle to layout binding.
+     */
     private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
 
     constructor(context: Context) : this(context, null)
@@ -30,7 +33,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     }
 
     /**
-     * Initial UI rendering and setting up callbacks
+     * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
@@ -40,7 +43,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     }
 
     /**
-     * Re-rendering the UI according to the new state
+     * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageInputState) {
         val sendButtonEnabled = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty()
