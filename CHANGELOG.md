@@ -85,7 +85,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
   You can customize its appearance using `streamUiMediaActivityHeader`, `streamUiMediaActivityHeaderLeftActionButtonStyle` and `streamUiMediaActivityHeaderTitleStyle` attributes.
 
 ### ⚠️ Changed
-
+- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example)
 ### ❌ Removed
 
 ## stream-chat-android-compose
