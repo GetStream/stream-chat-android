@@ -5,6 +5,7 @@ import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -76,6 +77,7 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  * @param messageListItem The item that holds the data.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread in a message item.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user receives a result from previewing message attachments.
@@ -98,6 +100,7 @@ public fun DefaultMessageItem(
     messageListItem: MessageListItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
+    onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -119,7 +122,10 @@ public fun DefaultMessageItem(
         )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemHeaderContent(messageItem = it)
+        DefaultMessageItemHeaderContent(
+            messageItem = it,
+            onReactionsClick = onReactionsClick
+        )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
@@ -158,6 +164,7 @@ public fun DefaultMessageItem(
             modifier = modifier,
             messageItem = messageListItem,
             onLongItemClick = onLongItemClick,
+            onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onImagePreviewResult = onImagePreviewResult,
             leadingContent = leadingContent,
@@ -183,6 +190,7 @@ public fun DefaultMessageItem(
  * a group of messages from the same user.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
@@ -204,6 +212,7 @@ public fun DefaultMessageContainer(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -217,7 +226,10 @@ public fun DefaultMessageContainer(
         )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemHeaderContent(messageItem = it)
+        DefaultMessageItemHeaderContent(
+            messageItem = it,
+            onReactionsClick = onReactionsClick
+        )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(
@@ -333,9 +345,13 @@ public fun DefaultMessageItemLeadingContent(
  * By default, we show if the message is pinned and a list of reactions for the message.
  *
  * @param messageItem The message item to show the content for.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  */
 @Composable
-public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
+public fun DefaultMessageItemHeaderContent(
+    messageItem: MessageItemState,
+    onReactionsClick: (Message) -> Unit = {},
+) {
     val message = messageItem.message
     val currentUser = messageItem.currentUser
 
@@ -387,7 +403,9 @@ public fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
             }
             ?.let { options ->
                 MessageReactions(
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                    modifier = Modifier
+                        .clickable(onClick = { onReactionsClick(message) })
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
                     options = options
                 )
             }

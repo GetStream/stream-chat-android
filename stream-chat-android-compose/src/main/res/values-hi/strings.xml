@@ -93,6 +93,10 @@
         <item quantity="other">%d जवाब</item>
     </plurals>
     <string name="stream_compose_flag_message">मैसेज चिह्नित करें</string>
+    <plurals name="stream_compose_message_reactions">
+        <item quantity="one">%d प्रतिक्रिया</item>
+        <item quantity="other">%d प्रतिक्रियायें</item>
+    </plurals>
     <string name="stream_compose_flag_message_title">मैसेज चिह्नित करें</string>
     <string name="stream_compose_flag_message_text">क्या आप आगे की जांच के लिए इस संदेश की एक कॉपी मॉडरेटर को भेजना चाहते हैं?</string>
     <string name="stream_compose_message_composer_error_message_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>

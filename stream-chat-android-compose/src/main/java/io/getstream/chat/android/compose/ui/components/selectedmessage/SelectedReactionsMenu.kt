@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
@@ -22,17 +23,17 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
-import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
-import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
+import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Represents the options user can take after selecting a message.
+ * Represents the list of user reactions.
  *
  * @param message The selected message.
- * @param messageOptions The available message options within the menu.
+ * @param currentUser The currently logged in user.
  * @param onMessageAction Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of [SelectedMessageMenu].
@@ -45,9 +46,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * By Default [MessageOptions].
  */
 @Composable
-public fun SelectedMessageMenu(
+public fun SelectedReactionsMenu(
     message: Message,
-    messageOptions: List<MessageOptionItemState>,
+    currentUser: User?,
     onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
@@ -72,11 +73,11 @@ public fun SelectedMessageMenu(
         )
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
-        MessageOptions(
-            options = messageOptions,
-            onMessageOptionSelected = {
-                onMessageAction(it.action)
-            }
+        UserReactions(
+            items = buildUserReactionItems(
+                message = message,
+                currentUser = currentUser
+            )
         )
     },
 ) {
@@ -115,18 +116,41 @@ public fun SelectedMessageMenu(
 }
 
 /**
- * Preview of [SelectedMessageMenu].
+ * Builds a list of user reactions, based on the current user and the selected message.
+ *
+ * @param message The message the reactions were left for.
+ * @param currentUser The currently logged in user.
+ * @param reactionTypes The available reactions within the menu.
  */
-@Preview(showBackground = true, name = "SelectedMessageMenu Preview")
 @Composable
-private fun SelectedMessageMenuPreview() {
-    ChatTheme {
-        val messageOptionsStateList = defaultMessageOptionsState(
-            selectedMessage = Message(),
-            currentUser = User(),
-            isInThread = false
-        )
+private fun buildUserReactionItems(
+    message: Message,
+    currentUser: User?,
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+): List<UserReactionItemState> {
+    return message.latestReactions
+        .filter { it.user != null && reactionTypes.contains(it.type) }
+        .map {
+            val user = requireNotNull(it.user)
+            val type = it.type
+            val resId = requireNotNull(reactionTypes[type])
 
-        SelectedMessageMenu(message = Message(), messageOptions = messageOptionsStateList, onMessageAction = {})
+            UserReactionItemState(
+                user = user,
+                painter = painterResource(resId),
+                isMine = currentUser?.id == user.id,
+                type = type
+            )
+        }
+}
+
+/**
+ * Preview of the [SelectedReactionsMenu] component.
+ */
+@Preview(showBackground = true, name = "SelectedReactionsMenu Preview")
+@Composable
+private fun SelectedReactionsMenuPreview() {
+    ChatTheme {
+        SelectedReactionsMenu(message = Message(), currentUser = null, onMessageAction = {})
     }
 }

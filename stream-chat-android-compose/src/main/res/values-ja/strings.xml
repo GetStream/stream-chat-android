@@ -43,6 +43,9 @@
     <string name="stream_compose_delete_message">メッセージを削除する</string>
     <string name="stream_compose_mute_user">ユーザーをミュートする</string>
     <string name="stream_compose_flag_message">メッセージをフラグする</string>
+    <plurals name="stream_compose_message_reactions">
+        <item quantity="other">%dメッセージのリアクション</item>
+    </plurals>
     <string name="stream_compose_delete_message_title">メッセージを削除する</string>
     <string name="stream_compose_delete_message_text">このメッセージを完全に削除してもよろしいですか？</string>
     <string name="stream_compose_flag_message_title">メッセージをフラグする</string>

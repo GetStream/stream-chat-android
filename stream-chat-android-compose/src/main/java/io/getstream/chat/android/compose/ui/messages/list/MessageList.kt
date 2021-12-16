@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
+ * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
@@ -46,6 +47,7 @@ public fun MessageList(
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
+    onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
@@ -62,6 +64,7 @@ public fun MessageList(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
+            onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult
         )
@@ -73,6 +76,7 @@ public fun MessageList(
         onMessagesStartReached = onMessagesStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
+        onReactionsClick = onReactionsClick,
         onScrolledToBottom = onScrollToBottom,
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
@@ -92,6 +96,7 @@ public fun MessageList(
  * @param onScrolledToBottom Handler when the user scrolls to the bottom.
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
  * @param onLongItemClick Handler for when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
@@ -107,6 +112,7 @@ public fun MessageList(
     onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
+    onReactionsClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
@@ -116,6 +122,7 @@ public fun MessageList(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
+            onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult
         )
