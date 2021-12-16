@@ -10,20 +10,15 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
-import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
@@ -50,7 +45,7 @@ public class MessageComposerView : ConstraintLayout {
      * Default implementation of [mentionSuggestionsContent].
      */
     private val defaultMentionSuggestionsView: View by lazy {
-        DefaultMentionSuggestionsView(context).apply {
+        DefaultMentionSuggestionsContent(context).apply {
             onMentionSelected = { onMentionSuggestionSelected(it) }
         }
     }
@@ -298,77 +293,4 @@ public class MessageComposerView : ConstraintLayout {
  */
 public interface MessageComposerChild {
     public fun renderState(state: MessageInputState)
-}
-
-internal class DefaultMentionSuggestionsView : FrameLayout, MessageComposerChild {
-
-    private val binding: StreamUiSuggestionListViewBinding =
-        StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
-
-    /**
-     * Callback invoked when mention suggestion is selected.
-     */
-    public var onMentionSelected: (User) -> Unit = {}
-
-    private val adapter = MentionsAdapter { onMentionSelected(it) }
-
-    constructor(context: Context) : this(context, null)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
-        attrs,
-        defStyleAttr) {
-        init()
-    }
-
-    private fun init() {
-        binding.apply {
-            suggestionsCardView.isVisible = true
-            commandsTitleTextView.isVisible = false
-            suggestionsRecyclerView.adapter = adapter
-        }
-    }
-
-    override fun renderState(state: MessageInputState) {
-        adapter.setMentions(state.mentionSuggestions)
-    }
-}
-
-internal class MentionsAdapter(inline val onMentionSelected: (User) -> Unit) : RecyclerView.Adapter<MentionsViewHolder>() {
-    private val mentions: MutableList<User> = mutableListOf()
-
-    fun setMentions(mentions: List<User>) {
-        this.mentions.apply {
-            clear()
-            addAll(mentions)
-            notifyDataSetChanged()
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
-        val binding = StreamUiItemMentionBinding.inflate(parent.streamThemeInflater, parent, false)
-        return MentionsViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: MentionsViewHolder, position: Int) {
-        val user = mentions[position]
-        holder.bind(user)
-        holder.itemView.setOnClickListener { onMentionSelected(user) }
-    }
-
-    override fun getItemCount(): Int {
-        return mentions.size
-    }
-}
-
-internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding) : RecyclerView.ViewHolder(binding.root) {
-    internal fun bind(user: User) = binding.apply {
-        avatarView.setUserData(user)
-        usernameTextView.text = user.name
-        mentionNameTextView.text = itemView.context.getString(
-            R.string.stream_ui_mention,
-            user.name.lowercase()
-        )
-    }
 }
