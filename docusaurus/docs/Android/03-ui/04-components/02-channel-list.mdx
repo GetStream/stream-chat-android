@@ -446,7 +446,7 @@ public sealed class EventHandlingResult {
 
 You can also use `BaseChatEventHandler` - a more detailed implementation that covers the most generic cases and forces you to implement the required ones.
 
-To inject the ChatEventHandler to `ChannelListViewModel`, use `ChatEventHandlerFactory`, inside `ChannelListViewModelFactory`: 
+To inject the `ChatEventHandler` to `ChannelListViewModel`, use `ChatEventHandlerFactory` inside `ChannelListViewModelFactory`: 
 
 ```
 public class ChannelListViewModelFactory @JvmOverloads constructor(
