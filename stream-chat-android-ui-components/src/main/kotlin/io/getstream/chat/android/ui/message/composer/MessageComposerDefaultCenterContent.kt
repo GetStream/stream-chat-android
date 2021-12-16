@@ -105,6 +105,8 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
             val newValue = state.inputValue
             if (newValue != currentValue) {
                 setText(state.inputValue)
+                //placing cursor at the end of the text
+                setSelection(length())
             }
         }
 
@@ -192,6 +194,9 @@ internal class MessageComposerAttachmentsAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Instantiates [MessageComposerAttachmentViewHolder].
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerAttachmentViewHolder {
         return MessageComposerAttachmentViewHolder(
             StreamUiMessageComposerAttachmentContainerBinding.inflate(parent.streamThemeInflater, parent, false),
@@ -199,10 +204,16 @@ internal class MessageComposerAttachmentsAdapter(
         ) { onRemoveAttachment(it) }
     }
 
+    /**
+     * Calls [MessageComposerAttachmentViewHolder] to update its [MessageComposerAttachmentViewHolder.itemView].
+     */
     override fun onBindViewHolder(holder: MessageComposerAttachmentViewHolder, position: Int) {
         holder.bindData(attachments[position])
     }
 
+    /**
+     * @return size of the attachments list.
+     */
     override fun getItemCount(): Int = attachments.size
 }
 
