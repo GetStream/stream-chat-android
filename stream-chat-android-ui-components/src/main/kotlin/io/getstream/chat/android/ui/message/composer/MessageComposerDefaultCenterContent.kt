@@ -146,9 +146,11 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Allows to override default attachment previews. Useful when you want to add support for custom attachments previews.
+     * Allows overriding default attachment previews. Useful when you want to add support for custom attachments previews.
+     *
+     * @param factory Implementation of [MessageComposerAttachmentPreviewFactory] interface.
      */
-    public fun addAttachmentViewFactory(vararg factory: MessageComposerImageAttachmentPreviewFactory) {
+    public fun addAttachmentViewFactory(vararg factory: MessageComposerAttachmentPreviewFactory) {
         attachmentPreviewFactories = attachmentPreviewFactories + factory
         attachmentsAdapter.apply {
             viewFactories = attachmentPreviewFactories
