@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
  * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
  * @param bottomSheet The shape of components used as bottom sheets.
  * @param suggestionList The shape of suggestion list popup.
- * @param attachmentSiteLabel The shape of a label showing website name over link attachments.
+ * @param attachmentSiteLabel The shape of the label showing website name over link attachments.
  */
 @Immutable
 public data class StreamShapes(
