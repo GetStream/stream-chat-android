@@ -112,6 +112,15 @@ internal class MentionsAdapter(inline val onMentionSelected: (User) -> Unit) : R
  * @param binding Handle to [StreamUiItemMentionBinding] instance.
  */
 internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    /**
+     * Setups view holder properties.
+     */
+    init {
+        // setting viewholder not recyclable, to enforce correct avatars refreshing.
+        setIsRecyclable(false)
+    }
+
     /**
      * Updates [itemView] elements for a given [User] object.
      *
