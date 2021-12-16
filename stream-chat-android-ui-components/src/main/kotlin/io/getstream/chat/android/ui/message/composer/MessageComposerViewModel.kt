@@ -172,6 +172,9 @@ public class MessageComposerViewModel(
         messageComposerController.onCleared()
     }
 
+    /**
+     * Recomputes current [MessageInputState] and updates [MessageComposerViewModel._messageInputState].
+     */
     private fun updateMessageInputState() {
         val oldState = _messageInputState.value
         _messageInputState.value = oldState.copy(
