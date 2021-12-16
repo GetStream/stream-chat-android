@@ -154,6 +154,8 @@ public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Bo
  *
  * @param cid The full channel id i.e. "messaging:123".
  * @param messageLimit How many new messages to load.
+ *
+ * @return The channel wrapped in [Call]. This channel contains older requested messages.
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     validateCid(cid)

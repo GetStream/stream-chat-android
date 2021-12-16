@@ -306,22 +306,22 @@ public class ChannelController internal constructor(
 
     /** Loads a list of messages before the oldest message in the current list. */
     internal suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit, null))
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit = limit, baseMessageId = null))
     }
 
     /** Loads a list of messages after the newest message in the current list. */
     internal suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit, null))
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit = limit, baseMessageId = null))
     }
 
     /** Loads a list of messages before the message with particular message id. */
     private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit, messageId))
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     /** Loads a list of messages after the message with particular message id. */
     private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit, messageId))
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
