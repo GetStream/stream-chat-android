@@ -37,7 +37,7 @@ public class MessageComposerView : ConstraintLayout {
 
     /**
      * Handle to [PopupWindow] which is currently displayed.
-     * It is shown above [MessageComposerView] to display hints/suggestions, e.g. suggested mentions, message actions.
+     * It is shown above [MessageComposerView] to display hints/suggestions, e.g. suggested mentions, available commands.
      */
     private var suggestionsPopup: PopupWindow? = null
 
