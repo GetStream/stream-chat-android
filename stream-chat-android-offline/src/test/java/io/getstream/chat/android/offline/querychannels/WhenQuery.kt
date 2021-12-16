@@ -211,7 +211,8 @@ internal class WhenQuery : SynchronizedCoroutineTest {
             whenever(chatDomainImpl.client) doReturn chatClient
             val filter = Filters.neutral()
             val mutableState = QueryChannelsMutableState(
-                filter, querySort, chatClient, chatDomainImpl.scope,
+                filter, querySort,
+                chatDomainImpl.scope,
                 MutableStateFlow(
                     mapOf(user.id to user)
                 )
@@ -220,7 +221,7 @@ internal class WhenQuery : SynchronizedCoroutineTest {
             return QueryChannelsController(
                 chatDomainImpl,
                 mutableState,
-                QueryChannelsLogic(mutableState, chatDomainImpl),
+                QueryChannelsLogic(mutableState, chatDomainImpl, chatClient),
             )
         }
     }
