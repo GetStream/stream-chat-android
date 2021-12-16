@@ -458,7 +458,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
 ) 
 ```
 
-There's a default implementation of `ChatEventHandler` for a ChannelListView listing channels that the current user is not a member. You can override the factory and inject it:
+A default `ChatEventHandlerFactory` implementation provides a `ChatEventHandler` that updates the `ChannelListView` based on membership - the channel will be added if the current user is a member and it will be removed otherwise.  You can override the factory, like in the example below:
 
 ```
 public open class NonMemberChatEventHandlerFactory : ChatEventHandlerFactory() {
