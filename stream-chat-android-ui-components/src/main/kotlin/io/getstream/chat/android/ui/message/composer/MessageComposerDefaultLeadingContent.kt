@@ -17,9 +17,9 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     /**
-     * Lambda invoked whn attachments button is clicked.
+     * Callback invoked whn attachments button is clicked.
      */
-    public var onAttachmentsButtonClick: () -> Unit = {}
+    public var onAttachmentsButtonClicked: () -> Unit = {}
 
     constructor(context: Context) : this(context, null)
 
@@ -36,7 +36,7 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
-        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClick() }
+        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClicked() }
     }
 
     /**

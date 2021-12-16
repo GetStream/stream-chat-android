@@ -13,9 +13,9 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTr
  */
 internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageComposerChild {
     /**
-     * Lambda invoked when send button is clicked.
+     * Callback invoked when send button is clicked.
      */
-    var onSendButtonClickListener: () -> Unit = {}
+    var onSendButtonClicked: () -> Unit = {}
 
     /**
      * Handle to layout binding.
@@ -38,7 +38,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
         binding.sendMessageButtonEnabled.setOnClickListener {
-            onSendButtonClickListener()
+            onSendButtonClicked()
         }
     }
 

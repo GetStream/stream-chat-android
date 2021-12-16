@@ -73,7 +73,7 @@ public class MessageComposerView : ConstraintLayout {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
             val defaultLeadingContent = MessageComposerDefaultLeadingContent(context).apply {
-                onAttachmentsButtonClick = {
+                onAttachmentsButtonClicked = {
                     context.getFragmentManager()?.let {
                         AttachmentSelectionDialogFragment.newInstance(MessageInputViewStyle.createDefault(context))
                             .apply {
@@ -104,16 +104,16 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.centerContent.apply {
             val defaultCenterContent = MessageComposerDefaultCenterContent(context).apply {
-                onTextChangedListener = { onInputChanged(it) }
-                onClearButtonClickListener = { onMessageDismissed() }
-                onAttachmentRemovedListener = { onAttachmentRemovedHandler(it) }
+                onTextChanged = { onInputChanged(it) }
+                onClearButtonClicked = { onMessageDismissed() }
+                onAttachmentRemoved = { onAttachmentRemovedHandler(it) }
             }
             removeAllViews()
             addView(defaultCenterContent)
         }
         binding.trailingContent.apply {
             val defaultTrailingContent = MessageComposerDefaultTrailingContent(context).apply {
-                this.onSendButtonClickListener = { onSendMessageClicked() }
+                this.onSendButtonClicked = { onSendMessageClicked() }
             }
             removeAllViews()
             addView(defaultTrailingContent)

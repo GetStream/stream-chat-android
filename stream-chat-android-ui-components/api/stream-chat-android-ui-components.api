@@ -1091,13 +1091,13 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun addAttachmentViewFactory ([Lio/getstream/chat/android/ui/message/composer/MessageComposerImageAttachmentPreviewFactory;)V
-	public final fun getOnAttachmentRemovedListener ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnClearButtonClickListener ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnTextChangedListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnAttachmentRemoved ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnClearButtonClicked ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnTextChanged ()Lkotlin/jvm/functions/Function1;
 	public fun renderState (Lio/getstream/chat/android/common/state/MessageInputState;)V
-	public final fun setOnAttachmentRemovedListener (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnClearButtonClickListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun setOnTextChangedListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun setOnAttachmentRemoved (Lkotlin/jvm/functions/Function1;)V
+	public final fun setOnClearButtonClicked (Lkotlin/jvm/functions/Function0;)V
+	public final fun setOnTextChanged (Lkotlin/jvm/functions/Function1;)V
 }
 
 public class io/getstream/chat/android/ui/message/composer/MessageComposerFileAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
