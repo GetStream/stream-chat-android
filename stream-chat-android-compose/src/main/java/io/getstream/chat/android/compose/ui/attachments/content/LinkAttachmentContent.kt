@@ -7,19 +7,25 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -82,15 +88,39 @@ public fun LinkAttachmentContent(
             )
     ) {
         if (hasImage) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 250.dp)
-                    .clip(ChatTheme.shapes.attachment),
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+            BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 250.dp)
+                        .clip(ChatTheme.shapes.attachment),
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+
+                val authorName = attachment.authorName
+
+                if (authorName != null) {
+                    Text(
+                        text = authorName,
+                        color = ChatTheme.colors.primaryAccent,
+                        maxLines = 1,
+                        style = ChatTheme.typography.body,
+                        fontSize = 16.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .widthIn(max = maxWidth / 2)
+                            .background(
+                                color = ChatTheme.colors.linkBackground,
+                                shape = ChatTheme.shapes.attachmentSiteLabel
+                            )
+                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                            .align(Alignment.BottomStart)
+                    )
+                }
+            }
         }
 
         val title = attachment.title
