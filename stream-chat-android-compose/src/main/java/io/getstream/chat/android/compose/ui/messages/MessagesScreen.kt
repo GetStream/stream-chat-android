@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
@@ -35,13 +36,13 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
-import io.getstream.chat.android.compose.ui.common.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -170,11 +171,32 @@ public fun MessagesScreen(
             )
         }
 
-        if (selectedMessage != null) {
-            SelectedMessageOverlay(
-                messageOptions = defaultMessageOptionsState(selectedMessage, user, listViewModel.isInThread),
-                message = selectedMessage,
-                currentUser = user,
+        val currentlySelectedMessage = selectedMessage ?: Message()
+
+        AnimatedVisibility(
+            visible = currentlySelectedMessage.id.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
+            SelectedMessageMenu(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .animateEnterExit(
+                        enter = slideInVertically(
+                            initialOffsetY = { height -> height },
+                            animationSpec = tween()
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { height -> height },
+                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
+                        )
+                    ),
+                messageOptions = defaultMessageOptionsState(
+                    selectedMessage = currentlySelectedMessage,
+                    currentUser = user,
+                    isInThread = listViewModel.isInThread
+                ),
+                message = currentlySelectedMessage,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)
                     listViewModel.performMessageAction(action)
@@ -200,7 +222,7 @@ public fun MessagesScreen(
                         ),
                         exit = slideOutVertically(
                             targetOffsetY = { height -> height },
-                            animationSpec = tween()
+                            animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
                 onAttachmentsSelected = { attachments ->

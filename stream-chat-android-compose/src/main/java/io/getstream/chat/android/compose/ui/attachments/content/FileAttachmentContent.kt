@@ -71,10 +71,17 @@ public fun FileAttachmentContent(
  */
 @Composable
 public fun FileAttachmentItem(attachment: Attachment) {
+    val previewHandlers = ChatTheme.attachmentPreviewHandlers
+
     Surface(
         modifier = Modifier
             .padding(2.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                previewHandlers
+                    .firstOrNull { it.canHandle(attachment) }
+                    ?.handleAttachmentPreview(attachment)
+            },
         color = ChatTheme.colors.appBackground, shape = ChatTheme.shapes.attachment
     ) {
         Row(

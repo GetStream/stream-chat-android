@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <plurals name="stream_ui_search_results_count">
+    <item quantity="other">"%d hasil"</item>
+  </plurals>
+  <string name="stream_ui_search_input_clear_icon_content_description">"Hapus"</string>
+  <string name="stream_ui_search_input_hint">"Cari"</string>
+  <string name="stream_ui_search_input_search_icon_content_description">"Cari"</string>
+  <string name="stream_ui_search_results_empty">"Tidak ada hasil untuk %1$s"</string>
+  <string name="stream_ui_search_results_error">"Terjadi kesalahan"</string>
+</resources>

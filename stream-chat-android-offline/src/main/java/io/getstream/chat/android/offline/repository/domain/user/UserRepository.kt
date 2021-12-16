@@ -52,6 +52,7 @@ internal class UserRepositoryImpl(
     }
 
     override suspend fun insertCurrentUser(user: User) {
+        insertUser(user)
         val userEntity = toEntity(user).copy(id = ME_ID)
         userDao.insert(userEntity)
     }

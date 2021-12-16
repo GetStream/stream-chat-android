@@ -1,6 +1,8 @@
 package io.getstream.chat.android.offline.experimental.channel.logic
 
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -24,6 +26,7 @@ import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import java.util.Date
 import kotlin.math.max
 
@@ -36,7 +39,7 @@ internal class ChannelLogic(
 
     private val logger = ChatLogger.get("Query channel request")
 
-    internal fun loadingStateByRequest(request: QueryChannelRequest) = when {
+    private fun loadingStateByRequest(request: QueryChannelRequest) = when {
         request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
         request.filteringOlderMessages() -> mutableState._loadingOlderMessages
         else -> mutableState._loading
@@ -273,6 +276,58 @@ internal class ChannelLogic(
     ).map { it.time }
         .maxOrNull()
         ?: NEVER.time
+
+    /**
+     * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
+     *
+     * @param limit Message limit in this request.
+     * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
+     */
+    internal fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+        watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
+
+    /**
+     * Returns instance of [WatchChannelRequest] to obtain newer messages of a channel.
+     *
+     * @param limit Message limit in this request.
+     * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
+     */
+    internal fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+        watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
+
+    /**
+     * Creates instance of [WatchChannelRequest] according to [Pagination].
+     *
+     * @param pagination Pagination parameter which defines should we request older/newer messages.
+     * @param limit Message limit in this request.
+     * @param baseMessageId Message id of the last available. Can be null then it calculates the last available message.
+     */
+    private fun watchChannelRequest(pagination: Pagination, limit: Int, baseMessageId: String?): WatchChannelRequest {
+        val messageId = baseMessageId ?: getLoadMoreBaseMessageId(pagination)
+        return QueryChannelPaginationRequest(limit).apply {
+            messageId?.let {
+                messageFilterDirection = pagination
+                messageFilterValue = it
+            }
+        }.toWatchChannelRequest(chatDomainImpl.userPresence)
+    }
+
+    /**
+     * Calculates base messageId for [WatchChannelRequest] depending on [Pagination] when requesting more messages.
+     *
+     * @param direction [Pagination] instance which shows direction of pagination.
+     */
+    private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
+        val messages = mutableState.sortedMessages.value.takeUnless(Collection<Message>::isEmpty) ?: return null
+        return when (direction) {
+            Pagination.GREATER_THAN_OR_EQUAL,
+            Pagination.GREATER_THAN,
+            -> messages.last().id
+            Pagination.LESS_THAN,
+            Pagination.LESS_THAN_OR_EQUAL,
+            -> messages.first().id
+        }
+    }
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L

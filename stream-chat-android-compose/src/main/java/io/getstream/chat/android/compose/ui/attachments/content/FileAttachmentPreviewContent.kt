@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.compose.ui.common.CancelIcon
-import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
+import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**

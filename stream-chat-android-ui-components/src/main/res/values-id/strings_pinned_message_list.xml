@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Tekan lama pesan penting dan pilih <b>Sematkan ke percakapan</b>]]></string>
+  <string name="stream_ui_pinned_message_list_empty_title">"Tidak ada pesan tersemat"</string>
+  <string name="stream_ui_pinned_message_list_results_error">"Terjadi kesalahan"</string>
+</resources>
