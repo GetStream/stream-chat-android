@@ -238,9 +238,7 @@ public open class MessageComposerImageAttachmentPreviewFactory : MessageComposer
     /**
      * @return true if given attachment is of image or giphy type, false otherwise.
      */
-    public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.isMedia()
-    }
+    public override fun canHandle(attachment: Attachment): Boolean = attachment.isMedia()
 
     /**
      * @return Image attachment view.
@@ -267,9 +265,8 @@ public open class MessageComposerFileAttachmentPreviewFactory : MessageComposerA
     /**
      * @return true if given attachment is of file type, false otherwise.
      */
-    public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.upload != null || attachment.uploadId != null
-    }
+    public override fun canHandle(attachment: Attachment): Boolean =
+        attachment.upload != null || attachment.uploadId != null
 
     /**
      * @return File attachment view.
