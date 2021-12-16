@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
 /**
- * Implementation of [ChatEventHandler] that handles events when the of channels shows which
- * channels the current user is not a member. BE AWARE that this implementation uses more API calls than [DefaultChatEventHandler]
+ * Implementation of [ChatEventHandler] that handles events when channel list shows which channels the current user
+ * is not a member. BE AWARE that this implementation uses more API calls than [DefaultChatEventHandler]
  */
 public class NonMemberChatEventHandler(
     private val client: ChatClient,
