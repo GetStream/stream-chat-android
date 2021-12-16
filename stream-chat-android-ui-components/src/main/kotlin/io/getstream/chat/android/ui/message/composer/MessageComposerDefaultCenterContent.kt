@@ -193,7 +193,10 @@ internal class MessageComposerAttachmentsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerAttachmentViewHolder {
-        return MessageComposerAttachmentViewHolder(parent, viewFactories, { onAttachmentRemovedCallback(it) })
+        return MessageComposerAttachmentViewHolder(
+            StreamUiMessageComposerAttachmentContainerBinding.inflate(parent.streamThemeInflater, parent, false),
+            viewFactories
+        ) { onAttachmentRemovedCallback(it) }
     }
 
     override fun onBindViewHolder(holder: MessageComposerAttachmentViewHolder, position: Int) {
@@ -207,11 +210,9 @@ internal class MessageComposerAttachmentsAdapter(
  * [RecyclerView.ViewHolder] implementation responsible for rendering previews of various [Attachment] types.
  */
 internal class MessageComposerAttachmentViewHolder(
-    private val parent: ViewGroup,
+    private val binding: StreamUiMessageComposerAttachmentContainerBinding,
     private val attachmentViewFactories: List<MessageComposerAttachmentPreviewFactory>,
     private inline val onAttachmentRemovedCallback: (Attachment) -> Unit,
-    private val binding: StreamUiMessageComposerAttachmentContainerBinding =
-        StreamUiMessageComposerAttachmentContainerBinding.inflate(parent.streamThemeInflater, parent, false),
 ) : RecyclerView.ViewHolder(binding.root) {
 
     /**
@@ -222,7 +223,7 @@ internal class MessageComposerAttachmentViewHolder(
         val attachmentContainer = binding.root
         val previewFactory = attachmentViewFactories.firstOrNull { it.canHandle(attachment) }
             ?: throw IllegalStateException("No MessageComposerAttachmentPreviewFactory instances found capable of handling attachment: $attachment")
-        val view = previewFactory.createAttachmentPreview(parent, attachment) {
+        val view = previewFactory.createAttachmentPreview(binding.root, attachment) {
             onAttachmentRemovedCallback(attachment)
         }
         attachmentContainer.removeAllViews()
