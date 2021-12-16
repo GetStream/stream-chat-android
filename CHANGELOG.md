@@ -7,6 +7,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
 - [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
 
+<!-- UNRELEASED START -->
+
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
@@ -132,6 +134,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 
+<!-- UNRELEASED END -->
 
 # December 9th, 2021 - 4.24.0
 ## stream-chat-android-offline
