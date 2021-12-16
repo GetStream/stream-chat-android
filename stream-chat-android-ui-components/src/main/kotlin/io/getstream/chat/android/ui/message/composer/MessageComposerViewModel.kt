@@ -159,7 +159,10 @@ public class MessageComposerViewModel(
      *
      * @param user The user that is used to autocomplete the mention.
      */
-    public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
+    public fun selectMention(user: User) {
+        messageComposerController.selectMention(user)
+        updateMessageInputState()
+    }
 
     /**
      * Disposes the inner [MessageComposerController].

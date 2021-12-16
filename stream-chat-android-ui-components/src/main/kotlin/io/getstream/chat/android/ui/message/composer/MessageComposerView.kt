@@ -51,9 +51,7 @@ public class MessageComposerView : ConstraintLayout {
      */
     private val defaultMentionSuggestionsView: View by lazy {
         DefaultMentionSuggestionsView(context).apply {
-            onMentionSelected = {
-                onMentionSuggestionSelected(it)
-            }
+            onMentionSelected = { onMentionSuggestionSelected(it) }
         }
     }
 
@@ -312,7 +310,7 @@ internal class DefaultMentionSuggestionsView : FrameLayout, MessageComposerChild
      */
     public var onMentionSelected: (User) -> Unit = {}
 
-    private val adapter = MentionsAdapter(onMentionSelected)
+    private val adapter = MentionsAdapter { onMentionSelected(it) }
 
     constructor(context: Context) : this(context, null)
 
@@ -337,7 +335,7 @@ internal class DefaultMentionSuggestionsView : FrameLayout, MessageComposerChild
     }
 }
 
-internal class MentionsAdapter(val onMentionSelected: (User) -> Unit) : RecyclerView.Adapter<MentionsViewHolder>() {
+internal class MentionsAdapter(inline val onMentionSelected: (User) -> Unit) : RecyclerView.Adapter<MentionsViewHolder>() {
     private val mentions: MutableList<User> = mutableListOf()
 
     fun setMentions(mentions: List<User>) {
@@ -356,9 +354,7 @@ internal class MentionsAdapter(val onMentionSelected: (User) -> Unit) : Recycler
     override fun onBindViewHolder(holder: MentionsViewHolder, position: Int) {
         val user = mentions[position]
         holder.bind(user)
-        holder.itemView.setOnClickListener {
-            onMentionSelected(user)
-        }
+        holder.itemView.setOnClickListener { onMentionSelected(user) }
     }
 
     override fun getItemCount(): Int {

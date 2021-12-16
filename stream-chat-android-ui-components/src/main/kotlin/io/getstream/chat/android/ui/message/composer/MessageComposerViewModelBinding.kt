@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
  * @param onDismissMessage Callback invoked when user dismisses the message. Default implementation clears input value in view model.
  * @param onAttachmentsSelected Callback invoked when user selects list of attachments in attachments picker.
  * @param onRemoveAttachment Callback invoked when user attempts to remove the attachment.
+ * @param onMentionSuggestionSelected Callback invoked when selects one of the mention suggestions.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
