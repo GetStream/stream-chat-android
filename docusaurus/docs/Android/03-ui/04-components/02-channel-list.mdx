@@ -469,7 +469,7 @@ public open class NonMemberChatEventHandlerFactory : ChatEventHandlerFactory() {
 }
 ```
 
-Then use the factory in you ChannelListViewModel
+Make sure to pass the factory to the `ChannelListViewModel`:
 
 ```
 private val viewModel: ChannelListViewModel by viewModels {
