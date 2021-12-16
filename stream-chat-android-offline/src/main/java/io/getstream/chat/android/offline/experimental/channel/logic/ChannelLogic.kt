@@ -296,7 +296,7 @@ internal class ChannelLogic(
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
     /**
-     * Creates instance of [WatchChannelRequest] according [Pagination].
+     * Creates instance of [WatchChannelRequest] according to [Pagination].
      *
      * @param pagination Pagination parameter which defines should we request older/newer messages.
      * @param limit Message limit in this request.
@@ -312,7 +312,11 @@ internal class ChannelLogic(
         }.toWatchChannelRequest(chatDomainImpl.userPresence)
     }
 
-    /** Calculates base messageId for [WatchChannelRequest] depending on [Pagination] when requesting more messages. */
+    /**
+     * Calculates base messageId for [WatchChannelRequest] depending on [Pagination] when requesting more messages.
+     *
+     * @param direction [Pagination] instance which shows direction of pagination.
+     */
     private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
         val messages = mutableState.sortedMessages.value.takeUnless(Collection<Message>::isEmpty) ?: return null
         return when (direction) {
