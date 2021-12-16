@@ -251,6 +251,10 @@ public open class MessageComposerImageAttachmentPreviewFactory : MessageComposer
         val context = parent.context
         return StreamUiMediaAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
             .apply {
+                val shapeAppearanceModel = mediaImage.shapeAppearanceModel.toBuilder()
+                    .setAllCornerSizes(context.resources.getDimension(R.dimen.stream_ui_message_composer_attachment_corner_radius))
+                    .build()
+                mediaImage.shapeAppearanceModel = shapeAppearanceModel
                 mediaImage.loadAttachmentThumb(attachment)
                 removeButton.setOnClickListener { onAttachmentRemovedCallback(attachment) }
             }.root
