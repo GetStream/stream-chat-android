@@ -106,6 +106,9 @@ internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val o
         }
     }
 
+    /**
+     * Cancels potential ongoing image loading request, to avoid image loading issues.
+     */
     override fun unbind() {
         binding.avatarView.clear()
     }
