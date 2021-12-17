@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
+import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.transformer.DefaultChatTextTransformer
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
