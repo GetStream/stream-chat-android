@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
 import io.getstream.chat.android.ui.common.extensions.isReply
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
+import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceFactory
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -38,7 +39,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr)
+
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
@@ -200,19 +204,13 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     fun setupBackground(data: MessageListItem.MessageItem) {
-        val topLeftCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-        val topRightCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-        val bottomRightCorner =
-            if (data.message.hasText() || (data.isMine && data.isBottomPosition())) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-        val bottomLeftCorner =
-            if (data.message.hasText() || (data.isTheirs && data.isBottomPosition())) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-
-        background = ShapeAppearanceModel.builder()
-            .setTopLeftCornerSize(topLeftCorner)
-            .setTopRightCornerSize(topRightCorner)
-            .setBottomRightCornerSize(bottomRightCorner)
-            .setBottomLeftCornerSize(bottomLeftCorner)
-            .build()
+        background = ShapeAppearanceFactory.shapeAppearanceModel(
+            context,
+            BackgroundDecorator.DEFAULT_CORNER_RADIUS,
+            0F,
+            data.isMine,
+            data.isBottomPosition()
+        )
             .let(::MaterialShapeDrawable)
             .apply { setTint(ContextCompat.getColor(context, R.color.stream_ui_literal_transparent)) }
     }
