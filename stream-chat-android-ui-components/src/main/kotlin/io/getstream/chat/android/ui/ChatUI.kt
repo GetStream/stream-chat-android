@@ -5,12 +5,12 @@ import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
-import com.getstream.sdk.chat.ChatMessageTextTransformer
-import io.getstream.chat.android.ui.common.DefaultChatTextTransformer
+import io.getstream.chat.android.ui.transformer.DefaultChatTextTransformer
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
  * ChatUI handles any configuration for the Chat UI elements.
@@ -47,8 +47,8 @@ public object ChatUI {
 
     private var markdownOverride: ChatMarkdown? = null
     private val defaultMarkdown: ChatMarkdown by lazy {
-        ChatMarkdown { _, _ ->
-            // no-op
+        ChatMarkdown { textView, message ->
+            textView.text = message
         }
     }
 
@@ -62,6 +62,11 @@ public object ChatUI {
 
     private var textTransformerOverride: ChatMessageTextTransformer? = null
     private val defaultTextTransformer: ChatMessageTextTransformer by lazy { DefaultChatTextTransformer() }
+
+    /**
+     * Allows customising the message text's format or style.
+     * For example, it can be used to provide markdown support in chat or it can be used to highlight specific messages by making them bold etc.
+     */
     public var messageTextTransformer: ChatMessageTextTransformer
         get() = textTransformerOverride ?: defaultTextTransformer
         set(value) {

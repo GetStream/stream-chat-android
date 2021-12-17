@@ -2,10 +2,6 @@ public abstract interface class com/getstream/sdk/chat/ChatMarkdown {
 	public abstract fun setText (Landroid/widget/TextView;Ljava/lang/String;)V
 }
 
-public abstract interface class com/getstream/sdk/chat/ChatMessageTextTransformer {
-	public abstract fun transformAndApply (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
-}
-
 public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/content/FileProvider {
 	public fun <init> ()V
 }

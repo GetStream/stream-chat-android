@@ -52,6 +52,7 @@ class ChatInitializer(private val context: Context) {
             .withPlugin(offlinePlugin)
             .build()
 
+        // Using markdown as text transformer
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
     }
 }

@@ -1,7 +1,6 @@
-package io.getstream.chat.android.ui.common
+package io.getstream.chat.android.ui.transformer
 
 import android.widget.TextView
-import com.getstream.sdk.chat.ChatMessageTextTransformer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
 

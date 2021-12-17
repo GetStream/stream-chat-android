@@ -1,4 +1,4 @@
-public final class io/getstream/chat/android/markdown/MarkdownTextTransformer : com/getstream/sdk/chat/ChatMessageTextTransformer {
+public final class io/getstream/chat/android/markdown/MarkdownTextTransformer : io/getstream/chat/android/ui/transformer/ChatMessageTextTransformer {
 	public fun <init> (Landroid/content/Context;)V
 	public fun transformAndApply (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
 }

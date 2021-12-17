@@ -17,7 +17,7 @@ import androidx.lifecycle.LiveData
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
-import com.getstream.sdk.chat.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.utils.DateFormatter
