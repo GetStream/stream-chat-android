@@ -62,23 +62,6 @@ public fun MessageOptions(
 }
 
 /**
- * Preview of [MessageOptions].
- * */
-@Preview(showBackground = true, name = "MessageOptions Preview")
-@Composable
-private fun MessageOptionsPreview() {
-    ChatTheme {
-        val messageOptionsStateList = defaultMessageOptionsState(
-            selectedMessage = Message(),
-            currentUser = User(),
-            isInThread = false
-        )
-
-        MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})
-    }
-}
-
-/**
  * Builds the default message options we show to our users.
  *
  * @param selectedMessage Currently selected message, used to callbacks.
@@ -164,4 +147,21 @@ public fun defaultMessageOptionsState(
             )
         } else null
     )
+}
+
+/**
+ * Preview of [MessageOptions].
+ * */
+@Preview(showBackground = true, name = "MessageOptions Preview")
+@Composable
+private fun MessageOptionsPreview() {
+    ChatTheme {
+        val messageOptionsStateList = defaultMessageOptionsState(
+            selectedMessage = Message(),
+            currentUser = User(),
+            isInThread = false
+        )
+
+        MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})
+    }
 }

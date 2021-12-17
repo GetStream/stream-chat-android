@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
+import io.getstream.chat.android.compose.previewdata.PreviewReactionData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
@@ -145,12 +147,35 @@ private fun buildUserReactionItems(
 }
 
 /**
- * Preview of the [SelectedReactionsMenu] component.
+ * Preview of the [SelectedReactionsMenu] component with 1 reaction.
  */
-@Preview(showBackground = true, name = "SelectedReactionsMenu Preview")
+@Preview
 @Composable
-private fun SelectedReactionsMenuPreview() {
+private fun OneSelectedReactionMenuPreview() {
     ChatTheme {
-        SelectedReactionsMenu(message = Message(), currentUser = null, onMessageAction = {})
+        val message = Message(latestReactions = PreviewReactionData.oneReaction.toMutableList())
+
+        SelectedReactionsMenu(
+            message = message,
+            currentUser = PreviewUserData.user1,
+            onMessageAction = {}
+        )
+    }
+}
+
+/**
+ * Preview of the [SelectedReactionsMenu] component with many reactions.
+ */
+@Preview
+@Composable
+private fun ManySelectedReactionsMenuPreview() {
+    ChatTheme {
+        val message = Message(latestReactions = PreviewReactionData.manyReaction.toMutableList())
+
+        SelectedReactionsMenu(
+            message = message,
+            currentUser = PreviewUserData.user1,
+            onMessageAction = {}
+        )
     }
 }

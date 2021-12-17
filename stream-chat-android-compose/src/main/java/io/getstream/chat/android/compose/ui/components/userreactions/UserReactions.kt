@@ -74,16 +74,18 @@ public fun UserReactions(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            val columns = reactionCount.coerceAtMost(maxColumns)
-            val reactionItemWidth = 80.dp
-            val reactionGridWidth = reactionItemWidth * columns
+            if (reactionCount > 0) {
+                val columns = reactionCount.coerceAtMost(maxColumns)
+                val reactionItemWidth = 80.dp
+                val reactionGridWidth = reactionItemWidth * columns
 
-            LazyVerticalGrid(
-                modifier = Modifier.width(reactionGridWidth),
-                cells = GridCells.Fixed(reactionCount.coerceAtMost(columns))
-            ) {
-                items(reactionCount) { index ->
-                    itemContent(items[index])
+                LazyVerticalGrid(
+                    modifier = Modifier.width(reactionGridWidth),
+                    cells = GridCells.Fixed(reactionCount.coerceAtMost(columns))
+                ) {
+                    items(reactionCount) { index ->
+                        itemContent(items[index])
+                    }
                 }
             }
         }

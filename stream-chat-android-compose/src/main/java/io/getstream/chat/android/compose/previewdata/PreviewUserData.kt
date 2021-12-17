@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.models.User
 /**
  * Provides sample users that will be used to render component previews.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 internal object PreviewUserData {
 
     /**
