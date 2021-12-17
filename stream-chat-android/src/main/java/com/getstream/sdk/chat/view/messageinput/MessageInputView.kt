@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
 
@@ -92,7 +93,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<Pair<File, String?>>,
+            attachmentsFilesWithMimeType: List<Pair<File, String?>>,
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -229,6 +230,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         }
     }
 
+    @OptIn(ExperimentalStreamChatApi::class)
     private fun configSendButtonEnableState() {
         val attachments = messageInputController.getSelectedAttachments()
         val notEmptyMessage = messageText.isNotBlank() || attachments.isNotEmpty()
@@ -340,6 +342,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             }
         }
         val title = inputContentInfo.contentUri.pathSegments.lastOrNull() ?: DEFAULT_ATTACHMENT_TITLE
+        @OptIn(ExperimentalStreamChatApi::class)
         messageInputController.setSelectedAttachments(
             setOf(
                 AttachmentMetaData(

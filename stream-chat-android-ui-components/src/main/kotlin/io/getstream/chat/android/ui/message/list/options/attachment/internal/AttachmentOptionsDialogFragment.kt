@@ -61,6 +61,11 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         binding.attachmentOptionsMenu.setDeleteItemVisiblity(isMine && binding.attachmentOptionsMenu.isDeleteEnabled)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     companion object {
         const val TAG = "AttachmentOptionsDialogFragment"
 
@@ -82,6 +87,6 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     fun interface AttachmentOptionHandler {
-        fun onClick(): Unit
+        fun onClick()
     }
 }

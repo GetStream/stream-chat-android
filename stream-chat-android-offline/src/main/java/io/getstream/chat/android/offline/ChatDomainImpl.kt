@@ -47,6 +47,7 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.stopTyping
@@ -60,6 +61,7 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -76,7 +78,6 @@ import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
 import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
-import io.getstream.chat.android.offline.usecase.LoadOlderMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
@@ -271,6 +272,10 @@ internal class ChatDomainImpl internal constructor(
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
+    /** State flow of latest cached users. Usually it has size of 100 as max size of LRU cache in [UserRepository].*/
+    internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+        private set
+
     private fun clearState() {
         _initialized.value = false
         _connectionState.value = ConnectionState.OFFLINE
@@ -280,6 +285,7 @@ internal class ChatDomainImpl internal constructor(
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
+        latestUsers = MutableStateFlow(emptyMap())
     }
 
     internal fun setUser(user: User) {
@@ -296,6 +302,7 @@ internal class ChatDomainImpl internal constructor(
             setOfflineEnabled(offlineEnabled)
         }.build()
 
+        latestUsers = repos.observeLatestUsers()
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
@@ -933,8 +940,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        LoadOlderMessages(this).invoke(cid, messageLimit)
+    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> = client.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)

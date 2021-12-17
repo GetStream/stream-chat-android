@@ -363,9 +363,11 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
-    private fun hasText(): Boolean = messageText.isNotBlank()
+    private fun hasValidText(): Boolean = isMessageTextValid(messageText)
 
-    fun hasContent(): Boolean = hasText() || selectedAttachments.isNotEmpty() || selectedCustomAttachments.isNotEmpty()
+    fun hasValidContent(): Boolean {
+        return hasValidText() || selectedAttachments.isNotEmpty() || selectedCustomAttachments.isNotEmpty()
+    }
 
     private fun onMessageTextChanged() {
         resetModeIfNecessary()
@@ -381,7 +383,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     private fun resetModeIfNecessary() {
-        if (!hasContent() && (mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)) {
+        if (!hasValidContent() && (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)) {
             resetMode()
         }
     }

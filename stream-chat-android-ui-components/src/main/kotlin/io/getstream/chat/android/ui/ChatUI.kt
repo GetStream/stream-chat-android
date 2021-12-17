@@ -1,14 +1,12 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
+import com.getstream.sdk.chat.ChatMarkdown
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
-import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
-import io.getstream.chat.android.ui.common.DefaultMessageTextTransformer
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
+import com.getstream.sdk.chat.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.common.DefaultChatTextTransformer
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
@@ -47,8 +45,23 @@ public object ChatUI {
             fontsOverride = value
         }
 
+    private var markdownOverride: ChatMarkdown? = null
+    private val defaultMarkdown: ChatMarkdown by lazy {
+        ChatMarkdown { _, _ ->
+            // no-op
+        }
+    }
+
+    @Deprecated(message = "ChatUI.markdown is deprecated. Use ChatUI.messageTextTransformer",
+        level = DeprecationLevel.WARNING)
+    public var markdown: ChatMarkdown
+        get() = markdownOverride ?: defaultMarkdown
+        set(value) {
+            markdownOverride = value
+        }
+
     private var textTransformerOverride: ChatMessageTextTransformer? = null
-    private val defaultTextTransformer: ChatMessageTextTransformer by lazy { DefaultMessageTextTransformer() }
+    private val defaultTextTransformer: ChatMessageTextTransformer by lazy { DefaultChatTextTransformer() }
     public var messageTextTransformer: ChatMessageTextTransformer
         get() = textTransformerOverride ?: defaultTextTransformer
         set(value) {
@@ -77,21 +90,5 @@ public object ChatUI {
         get() = mimeTypeIconProviderOverride ?: defaultMimeTypeIconProvider
         set(value) {
             mimeTypeIconProviderOverride = value
-        }
-
-    @Deprecated(
-        message = "This property is not used anymore. The SDK already provide a Day/Night theme",
-        replaceWith = ReplaceWith("AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public var uiMode: UiMode = UiMode.SYSTEM
-        set(value) {
-            Log.e("ChatUI", "[ERROR] ChatUI.uiMode is deprecated, you should use `AppCompatDelegate.setDefaultNightMode` [ERROR]")
-            field = value
-            when (value) {
-                UiMode.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                UiMode.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                UiMode.SYSTEM -> { }
-            }
         }
 }

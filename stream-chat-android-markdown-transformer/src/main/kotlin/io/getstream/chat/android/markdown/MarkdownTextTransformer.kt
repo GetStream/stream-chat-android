@@ -2,8 +2,9 @@ package io.getstream.chat.android.markdown
 
 import android.content.Context
 import android.widget.TextView
+import com.getstream.sdk.chat.ChatMessageTextTransformer
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
+import com.getstream.sdk.chat.utils.Linkify
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.CorePlugin
@@ -20,7 +21,7 @@ public class MarkdownTextTransformer(context: Context) : ChatMessageTextTransfor
         .usePlugin(SoftBreakAddsNewLinePlugin.create())
         .build()
 
-    override fun transform(textView: TextView, messageItem: MessageListItem.MessageItem) {
+    override fun transformAndApply(textView: TextView, messageItem: MessageListItem.MessageItem) {
         markwon.setMarkdown(textView, fixItalicAtEnd(messageItem.message.text))
         Linkify.addLinks(textView)
     }

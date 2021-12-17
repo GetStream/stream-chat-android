@@ -3,6 +3,7 @@ import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 ext {
@@ -33,6 +34,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     implementation project(":stream-chat-android-ui-components")
+
     implementation Dependencies.androidxCoreKtx
 
     // Markdown
@@ -40,4 +42,11 @@ dependencies {
     implementation Dependencies.markwonLinkify
     implementation Dependencies.markwonextStrikethrough
     implementation Dependencies.markwonImage
+
+    // Tests
+    testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
 }

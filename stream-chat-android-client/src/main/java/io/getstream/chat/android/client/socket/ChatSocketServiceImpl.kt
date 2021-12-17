@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -232,7 +231,7 @@ internal class ChatSocketServiceImpl constructor(
                         }
                     }
                 }
-            }.exhaustive
+            }
         }
     }
 

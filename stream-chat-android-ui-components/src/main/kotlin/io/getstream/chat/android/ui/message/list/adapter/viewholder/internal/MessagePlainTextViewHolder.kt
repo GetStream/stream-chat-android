@@ -4,10 +4,9 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
+import com.getstream.sdk.chat.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
@@ -61,7 +60,7 @@ internal class MessagePlainTextViewHolder(
         if (diff?.text == false) return
 
         with(binding) {
-            messageTextTransformer.transform(messageText, data.message)
+            messageTextTransformer.transformAndApply(messageText, data)
             messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 horizontalBias = if (data.isTheirs) 0f else 1f
             }

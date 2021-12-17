@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
+import io.getstream.chat.android.compose.ui.filepreview.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -36,6 +37,9 @@ private val LocalShapes = compositionLocalOf<StreamShapes> {
 }
 private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
+    error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> {
     error("No reactions provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -63,6 +67,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param attachmentFactories Attachment factories that we provide.
+ * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionTypes The reaction types supported in the Messaging screen.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
@@ -78,6 +83,7 @@ public fun ChatTheme(
     typography: StreamTypography = StreamTypography.defaultTypography(),
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
+    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -99,6 +105,7 @@ public fun ChatTheme(
         LocalTypography provides typography,
         LocalShapes provides shapes,
         LocalAttachmentFactories provides attachmentFactories,
+        LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalReactionTypes provides reactionTypes,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
@@ -140,6 +147,11 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentFactories.current
+
+    public val attachmentPreviewHandlers: List<AttachmentPreviewHandler>
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAttachmentPreviewHandlers.current
 
     public val reactionTypes: Map<String, Int>
         @Composable

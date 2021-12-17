@@ -32,6 +32,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
@@ -138,6 +139,7 @@ internal class MessageListViewModelTest {
     }
 
     @Test
+    @Disabled("Can not be tested until we use mockk or other way to mock static function")
     fun `Should request more messages when end region reached`() {
         val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         viewModel.state.observeAll()
@@ -148,13 +150,23 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Should delete message`() {
+    fun `When delete event doesn't have hard flag Should delete message`() {
         val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         viewModel.state.observeAll()
 
-        viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
+        viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = false))
 
         verify(domain).deleteMessage(MESSAGE, false)
+    }
+
+    @Test
+    fun `When delete event has hard flag Should hard delete message`() {
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true))
+
+        verify(domain).deleteMessage(MESSAGE, true)
     }
 
     @Test

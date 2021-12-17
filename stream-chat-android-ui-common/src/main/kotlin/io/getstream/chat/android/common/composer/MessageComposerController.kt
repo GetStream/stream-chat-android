@@ -4,7 +4,9 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -14,13 +16,19 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.stopTyping
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 
 /**
  * Controller responsible for handling the composing and sending of messages.
@@ -56,6 +64,16 @@ public class MessageComposerController(
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
+     * If the message will be shown in the channel after it is sent.
+     */
+    public val alsoSendToChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    /**
+     * Represents the remaining time until the user is allowed to send the next message.
+     */
+    public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
+
+    /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
@@ -66,38 +84,53 @@ public class MessageComposerController(
     public val validationErrors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the list of users that can be used to autocomplete the current mention input.
+     */
+    public val mentionSuggestions: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
+
+    /**
+     * Represents the list of commands that can be executed for the channel.
+     */
+    public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
+
+    /**
+     * Represents the list of users in the channel.
+     */
+    private var users: List<User> = emptyList()
+
+    /**
+     * Represents the list of available commands in the channel.
+     */
+    private var commands: List<Command> = emptyList()
+
+    /**
      * Represents the maximum allowed message length in the message input.
      */
     private var maxMessageLength: Int = DEFAULT_MAX_MESSAGE_LENGTH
 
     /**
-     * Sets up the data loading operations such as observing the maximum allowed message length.
+     * Represents the coroutine [Job] used to update the countdown
      */
-    init {
-        scope.launch {
-            val result = chatDomain.watchChannel(channelId, 0).await()
+    private var cooldownTimerJob: Job? = null
 
-            if (result.isSuccess) {
-                val channelController = result.data()
-                channelController.channelConfig.collect {
-                    maxMessageLength = it.maxMessageLength
-                }
-            }
-        }
-    }
+    /**
+     * Represents the cooldown interval in seconds.
+     *
+     * When slow mode is enabled, users can only send messages every [cooldownInterval] time interval.
+     */
+    private var cooldownInterval: Int = 0
 
     /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
      * reply or a regular message.
      */
-    private var messageMode: MessageMode = MessageMode.Normal
+    public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
 
     /**
      * Set of currently active message actions. These are used to display different UI in the composer,
      * as well as help us decorate the message with information, such as the quoted message id.
      */
-    public val messageActions: MutableStateFlow<Set<MessageAction>> =
-        MutableStateFlow(mutableSetOf())
+    public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
 
     /**
      * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
@@ -121,7 +154,45 @@ public class MessageComposerController(
      * Gets the parent message id if we are in thread mode, or null otherwise.
      */
     private val parentMessageId: String?
-        get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
+        get() = (messageMode.value as? MessageMode.MessageThread)?.parentMessage?.id
+
+    /**
+     * Gets the current text input in the message composer.
+     */
+    private val messageText: String
+        get() = input.value
+
+    /**
+     * Gives us information if the composer is in the "thread" mode.
+     */
+    private val isInThread: Boolean
+        get() = messageMode.value is MessageMode.MessageThread
+
+    /**
+     * Sets up the data loading operations such as observing the maximum allowed message length.
+     */
+    init {
+        scope.launch {
+            val result = chatDomain.watchChannel(channelId, 0).await()
+
+            if (result.isSuccess) {
+                val channelController = result.data()
+
+                channelController.channelConfig.onEach {
+                    maxMessageLength = it.maxMessageLength
+                    commands = it.commands
+                }.launchIn(scope)
+
+                channelController.members.onEach { members ->
+                    users = members.map { it.user }
+                }.launchIn(scope)
+
+                channelController.channelData.onEach {
+                    cooldownInterval = it.cooldown
+                }.launchIn(scope)
+            }
+        }
+    }
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -131,9 +202,10 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        setTyping(value.isNotEmpty())
-
-        validateInput()
+        handleTypingEvent(isTyping = value.isNotEmpty())
+        handleMentionSuggestions()
+        handleCommandSuggestions()
+        handleValidationErrors()
     }
 
     /**
@@ -144,7 +216,16 @@ public class MessageComposerController(
      * @param messageMode The current message mode.
      */
     public fun setMessageMode(messageMode: MessageMode) {
-        this.messageMode = messageMode
+        this.messageMode.value = messageMode
+    }
+
+    /**
+     * Called when the "Also send as a direct message" checkbox is checked or unchecked.
+     *
+     * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
+     */
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
+        this.alsoSendToChannel.value = alsoSendToChannel
     }
 
     /**
@@ -204,7 +285,7 @@ public class MessageComposerController(
         }
         selectedAttachments.value = newAttachments
 
-        validateInput()
+        handleValidationErrors()
     }
 
     /**
@@ -217,7 +298,7 @@ public class MessageComposerController(
     public fun removeSelectedAttachment(attachment: Attachment) {
         selectedAttachments.value = selectedAttachments.value - attachment
 
-        validateInput()
+        handleValidationErrors()
     }
 
     /**
@@ -228,6 +309,7 @@ public class MessageComposerController(
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
+        alsoSendToChannel.value = false
     }
 
     /**
@@ -242,12 +324,14 @@ public class MessageComposerController(
         val sendMessageCall = if (isInEditMode) {
             chatDomain.editMessage(message)
         } else {
+            message.showInChannel = isInThread && alsoSendToChannel.value
             chatDomain.sendMessage(message)
         }
 
         dismissMessageActions()
         clearData()
-        setTyping(false)
+        handleTypingEvent(isTyping = false)
+        handleCooldownTimer()
 
         sendMessageCall.enqueue()
     }
@@ -303,13 +387,16 @@ public class MessageComposerController(
     /**
      * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
      *
+     * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
+     * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
+     *
      * @param isTyping If the user is currently typing.
      */
-    private fun setTyping(isTyping: Boolean) {
+    private fun handleTypingEvent(isTyping: Boolean) {
         if (isTyping) {
-            chatDomain.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(channelId, parentMessageId)
         } else {
-            chatDomain.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(channelId, parentMessageId)
         }.enqueue()
     }
 
@@ -323,7 +410,7 @@ public class MessageComposerController(
     /**
      * Checks the current input for validation errors.
      */
-    private fun validateInput() {
+    private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
             val messageLength = input.value.length
             if (messageLength > maxMessageLength) {
@@ -358,10 +445,91 @@ public class MessageComposerController(
         }
     }
 
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User) {
+        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
+
+        setMessageInput(augmentedMessageText)
+    }
+
+    /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected.
+     */
+    public fun selectCommand(command: Command) {
+        setMessageInput("/${command.name} ")
+    }
+
+    /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility() {
+        val isHidden = commandSuggestions.value.isEmpty()
+
+        commandSuggestions.value = if (isHidden) commands else emptyList()
+    }
+
+    /**
+     * Shows the mention suggestion list popup if necessary.
+     */
+    private fun handleMentionSuggestions() {
+        val containsMention = MENTION_PATTERN.matcher(messageText).find()
+
+        mentionSuggestions.value = if (containsMention) {
+            users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
+        } else {
+            emptyList()
+        }
+    }
+
+    /**
+     * Shows the command suggestion list popup if necessary.
+     */
+    private fun handleCommandSuggestions() {
+        val containsCommand = COMMAND_PATTERN.matcher(messageText).find()
+
+        commandSuggestions.value = if (containsCommand) {
+            val commandPattern = messageText.removePrefix("/")
+            commands.filter { it.name.startsWith(commandPattern) }
+        } else {
+            emptyList()
+        }
+    }
+
+    /**
+     * Shows cooldown countdown timer instead of send button when slow mode is enabled.
+     */
+    private fun handleCooldownTimer() {
+        if (cooldownInterval > 0) {
+            cooldownTimerJob?.cancel()
+            cooldownTimerJob = scope.launch {
+                for (timeRemaining in cooldownInterval downTo 0) {
+                    cooldownTimer.value = timeRemaining
+                    delay(1000)
+                }
+            }
+        }
+    }
+
     private companion object {
         /**
          * The default allowed number of characters in a message.
          */
         private const val DEFAULT_MAX_MESSAGE_LENGTH: Int = 5000
+
+        /**
+         * The regex pattern used to check if the message ends with incomplete mention.
+         */
+        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
+
+        /**
+         * The regex pattern used to check if the message ends with incomplete command.
+         */
+        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
     }
 }

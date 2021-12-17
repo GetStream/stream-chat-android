@@ -37,7 +37,7 @@ buildscript {
         classpath Dependencies.kotlinBinaryValidator
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0'
+        classpath Dependencies.ksp
     }
 }
 

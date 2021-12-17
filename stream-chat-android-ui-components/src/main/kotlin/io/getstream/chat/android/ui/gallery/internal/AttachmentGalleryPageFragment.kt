@@ -9,7 +9,10 @@ import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
 internal class AttachmentGalleryPageFragment : Fragment() {
-    private lateinit var binding: StreamUiItemImageGalleryBinding
+
+    private var _binding: StreamUiItemImageGalleryBinding? = null
+    private val binding get() = _binding!!
+
     private val imageUrl: String by lazy {
         requireNotNull(requireArguments().getString(ARG_IMAGE_URL)) { "Image URL must not be null" }
     }
@@ -18,7 +21,7 @@ internal class AttachmentGalleryPageFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return StreamUiItemImageGalleryBinding.inflate(inflater)
-            .apply { binding = this }
+            .apply { _binding = this }
             .root
     }
 
@@ -30,6 +33,11 @@ internal class AttachmentGalleryPageFragment : Fragment() {
                 imageClickListener()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

@@ -5,10 +5,9 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.ChatMessageTextTransformer
+import com.getstream.sdk.chat.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -99,7 +98,7 @@ internal class TextAndAttachmentsViewHolder(
         super.bindData(data, diff)
 
         binding.messageText.isVisible = data.message.text.isNotEmpty()
-        messageTextTransformer.transform(binding.messageText, data.message.text)
+        messageTextTransformer.transformAndApply(binding.messageText, data)
 
         if (diff?.attachments != false) {
             setupAttachment(data)

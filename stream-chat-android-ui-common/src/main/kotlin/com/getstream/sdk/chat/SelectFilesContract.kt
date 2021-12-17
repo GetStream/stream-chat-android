@@ -13,7 +13,7 @@ public class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
 
     override fun createIntent(
         context: Context,
-        input: Unit?
+        input: Unit
     ): Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         type = "*/*"
         addCategory(Intent.CATEGORY_OPENABLE)

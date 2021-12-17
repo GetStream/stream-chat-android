@@ -1,0 +1,14 @@
+package io.getstream.chat.android.ui.common
+
+import android.widget.TextView
+import com.getstream.sdk.chat.ChatMessageTextTransformer
+import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.ChatUI
+
+internal class DefaultChatTextTransformer : ChatMessageTextTransformer {
+    override fun transformAndApply(textView: TextView, messageItem: MessageListItem.MessageItem) {
+
+        // Bypass to markdown by default for backwards compatibility.
+        ChatUI.markdown.setText(textView, messageItem.message.text)
+    }
+}

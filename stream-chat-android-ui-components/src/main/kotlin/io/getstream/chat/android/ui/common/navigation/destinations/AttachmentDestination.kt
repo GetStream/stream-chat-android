@@ -83,6 +83,7 @@ public open class AttachmentDestination(
         val mimeType = attachment.mimeType
         val url = attachment.assetUrl
         val type = attachment.type
+        val title = attachment.title ?: attachment.name ?: ""
 
         if (mimeType == null && type == null) {
             ChatLogger.instance.logE("AttachmentDestination", "MimeType is null for url $url")
@@ -100,6 +101,7 @@ public open class AttachmentDestination(
                 val intent = Intent(context, AttachmentMediaActivity::class.java).apply {
                     putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType)
                     putExtra(AttachmentMediaActivity.URL_KEY, url)
+                    putExtra(AttachmentMediaActivity.HEADER_TITLE_KEY, title)
                 }
                 start(intent)
             }

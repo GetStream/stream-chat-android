@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 internal class AttachmentViewHolder(
     parent: ViewGroup,
@@ -199,6 +200,7 @@ internal class AttachmentViewHolder(
 
         val attachments = messageItem.message.attachments.filter { it.type == ModelType.attach_file }
         binding.lvAttachmentFile.adapter = FileAttachmentSelectedAdapter(
+            @OptIn(ExperimentalStreamChatApi::class)
             attachments.map { AttachmentMetaData(it) },
             false
         )
