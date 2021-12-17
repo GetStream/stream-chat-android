@@ -49,7 +49,7 @@ private fun ReactionData.clearOwnReactions(userId: String) {
             reactionCounts.remove(type)
         }
 
-        val newScore = reactionScores.getOrElse(type) { 0 } - reactions.sumBy { it.score }
+        val newScore = reactionScores.getOrElse(type) { 0 } - reactions.sumOf { it.score }
         if (newScore > 0) {
             reactionScores[type] = newScore
         } else {

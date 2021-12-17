@@ -40,7 +40,6 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Versions.KOTLIN
         kotlinCompilerExtensionVersion Versions.COMPOSE
     }
 }
@@ -75,6 +74,7 @@ dependencies {
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
+    implementation Dependencies.composeAccompanistSystemUiController
 
     // Coil
     implementation Dependencies.composeCoil

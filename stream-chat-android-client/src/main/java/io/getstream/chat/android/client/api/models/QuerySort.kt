@@ -23,16 +23,16 @@ public class QuerySort<T : Any> {
     public val comparator: Comparator<in T>
         get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
 
-    private val SortSpecification<T>.comparator: Comparator<T>?
+    private val SortSpecification<T>.comparator: Comparator<T>
         get() {
             return when (this.sortAttribute) {
-                is FieldSortAttribute<T> -> this.sortAttribute.field?.comparator(this.sortDirection)
+                is FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
                 is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
             }
         }
 
     @Suppress("UNCHECKED_CAST")
-    private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T>? =
+    private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T> =
         this.let { compareProperty ->
             Comparator { c0, c1 ->
                 compare(

@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -32,6 +33,11 @@ public class MessageComposerViewModel(
     public val input: MutableStateFlow<String> = messageComposerController.input
 
     /**
+     * If the message will be shown in the channel after it is sent.
+     */
+    public val alsoSendToChannel: MutableStateFlow<Boolean> = messageComposerController.alsoSendToChannel
+
+    /**
      * Represents the remaining time until the user is allowed to send the next message.
      */
     public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
@@ -52,6 +58,17 @@ public class MessageComposerViewModel(
     public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
 
     /**
+     * Represents the list of commands to be displayed in the command suggestion list popup.
+     */
+    public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
+
+    /**
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
+     * reply or a regular message.
+     */
+    public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
+
+    /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
@@ -62,6 +79,14 @@ public class MessageComposerViewModel(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String): Unit = messageComposerController.setMessageInput(value)
+
+    /**
+     * Called when the "Also send as a direct message" checkbox is checked or unchecked.
+     *
+     * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
+     */
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean): Unit =
+        messageComposerController.setAlsoSendToChannel(alsoSendToChannel)
 
     /**
      * Called when the message mode changes and the internal state needs to be updated.
@@ -146,6 +171,19 @@ public class MessageComposerViewModel(
      * @param user The user that is used to autocomplete the mention.
      */
     public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
+
+    /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected in the command suggestion list popup.
+     */
+    public fun selectCommand(command: Command): Unit = messageComposerController.selectCommand(command)
+
+    /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility(): Unit =
+        messageComposerController.toggleCommandsVisibility()
 
     /**
      * Disposes the inner [MessageComposerController].

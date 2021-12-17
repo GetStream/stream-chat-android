@@ -61,6 +61,10 @@ public class Result<T : Any> private constructor(
         return result
     }
 
+    override fun toString(): String {
+        return "Result(data=$data, error=$error)"
+    }
+
     public companion object {
 
         /**

@@ -12,8 +12,10 @@ import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import top.defaults.drawabletoolbox.DrawableBuilder
 
+@OptIn(ExperimentalStreamChatApi::class)
 internal class MediaAttachmentSelectedAdapter(
     private var selectedAttachments: List<AttachmentMetaData> = emptyList(),
     var cancelListener: (AttachmentMetaData) -> Unit = { },

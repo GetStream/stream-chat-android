@@ -8,11 +8,15 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 
+/**
+ * Returns all users including watchers of a channel that are associated with it.
+ */
 internal fun Channel.users(): List<User> {
     return members.map(Member::user) +
         read.map(ChannelUserRead::user) +
         createdBy +
-        messages.flatMap { it.users() }
+        messages.flatMap { it.users() } +
+        watchers
 }
 
 internal val Channel.lastMessage: Message?
@@ -60,4 +64,25 @@ internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginatio
         .drop(pagination.channelOffset)
         .take(pagination.channelLimit)
         .toList()
+}
+
+/** Updates collection of channels with more recent data of [users]. */
+internal fun Collection<Channel>.updateUsers(users: Map<String, User>) = map { it.updateUsers(users) }
+
+/**
+ * Updates a channel with more recent data of [users]. It updates messages, members, watchers, createdBy and
+ * pinnedMessages of channel instance.
+ */
+internal fun Channel.updateUsers(users: Map<String, User>): Channel {
+    return if (users().map(User::id).any(users::containsKey)) {
+        copy(
+            messages = messages.updateUsers(users),
+            members = members.updateUsers(users).toList(),
+            watchers = watchers.updateUsers(users),
+            createdBy = users[createdBy.id] ?: createdBy,
+            pinnedMessages = pinnedMessages.updateUsers(users),
+        )
+    } else {
+        this
+    }
 }

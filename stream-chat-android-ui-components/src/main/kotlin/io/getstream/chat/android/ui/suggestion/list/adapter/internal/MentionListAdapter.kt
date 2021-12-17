@@ -30,9 +30,9 @@ internal class MentionListAdapter(
             viewHolder.itemView.setOnClickListener { mentionClickListener(user) }
         }
 
-        override fun bind(command: SuggestionListItem.MentionItem) {
-            this.user = command.user
-            viewHolder.bindItem(command)
+        override fun bind(item: SuggestionListItem.MentionItem) {
+            this.user = item.user
+            viewHolder.bindItem(item)
         }
     }
 }

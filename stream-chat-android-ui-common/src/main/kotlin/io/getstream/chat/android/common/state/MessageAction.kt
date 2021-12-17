@@ -41,6 +41,11 @@ public class Copy(message: Message) : MessageAction(message)
 public class Edit(message: Message) : MessageAction(message)
 
 /**
+ * Pins or unpins the message from the channel.
+ */
+public class Pin(message: Message) : MessageAction(message)
+
+/**
  * Show a delete dialog for owned message.
  */
 public class Delete(message: Message) : MessageAction(message)

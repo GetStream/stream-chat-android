@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.DIRECT_CHAT
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.GROUP_CHAT
@@ -87,9 +86,9 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachments: List<Attachment>,
+                attachmentsWithMimeTypes: List<Attachment>,
             ) {
-                viewModel.sendMessageWithCustomAttachments(message, attachments) {
+                viewModel.sendMessageWithCustomAttachments(message, attachmentsWithMimeTypes) {
                     this.parentId = parentMessage.id
                     this.showInChannel = alsoSendToChannel
                 }

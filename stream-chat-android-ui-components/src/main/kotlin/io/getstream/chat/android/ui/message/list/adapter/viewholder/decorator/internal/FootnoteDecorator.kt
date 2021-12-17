@@ -12,7 +12,6 @@ import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.getUpdatedAtOrNull
@@ -190,7 +189,7 @@ internal class FootnoteDecorator(
                     if (data.isMessageRead) footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorRead)
                     else footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorSent)
                 }
-            }.exhaustive
+            }
         }
     }
 }

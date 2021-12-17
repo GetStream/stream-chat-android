@@ -280,6 +280,7 @@ internal fun createNotificationRemovedFromChannelEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
+            "channel": ${createChannelJsonString()},
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()}
         """.trimIndent()
