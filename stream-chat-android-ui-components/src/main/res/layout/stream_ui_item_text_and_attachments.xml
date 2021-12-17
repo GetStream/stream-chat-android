@@ -130,7 +130,6 @@
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@+id/messageContainer"
-        android:background="@color/stream_ui_accent_red"
         />
 
     <TextView
