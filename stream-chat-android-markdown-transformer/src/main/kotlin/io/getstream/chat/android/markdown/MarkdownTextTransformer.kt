@@ -22,8 +22,7 @@ public class MarkdownTextTransformer(context: Context) : ChatMessageTextTransfor
         .build()
 
     override fun transformAndApply(textView: TextView, messageItem: MessageListItem.MessageItem) {
-        textView.apply {
-            text = messageItem.message.text.fixItalicAtEnd()
-        }.also(Linkify::addLinks)
+        markwon.setMarkdown(textView, messageItem.message.text.fixItalicAtEnd())
+        Linkify.addLinks(textView)
     }
 }
