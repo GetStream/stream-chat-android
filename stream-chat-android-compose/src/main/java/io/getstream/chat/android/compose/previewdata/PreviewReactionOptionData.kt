@@ -6,7 +6,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 
 /**
- * Provides sample reactions that will be used to render component previews.
+ * Provides sample reaction option items that will be used to render component previews.
  */
 internal object PreviewReactionOptionData {
 

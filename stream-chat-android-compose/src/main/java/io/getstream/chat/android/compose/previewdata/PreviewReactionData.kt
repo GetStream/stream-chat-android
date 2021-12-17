@@ -3,7 +3,7 @@ package io.getstream.chat.android.compose.previewdata
 import io.getstream.chat.android.client.models.Reaction
 
 /**
- * Provides sample reaction that will be used to render component previews.
+ * Provides sample reactions that will be used to render component previews.
  */
 @Suppress("MemberVisibilityCanBePrivate")
 internal object PreviewReactionData {
