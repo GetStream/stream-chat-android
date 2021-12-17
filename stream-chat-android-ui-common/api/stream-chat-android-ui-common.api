@@ -345,6 +345,7 @@ public final class com/getstream/sdk/chat/view/EndlessScrollListener : androidx/
 
 public class com/getstream/sdk/chat/view/activity/AttachmentDocumentActivity : androidx/appcompat/app/AppCompatActivity {
 	public fun <init> ()V
+	public static fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 	public fun loadDocument (Ljava/lang/String;)V
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
@@ -806,6 +807,10 @@ public final class io/getstream/chat/android/common/state/MuteUser : io/getstrea
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public final class io/getstream/chat/android/common/state/Pin : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public final class io/getstream/chat/android/common/state/React : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Reaction;Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getReaction ()Lio/getstream/chat/android/client/models/Reaction;
@@ -817,6 +822,48 @@ public final class io/getstream/chat/android/common/state/Reply : io/getstream/c
 
 public final class io/getstream/chat/android/common/state/ThreadReply : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract class io/getstream/chat/android/common/state/ValidationError {
+}
+
+public final class io/getstream/chat/android/common/state/ValidationError$AttachmentCountExceeded : io/getstream/chat/android/common/state/ValidationError {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/getstream/chat/android/common/state/ValidationError$AttachmentCountExceeded;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/state/ValidationError$AttachmentCountExceeded;IIILjava/lang/Object;)Lio/getstream/chat/android/common/state/ValidationError$AttachmentCountExceeded;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachmentCount ()I
+	public final fun getMaxAttachmentCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/state/ValidationError$AttachmentSizeExceeded : io/getstream/chat/android/common/state/ValidationError {
+	public fun <init> (Ljava/util/List;J)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()J
+	public final fun copy (Ljava/util/List;J)Lio/getstream/chat/android/common/state/ValidationError$AttachmentSizeExceeded;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/state/ValidationError$AttachmentSizeExceeded;Ljava/util/List;JILjava/lang/Object;)Lio/getstream/chat/android/common/state/ValidationError$AttachmentSizeExceeded;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachments ()Ljava/util/List;
+	public final fun getMaxAttachmentSize ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/state/ValidationError$MessageLengthExceeded : io/getstream/chat/android/common/state/ValidationError {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/getstream/chat/android/common/state/ValidationError$MessageLengthExceeded;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/state/ValidationError$MessageLengthExceeded;IIILjava/lang/Object;)Lio/getstream/chat/android/common/state/ValidationError$MessageLengthExceeded;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxMessageLength ()I
+	public final fun getMessageLength ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/BuildConfig {

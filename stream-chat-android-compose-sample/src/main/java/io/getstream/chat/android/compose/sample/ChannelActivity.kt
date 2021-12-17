@@ -1,5 +1,7 @@
 package io.getstream.chat.android.compose.sample
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -35,12 +37,13 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
 import io.getstream.chat.android.compose.ui.channel.list.DefaultChannelItem
-import io.getstream.chat.android.compose.ui.common.SearchInput
+import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
@@ -61,8 +64,6 @@ class ChannelActivity : AppCompatActivity() {
 
     private val listViewModel: ChannelListViewModel by viewModels { factory }
 
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -109,8 +110,17 @@ class ChannelActivity : AppCompatActivity() {
 
             ChannelList(
                 itemContent = {
-                    CustomChannelListItem(channel = it, user = user)
-                }
+                    CustomChannelListItem(channelItem = it, user = user)
+                },
+                divider = {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .height(0.5.dp)
+                            .align(CenterHorizontally)
+                            .background(color = ChatTheme.colors.textLowEmphasis)
+                    )
+                },
             )
         }
     }
@@ -119,27 +129,18 @@ class ChannelActivity : AppCompatActivity() {
      * An example of a customized DefaultChannelItem component.
      */
     @Composable
-    private fun CustomChannelListItem(channel: Channel, user: User?) {
+    private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
         DefaultChannelItem(
-            channel = channel,
+            channelItem = channelItem,
             currentUser = user,
             onChannelLongClick = { },
             onChannelClick = { },
-            divider = {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(0.5.dp)
-                        .align(CenterHorizontally)
-                        .background(color = ChatTheme.colors.textLowEmphasis)
-                )
-            },
             trailingContent = {
                 Spacer(modifier = Modifier.width(8.dp))
             },
             detailsContent = {
                 Text(
-                    text = ChatTheme.channelNameFormatter.formatChannelName(channel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
@@ -192,7 +193,8 @@ class ChannelActivity : AppCompatActivity() {
                 )
             }
 
-            if (selectedChannel != null) {
+            val currentSelectedChannel = selectedChannel
+            if (currentSelectedChannel != null) {
                 ChannelInfo(
                     modifier = Modifier
                         .padding(16.dp)
@@ -200,7 +202,8 @@ class ChannelActivity : AppCompatActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    selectedChannel = selectedChannel!!,
+                    isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
+                    selectedChannel = currentSelectedChannel,
                     currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )
@@ -210,5 +213,11 @@ class ChannelActivity : AppCompatActivity() {
 
     private fun openMessages(channel: Channel) {
         startActivity(MessagesActivity.getIntent(this, channel.cid))
+    }
+
+    companion object {
+        fun getIntent(context: Context): Intent {
+            return Intent(context, ChannelActivity::class.java)
+        }
     }
 }

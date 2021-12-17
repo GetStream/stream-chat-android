@@ -458,6 +458,7 @@ private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemov
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        channel = channel.toDomain(),
         member = member.toDomain()
     )
 }

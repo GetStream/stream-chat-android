@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,8 +35,8 @@ import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
-import io.getstream.chat.android.compose.ui.common.SearchInput
-import io.getstream.chat.android.compose.ui.common.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
@@ -96,51 +97,57 @@ public fun ChannelsScreen(
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
-
-            if (isShowingHeader) {
-                ChannelListHeader(
-                    onHeaderActionClick = onHeaderClickAction,
-                    currentUser = user,
-                    title = title,
-                    connectionState = connectionState
-                )
-            }
-
-            if (isShowingSearch) {
-                SearchInput(
-                    modifier = Modifier
-                        .background(color = ChatTheme.colors.appBackground)
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .fillMaxWidth(),
-                    query = searchQuery,
-                    onSearchStarted = {},
-                    onValueChange = {
-                        searchQuery = it
-                        listViewModel.setSearchQuery(it)
-                    },
-                )
-            }
-
-            ChannelList(
-                modifier = Modifier
-                    .fillMaxSize(),
-                viewModel = listViewModel,
-                onChannelClick = onItemClick,
-                onChannelLongClick = {
-                    listViewModel.selectChannel(it)
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                if (isShowingHeader) {
+                    ChannelListHeader(
+                        onHeaderActionClick = onHeaderClickAction,
+                        currentUser = user,
+                        title = title,
+                        connectionState = connectionState
+                    )
                 }
-            )
+            }
+
+        ) {
+            Column(Modifier.fillMaxSize()) {
+                if (isShowingSearch) {
+                    SearchInput(
+                        modifier = Modifier
+                            .background(color = ChatTheme.colors.appBackground)
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .fillMaxWidth(),
+                        query = searchQuery,
+                        onSearchStarted = {},
+                        onValueChange = {
+                            searchQuery = it
+                            listViewModel.setSearchQuery(it)
+                        },
+                    )
+                }
+
+                ChannelList(
+                    modifier = Modifier.fillMaxSize(),
+                    viewModel = listViewModel,
+                    onChannelClick = onItemClick,
+                    onChannelLongClick = {
+                        listViewModel.selectChannel(it)
+                    }
+                )
+            }
         }
 
-        if (selectedChannel != null) {
+        val currentSelectedChannel = selectedChannel
+        if (currentSelectedChannel != null) {
             ChannelInfo(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                selectedChannel = selectedChannel!!,
+                selectedChannel = currentSelectedChannel,
                 currentUser = user,
+                isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
@@ -162,7 +169,7 @@ public fun ChannelsScreen(
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
-                    activeAction.channel.id
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel)
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
                 onDismiss = { listViewModel.dismissChannelAction() }
@@ -175,7 +182,7 @@ public fun ChannelsScreen(
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
-                    activeAction.channel.id
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel)
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },
                 onDismiss = { listViewModel.dismissChannelAction() }

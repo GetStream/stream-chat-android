@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Header Title -->
-    <string name="stream_ui_message_list_header_thread_title">스레드 응답</string>
-    <string name="stream_ui_message_list_header_untitled_channel">무명의 그룹</string>
-
-    <!-- Header Subtitle -->
-    <string name="stream_ui_message_list_header_thread_subtitle">%s 참여</string>
-    <string name="stream_ui_message_list_header_disconnected">네트워크를 검색하는 중입니다</string>
-    <string name="stream_ui_message_list_header_offline">오프라인…</string>
-    <string name="stream_ui_message_list_header_retry">재시도</string>
-    <string name="stream_ui_message_list_header_member_count_online">%s, %d온라인</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <plurals name="stream_ui_message_list_header_member_count">
-        <item quantity="other">%1d명</item>
+        <item quantity="other">"%1d명"</item>
     </plurals>
     <plurals name="stream_ui_message_list_header_typing_users">
-        <item quantity="one">%s 입력중</item>
-        <item quantity="other">%s 및 %d명 입력중</item>
+        <item quantity="one">"%s 타이핑중"</item>
+        <item quantity="other">"%s하고 %d명 타이핑중"</item>
     </plurals>
-
-    <string name="stream_ui_message_list_header_back_button_content_description">뒤로 가기</string>
+    <string name="stream_ui_message_list_header_back_button_content_description">"뒤로 버튼"</string>
+    <string name="stream_ui_message_list_header_disconnected">"네트워크를 검색하는 중입니다"</string>
+    <string name="stream_ui_message_list_header_member_count_online">"%s, %d온라인"</string>
+    <string name="stream_ui_message_list_header_offline">"오프라인…"</string>
+    <string name="stream_ui_message_list_header_retry">"다시 시도합니다"</string>
+    <string name="stream_ui_message_list_header_thread_subtitle">"함께 %s"</string>
+    <string name="stream_ui_message_list_header_thread_title">"스레드 응답입니다"</string>
+    <string name="stream_ui_message_list_header_untitled_channel">"이름 없는 채널"</string>
 </resources>

@@ -12,12 +12,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ThreadReply
@@ -26,15 +28,26 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.items.DateSeparator
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
-import io.getstream.chat.android.compose.state.messages.items.MessageListItem
+import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
+import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.GiphyAction
+import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
+import io.getstream.chat.android.compose.state.messages.list.MessageFocused
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.state.messages.list.SendGiphy
+import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
+import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
+import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.ui.util.isError
+import io.getstream.chat.android.compose.ui.util.isSystem
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -49,22 +62,34 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
+ * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
+ * we show a separator, if it's enabled in the list.
+ */
+private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+/**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
  * @param chatDomain Used to connect to the API and fetch the domain status.
  * @param channelId The ID of the channel to load the messages for.
+ * @param clipboardHandler Used to copy data from message actions to the clipboard.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param enforceUniqueReactions Enables or disables unique message reactions per user.
- * @param clipboardHandler Used to copy data from message actions to the clipboard.
+ * @param showDateSeparators Enables or disables date separator items in the list.
+ * @param showSystemMessages Enables or disables system messages in the list.
+ * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
     private val channelId: String,
+    private val clipboardHandler: ClipboardHandler,
     private val messageLimit: Int = 0,
     private val enforceUniqueReactions: Boolean = true,
-    private val clipboardHandler: ClipboardHandler,
+    private val showDateSeparators: Boolean = true,
+    private val showSystemMessages: Boolean = true,
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD)
 ) : ViewModel() {
 
     /**
@@ -98,6 +123,12 @@ public class MessageListViewModel(
         private set
 
     /**
+     * The list of typing users.
+     */
+    public var typingUsers: List<User> by mutableStateOf(emptyList())
+        private set
+
+    /**
      * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
      * similar actions.
      */
@@ -108,7 +139,7 @@ public class MessageListViewModel(
      * Gives us information if we're currently in the [Thread] message mode.
      */
     public val isInThread: Boolean
-        get() = messageMode is Thread
+        get() = messageMode is MessageMode.MessageThread
 
     /**
      * Gives us information if we're showing the selected message overlay.
@@ -169,6 +200,7 @@ public class MessageListViewModel(
                 val controller = result.data()
 
                 observeConversation(controller)
+                observeTypingUsers(controller)
             } else {
                 result.error().cause?.printStackTrace()
                 showEmptyState()
@@ -199,7 +231,10 @@ public class MessageListViewModel(
                         is ChannelController.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
-                                messageItems = groupMessages(filterDeletedMessages(state.messages)),
+                                messageItems = groupMessages(
+                                    messages = filterMessagesToShow(state.messages),
+                                    isInThread = false
+                                ),
                                 isLoadingMore = false,
                                 endOfMessages = controller.endOfOlderMessages.value,
                                 currentUser = user
@@ -208,7 +243,7 @@ public class MessageListViewModel(
                     }
                 }.collect { newState ->
                     val newLastMessage =
-                        (newState.messageItems.firstOrNull { it is MessageItem } as? MessageItem)?.message
+                        (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
                     val hasNewMessage = lastLoadedMessage != null &&
                         messagesState.messageItems.isNotEmpty() &&
@@ -234,6 +269,17 @@ public class MessageListViewModel(
     }
 
     /**
+     * Starts observing the list of typing users.
+     */
+    private fun observeTypingUsers(controller: ChannelController) {
+        viewModelScope.launch {
+            controller.typing.collect {
+                typingUsers = it.users
+            }
+        }
+    }
+
+    /**
      * Sets the current channel, used to show info in the UI.
      */
     private fun setCurrentChannel(channel: Channel) {
@@ -241,15 +287,20 @@ public class MessageListViewModel(
     }
 
     /**
-     * Used to filter messages deleted by other users.
+     * Used to filter messages which we should show to the current user.
      *
      * @param messages List of all messages.
      * @return Filtered messages.
      */
-    private fun filterDeletedMessages(messages: List<Message>): List<Message> {
+    private fun filterMessagesToShow(messages: List<Message>): List<Message> {
         val currentUser = user.value
 
-        return messages.filter { !(it.user.id != currentUser?.id && it.deletedAt != null) }
+        return messages.filter {
+            val isNotDeletedByOtherUser = !(it.deletedAt != null && it.user.id != currentUser?.id)
+            val isSystemMessage = it.isSystem() || it.isError()
+
+            isNotDeletedByOtherUser || (isSystemMessage && showSystemMessages)
+        }
     }
 
     /**
@@ -292,7 +343,7 @@ public class MessageListViewModel(
         for (i in 0..lastSeenMessagePosition) {
             val messageItem = messageItems[i]
 
-            if (messageItem is MessageItem && !messageItem.isMine && messageItem.message.deletedAt == null) {
+            if (messageItem is MessageItemState && !messageItem.isMine && messageItem.message.deletedAt == null) {
                 unreadCount++
             }
         }
@@ -310,7 +361,7 @@ public class MessageListViewModel(
         if (lastSeenMessage == null) return 0
 
         return currentMessagesState.messageItems.indexOfFirst {
-            it is MessageItem && it.message.id == lastSeenMessage.id
+            it is MessageItemState && it.message.id == lastSeenMessage.id
         }
     }
 
@@ -339,9 +390,9 @@ public class MessageListViewModel(
         val messages = currentMessagesState.messageItems
 
         val currentMessagePosition =
-            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
+            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
         val lastSeenMessagePosition =
-            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
+            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
 
         if (currentMessagePosition < lastSeenMessagePosition) {
             updateLastSeenMessageState(message)
@@ -387,7 +438,7 @@ public class MessageListViewModel(
                 .enqueue()
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
-            chatDomain.loadOlderMessages(channelId, messageLimit).enqueue()
+            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
         }
     }
 
@@ -456,6 +507,7 @@ public class MessageListViewModel(
             is Copy -> copyMessage(messageAction.message)
             is MuteUser -> muteUser(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
+            is Pin -> updateMessagePin(messageAction.message)
             else -> {
                 // no op, custom user action
             }
@@ -465,23 +517,43 @@ public class MessageListViewModel(
     /**
      * Loads the thread data and changes the current [messageMode] to be [Thread].
      *
-     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage],
-     * after which we observe specific data from the thread.
-     *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
         messageMode = MessageMode.MessageThread(parentMessage)
 
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            loadThreadWithOfflinePlugin(parentMessage)
+        } else {
+            loadThreadWithChatDomain(parentMessage)
+        }
+    }
+
+    /**
+     * Loads thread data using ChatDomain approach. The data is loaded by fetching the [ThreadController] first, based
+     * on the [parentMessage], after which we observe specific data from the thread.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private fun loadThreadWithChatDomain(parentMessage: Message) {
         chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
-
-                observeThreadMessages(controller)
+                observeThreadMessages(controller.threadId, controller.messages, controller.endOfOlderMessages)
             } else {
                 messageMode = MessageMode.Normal
             }
         }
+    }
+
+    /**
+     * Loads thread data using ChatClient directly. The data is observed by using [ThreadState].
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
+        val threadState = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
     }
 
     /**
@@ -491,20 +563,28 @@ public class MessageListViewModel(
      * The data consists of the 'loadingOlderMessages', 'messages' and 'endOfOlderMessages' states,
      * that are combined into one [MessagesState].
      *
-     * @param controller The controller for the active thread.
+     * @param threadId The message id with the thread we want to observe.
+     * @param messages State flow source of thread messages.
+     * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
      */
-    private fun observeThreadMessages(controller: ThreadController) {
+    private fun observeThreadMessages(
+        threadId: String,
+        messages: StateFlow<List<Message>>,
+        endOfOlderMessages: StateFlow<Boolean>,
+    ) {
         threadJob = viewModelScope.launch {
-            controller.messages
-                .combine(user) { messages, user -> messages to user }
-                .combine(controller.endOfOlderMessages) { (messages, user), endOfOlderMessages ->
+            messages.combine(user) { messages, user -> messages to user }
+                .combine(endOfOlderMessages) { (messages, user), endOfOlderMessages ->
                     threadMessagesState.copy(
                         isLoading = false,
-                        messageItems = groupMessages(filterDeletedMessages(messages)),
+                        messageItems = groupMessages(
+                            messages = filterMessagesToShow(messages),
+                            isInThread = true
+                        ),
                         isLoadingMore = false,
                         endOfMessages = endOfOlderMessages,
                         currentUser = user,
-                        parentMessageId = controller.threadId
+                        parentMessageId = threadId
                     )
                 }.collect { newState -> threadMessagesState = newState }
         }
@@ -512,54 +592,72 @@ public class MessageListViewModel(
 
     /**
      * Takes in the available messages for a [Channel] and groups them based on the sender ID. We put the message in a
-     * group, where the positions can be [Top], [Middle], [Bottom] or [None] if the message isn't in a group.
+     * group, where the positions can be [MessageItemGroupPosition.Top], [MessageItemGroupPosition.Middle],
+     * [MessageItemGroupPosition.Bottom] or [MessageItemGroupPosition.None] if the message isn't in a group.
      *
      * @param messages The messages we need to group.
-     * @return A list of [MessageItem]s, each containing a position.
+     * @param isInThread If we are in inside a thread.
+     * @return A list of [MessageListItemState]s, each containing a position.
      */
-    private fun groupMessages(messages: List<Message>): List<MessageListItem> {
+    private fun groupMessages(messages: List<Message>, isInThread: Boolean): List<MessageListItemState> {
         val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
-        val groupedMessages = mutableListOf<MessageListItem>()
+        val groupedMessages = mutableListOf<MessageListItemState>()
 
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
+            val nextMessage = messages.getOrNull(index + 1)
 
             val previousUser = previousMessage?.user
-            val nextUser = messages.getOrNull(index + 1)?.user
+            val nextUser = nextMessage?.user
+
+            val willSeparateNextMessage =
+                nextMessage?.let { shouldAddDateSeparator(message, it) } ?: false
 
             val position = when {
-                previousUser != user && nextUser == user -> Top
-                previousUser == user && nextUser == user -> Middle
-                previousUser == user && nextUser != user -> Bottom
-                else -> None
+                previousUser != user && nextUser == user && !willSeparateNextMessage -> MessageItemGroupPosition.Top
+                previousUser == user && nextUser == user && !willSeparateNextMessage -> MessageItemGroupPosition.Middle
+                previousUser == user && nextUser != user -> MessageItemGroupPosition.Bottom
+                else -> MessageItemGroupPosition.None
             }
 
             if (shouldAddDateSeparator(previousMessage, message)) {
-                groupedMessages.add(DateSeparator(message.getCreatedAtOrThrow()))
+                groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
             }
 
-            groupedMessages.add(
-                MessageItem(
-                    message = message,
-                    groupPosition = position,
-                    parentMessageId = parentMessageId,
-                    isMine = user.id == currentUser?.id
+            if (message.isSystem() || message.isError()) {
+                groupedMessages.add(SystemMessageState(message = message))
+            } else {
+                groupedMessages.add(
+                    MessageItemState(
+                        message = message,
+                        currentUser = currentUser,
+                        groupPosition = position,
+                        parentMessageId = parentMessageId,
+                        isMine = user.id == currentUser?.id,
+                        isInThread = isInThread
+                    )
                 )
-            )
+            }
+
+            if (index == 0 && isInThread) {
+                groupedMessages.add(ThreadSeparatorState(message.replyCount))
+            }
         }
 
         return groupedMessages.reversed()
     }
 
     private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
-        return if (previousMessage == null) {
+        return if (!showDateSeparators) {
+            false
+        } else if (previousMessage == null) {
             true
         } else {
             val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
 
-            return timeDifference > TimeUnit.HOURS.toMillis(4)
+            return timeDifference > dateSeparatorThresholdMillis
         }
     }
 
@@ -575,6 +673,19 @@ public class MessageListViewModel(
         removeOverlay()
 
         chatDomain.deleteMessage(message, hard).enqueue()
+    }
+
+    /**
+     * Removes the flag actions from our [messageActions], as well as the overlay, before flagging
+     * the selected message.
+     *
+     * @param message Message to delete.
+     */
+    public fun flagMessage(message: Message) {
+        messageActions = messageActions - messageActions.filterIsInstance<Flag>()
+        removeOverlay()
+
+        chatClient.flagMessage(message.id).enqueue()
     }
 
     /**
@@ -610,6 +721,21 @@ public class MessageListViewModel(
         } else {
             chatDomain.sendReaction(channelId, reaction, enforceUniqueReactions).enqueue()
         }
+    }
+
+    /**
+     * Pins or unpins the message from the current channel based on its state.
+     *
+     * @param message The message to update the pin state of.
+     */
+    private fun updateMessagePin(message: Message) {
+        val updateCall = if (message.pinned) {
+            chatClient.unpinMessage(message)
+        } else {
+            chatClient.pinMessage(message = message, expirationDate = null)
+        }
+
+        updateCall.enqueue()
     }
 
     /**
@@ -650,8 +776,8 @@ public class MessageListViewModel(
      */
     public fun focusMessage(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
-            if (it is MessageItem && it.message.id == messageId) {
-                it.copy(isFocused = true)
+            if (it is MessageItemState && it.message.id == messageId) {
+                it.copy(focusState = MessageFocused)
             } else {
                 it
             }
@@ -665,14 +791,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Removes the focus flag from the message with the given ID.
+     * Removes the focus from the message with the given ID.
      *
      * @param messageId The ID of the message.
      */
     private fun removeMessageFocus(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
-            if (it is MessageItem && it.message.id == messageId) {
-                it.copy(isFocused = false)
+            if (it is MessageItemState && it.message.id == messageId) {
+                it.copy(focusState = MessageFocusRemoved)
             } else {
                 it
             }
@@ -686,7 +812,7 @@ public class MessageListViewModel(
      *
      * @param messages The list of new message items.
      */
-    private fun updateMessages(messages: List<MessageListItem>) {
+    private fun updateMessages(messages: List<MessageListItemState>) {
         if (isInThread) {
             this.threadMessagesState = threadMessagesState.copy(messageItems = messages)
         } else {
@@ -702,8 +828,22 @@ public class MessageListViewModel(
      */
     public fun getMessageWithId(messageId: String): Message? {
         val messageItem =
-            currentMessagesState.messageItems.firstOrNull { it is MessageItem && it.message.id == messageId }
+            currentMessagesState.messageItems.firstOrNull { it is MessageItemState && it.message.id == messageId }
 
-        return (messageItem as? MessageItem)?.message
+        return (messageItem as? MessageItemState)?.message
+    }
+
+    /**
+     * Executes one of the actions for the given ephemeral giphy message.
+     *
+     * @param action The action to be executed.
+     */
+    public fun performGiphyAction(action: GiphyAction) {
+        val message = action.message
+        when (action) {
+            is SendGiphy -> chatDomain.sendGiphy(message)
+            is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
+            is CancelGiphy -> chatDomain.cancelMessage(message)
+        }.exhaustive.enqueue()
     }
 }

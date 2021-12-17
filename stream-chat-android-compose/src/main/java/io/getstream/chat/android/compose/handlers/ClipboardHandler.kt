@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 /**
  * Abstraction over the [ClipboardHandlerImpl] that allows users to copy messages.
  */
-public interface ClipboardHandler {
+public fun interface ClipboardHandler {
 
     /**
      * @param message The message to copy.

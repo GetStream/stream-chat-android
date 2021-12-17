@@ -1,41 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Channel List Header -->
-    <string name="stream_compose_channel_list_header_new_chat">새 채팅</string>
-
-    <!-- Search Input -->
-    <string name="stream_compose_search_input_cancel">취소</string>
-    <string name="stream_compose_search_input_hint">이름으로 채널 검색</string>
-
-    <!-- Channel List -->
-    <string name="stream_compose_channel_list_you">나</string>
-    <string name="stream_compose_channel_list_empty_channels">사용 가능한 그룹이 없습니다</string>
-    <string name="stream_compose_channel_list_empty_search_results">\"%s\"에 대한 검색결과가 없습니다.</string>
-
-    <!-- Channel Info Dialog -->
-    <string name="stream_compose_channel_info_view_info">정보 보기</string>
-    <string name="stream_compose_channel_info_leave_group">그룹 나가기</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_title">그룹 나가기</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_message">%1$s 그룹에서 나가시겠습니까?</string>
-    <string name="stream_compose_channel_info_mute_channel">채널 음소거</string>
-    <string name="stream_compose_channel_info_unmute_channel">채널 음소거 해제</string>
-    <string name="stream_compose_channel_info_delete_conversation">대화 삭제하기</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">대화 삭제하기</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">%1$s 채널을 삭제하시겠습니까</string>
-    <string name="stream_compose_channel_info_dismiss">취소</string>
-
-    <!-- Common -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <plurals name="stream_compose_channel_members">
-        <item quantity="other">%1d명, %2d명이 온라인</item>
+        <item quantity="other">"%1d명, %2d명이 온라인"</item>
     </plurals>
-    <string name="stream_compose_ok">확인</string>
-    <string name="stream_compose_cancel">취소</string>
-    <string name="stream_compose_waiting_for_network">네트워크를 검색하는 중입니다</string>
-    <string name="stream_compose_untitled_channel">무명의 그룹</string>
-    <string name="stream_compose_user_status_online">온라인</string>
-    <string name="stream_compose_user_status_last_seen">마지막 확인: %s</string>
-    <string name="stream_compose_user_status_last_seen_just_now">방금 확인했습니다</string>
-
-    <!-- Message List -->
-    <string name="stream_compose_message_list_empty_messages">메시지 없음</string>
+    <string name="stream_compose_cancel">"취소"</string>
+    <string name="stream_compose_channel_info_delete_conversation">"대화 삭제하기"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">"%1$s 채널을 삭제하시겠습니까"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">"대화 삭제하기"</string>
+    <string name="stream_compose_channel_info_dismiss">"취소"</string>
+    <string name="stream_compose_channel_info_leave_group">"그룹 나가기"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">"%1$s 그룹에서 나가시겠습니까?"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">"그룹 나가기"</string>
+    <string name="stream_compose_channel_info_mute_channel">"채널 음소거"</string>
+    <string name="stream_compose_channel_info_unmute_channel">"채널 음소거 해제"</string>
+    <string name="stream_compose_channel_info_view_info">"정보 보기"</string>
+    <string name="stream_compose_channel_list_empty_channels">"사용 가능한 그룹이 없습니다"</string>
+    <string name="stream_compose_channel_list_empty_search_results">"\"%s\"에 대한 검색결과가 없습니다."</string>
+    <string name="stream_compose_channel_list_header_new_chat">"새 채팅"</string>
+    <string name="stream_compose_channel_list_you">"나"</string>
+    <string name="stream_compose_message_list_empty_messages">"메시지 없음"</string>
+    <string name="stream_compose_ok">"확인"</string>
+    <string name="stream_compose_search_input_cancel">"취소"</string>
+    <string name="stream_compose_search_input_hint">"이름으로 채널 검색"</string>
+    <string name="stream_compose_untitled_channel">"무명의 그룹"</string>
+    <string name="stream_compose_user_status_last_seen">"마지막 확인: %s"</string>
+    <string name="stream_compose_user_status_last_seen_just_now">"방금 확인했습니다"</string>
+    <string name="stream_compose_user_status_online">"온라인"</string>
+    <string name="stream_compose_waiting_for_network">"네트워크를 검색하는 중입니다"</string>
+    <string name="stream_compose_member_count_online">%s, %d온라인</string>
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s 입력중</item>
+        <item quantity="other">%s 및 %d명 입력중</item>
+    </plurals>
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">보내기</string>
+    <string name="stream_compose_message_list_giphy_cancel">취소</string>
+    <string name="stream_compose_message_list_giphy_shuffle">섞기</string>
+    <string name="stream_compose_reply">답장</string>
+    <string name="stream_compose_thread_reply">스레드 답장</string>
+    <string name="stream_compose_copy_message">메세지 복사</string>
+    <string name="stream_compose_edit_message">메세지 수정</string>
+    <string name="stream_compose_delete_message">메시지 삭제</string>
+    <string name="stream_compose_mute_user">사용자 무시</string>
+    <string name="stream_compose_flag_message">메세지 신고</string>
+    <string name="stream_compose_delete_message_title">메시지를 삭제합니다</string>
+    <string name="stream_compose_delete_message_text">이 메시지를 완전히 삭제하시겠습니까?</string>
+    <string name="stream_compose_flag_message_title">메시지를 신고합니다</string>
+    <string name="stream_compose_flag_message_text">추가 조사를 위해 관리자에게 해당 메시지의 복사본을 전송하시겠습니까?</string>
+    <string name="stream_compose_message_composer_error_message_length">"최대 메시지 길이(%d)를 초과했습니다"</string>
+    <string name="stream_compose_message_composer_error_file_size">파일이 너무 큽니다 - 최대 %1$s입니다</string>
+    <string name="stream_compose_message_composer_error_attachment_count">첨부파일 개수가 (%1$d) 개를 초과하였습니다.</string>
+    <string name="stream_compose_message_composer_instant_commands">인스턴트 명령어</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">상대방에게도 전송하기</string>
 </resources>

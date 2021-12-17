@@ -26,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
-import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.offline.model.ConnectionState
 
@@ -63,7 +63,7 @@ public fun ChannelListHeader(
         )
     },
     titleContent: @Composable RowScope.() -> Unit = {
-        ChannelHeaderTitle(
+        DefaultChannelHeaderTitle(
             modifier = Modifier.weight(1f),
             connectionState = connectionState,
             title = title
@@ -103,7 +103,7 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val size = Modifier.size(36.dp)
+    val size = Modifier.size(40.dp)
 
     if (currentUser != null) {
         UserAvatar(
@@ -120,14 +120,14 @@ internal fun DefaultChannelHeaderLeadingContent(
 
 /**
  * Represents the channel header's title slot. It either shows a [Text] if [connectionState] is
- * [ConnectionState.CONNECTED], or a [NetworkLoadingView] if there is no connections.
+ * [ConnectionState.CONNECTED], or a [NetworkLoadingIndicator] if there is no connections.
  *
  * @param connectionState The state of WebSocket connection.
  * @param title The title to show.
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun ChannelHeaderTitle(
+internal fun DefaultChannelHeaderTitle(
     connectionState: ConnectionState,
     title: String,
     modifier: Modifier = Modifier,
@@ -143,7 +143,7 @@ internal fun ChannelHeaderTitle(
             color = ChatTheme.colors.textHighEmphasis
         )
     } else {
-        NetworkLoadingView(modifier = modifier)
+        NetworkLoadingIndicator(modifier = modifier)
     }
 }
 
@@ -161,7 +161,7 @@ internal fun DefaultChannelListHeaderAction(
 ) {
     Surface(
         modifier = modifier
-            .size(36.dp)
+            .size(40.dp)
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },

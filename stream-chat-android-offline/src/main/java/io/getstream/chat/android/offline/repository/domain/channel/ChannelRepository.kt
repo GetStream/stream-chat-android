@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.repository.domain.channel
 
+import androidx.annotation.VisibleForTesting
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -21,6 +22,9 @@ internal interface ChannelRepository {
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
     suspend fun selectMembersForChannel(cid: String): List<Member>
     suspend fun updateMembersForChannel(cid: String, members: List<Member>)
+    suspend fun evictChannel(cid: String)
+    @VisibleForTesting
+    fun clearChannelCache()
 }
 
 internal class ChannelRepositoryImpl(
@@ -104,5 +108,13 @@ internal class ChannelRepositoryImpl(
         for (channel in channels) {
             channelCache.put(channel.cid, channel)
         }
+    }
+
+    override suspend fun evictChannel(cid: String) {
+        channelCache.remove(cid)
+    }
+
+    override fun clearChannelCache() {
+        channelCache.evictAll()
     }
 }

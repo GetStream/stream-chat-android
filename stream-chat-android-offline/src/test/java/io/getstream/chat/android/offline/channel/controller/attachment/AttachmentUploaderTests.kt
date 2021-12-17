@@ -103,6 +103,7 @@ internal class AttachmentUploaderTests {
                 type = "file",
                 mimeType = "",
                 name = attachment.upload!!.name,
+                title = attachment.upload!!.name,
                 uploadState = Attachment.UploadState.Success
             )
             val result = sut.uploadAttachment(channelType, channelId, attachment)
@@ -128,6 +129,7 @@ internal class AttachmentUploaderTests {
                 type = "file",
                 mimeType = "",
                 name = attachment.upload!!.name,
+                title = attachment.upload!!.name,
                 uploadState = Attachment.UploadState.Success
             )
             val result = sut.uploadAttachment(

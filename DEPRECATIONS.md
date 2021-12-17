@@ -4,19 +4,22 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.07<br/>⌛ | 2022.12.21 ⌛ | Use ChatDomain.mutedChannels instead |
+| `ChatDomain#loadOlderMessages` | 2021.12.20<br/>4.25.0 | 2022.01.20<br/>⌛ | 2022.02.20 ⌛ | Use `ChatClient#loadOlderMessages` instead |
+| `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2021.12.29<br/>⌛ | 2022.01.29 ⌛ | Use `ChatClient#stopTyping` instead |
+| `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2021.12.29<br/>⌛ | 2022.01.29 ⌛ | Use `ChatClient#keystroke` instead |
+| `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.09<br/>4.24.0 | 2022.12.21 ⌛ | Use ChatDomain.mutedChannels instead |
 | `ChatDomain#downloadAttachment` | 2021.11.23<br/>4.23.0 | 2021.12.21<br/>⌛ | 2022.01.18 ⌛ | Use `ChatClient#downloadAttachment` instead |
 | `ChatDomain#setMessageForReply` | 2021.11.23<br/>4.23.0 | 2021.12.21<br/>⌛ | 2022.01.18 ⌛ | Use `ChatClient#setMessageForReply` instead |
-| `ChatDomain#replayEventsForActiveChannels` | 2021.11.23<br/>4.23.0 | 2021.12.21<br/>⌛ | 2022.01.18 ⌛ | Use `ChatClient#replayEventsForActiveChannels` instead |
-| `ChatDomain#online` | 2021.10.26<br/>4.21.0 | 2021.11.22<br/>⌛ | 2021.12.20 ⌛ | Use ChatDomain#connectionState instead |
+| `ChatDomain#replayEventsForActiveChannels` | 2021.11.24<br/>4.23.0 | 2021.12.21<br/>⌛ | 2022.01.18 ⌛ | Use `ChatClient#replayEventsForActiveChannels` instead |
+| `ChatDomain#online` | 2021.10.26<br/>4.21.0 | 2021.11.24<br/>4.23.0 | 2021.12.20 ⌛ | Use ChatDomain#connectionState instead |
 | `QueryChannelsController#newChannelEventFilter` | 2021.10.12<br/>4.20.0 | 2021.11.08<br/>4.22 | 2021.11.08<br/>4.22 | Use QueryChannelsController::chatEventHandler instead |
 | `QueryChannelsController#checkFilterOnChannelUpdatedEvent` | 2021.10.12<br/>4.20.0 | 2021.11.08<br/>4.22 | 2021.11.08<br/>4.22 | Use QueryChannelsController::chatEventHandler instead |
-| `ChatUI#uiMode` <br/>*ui-components* | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | 2021.12.07 ⌛ | This behavior is not supported anymore. Our SDK already use Day/Night themes that follow the standard process Android provide to support them. If you want to force your app to use Dark/Light mode, you need tu use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)` |
-| `ProgressCallback#onProgress(Long)` <br/>*client* | 2021.09.28<br/> | 2021.11.10<br/>4.22.0 | 2021.12.07 ⌛ | This function is not used anymore. Use `ProgressCallback#onProgress(Long, Long)` |
-| `ChatNotificationHandler` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | 2021.12.07 ⌛ | If you want to continue using our implementation, you can use our `NotificationHandlerFactory` to create the default implementation we provide. If you need a more customized implementation, you need to implement `NotificationHandler` interface |
+| `ChatUI#uiMode` <br/>*ui-components* | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | 2021.12.09<br/>4.24.0 | This behavior is not supported anymore. Our SDK already use Day/Night themes that follow the standard process Android provide to support them. If you want to force your app to use Dark/Light mode, you need tu use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)` |
+| `ProgressCallback#onProgress(Long)` <br/>*client* | 2021.09.28<br/> | 2021.11.10<br/>4.22.0 | 2021.12.09<br/>4.24.0 | This function is not used anymore. Use `ProgressCallback#onProgress(Long, Long)` |
+| `ChatNotificationHandler` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | 2021.12.09<br/>4.24.0 | If you want to continue using our implementation, you can use our `NotificationHandlerFactory` to create the default implementation we provide. If you need a more customized implementation, you need to implement `NotificationHandler` interface |
 | `NotificationConfig` attributes <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | Attributes to customize notifications are not used anymore. You need to override those Strings/Drawable into resources of your app |
 | `ChatClient#cdnUrl`  <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | Use `ChatClient.fileUploader()` to add custom file uploading logic instead  |
-| `ChatClient#cdnTimeout` and `ChatClient#baseTimeout` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | 2021.11.22 ⌛ | Use `ChatClient.okHttpClient()` to set the timeouts instead |
+| `ChatClient#cdnTimeout` and `ChatClient#baseTimeout` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | 2021.12.09<br/>4.24.0 | Use `ChatClient.okHttpClient()` to set the timeouts instead |
 | `DeviceRegisteredListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | This class is not used anymore |
 | `ViewReactionsViewStyle#bubbleBorderColor` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | Use bubbleBorderColorMine instead  |
 | `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | Some attributes are not needed anymore |

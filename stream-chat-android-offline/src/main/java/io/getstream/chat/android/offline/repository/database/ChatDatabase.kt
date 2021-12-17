@@ -44,7 +44,7 @@ import io.getstream.chat.android.offline.repository.domain.user.UserEntity
         CommandInnerEntity::class,
         SyncStateEntity::class,
     ],
-    version = 51,
+    version = 52,
     exportSchema = false
 )
 @TypeConverters(

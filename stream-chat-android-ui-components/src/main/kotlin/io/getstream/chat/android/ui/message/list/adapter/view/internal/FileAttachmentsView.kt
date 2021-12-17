@@ -59,16 +59,26 @@ internal class FileAttachmentsView : RecyclerView {
 
     private fun init(attrs: AttributeSet?) {
         style = FileAttachmentViewStyle(context, attrs)
-        fileAttachmentsAdapter = FileAttachmentsAdapter(
-            attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
-            attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
-            attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) },
-            style,
-        )
-        adapter = fileAttachmentsAdapter
     }
 
     fun setAttachments(attachments: List<Attachment>) {
+        if (!::fileAttachmentsAdapter.isInitialized) {
+            fileAttachmentsAdapter = FileAttachmentsAdapter(
+                attachmentClickListener = attachmentClickListener?.let { listener ->
+                    AttachmentClickListener(listener::onAttachmentClick)
+                },
+                attachmentLongClickListener = attachmentLongClickListener?.let { listener ->
+                    AttachmentLongClickListener(listener::onAttachmentLongClick)
+                },
+                attachmentDownloadClickListener = attachmentDownloadClickListener?.let { listener ->
+                    AttachmentDownloadClickListener(listener::onAttachmentDownloadClick)
+                },
+                style,
+            )
+
+            adapter = fileAttachmentsAdapter
+        }
+        
         fileAttachmentsAdapter.setItems(attachments)
     }
 
@@ -89,9 +99,9 @@ private class VerticalSpaceItemDecorator(private val marginPx: Int) : RecyclerVi
 }
 
 private class FileAttachmentsAdapter(
-    private val attachmentClickListener: AttachmentClickListener,
-    private val attachmentLongClickListener: AttachmentLongClickListener,
-    private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    private val attachmentClickListener: AttachmentClickListener?,
+    private val attachmentLongClickListener: AttachmentLongClickListener?,
+    private val attachmentDownloadClickListener: AttachmentDownloadClickListener?,
     private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
@@ -104,7 +114,7 @@ private class FileAttachmentsAdapter(
                     attachmentClickListener,
                     attachmentLongClickListener,
                     attachmentDownloadClickListener,
-                    style,
+                    style
                 )
             }
     }
@@ -127,9 +137,9 @@ private class FileAttachmentsAdapter(
 
 private class FileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
-    private val attachmentClickListener: AttachmentClickListener,
-    private val attachmentLongClickListener: AttachmentLongClickListener,
-    private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    attachmentClickListener: AttachmentClickListener?,
+    attachmentLongClickListener: AttachmentLongClickListener?,
+    attachmentDownloadClickListener: AttachmentDownloadClickListener?,
     private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private var attachment: Attachment? = null
@@ -142,15 +152,23 @@ private class FileAttachmentViewHolder(
     }
 
     init {
-        binding.root.setOnClickListener {
-            attachment?.let(attachmentClickListener::onAttachmentClick)
+        attachmentClickListener?.let { listener ->
+            binding.root.setOnClickListener {
+                attachment?.let(listener::onAttachmentClick)
+            }
         }
-        binding.root.setOnLongClickListener {
-            attachmentLongClickListener.onAttachmentLongClick()
-            true
+
+        attachmentLongClickListener?.let { listener ->
+            binding.root.setOnLongClickListener {
+                listener.onAttachmentLongClick()
+                true
+            }
         }
-        binding.actionButton.setOnClickListener {
-            attachment?.let(attachmentDownloadClickListener::onAttachmentDownloadClick)
+
+        attachmentDownloadClickListener?.let { listener ->
+            binding.actionButton.setOnClickListener {
+                attachment?.let(listener::onAttachmentDownloadClick)
+            }
         }
     }
 

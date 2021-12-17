@@ -1,41 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Channel List Header -->
-    <string name="stream_compose_channel_list_header_new_chat">新しいチャット</string>
-
-    <!-- Search Input -->
-    <string name="stream_compose_search_input_cancel">キャンセル</string>
-    <string name="stream_compose_search_input_hint">名前でチャンネルを検索</string>
-
-    <!-- Channel List -->
-    <string name="stream_compose_channel_list_you">あなた</string>
-    <string name="stream_compose_channel_list_empty_channels">利用可能なチャンネルはありません</string>
-    <string name="stream_compose_channel_list_empty_search_results">\"%s\"の結果はありません</string>
-
-    <!-- Channel Info Dialog -->
-    <string name="stream_compose_channel_info_view_info">情報を見る</string>
-    <string name="stream_compose_channel_info_leave_group">グループを離れる</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_title">グループを離れる</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_message">％1$s グループを離れますか？</string>
-    <string name="stream_compose_channel_info_mute_channel">ミュートチャンネル</string>
-    <string name="stream_compose_channel_info_unmute_channel">チャネルのミュートを解除する</string>
-    <string name="stream_compose_channel_info_delete_conversation">会話を削除する</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">会話を削除する</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">チャネル ％1$s を削除しますか</string>
-    <string name="stream_compose_channel_info_dismiss">キャンセル</string>
-
-    <!-- Common -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools">
     <plurals name="stream_compose_channel_members">
-        <item quantity="other">%1d人のメンバー, %2d人がオンライン</item>
+        <item quantity="other">"%1d人のメンバー, %2d人がオンライン"</item>
     </plurals>
-    <string name="stream_compose_ok">よし</string>
-    <string name="stream_compose_cancel">キャンセル</string>
-    <string name="stream_compose_waiting_for_network">ネットワークを検索中</string>
-    <string name="stream_compose_untitled_channel">名前のないチャンネル</string>
-    <string name="stream_compose_user_status_online">オンライン</string>
-    <string name="stream_compose_user_status_last_seen">%s見ました</string>
-    <string name="stream_compose_user_status_last_seen_just_now">今見ました</string>
-
-    <!-- Message List -->
-    <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>
+    <string name="stream_compose_cancel">"キャンセル"</string>
+    <string name="stream_compose_channel_info_delete_conversation">"会話を削除する"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">"チャネル ％1$s を削除しますか"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">"会話を削除する"</string>
+    <string name="stream_compose_channel_info_dismiss">"キャンセル"</string>
+    <string name="stream_compose_channel_info_leave_group">"グループを離れる"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">"％1$s グループを離れますか？"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">"グループを離れる"</string>
+    <string name="stream_compose_channel_info_mute_channel">"ミュートチャンネル"</string>
+    <string name="stream_compose_channel_info_unmute_channel">"チャネルのミュートを解除する"</string>
+    <string name="stream_compose_channel_info_view_info">"情報を見る"</string>
+    <string name="stream_compose_channel_list_empty_channels">"利用可能なチャンネルはありません"</string>
+    <string name="stream_compose_channel_list_empty_search_results">"\"%s\"の結果はありません"</string>
+    <string name="stream_compose_channel_list_header_new_chat">"新しいチャット"</string>
+    <string name="stream_compose_channel_list_you">"あなた"</string>
+    <string name="stream_compose_message_list_empty_messages">"メッセージはありません"</string>
+    <string name="stream_compose_ok">"よし"</string>
+    <string name="stream_compose_search_input_cancel">"キャンセル"</string>
+    <string name="stream_compose_search_input_hint">"名前でチャンネルを検索"</string>
+    <string name="stream_compose_untitled_channel">"名前のないチャンネル"</string>
+    <string name="stream_compose_user_status_last_seen">"%s見ました"</string>
+    <string name="stream_compose_user_status_last_seen_just_now">"今見ました"</string>
+    <string name="stream_compose_user_status_online">"オンライン"</string>
+    <string name="stream_compose_waiting_for_network">"ネットワークを検索中"</string>
+    <string name="stream_compose_member_count_online">%s, %d人がオンライン</string>
+    <plurals name="stream_compose_message_list_header_typing_users" tools:ignore="UnusedQuantity">
+        <item quantity="one">%sが入力しています</item>
+        <item quantity="other">%sと%d人が入力しています</item>
+    </plurals>
+    <string name="stream_compose_message_list_giphy_title">ギフィー</string>
+    <string name="stream_compose_message_list_giphy_send">送信</string>
+    <string name="stream_compose_message_list_giphy_cancel">キャンセル</string>
+    <string name="stream_compose_message_list_giphy_shuffle">ミックス</string>
+    <string name="stream_compose_reply">返信</string>
+    <string name="stream_compose_thread_reply">スレッド返信</string>
+    <string name="stream_compose_copy_message">メッセージをコピーする</string>
+    <string name="stream_compose_edit_message">メッセージを編集する</string>
+    <string name="stream_compose_delete_message">メッセージを削除する</string>
+    <string name="stream_compose_mute_user">ユーザーをミュートする</string>
+    <string name="stream_compose_flag_message">メッセージをフラグする</string>
+    <string name="stream_compose_delete_message_title">メッセージを削除する</string>
+    <string name="stream_compose_delete_message_text">このメッセージを完全に削除してもよろしいですか？</string>
+    <string name="stream_compose_flag_message_title">メッセージをフラグする</string>
+    <string name="stream_compose_flag_message_text">このメッセージのコピーをモデレーターに送って、さらに調査してもらいますか？</string>
+    <string name="stream_compose_message_composer_error_message_length">"最大メッセージ長（%1$d)字を超えました"</string>
+    <string name="stream_compose_message_composer_error_file_size">ファイルが大きすぎます- 最大%1$s。</string>
+    <string name="stream_compose_message_composer_error_attachment_count">添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません</string>
+    <string name="stream_compose_message_composer_instant_commands">インスタントコマンド</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">ダイレクトメッセージでも送信</string>
 </resources>

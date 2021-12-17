@@ -58,171 +58,172 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "differentUserId" }, "token").enqueue()
 
-        verify(socket, never()).connect(any())
-        verify(userStateService, never()).onUserUpdated(any())
-        verify(tokenManager, never()).setTokenProvider(any())
-    }
-
-    @Test
-    fun `Given user set and socket in idle state and user with the same id Should update token provider`() {
-        val tokenProviderMock = mock<TokenProvider>()
-        val token = randomString()
-        whenever(tokenProviderMock.loadToken()) doReturn token
-        val sut = Fixture()
-            .givenIdleConnectionState()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, token)
-            .givenUserSetState(Mother.randomUser { id = "userId" })
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
-
-        verify(tokenManager).setTokenProvider(tokenProviderMock)
-    }
-
-    @Test
-    fun `Given user set and socket in idle state and user with the same id Should invoke pre set listeners`() {
-        val listener: (User) -> Unit = mock()
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenIdleConnectionState()
-            .givenUserSetState(Mother.randomUser { id = "userId" })
-            .givenPreSetUserListener(listener)
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
-
-        verify(listener).invoke(argThat { id == "userId" })
-    }
-
-    @Test
-    fun `Given user not set Should set the user`() {
-        val user = Mother.randomUser { id = "userId" }
-        val sut = Fixture()
-            .givenUserAndToken(user, "token")
-            .givenUserNotSetState()
-            .get()
-
-        sut.connectUser(user, "token").enqueue()
-
-        verify(userStateService).onSetUser(user)
-    }
-
-    @Test
-    fun `Given user not set Should update token provider`() {
-        val tokenProviderMock = mock<TokenProvider>()
-        whenever(tokenProviderMock.loadToken()) doReturn "token"
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenUserNotSetState()
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
-
-        verify(tokenManager).setTokenProvider(tokenProviderMock)
-    }
-
-    @Test
-    fun `Given user not set Should connect to the socket`() {
-        val user = Mother.randomUser { id = "userId" }
-        val sut = Fixture()
-            .givenUserAndToken(user, "token")
-            .givenUserNotSetState()
-            .get()
-
-        sut.connectUser(user, "token").enqueue()
-
-        verify(socket).connect(user)
-    }
-
-    @Test
-    fun `Given user not set and config with warmup Should do warmup`() {
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenUserNotSetState()
-            .givenWarmUpEnabled()
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
-
-        verify(api).warmUp()
-    }
-
-    @Test
-    fun `Given user not set Should invoke pre set listeners`() {
-        val listener: (User) -> Unit = mock()
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenUserNotSetState()
-            .givenPreSetUserListener(listener)
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
-
-        verify(listener).invoke(argThat { id == "userId" })
-    }
-
-    @Test
-    fun `Given user set and user with different id Should call init connection listener with error`() {
-        val connectionDataCallback: Call.Callback<ConnectionData> = mock()
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenUserSetState(Mother.randomUser { id = "userId1" })
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
-
-        verify(connectionDataCallback).onResult(argThat { isError })
-    }
-
-    inner class Fixture {
-        fun givenIdleConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Idle
+            verify(socket, never()).connect(any())
+            verify(userStateService, never()).onUserUpdated(any())
+            verify(tokenManager, never()).setTokenProvider(any())
         }
 
-        fun givenPendingConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Pending
-        }
+        @Test
+        fun `Given user set and socket in idle state and user with the same id Should update token provider`() {
+            val tokenProviderMock = mock<TokenProvider>()
+            val token = randomString()
+            whenever(tokenProviderMock.loadToken()) doReturn token
+            val sut = Fixture()
+                .givenIdleConnectionState()
+                .givenUserAndToken(Mother.randomUser { id = "userId" }, token)
+                .givenUserSetState(Mother.randomUser { id = "userId" })
+                .get()
 
-        fun givenConnectedConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Connected(randomString())
-        }
+            sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
 
-        fun givenDisconnectedConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Disconnected
-        }
+                verify(tokenManager).setTokenProvider(tokenProviderMock)
+            }
 
-        fun givenUserSetState(user: User) = apply {
-            whenever(userStateService.state) doReturn UserState.UserSet(user)
-        }
+            @Test
+            fun `Given user set and socket in idle state and user with the same id Should invoke pre set listeners`() {
+                val listener: (User) -> Unit = mock()
+                val sut = Fixture()
+                    .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+                    .givenIdleConnectionState()
+                    .givenUserSetState(Mother.randomUser { id = "userId" })
+                    .givenPreSetUserListener(listener)
+                    .get()
 
-        fun givenAnonymousUserSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
-        }
+                sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
 
-        fun givenAnonymousPendingState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.Pending
-        }
+                    verify(listener).invoke(argThat { id == "userId" })
+                }
 
-        fun givenUserNotSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.NotSet
-        }
+                @Test
+                fun `Given user not set Should set the user`() {
+                    val user = Mother.randomUser { id = "userId" }
+                    val sut = Fixture()
+                        .givenUserAndToken(user, "token")
+                        .givenUserNotSetState()
+                        .get()
 
-        fun givenWarmUpEnabled() = apply {
-            whenever(config.warmUp) doReturn true
-        }
+                    sut.connectUser(user, "token").enqueue()
 
-        fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
-            chatClient.preSetUserListeners.add(listener)
-        }
+                    verify(userStateService).onSetUser(user)
+                }
 
-        fun givenUserAndToken(user: User, token: String) = apply {
-            whenever(tokenUtils.getUserId(token)) doReturn user.id
-        }
+                @Test
+                fun `Given user not set Should update token provider`() {
+                    val tokenProviderMock = mock<TokenProvider>()
+                    whenever(tokenProviderMock.loadToken()) doReturn "token"
+                    val sut = Fixture()
+                        .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+                        .givenUserNotSetState()
+                        .get()
 
-        fun clearSocketInvocations() = apply {
-            clearInvocations(socket)
-        }
+                    sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
 
-        fun get() = chatClient
-    }
-}
+                        verify(tokenManager).setTokenProvider(tokenProviderMock)
+                    }
+
+                    @Test
+                    fun `Given user not set Should connect to the socket`() {
+                        val user = Mother.randomUser { id = "userId" }
+                        val sut = Fixture()
+                            .givenUserAndToken(user, "token")
+                            .givenUserNotSetState()
+                            .get()
+
+                        sut.connectUser(user, "token").enqueue()
+
+                        verify(socket).connect(user)
+                    }
+
+                    @Test
+                    fun `Given user not set and config with warmup Should do warmup`() {
+                        val sut = Fixture()
+                            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+                            .givenUserNotSetState()
+                            .givenWarmUpEnabled()
+                            .get()
+
+                        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
+
+                            verify(api).warmUp()
+                        }
+
+                        @Test
+                        fun `Given user not set Should invoke pre set listeners`() {
+                            val listener: (User) -> Unit = mock()
+                            val sut = Fixture()
+                                .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+                                .givenUserNotSetState()
+                                .givenPreSetUserListener(listener)
+                                .get()
+
+                            sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
+
+                                verify(listener).invoke(argThat { id == "userId" })
+                            }
+
+                            @Test
+                            fun `Given user set and user with different id Should call init connection listener with error`() {
+                                val connectionDataCallback: Call.Callback<ConnectionData> = mock()
+                                val sut = Fixture()
+                                    .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+                                    .givenUserSetState(Mother.randomUser { id = "userId1" })
+                                    .get()
+
+                                sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
+
+                                    verify(connectionDataCallback).onResult(argThat { isError })
+                                }
+
+                                inner class Fixture {
+                                    fun givenIdleConnectionState() = apply {
+                                        whenever(socketStateService.state) doReturn SocketState.Idle
+                                    }
+
+                                    fun givenPendingConnectionState() = apply {
+                                        whenever(socketStateService.state) doReturn SocketState.Pending
+                                    }
+
+                                    fun givenConnectedConnectionState() = apply {
+                                        whenever(socketStateService.state) doReturn SocketState.Connected(randomString())
+                                    }
+
+                                    fun givenDisconnectedConnectionState() = apply {
+                                        whenever(socketStateService.state) doReturn SocketState.Disconnected
+                                    }
+
+                                    fun givenUserSetState(user: User) = apply {
+                                        whenever(userStateService.state) doReturn UserState.UserSet(user)
+                                    }
+
+                                    fun givenAnonymousUserSetState() = apply {
+                                        whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
+                                    }
+
+                                    fun givenAnonymousPendingState() = apply {
+                                        whenever(userStateService.state) doReturn UserState.Anonymous.Pending
+                                    }
+
+                                    fun givenUserNotSetState() = apply {
+                                        whenever(userStateService.state) doReturn UserState.NotSet
+                                    }
+
+                                    fun givenWarmUpEnabled() = apply {
+                                        whenever(config.warmUp) doReturn true
+                                    }
+
+                                    fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
+                                        chatClient.preSetUserListeners.add(listener)
+                                    }
+
+                                    fun givenUserAndToken(user: User, token: String) = apply {
+                                        whenever(tokenUtils.getUserId(token)) doReturn user.id
+                                    }
+
+                                    fun clearSocketInvocations() = apply {
+                                        clearInvocations(socket)
+                                    }
+
+                                    fun get() = chatClient
+                                }
+                            }
+                            

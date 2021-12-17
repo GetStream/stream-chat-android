@@ -26,7 +26,6 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -374,7 +373,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
-        private const val ARG_OPTIONS_BACKGROUND_FACTORY = "backgroundFactory"
 
         internal var messageListViewStyle: MessageListViewStyle? = null
 
@@ -426,7 +424,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         /* Default listener. We don't want the message of this dialog to listen for clicks just like it was
                         * a normal message inside MessageListView
                         */
-                        setListenerContainer(MessageListListenerContainerImpl())
+                        setListenerContainer(null)
                         decoratorProvider = MessageOptionsDecoratorProvider(
                             style.itemStyle,
                             style.replyMessageStyle,
@@ -437,7 +435,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
                     ARG_OPTIONS_CONFIG to configuration,
-                    ARG_OPTIONS_BACKGROUND_FACTORY to messageBackgroundFactory
                 )
                 // pass message via static field
                 messageArg = message

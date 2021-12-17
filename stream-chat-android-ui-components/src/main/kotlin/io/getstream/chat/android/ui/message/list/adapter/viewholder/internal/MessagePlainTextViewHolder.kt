@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 internal class MessagePlainTextViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer,
+    private val listeners: MessageListListenerContainer?,
     private val markdown: ChatMarkdown,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
@@ -28,27 +28,29 @@ internal class MessagePlainTextViewHolder(
 
     init {
         binding.run {
-            root.setOnClickListener {
-                listeners.messageClickListener.onMessageClick(data.message)
+            listeners?.let { container ->
+                root.setOnClickListener {
+                    container.messageClickListener.onMessageClick(data.message)
+                }
+                reactionsView.setReactionClickListener {
+                    container.reactionViewClickListener.onReactionViewClick(data.message)
+                }
+                footnote.setOnThreadClickListener {
+                    container.threadClickListener.onThreadClick(data.message)
+                }
+                root.setOnLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                avatarView.setOnClickListener {
+                    container.userClickListener.onUserClick(data.message.user)
+                }
+                LongClickFriendlyLinkMovementMethod.set(
+                    textView = messageText,
+                    longClickTarget = root,
+                    onLinkClicked = container.linkClickListener::onLinkClick
+                )
             }
-            reactionsView.setReactionClickListener {
-                listeners.reactionViewClickListener.onReactionViewClick(data.message)
-            }
-            footnote.setOnThreadClickListener {
-                listeners.threadClickListener.onThreadClick(data.message)
-            }
-            root.setOnLongClickListener {
-                listeners.messageLongClickListener.onMessageLongClick(data.message)
-                true
-            }
-            avatarView.setOnClickListener {
-                listeners.userClickListener.onUserClick(data.message.user)
-            }
-            LongClickFriendlyLinkMovementMethod.set(
-                textView = messageText,
-                longClickTarget = root,
-                onLinkClicked = listeners.linkClickListener::onLinkClick
-            )
         }
     }
 

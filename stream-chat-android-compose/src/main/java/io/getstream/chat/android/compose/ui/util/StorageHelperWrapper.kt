@@ -58,7 +58,7 @@ public class StorageHelperWrapper(
                 upload = fileFromUri,
                 type = it.type,
                 name = it.title ?: fileFromUri.name ?: "",
-                fileSize = metaData.size,
+                fileSize = it.size.toInt(),
                 mimeType = it.mimeType
             )
         }

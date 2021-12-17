@@ -101,6 +101,7 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.turbine
 
     // Instrumentation tests
     androidTestImplementation Dependencies.androidxTestJunit

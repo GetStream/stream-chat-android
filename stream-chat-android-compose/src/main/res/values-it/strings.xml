@@ -1,42 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Channel List Header -->
-    <string name="stream_compose_channel_list_header_new_chat">Nuova chat</string>
-
-    <!-- Search Input -->
-    <string name="stream_compose_search_input_cancel">Annulla</string>
-    <string name="stream_compose_search_input_hint">Cerca i canali per nome</string>
-
-    <!-- Channel List -->
-    <string name="stream_compose_channel_list_you">Tu</string>
-    <string name="stream_compose_channel_list_empty_channels">Nessun canale disponibile</string>
-    <string name="stream_compose_channel_list_empty_search_results">Nessun risultato per %1$s</string>
-
-    <!-- Channel Info Dialog -->
-    <string name="stream_compose_channel_info_view_info">Vedi info</string>
-    <string name="stream_compose_channel_info_leave_group">Esci dal gruppo</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_title">Esci dal gruppo</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_message">Vuoi lasciare il gruppo %1$s?</string>
-    <string name="stream_compose_channel_info_mute_channel">Disattiva canale</string>
-    <string name="stream_compose_channel_info_unmute_channel">Riattiva canale</string>
-    <string name="stream_compose_channel_info_delete_conversation">Elimina canale</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Elimina canale</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Vuoi eliminare il canale% 1$s?</string>
-    <string name="stream_compose_channel_info_dismiss">Annulla</string>
-
-    <!-- Common -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d Membro, %2d Online</item>
-        <item quantity="other">%1d Membri, %2d Online</item>
+        <item quantity="one">"%1d Membro, %2d Online"</item>
+        <item quantity="other">"%1d Membri, %2d Online"</item>
+    </plurals>
+    <string name="stream_compose_cancel">"Annulla"</string>
+    <string name="stream_compose_channel_info_delete_conversation">"Elimina canale"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">"Vuoi eliminare il canale% 1$s?"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">"Elimina canale"</string>
+    <string name="stream_compose_channel_info_dismiss">"Annulla"</string>
+    <string name="stream_compose_channel_info_leave_group">"Esci dal gruppo"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">"Vuoi lasciare il gruppo %1$s?"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">"Esci dal gruppo"</string>
+    <string name="stream_compose_channel_info_mute_channel">"Disattiva canale"</string>
+    <string name="stream_compose_channel_info_unmute_channel">"Riattiva canale"</string>
+    <string name="stream_compose_channel_info_view_info">"Vedi info"</string>
+    <string name="stream_compose_channel_list_empty_channels">"Nessun canale disponibile"</string>
+    <string name="stream_compose_channel_list_empty_search_results">"Nessun risultato per %1$s"</string>
+    <string name="stream_compose_channel_list_header_new_chat">"Nuova chat"</string>
+    <string name="stream_compose_channel_list_you">"Tu"</string>
+    <string name="stream_compose_message_list_empty_messages">"Nessun messaggio"</string>
+    <string name="stream_compose_search_input_cancel">"Annulla"</string>
+    <string name="stream_compose_search_input_hint">"Cerca i canali per nome"</string>
+    <string name="stream_compose_untitled_channel">"Canale senza nome"</string>
+    <string name="stream_compose_user_status_last_seen">"Ultimo accesso %1$s fa"</string>
+    <string name="stream_compose_user_status_last_seen_just_now">"Ultimo accesso di recente"</string>
+    <string name="stream_compose_waiting_for_network">"Attendo la rete"</string>
+    <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="one">%1d Membro</item>
+        <item quantity="other">%1d Membri</item>
     </plurals>
     <string name="stream_compose_ok">OK</string>
-    <string name="stream_compose_cancel">Annulla</string>
-    <string name="stream_compose_waiting_for_network">Attendo la rete</string>
-    <string name="stream_compose_untitled_channel">Canale senza nome</string>
     <string name="stream_compose_user_status_online">Online</string>
-    <string name="stream_compose_user_status_last_seen">Ultimo accesso %1$s fa</string>
-    <string name="stream_compose_user_status_last_seen_just_now">Ultimo accesso di recente</string>
-
-    <!-- Message List -->
-    <string name="stream_compose_message_list_empty_messages">Nessun messaggio</string>
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s sta scrivendo</item>
+        <item quantity="other">%s e altri %d stanno scrivendo</item>
+    </plurals>
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">Invia</string>
+    <string name="stream_compose_message_list_giphy_cancel">Annulla</string>
+    <string name="stream_compose_message_list_giphy_shuffle">Casuale</string>
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">%d Risposta nella Conversazione</item>
+        <item quantity="other">%d Risposte nella Conversazione</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d Risposta</item>
+        <item quantity="other">%d Risposte</item>
+    </plurals>
+    <string name="stream_compose_reply">Rispondi</string>
+    <string name="stream_compose_thread_reply">Rispondi nella conversazione</string>
+    <string name="stream_compose_copy_message">Copia messaggio</string>
+    <string name="stream_compose_edit_message">Modifica messaggio</string>
+    <string name="stream_compose_delete_message">Cancella messaggio</string>
+    <string name="stream_compose_mute_user">Silenzia Utente</string>
+    <string name="stream_compose_flag_message">Segnala messaggio</string>
+    <string name="stream_compose_delete_message_title">Cancella messaggio</string>
+    <string name="stream_compose_delete_message_text">Sei sicuro di voler definitivamente cancellare questo messaggio?</string>
+    <string name="stream_compose_flag_message_title">Segnala messaggio</string>
+    <string name="stream_compose_flag_message_text">Vuoi mandare una copia di questo messaggio ad un moderatore?</string>
+    <string name="stream_compose_message_composer_error_message_length">La lunghezza massima del messaggio (%1$d) è stata superata.</string>
+    <string name="stream_compose_message_composer_error_file_size">File troppo grande - max %1$s.</string>
+    <string name="stream_compose_message_composer_error_attachment_count">Attenzione: il limite massimo di %1$d file è stato superato.</string>
+    <string name="stream_compose_message_composer_instant_commands">Commandi istantanei</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">Inviato anche come messaggio diretto</string>
 </resources>

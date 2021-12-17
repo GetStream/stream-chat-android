@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -30,6 +31,7 @@ import io.getstream.chat.android.offline.randomReactionNewEvent
 import io.getstream.chat.android.offline.randomTypingStartEvent
 import io.getstream.chat.android.offline.randomTypingStopEvent
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
@@ -40,24 +42,28 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo
+import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-internal class WhenHandleEvent {
+internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
+    @get:Rule
+    val testCoroutines = TestCoroutineRule()
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
-    private val scope = TestCoroutineScope()
     private val userFlow = MutableStateFlow(currentUser)
+
+    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
     private val chatClient: ChatClient = mock {
         on(it.channel(any())) doReturn mock()
     }
     private val chatDomain: ChatDomainImpl = mock {
         on(it.appContext) doReturn mock()
-        on(it.scope) doReturn scope
+        on(it.scope) doReturn testCoroutines.scope
         on(it.user) doReturn userFlow
         on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
     }
@@ -72,7 +78,12 @@ internal class WhenHandleEvent {
             invocation.arguments[0] as List<Message>
         }
 
-        val mutableState = ChannelMutableState("type1", channelId, scope, userFlow)
+        val mutableState = ChannelMutableState(
+            "type1", channelId, testCoroutines.scope, userFlow,
+            MutableStateFlow(
+                mapOf(currentUser.id to currentUser)
+            )
+        )
 
         channelController = ChannelController(
             mutableState,
@@ -105,7 +116,7 @@ internal class WhenHandleEvent {
 
     // New message event
     @Test
-    fun `when new message event arrives, messages should be propagated correctly`() {
+    fun `when new message event arrives, messages should be propagated correctly`(): Unit = coroutineTest {
         val user = User(id = CURRENT_USER_ID)
         val message = randomMessage(
             createdAt = Date(1000L),
@@ -127,7 +138,7 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when new message event arrives from other user, unread number should be updated`() {
+    fun `when new message event arrives from other user, unread number should be updated`() = coroutineTest {
         val createdAt = Date()
         val message = randomMessage(
             createdAt = createdAt,
@@ -152,7 +163,7 @@ internal class WhenHandleEvent {
 
     // Message update
     @Test
-    fun `when a message update for a non existing message arrives, it is added`() {
+    fun `when a message update for a non existing message arrives, it is added`() = coroutineTest {
         val messageId = randomString()
         val message = randomMessage(
             id = messageId,
@@ -169,7 +180,7 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when a message update event is outdated, it should be ignored`() {
+    fun `when a message update event is outdated, it should be ignored`() = coroutineTest {
         val messageId = randomString()
         val createdAt = randomDate()
         val createdLocallyAt = randomDateBefore(createdAt.time)
@@ -208,7 +219,7 @@ internal class WhenHandleEvent {
 
     // Member added event
     @Test
-    fun `when member is added, it should be propagated`() {
+    fun `when member is added, it should be propagated`(): Unit = coroutineTest {
         val user = randomUser()
         val member = randomMember(user = user)
         val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
@@ -262,7 +273,7 @@ internal class WhenHandleEvent {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, the message of the event should be upsert`() {
+    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = coroutineTest {
         val message = randomMessage(
             showInChannel = true,
             silent = false,
@@ -287,7 +298,7 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when channel is deleted, the status is updated`() {
+    fun `when channel is deleted, the status is updated`() = coroutineTest {
         val channel = randomChannel()
         val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
         val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)

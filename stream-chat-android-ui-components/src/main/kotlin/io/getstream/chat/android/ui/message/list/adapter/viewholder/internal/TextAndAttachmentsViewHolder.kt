@@ -22,7 +22,7 @@ import kotlinx.coroutines.cancel
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer,
+    private val listeners: MessageListListenerContainer?,
     private val markdown: ChatMarkdown,
     private val attachmentViewFactory: AttachmentViewFactory,
     private val style: MessageListItemStyle,
@@ -45,46 +45,52 @@ internal class TextAndAttachmentsViewHolder(
      * of the Message are unchanged. However, other properties (like reactions) might
      * change, and these listeners should receive a fully up-to-date Message.
      */
-    private val modifiedListeners = MessageListListenerContainerImpl(
-        messageClickListener = { listeners.messageClickListener.onMessageClick(data.message) },
-        messageLongClickListener = { listeners.messageLongClickListener.onMessageLongClick(data.message) },
-        messageRetryListener = { listeners.messageRetryListener.onRetryMessage(data.message) },
-        threadClickListener = { listeners.threadClickListener.onThreadClick(data.message) },
-        attachmentClickListener = { _, attachment ->
-            listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
-        },
-        attachmentDownloadClickListener = listeners.attachmentDownloadClickListener::onAttachmentDownloadClick,
-        reactionViewClickListener = { listeners.reactionViewClickListener.onReactionViewClick(data.message) },
-        userClickListener = { listeners.userClickListener.onUserClick(data.message.user) },
-        giphySendListener = { _, action ->
-            listeners.giphySendListener.onGiphySend(data.message, action)
-        },
-        linkClickListener = listeners.linkClickListener::onLinkClick
-    )
+    private fun modifiedListeners(listeners: MessageListListenerContainer?): MessageListListenerContainer? {
+        return listeners?.let { container ->
+            MessageListListenerContainerImpl(
+                messageClickListener = { container.messageClickListener.onMessageClick(data.message) },
+                messageLongClickListener = { container.messageLongClickListener.onMessageLongClick(data.message) },
+                messageRetryListener = { container.messageRetryListener.onRetryMessage(data.message) },
+                threadClickListener = { container.threadClickListener.onThreadClick(data.message) },
+                attachmentClickListener = { _, attachment ->
+                    container.attachmentClickListener.onAttachmentClick(data.message, attachment)
+                },
+                attachmentDownloadClickListener = container.attachmentDownloadClickListener::onAttachmentDownloadClick,
+                reactionViewClickListener = { container.reactionViewClickListener.onReactionViewClick(data.message) },
+                userClickListener = { container.userClickListener.onUserClick(data.message.user) },
+                giphySendListener = { _, action ->
+                    container.giphySendListener.onGiphySend(data.message, action)
+                },
+                linkClickListener = container.linkClickListener::onLinkClick
+            )
+        }
+    }
 
     init {
         binding.run {
-            root.setOnClickListener {
-                listeners.messageClickListener.onMessageClick(data.message)
+            listeners?.let { container ->
+                root.setOnClickListener {
+                    container.messageClickListener.onMessageClick(data.message)
+                }
+                reactionsView.setReactionClickListener {
+                    container.reactionViewClickListener.onReactionViewClick(data.message)
+                }
+                footnote.setOnThreadClickListener {
+                    container.threadClickListener.onThreadClick(data.message)
+                }
+                root.setOnLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                avatarView.setOnClickListener {
+                    container.userClickListener.onUserClick(data.message.user)
+                }
+                LongClickFriendlyLinkMovementMethod.set(
+                    textView = messageText,
+                    longClickTarget = root,
+                    onLinkClicked = container.linkClickListener::onLinkClick
+                )
             }
-            reactionsView.setReactionClickListener {
-                listeners.reactionViewClickListener.onReactionViewClick(data.message)
-            }
-            footnote.setOnThreadClickListener {
-                listeners.threadClickListener.onThreadClick(data.message)
-            }
-            root.setOnLongClickListener {
-                listeners.messageLongClickListener.onMessageLongClick(data.message)
-                true
-            }
-            avatarView.setOnClickListener {
-                listeners.userClickListener.onUserClick(data.message.user)
-            }
-            LongClickFriendlyLinkMovementMethod.set(
-                textView = messageText,
-                longClickTarget = root,
-                onLinkClicked = listeners.linkClickListener::onLinkClick
-            )
         }
     }
 
@@ -104,7 +110,7 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         with(binding.attachmentsContainer) {
             removeAllViews()
-            addView(attachmentViewFactory.createAttachmentView(data, modifiedListeners, style, binding.root))
+            addView(attachmentViewFactory.createAttachmentView(data, modifiedListeners(listeners), style, binding.root))
         }
     }
 

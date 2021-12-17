@@ -8,6 +8,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
@@ -26,13 +27,15 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.flow.map
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
@@ -367,17 +370,28 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.ShowMessage -> {
-                domain.loadMessageById(
-                    cid,
-                    event.messageId,
-                    MESSAGES_LIMIT,
-                    MESSAGES_LIMIT
-                ).enqueue { result ->
-                    if (result.isSuccess) {
-                        _targetMessage.value = result.data()
-                    } else {
-                        val error = result.error()
-                        logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
+                val message = messageListData?.value
+                    ?.items
+                    ?.asSequence()
+                    ?.filterIsInstance<MessageListItem.MessageItem>()
+                    ?.find { messageItem -> messageItem.message.id == event.messageId }
+                    ?.message
+
+                if (message != null) {
+                    _targetMessage.value = message
+                } else {
+                    domain.loadMessageById(
+                        cid,
+                        event.messageId,
+                        MESSAGES_LIMIT,
+                        MESSAGES_LIMIT
+                    ).enqueue { result ->
+                        if (result.isSuccess) {
+                            _targetMessage.value = result.data()
+                        } else {
+                            val error = result.error()
+                            logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
+                        }
                     }
                 }
             }
@@ -426,7 +440,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     }
                 }
             }
-        }.exhaustive
+        }
     }
 
     /**
@@ -478,7 +492,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     }
                 )
             }
-        }.exhaustive
+        }
     }
 
     private fun onEndRegionReached() {
@@ -486,7 +500,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             when (this) {
                 is Mode.Normal -> {
                     messageListData?.loadingMoreChanged(true)
-                    domain.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
+                    client.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
                         messageListData?.loadingMoreChanged(false)
                     }
                 }
@@ -497,7 +511,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                             threadListData?.loadingMoreChanged(false)
                         }
                 }
-            }.exhaustive
+            }
         }
     }
 
@@ -510,11 +524,43 @@ public class MessageListViewModel @JvmOverloads constructor(
                 is Mode.Thread -> {
                     onNormalModeEntered()
                 }
-            }.exhaustive
+            }
         }
     }
 
+    /**
+     * Handles an event to move to thread mode.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
     private fun onThreadModeEntered(parentMessage: Message) {
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            loadThreadWithOfflinePlugin(parentMessage)
+        } else {
+            loadThreadWithChatDomain(parentMessage)
+        }
+    }
+
+    /**
+     * Move [currentMode] to [Mode.Thread] and loads thread data using ChatClient directly. The data is observed by
+     * using [ThreadState].
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
+        val state = client.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        currentMode = Mode.Thread(parentMessage)
+        setThreadMessages(state.messages.asLiveData())
+    }
+
+    /**
+     * Move [currentMode] to [Mode.Thread] and loads thread data using ChatDomain approach. The data is loaded by
+     * fetching the [ThreadController] first, based on the [parentMessage], after which we observe specific data from
+     * the thread.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private fun loadThreadWithChatDomain(parentMessage: Message) {
         val parentId: String = parentMessage.id
         domain.getThread(cid, parentId).enqueue { threadControllerResult ->
             if (threadControllerResult.isSuccess) {

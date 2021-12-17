@@ -152,7 +152,6 @@ internal open class BaseChatModule(
                 }
             }
             // timeouts
-
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
@@ -217,7 +216,7 @@ internal open class BaseChatModule(
         val apiClass = T::class.java
         return buildRetrofit(
             config.httpUrl,
-            config.baseTimeout,
+            BASE_TIMEOUT,
             config,
             moshiParser,
             apiClass.isAnonymousApi,
@@ -243,10 +242,15 @@ internal open class BaseChatModule(
         val apiClass = RetrofitCdnApi::class.java
         return buildRetrofit(
             config.cdnHttpUrl,
-            config.cdnTimeout,
+            CDN_TIMEOUT,
             config,
             moshiParser,
             apiClass.isAnonymousApi,
         ).create(apiClass)
+    }
+
+    private companion object {
+        private const val BASE_TIMEOUT = 30_000L
+        private var CDN_TIMEOUT = 30_000L
     }
 }

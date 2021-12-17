@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="stream_ui_channel_list_header_connected">ストリームチャット</string>
-    <string name="stream_ui_channel_list_header_disconnected">ネットワークを検索中</string>
-    <string name="stream_ui_channel_list_header_offline">切断されました</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_channel_list_header_connected">"ストリームチャット"</string>
+  <string name="stream_ui_channel_list_header_disconnected">"ネットワークを検索中"</string>
+  <string name="stream_ui_channel_list_header_offline">"切断されました"</string>
 </resources>

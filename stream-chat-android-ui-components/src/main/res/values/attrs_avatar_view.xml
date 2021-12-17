@@ -32,5 +32,10 @@
         <attr name="streamUiAvatarOnlineIndicatorColor" format="color|reference" />
         <!-- Border color of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorBorderColor" format="color|reference" />
+        <attr name="streamUiAvatarShape" format="enum">
+            <enum name="circle" value="0"/>
+            <enum name="square" value="1"/>
+        </attr>
+        <attr name="streamUiAvatarBorderRadius" format="dimension|reference"/>
     </declare-styleable>
 </resources>

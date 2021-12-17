@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 @OptIn(ExperimentalStreamChatApi::class)
-internal class MediaAttachmentAdapter(
+internal class MediaAttachmentAdapter constructor(
     private var attachments: List<AttachmentMetaData> = emptyList(),
     var listener: (attachmentMetaData: AttachmentMetaData) -> Unit = { },
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {

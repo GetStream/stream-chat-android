@@ -22,7 +22,7 @@ public interface QueryChannelListener {
     ): Result<Unit> = Result.success(Unit)
 
     /**
-     * Run side effect before the request is launched.
+     * Runs side effect before the request is launched.
      *
      * @param channelType Type of the requested channel.
      * @param channelId Id of the requested channel.

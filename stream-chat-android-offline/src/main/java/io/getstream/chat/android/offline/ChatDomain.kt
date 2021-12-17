@@ -64,7 +64,10 @@ public sealed interface ChatDomain {
     /**
      * StateFlow<Boolean> that indicates if we are currently online, connecting or offline.
      */
-    @Deprecated("Use connectionState instead")
+    @Deprecated(
+        message = "Use connectionState instead",
+        level = DeprecationLevel.ERROR
+    )
     public val online: StateFlow<Boolean>
 
     /**
@@ -208,6 +211,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for loading older messages in a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "loadOlderMessages is deprecated. Use extension function ChatClient::loadOlderMessages instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
@@ -440,6 +451,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "keystroke is deprecated. Use extension function ChatClient::keystroke instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().keystroke(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
     /**
@@ -452,6 +471,14 @@ public sealed interface ChatDomain {
      * false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "stopTyping is deprecated. Use extension function ChatClient::stopTyping instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().stopTyping(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**

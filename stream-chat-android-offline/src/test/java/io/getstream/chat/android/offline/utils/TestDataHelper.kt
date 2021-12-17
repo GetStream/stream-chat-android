@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -52,7 +53,8 @@ internal class TestDataHelper {
     }
 
     val apiKey = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }
-    val logLevel = checkNotNull(dotenv["STREAM_LOG_LEVEL"]) { "Be sure to specify the STREAM_LOG_LEVEL environment variable" }
+    val logLevel =
+        checkNotNull(dotenv["STREAM_LOG_LEVEL"]) { "Be sure to specify the STREAM_LOG_LEVEL environment variable" }
 
     val connection1 = "test-connection"
     val user1 = User("broad-lake-3")
@@ -61,7 +63,8 @@ internal class TestDataHelper {
     val mute1 = Mute(user1, userEvil, Date(), Date(), null)
     val me1 = User("broad-lake-3").apply { mutes = listOf(mute1) }
 
-    val user1Token = checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }
+    val user1Token =
+        checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }
 
     val user2 = User("test-user-2")
     val userMap = mutableMapOf("broad-lake-3" to user1, "test-user-2" to user2)
@@ -95,16 +98,17 @@ internal class TestDataHelper {
     val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
 
     val config1 = Config(typingEventsEnabled = true, readEventsEnabled = true)
-    val channel1 = Channel().apply {
-        type = "messaging"
-        id = "123-testing"
-        cid = "messaging:123-testing"
-        watcherCount = 100
-        createdBy = user1
-        watchers = listOf(watcher1)
-        members = listOf(member1)
+    val channel1 = Channel().copy(
+        type = "messaging",
+        id = "123-testing",
+        cid = "messaging:123-testing",
+        watcherCount = 100,
+        createdBy = user1,
+        watchers = listOf(watcher1),
+        members = listOf(member1),
+        memberCount = 100,
         config = config1
-    }
+    )
 
     val channel1WithNewMember = Channel().apply {
         type = "messaging"
@@ -198,6 +202,9 @@ internal class TestDataHelper {
         cid = channel1.cid; text = "im update now"; id = "message-1"; user =
             user1; createdAt = calendar(2020, 1, 1)
     }
+
+    val message1Deleted = message1.copy(deletedAt = Date())
+
     val reactionMessage1 = Message().apply {
         text = "im update now"
         id = "message-1"
@@ -230,55 +237,266 @@ internal class TestDataHelper {
     val connectedEvent2 = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user1, connection1)
 
     val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
-    val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message1, 1, 0, 0)
-    val newMessageEvent2 = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message2Older, 1, 0, 0)
-    val newMessageFromUser2 = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, messageFromUser2, 1, 0, 0)
+    val newMessageEvent = NewMessageEvent(
+        EventType.MESSAGE_NEW,
+        Date(),
+        user1,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        message1,
+        1,
+        0,
+        0
+    )
+    val newMessageEvent2 = NewMessageEvent(
+        EventType.MESSAGE_NEW,
+        Date(),
+        user1,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        message2Older,
+        1,
+        0,
+        0
+    )
+    val newMessageFromUser2 = NewMessageEvent(
+        EventType.MESSAGE_NEW,
+        Date(),
+        user2,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        messageFromUser2,
+        1,
+        0,
+        0
+    )
 
-    val newMessageEventNotification = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, Date(), channel1.cid, channel1.type, channel1.id, channel1, message1WithoutChannelAndCid, 0, 0)
+    val newMessageEventNotification = NotificationMessageNewEvent(
+        EventType.NOTIFICATION_MESSAGE_NEW,
+        Date(),
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        channel1,
+        message1WithoutChannelAndCid,
+        0,
+        0
+    )
 
-    val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, Date(), user1, channel1.cid, channel1.type, channel1.id, message1Updated)
-    val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, Date(), channel1.cid, 1, channel1.type, channel1.id, user1)
-    val reactionEvent = ReactionNewEvent(EventType.REACTION_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, reactionMessage1, reaction1)
-    val reactionEvent2 = ReactionNewEvent(EventType.REACTION_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, reactionMessage2, reaction2)
+    val messageUpdatedEvent = MessageUpdatedEvent(
+        EventType.MESSAGE_UPDATED,
+        Date(),
+        user1,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        message1Updated
+    )
 
-    val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel1Updated.cid, channel1Updated.type, channel1Updated.id, null, channel1Updated)
-    val channelUpdatedEvent2 = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel5.cid, channel5.type, channel5.id, null, channel5)
+    val messageDeletedEvent = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        user = user1,
+        cid = channel1.cid,
+        channelType = channel1.type,
+        channelId = channel1.id,
+        message = message1Deleted,
+        hardDelete = false
+    )
 
-    val user1TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user1, channel1.cid, channel1.type, channel1.id, parentMessageId)
-    val user3TypingStartedOld = TypingStartEvent(EventType.TYPING_START, getOldDate(), user3, channel1.cid, channel1.type, channel1.id, parentMessageId)
+    val messageHardDeletedEvent = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        user = user1,
+        cid = channel1.cid,
+        channelType = channel1.type,
+        channelId = channel1.id,
+        message = message1Deleted,
+        hardDelete = true
+    )
 
-    val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false)
-    val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1)
+    val userStartWatchingEvent = UserStartWatchingEvent(
+        EventType.USER_WATCHING_START,
+        Date(),
+        channel1.cid,
+        1,
+        channel1.type,
+        channel1.id,
+        user1
+    )
+    val reactionEvent = ReactionNewEvent(
+        EventType.REACTION_NEW,
+        Date(),
+        user1,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        reactionMessage1,
+        reaction1
+    )
+    val reactionEvent2 = ReactionNewEvent(
+        EventType.REACTION_NEW,
+        Date(),
+        user2,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        reactionMessage2,
+        reaction2
+    )
 
-    val user2TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user2, channel2.cid, channel2.type, channel2.id, parentMessageId)
-    val user1TypingStop = TypingStopEvent(EventType.TYPING_STOP, Date(), user1, channel2.cid, channel2.type, channel2.id, parentMessageId)
+    val channelUpdatedEvent = ChannelUpdatedEvent(
+        EventType.CHANNEL_UPDATED,
+        Date(),
+        channel1Updated.cid,
+        channel1Updated.type,
+        channel1Updated.id,
+        null,
+        channel1Updated
+    )
+    val channelUpdatedEvent2 =
+        ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel5.cid, channel5.type, channel5.id, null, channel5)
+
+    val user1TypingStarted = TypingStartEvent(
+        EventType.TYPING_START,
+        Date(),
+        user1,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        parentMessageId
+    )
+    val user3TypingStartedOld = TypingStartEvent(
+        EventType.TYPING_START,
+        getOldDate(),
+        user3,
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        parentMessageId
+    )
+
+    val channelHiddenEvent =
+        ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false)
+    val channelVisibleEvent =
+        ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1)
+
+    val user2TypingStarted = TypingStartEvent(
+        EventType.TYPING_START,
+        Date(),
+        user2,
+        channel2.cid,
+        channel2.type,
+        channel2.id,
+        parentMessageId
+    )
+    val user1TypingStop =
+        TypingStopEvent(EventType.TYPING_STOP, Date(), user1, channel2.cid, channel2.type, channel2.id, parentMessageId)
     val readEvent = MessageReadEvent(EventType.MESSAGE_READ, Date(), user1, channel1.cid, channel1.type, channel1.id)
 
     val notificationMutesUpdated = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, Date(), me1)
 
-    val user1Banned = ChannelUserBannedEvent(EventType.USER_BANNED, Date(), channel2.cid, channel2.type, channel2.id, user1, null)
-    val user1Unbanned = ChannelUserUnbannedEvent(EventType.USER_UNBANNED, Date(), user1, channel2.cid, channel2.type, channel2.id)
+    val user1Banned =
+        ChannelUserBannedEvent(EventType.USER_BANNED, Date(), channel2.cid, channel2.type, channel2.id, user1, null)
+    val user1Unbanned =
+        ChannelUserUnbannedEvent(EventType.USER_UNBANNED, Date(), user1, channel2.cid, channel2.type, channel2.id)
 
-    val user1ReadNotification = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, Date(), user1, channel2.cid, channel2.type, channel2.id, 0, 0)
+    val user1ReadNotification = NotificationMarkReadEvent(
+        EventType.NOTIFICATION_MARK_READ,
+        Date(),
+        user1,
+        channel2.cid,
+        channel2.type,
+        channel2.id,
+        0,
+        0
+    )
     val user1Read = MessageReadEvent(EventType.MESSAGE_READ, Date(), user1, channel2.cid, channel2.type, channel2.id)
-    val memberAddedToChannelEvent = MemberAddedEvent(EventType.MEMBER_ADDED, Date(), user1, channel1WithNewMember.cid, channel1WithNewMember.type, channel1WithNewMember.id, member2)
+    val memberAddedToChannelEvent = MemberAddedEvent(
+        EventType.MEMBER_ADDED,
+        Date(),
+        user1,
+        channel1WithNewMember.cid,
+        channel1WithNewMember.type,
+        channel1WithNewMember.id,
+        member2
+    )
 
     // member removed doesn't have a cid
-    val memberRemovedFromChannel = MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id)
+    val memberRemovedFromChannel =
+        MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id)
 
-    val notificationRemovedFromChannel = NotificationRemovedFromChannelEvent(EventType.NOTIFICATION_REMOVED_FROM_CHANNEL, Date(), user1, channel1.cid, channel1.type, channel1.id, member1)
+    val notificationRemovedFromChannel =
+        NotificationRemovedFromChannelEvent(
+            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
+            Date(),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            channel1,
+            member1
+        )
 
     // for whatever reason these events don't have event.cid
-    val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel1.cid, channel1.type, channel1.id, channel1, 0, 0)
-    val notificationAddedToChannel2Event = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel2.cid, channel2.type, channel2.id, channel2, 0, 0)
-    // no created by
-    val notificationAddedToChannel3Event = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel3.cid, channel3.type, channel3.id, channel3, 0, 0)
-    val user1UpdatedEvent = UserUpdatedEvent(EventType.USER_UPDATED, Date(), user1updated)
-    val syncHistoryResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
+    val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(
+        EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        Date(),
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        channel1,
+        0,
+        0
+    )
+    val notificationAddedToChannel2Event = NotificationAddedToChannelEvent(
+        EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        Date(),
+        channel2.cid,
+        channel2.type,
+        channel2.id,
+        channel2,
+        0,
+        0
+    )
 
-    val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, Date(), channel1.cid, channel1.type, channel1.id, user1, channel1)
-    val notificationChannelTruncated = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, Date(), channel1.cid, channel1.type, channel1.id, channel1)
-    val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null)
+    // no created by
+    val notificationAddedToChannel3Event = NotificationAddedToChannelEvent(
+        EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        Date(),
+        channel3.cid,
+        channel3.type,
+        channel3.id,
+        channel3,
+        0,
+        0
+    )
+    val user1UpdatedEvent = UserUpdatedEvent(EventType.USER_UPDATED, Date(), user1updated)
+    val syncHistoryResult: Result<List<ChatEvent>> =
+        Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
+
+    val channelTruncatedEvent = ChannelTruncatedEvent(
+        EventType.CHANNEL_TRUNCATED,
+        Date(),
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        user1,
+        channel1
+    )
+    val notificationChannelTruncated = NotificationChannelTruncatedEvent(
+        EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+        Date(),
+        channel1.cid,
+        channel1.type,
+        channel1.id,
+        channel1
+    )
+    val channelDeletedEvent =
+        ChannelDeletedEvent(EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null)
 
     val syncState = SyncStateEntity(user1.id, lastSyncedAt = Date.from(Instant.now()))
 }
@@ -289,7 +507,7 @@ internal fun calendar(
     date: Int,
     hourOfDay: Int = 0,
     minute: Int = 0,
-    seconds: Int = 0
+    seconds: Int = 0,
 ): Date {
     val calendar = Calendar.getInstance()
     calendar.set(year, month, date, hourOfDay, minute, seconds)

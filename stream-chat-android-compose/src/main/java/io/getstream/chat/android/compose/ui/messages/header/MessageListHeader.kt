@@ -27,9 +27,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.common.BackButton
-import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
-import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
+import io.getstream.chat.android.compose.ui.components.BackButton
+import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.TypingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -42,6 +43,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param channel Channel info to display.
  * @param currentUser The current user, required for different UI states.
  * @param modifier Modifier for styling.
+ * @param typingUsers The list of typing users.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
  * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
  * @param onBackPressed Handler that propagates the back button click event.
@@ -56,6 +58,7 @@ public fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
     onBackPressed: () -> Unit = {},
@@ -74,6 +77,7 @@ public fun MessageListHeader(
             modifier = Modifier.weight(1f),
             channel = channel,
             currentUser = currentUser,
+            typingUsers = typingUsers,
             messageMode = messageMode,
             onHeaderActionClick = onHeaderActionClick,
             connectionState = connectionState
@@ -81,7 +85,7 @@ public fun MessageListHeader(
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChannelAvatar(
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier.size(40.dp),
             channel = channel,
             currentUser = currentUser,
             contentDescription = channel.name,
@@ -115,6 +119,7 @@ public fun MessageListHeader(
  *
  * @param channel The channel used for the title information.
  * @param modifier Modifier for styling.
+ * @param typingUsers The list of typing users.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderActionClick Handler for when the user taps on the header content.
  * @param connectionState A flag that governs if we show the subtitle or the network loading view.
@@ -124,6 +129,7 @@ public fun DefaultMessageHeaderTitle(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     onHeaderActionClick: (Channel) -> Unit = {},
     connectionState: ConnectionState = ConnectionState.CONNECTED,
@@ -161,16 +167,48 @@ public fun DefaultMessageHeaderTitle(
             color = ChatTheme.colors.textHighEmphasis,
         )
 
+        val subtitleTextColor = ChatTheme.colors.textLowEmphasis
+        val subtitleTextStyle = ChatTheme.typography.footnote
+
         if (connectionState == ConnectionState.CONNECTED) {
-            Text(
-                text = subtitle,
-                color = ChatTheme.colors.textLowEmphasis,
-                style = ChatTheme.typography.footnote,
-            )
+            if (typingUsers.isEmpty()) {
+                Text(
+                    text = subtitle,
+                    color = subtitleTextColor,
+                    style = subtitleTextStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            } else {
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val typingUsersText = LocalContext.current.resources.getQuantityString(
+                        R.plurals.stream_compose_message_list_header_typing_users,
+                        typingUsers.size,
+                        typingUsers.first().name,
+                        typingUsers.size - 1
+                    )
+
+                    TypingIndicator()
+
+                    Text(
+                        text = typingUsersText,
+                        color = subtitleTextColor,
+                        style = subtitleTextStyle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
         } else {
-            NetworkLoadingView(
+            NetworkLoadingIndicator(
                 modifier = Modifier.wrapContentHeight(),
                 spinnerSize = 12.dp,
+                textColor = subtitleTextColor,
+                textStyle = subtitleTextStyle
             )
         }
     }

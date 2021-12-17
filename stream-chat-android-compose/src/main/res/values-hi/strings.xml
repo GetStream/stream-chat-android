@@ -1,42 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Channel List Header -->
-    <string name="stream_compose_channel_list_header_new_chat">नई चैट</string>
-
-    <!-- Search Input -->
-    <string name="stream_compose_search_input_cancel">रद्द करें</string>
-    <string name="stream_compose_search_input_hint">नाम से चैनल खोजें</string>
-
-    <!-- Channel List -->
-    <string name="stream_compose_channel_list_you">आप</string>
-    <string name="stream_compose_channel_list_empty_channels">कोई चैनल उपलब्ध नहीं है</string>
-    <string name="stream_compose_channel_list_empty_search_results">%1$s के लिए कोई परिणाम नहीं</string>
-
-    <!-- Channel Info Dialog -->
-    <string name="stream_compose_channel_info_view_info">जानकारी देखें</string>
-    <string name="stream_compose_channel_info_leave_group">ग्रुप छोड़ेें</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_title">ग्रुप छोड़ेें</string>
-    <string name="stream_compose_channel_info_leave_group_confirmation_message">क्या आप %1$s समूह को छोड़ना चाहते हैं?</string>
-    <string name="stream_compose_channel_info_mute_channel">म्यूट चैनल</string>
-    <string name="stream_compose_channel_info_unmute_channel">चैनल अनम्यूट करें</string>
-    <string name="stream_compose_channel_info_delete_conversation">बातचीत मिटायें</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">बातचीत मिटायें</string>
-    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">क्या आप %1$s . चैनल को हटाना चाहते हैं</string>
-    <string name="stream_compose_channel_info_dismiss">रद्द करें</string>
-
-    <!-- Common -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d सदस्य, %2d ऑनलाइन</item>
-        <item quantity="other">%1d सदस्य, %2d ऑनलाइन</item>
+        <item quantity="one">"%1d सदस्य, %2d ऑनलाइन"</item>
+        <item quantity="other">"%1d सदस्य, %2d ऑनलाइन"</item>
     </plurals>
-    <string name="stream_compose_ok">ठीक</string>
-    <string name="stream_compose_cancel">रद्द करें</string>
-    <string name="stream_compose_waiting_for_network">नेटवर्क की प्रतीक्षा में</string>
-    <string name="stream_compose_untitled_channel">बिना नाम वाला चैनल</string>
-    <string name="stream_compose_user_status_online">ऑनलाइन</string>
-    <string name="stream_compose_user_status_last_seen">पिछली बार देखा %1$s</string>
-    <string name="stream_compose_user_status_last_seen_just_now">अंतिम बार अभी देखा</string>
-
-    <!-- Message List -->
-    <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>
+    <string name="stream_compose_attachment_gallery_share">"फ़ोटो शेयर करें"</string>
+    <string name="stream_compose_attachments">"अटैचमेंट्स"</string>
+    <string name="stream_compose_cancel">"रद्द करें"</string>
+    <string name="stream_compose_capture_option">"मीडिया कैप्चर"</string>
+    <string name="stream_compose_channel_info_delete_conversation">"बातचीत मिटायें"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">"क्या आप %1$s . चैनल को हटाना चाहते हैं"</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">"बातचीत मिटायें"</string>
+    <string name="stream_compose_channel_info_dismiss">"रद्द करें"</string>
+    <string name="stream_compose_channel_info_leave_group">"ग्रुप छोड़ेें"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">"क्या आप %1$s समूह को छोड़ना चाहते हैं?"</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">"ग्रुप छोड़ेें"</string>
+    <string name="stream_compose_channel_info_mute_channel">"म्यूट चैनल"</string>
+    <string name="stream_compose_channel_info_unmute_channel">"चैनल अनम्यूट करें"</string>
+    <string name="stream_compose_channel_info_view_info">"जानकारी देखें"</string>
+    <string name="stream_compose_channel_list_empty_channels">"कोई चैनल उपलब्ध नहीं है"</string>
+    <string name="stream_compose_channel_list_empty_search_results">"%1$s के लिए कोई परिणाम नहीं"</string>
+    <string name="stream_compose_channel_list_header_new_chat">"नई चैट"</string>
+    <string name="stream_compose_channel_list_you">"आप"</string>
+    <string name="stream_compose_copy_message">"कॉपी करें"</string>
+    <string name="stream_compose_delete_message">"मैसेज मिटायें"</string>
+    <string name="stream_compose_delete_message_text">"क्या आप वाकई यह संदेश हटाना चाहते हैं?"</string>
+    <string name="stream_compose_delete_message_title">"मैसेज मिटायें"</string>
+    <string name="stream_compose_download">"डाउनलोड करें"</string>
+    <string name="stream_compose_edit_message">"मैसेज एडिट करें"</string>
+    <string name="stream_compose_files_option">"फ़ाइलें"</string>
+    <string name="stream_compose_giphy_label">"GIPHY"</string>
+    <string name="stream_compose_grant_permission">"अनुमति दें"</string>
+    <string name="stream_compose_image_options">"इमेज के विकल्प"</string>
+    <string name="stream_compose_image_order">"%2$d में से %1$d"</string>
+    <string name="stream_compose_image_preview_delete">"मिटायें"</string>
+    <string name="stream_compose_image_preview_photos">"फ़ोटोज"</string>
+    <string name="stream_compose_image_preview_reply">"जवाब दें"</string>
+    <string name="stream_compose_image_preview_save_image">"फ़ोटो सेव करें"</string>
+    <string name="stream_compose_image_preview_share">"शेयर करें"</string>
+    <string name="stream_compose_image_preview_show_in_chat">"चैट में देखें"</string>
+    <string name="stream_compose_images_option">"छवियाँ"</string>
+    <string name="stream_compose_instant_commands">"इंस्टेंट कमांड्स"</string>
+    <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
+    <string name="stream_compose_message_label">"मेसेज भेजें"</string>
+    <string name="stream_compose_message_list_empty_messages">"कोई मैसेज नहीं"</string>
+    <string name="stream_compose_mute_user">"यूजर को म्यूट करें"</string>
+    <string name="stream_compose_new_message">"नया मैसेज़"</string>
+    <string name="stream_compose_ok">"ठीक"</string>
+    <string name="stream_compose_only_visible_to_you">"केवल आपको दिखाई दे रहा है"</string>
+    <string name="stream_compose_photos">"फ़ोटोज"</string>
+    <string name="stream_compose_recent_files">"हाल ही की फाइलें"</string>
+    <string name="stream_compose_remaining_images_count">"+%1$d"</string>
+    <string name="stream_compose_reply">"जवाब दें"</string>
+    <string name="stream_compose_reply_to_message">"मैसेज का जवाब दें"</string>
+    <string name="stream_compose_scroll_to_bottom">"नीचे तक स्क्रॉल करें"</string>
+    <string name="stream_compose_search_input_cancel">"रद्द करें"</string>
+    <string name="stream_compose_search_input_hint">"नाम से चैनल खोजें"</string>
+    <string name="stream_compose_send_attachment">"अटैचमेंट भेजें"</string>
+    <string name="stream_compose_send_message">"भेजें"</string>
+    <string name="stream_compose_share">"शेयर"</string>
+    <string name="stream_compose_storage_permission_title">"स्टोरेज पढ़ने की अनुमति नहीं है"</string>
+    <string name="stream_compose_thread_footnote">"चर्चा पर जवाब"</string>
+    <string name="stream_compose_thread_reply">"चर्चा पर जवाब दें"</string>
+    <string name="stream_compose_thread_subtitle">"%1$s के साथ"</string>
+    <string name="stream_compose_thread_title">"चर्चा पर जवाब"</string>
+    <string name="stream_compose_untitled_channel">"बिना नाम वाला चैनल"</string>
+    <string name="stream_compose_upload_file_count">"अपलोडिंग %1$d / %2$d …"</string>
+    <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
+    <string name="stream_compose_user_status_last_seen">"पिछली बार देखा %1$s"</string>
+    <string name="stream_compose_user_status_last_seen_just_now">"अंतिम बार अभी देखा"</string>
+    <string name="stream_compose_user_status_online">"ऑनलाइन"</string>
+    <string name="stream_compose_waiting_for_network">"नेटवर्क की प्रतीक्षा में"</string>
+    <string name="stream_compose_member_count_online">%1$s, %2$d ऑनलाइन</string>
+    <plurals name="stream_compose_member_count">
+        <item quantity="one">%1d सदस्य</item>
+        <item quantity="other">%1d सदस्य</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_header_typing_users">
+        <item quantity="one">%s लिख रहे/रहीं हैं</item>
+        <item quantity="other">%s and %d अन्य लिख रहें हैं</item>
+    </plurals>
+    <string name="stream_compose_message_list_giphy_title">Giphy</string>
+    <string name="stream_compose_message_list_giphy_send">भेजें</string>
+    <string name="stream_compose_message_list_giphy_cancel">रद्द करें</string>
+    <string name="stream_compose_message_list_giphy_shuffle">बदलें</string>
+    <plurals name="stream_compose_message_list_thread_footnote">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
+    <plurals name="stream_compose_message_list_thread_separator">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
+    <string name="stream_compose_flag_message">मैसेज चिह्नित करें</string>
+    <string name="stream_compose_flag_message_title">मैसेज चिह्नित करें</string>
+    <string name="stream_compose_flag_message_text">क्या आप आगे की जांच के लिए इस संदेश की एक कॉपी मॉडरेटर को भेजना चाहते हैं?</string>
+    <string name="stream_compose_message_composer_error_message_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>
+    <string name="stream_compose_message_composer_error_file_size">फ़ाइल बहुत बड़ी है - अधिकतम %1$s एमबी.</string>
+    <string name="stream_compose_message_composer_error_attachment_count">अटैचमेंट्स संख्या (%1$d) पार हो गयी</string>
+    <string name="stream_compose_message_composer_instant_commands">इंस्टेंट कमांड</string>
+    <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+    <string name="stream_compose_message_composer_show_in_channel">सीधे मैसेज के रूप में भी भेजें</string>
 </resources>
