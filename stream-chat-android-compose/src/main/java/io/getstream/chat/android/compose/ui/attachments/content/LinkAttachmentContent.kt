@@ -106,7 +106,7 @@ public fun LinkAttachmentContent(
                         text = authorName,
                         color = ChatTheme.colors.primaryAccent,
                         maxLines = 1,
-                        style = ChatTheme.typography.body,
+                        style = ChatTheme.typography.bodyBold,
                         fontSize = 16.sp,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
@@ -116,7 +116,7 @@ public fun LinkAttachmentContent(
                                 color = ChatTheme.colors.linkBackground,
                                 shape = ChatTheme.shapes.attachmentSiteLabel
                             )
-                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                            .padding(vertical = 6.dp, horizontal = 12.dp)
                             .align(Alignment.BottomStart)
                     )
                 }
