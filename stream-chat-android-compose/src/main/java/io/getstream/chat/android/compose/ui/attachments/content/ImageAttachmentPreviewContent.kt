@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.compose.ui.common.CancelIcon
-import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
+import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 
 /**
  * UI for currently selected image attachments, within the [MessageInput].

@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Attachment.UploadState.Idle
 import io.getstream.chat.android.client.models.Attachment.UploadState.InProgress
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.common.LoadingView
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -114,7 +114,7 @@ private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        LoadingView(modifier = Modifier.size(12.dp))
+        LoadingIndicator(modifier = Modifier.size(12.dp))
 
         Spacer(modifier = Modifier.size(8.dp))
 

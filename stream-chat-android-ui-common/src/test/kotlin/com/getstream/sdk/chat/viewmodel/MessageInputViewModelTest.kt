@@ -7,7 +7,6 @@ import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
-import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomUser
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -75,16 +74,5 @@ internal class MessageInputViewModelTest {
         messageInputViewModel.commands.observeForever(mockObserver)
 
         verify(mockObserver).onChanged(eq(commands))
-    }
-
-    @Test
-    fun `Should stop typing if a message is edited`() {
-        val message = createMessage()
-        val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
-
-        messageInputViewModel.editMessage(message)
-
-        verify(chatDomain).stopTyping(eq(CID), anyOrNull())
-        verify(chatDomain).editMessage(eq(message))
     }
 }

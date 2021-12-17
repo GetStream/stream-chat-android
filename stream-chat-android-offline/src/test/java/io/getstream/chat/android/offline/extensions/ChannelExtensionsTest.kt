@@ -1,10 +1,13 @@
 package io.getstream.chat.android.offline.extensions
 
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.offline.randomChannel
@@ -23,8 +26,27 @@ internal class ChannelExtensionsTest {
     @Test
     fun `When apply pagination Should not throw any exception`() {
         val channelsFile = File(this.javaClass.classLoader!!.getResource("channels.json").toURI())
-        val adapter =
-            Moshi.Builder().add(KotlinJsonAdapterFactory()).add(DateAdapter()).build().adapter<List<Channel>>()
+        val moshi = Moshi.Builder()
+            .add(DateAdapter())
+            .add(
+                File::class.java,
+                object : JsonAdapter<File>() {
+                    // Dummy adapter because reflective serialization can't deal with platform types
+                    override fun fromJson(reader: JsonReader): File? = null
+                    override fun toJson(writer: JsonWriter, value: File?) = TODO("Not implemented")
+                }
+            )
+            .add(
+                Attachment.UploadState::class.java,
+                object : JsonAdapter<Attachment.UploadState>() {
+                    // Dummy adapter because reflective serialization can't deal with sealed classes
+                    override fun fromJson(reader: JsonReader): Attachment.UploadState? = null
+                    override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
+                }
+            )
+            .add(KotlinJsonAdapterFactory())
+            .build()
+        val adapter = moshi.adapter<List<Channel>>()
         val channels = requireNotNull(adapter.fromJson(JsonReader.of(channelsFile.source().buffer())))
         val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
         val queryPaginationRequest = QueryChannelsPaginationRequest(

@@ -17,6 +17,10 @@ import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 
+/**
+ * A component that shows the profile image of the [User] and [Channel] with the online indicator and border.
+ * If the profile image does not exist, the initials will be shown up instead.
+ */
 public class AvatarView : AppCompatImageView {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val onlineIndicatorOutlinePaint = Paint().apply { style = Paint.Style.FILL }
@@ -42,6 +46,12 @@ public class AvatarView : AppCompatImageView {
         init(context, attrs)
     }
 
+    /**
+     * Sets a [Channel] to show up the profile images of channel members.
+     * The online indicator will be hidden if you set [Channel].
+     *
+     * @param channel A channel that includes user list information.
+     */
     public fun setChannelData(channel: Channel) {
         val otherUsers = channel.getUsersExcludingCurrent()
         if (channel.isAnonymousChannel() && otherUsers.size == 1) {
@@ -56,6 +66,12 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
+    /**
+     * Sets a [User] to show up the profile image of a user.
+     * The online indicator will be shown or not by the user's connection state.
+     *
+     * @param user A user that includes user information.
+     */
     public fun setUserData(user: User) {
         load(
             data = Avatar.UserAvatar(user, avatarStyle),
@@ -151,6 +167,9 @@ public class AvatarView : AppCompatImageView {
         }
     }
 
+    /**
+     * Used to set the position of the indicator on the avatar.
+     */
     public enum class OnlineIndicatorPosition {
         TOP_LEFT,
         TOP_RIGHT,
@@ -158,6 +177,9 @@ public class AvatarView : AppCompatImageView {
         BOTTOM_RIGHT
     }
 
+    /**
+     * Used to set the shape of the avatar.
+     */
     public enum class AvatarShape(public val value: Int) {
         CIRCLE(0), SQUARE(1)
     }

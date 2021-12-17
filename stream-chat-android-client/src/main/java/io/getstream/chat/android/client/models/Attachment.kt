@@ -29,13 +29,10 @@ public data class Attachment(
      * Leaving this property empty means that there is no file to upload for
      * this attachment.
      */
-    @Transient
     var upload: File? = null,
 
-    @Transient
     var uploadState: UploadState? = null,
 
-    @Transient
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
 ) : CustomObject {

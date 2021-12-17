@@ -11,8 +11,10 @@ import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
-internal class MediaAttachmentAdapter(
+@OptIn(ExperimentalStreamChatApi::class)
+internal class MediaAttachmentAdapter constructor(
     private var attachments: List<AttachmentMetaData> = emptyList(),
     var listener: (attachmentMetaData: AttachmentMetaData) -> Unit = { },
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {

@@ -11,7 +11,6 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest.Companion.data
 import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.test.TestCall
-import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,20 +19,18 @@ import org.junit.runner.RunWith
 internal class SendMessageTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `Given a message was sent When subscribing message updates Should emit the sent message`() {
-        runBlocking {
-            val message = data.createMessage().apply { extraData = mutableMapOf("location" to "Amsterdam") }
-            val channelController = Fixture(chatDomain)
-                .givenMockedSendMessageResponse(channelClientMock, message)
-                .get()
+    fun `Given a message was sent When subscribing message updates Should emit the sent message`() = coroutineTest {
+        val message = data.createMessage().apply { extraData = mutableMapOf("location" to "Amsterdam") }
+        val channelController = Fixture(chatDomain)
+            .givenMockedSendMessageResponse(channelClientMock, message)
+            .get()
 
-            // check that current state is empty
-            channelController.messages.value.size `should be equal to` 0
+        // check that current state is empty
+        channelController.messages.value.size `should be equal to` 0
 
-            chatDomain.sendMessage(message).execute()
+        chatDomain.sendMessage(message).execute()
 
-            channelController.messages.value.last() `should be equal to` message
-        }
+        channelController.messages.value.last() `should be equal to` message
     }
 
     private class Fixture(private val chatDomain: ChatDomain) {

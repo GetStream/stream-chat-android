@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentItem
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
@@ -33,12 +33,12 @@ public class AttachmentsPickerViewModel(
     /**
      * List of images available, from the system.
      */
-    public var images: List<AttachmentItem> by mutableStateOf(emptyList())
+    public var images: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
 
     /**
      * List of files available, from the system.
      */
-    public var files: List<AttachmentItem> by mutableStateOf(emptyList())
+    public var files: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
 
     /**
      * Gives us info if there are any file items that are selected.
@@ -57,10 +57,6 @@ public class AttachmentsPickerViewModel(
      */
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
-
-    init {
-        loadData()
-    }
 
     /**
      * Loads all the items based on the current type.
@@ -88,11 +84,8 @@ public class AttachmentsPickerViewModel(
     public fun changeAttachmentState(showAttachments: Boolean) {
         isShowingAttachments = showAttachments
 
-        if (!showAttachments) {
+        if (!showAttachments)
             dismissAttachments()
-        } else {
-            loadData()
-        }
     }
 
     /**
@@ -102,10 +95,10 @@ public class AttachmentsPickerViewModel(
      */
     private fun loadAttachmentsData(attachmentsPickerMode: AttachmentsPickerMode) {
         if (attachmentsPickerMode == Images) {
-            images = storageHelper.getMedia().map { AttachmentItem(it, false) }
+            images = storageHelper.getMedia().map { AttachmentPickerItemState(it, false) }
             files = emptyList()
         } else if (attachmentsPickerMode == Files) {
-            files = storageHelper.getFiles().map { AttachmentItem(it, false) }
+            files = storageHelper.getFiles().map { AttachmentPickerItemState(it, false) }
             images = emptyList()
         }
     }
@@ -116,7 +109,7 @@ public class AttachmentsPickerViewModel(
      *
      * @param attachmentItem The selected item.
      */
-    public fun changeSelectedAttachments(attachmentItem: AttachmentItem) {
+    public fun changeSelectedAttachments(attachmentItem: AttachmentPickerItemState) {
         val dataSet = if (attachmentsPickerMode == Files) files else images
 
         val itemIndex = dataSet.indexOf(attachmentItem)

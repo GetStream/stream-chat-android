@@ -151,7 +151,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * @param factory Implementation of [MessageComposerAttachmentPreviewFactory] interface.
      */
     public fun addAttachmentViewFactory(vararg factory: MessageComposerAttachmentPreviewFactory) {
-        attachmentPreviewFactories = attachmentPreviewFactories + factory
+        attachmentPreviewFactories = factory.toList() + attachmentPreviewFactories
         attachmentsAdapter.apply {
             viewFactories = attachmentPreviewFactories
             notifyDataSetChanged()
