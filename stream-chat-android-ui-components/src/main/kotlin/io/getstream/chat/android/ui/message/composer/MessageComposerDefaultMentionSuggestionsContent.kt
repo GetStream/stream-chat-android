@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import coil.clear
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.ui.R
@@ -88,10 +89,6 @@ internal class MentionsAdapter(private inline val onMentionSelected: (User) -> U
 internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val onMentionSelected: (User) -> Unit) :
     SimpleListAdapter.ViewHolder<User>(binding.root) {
 
-    init {
-        setIsRecyclable(false)
-    }
-
     /**
      * Updates [itemView] elements for a given [User] object.
      *
@@ -107,5 +104,9 @@ internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val o
                 user.name.lowercase()
             )
         }
+    }
+
+    override fun unbind() {
+        binding.avatarView.clear()
     }
 }
