@@ -23,7 +23,10 @@ internal class FootnoteView : ConstraintLayout {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr)
+
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
@@ -32,7 +35,8 @@ internal class FootnoteView : ConstraintLayout {
     )
 
     private val footnote = StreamUiItemMessageFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
-    private val threadsFootnote = StreamUiMessageThreadsFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
+    private val threadsFootnote =
+        StreamUiMessageThreadsFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
     val footerTextLabel: TextView = footnote.messageFooterLabel
 
     init {
@@ -58,7 +62,12 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
-    fun showThreadRepliesFootnote(isMine: Boolean, replyCount: Int, threadParticipants: List<User>, style: MessageListItemStyle) {
+    fun showThreadRepliesFootnote(
+        isMine: Boolean,
+        replyCount: Int,
+        threadParticipants: List<User>,
+        style: MessageListItemStyle,
+    ) {
         footnote.root.isVisible = false
         with(threadsFootnote) {
             root.isVisible = true
@@ -133,8 +142,8 @@ internal class FootnoteView : ConstraintLayout {
 
     private fun ConstraintSet.constrainView(view: View) {
         constrainViewToParentBySide(view, ConstraintSet.TOP)
-        constrainViewToParentBySide(view, ConstraintSet.LEFT)
-        constrainViewToParentBySide(view, ConstraintSet.RIGHT)
+        constrainViewToParentBySide(view, ConstraintSet.START)
+        constrainViewToParentBySide(view, ConstraintSet.END)
         constrainWidth(view.id, ConstraintSet.WRAP_CONTENT)
         constrainHeight(view.id, ConstraintSet.WRAP_CONTENT)
     }
