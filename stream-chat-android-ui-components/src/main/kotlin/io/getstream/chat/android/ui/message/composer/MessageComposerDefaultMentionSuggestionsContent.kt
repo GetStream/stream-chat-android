@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 
@@ -60,49 +61,22 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
      * Propagates list of currently available mention suggestions to adapter.
      */
     override fun renderState(state: MessageInputState) {
-        adapter.setMentions(state.mentionSuggestions)
+        adapter.setItems(state.mentionSuggestions)
     }
 }
 
 /**
  * [RecyclerView.Adapter] responsible for displaying mention suggestions in the RecyclerView in [DefaultMentionSuggestionsContent].
  */
-internal class MentionsAdapter(inline val onMentionSelected: (User) -> Unit) : RecyclerView.Adapter<MentionsViewHolder>() {
-    private val mentions: MutableList<User> = mutableListOf()
-
-    /**
-     * Updates mentions data and re-renders list.
-     */
-    fun setMentions(mentions: List<User>) {
-        this.mentions.apply {
-            clear()
-            addAll(mentions)
-            notifyDataSetChanged()
-        }
-    }
+internal class MentionsAdapter(private inline val onMentionSelected: (User) -> Unit) :
+    SimpleListAdapter<User, MentionsViewHolder>() {
 
     /**
      * Inflates layout and instantiates [MentionsViewHolder].
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
         val binding = StreamUiItemMentionBinding.inflate(parent.streamThemeInflater, parent, false)
-        return MentionsViewHolder(binding)
-    }
-
-    /**
-     * Invokes [MentionsViewHolder] to refresh its [MentionsViewHolder.itemView].
-     */
-    override fun onBindViewHolder(holder: MentionsViewHolder, position: Int) {
-        val user = mentions[position]
-        holder.bind(user)
-        holder.itemView.setOnClickListener { onMentionSelected(user) }
-    }
-
-    /**
-     * @return Size of mentions list.
-     */
-    override fun getItemCount(): Int {
-        return mentions.size
+        return MentionsViewHolder(binding, onMentionSelected)
     }
 }
 
@@ -111,13 +85,10 @@ internal class MentionsAdapter(inline val onMentionSelected: (User) -> Unit) : R
  *
  * @param binding Handle to [StreamUiItemMentionBinding] instance.
  */
-internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding) : RecyclerView.ViewHolder(binding.root) {
+internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val onMentionSelected: (User) -> Unit) :
+    SimpleListAdapter.ViewHolder<User>(binding.root) {
 
-    /**
-     * Setups view holder properties.
-     */
     init {
-        // setting viewholder not recyclable, to enforce correct avatars refreshing.
         setIsRecyclable(false)
     }
 
@@ -126,12 +97,15 @@ internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding) : Rec
      *
      * @param user Single mention suggestion represented by [User] class.
      */
-    internal fun bind(user: User) = binding.apply {
-        avatarView.setUserData(user)
-        usernameTextView.text = user.name
-        mentionNameTextView.text = itemView.context.getString(
-            R.string.stream_ui_mention,
-            user.name.lowercase()
-        )
+    override fun bind(user: User) {
+        binding.apply {
+            root.setOnClickListener { onMentionSelected(user) }
+            avatarView.setUserData(user)
+            usernameTextView.text = user.name
+            mentionNameTextView.text = itemView.context.getString(
+                R.string.stream_ui_mention,
+                user.name.lowercase()
+            )
+        }
     }
 }
