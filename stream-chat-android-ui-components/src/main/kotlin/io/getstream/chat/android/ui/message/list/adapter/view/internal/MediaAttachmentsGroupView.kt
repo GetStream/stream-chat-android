@@ -19,14 +19,12 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
-import io.getstream.chat.android.ui.common.extensions.isReply
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
-import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceFactory
+import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -204,7 +202,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     fun setupBackground(data: MessageListItem.MessageItem) {
-        background = ShapeAppearanceFactory.shapeAppearanceModel(
+        background = ShapeAppearanceModelFactory.create(
             context,
             BackgroundDecorator.DEFAULT_CORNER_RADIUS,
             0F,

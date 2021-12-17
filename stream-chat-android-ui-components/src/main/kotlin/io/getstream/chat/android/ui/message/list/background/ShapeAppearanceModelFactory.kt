@@ -4,9 +4,9 @@ import android.content.Context
 import android.view.View
 import com.google.android.material.shape.ShapeAppearanceModel
 
-internal object ShapeAppearanceFactory {
+internal object ShapeAppearanceModelFactory {
 
-    fun shapeAppearanceModel(
+    fun create(
         context: Context,
         radius: Float,
         bottomEndCorner: Float,

@@ -105,6 +105,6 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         isMine: Boolean,
         isBottomPosition: Boolean,
     ): ShapeAppearanceModel {
-        return ShapeAppearanceFactory.shapeAppearanceModel(context, radius, bottomEndCorner, isMine, isBottomPosition)
+        return ShapeAppearanceModelFactory.create(context, radius, bottomEndCorner, isMine, isBottomPosition)
     }
 }

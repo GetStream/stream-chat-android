@@ -14,7 +14,6 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -26,6 +25,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
+import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.utils.ellipsizeText
 
 internal class MessageReplyView : FrameLayout {
@@ -102,11 +102,14 @@ internal class MessageReplyView : FrameLayout {
     }
 
     private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
-        val shapeAppearanceModel = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(REPLY_CORNER_RADIUS)
-            .setBottomLeftCornerSize(if (isMine.not()) 0f else REPLY_CORNER_RADIUS)
-            .setBottomRightCornerSize(if (isMine) 0f else REPLY_CORNER_RADIUS)
-            .build()
+        val shapeAppearanceModel = ShapeAppearanceModelFactory.create(
+            context,
+            REPLY_CORNER_RADIUS,
+            0f,
+            isMine,
+            true
+        )
+
         binding.replyContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             when {
                 isLink(message) -> {
