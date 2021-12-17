@@ -51,7 +51,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed a bug when hard deleted messages still remain in the UI. 
+- Fixed a bug when hard deleted messages still remain in the UI.
 
 ### ⬆️ Improved
 
@@ -83,6 +83,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 - Added header with back button and attachment's title to `AttachmentMediaActivity` which displays playable attachments.
   You can customize its appearance using `streamUiMediaActivityHeader`, `streamUiMediaActivityHeaderLeftActionButtonStyle` and `streamUiMediaActivityHeaderTitleStyle` attributes.
+- Added `hard` flag to `MessageListViewModel.Event.DeleteMessage`.
+  You can use `MessageListView::setMessageDeleteHandler` and pass `MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true)` to hard delete messages using `MessageListViewModel`.
+  Check [MessageListViewModelBinding](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding.kt#L37) for further details. [#2772](https://github.com/GetStream/stream-chat-android/pull/2772)
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
