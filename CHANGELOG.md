@@ -367,6 +367,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ❌ Removed
 - Removed some redundant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
+<!-- end of unreleased -->
 
 # December 9th, 2021 - 4.24.0
 ## stream-chat-android-offline
