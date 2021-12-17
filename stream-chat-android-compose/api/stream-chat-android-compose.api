@@ -1251,7 +1251,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens$Compa
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamShapes {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamShapes$Companion;
-	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
+	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
 	public final fun component1 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component2 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component3 ()Landroidx/compose/ui/graphics/Shape;
@@ -1260,10 +1260,12 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamShapes {
 	public final fun component6 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component7 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component8 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun copy (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)Lio/getstream/chat/android/compose/ui/theme/StreamShapes;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamShapes;
+	public final fun component9 ()Landroidx/compose/ui/graphics/Shape;
+	public final fun copy (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)Lio/getstream/chat/android/compose/ui/theme/StreamShapes;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamShapes;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachment ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getAttachmentSiteLabel ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getAvatar ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getBottomSheet ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getImageThumbnail ()Landroidx/compose/ui/graphics/Shape;
