@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.getUpdatedAtOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
@@ -151,7 +151,7 @@ internal class FootnoteDecorator(
             else -> textView.apply {
                 isVisible = true
                 text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
-                setLeftDrawable(style.iconOnlyVisibleToYou)
+                setStartDrawable(style.iconOnlyVisibleToYou)
                 compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
             }
         }

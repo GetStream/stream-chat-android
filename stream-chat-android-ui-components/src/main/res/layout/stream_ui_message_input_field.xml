@@ -83,7 +83,7 @@
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
         android:background="@drawable/stream_ui_shape_command_background"
         android:gravity="center_vertical"
-        android:paddingStart="@dimen/stream_ui_spacing_tiny"
+        android:paddingStart="@dimen/stream_ui_spacing_small"
         android:paddingEnd="@dimen/stream_ui_spacing_small"
         android:textAllCaps="true"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"

@@ -22,7 +22,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithSize
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawableWithSize
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -174,7 +174,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun setCommandInputBadgeIcon(drawable: Drawable) {
-        binding.commandBadge.setLeftDrawableWithSize(drawable, R.dimen.stream_ui_message_input_command_icon_size)
+        binding.commandBadge.setStartDrawableWithSize(drawable, R.dimen.stream_ui_message_input_command_icon_size)
     }
 
     fun setCommandInputBadgeBackgroundDrawable(drawable: Drawable) {
