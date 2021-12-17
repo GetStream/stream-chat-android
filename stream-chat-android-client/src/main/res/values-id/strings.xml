@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_chat_error_notification_group_summary_content_text">"Anda mendapat pesan baru"</string>
+  <string name="stream_chat_error_notification_group_summary_title">"Pesan obrolan"</string>
+  <string name="stream_chat_load_notification_data_title">"Memuat data notifikasi"</string>
+  <string name="stream_chat_notification_channel_name">"Pesan baru"</string>
+  <string name="stream_chat_notification_content">"Anda mendapat pesan baru"</string>
+  <string name="stream_chat_notification_empty_username">"Pengguna anonim"</string>
+  <string name="stream_chat_notification_group_summary_content_text">"Anda mendapat pesan baru"</string>
+  <string name="stream_chat_notification_read">"Tandai telah dibaca"</string>
+  <string name="stream_chat_notification_reply">"Balas"</string>
+  <string name="stream_chat_notification_title">"Pesan Obrolan"</string>
+  <string name="stream_chat_notification_type_hint">"Ketik pesan"</string>
+</resources>

@@ -19,6 +19,11 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 
+/**
+ * A component that shows the title of the channels list, the current connection status,
+ * the avatar of the current user, and provides an action button which can be used to create a new conversation.
+ * It is designed to be displayed at the top of the channels screen of your app.
+ */
 public class ChannelListHeaderView : ConstraintLayout {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
@@ -101,7 +106,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             setImageDrawable(drawable)
             backgroundTintList =
                 typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
-                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
+                    ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
         }
     }
 
@@ -145,19 +150,35 @@ public class ChannelListHeaderView : ConstraintLayout {
             ).build()
     }
 
+    /**
+     * Sets [User] to bind user information with the avatar in the header.
+     *
+     * @param user A user that will represent the avatar in the header.
+     */
     public fun setUser(user: User) {
         binding.userAvatar.setUserData(user)
     }
 
+    /**
+     * Sets the title that is shown on the header when the client's network state is online.
+     *
+     * @param title A title that indicates the online network state.
+     */
     public fun setOnlineTitle(title: String) {
         binding.onlineTextView.text = title
     }
 
+    /**
+     * Shows the title that indicates the network state is online.
+     */
     public fun showOnlineTitle() {
         binding.offlineTitleContainer.isVisible = false
         binding.onlineTextView.isVisible = true
     }
 
+    /**
+     * Shows the title that indicates the network state is offline.
+     */
     public fun showOfflineTitle() {
         binding.offlineTitleContainer.isVisible = true
         binding.offlineProgressBar.isVisible = false
@@ -166,6 +187,9 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.offlineTextView.text = resources.getString(R.string.stream_ui_channel_list_header_offline)
     }
 
+    /**
+     * Shows the title that indicates the network state is connecting.
+     */
     public fun showConnectingTitle() {
         binding.offlineTitleContainer.isVisible = true
         binding.offlineProgressBar.isVisible = true
@@ -174,10 +198,17 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.offlineTextView.text = resources.getString(R.string.stream_ui_channel_list_header_disconnected)
     }
 
+    /**
+     * Sets a click listener for the left button in the header represented by the avatar of
+     * the current user.
+     */
     public fun setOnUserAvatarClickListener(listener: UserAvatarClickListener) {
         binding.userAvatar.setOnClickListener { listener.onUserAvatarClick() }
     }
 
+    /**
+     * Sets a click listener for the right button in the header.
+     */
     public fun setOnActionButtonClickListener(listener: ActionButtonClickListener) {
         binding.actionButton.setOnClickListener { listener.onClick() }
     }
@@ -190,10 +221,17 @@ public class ChannelListHeaderView : ConstraintLayout {
         }
     }
 
+    /**
+     * Click listener for the left button in the header represented by the avatar of
+     * the current user.
+     */
     public fun interface UserAvatarClickListener {
         public fun onUserAvatarClick()
     }
 
+    /**
+     * Click listener for the right button in the header.
+     */
     public fun interface ActionButtonClickListener {
         public fun onClick()
     }

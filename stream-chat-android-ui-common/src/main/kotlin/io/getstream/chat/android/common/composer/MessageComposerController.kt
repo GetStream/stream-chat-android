@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
@@ -15,6 +16,8 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.stopTyping
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -61,6 +64,11 @@ public class MessageComposerController(
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
+     * If the message will be shown in the channel after it is sent.
+     */
+    public val alsoSendToChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    /**
      * Represents the remaining time until the user is allowed to send the next message.
      */
     public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -81,9 +89,19 @@ public class MessageComposerController(
     public val mentionSuggestions: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the list of commands that can be executed for the channel.
+     */
+    public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
+
+    /**
      * Represents the list of users in the channel.
      */
     private var users: List<User> = emptyList()
+
+    /**
+     * Represents the list of available commands in the channel.
+     */
+    private var commands: List<Command> = emptyList()
 
     /**
      * Represents the maximum allowed message length in the message input.
@@ -106,14 +124,13 @@ public class MessageComposerController(
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
      * reply or a regular message.
      */
-    private var messageMode: MessageMode = MessageMode.Normal
+    public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
 
     /**
      * Set of currently active message actions. These are used to display different UI in the composer,
      * as well as help us decorate the message with information, such as the quoted message id.
      */
-    public val messageActions: MutableStateFlow<Set<MessageAction>> =
-        MutableStateFlow(mutableSetOf())
+    public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
 
     /**
      * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
@@ -137,13 +154,19 @@ public class MessageComposerController(
      * Gets the parent message id if we are in thread mode, or null otherwise.
      */
     private val parentMessageId: String?
-        get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
+        get() = (messageMode.value as? MessageMode.MessageThread)?.parentMessage?.id
 
     /**
-     * Gets the current text input in the message composer..
+     * Gets the current text input in the message composer.
      */
     private val messageText: String
         get() = input.value
+
+    /**
+     * Gives us information if the composer is in the "thread" mode.
+     */
+    private val isInThread: Boolean
+        get() = messageMode.value is MessageMode.MessageThread
 
     /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
@@ -157,6 +180,7 @@ public class MessageComposerController(
 
                 channelController.channelConfig.onEach {
                     maxMessageLength = it.maxMessageLength
+                    commands = it.commands
                 }.launchIn(scope)
 
                 channelController.members.onEach { members ->
@@ -180,6 +204,7 @@ public class MessageComposerController(
 
         handleTypingEvent(isTyping = value.isNotEmpty())
         handleMentionSuggestions()
+        handleCommandSuggestions()
         handleValidationErrors()
     }
 
@@ -191,7 +216,16 @@ public class MessageComposerController(
      * @param messageMode The current message mode.
      */
     public fun setMessageMode(messageMode: MessageMode) {
-        this.messageMode = messageMode
+        this.messageMode.value = messageMode
+    }
+
+    /**
+     * Called when the "Also send as a direct message" checkbox is checked or unchecked.
+     *
+     * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
+     */
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
+        this.alsoSendToChannel.value = alsoSendToChannel
     }
 
     /**
@@ -275,6 +309,7 @@ public class MessageComposerController(
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
+        alsoSendToChannel.value = false
     }
 
     /**
@@ -289,6 +324,7 @@ public class MessageComposerController(
         val sendMessageCall = if (isInEditMode) {
             chatDomain.editMessage(message)
         } else {
+            message.showInChannel = isInThread && alsoSendToChannel.value
             chatDomain.sendMessage(message)
         }
 
@@ -358,9 +394,9 @@ public class MessageComposerController(
      */
     private fun handleTypingEvent(isTyping: Boolean) {
         if (isTyping) {
-            chatDomain.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(channelId, parentMessageId)
         } else {
-            chatDomain.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(channelId, parentMessageId)
         }.enqueue()
     }
 
@@ -421,6 +457,24 @@ public class MessageComposerController(
     }
 
     /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected.
+     */
+    public fun selectCommand(command: Command) {
+        setMessageInput("/${command.name} ")
+    }
+
+    /**
+     * Toggles the visibility of the command suggestion list popup.
+     */
+    public fun toggleCommandsVisibility() {
+        val isHidden = commandSuggestions.value.isEmpty()
+
+        commandSuggestions.value = if (isHidden) commands else emptyList()
+    }
+
+    /**
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
@@ -428,6 +482,20 @@ public class MessageComposerController(
 
         mentionSuggestions.value = if (containsMention) {
             users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
+        } else {
+            emptyList()
+        }
+    }
+
+    /**
+     * Shows the command suggestion list popup if necessary.
+     */
+    private fun handleCommandSuggestions() {
+        val containsCommand = COMMAND_PATTERN.matcher(messageText).find()
+
+        commandSuggestions.value = if (containsCommand) {
+            val commandPattern = messageText.removePrefix("/")
+            commands.filter { it.name.startsWith(commandPattern) }
         } else {
             emptyList()
         }
@@ -458,5 +526,10 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete mention.
          */
         private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
+
+        /**
+         * The regex pattern used to check if the message ends with incomplete command.
+         */
+        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
     }
 }

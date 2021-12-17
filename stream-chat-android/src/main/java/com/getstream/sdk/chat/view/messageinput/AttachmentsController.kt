@@ -12,11 +12,13 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalStreamChatApi::class)
 internal class AttachmentsController(
     private val rootController: MessageInputController,
     private val permissionChecker: PermissionChecker,

@@ -95,7 +95,14 @@ internal class WhenUploadAttachmentsTests {
     fun `Given uploaded and not uploaded attachments And failure when upload Should insert message with 2 attachments`() =
         runBlockingTest {
             val attachmentUploader = mock<AttachmentUploader> {
-                on(it.uploadAttachment(any(), any(), any(), any())) doReturn Result.error(IllegalArgumentException("Error:-)"))
+                on(
+                    it.uploadAttachment(
+                        any(),
+                        any(),
+                        any(),
+                        any()
+                    )
+                ) doReturn Result.error(IllegalArgumentException("Error:-)"))
             }
             val repository = mock<RepositoryFacade>()
             val message = randomMessage(
@@ -187,7 +194,13 @@ internal class WhenUploadAttachmentsTests {
         }
 
         fun get(): ChannelController {
-            val mutableState = ChannelMutableState("channelType", "channelId", scope, MutableStateFlow(randomUser()))
+            val mutableState = ChannelMutableState(
+                "channelType",
+                "channelId",
+                scope,
+                MutableStateFlow(randomUser()),
+                MutableStateFlow(emptyMap())
+            )
             return ChannelController(
                 mutableState = mutableState,
                 channelLogic = ChannelLogic(mutableState, chatDomainImpl),

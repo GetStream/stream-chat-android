@@ -24,11 +24,11 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
         get() = binding.inputEditText.text.trim().toString()
 
     constructor(context: Context) : super(context) {
-        init(null)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(attrs)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -36,10 +36,10 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
         attrs,
         defStyleAttr
     ) {
-        init(attrs)
+        init()
     }
 
-    private fun init(attrs: AttributeSet?) {
+    private fun init() {
         binding.inputEditText.doAfterTextChanged {
             inputDebouncer.submit {
                 membersInputListener.onMembersInputChanged(query)

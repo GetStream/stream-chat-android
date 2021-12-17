@@ -1,9 +1,15 @@
 package io.getstream.chat.android.offline.integration
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
+import io.getstream.chat.android.offline.randomMember
+import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.randomUserStartWatchingEvent
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -16,6 +22,7 @@ import org.junit.runner.RunWith
 /**
  * Verify that all events correctly update state in room.
  */
+@OptIn(ExperimentalStreamChatApi::class)
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
@@ -43,14 +50,12 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `channel controller edit message event`(): Unit = runBlocking {
+    fun `channel controller edit message event`(): Unit = coroutineTest {
         // setup the queryControllerImpl
         queryControllerImpl.query(10)
 
         // update the last message
         chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-        // channelControllerImpl.handleEvent(data.messageUpdatedEvent)
-        // queryControllerImpl.handleEvent(data.messageUpdatedEvent)
 
         // verify that the last message is now updated
         val channelMap = queryControllerImpl.channels.value.associateBy { it.cid }
@@ -101,7 +106,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Test
     fun `verify that a channel is correctly deleted when channel deleted event is received`(): Unit =
-        runBlocking {
+        coroutineTest {
             queryControllerImpl.chatEventHandler = ChatEventHandler { _, _ -> EventHandlingResult.Skip }
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
@@ -216,4 +221,64 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         channel = chatDomainImpl.repos.selectChannelWithoutMessages(cid)!!
         channel.members.size shouldBeEqualTo 1
     }
+
+    @Test
+    fun `Given channel stored in DB and in controller When handle UserStartWatchingEvent Should update user value for channel in controller`() =
+        coroutineTest {
+            val userMember = randomUser(id = "user99")
+            val updateUserMember = userMember.copy(extraData = mutableMapOf()).apply { name = "updatedName" }
+            val message = randomMessage(user = userMember)
+            val channel = data.channel1.copy(
+                createdBy = userMember,
+                messages = listOf(message),
+                members = listOf(randomMember(chatDomainImpl.user.value!!), randomMember(userMember))
+            )
+            chatDomainImpl.repos.insertChannel(channel)
+            queryControllerImpl.query()
+
+            queryControllerImpl.channels.value.first() shouldBeEqualTo channel
+
+            chatDomainImpl.eventHandler.handleEvent(
+                randomUserStartWatchingEvent(
+                    user = updateUserMember,
+                    cid = channel.cid
+                )
+            )
+
+            val updatedChannel = queryControllerImpl.channels.value.first()
+            updatedChannel.createdBy.name shouldBeEqualTo "user99"
+            updatedChannel.messages.first().user.name shouldBeEqualTo "user99"
+            updatedChannel.members.any { it.user.name == "user99" } shouldBe true
+        }
+
+    @Test
+    fun `Given a message was sent to a channel When the message is soft deleted Should contain deleted date`(): Unit =
+        coroutineTest {
+            chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
+            chatDomainImpl.eventHandler.handleEvent(data.messageDeletedEvent)
+
+            val messageId = data.newMessageEvent.message.id
+            val message = chatDomainImpl.repos.selectMessage(messageId)
+            message.shouldNotBeNull()
+            message.deletedAt.shouldNotBeNull()
+
+            val channelController = chatDomainImpl.channel(data.channel1)
+            val messages = channelController.messages.value
+            messages.size shouldBeEqualTo 1
+        }
+
+    @Test
+    fun `Given a message was sent to a channel When the message is hard deleted Should be completely deleted`(): Unit =
+        coroutineTest {
+            chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
+            chatDomainImpl.eventHandler.handleEvent(data.messageHardDeletedEvent)
+
+            val messageId = data.newMessageEvent.message.id
+            val message = chatDomainImpl.repos.selectMessage(messageId)
+            message.shouldBeNull()
+
+            val channelController = chatDomainImpl.channel(data.channel1)
+            val messages = channelController.messages.value
+            messages.shouldBeEmpty()
+        }
 }

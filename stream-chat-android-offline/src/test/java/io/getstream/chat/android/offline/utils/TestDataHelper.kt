@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -201,6 +202,9 @@ internal class TestDataHelper {
         cid = channel1.cid; text = "im update now"; id = "message-1"; user =
             user1; createdAt = calendar(2020, 1, 1)
     }
+
+    val message1Deleted = message1.copy(deletedAt = Date())
+
     val reactionMessage1 = Message().apply {
         text = "im update now"
         id = "message-1"
@@ -291,6 +295,29 @@ internal class TestDataHelper {
         channel1.id,
         message1Updated
     )
+
+    val messageDeletedEvent = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        user = user1,
+        cid = channel1.cid,
+        channelType = channel1.type,
+        channelId = channel1.id,
+        message = message1Deleted,
+        hardDelete = false
+    )
+
+    val messageHardDeletedEvent = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        user = user1,
+        cid = channel1.cid,
+        channelType = channel1.type,
+        channelId = channel1.id,
+        message = message1Deleted,
+        hardDelete = true
+    )
+
     val userStartWatchingEvent = UserStartWatchingEvent(
         EventType.USER_WATCHING_START,
         Date(),
@@ -410,6 +437,7 @@ internal class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
+            channel1,
             member1
         )
 

@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
     val res = context.resources
@@ -56,7 +56,7 @@ internal fun randomMessage(): Message {
     }
 }
 
-@InternalStreamChatApi
+@ExperimentalStreamChatApi
 internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> {
     return List(count) {
         AttachmentMetaData(
@@ -67,7 +67,7 @@ internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> {
     }
 }
 
-@InternalStreamChatApi
+@ExperimentalStreamChatApi
 internal fun randomFileAttachments(count: Int): List<AttachmentMetaData> {
     return List(count) {
         AttachmentMetaData(

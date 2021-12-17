@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.client.notifications.handler
 
 import android.app.Notification
@@ -23,17 +21,18 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 /**
  * Class responsible for handling chat notifications.
  */
-@Deprecated(
-    message = "This class will be used internally on future versions and won't be accesible, you need to implement your own [NotificationHandler]",
-    level = DeprecationLevel.ERROR,
-)
-public open class ChatNotificationHandler @JvmOverloads constructor(
-    protected val context: Context,
+internal class ChatNotificationHandler(
+    private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
         { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! },
 ) : NotificationHandler {
 
-    private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
+    private val sharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences(
+            SHARED_PREFERENCES_NAME,
+            Context.MODE_PRIVATE
+        )
+    }
     private val notificationManager: NotificationManager by lazy {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -43,7 +42,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public open fun createNotificationChannel(): NotificationChannel {
+    fun createNotificationChannel(): NotificationChannel {
         return NotificationChannel(
             getNotificationChannelId(),
             getNotificationChannelName(),
@@ -68,35 +67,11 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    public open fun getNotificationChannelId(): String = context.getString(R.string.stream_chat_notification_channel_id)
-    public open fun getNotificationChannelName(): String = context.getString(R.string.stream_chat_notification_channel_name)
+    private fun getNotificationChannelId(): String = context.getString(R.string.stream_chat_notification_channel_id)
+    private fun getNotificationChannelName(): String =
+        context.getString(R.string.stream_chat_notification_channel_name)
 
-    @Deprecated(
-        message = "It is not used anymore",
-        level = DeprecationLevel.ERROR
-    )
-    public open fun getErrorCaseNotificationTitle(): String = ""
-
-    @Deprecated(
-        message = "It is not used anymore",
-        level = DeprecationLevel.ERROR
-    )
-    public open fun getErrorCaseNotificationContent(): String = ""
-
-    @Deprecated(
-        message = "Notification error is not used anymore",
-        level = DeprecationLevel.ERROR
-    )
-    public open fun buildErrorCaseNotification(): Notification {
-        return getNotificationBuilder(
-            contentTitle = getErrorCaseNotificationTitle(),
-            contentText = getErrorCaseNotificationContent(),
-            groupKey = getErrorNotificationGroupKey(),
-            intent = getErrorCaseIntent(),
-        ).build()
-    }
-
-    public override fun showNotification(channel: Channel, message: Message) {
+    override fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
@@ -104,7 +79,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         showNotification(notificationSummaryId, buildNotificationGroupSummary(channel, message).build())
     }
 
-    public open fun buildNotification(
+    private fun buildNotification(
         notificationId: Int,
         channel: Channel,
         message: Message,
@@ -121,7 +96,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    public open fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
+    private fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
         return getNotificationBuilder(
             contentTitle = channel.getNotificationContentTitle(),
             contentText = context.getString(R.string.stream_chat_notification_group_summary_content_text),
@@ -132,38 +107,19 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    @Deprecated(
-        message = "Notification error is not used anymore",
-        level = DeprecationLevel.ERROR
-    )
-    public open fun buildErrorNotificationGroupSummary(): Notification {
-        return getNotificationBuilder(
-            contentTitle = "",
-            contentText = "",
-            groupKey = getErrorNotificationGroupKey(),
-            getErrorCaseIntent(),
-        ).apply {
-            setGroupSummary(true)
-        }.build()
-    }
-
-    public open fun getNotificationGroupKey(channelType: String, channelId: String): String {
+    private fun getNotificationGroupKey(channelType: String, channelId: String): String {
         return "$channelType:$channelId"
     }
 
-    public open fun getNotificationGroupSummaryId(channelType: String, channelId: String): Int {
+    private fun getNotificationGroupSummaryId(channelType: String, channelId: String): Int {
         return getNotificationGroupKey(channelType = channelType, channelId = channelId).hashCode()
     }
-
-    public open fun getErrorNotificationGroupKey(): String = ERROR_NOTIFICATION_GROUP_KEY
-
-    public open fun getErrorNotificationGroupSummaryId(): Int = getErrorNotificationGroupKey().hashCode()
 
     private fun getRequestCode(): Int {
         return System.currentTimeMillis().toInt()
     }
 
-    public open fun getNewMessageIntent(
+    private fun getNewMessageIntent(
         messageId: String,
         channelType: String,
         channelId: String,
@@ -184,10 +140,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
      */
     override fun dismissAllNotifications() {
         getNotificationSummaryIds().forEach(::dismissSummaryNotification)
-    }
-
-    public open fun getErrorCaseIntent(): Intent {
-        return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
 
     private fun showNotification(notificationId: Int, notification: Notification) {
@@ -268,16 +220,21 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    private fun getNotificationSummaryIds(): Set<Int> = sharedPreferences.getStringSet(KEY_NOTIFICATION_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
-    private fun getAssociatedNotificationSummaryId(notificationId: Int): Int = sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
+    private fun getNotificationSummaryIds(): Set<Int> =
+        sharedPreferences.getStringSet(KEY_NOTIFICATION_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
+
+    private fun getAssociatedNotificationSummaryId(notificationId: Int): Int =
+        sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
+
     private fun getAssociatedNotificationIds(notificationSummaryId: Int): Set<Int> =
-        sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty().map(String::toInt).toSet()
+        sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty()
+            .map(String::toInt).toSet()
 
     private fun getNotificationIdKey(notificationId: Int) = KEY_PREFIX_NOTIFICATION_ID + notificationId
-    private fun getNotificationSummaryIdKey(notificationSummaryId: Int) = KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
+    private fun getNotificationSummaryIdKey(notificationSummaryId: Int) =
+        KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
 
     private companion object {
-        private const val ERROR_NOTIFICATION_GROUP_KEY = "error_notification_group_key"
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_PREFIX_NOTIFICATION_ID = "nId-"
         private const val KEY_PREFIX_NOTIFICATION_SUMMARY_ID = "nSId-"

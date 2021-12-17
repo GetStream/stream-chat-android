@@ -37,7 +37,7 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
 
     fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsLogic(stateRegistry.queryChannels(filter, sort).toMutableState(), chatDomain)
+            QueryChannelsLogic(stateRegistry.queryChannels(filter, sort).toMutableState(), chatDomain, chatDomain.client)
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -32,13 +33,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -59,9 +60,6 @@ class MessagesActivity : AppCompatActivity() {
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-    @ExperimentalMaterialApi
-    @ExperimentalPermissionsApi
-    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
@@ -142,12 +140,22 @@ class MessagesActivity : AppCompatActivity() {
             }
 
             if (selectedMessage != null) {
-                SelectedMessageOverlay(
-                    messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
+                SelectedMessageMenu(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 20.dp)
+                        .wrapContentSize(),
+                    shape = ChatTheme.shapes.attachment,
+                    messageOptions = defaultMessageOptionsState(
+                        selectedMessage = selectedMessage,
+                        currentUser = user,
+                        isInThread = listViewModel.isInThread
+                    ),
                     message = selectedMessage,
                     onMessageAction = { action ->
                         composerViewModel.performMessageAction(action)
                         listViewModel.performMessageAction(action)
+                        listViewModel.removeOverlay()
                     },
                     onDismiss = { listViewModel.removeOverlay() }
                 )
@@ -170,7 +178,7 @@ class MessagesActivity : AppCompatActivity() {
                         .fillMaxWidth()
                         .weight(7f)
                         .padding(start = 8.dp),
-                    messageInputState = inputState,
+                    messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     label = {
