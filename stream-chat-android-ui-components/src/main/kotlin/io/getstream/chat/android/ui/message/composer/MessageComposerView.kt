@@ -197,7 +197,13 @@ public class MessageComposerView : ConstraintLayout {
             )
             val offset = mentionSuggestionsContent.measuredHeight + this@MessageComposerView.height
             if (isShowing) {
-                update(this@MessageComposerView, 0, -offset, -1, -1)
+                update(
+                    this@MessageComposerView,
+                    0,
+                    -offset,
+                    -1,
+                    -1,
+                )
             } else {
                 showAsDropDown(this@MessageComposerView, 0, -offset)
             }

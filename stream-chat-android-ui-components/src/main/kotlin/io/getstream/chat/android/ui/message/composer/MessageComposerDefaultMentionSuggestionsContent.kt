@@ -60,6 +60,8 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
 
     /**
      * Propagates list of currently available mention suggestions to adapter.
+     *
+     * @param state Current [MessageInputState] instance. Provides available mention suggestions data.
      */
     override fun renderState(state: MessageInputState) {
         adapter.setItems(state.mentionSuggestions)
@@ -74,6 +76,11 @@ internal class MentionsAdapter(private inline val onMentionSelected: (User) -> U
 
     /**
      * Inflates layout and instantiates [MentionsViewHolder].
+     *
+     * @param parent Container item layout provided by [RecyclerView.Adapter].
+     * @param viewType View type provided by [RecyclerView.Adapter]. In case of this [MentionsAdapter] it's not used.
+     *
+     * @return [MentionsViewHolder] instance.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
         val binding = StreamUiItemMentionBinding.inflate(parent.streamThemeInflater, parent, false)
@@ -85,6 +92,7 @@ internal class MentionsAdapter(private inline val onMentionSelected: (User) -> U
  * [RecyclerView.ViewHolder] used for rendering mention. Used by [MentionsAdapter].
  *
  * @param binding Handle to [StreamUiItemMentionBinding] instance.
+ * @param onMentionSelected Callback invoked when mention suggestion item is clicked.
  */
 internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val onMentionSelected: (User) -> Unit) :
     SimpleListAdapter.ViewHolder<User>(binding.root) {
