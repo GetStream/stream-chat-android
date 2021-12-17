@@ -20,6 +20,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
   - Moshi 1.13.0
   - OkHttp 4.9.3
   - and other, see [#2771](https://github.com/GetStream/stream-chat-android/pull/2771) for more details
+- Markdown support is moved into a standalone module `stream-chat-android-markdown-transformer`.
 
 ### ✅ Added
 
@@ -86,6 +87,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `hard` flag to `MessageListViewModel.Event.DeleteMessage`.
   You can use `MessageListView::setMessageDeleteHandler` and pass `MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true)` to hard delete messages using `MessageListViewModel`.
   Check [MessageListViewModelBinding](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding.kt#L37) for further details. [#2772](https://github.com/GetStream/stream-chat-android/pull/2772)
+- Added `ChatMessageTextTransformer` to transform messages and set them to TextView.
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
