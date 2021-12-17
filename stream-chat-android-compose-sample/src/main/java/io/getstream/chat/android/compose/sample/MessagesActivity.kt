@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -33,12 +34,12 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -139,13 +140,22 @@ class MessagesActivity : AppCompatActivity() {
             }
 
             if (selectedMessage != null) {
-                SelectedMessageOverlay(
-                    messageOptions = defaultMessageOptionsState(selectedMessage, user, listViewModel.isInThread),
+                SelectedMessageMenu(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 20.dp)
+                        .wrapContentSize(),
+                    shape = ChatTheme.shapes.attachment,
+                    messageOptions = defaultMessageOptionsState(
+                        selectedMessage = selectedMessage,
+                        currentUser = user,
+                        isInThread = listViewModel.isInThread
+                    ),
                     message = selectedMessage,
-                    currentUser = user,
                     onMessageAction = { action ->
                         composerViewModel.performMessageAction(action)
                         listViewModel.performMessageAction(action)
+                        listViewModel.removeOverlay()
                     },
                     onDismiss = { listViewModel.removeOverlay() }
                 )

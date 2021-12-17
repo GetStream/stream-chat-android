@@ -15,7 +15,7 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Default message footer, which contains either [ThreadParticipants] or the default footer, which
+ * Default message footer, which contains either [MessageThreadFooter] or the default footer, which
  * holds the sender name and the timestamp.
  *
  * @param messageItem Message to show.
@@ -28,19 +28,23 @@ public fun MessageFooter(
 ) {
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
+    val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
     if (hasThread && !messageItem.isInThread) {
         val replyCount = message.replyCount
-        ThreadParticipants(
+        MessageThreadFooter(
             modifier = modifier,
             participants = message.threadParticipants,
+            messageAlignment = alignment,
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_footnote,
                 replyCount,
                 replyCount
             )
         )
-    } else if (!hasThread && (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None)) {
+    }
+
+    if (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None) {
         Row(
             modifier = modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically

@@ -563,8 +563,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandler;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;
@@ -662,8 +662,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)V
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandler;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
@@ -1979,7 +1979,7 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/BaseMess
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff {
-	public fun <init> (ZZZZZZZZ)V
+	public fun <init> (ZZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
@@ -1988,8 +1988,9 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public final fun component6 ()Z
 	public final fun component7 ()Z
 	public final fun component8 ()Z
-	public final fun copy (ZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public final fun component9 ()Z
+	public final fun copy (ZZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Z
 	public final fun getDeleted ()Z
@@ -1999,6 +2000,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public final fun getReplies ()Z
 	public final fun getSyncStatus ()Z
 	public final fun getText ()Z
+	public final fun getUser ()Z
 	public fun hashCode ()I
 	public final fun plus (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
 	public fun toString ()Ljava/lang/String;

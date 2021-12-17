@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
@@ -19,7 +20,7 @@ internal class WatchChannelTest : BaseConnectedIntegrationTest() {
         val message1 = data.createMessage()
         val result0 = chatDomain.watchChannel(data.channel1.cid, 0).execute()
         val channelController = result0.data()
-        val result = chatDomain.loadOlderMessages(data.channel1.cid, 10).execute()
+        val result = client.loadOlderMessages(data.channel1.cid, 10).execute()
         assertSuccess(result)
         var messages = channelController.messages.value
         messages.size shouldBeGreaterThan 0

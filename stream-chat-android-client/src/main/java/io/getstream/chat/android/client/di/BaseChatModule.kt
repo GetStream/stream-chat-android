@@ -152,7 +152,6 @@ internal open class BaseChatModule(
                 }
             }
             // timeouts
-
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
