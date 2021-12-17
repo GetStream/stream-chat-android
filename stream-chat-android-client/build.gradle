@@ -72,7 +72,7 @@ dependencies {
     implementation Dependencies.retrofit
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
-    ksp Dependencies.moshiKsp
+    ksp Dependencies.moshiCodegen
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
     debugImplementation Dependencies.flipper

@@ -78,7 +78,7 @@ dependencies {
 
     // Serialization
     implementation Dependencies.moshi
-    ksp Dependencies.moshiKsp
+    ksp Dependencies.moshiCodegen
 
     // Tests
     testImplementation project(":stream-chat-android-test")
