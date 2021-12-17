@@ -97,6 +97,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed the orientation and UI of ThreadParticipants [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
 
 ### ✅ Added
+- Added site name labels to link attachments for websites using the Open Graph protocol [#2785](https://github.com/GetStream/stream-chat-android/pull/2785)
 - Added preview screens for file attachments [#2764](https://github.com/GetStream/stream-chat-android/pull/2764)
 - Added a way to disable date separator and system message items in the message list [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 
