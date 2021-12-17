@@ -66,7 +66,11 @@ internal class EventBatchUpdate private constructor(
     }
 
     fun addUsers(newUsers: List<User>) {
-        userMap += newUsers.associateBy(User::id)
+        newUsers.forEach { user ->
+            if (userMap.containsKey(user.id).not()) {
+                userMap[user.id] = user
+            }
+        }
     }
 
     fun addUser(newUser: User) {

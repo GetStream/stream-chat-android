@@ -383,7 +383,7 @@ public class ChannelController internal constructor(
     }
 
     private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState._messages.value[messageId]
+        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
         if (message != null) {
             val newAttachments = message.attachments.map { attachment ->
                 if (attachment.uploadId == uploadId) {
@@ -393,7 +393,8 @@ public class ChannelController internal constructor(
                 }
             }
             val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages = mutableState._messages.value + (updatedMessage.id to updatedMessage)
+            val newMessages =
+                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
             mutableState._messages.value = newMessages
         }
     }
@@ -594,6 +595,7 @@ public class ChannelController internal constructor(
     // This one needs to be public for flows such as running a message action
 
     internal fun upsertMessage(message: Message) {
+        android.util.Log.w("USER_UPDATES", "upsertMessage")
         channelLogic.upsertMessages(listOf(message))
     }
 
@@ -606,8 +608,8 @@ public class ChannelController internal constructor(
     }
 
     public fun getMessage(messageId: String): Message? {
-        val copy = mutableState._messages.value
-        var message = copy[messageId]
+        val copy = mutableState.messageList.value
+        var message = copy.firstOrNull { it.id == messageId }
 
         if (mutableState.hideMessagesBefore != null) {
             if (message != null && message.wasCreatedBeforeOrAt(mutableState.hideMessagesBefore)) {
@@ -674,7 +676,7 @@ public class ChannelController internal constructor(
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
-                    replyTo = mutableState._messages.value[replyMessageId]
+                    replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
                 }.let(::upsertEventMessage)
 
                 channelLogic.setHidden(false)
@@ -825,9 +827,9 @@ public class ChannelController internal constructor(
         // updating messages is harder
         // user updates don't happen frequently, it's probably ok for this update to be sluggish
         // if it turns out to be slow we can do a simple reverse index from user -> message
-        val messages = mutableState._messages.value
+        val messages = mutableState.messageList.value
         val changedMessages = mutableListOf<Message>()
-        for (message in messages.values) {
+        for (message in messages) {
             var changed = false
             if (message.user.id == userId) {
                 message.user = user

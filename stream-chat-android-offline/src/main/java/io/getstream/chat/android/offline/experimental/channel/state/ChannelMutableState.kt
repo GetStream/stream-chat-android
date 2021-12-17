@@ -31,7 +31,7 @@ internal class ChannelMutableState(
     override val channelId: String,
     private val scope: CoroutineScope,
     private val userFlow: StateFlow<User?>,
-    latestUsers: StateFlow<Map<String, User>>,
+    private val latestUsers: StateFlow<Map<String, User>>,
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
@@ -164,11 +164,11 @@ internal class ChannelMutableState(
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
-        val channelData = _channelData.value ?: ChannelData(channelType, channelId)
+        val channelData = channelData.value ?: ChannelData(channelType, channelId)
 
         val messages = sortedMessages.value
-        val members = _members.value.values.toList()
-        val watchers = _watchers.value.values.toList()
+        val members = _members.value.values.updateUsers(latestUsers.value).toList()
+        val watchers = _watchers.value.values.toList().updateUsers(latestUsers.value)
         val reads = _reads.value.values.toList()
         val watcherCount = _watcherCount.value
 

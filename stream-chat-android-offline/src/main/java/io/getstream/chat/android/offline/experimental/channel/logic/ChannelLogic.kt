@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import java.util.Date
@@ -235,7 +236,7 @@ internal class ChannelLogic(
     }
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState._messages.value
+        val currentMessages = mutableState.messageList.value.associateBy(Message::id)
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
