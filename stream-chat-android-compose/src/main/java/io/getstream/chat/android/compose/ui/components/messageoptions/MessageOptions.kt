@@ -91,8 +91,11 @@ public fun defaultMessageOptionsState(
     currentUser: User?,
     isInThread: Boolean,
 ): List<MessageOptionItemState> {
+    val selectedMessageUserId = selectedMessage.user.id
+
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
-    val isOwnMessage = selectedMessage.user.id == currentUser?.id
+    val isOwnMessage = selectedMessageUserId == currentUser?.id
+    val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: true
 
     return listOfNotNull(
         MessageOptionItemState(
@@ -156,8 +159,8 @@ public fun defaultMessageOptionsState(
         } else null,
         if (!isOwnMessage) {
             MessageOptionItemState(
-                title = R.string.stream_compose_mute_user,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_mute),
+                title = if (isUserMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
+                iconPainter = painterResource(id = if (isUserMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute),
                 action = MuteUser(selectedMessage),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
