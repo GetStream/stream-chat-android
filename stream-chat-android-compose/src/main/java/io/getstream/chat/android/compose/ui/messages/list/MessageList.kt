@@ -1,22 +1,16 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContainer
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 
 /**
@@ -36,9 +30,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param itemContent Composable that represents each message item in a list. By default, we provide
- * the [DefaultMessageContainer] and connect the the long click handler with it.
- * Users can override this to provide fully custom UI and behavior.
+ * @param itemContent Composable that represents each item in a list. By default, we provide
+ * the [DefaultMessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
  */
 @Composable
 public fun MessageList(
@@ -57,13 +50,13 @@ public fun MessageList(
     },
     loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageItem(
-            messageListItem = it,
-            onLongItemClick = onLongItemClick,
+    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
+        DefaultMessageContainer(
+            messageListItem = messageListItem,
+            onImagePreviewResult = onImagePreviewResult,
             onThreadClick = onThreadClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick
         )
     },
 ) {
@@ -112,7 +105,7 @@ public fun MessageList(
     loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageItem(
+        DefaultMessageContainer(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
@@ -134,25 +127,5 @@ public fun MessageList(
             itemContent = itemContent
         )
         else -> emptyContent()
-    }
-}
-
-/**
- * The default empty placeholder that is displayed when there are no messages in the channel.
- *
- * @param modifier Modifier for styling.
- */
-@Composable
-internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
-    Box(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = stringResource(R.string.stream_compose_message_list_empty_messages),
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center
-        )
     }
 }
