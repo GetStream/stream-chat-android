@@ -53,7 +53,10 @@ public object ChatUI {
     }
 
     @Deprecated(message = "ChatUI.markdown is deprecated. Use ChatUI.messageTextTransformer",
-        level = DeprecationLevel.WARNING)
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            expression = "ChatUI.messageTextTransformer")
+    )
     public var markdown: ChatMarkdown
         get() = markdownOverride ?: defaultMarkdown
         set(value) {
