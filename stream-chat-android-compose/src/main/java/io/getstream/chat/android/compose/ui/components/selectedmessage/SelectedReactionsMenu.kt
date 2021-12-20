@@ -1,17 +1,10 @@
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -23,11 +16,9 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
-import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -39,14 +30,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param currentUser The currently logged in user.
  * @param onMessageAction Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
- * @param shape Changes the shape of [SelectedMessageMenu].
+ * @param shape Changes the shape of [SelectedReactionsMenu].
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent Leading vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
- * By default [ReactionOptions].
- * @param bodyContent Trailing vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
- * By Default [MessageOptions].
+ * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
+ * @param bodyContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
  */
 @Composable
 public fun SelectedReactionsMenu(
@@ -77,6 +66,10 @@ public fun SelectedReactionsMenu(
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
         UserReactions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight)
+                .padding(vertical = 16.dp),
             items = buildUserReactionItems(
                 message = message,
                 currentUser = currentUser
@@ -84,36 +77,14 @@ public fun SelectedReactionsMenu(
         )
     },
 ) {
-    Box(
-        modifier = Modifier
-            .background(overlayColor)
-            .fillMaxSize()
-            .clickable(
-                onClick = onDismiss,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
-    ) {
-        Card(
-            modifier = modifier
-                .clickable(
-                    onClick = {},
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
-            shape = shape,
-            backgroundColor = ChatTheme.colors.barsBackground
-        ) {
-            Column(modifier = Modifier.padding(top = 12.dp)) {
-                headerContent()
-                bodyContent()
-            }
-        }
-    }
-
-    SystemBackPressedHandler(isEnabled = true) {
-        onDismiss()
-    }
+    SelectedMessageDialog(
+        modifier = modifier,
+        shape = shape,
+        overlayColor = overlayColor,
+        onDismiss = onDismiss,
+        headerContent = headerContent,
+        bodyContent = bodyContent
+    )
 }
 
 /**

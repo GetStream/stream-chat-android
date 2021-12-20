@@ -1,17 +1,15 @@
 package io.getstream.chat.android.compose.ui.components.userreactions
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,14 +28,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param items The list of user reactions to display.
  * @param modifier Modifier for styling.
- * @param maxColumns The maximum number of columns in the user reactions grid.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun UserReactions(
     items: List<UserReactionItemState>,
     modifier: Modifier = Modifier,
-    maxColumns: Int = 4,
     itemContent: @Composable (UserReactionItemState) -> Unit = {
         UserReactionItem(
             item = it,
@@ -53,35 +49,35 @@ public fun UserReactions(
         reactionCount
     )
 
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight),
-        shape = RoundedCornerShape(16.dp),
-        color = ChatTheme.colors.barsBackground,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.background(ChatTheme.colors.barsBackground)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(vertical = 16.dp)
-        ) {
-            Text(
-                text = reactionCountText,
-                style = ChatTheme.typography.title3Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis
-            )
+        Text(
+            text = reactionCountText,
+            style = ChatTheme.typography.title3Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = ChatTheme.colors.textHighEmphasis
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            if (reactionCount > 0) {
-                val columns = reactionCount.coerceAtMost(maxColumns)
+        if (reactionCount > 0) {
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
                 val reactionItemWidth = 80.dp
+                val maxColumns = maxOf((maxWidth / reactionItemWidth).toInt(), 1)
+                val columns = reactionCount.coerceAtMost(maxColumns)
                 val reactionGridWidth = reactionItemWidth * columns
 
                 LazyVerticalGrid(
-                    modifier = Modifier.width(reactionGridWidth),
-                    cells = GridCells.Fixed(reactionCount.coerceAtMost(columns))
+                    modifier = Modifier
+                        .width(reactionGridWidth)
+                        .align(Alignment.Center),
+                    cells = GridCells.Fixed(columns)
                 ) {
                     items(reactionCount) { index ->
                         itemContent(items[index])
