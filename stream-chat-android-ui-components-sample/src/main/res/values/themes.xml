@@ -5,6 +5,7 @@
         <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
         <item name="streamUiTheme">@style/StreamTheme</item>
         <item name="android:textViewStyle">@style/RtlTextView</item>
+        <item name="android:editTextStyle">@style/RtlEditView</item>
     </style>
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
@@ -12,6 +13,10 @@
     </style>
 
     <style name="RtlTextView" parent="android:Widget.TextView">
+        <item name="android:textDirection">locale</item>
+    </style>
+
+    <style name="RtlEditView" parent="android:Widget.EditText">
         <item name="android:textDirection">locale</item>
     </style>
 

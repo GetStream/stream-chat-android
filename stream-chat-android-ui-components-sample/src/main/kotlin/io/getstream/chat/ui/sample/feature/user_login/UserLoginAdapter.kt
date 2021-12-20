@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.ItemOptionsBinding
 import io.getstream.chat.ui.sample.databinding.ItemUserBinding
@@ -21,7 +22,7 @@ class UserLoginAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
+        val inflater = LayoutInflater.from(parent.context.appThemeContext())
         return if (viewType == VIEW_TYPE_OPTIONS) {
             OptionsViewHolder(ItemOptionsBinding.inflate(inflater, parent, false))
         } else {

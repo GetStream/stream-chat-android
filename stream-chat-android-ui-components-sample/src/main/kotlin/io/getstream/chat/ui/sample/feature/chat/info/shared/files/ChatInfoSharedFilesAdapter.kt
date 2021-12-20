@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedFileDateDividerBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedFileItemBinding
 import io.getstream.chat.ui.sample.feature.chat.info.shared.SharedAttachment
@@ -30,11 +31,11 @@ class ChatInfoSharedFilesAdapter : ListAdapter<SharedAttachment, BaseViewHolder<
         return when (viewType) {
             TYPE_FILE ->
                 ChatInfoSharedFileItemBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
                     .let { ChatInfoSharedFileViewHolder(it, attachmentClickListener) }
             TYPE_FILE_DATE_DIVIDER ->
                 ChatInfoSharedFileDateDividerBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
                     .let { ChatInfoSharedFileDateDividerViewHolder(it, dateFormat) }
 
             else -> throw IllegalArgumentException("Unhandled view type ($viewType)")

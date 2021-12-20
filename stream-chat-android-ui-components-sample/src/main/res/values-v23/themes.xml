@@ -7,10 +7,20 @@
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="streamUiTheme">@style/StreamTheme</item>
+        <item name="android:textViewStyle">@style/RtlTextView</item>
+        <item name="android:editTextStyle">@style/RtlEditView</item>
     </style>
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+    </style>
+
+    <style name="RtlTextView" parent="android:Widget.TextView">
+        <item name="android:textDirection">locale</item>
+    </style>
+
+    <style name="RtlEditView" parent="android:Widget.EditText">
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >

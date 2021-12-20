@@ -10,6 +10,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -28,6 +29,10 @@ fun Activity.showToast(text: String) {
 
 fun Fragment.showToast(@StringRes resId: Int) {
     showToast(getString(resId))
+}
+
+fun Context.appThemeContext(): Context {
+    return ContextThemeWrapper(this, R.style.AppTheme)
 }
 
 fun Fragment.showToast(text: String) {
