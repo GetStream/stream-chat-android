@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.channel
+package io.getstream.chat.android.compose.ui.channels
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,9 +32,9 @@ import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
 import io.getstream.chat.android.compose.state.channel.list.MuteChannel
 import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
-import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
-import io.getstream.chat.android.compose.ui.channel.list.ChannelList
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
+import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme

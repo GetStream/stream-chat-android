@@ -40,7 +40,7 @@ public fun UserAvatar(
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
-        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+        DefaultOnlineIndicator(onlineIndicatorAlignment)
     },
     onClick: (() -> Unit)? = null,
 ) {
@@ -75,6 +75,14 @@ public fun UserAvatar(
         // Apply modifier to the avatar itself
         avatarContent(modifier = modifier)
     }
+}
+
+/**
+ * The default online indicator for channel members.
+ */
+@Composable
+internal fun BoxScope.DefaultOnlineIndicator(onlineIndicatorAlignment: OnlineIndicatorAlignment) {
+    OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
 }
 
 @Preview

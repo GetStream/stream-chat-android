@@ -1,14 +1,10 @@
-package io.getstream.chat.android.compose.ui.channel.list
+package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,11 +16,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
-import io.getstream.chat.android.compose.ui.components.LoadingFooter
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
@@ -83,16 +77,8 @@ public fun ChannelList(
             onChannelLongClick = onChannelLongClick
         )
     },
-    divider: @Composable () -> Unit = {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders)
-        )
-    },
+    divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
-
     ChannelList(
         modifier = modifier,
         channelsState = viewModel.channelsState,
@@ -142,7 +128,7 @@ public fun ChannelList(
     onLastItemReached: () -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
+    loadingContent: @Composable () -> Unit = { DefaultChannelListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyContent(modifier) },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
         DefaultChannelSearchEmptyContent(
@@ -158,14 +144,7 @@ public fun ChannelList(
             onChannelLongClick = onChannelLongClick
         )
     },
-    divider: @Composable () -> Unit = {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders)
-        )
-    },
+    divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
     val (isLoading, _, _, channels, searchQuery) = channelsState
 
@@ -184,52 +163,13 @@ public fun ChannelList(
 }
 
 /**
- * Builds a list of [DefaultChannelItem] elements, based on [channelsState] and action handlers that it receives.
+ * Default loading indicator.
  *
- * @param channelsState Exposes if we're loading more items, reaches the end of the list and the
- * current list of channels to show.
- * @param onLastItemReached Handler for when the user reaches the end of the list.
  * @param modifier Modifier for styling.
- * @param itemContent Customizable UI component, that represents each item in the list.
- * @param divider Customizable UI component, that represents item dividers.
  */
 @Composable
-public fun Channels(
-    channelsState: ChannelsState,
-    onLastItemReached: () -> Unit,
-    modifier: Modifier = Modifier,
-    itemContent: @Composable (ChannelItemState) -> Unit,
-    divider: @Composable () -> Unit,
-) {
-    val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
-    val listState = rememberLazyListState()
-
-    LazyColumn(
-        modifier = modifier,
-        state = listState,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        items(
-            items = channelItems,
-            key = { it.channel.cid }
-        ) { item ->
-            itemContent(item)
-
-            divider()
-        }
-
-        if (isLoadingMore) {
-            item {
-                LoadingFooter(modifier = Modifier.fillMaxWidth())
-            }
-        }
-    }
-
-    if (!endOfChannels && channelItems.isNotEmpty()) {
-        LoadMoreHandler(listState) {
-            onLastItemReached()
-        }
-    }
+internal fun DefaultChannelListLoadingIndicator(modifier: Modifier) {
+    LoadingIndicator(modifier)
 }
 
 /**
@@ -261,5 +201,18 @@ internal fun DefaultChannelSearchEmptyContent(
         modifier = modifier,
         painter = painterResource(id = R.drawable.stream_compose_empty_search_results),
         text = stringResource(R.string.stream_compose_channel_list_empty_search_results, searchQuery),
+    )
+}
+
+/**
+ * Represents the default item divider in channel items.
+ */
+@Composable
+public fun DefaultChannelItemDivider() {
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(0.5.dp)
+            .background(color = ChatTheme.colors.borders)
     )
 }

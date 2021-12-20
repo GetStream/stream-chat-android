@@ -14,8 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
-private const val UNREAD_COUNT_MANY = "99+"
-
 /**
  * Shows the unread count badge for each channel item, to showcase how many messages the user didn't read.
  *
@@ -46,3 +44,8 @@ public fun UnreadCountIndicator(
         )
     }
 }
+
+/**
+ * The unread count that's shown for many messages.
+ */
+private const val UNREAD_COUNT_MANY = "99+"

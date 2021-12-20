@@ -55,28 +55,16 @@ public fun SelectedMessageMenu(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        ReactionOptions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+        DefaultSelectedMessageReactionOptions(
+            message = message,
             reactionTypes = reactionTypes,
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.type),
-                        message = message
-                    )
-                )
-            },
-            ownReactions = message.ownReactions
+            onMessageAction = onMessageAction
         )
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
-        MessageOptions(
-            options = messageOptions,
-            onMessageOptionSelected = {
-                onMessageAction(it.action)
-            }
+        DefaultSelectedMessageOptions(
+            messageOptions = messageOptions,
+            onMessageAction = onMessageAction
         )
     },
 ) {
@@ -116,6 +104,55 @@ public fun SelectedMessageMenu(
     SystemBackPressedHandler(isEnabled = true) {
         onDismiss()
     }
+}
+
+/**
+ * Default reaction options for the selected message.
+ *
+ * @param message The selected message.
+ * @param reactionTypes Available reactions.
+ * @param onMessageAction Handler when the user selects a reaction.
+ */
+@Composable
+internal fun DefaultSelectedMessageReactionOptions(
+    message: Message,
+    reactionTypes: Map<String, Int>,
+    onMessageAction: (MessageAction) -> Unit,
+) {
+    ReactionOptions(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        reactionTypes = reactionTypes,
+        onReactionOptionSelected = {
+            onMessageAction(
+                React(
+                    reaction = Reaction(messageId = message.id, type = it.type),
+                    message = message
+                )
+            )
+        },
+        ownReactions = message.ownReactions
+    )
+}
+
+/**
+ * Default selected message options.
+ *
+ * @param messageOptions The available options.
+ * @param onMessageAction Handler when the user selects an option.
+ */
+@Composable
+internal fun DefaultSelectedMessageOptions(
+    messageOptions: List<MessageOptionItemState>,
+    onMessageAction: (MessageAction) -> Unit,
+) {
+    MessageOptions(
+        options = messageOptions,
+        onMessageOptionSelected = {
+            onMessageAction(it.action)
+        }
+    )
 }
 
 /**

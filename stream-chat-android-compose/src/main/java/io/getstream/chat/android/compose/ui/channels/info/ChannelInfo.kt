@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.channel.info
+package io.getstream.chat.android.compose.ui.channels.info
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

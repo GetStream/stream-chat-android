@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
-import io.getstream.chat.android.compose.ui.components.OnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -40,7 +39,7 @@ public fun ChannelAvatar(
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
-        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+        DefaultOnlineIndicator(onlineIndicatorAlignment)
     },
     contentDescription: String? = null,
     onClick: (() -> Unit)? = null,
