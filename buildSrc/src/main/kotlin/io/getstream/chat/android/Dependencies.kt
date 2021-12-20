@@ -71,7 +71,7 @@ object Versions {
     internal const val PHOTOVIEW = "2.3.0"
     internal const val RETROFIT = "2.9.0"
     internal const val ROBOLECTRIC = "4.6.1"
-    internal const val ROOM = "2.3.0"
+    internal const val ROOM = "2.4.0"
     internal const val SHIMMER = "0.5.0"
     internal const val SHOT = "5.12.1"
     internal const val STFALCON_IMAGE_VIEWER = "d11578fe3f"
