@@ -9,7 +9,6 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContainer
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 
@@ -31,7 +30,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param itemContent Composable that represents each item in a list. By default, we provide
- * the [DefaultMessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
+ * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
  */
 @Composable
 public fun MessageList(
@@ -48,7 +47,7 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
+    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
@@ -72,6 +71,42 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent
     )
+}
+
+/**
+ * The default message container item.
+ *
+ * @param messageListItem The state of the message list item.
+ * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
+ * @param onThreadClick Handler when the user taps on a thread within a message item.
+ * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ */
+@Composable
+internal fun DefaultMessageContainer(
+    messageListItem: MessageListItemState,
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onThreadClick: (Message) -> Unit,
+    onLongItemClick: (Message) -> Unit,
+    onGiphyActionClick: (GiphyAction) -> Unit,
+) {
+    MessageContainer(
+        messageListItem = messageListItem,
+        onLongItemClick = onLongItemClick,
+        onThreadClick = onThreadClick,
+        onGiphyActionClick = onGiphyActionClick,
+        onImagePreviewResult = onImagePreviewResult
+    )
+}
+
+/**
+ * The default message list loading indicator.
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultMessageListLoadingIndicator(modifier: Modifier) {
+    LoadingIndicator(modifier)
 }
 
 /**
@@ -102,7 +137,7 @@ public fun MessageList(
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
+    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(

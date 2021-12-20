@@ -19,13 +19,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * holds the sender name and the timestamp.
  *
  * @param messageItem Message to show.
- * @param modifier Modifier for styling.
  */
 @Composable
-public fun MessageFooter(
-    messageItem: MessageItemState,
-    modifier: Modifier = Modifier,
-) {
+public fun MessageFooter(messageItem: MessageItemState) {
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
@@ -33,7 +29,6 @@ public fun MessageFooter(
     if (hasThread && !messageItem.isInThread) {
         val replyCount = message.replyCount
         MessageThreadFooter(
-            modifier = modifier,
             participants = message.threadParticipants,
             messageAlignment = alignment,
             text = LocalContext.current.resources.getQuantityString(
@@ -46,7 +41,7 @@ public fun MessageFooter(
 
     if (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None) {
         Row(
-            modifier = modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (!messageItem.isMine) {
