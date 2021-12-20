@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.composer
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.collect
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
  * @param onAttachmentsSelected Callback invoked when user selects list of attachments in attachments picker.
  * @param onRemoveAttachment Callback invoked when user attempts to remove the attachment.
  * @param onMentionSuggestionSelected Callback invoked when selects one of the mention suggestions.
+ * @param onCommandSuggestionSelected Callback invoked when selects one of the command suggestions.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
@@ -30,6 +32,7 @@ public fun MessageComposerViewModel.bindView(
     onAttachmentsSelected: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
     onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     onMentionSuggestionSelected: (User) -> Unit = { selectMention(it) },
+    onCommandSuggestionSelected: (Command) -> Unit = { selectCommand(it) },
 ) {
     view.onSendMessageClicked = {
         val message = buildNewMessage()
@@ -46,9 +49,17 @@ public fun MessageComposerViewModel.bindView(
 
     view.onMentionSuggestionSelected = onMentionSuggestionSelected
 
+    view.onCommandSuggestionSelected = onCommandSuggestionSelected
+
     lifecycleOwner.lifecycleScope.launch {
         messageInputState.collect {
             view.renderState(it)
+        }
+    }
+
+    lifecycleOwner.lifecycleScope.launch {
+        availableCommands.collect {
+            view.availableCommands = it
         }
     }
 }
