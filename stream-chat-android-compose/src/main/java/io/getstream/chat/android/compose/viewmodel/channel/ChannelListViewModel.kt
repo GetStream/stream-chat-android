@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelAction
@@ -253,12 +254,19 @@ public class ChannelListViewModel(
         }
 
         channelsState = channelsState.copy(isLoadingMore = true)
-        chatClient.queryChannels(
-            chatClient.nextPageQueryChannelsRequest(
-                currentConfig.filters,
-                currentConfig.querySort
-            )
-        ).enqueue()
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            loadMoreChannelsWithOfflinePlugin(filter, currentConfig.querySort)
+        } else {
+            loadMoreChannelsWithChatDomain(filter, currentConfig.querySort)
+        }
+    }
+
+    private fun loadMoreChannelsWithChatDomain(filter: FilterObject, sort: QuerySort<Channel>) {
+        chatDomain.queryChannelsLoadMore(filter, sort).enqueue()
+    }
+
+    private fun loadMoreChannelsWithOfflinePlugin(filter: FilterObject, sort: QuerySort<Channel>) {
+        chatClient.queryChannels(chatClient.nextPageQueryChannelsRequest(filter, sort)).enqueue()
     }
 
     /**
