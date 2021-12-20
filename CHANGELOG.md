@@ -98,6 +98,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 - Improved the UI for message footers to be more respective of thread replies [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
 - Fixed the orientation and UI of ThreadParticipants [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
+- Improved the API structure more, made the components package more clear [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
 ### ✅ Added
 - Added site name labels to link attachments for websites using the Open Graph protocol [#2785](https://github.com/GetStream/stream-chat-android/pull/2785)
@@ -112,8 +113,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Decoupled many smaller components to the `components` package and their individual files, for ease of use
 - Improved the API of several smaller components
 - Added a few missing previews
+- Changed various component names, removed unused/redundant component blocks and moved to Default components [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
 ### ❌ Removed
+- Removed some reduntant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
