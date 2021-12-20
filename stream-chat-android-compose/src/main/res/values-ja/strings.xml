@@ -42,6 +42,7 @@
     <string name="stream_compose_edit_message">メッセージを編集する</string>
     <string name="stream_compose_delete_message">メッセージを削除する</string>
     <string name="stream_compose_mute_user">ユーザーをミュートする</string>
+    <string name="stream_compose_unmute_user">ユーザーのミュートを解除する</string>
     <string name="stream_compose_flag_message">メッセージをフラグする</string>
     <string name="stream_compose_delete_message_title">メッセージを削除する</string>
     <string name="stream_compose_delete_message_text">このメッセージを完全に削除してもよろしいですか？</string>

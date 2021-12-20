@@ -50,6 +50,7 @@
     <string name="stream_compose_edit_message">Editar Mensaje</string>
     <string name="stream_compose_delete_message">Eliminar mensaje</string>
     <string name="stream_compose_mute_user">Silenciar usuario</string>
+    <string name="stream_compose_unmute_user">Dejar de silenciar al usuario</string>
     <string name="stream_compose_flag_message">Marcar Mensaje</string>
     <string name="stream_compose_delete_message_title">Eliminar mensaje</string>
     <string name="stream_compose_delete_message_text">¿Estás seguro de que quieres eliminar permanentemente el mensaje?</string>

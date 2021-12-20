@@ -45,6 +45,7 @@
     <string name="stream_compose_message_label">"मेसेज भेजें"</string>
     <string name="stream_compose_message_list_empty_messages">"कोई मैसेज नहीं"</string>
     <string name="stream_compose_mute_user">"यूजर को म्यूट करें"</string>
+    <string name="stream_compose_unmute_user">"यूजर को म्यूट से हटायें"</string>
     <string name="stream_compose_new_message">"नया मैसेज़"</string>
     <string name="stream_compose_ok">"ठीक"</string>
     <string name="stream_compose_only_visible_to_you">"केवल आपको दिखाई दे रहा है"</string>
