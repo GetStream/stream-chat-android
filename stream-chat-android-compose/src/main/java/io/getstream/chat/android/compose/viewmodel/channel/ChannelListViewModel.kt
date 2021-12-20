@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.viewmodel.channel
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.nextPageQueryChannelsRequest
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.Flow
@@ -239,6 +241,7 @@ public class ChannelListViewModel(
     /**
      * Loads more data when the user reaches the end of the channels list.
      */
+    @SuppressLint("CheckResult")
     public fun loadMore() {
         val currentConfig = queryConfig.value
         val query = searchQuery.value
@@ -250,7 +253,12 @@ public class ChannelListViewModel(
         }
 
         channelsState = channelsState.copy(isLoadingMore = true)
-        chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
+        chatClient.queryChannels(
+            chatClient.nextPageQueryChannelsRequest(
+                currentConfig.filters,
+                currentConfig.querySort
+            )
+        ).enqueue()
     }
 
     /**

@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
@@ -78,20 +77,6 @@ public class QueryChannelsController internal constructor(
     }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
-
-    internal fun loadMoreRequest(
-        channelLimit: Int = CHANNEL_LIMIT,
-        messageLimit: Int = MESSAGE_LIMIT,
-        memberLimit: Int = MEMBER_LIMIT,
-    ): QueryChannelsPaginationRequest {
-        return QueryChannelsPaginationRequest(
-            sort,
-            mutableState.channelsOffset.value,
-            channelLimit,
-            messageLimit,
-            memberLimit
-        )
-    }
 
     /**
      * Updates the collection of channels by some channel. If the channels passes filter it's added to collection,
@@ -191,15 +176,6 @@ public class QueryChannelsController internal constructor(
             .intersect(cIds)
             .map { it to domainImpl.channel(it).toChannel() }
             .toMap()
-    }
-
-    internal suspend fun loadMore(
-        channelLimit: Int = CHANNEL_LIMIT,
-        messageLimit: Int = MESSAGE_LIMIT,
-    ): Result<List<Channel>> {
-        val oldChannels = mutableState._channels.value.values
-        val pagination = loadMoreRequest(channelLimit, messageLimit)
-        return runQuery(pagination).map { it - oldChannels }
     }
 
     private suspend fun addChannel(channel: Channel) = queryChannelsLogic.addChannel(channel)

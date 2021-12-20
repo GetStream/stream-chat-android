@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
@@ -19,6 +20,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.extensions.nextPageQueryChannelsRequest
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -170,7 +172,8 @@ public class ChannelListViewModel(
 
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
-            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
+            val client = ChatClient.instance()
+            client.queryChannels(client.nextPageQueryChannelsRequest(filter, sort, limit, messageLimit)).enqueue(
                 onError = { chatError ->
                     logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 }
