@@ -428,11 +428,11 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
     fun get(): QueryChannelsController {
         val filter = Filters.neutral()
         val mutableState =
-            QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope, MutableStateFlow(emptyMap()))
+            QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope, MutableStateFlow(emptyMap()))
         return QueryChannelsController(
             chatDomainImpl,
             mutableState,
-            QueryChannelsLogic(mutableState, chatDomainImpl),
+            QueryChannelsLogic(mutableState, chatDomainImpl, chatClient),
         ).apply {
             chatEventHandler = this@Fixture.chatEventHandler
             queryChannelsSpec.cids = initialCids

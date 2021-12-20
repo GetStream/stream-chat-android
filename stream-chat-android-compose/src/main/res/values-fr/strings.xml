@@ -52,6 +52,7 @@
     <string name="stream_compose_edit_message">Modifier le message</string>
     <string name="stream_compose_delete_message">Supprimer le message</string>
     <string name="stream_compose_mute_user">Mettre en sourdine l\'utilisateur</string>
+    <string name="stream_compose_unmute_user">Désactiver la mise en sourdine de l\'utilisateur</string>
     <string name="stream_compose_flag_message">Signaler un message</string>
     <plurals name="stream_compose_message_reactions">
         <item quantity="one">%d Réaction aux messages</item>

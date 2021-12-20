@@ -66,6 +66,7 @@
     <string name="stream_compose_edit_message">Edit Message</string>
     <string name="stream_compose_delete_message">Delete Message</string>
     <string name="stream_compose_mute_user">Mute User</string>
+    <string name="stream_compose_unmute_user">Unmute User</string>
     <string name="stream_compose_unpin_message">Unpin from this Chat</string>
     <string name="stream_compose_pin_message">Pin to this Chat</string>
     <string name="stream_compose_flag_message">Flag Message</string>

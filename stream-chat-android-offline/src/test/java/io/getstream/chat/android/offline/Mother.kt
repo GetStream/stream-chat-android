@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -18,6 +19,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
@@ -77,7 +79,7 @@ internal fun randomUserStartWatchingEvent(
     watcherCount = watcherCount,
     channelType = channelType,
     channelId = channelId,
-    user = randomUser()
+    user = user,
 )
 
 internal fun randomChannelDeletedEvent(
@@ -750,3 +752,75 @@ internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
         .setTransactionExecutor(Executors.newSingleThreadExecutor())
         .setQueryExecutor(dispatcher.asExecutor())
         .build()
+
+internal fun randomNotificationAddedToChannelEvent(
+    cid: String = randomString(),
+    channel: Channel = randomChannel()
+): NotificationAddedToChannelEvent {
+    return NotificationAddedToChannelEvent(
+        type = randomString(),
+        createdAt = Date(),
+        cid = cid,
+        channelType = randomString(),
+        channelId = randomString(),
+        channel = channel,
+        totalUnreadCount = randomInt(),
+        unreadChannels = randomInt(),
+    )
+}
+
+internal fun randomNotificationRemovedFromChannelEvent(
+    cid: String = randomString(),
+    channel: Channel = randomChannel()
+): NotificationRemovedFromChannelEvent {
+    return NotificationRemovedFromChannelEvent(
+        type = randomString(),
+        user = randomUser(),
+        createdAt = Date(),
+        cid = cid,
+        channelType = randomString(),
+        channelId = randomString(),
+        channel = channel,
+        member = randomMember()
+    )
+}
+
+internal fun randomNotificationMessageNewEvent(
+    cid: String = randomString(),
+    channel: Channel = randomChannel()
+): NotificationMessageNewEvent {
+    return NotificationMessageNewEvent(
+        type = randomString(),
+        createdAt = Date(),
+        cid = cid,
+        channelType = randomString(),
+        channelId = randomString(),
+        channel = channel,
+        message = randomMessage(),
+        totalUnreadCount = randomInt(),
+        unreadChannels = randomInt()
+    )
+}
+
+internal fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEvent {
+    return MemberAddedEvent(
+        type = randomString(),
+        createdAt = Date(),
+        user = randomUser(),
+        cid = cid,
+        channelType = randomString(),
+        channelId = randomString(),
+        member = randomMember()
+    )
+}
+
+internal fun randomMemberRemovedEvent(cid: String = randomString()): MemberRemovedEvent {
+    return MemberRemovedEvent(
+        type = randomString(),
+        createdAt = Date(),
+        user = randomUser(),
+        cid = cid,
+        channelType = randomString(),
+        channelId = randomString(),
+    )
+}

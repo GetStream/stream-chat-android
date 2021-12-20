@@ -33,6 +33,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.MessagesStat
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.flow.map
@@ -279,10 +280,10 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                domain.deleteMessage(event.message, false)
+                domain.deleteMessage(event.message, event.hard)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE("Could not delete message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                            logger.logE("Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}")
                             _errorEvents.postValue(EventWrapper(ErrorEvent.DeleteMessageError(chatError)))
                         }
                     )
@@ -499,7 +500,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             when (this) {
                 is Mode.Normal -> {
                     messageListData?.loadingMoreChanged(true)
-                    domain.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
+                    client.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
                         messageListData?.loadingMoreChanged(false)
                     }
                 }
@@ -612,7 +613,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public object EndRegionReached : Event()
         public object LastMessageRead : Event()
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
-        public data class DeleteMessage(val message: Message) : Event()
+        public data class DeleteMessage(val message: Message, val hard: Boolean = false) : Event()
         public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit) = { }) : Event()
         public data class PinMessage(val message: Message) : Event()
         public data class UnpinMessage(val message: Message) : Event()

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.experimental.querychannels.state
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -23,13 +22,11 @@ import kotlinx.coroutines.flow.stateIn
 internal class QueryChannelsMutableState(
     override val filter: FilterObject,
     override val sort: QuerySort<Channel>,
-    client: ChatClient,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
-
     internal val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
@@ -42,8 +39,6 @@ internal class QueryChannelsMutableState(
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
-    internal val defaultChatEventHandler: DefaultChatEventHandler = DefaultChatEventHandler(client, _sortedChannels)
-
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null
 
@@ -52,7 +47,7 @@ internal class QueryChannelsMutableState(
      * handler set by user or default one if there is no.
      */
     internal val eventHandler: ChatEventHandler
-        get() = chatEventHandler ?: defaultChatEventHandler
+        get() = chatEventHandler ?: DefaultChatEventHandler(_sortedChannels)
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
     override val loading: StateFlow<Boolean> = _loading
