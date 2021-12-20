@@ -42,13 +42,14 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
-import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
+import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
+import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasThread
@@ -401,6 +402,26 @@ internal fun DefaultMessageItemContent(
             }
         }
     )
+}
+
+/**
+ * The default text message content. It holds the quoted message in case there is one.
+ *
+ * @param message The message to show.
+ */
+@Composable
+internal fun DefaultMessageContent(message: Message) {
+    val quotedMessage = message.replyTo
+
+    Column {
+        if (quotedMessage != null) {
+            QuotedMessage(
+                modifier = Modifier.padding(8.dp),
+                message = quotedMessage
+            )
+        }
+        MessageText(message = message)
+    }
 }
 
 /**
