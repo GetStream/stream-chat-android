@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -41,7 +42,6 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
-import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
@@ -49,7 +49,6 @@ import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.extensions.nextPageQueryChannelsRequest
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.stopTyping
@@ -959,20 +958,25 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> =
-        client.queryChannels(client.nextPageQueryChannelsRequest(filter, sort, limit, messageLimit))
+    ): Call<List<Channel>> {
+        return CoroutineCall(scope) {
+            val queryChannelsController = queryChannels(filter, sort)
+            val oldChannels = queryChannelsController.channels.value
+            val pagination = queryChannelsController.loadMoreRequest(limit, messageLimit)
+            queryChannelsController.runQuery(pagination).map { it - oldChannels.toSet() }
+        }
+    }
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> =
-        client.queryChannels(client.nextPageQueryChannelsRequest(filter, sort, messageLimit = messageLimit))
+    ): Call<List<Channel>> = queryChannelsLoadMore(filter, sort, limit = CHANNEL_LIMIT, messageLimit = messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = client.queryChannels(client.nextPageQueryChannelsRequest(filter, sort))
+    ): Call<List<Channel>> = queryChannelsLoadMore(filter, sort, limit = CHANNEL_LIMIT, messageLimit = MESSAGE_LIMIT)
 
     /**
      * Loads more messages for the specified thread.

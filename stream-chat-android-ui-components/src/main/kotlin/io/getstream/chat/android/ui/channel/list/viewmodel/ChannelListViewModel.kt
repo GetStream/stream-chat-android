@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -18,8 +19,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.extensions.nextPageQueryChannelsRequest
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
@@ -47,6 +50,7 @@ public class ChannelListViewModel(
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -172,13 +176,28 @@ public class ChannelListViewModel(
 
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
-            val client = ChatClient.instance()
-            client.queryChannels(client.nextPageQueryChannelsRequest(filter, sort, limit, messageLimit)).enqueue(
-                onError = { chatError ->
-                    logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
-                }
-            )
+            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                loadMoreChannelsWithOfflinePlugin(filter)
+            } else {
+                loadMoreChannelsWithChatDomain(filter)
+            }
         }
+    }
+
+    private fun loadMoreChannelsWithChatDomain(filter: FilterObject) {
+        chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+            }
+        )
+    }
+
+    private fun loadMoreChannelsWithOfflinePlugin(filter: FilterObject) {
+        chatClient.queryChannels(chatClient.nextPageQueryChannelsRequest(filter, sort, limit, messageLimit)).enqueue(
+            onError = { chatError ->
+                logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+            }
+        )
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {

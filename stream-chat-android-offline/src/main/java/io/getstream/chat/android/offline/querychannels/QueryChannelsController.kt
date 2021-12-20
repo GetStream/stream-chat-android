@@ -78,6 +78,20 @@ public class QueryChannelsController internal constructor(
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
+    internal fun loadMoreRequest(
+        channelLimit: Int = CHANNEL_LIMIT,
+        messageLimit: Int = MESSAGE_LIMIT,
+        memberLimit: Int = MEMBER_LIMIT,
+    ): QueryChannelsPaginationRequest {
+        return QueryChannelsPaginationRequest(
+            sort,
+            mutableState.channelsOffset.value,
+            channelLimit,
+            messageLimit,
+            memberLimit
+        )
+    }
+
     /**
      * Updates the collection of channels by some channel. If the channels passes filter it's added to collection,
      * otherwise it gets removed.
