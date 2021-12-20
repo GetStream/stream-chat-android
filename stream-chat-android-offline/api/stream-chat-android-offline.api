@@ -643,8 +643,6 @@ public final class io/getstream/chat/android/offline/repository/database/ChatDat
 	public fun channelConfigDao ()Lio/getstream/chat/android/offline/repository/domain/channelconfig/ChannelConfigDao;
 	public fun channelStateDao ()Lio/getstream/chat/android/offline/repository/domain/channel/ChannelDao;
 	public fun clearAllTables ()V
-	public fun getAutoMigrations (Ljava/util/Map;)Ljava/util/List;
-	public fun getRequiredAutoMigrationSpecs ()Ljava/util/Set;
 	public fun messageDao ()Lio/getstream/chat/android/offline/repository/domain/message/MessageDao;
 	public fun queryChannelsDao ()Lio/getstream/chat/android/offline/repository/domain/queryChannels/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/offline/repository/domain/reaction/ReactionDao;
