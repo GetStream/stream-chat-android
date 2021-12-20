@@ -51,7 +51,7 @@ public class EditReactionsView : RecyclerView {
     public fun setMessage(message: Message, isMyMessage: Boolean) {
         this.isMyMessage = isMyMessage
 
-        val reactionItems = ChatUI.supportedReactions.reactions.map { (type, reactionDrawable) ->
+        val reactionItems: List<ReactionItem> = ChatUI.supportedReactions.reactions.map { (type, reactionDrawable) ->
             ReactionItem(
                 type = type,
                 isMine = message.ownReactions.any { it.type == type },
@@ -76,7 +76,7 @@ public class EditReactionsView : RecyclerView {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        bubbleDrawer.drawReactionsBubble(canvas, width, bubbleHeight, isMyMessage, true)
+        bubbleDrawer.drawReactionsBubble(context, canvas, width, bubbleHeight, isMyMessage, true)
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {

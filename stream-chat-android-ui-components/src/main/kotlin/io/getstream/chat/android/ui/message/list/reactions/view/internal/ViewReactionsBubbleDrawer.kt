@@ -1,8 +1,10 @@
 package io.getstream.chat.android.ui.message.list.reactions.view.internal
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.view.View
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 
@@ -40,6 +42,7 @@ internal class ViewReactionsBubbleDrawer(
     private var isSingleReaction: Boolean = false
 
     fun drawReactionsBubble(
+        context: Context,
         canvas: Canvas,
         bubbleWidth: Int,
         isMyMessage: Boolean,
@@ -50,10 +53,12 @@ internal class ViewReactionsBubbleDrawer(
         this.bubbleWidth = bubbleWidth
         this.isSingleReaction = isSingleReaction
 
+        val isRtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+
         val path = Path().apply {
             op(createBubbleRoundRectPath(), Path.Op.UNION)
-            op(createLargeTailBubblePath(), Path.Op.UNION)
-            op(createSmallTailBubblePath(), Path.Op.UNION)
+            op(createLargeTailBubblePath(isRtl), Path.Op.UNION)
+            op(createSmallTailBubblePath(isRtl), Path.Op.UNION)
         }
 
         val outlineStyle = if (inverseBubbleStyle) !isMyMessage else isMyMessage
@@ -100,10 +105,10 @@ internal class ViewReactionsBubbleDrawer(
         }
     }
 
-    private fun createLargeTailBubblePath(): Path {
+    private fun createLargeTailBubblePath(isRtl: Boolean): Path {
         return Path().apply {
             addCircle(
-                calculateBubbleCenterX(viewReactionsViewStyle.largeTailBubbleOffset.toFloat()),
+                positionBubble(isRtl, viewReactionsViewStyle.largeTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.largeTailBubbleCy.toFloat(),
                 viewReactionsViewStyle.largeTailBubbleRadius.toFloat(),
                 Path.Direction.CW
@@ -111,10 +116,10 @@ internal class ViewReactionsBubbleDrawer(
         }
     }
 
-    private fun createSmallTailBubblePath(): Path {
+    private fun createSmallTailBubblePath(isRtl: Boolean): Path {
         return Path().apply {
             addCircle(
-                calculateBubbleCenterX(viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
+                positionBubble(isRtl, viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.smallTailBubbleCy.toFloat(),
                 viewReactionsViewStyle.smallTailBubbleRadius.toFloat() - getStrokeOffset(),
                 Path.Direction.CW
@@ -134,6 +139,16 @@ internal class ViewReactionsBubbleDrawer(
                 bubbleWidth / 2 - bubbleOffset
             } else {
                 MULTIPLE_REACTIONS_BASELINE_OFFSET - bubbleOffset
+            }
+        }
+    }
+
+    private fun positionBubble(isRtl: Boolean, bubbleOffset: Float): Float {
+        return calculateBubbleCenterX(bubbleOffset).let { offset ->
+            if (isRtl) {
+                bubbleWidth.toFloat() - offset
+            } else {
+                offset
             }
         }
     }
