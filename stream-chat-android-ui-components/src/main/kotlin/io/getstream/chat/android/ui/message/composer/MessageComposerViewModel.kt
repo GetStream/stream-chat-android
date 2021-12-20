@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.composer
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
@@ -58,11 +59,7 @@ public class MessageComposerViewModel(
      */
     public fun setMessageInput(value: String) {
         messageComposerController.setMessageInput(value)
-        _messageInputState.value =
-            _messageInputState.value.copy(
-                inputValue = value,
-                validationErrors = messageComposerController.validationErrors.value,
-            )
+        updateMessageInputState()
     }
 
     /**
@@ -96,10 +93,7 @@ public class MessageComposerViewModel(
      */
     public fun addSelectedAttachments(attachments: List<Attachment>) {
         messageComposerController.addSelectedAttachments(attachments)
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = messageComposerController.selectedAttachments.value,
-                validationErrors = messageComposerController.validationErrors.value)
+        updateMessageInputState()
     }
 
     /**
@@ -111,10 +105,7 @@ public class MessageComposerViewModel(
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
         messageComposerController.removeSelectedAttachment(attachment)
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = oldState.attachments - attachment,
-                validationErrors = messageComposerController.validationErrors.value)
+        updateMessageInputState()
     }
 
     /**
@@ -135,10 +126,7 @@ public class MessageComposerViewModel(
      */
     private fun clearSelectedAttachments() {
         messageComposerController.selectedAttachments.value = emptyList()
-        val oldState = _messageInputState.value
-        _messageInputState.value =
-            oldState.copy(attachments = selectedAttachments.value,
-                validationErrors = messageComposerController.validationErrors.value)
+        updateMessageInputState()
     }
 
     /**
@@ -165,4 +153,35 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User) {
+        messageComposerController.selectMention(user)
+        updateMessageInputState()
+    }
+
+    /**
+     * Disposes the inner [MessageComposerController].
+     */
+    override fun onCleared() {
+        super.onCleared()
+        messageComposerController.onCleared()
+    }
+
+    /**
+     * Recomputes current [MessageInputState] and updates [MessageComposerViewModel._messageInputState].
+     */
+    private fun updateMessageInputState() {
+        val oldState = _messageInputState.value
+        _messageInputState.value = oldState.copy(
+            inputValue = messageComposerController.input.value,
+            attachments = messageComposerController.selectedAttachments.value,
+            validationErrors = messageComposerController.validationErrors.value,
+            mentionSuggestions = messageComposerController.mentionSuggestions.value,
+        )
+    }
 }

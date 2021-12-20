@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
  * @param onDismissMessage Callback invoked when user dismisses the message. Default implementation clears input value in view model.
  * @param onAttachmentsSelected Callback invoked when user selects list of attachments in attachments picker.
  * @param onRemoveAttachment Callback invoked when user attempts to remove the attachment.
+ * @param onMentionSuggestionSelected Callback invoked when selects one of the mention suggestions.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
@@ -26,7 +28,8 @@ public fun MessageComposerViewModel.bindView(
     onInputChanged: (String) -> Unit = { setMessageInput(it) },
     onDismissMessage: () -> Unit = { setMessageInput("") },
     onAttachmentsSelected: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
-    onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) }
+    onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) },
+    onMentionSuggestionSelected: (User) -> Unit = { selectMention(it) },
 ) {
     view.onSendMessageClicked = {
         val message = buildNewMessage()
@@ -40,6 +43,8 @@ public fun MessageComposerViewModel.bindView(
     view.onAttachmentSelected = onAttachmentsSelected
 
     view.onAttachmentRemovedHandler = onRemoveAttachment
+
+    view.onMentionSuggestionSelected = onMentionSuggestionSelected
 
     lifecycleOwner.lifecycleScope.launch {
         messageInputState.collect {

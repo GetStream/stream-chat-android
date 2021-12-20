@@ -1,15 +1,19 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
@@ -30,6 +34,31 @@ public class MessageComposerView : ConstraintLayout {
      * Handle to layout binding.
      */
     private lateinit var binding: StreamUiMessageComposerBinding
+
+    /**
+     * Handle to [PopupWindow] which is currently displayed.
+     * It is shown above [MessageComposerView] to display hints/suggestions, e.g. suggested mentions, available commands.
+     */
+    private var suggestionsPopup: PopupWindow? = null
+
+    /**
+     * Default implementation of [mentionSuggestionsContent].
+     */
+    private val defaultMentionSuggestionsView: View by lazy {
+        DefaultMentionSuggestionsContent(context).apply {
+            onMentionSelected = { onMentionSuggestionSelected(it) }
+        }
+    }
+
+    /**
+     * Handle to a custom mention suggestions view set with [setMentionSuggestionsContent].
+     */
+    private var mentionSuggestionsContentOverride: View? = null
+
+    /**
+     * Mention suggestions list shown in a popup window above the [MessageComposerView].
+     */
+    private val mentionSuggestionsContent: View = mentionSuggestionsContentOverride ?: defaultMentionSuggestionsView
 
     /**
      * Callback invoked when send button is clicked.
@@ -55,6 +84,11 @@ public class MessageComposerView : ConstraintLayout {
      * Callback invoked when attachment is removed.
      */
     public var onAttachmentRemovedHandler: (Attachment) -> Unit = {}
+
+    /**
+     * Callback invoked when one of mention suggestions is selected.
+     */
+    public var onMentionSuggestionSelected: (User) -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -138,6 +172,59 @@ public class MessageComposerView : ConstraintLayout {
         (binding.trailingContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
+
+        if (state.mentionSuggestions.isNotEmpty()) {
+            renderMentionSuggestions(state)
+        } else {
+            suggestionsPopup?.dismiss()
+        }
+    }
+
+    /**
+     * Displays list of mention suggestions, or updates it according to the [MessageInputState.mentionSuggestions] list.
+     *
+     * @param state Current instance of [MessageInputState].
+     */
+    private fun renderMentionSuggestions(state: MessageInputState) {
+        (mentionSuggestionsContent as? MessageComposerChild)?.renderState(state)
+
+        val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow()
+        popupWindow.apply {
+            mentionSuggestionsContent.measure(
+                MeasureSpec.makeMeasureSpec(Resources.getSystem().displayMetrics.widthPixels,
+                    MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            )
+            val offset = mentionSuggestionsContent.measuredHeight + this@MessageComposerView.height
+            if (isShowing) {
+                update(
+                    this@MessageComposerView,
+                    0,
+                    -offset,
+                    -1,
+                    -1,
+                )
+            } else {
+                showAsDropDown(this@MessageComposerView, 0, -offset)
+            }
+        }
+    }
+
+    /**
+     * Creates new [PopupWindow] dedicated to displaying suggestions (e.g. mentions list, commands).
+     */
+    private fun createSuggestionPopupWindow(): PopupWindow {
+        val onDismissListener = PopupWindow.OnDismissListener { suggestionsPopup = null }
+        return PopupWindow(
+            mentionSuggestionsContent,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply {
+            suggestionsPopup = this
+            isOutsideTouchable = true
+            setOnDismissListener(onDismissListener)
+            inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
+        }
     }
 
     /**
@@ -180,6 +267,17 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerChild {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(view, layoutParams)
+    }
+
+    /**
+     * Sets custom mention suggestions content view. It must implement [MessageComposerChild] interface, and should
+     * render mention suggestions according to the received state. List of currently available mention suggestions is propagated
+     * to the [view] in the [MessageComposerChild.renderState] hook function.
+     *
+     * @param view The [View] which shows mention suggestions list and allows to choose one of them.
+     */
+    public fun <V> setMentionSuggestionsContent(view: V) where V : View, V : MessageComposerChild {
+        mentionSuggestionsContentOverride = view
     }
 
     private companion object {
