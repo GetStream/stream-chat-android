@@ -64,6 +64,7 @@ object Versions {
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "2.2.0"
     internal const val MOCKITO = "3.11.2"
+    // Be careful with updating Moshi to 1.13.0 as it's shipped as MR-jar which causes problems with Jetifier. Check [this](https://github.com/square/moshi/issues/1424) issue for more details
     internal const val MOSHI = "1.12.0"
     internal const val NAVIGATION = "2.3.5"
     internal const val OK2CURL = "0.7.0"
