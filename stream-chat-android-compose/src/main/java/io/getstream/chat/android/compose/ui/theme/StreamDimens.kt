@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
  * @param commandSuggestionItemIconSize The size of a command icon in the suggestion list popup.
  * @param threadParticipantItemSize The size of thread participant avatar items.
  * @param userReactionsMaxHeight The max height of the message reactions section when we click on message reactions.
+ * @param userReactionItemWidth The width of user reaction item.
  * @param userReactionItemAvatarSize The size of a user avatar in the user reaction item.
  * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
  */
@@ -66,6 +67,7 @@ public data class StreamDimens(
     public val commandSuggestionItemIconSize: Dp,
     public val threadParticipantItemSize: Dp,
     public val userReactionsMaxHeight: Dp,
+    public val userReactionItemWidth: Dp,
     public val userReactionItemAvatarSize: Dp,
     public val userReactionItemIconSize: Dp,
 ) {
@@ -98,6 +100,7 @@ public data class StreamDimens(
             commandSuggestionItemIconSize = 24.dp,
             threadParticipantItemSize = 16.dp,
             userReactionsMaxHeight = 256.dp,
+            userReactionItemWidth = 80.dp,
             userReactionItemIconSize = 24.dp,
             userReactionItemAvatarSize = 64.dp,
         )

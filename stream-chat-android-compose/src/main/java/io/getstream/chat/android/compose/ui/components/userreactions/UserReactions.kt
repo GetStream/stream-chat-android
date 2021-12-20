@@ -68,7 +68,7 @@ public fun UserReactions(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                val reactionItemWidth = 80.dp
+                val reactionItemWidth = ChatTheme.dimens.userReactionItemWidth
                 val maxColumns = maxOf((maxWidth / reactionItemWidth).toInt(), 1)
                 val columns = reactionCount.coerceAtMost(maxColumns)
                 val reactionGridWidth = reactionItemWidth * columns
