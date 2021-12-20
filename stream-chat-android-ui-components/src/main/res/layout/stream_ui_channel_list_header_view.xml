@@ -27,6 +27,7 @@
         android:gravity="center_horizontal"
         android:text="@string/stream_ui_channel_list_header_connected"
         android:visibility="gone"
+        android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/actionButton"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
@@ -62,6 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stream_ui_channel_list_header_disconnected"
+            android:textDirection="locale"
             />
 
     </LinearLayout>

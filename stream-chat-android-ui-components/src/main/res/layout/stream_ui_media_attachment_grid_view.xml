@@ -39,6 +39,7 @@
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:textColor="@color/stream_ui_white"
+            android:textDirection="locale"
             />
 
     </FrameLayout>
