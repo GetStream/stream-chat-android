@@ -95,7 +95,7 @@ public fun defaultMessageOptionsState(
 
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
     val isOwnMessage = selectedMessageUserId == currentUser?.id
-    val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: true
+    val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
 
     return listOfNotNull(
         MessageOptionItemState(
