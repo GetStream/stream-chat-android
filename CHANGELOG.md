@@ -103,7 +103,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added site name labels to link attachments for websites using the Open Graph protocol [#2785](https://github.com/GetStream/stream-chat-android/pull/2785)
 - Added preview screens for file attachments [#2764](https://github.com/GetStream/stream-chat-android/pull/2764)
 - Added a way to disable date separator and system message items in the message list [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
-- Added an option to the message options menu to unmute a user that sent the message. [#](https://github.com/GetStream/stream-chat-android/pull/)
+- Added an option to the message options menu to unmute a user that sent the message. [#2787](https://github.com/GetStream/stream-chat-android/pull/2787)
 
 ### ⚠️ Changed
 - Removed SelectedMessageOverlay and replaced it with SelectedMessageMenu - [#2768](https://github.com/GetStream/stream-chat-android/pull/2768)
