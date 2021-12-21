@@ -136,7 +136,7 @@ public fun DefaultMessageHeaderTitle(
 ) {
 
     val title = when (messageMode) {
-        MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel)
+        MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
         is MessageMode.MessageThread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
@@ -144,7 +144,7 @@ public fun DefaultMessageHeaderTitle(
         MessageMode.Normal -> channel.getMembersStatusText(LocalContext.current, currentUser)
         is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,
-            ChatTheme.channelNameFormatter.formatChannelName(channel)
+            ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
         )
     }
 

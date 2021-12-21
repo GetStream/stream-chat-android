@@ -47,12 +47,13 @@ import io.getstream.chat.android.offline.repository.domain.user.UserEntity
     version = 52,
     exportSchema = false
 )
+
 @TypeConverters(
     FilterObjectConverter::class,
-    ListConverter::class,
-    MapConverter::class,
     QuerySortConverter::class,
     ExtraDataConverter::class,
+    ListConverter::class,
+    MapConverter::class,
     SetConverter::class,
     SyncStatusConverter::class,
     DateConverter::class,

@@ -91,7 +91,7 @@ public fun ChannelInfo(
 
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
                     style = ChatTheme.typography.title3Bold,
                     color = ChatTheme.colors.textHighEmphasis,
                     maxLines = 1,
