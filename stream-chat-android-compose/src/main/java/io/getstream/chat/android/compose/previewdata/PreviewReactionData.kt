@@ -5,25 +5,24 @@ import io.getstream.chat.android.client.models.Reaction
 /**
  * Provides sample reactions that will be used to render component previews.
  */
-@Suppress("MemberVisibilityCanBePrivate")
 internal object PreviewReactionData {
 
-    val reaction1: Reaction = Reaction(
+    private val reaction1: Reaction = Reaction(
         type = "like",
         user = PreviewUserData.user1
     )
 
-    val reaction2: Reaction = Reaction(
+    private val reaction2: Reaction = Reaction(
         type = "love",
         user = PreviewUserData.user2
     )
 
-    val reaction3: Reaction = Reaction(
+    private val reaction3: Reaction = Reaction(
         type = "wow",
         user = PreviewUserData.user3
     )
 
-    val reaction4: Reaction = Reaction(
+    private val reaction4: Reaction = Reaction(
         type = "sad",
         user = PreviewUserData.user4
     )

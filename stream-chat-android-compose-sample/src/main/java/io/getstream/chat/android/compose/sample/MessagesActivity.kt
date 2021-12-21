@@ -160,7 +160,6 @@ class MessagesActivity : AppCompatActivity() {
                         onMessageAction = { action ->
                             composerViewModel.performMessageAction(action)
                             listViewModel.performMessageAction(action)
-                            listViewModel.removeOverlay()
                         },
                         onDismiss = { listViewModel.removeOverlay() }
                     )
@@ -176,7 +175,6 @@ class MessagesActivity : AppCompatActivity() {
                         onMessageAction = { action ->
                             composerViewModel.performMessageAction(action)
                             listViewModel.performMessageAction(action)
-                            listViewModel.removeOverlay()
                         },
                         onDismiss = { listViewModel.removeOverlay() }
                     )
