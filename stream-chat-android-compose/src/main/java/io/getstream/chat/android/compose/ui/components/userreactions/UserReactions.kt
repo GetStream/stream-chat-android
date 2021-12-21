@@ -35,10 +35,7 @@ public fun UserReactions(
     items: List<UserReactionItemState>,
     modifier: Modifier = Modifier,
     itemContent: @Composable (UserReactionItemState) -> Unit = {
-        UserReactionItem(
-            item = it,
-            modifier = Modifier,
-        )
+        DefaultUserReactionItem(item = it)
     },
 ) {
     val reactionCount = items.size
@@ -86,6 +83,19 @@ public fun UserReactions(
             }
         }
     }
+}
+
+/**
+ * Default user reactions item for the user reactions component.
+ *
+ * @param item The user reaction to display.
+ */
+@Composable
+internal fun DefaultUserReactionItem(item: UserReactionItemState) {
+    UserReactionItem(
+        item = item,
+        modifier = Modifier,
+    )
 }
 
 /**

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -277,7 +278,12 @@ internal fun DefaultMessageItemHeaderContent(
             ?.let { options ->
                 MessageReactions(
                     modifier = Modifier
-                        .clickable(onClick = { onReactionsClick(message) })
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(bounded = false)
+                        ) {
+                            onReactionsClick(message)
+                        }
                         .padding(horizontal = 4.dp, vertical = 2.dp),
                     options = options
                 )
