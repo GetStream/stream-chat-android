@@ -9,6 +9,5 @@
     <string name="stream_ui_user_status_last_seen_just_now">Terakhir dilihat baru-baru ini</string>
 
     <!-- Message Preview (User in Mention List and Search Result List) -->
-    <string name="stream_ui_message_preview_file">Berkas: %1$s</string>
     <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; di &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>
