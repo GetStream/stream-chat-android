@@ -46,7 +46,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
      * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageInputState) {
-        val sendButtonEnabled = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty()
+        val sendButtonEnabled = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.cooldownTimer == 0
         binding.apply {
             sendMessageButtonDisabled.isVisible = !sendButtonEnabled
             sendMessageButtonEnabled.isVisible = sendButtonEnabled
