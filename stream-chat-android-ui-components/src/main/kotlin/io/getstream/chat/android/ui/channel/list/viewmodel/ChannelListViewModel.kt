@@ -82,9 +82,14 @@ public class ChannelListViewModel(
     private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
 
-        val queryChannelsRequest =
-            QueryChannelsRequest(filter = filterObject, querySort = sort, limit = limit, messageLimit = messageLimit)
-        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val queryChannelsRequest =
+                QueryChannelsRequest(filter = filterObject,
+                    querySort = sort,
+                    limit = limit,
+                    messageLimit = messageLimit)
+            queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+        }
 
         chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {

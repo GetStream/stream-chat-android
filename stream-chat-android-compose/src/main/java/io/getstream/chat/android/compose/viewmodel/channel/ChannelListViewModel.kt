@@ -137,13 +137,16 @@ public class ChannelListViewModel(
                     }
                 }
         }
-        val queryChannelsRequest = QueryChannelsRequest(
-            filter = queryConfig.value.filters,
-            querySort = queryConfig.value.querySort,
-            limit = 30,
-            messageLimit = 1
-        )
-        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val queryChannelsRequest = QueryChannelsRequest(
+                filter = queryConfig.value.filters,
+                querySort = queryConfig.value.querySort,
+                limit = 30,
+                messageLimit = 1
+            )
+            queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+        }
     }
 
     /**
