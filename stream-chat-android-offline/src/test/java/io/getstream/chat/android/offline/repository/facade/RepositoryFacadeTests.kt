@@ -42,7 +42,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
             whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(channel1, channel2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), false, paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
@@ -70,7 +70,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                 channelEntity2
             )
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), false, paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
