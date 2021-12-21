@@ -3,7 +3,7 @@ import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
@@ -45,8 +45,10 @@ android {
     }
 }
 
-ksp {
-    arg("room.useNullAwareTypeAnalysis", "false")
+kapt {
+    arguments {
+        arg("room.incremental", "true")
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -73,12 +75,12 @@ dependencies {
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.roomRuntime
     implementation Dependencies.roomKtx
-    ksp Dependencies.roomCompiler
+    kapt Dependencies.roomCompiler
     implementation Dependencies.workRuntimeKtx
 
     // Serialization
     implementation Dependencies.moshi
-    ksp Dependencies.moshiCodegen
+    kapt Dependencies.moshiCodegen
 
     // Tests
     testImplementation project(":stream-chat-android-test")
