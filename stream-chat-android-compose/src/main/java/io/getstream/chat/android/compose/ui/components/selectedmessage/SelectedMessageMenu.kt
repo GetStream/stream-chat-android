@@ -1,16 +1,9 @@
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -21,7 +14,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -39,10 +31,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent Leading vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
- * By default [ReactionOptions].
- * @param bodyContent Trailing vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
- * By Default [MessageOptions].
+ * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
+ * @param bodyContent The content shown in the [SelectedMessageMenu] dialog. By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(
@@ -68,42 +58,14 @@ public fun SelectedMessageMenu(
         )
     },
 ) {
-    Box(
-        modifier = Modifier
-            .background(overlayColor)
-            .fillMaxSize()
-            .clickable(
-                onClick = onDismiss,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
-    ) {
-        Card(
-            modifier = modifier
-                .clickable(
-                    onClick = {},
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
-            shape = shape,
-            backgroundColor = ChatTheme.colors.barsBackground
-        ) {
-            SelectedMessageOptions(
-                modifier = Modifier
-                    .padding(top = 12.dp),
-                message = message,
-                reactionTypes = reactionTypes,
-                messageOptions = messageOptions,
-                onMessageAction = onMessageAction,
-                headerContent = headerContent,
-                bodyContent = bodyContent
-            )
-        }
-    }
-
-    SystemBackPressedHandler(isEnabled = true) {
-        onDismiss()
-    }
+    SelectedMessageDialog(
+        modifier = modifier,
+        shape = shape,
+        overlayColor = overlayColor,
+        onDismiss = onDismiss,
+        headerContent = headerContent,
+        bodyContent = bodyContent
+    )
 }
 
 /**

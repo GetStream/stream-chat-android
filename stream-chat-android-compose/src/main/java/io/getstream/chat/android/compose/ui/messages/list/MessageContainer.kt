@@ -31,6 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param messageListItem The state of the message list item.
  * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
@@ -43,6 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun MessageContainer(
     messageListItem: MessageListItemState,
     onLongItemClick: (Message) -> Unit = {},
+    onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -59,6 +61,7 @@ public fun MessageContainer(
         DefaultMessageItem(
             messageItem = it,
             onLongItemClick = onLongItemClick,
+            onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult
@@ -163,6 +166,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
  *
  * @param messageItem The message item to show.
  * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user clicks on the message thread.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onImagePreviewResult Handler when the user receives an image preview result.
@@ -171,6 +175,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
+    onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
@@ -178,6 +183,7 @@ internal fun DefaultMessageItem(
     MessageItem(
         messageItem = messageItem,
         onLongItemClick = onLongItemClick,
+        onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
         onImagePreviewResult = onImagePreviewResult

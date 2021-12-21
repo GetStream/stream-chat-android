@@ -108,6 +108,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added a way to disable date separator and system message items in the message list [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 - Added an option to the message options menu to unmute a user that sent the message. [#2787](https://github.com/GetStream/stream-chat-android/pull/2787)
 - Added a `DefaultMessageContainer` component that encapsulates all default message types [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
+- Added the `SelectedReactionsMenu` component that represents a list of user reactions left for a particular message [#2782](https://github.com/GetStream/stream-chat-android/pull/2782)
 
 ### ⚠️ Changed
 - Removed SelectedMessageOverlay and replaced it with SelectedMessageMenu - [#2768](https://github.com/GetStream/stream-chat-android/pull/2768)

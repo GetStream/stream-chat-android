@@ -28,6 +28,8 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -89,7 +91,7 @@ public class MessageListViewModel(
     private val enforceUniqueReactions: Boolean = true,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
-    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD)
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD),
 ) : ViewModel() {
 
     /**
@@ -142,10 +144,10 @@ public class MessageListViewModel(
         get() = messageMode is MessageMode.MessageThread
 
     /**
-     * Gives us information if we're showing the selected message overlay.
+     * Gives us information if we have selected a message.
      */
     public val isShowingOverlay: Boolean
-        get() = messagesState.selectedMessage != null || threadMessagesState.selectedMessage != null
+        get() = messagesState.selectedMessageState != null || threadMessagesState.selectedMessageState != null
 
     /**
      * Gives us information about the online state of the device.
@@ -443,16 +445,30 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user long taps on and selects a message. This updates the internal state
-     * and allows our UI to re-render it and show an overlay.
+     * Triggered when the user long taps on and selects a message.
      *
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
+        val selectedMessageState = message?.let(::SelectedMessageOptionsState)
         if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(selectedMessage = message)
+            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
         } else {
-            messagesState = messagesState.copy(selectedMessage = message)
+            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
+        }
+    }
+
+    /**
+     * Triggered when the user taps on and selects message reactions.
+     *
+     * @param message The message that contains the reactions.
+     */
+    public fun selectReactions(message: Message?) {
+        val selectedMessageState = message?.let(::SelectedMessageReactionsState)
+        if (isInThread) {
+            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
+        } else {
+            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
         }
     }
 
@@ -751,7 +767,7 @@ public class MessageListViewModel(
      */
     public fun leaveThread() {
         messageMode = MessageMode.Normal
-        messagesState = messagesState.copy(selectedMessage = null)
+        messagesState = messagesState.copy(selectedMessageState = null)
         threadMessagesState = MessagesState()
         lastSeenThreadMessage = null
         threadJob?.cancel()
@@ -761,8 +777,8 @@ public class MessageListViewModel(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
      */
     public fun removeOverlay() {
-        threadMessagesState = threadMessagesState.copy(selectedMessage = null)
-        messagesState = messagesState.copy(selectedMessage = null)
+        threadMessagesState = threadMessagesState.copy(selectedMessageState = null)
+        messagesState = messagesState.copy(selectedMessageState = null)
     }
 
     /**
