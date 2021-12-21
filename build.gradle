@@ -37,7 +37,6 @@ buildscript {
         classpath Dependencies.kotlinBinaryValidator
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
-        classpath Dependencies.ksp
     }
 }
 

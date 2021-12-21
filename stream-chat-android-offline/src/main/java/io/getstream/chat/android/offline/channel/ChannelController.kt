@@ -271,12 +271,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun show(): Result<Unit> {
-        channelLogic.setHidden(false)
-        val result = channelClient.show().await()
-        if (result.isSuccess) {
-            domainImpl.repos.setHiddenForChannel(cid, false)
-        }
-        return result
+        return channelClient.show().await()
     }
 
     /** Leave the channel action. Fires an API request. */

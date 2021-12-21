@@ -25,7 +25,7 @@ import java.util.Date
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun OwnedMessageVisibilityContent(
+public fun OwnedMessageVisibilityContent(
     message: Message,
     modifier: Modifier = Modifier,
 ) {

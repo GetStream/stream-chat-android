@@ -37,9 +37,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param itemContent Composable that represents each message item in a list. By default, we provide
- * the [DefaultMessageContainer] and connect the the long click handler with it.
- * Users can override this to provide fully custom UI and behavior.
+ * @param itemContent Composable that represents each item in a list. By default, we provide
+ * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
  */
 @Composable
 public fun MessageList(
@@ -57,16 +56,16 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
+    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageItem(
-            messageListItem = it,
-            onLongItemClick = onLongItemClick,
+    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
+        DefaultMessageContainer(
+            messageListItem = messageListItem,
+            onImagePreviewResult = onImagePreviewResult,
             onThreadClick = onThreadClick,
+            onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onGiphyActionClick = onGiphyActionClick
         )
     },
 ) {
@@ -83,6 +82,65 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent
     )
+}
+
+/**
+ * The default message container item.
+ *
+ * @param messageListItem The state of the message list item.
+ * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
+ * @param onThreadClick Handler when the user taps on a thread within a message item.
+ * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions.
+ * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ */
+@Composable
+internal fun DefaultMessageContainer(
+    messageListItem: MessageListItemState,
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onThreadClick: (Message) -> Unit,
+    onLongItemClick: (Message) -> Unit,
+    onReactionsClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit,
+) {
+    MessageContainer(
+        messageListItem = messageListItem,
+        onLongItemClick = onLongItemClick,
+        onReactionsClick = onReactionsClick,
+        onThreadClick = onThreadClick,
+        onGiphyActionClick = onGiphyActionClick,
+        onImagePreviewResult = onImagePreviewResult
+    )
+}
+
+/**
+ * The default message list loading indicator.
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultMessageListLoadingIndicator(modifier: Modifier) {
+    LoadingIndicator(modifier)
+}
+
+/**
+ * The default empty placeholder that is displayed when there are no messages in the channel.
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
+    Box(
+        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.stream_compose_message_list_empty_messages),
+            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textLowEmphasis,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 /**
@@ -115,10 +173,10 @@ public fun MessageList(
     onReactionsClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
+    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageItem(
+        DefaultMessageContainer(
             messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
@@ -141,25 +199,5 @@ public fun MessageList(
             itemContent = itemContent
         )
         else -> emptyContent()
-    }
-}
-
-/**
- * The default empty placeholder that is displayed when there are no messages in the channel.
- *
- * @param modifier Modifier for styling.
- */
-@Composable
-internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
-    Box(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = stringResource(R.string.stream_compose_message_list_empty_messages),
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center
-        )
     }
 }
