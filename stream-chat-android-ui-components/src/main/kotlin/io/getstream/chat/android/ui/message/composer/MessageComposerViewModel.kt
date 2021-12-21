@@ -175,7 +175,10 @@ public class MessageComposerViewModel(
      *
      * @param command The command that was selected in the command suggestion list popup.
      */
-    public fun selectCommand(command: Command): Unit = messageComposerController.selectCommand(command)
+    public fun selectCommand(command: Command) {
+        messageComposerController.selectCommand(command)
+        updateMessageInputState()
+    }
 
     /**
      * Disposes the inner [MessageComposerController].

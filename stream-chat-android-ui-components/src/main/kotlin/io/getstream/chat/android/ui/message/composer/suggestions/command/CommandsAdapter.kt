@@ -22,6 +22,6 @@ internal class CommandsAdapter(private inline val onCommandSelected: (Command) -
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
         val binding = StreamUiItemCommandBinding.inflate(parent.streamThemeInflater, parent, false)
-        return CommandViewHolder(binding, onCommandSelected)
+        return CommandViewHolder(binding) { onCommandSelected(it) }
     }
 }

@@ -24,6 +24,7 @@ internal class CommandViewHolder(
      */
     override fun bind(command: Command) {
         binding.apply {
+            root.setOnClickListener { onCommandSelected(command) }
             commandNameTextView.text = command.name.replaceFirstChar(Char::uppercase)
             commandQueryTextView.text = itemView.context.getString(
                 R.string.stream_ui_message_input_command_template,
