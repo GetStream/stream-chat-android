@@ -4,6 +4,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
+import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomChannelVisibleEvent
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
@@ -281,4 +283,17 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             val messages = channelController.messages.value
             messages.shouldBeEmpty()
         }
+
+    @Test
+    fun `Given a hidden channel in DB When handle ChannelVisibleEvent Should update value in DB and in controller`() = coroutineTest {
+        val channel = randomChannel(cid = "cid123", hidden = true)
+        chatDomainImpl.repos.insertChannel(channel)
+        val channelController = chatDomainImpl.channel(channel).also { it.watch() }
+        channelController.hidden.value shouldBeEqualTo true
+
+        chatDomainImpl.eventHandler.handleEvent(randomChannelVisibleEvent(cid = "cid123"))
+
+        channelController.hidden.value shouldBeEqualTo false
+        chatDomainImpl.repos.selectChannels(listOf("cid123")).first().hidden shouldBeEqualTo false
+    }
 }
