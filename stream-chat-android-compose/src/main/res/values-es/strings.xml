@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <plurals name="stream_compose_channel_members">
-    <item quantity="one">"%1d Miembro, %2d Conectados"</item>
-    <item quantity="other">"%1d Miembros, %2d Conectados"</item>
-  </plurals>
-  <plurals name="stream_compose_member_count">
+    <plurals name="stream_compose_member_count">
     <item quantity="one">"%1d Miembro"</item>
     <item quantity="other">"%1d Miembros"</item>
   </plurals>
@@ -44,6 +40,7 @@
   <string name="stream_compose_flag_message_text">"¿Quieres enviar una copia de este mensaje al moderador para una mejor investigación?"</string>
   <string name="stream_compose_flag_message_title">"Marcar Mensaje"</string>
   <string name="stream_compose_member_count_online">"%1$s, %2$d Conectados"</string>
+  <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
   <string name="stream_compose_message_composer_error_attachment_count">"No es posible añadir más de %1$d archivos adjuntos."</string>
   <string name="stream_compose_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %1$s."</string>
   <string name="stream_compose_message_composer_error_message_length">"Tamaño máximo de mensaje (%1$d) excedido."</string>
@@ -53,12 +50,14 @@
   <string name="stream_compose_message_list_giphy_cancel">"Cancelar"</string>
   <string name="stream_compose_message_list_giphy_send">"Enviar"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Aleatorio"</string>
+  <string name="stream_compose_message_list_giphy_title">Giphy</string>
   <string name="stream_compose_mute_user">"Silenciar usuario"</string>
   <string name="stream_compose_ok">"Vale"</string>
   <string name="stream_compose_reply">"Contestar"</string>
   <string name="stream_compose_search_input_cancel">"Cancelar"</string>
   <string name="stream_compose_search_input_hint">"Buscar canales por nombre"</string>
   <string name="stream_compose_thread_reply">"Contestar en el hilo"</string>
+  <string name="stream_compose_unmute_user">Dejar de silenciar al usuario</string>
   <string name="stream_compose_untitled_channel">"Canal sin nombre"</string>
   <string name="stream_compose_user_status_last_seen">"Ultima vez visto %1$s"</string>
   <string name="stream_compose_user_status_last_seen_just_now">"Última vez visto justo ahora"</string>

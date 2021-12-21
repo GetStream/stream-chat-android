@@ -40,6 +40,7 @@
   <string name="stream_compose_flag_message_text">"Voulez-vous envoyer une copie de ce message à un nmodérateur pour une enquête plus approfondie?"</string>
   <string name="stream_compose_flag_message_title">"Signaler un message"</string>
   <string name="stream_compose_member_count_online">"%1$s, %2$d En ligne"</string>
+  <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
   <string name="stream_compose_message_composer_error_attachment_count">"Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %1$d pièces jointes"</string>
   <string name="stream_compose_message_composer_error_file_size">"Le fichier est trop volumineux - %1$s maximum."</string>
   <string name="stream_compose_message_composer_error_message_length">"Longueur maximale du message (%1$d) dépassée."</string>
@@ -49,11 +50,15 @@
   <string name="stream_compose_message_list_giphy_cancel">"Annuler"</string>
   <string name="stream_compose_message_list_giphy_send">"Envoyer"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Mélanger"</string>
+  <string name="stream_compose_message_list_giphy_title">Giphy</string>
   <string name="stream_compose_mute_user">"Mettre en sourdine l\'utilisateur"</string>
+  <string name="stream_compose_ok">OK</string>
   <string name="stream_compose_reply">"Réponse"</string>
   <string name="stream_compose_search_input_cancel">"Annuler"</string>
   <string name="stream_compose_search_input_hint">"Rechercher des chaînes par nom"</string>
   <string name="stream_compose_thread_reply">"Réponse au fil de discussion"</string>
+  <string name="stream_compose_unmute_user">Désactiver la mise en sourdine de l\'utilisateur</string>
+  <string name="stream_compose_untitled_channel">Channel without name</string>
   <string name="stream_compose_user_status_last_seen">"Vu pour la dernière fois %1$s"</string>
   <string name="stream_compose_user_status_last_seen_just_now">"Dernière vue à l\'instant"</string>
   <string name="stream_compose_user_status_online">"En ligne"</string>

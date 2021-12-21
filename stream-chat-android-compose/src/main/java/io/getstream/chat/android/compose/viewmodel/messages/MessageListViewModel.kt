@@ -505,7 +505,7 @@ public class MessageListViewModel(
                 messageActions = messageActions + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
-            is MuteUser -> muteUser(messageAction.message.user)
+            is MuteUser -> updateUserMute(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
             else -> {
@@ -699,12 +699,18 @@ public class MessageListViewModel(
     }
 
     /**
-     * Mutes the user that sent a particular message.
+     * Mutes or unmutes the user that sent a particular message.
      *
-     * @param user The user to mute.
+     * @param user The user to mute or unmute.
      */
-    private fun muteUser(user: User) {
-        chatClient.muteUser(user.id).enqueue()
+    private fun updateUserMute(user: User) {
+        val isUserMuted = chatDomain.muted.value.any { it.target.id == user.id }
+
+        if (isUserMuted) {
+            chatClient.unmuteUser(user.id)
+        } else {
+            chatClient.muteUser(user.id)
+        }.enqueue()
     }
 
     /**
