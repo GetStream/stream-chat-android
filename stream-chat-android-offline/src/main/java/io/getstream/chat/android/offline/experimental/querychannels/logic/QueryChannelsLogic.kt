@@ -61,7 +61,11 @@ internal class QueryChannelsLogic(
         val query =
             chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
 
-        return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
+        return chatDomainImpl.repos.selectChannels(
+            channelIds = query.cids.toList(),
+            forceCache = false,
+            pagination = pagination
+        )
             .applyPagination(pagination)
             .also { logger.logI("found ${it.size} channels in offline storage") }
             .also { addChannels(it) }
@@ -120,11 +124,10 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Updates the state on the channelController based on the channel object we received from the API.
+     * Updates the state based on the channels collection we received from the API.
      *
      * @param channels The list of channels to update.
      * @param isFirstPage If it's the first page we set/replace the list of results. if it's not the first page we add to the list.
-     *
      */
     internal suspend fun updateOnlineChannels(
         channels: List<Channel>,
