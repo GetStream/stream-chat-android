@@ -2,15 +2,16 @@ package io.getstream.chat.android.ui.message.preview.internal
 
 import android.content.Context
 import android.text.Html
+import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.bold
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getAttachmentsText
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
@@ -91,21 +92,19 @@ internal class MessagePreviewView : FrameLayout {
     }
 
     private fun formatMessagePreview(message: Message, currentUserMention: String?): CharSequence {
-        val fileAttachmentsNames = message.attachments
-            .filter { it.type == ModelType.attach_file }
-            .mapNotNull { attachment ->
-                attachment.title ?: attachment.name
+        val attachmentsText = message.getAttachmentsText()
+
+        val previewText = message.text.trim().let {
+            if (currentUserMention != null) {
+                // bold mentions of the current user
+                it.bold(currentUserMention.singletonList(), ignoreCase = true)
+            } else {
+                it
             }
-
-        if (fileAttachmentsNames.isNotEmpty()) {
-            return context.getString(R.string.stream_ui_message_preview_file, fileAttachmentsNames.joinToString())
         }
 
-        if (currentUserMention != null) {
-            // bold mentions of the current user
-            return message.text.trim().bold(currentUserMention.singletonList(), ignoreCase = true)
-        }
-
-        return message.text.trim()
+        return listOf(previewText, attachmentsText)
+            .filterNot { it.isNullOrEmpty() }
+            .joinTo(SpannableStringBuilder(), " ")
     }
 }

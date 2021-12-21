@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.channel.info
+package io.getstream.chat.android.compose.ui.channels.info
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -91,7 +91,7 @@ public fun ChannelInfo(
 
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
                     style = ChatTheme.typography.title3Bold,
                     color = ChatTheme.colors.textHighEmphasis,
                     maxLines = 1,

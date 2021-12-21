@@ -40,7 +40,6 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.components.composer.CooldownIndicator
-import io.getstream.chat.android.compose.ui.components.composer.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
@@ -114,9 +113,6 @@ public fun MessageComposer(
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultComposerIntegrations(
-            modifier = Modifier
-                .height(44.dp)
-                .padding(horizontal = 4.dp),
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
             onCommandsClick = onCommandsClick
@@ -400,6 +396,71 @@ internal fun DefaultComposerLabel() {
         text = stringResource(id = R.string.stream_compose_message_label),
         color = ChatTheme.colors.textLowEmphasis
     )
+}
+
+/**
+ * Composable that represents the message composer integrations (special actions).
+ *
+ * Currently just shows the Attachment picker action.
+ *
+ * @param messageInputState The state of the input.
+ * @param onAttachmentsClick Handler when the user selects attachments.
+ * @param onCommandsClick Handler when the user selects commands.
+ */
+@Composable
+internal fun DefaultComposerIntegrations(
+    messageInputState: MessageComposerState,
+    onAttachmentsClick: () -> Unit,
+    onCommandsClick: () -> Unit,
+) {
+    val hasTextInput = messageInputState.inputValue.isNotEmpty()
+    val hasCommandInput = messageInputState.inputValue.startsWith("/")
+    val hasCommandSuggestions = messageInputState.commandSuggestions.isNotEmpty()
+
+    Row(
+        modifier = Modifier
+            .height(44.dp)
+            .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            enabled = !hasCommandInput,
+            modifier = Modifier
+                .size(32.dp)
+                .padding(4.dp),
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
+                    contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                    tint = if (hasCommandInput) ChatTheme.colors.disabled else ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            onClick = onAttachmentsClick
+        )
+
+        val commandsButtonTint = if (hasCommandSuggestions && !hasTextInput) {
+            ChatTheme.colors.primaryAccent
+        } else if (!hasTextInput) {
+            ChatTheme.colors.textLowEmphasis
+        } else {
+            ChatTheme.colors.disabled
+        }
+
+        IconButton(
+            modifier = Modifier
+                .size(32.dp)
+                .padding(4.dp),
+            enabled = !hasTextInput,
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_command),
+                    contentDescription = null,
+                    tint = commandsButtonTint,
+                )
+            },
+            onClick = onCommandsClick
+        )
+    }
 }
 
 /**

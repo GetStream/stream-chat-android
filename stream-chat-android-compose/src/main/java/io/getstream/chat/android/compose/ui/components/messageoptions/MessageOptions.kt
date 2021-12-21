@@ -41,16 +41,9 @@ public fun MessageOptions(
     onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     itemContent: @Composable ColumnScope.(MessageOptionItemState) -> Unit = { option ->
-        MessageOptionItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ChatTheme.dimens.messageOptionsItemHeight)
-                .clickable(
-                    onClick = { onMessageOptionSelected(option) },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple()
-                ),
-            option = option
+        DefaultMessageOptionItem(
+            option = option,
+            onMessageOptionSelected = onMessageOptionSelected
         )
     },
 ) {
@@ -59,6 +52,30 @@ public fun MessageOptions(
             itemContent(option)
         }
     }
+}
+
+/**
+ * The default message option item.
+ *
+ * @param option The represented option.
+ * @param onMessageOptionSelected Handler when the user selects the option.
+ */
+@Composable
+internal fun DefaultMessageOptionItem(
+    option: MessageOptionItemState,
+    onMessageOptionSelected: (MessageOptionItemState) -> Unit,
+) {
+    MessageOptionItem(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(ChatTheme.dimens.messageOptionsItemHeight)
+            .clickable(
+                onClick = { onMessageOptionSelected(option) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple()
+            ),
+        option = option
+    )
 }
 
 /**
