@@ -17,8 +17,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
   - Compose framework 1.0.5
   - AndroidX
   - Lottie 4.2.2
-  - Moshi 1.13.0
   - OkHttp 4.9.3
+  - Room 2.4.0
   - and other, see [#2771](https://github.com/GetStream/stream-chat-android/pull/2771) for more details
 
 ### ✅ Added

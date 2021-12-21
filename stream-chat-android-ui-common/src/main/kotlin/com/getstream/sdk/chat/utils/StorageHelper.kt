@@ -17,7 +17,7 @@ import java.util.Date
 import java.util.Locale
 
 @InternalStreamChatApi
-@OptIn(ExperimentalStreamChatApi::class)
+@ExperimentalStreamChatApi
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
     private val projection = arrayOf(
