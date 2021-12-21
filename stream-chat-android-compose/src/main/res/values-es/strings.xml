@@ -50,14 +50,14 @@
   <string name="stream_compose_message_list_giphy_cancel">"Cancelar"</string>
   <string name="stream_compose_message_list_giphy_send">"Enviar"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Aleatorio"</string>
-  <string name="stream_compose_message_list_giphy_title">Giphy</string>
+  <string name="stream_compose_message_list_giphy_title">"Giphy"</string>
   <string name="stream_compose_mute_user">"Silenciar usuario"</string>
   <string name="stream_compose_ok">"Vale"</string>
   <string name="stream_compose_reply">"Contestar"</string>
   <string name="stream_compose_search_input_cancel">"Cancelar"</string>
   <string name="stream_compose_search_input_hint">"Buscar canales por nombre"</string>
   <string name="stream_compose_thread_reply">"Contestar en el hilo"</string>
-  <string name="stream_compose_unmute_user">Dejar de silenciar al usuario</string>
+  <string name="stream_compose_unmute_user">"Dejar de silenciar al usuario"</string>
   <string name="stream_compose_untitled_channel">"Canal sin nombre"</string>
   <string name="stream_compose_user_status_last_seen">"Ultima vez visto %1$s"</string>
   <string name="stream_compose_user_status_last_seen_just_now">"Última vez visto justo ahora"</string>
