@@ -169,7 +169,7 @@ public fun ChannelsScreen(
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
-                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel)
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
                 onDismiss = { listViewModel.dismissChannelAction() }
@@ -182,7 +182,7 @@ public fun ChannelsScreen(
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
-                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel)
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },
                 onDismiss = { listViewModel.dismissChannelAction() }

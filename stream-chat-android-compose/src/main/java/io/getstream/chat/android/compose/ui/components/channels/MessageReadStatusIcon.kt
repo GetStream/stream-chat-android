@@ -4,18 +4,22 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
+import io.getstream.chat.android.compose.previewdata.PreviewMessageData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
 
 /**
- * Shows the last message read status for each channel item based on the given information about the channel, the last
- * message and the current user.
+ * Shows the last message read status for each channel item based on the given
+ * information about the channel, the last message and the current user.
  *
  * @param channel The channel to show the read status for.
  * @param lastMessage The last message in the channel.
@@ -51,6 +55,23 @@ public fun MessageReadStatusIcon(
             painter = painterResource(id = messageIcon),
             contentDescription = null,
             tint = iconTint,
+        )
+    }
+}
+
+/**
+ * Preview of [MessageReadStatusIcon] for a seen message.
+ *
+ * Should show a double tick indicator.
+ */
+@Preview(showBackground = true, name = "MessageReadStatusIcon Preview (Seen message)")
+@Composable
+private fun SeenMessageReadStatusIcon() {
+    ChatTheme {
+        MessageReadStatusIcon(
+            channel = PreviewChannelData.channelWithMessages,
+            lastMessage = PreviewMessageData.message2,
+            currentUser = PreviewUserData.user1,
         )
     }
 }
