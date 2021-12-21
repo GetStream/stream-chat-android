@@ -77,7 +77,7 @@ public fun ChannelInfo(
                 .clickable(
                     indication = null,
                     interactionSource = MutableInteractionSource(),
-                    onClick = { }
+                    onClick = {}
                 ),
             elevation = 8.dp,
             shape = shape,

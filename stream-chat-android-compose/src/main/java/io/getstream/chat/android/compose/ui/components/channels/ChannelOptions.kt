@@ -171,7 +171,7 @@ private fun ChannelOptionsPreview() {
                 isMuted = false,
                 channelMembers = PreviewMembersData.manyMembers
             ),
-            onChannelOptionClick = { }
+            onChannelOptionClick = {}
         )
     }
 }

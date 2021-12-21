@@ -34,8 +34,8 @@ internal fun SelectedMessageDialog(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     onDismiss: () -> Unit = {},
-    headerContent: @Composable ColumnScope.() -> Unit = { },
-    bodyContent: @Composable ColumnScope.() -> Unit = { },
+    headerContent: @Composable ColumnScope.() -> Unit = {},
+    bodyContent: @Composable ColumnScope.() -> Unit = {},
 ) {
     Box(
         modifier = Modifier
