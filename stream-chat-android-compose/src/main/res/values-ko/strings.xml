@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <plurals name="stream_compose_channel_members">
-    <item quantity="other">"%1d명, %2d명이 온라인"</item>
-  </plurals>
   <plurals name="stream_compose_message_list_header_typing_users">
     <item quantity="one">"%s 입력중"</item>
     <item quantity="other">"%s 및 %d명 입력중"</item>

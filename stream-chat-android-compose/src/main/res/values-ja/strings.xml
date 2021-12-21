@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <plurals name="stream_compose_channel_members">
-    <item quantity="other">"%1d人のメンバー, %2d人がオンライン"</item>
-  </plurals>
   <plurals name="stream_compose_message_list_header_typing_users">
     <item quantity="one">"%sが入力しています"</item>
     <item quantity="other">"%sと%d人が入力しています"</item>

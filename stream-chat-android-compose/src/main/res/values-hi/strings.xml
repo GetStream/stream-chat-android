@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <plurals name="stream_compose_channel_members">
-    <item quantity="one">"%1d सदस्य, %2d ऑनलाइन"</item>
-    <item quantity="other">"%1d सदस्य, %2d ऑनलाइन"</item>
-  </plurals>
   <plurals name="stream_compose_member_count">
     <item quantity="one">"%1d सदस्य"</item>
     <item quantity="other">"%1d सदस्य"</item>
@@ -60,7 +56,6 @@
   <string name="stream_compose_image_preview_share">"शेयर करें"</string>
   <string name="stream_compose_image_preview_show_in_chat">"चैट में देखें"</string>
   <string name="stream_compose_images_option">"छवियाँ"</string>
-  <string name="stream_compose_instant_commands">"इंस्टेंट कमांड्स"</string>
   <string name="stream_compose_member_count_online">"%1$s, %2$d ऑनलाइन"</string>
   <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
   <string name="stream_compose_message_composer_error_attachment_count">"अटैचमेंट्स संख्या (%1$d) पार हो गयी"</string>
@@ -95,7 +90,6 @@
   <string name="stream_compose_send_message">"भेजें"</string>
   <string name="stream_compose_share">"शेयर"</string>
   <string name="stream_compose_storage_permission_title">"स्टोरेज पढ़ने की अनुमति नहीं है"</string>
-  <string name="stream_compose_thread_footnote">"चर्चा पर जवाब"</string>
   <string name="stream_compose_thread_reply">"चर्चा पर जवाब दें"</string>
   <string name="stream_compose_thread_subtitle">"%1$s के साथ"</string>
   <string name="stream_compose_thread_title">"चर्चा पर जवाब"</string>
