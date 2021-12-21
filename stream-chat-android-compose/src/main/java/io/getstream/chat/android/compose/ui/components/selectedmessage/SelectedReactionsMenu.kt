@@ -48,32 +48,16 @@ public fun SelectedReactionsMenu(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        ReactionOptions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+        DefaultSelectedReactionsReactionOptions(
+            message = message,
             reactionTypes = reactionTypes,
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.type),
-                        message = message
-                    )
-                )
-            },
-            ownReactions = message.ownReactions
+            onMessageAction = onMessageAction
         )
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
-        UserReactions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight)
-                .padding(vertical = 16.dp),
-            items = buildUserReactionItems(
-                message = message,
-                currentUser = currentUser
-            )
+        DefaultSelectedReactionsUserReactions(
+            message = message,
+            currentUser = currentUser
         )
     },
 ) {
@@ -84,6 +68,59 @@ public fun SelectedReactionsMenu(
         onDismiss = onDismiss,
         headerContent = headerContent,
         bodyContent = bodyContent
+    )
+}
+
+/**
+ * Default reaction options for the selected reactions menu.
+ *
+ * @param message The selected message.
+ * @param reactionTypes Available reactions.
+ * @param onMessageAction Handler when the user selects a reaction.
+ */
+@Composable
+internal fun DefaultSelectedReactionsReactionOptions(
+    message: Message,
+    reactionTypes: Map<String, Int>,
+    onMessageAction: (MessageAction) -> Unit,
+) {
+    ReactionOptions(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        reactionTypes = reactionTypes,
+        onReactionOptionSelected = {
+            onMessageAction(
+                React(
+                    reaction = Reaction(messageId = message.id, type = it.type),
+                    message = message
+                )
+            )
+        },
+        ownReactions = message.ownReactions
+    )
+}
+
+/**
+ * Default user reactions for the selected reactions menu.
+ *
+ * @param message The selected message.
+ * @param currentUser The currently logged in user.
+ */
+@Composable
+internal fun DefaultSelectedReactionsUserReactions(
+    message: Message,
+    currentUser: User?,
+) {
+    UserReactions(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight)
+            .padding(vertical = 16.dp),
+        items = buildUserReactionItems(
+            message = message,
+            currentUser = currentUser
+        )
     )
 }
 
