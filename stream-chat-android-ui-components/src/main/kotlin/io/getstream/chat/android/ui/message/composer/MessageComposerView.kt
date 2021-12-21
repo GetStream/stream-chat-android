@@ -208,16 +208,19 @@ public class MessageComposerView : ConstraintLayout {
         (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
 
-        if (state.mentionSuggestions.isNotEmpty()) {
-            renderMentionSuggestions(state)
-        } else {
-            suggestionsPopup?.dismiss()
-        }
+        updateSuggestionsPopup(state)
+    }
 
-        if (state.commandSuggestions.isNotEmpty()) {
-            renderCommandsSuggestions(state)
-        } else {
-            suggestionsPopup?.dismiss()
+    /**
+     * Re-renders suggestions popup window for the given [MessageInputState] instance.
+     *
+     * @param state [MessageInputState] for which the suggestions popup is updated.
+     */
+    private fun updateSuggestionsPopup(state: MessageInputState) {
+        when {
+            state.mentionSuggestions.isNotEmpty() -> renderMentionSuggestions(state)
+            state.commandSuggestions.isNotEmpty() -> renderCommandsSuggestions(state)
+            else -> suggestionsPopup?.dismiss()
         }
     }
 
@@ -228,7 +231,6 @@ public class MessageComposerView : ConstraintLayout {
      */
     private fun renderCommandsSuggestions(state: MessageInputState) {
         (commandSuggestionsContent as? MessageComposerChild)?.renderState(state)
-
         val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(commandSuggestionsContent)
         popupWindow.apply {
             val offset = computeSuggestionsPopupVerticalOffset(commandSuggestionsContent)
@@ -265,7 +267,7 @@ public class MessageComposerView : ConstraintLayout {
                     -1,
                 )
             } else {
-                showAsDropDown(this@MessageComposerView, 0, -offset)
+                showAsDropDown(this@MessageComposerView, 0, offset)
             }
         }
     }
@@ -287,7 +289,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Creates new [PopupWindow] dedicated to displaying suggestions (e.g. mentions list, commands).
+     * Creates new [PopupWindow] dedicated to displaying suggestions (e.g. available mention, command suggestions).
      */
     private fun createSuggestionPopupWindow(content: View): PopupWindow {
         val onDismissListener = PopupWindow.OnDismissListener { suggestionsPopup = null }
