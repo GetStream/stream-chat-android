@@ -167,8 +167,8 @@ internal class ChannelMutableState(
         val channelData = channelData.value ?: ChannelData(channelType, channelId)
 
         val messages = sortedMessages.value
-        val members = _members.value.values.updateUsers(latestUsers.value).toList()
-        val watchers = _watchers.value.values.toList().updateUsers(latestUsers.value)
+        val members = members.value
+        val watchers = watchers.value
         val reads = _reads.value.values.toList()
         val watcherCount = _watcherCount.value
 

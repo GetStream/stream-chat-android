@@ -970,25 +970,7 @@ public class ChannelController internal constructor(
         return Result(messageToBeDeleted)
     }
 
-    public fun toChannel(): Channel {
-        // recreate a channel object from the various observables.
-        val channelData = mutableState._channelData.value ?: ChannelData(channelType, channelId)
-
-        val messages = mutableState.sortedMessages.value
-        val members = mutableState._members.value.values.toList()
-        val watchers = mutableState._watchers.value.values.toList()
-        val reads = mutableState._reads.value.values.toList()
-        val watcherCount = mutableState._watcherCount.value
-
-        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
-        channel.config = mutableState.channelConfig.value
-        channel.unreadCount = mutableState._unreadCount.value
-        channel.lastMessageAt =
-            mutableState.lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
-        channel.hidden = mutableState._hidden.value
-
-        return channel
-    }
+    public fun toChannel(): Channel = mutableState.toChannel()
 
     internal suspend fun loadMessageById(
         messageId: String,
