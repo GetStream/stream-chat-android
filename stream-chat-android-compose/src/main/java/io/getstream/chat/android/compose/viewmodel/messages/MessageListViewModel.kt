@@ -459,7 +459,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user taps on and selectes message reactions.
+     * Triggered when the user taps on and selects message reactions.
      *
      * @param message The message that contains the reactions.
      */
