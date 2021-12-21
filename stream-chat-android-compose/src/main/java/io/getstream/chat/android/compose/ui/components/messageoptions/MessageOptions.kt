@@ -41,16 +41,9 @@ public fun MessageOptions(
     onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     itemContent: @Composable ColumnScope.(MessageOptionItemState) -> Unit = { option ->
-        MessageOptionItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ChatTheme.dimens.messageOverlayActionItemHeight)
-                .clickable(
-                    onClick = { onMessageOptionSelected(option) },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple()
-                ),
-            option = option
+        DefaultMessageOptionItem(
+            option = option,
+            onMessageOptionSelected = onMessageOptionSelected
         )
     },
 ) {
@@ -62,20 +55,27 @@ public fun MessageOptions(
 }
 
 /**
- * Preview of [MessageOptions].
- * */
-@Preview(showBackground = true, name = "MessageOptions Preview")
+ * The default message option item.
+ *
+ * @param option The represented option.
+ * @param onMessageOptionSelected Handler when the user selects the option.
+ */
 @Composable
-private fun MessageOptionsPreview() {
-    ChatTheme {
-        val messageOptionsStateList = defaultMessageOptionsState(
-            selectedMessage = Message(),
-            currentUser = User(),
-            isInThread = false
-        )
-
-        MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})
-    }
+internal fun DefaultMessageOptionItem(
+    option: MessageOptionItemState,
+    onMessageOptionSelected: (MessageOptionItemState) -> Unit,
+) {
+    MessageOptionItem(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(ChatTheme.dimens.messageOptionsItemHeight)
+            .clickable(
+                onClick = { onMessageOptionSelected(option) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple()
+            ),
+        option = option
+    )
 }
 
 /**
@@ -167,4 +167,21 @@ public fun defaultMessageOptionsState(
             )
         } else null
     )
+}
+
+/**
+ * Preview of [MessageOptions].
+ * */
+@Preview(showBackground = true, name = "MessageOptions Preview")
+@Composable
+private fun MessageOptionsPreview() {
+    ChatTheme {
+        val messageOptionsStateList = defaultMessageOptionsState(
+            selectedMessage = Message(),
+            currentUser = User(),
+            isInThread = false
+        )
+
+        MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})
+    }
 }

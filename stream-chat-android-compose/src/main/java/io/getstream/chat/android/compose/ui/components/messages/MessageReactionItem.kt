@@ -4,7 +4,7 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.compose.previewdata.PreviewReactionData
+import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -34,7 +34,7 @@ public fun MessageReactionItem(
 @Composable
 public fun MessageReactionItemSelectedPreview() {
     ChatTheme {
-        MessageReactionItem(option = PreviewReactionData.oneReaction().first())
+        MessageReactionItem(option = PreviewReactionOptionData.reactionOption1())
     }
 }
 
@@ -45,6 +45,6 @@ public fun MessageReactionItemSelectedPreview() {
 @Composable
 public fun MessageReactionItemNotSelectedPreview() {
     ChatTheme {
-        MessageReactionItem(option = PreviewReactionData.oneReaction().first().copy(isSelected = false))
+        MessageReactionItem(option = PreviewReactionOptionData.reactionOption1().copy(isSelected = false))
     }
 }

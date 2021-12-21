@@ -676,7 +676,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { }
+                        onClick = {}
                     ),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 elevation = 4.dp,

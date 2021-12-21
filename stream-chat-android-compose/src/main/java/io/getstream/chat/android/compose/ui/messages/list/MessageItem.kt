@@ -5,6 +5,7 @@ import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -71,6 +73,7 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * a group of messages from the same user.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
@@ -92,6 +95,7 @@ public fun MessageItem(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -99,7 +103,10 @@ public fun MessageItem(
         DefaultMessageItemLeadingContent(messageItem = it)
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemHeaderContent(messageItem = it)
+        DefaultMessageItemHeaderContent(
+            messageItem = it,
+            onReactionsClick = onReactionsClick
+        )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemFooterContent(messageItem = it)
@@ -212,9 +219,13 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
  * By default, we show if the message is pinned and a list of reactions for the message.
  *
  * @param messageItem The message item to show the content for.
+ * @param onReactionsClick Handler when the user taps on message reactions.
  */
 @Composable
-internal fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
+internal fun DefaultMessageItemHeaderContent(
+    messageItem: MessageItemState,
+    onReactionsClick: (Message) -> Unit = {},
+) {
     val message = messageItem.message
     val currentUser = messageItem.currentUser
 
@@ -266,7 +277,14 @@ internal fun DefaultMessageItemHeaderContent(messageItem: MessageItemState) {
             }
             ?.let { options ->
                 MessageReactions(
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(bounded = false)
+                        ) {
+                            onReactionsClick(message)
+                        }
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
                     options = options
                 )
             }
