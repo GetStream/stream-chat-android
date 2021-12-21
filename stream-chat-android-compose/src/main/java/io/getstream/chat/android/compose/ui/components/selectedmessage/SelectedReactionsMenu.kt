@@ -48,14 +48,14 @@ public fun SelectedReactionsMenu(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsReactionOptions(
+        DefaultSelectedReactionsHeaderContent(
             message = message,
             reactionTypes = reactionTypes,
             onMessageAction = onMessageAction
         )
     },
     bodyContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsUserReactions(
+        DefaultSelectedReactionsBodyContent(
             message = message,
             currentUser = currentUser
         )
@@ -72,14 +72,14 @@ public fun SelectedReactionsMenu(
 }
 
 /**
- * Default reaction options for the selected reactions menu.
+ * Default header content for the selected reactions menu.
  *
  * @param message The selected message.
  * @param reactionTypes Available reactions.
  * @param onMessageAction Handler when the user selects a reaction.
  */
 @Composable
-internal fun DefaultSelectedReactionsReactionOptions(
+internal fun DefaultSelectedReactionsHeaderContent(
     message: Message,
     reactionTypes: Map<String, Int>,
     onMessageAction: (MessageAction) -> Unit,
@@ -102,13 +102,13 @@ internal fun DefaultSelectedReactionsReactionOptions(
 }
 
 /**
- * Default user reactions for the selected reactions menu.
+ * Default body content for the selected reactions menu.
  *
  * @param message The selected message.
  * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultSelectedReactionsUserReactions(
+internal fun DefaultSelectedReactionsBodyContent(
     message: Message,
     currentUser: User?,
 ) {
