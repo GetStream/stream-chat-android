@@ -43,7 +43,7 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
     }
 
     /**
-     * Set up initial layout state.
+     * Sets up initial layout state and initializes suggestions RecyclerView.
      */
     private fun init() {
         binding.apply {
