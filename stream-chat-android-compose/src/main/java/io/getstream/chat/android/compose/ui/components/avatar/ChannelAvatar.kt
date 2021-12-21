@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -52,7 +55,12 @@ public fun ChannelAvatar(
          * If the channel has an image we load that as a priority.
          */
         channel.image.isNotEmpty() -> {
-            val painter = rememberImagePainter(data = channel.image)
+            val painter = if (LocalInspectionMode.current) {
+                // Show hardcoded avatar from resources when rendering preview
+                painterResource(id = R.drawable.stream_compose_preview_avatar)
+            } else {
+                rememberImagePainter(data = channel.image)
+            }
 
             Avatar(
                 modifier = modifier,
