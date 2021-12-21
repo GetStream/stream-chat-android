@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -22,11 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
@@ -157,7 +161,7 @@ internal fun DefaultChannelDetails(
         val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
             Text(
                 modifier = it,
-                text = ChatTheme.channelNameFormatter.formatChannelName(channel),
+                text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,
@@ -242,5 +246,86 @@ public fun DefaultChannelTrailingContent(
                 Timestamp(date = channel.lastUpdated)
             }
         }
+    }
+}
+
+/**
+ * Preview of [DefaultChannelDetails] component for one-to-one conversation.
+ *
+ * Should show a user name and the last message in the channel.
+ */
+@Preview(showBackground = true, name = "ChannelDetails Preview (One-to-one conversation)")
+@Composable
+private fun DefaultChannelDetailsOneToOnePreview() {
+    DefaultChannelDetailsPreview(
+        channel = PreviewChannelData.channelWithMessages,
+        isMuted = false,
+        currentUser = PreviewUserData.user1
+    )
+}
+
+/**
+ * Preview of [DefaultChannelDetails] for muted channel.
+ *
+ * Should show a muted icon next to the channel name.
+ */
+@Preview(showBackground = true, name = "ChannelDetails Preview (Muted channel)")
+@Composable
+private fun DefaultChannelDetailsMutedPreview() {
+    DefaultChannelDetailsPreview(
+        channel = PreviewChannelData.channelWithMessages,
+        isMuted = true
+    )
+}
+
+/**
+ * Preview of [DefaultChannelDetails] for a channel without messages.
+ *
+ * Should show only channel name that is centered vertically.
+ */
+@Preview(showBackground = true, name = "ChannelDetails Preview (Without message)")
+@Composable
+private fun DefaultChannelDetailsWithMessagePreview() {
+    DefaultChannelDetailsPreview(channel = PreviewChannelData.channelWithImage)
+}
+
+/**
+ * Shows [DefaultChannelDetails] preview for the provided parameters.
+ *
+ * @param channel The channel used to show the preview.
+ * @param isMuted If the channel is muted.
+ * @param currentUser The currently logged in user.
+ */
+@Composable
+private fun DefaultChannelDetailsPreview(
+    channel: Channel,
+    isMuted: Boolean = false,
+    currentUser: User? = null,
+) {
+    ChatTheme {
+        DefaultChannelDetails(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp),
+            channel = channel,
+            isMuted = isMuted,
+            currentUser = currentUser
+        )
+    }
+}
+
+/**
+ * Preview of [DefaultChannelTrailingContent].
+ *
+ * Should show unread count badge, delivery indicator and timestamp.
+ */
+@Preview(showBackground = true, name = "ChannelLastMessageInfo Preview")
+@Composable
+private fun DefaultChannelTrailingContentPreview() {
+    ChatTheme {
+        DefaultChannelTrailingContent(
+            channel = PreviewChannelData.channelWithMessages,
+            currentUser = PreviewUserData.user1,
+        )
     }
 }
