@@ -52,7 +52,7 @@ import io.getstream.chat.android.compose.ui.util.getLastMessage
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun DefaultChannelItem(
+public fun ChannelItem(
     channelItem: ChannelItemState,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,

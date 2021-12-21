@@ -39,7 +39,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param itemContent Composable that allows the user to completely customize the item UI.
- * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
+ * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
  * @param divider Composable that allows the user to define an item divider.
  */
@@ -116,7 +116,7 @@ public fun ChannelList(
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param itemContent Composable that allows the user to completely customize the item UI.
- * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
+ * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
  * @param divider Composable that allows the user to define an item divider.
  */
@@ -160,6 +160,29 @@ public fun ChannelList(
         searchQuery.isNotEmpty() -> emptySearchContent(searchQuery)
         else -> emptyContent()
     }
+}
+
+/**
+ * The default channel item.
+ *
+ * @param channelItem The item to represent.
+ * @param currentUser The currently logged in user.
+ * @param onChannelClick Handler when the user clicks on an item.
+ * @param onChannelLongClick Handler when the user long taps on an item.
+ */
+@Composable
+internal fun DefaultChannelItem(
+    channelItem: ChannelItemState,
+    currentUser: User?,
+    onChannelClick: (Channel) -> Unit,
+    onChannelLongClick: (Channel) -> Unit,
+) {
+    ChannelItem(
+        channelItem = channelItem,
+        currentUser = currentUser,
+        onChannelClick = onChannelClick,
+        onChannelLongClick = onChannelLongClick
+    )
 }
 
 /**

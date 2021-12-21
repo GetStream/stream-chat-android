@@ -41,8 +41,8 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
-import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItem
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
@@ -130,7 +130,7 @@ class ChannelActivity : AppCompatActivity() {
      */
     @Composable
     private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
-        DefaultChannelItem(
+        ChannelItem(
             channelItem = channelItem,
             currentUser = user,
             onChannelLongClick = { },

@@ -13,7 +13,7 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
 
 /**
- * Builds a list of [DefaultChannelItem] elements, based on [channelsState] and action handlers that it receives.
+ * Builds a list of [ChannelItem] elements, based on [channelsState] and action handlers that it receives.
  *
  * @param channelsState Exposes if we're loading more items, reaches the end of the list and the
  * current list of channels to show.
