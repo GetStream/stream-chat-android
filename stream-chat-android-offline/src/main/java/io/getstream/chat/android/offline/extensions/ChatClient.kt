@@ -6,7 +6,6 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -17,10 +16,8 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
 
@@ -168,26 +165,4 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
     return CoroutineCall(domainImpl.scope) {
         channelController.loadOlderMessages(messageLimit)
     }
-}
-
-/**
- * Provides an instance of QueryChannelsRequest for next page.
- *
- * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
- * @param sort The sort for the channels, by default will sort on last_message_at.
- * @param limit The number of channels to retrieve.
- * @param messageLimit How many messages to fetch per channel.
- */
-@ExperimentalStreamChatApi
-public fun ChatClient.nextPageQueryChannelsRequest(
-    filter: FilterObject,
-    sort: QuerySort<Channel>,
-    limit: Int = 0,
-    messageLimit: Int = 0,
-): QueryChannelsRequest {
-    return this.state.queryChannels(filter, sort).nextPageRequest.value?.apply {
-        if (limit > 0) this.limit = limit
-        if (messageLimit > 0) this.messageLimit = messageLimit
-    }
-        ?: throw IllegalStateException("This function can only be called after first QueryChannelsRequest is completed.")
 }

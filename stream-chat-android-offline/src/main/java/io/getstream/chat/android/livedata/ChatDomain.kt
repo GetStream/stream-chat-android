@@ -260,14 +260,6 @@ public sealed interface ChatDomain {
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
     @CheckResult
-    @Deprecated(
-        message = "queryChannelsLoadMore is deprecated. Use extension function ChatClient::queryChannels instead",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().queryChannels()",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        )
-    )
     public fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
@@ -289,14 +281,6 @@ public sealed interface ChatDomain {
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
     @CheckResult
-    @Deprecated(
-        message = "queryChannelsLoadMore is deprecated. Use extension function ChatClient::queryChannels instead",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().queryChannels()",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        )
-    )
     public fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
@@ -316,14 +300,6 @@ public sealed interface ChatDomain {
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
     @CheckResult
-    @Deprecated(
-        message = "queryChannelsLoadMore is deprecated. Use extension function ChatClient::queryChannels instead",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().queryChannels()",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        )
-    )
     public fun queryChannelsLoadMore(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
 
     /**

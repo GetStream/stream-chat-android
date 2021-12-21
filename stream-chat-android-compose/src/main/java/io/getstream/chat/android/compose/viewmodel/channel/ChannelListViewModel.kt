@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
@@ -22,7 +23,8 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.nextPageQueryChannelsRequest
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.Flow
@@ -113,6 +115,8 @@ public class ChannelListViewModel(
         return channelMutes.value.any { cid == it.channel.cid }
     }
 
+    private lateinit var queryChannelsState: QueryChannelsState
+
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
@@ -133,6 +137,13 @@ public class ChannelListViewModel(
                     }
                 }
         }
+        val queryChannelsRequest = QueryChannelsRequest(
+            filter = queryConfig.value.filters,
+            querySort = queryConfig.value.querySort,
+            limit = 30,
+            messageLimit = 1
+        )
+        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
     }
 
     /**
@@ -255,18 +266,11 @@ public class ChannelListViewModel(
 
         channelsState = channelsState.copy(isLoadingMore = true)
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            loadMoreChannelsWithOfflinePlugin(filter, currentConfig.querySort)
+            queryChannelsState.nextPageRequest.value?.copy(filter = filter, querySort = currentConfig.querySort)
+                ?.let { chatClient.queryChannels(it) }
         } else {
-            loadMoreChannelsWithChatDomain(filter, currentConfig.querySort)
+            chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
         }
-    }
-
-    private fun loadMoreChannelsWithChatDomain(filter: FilterObject, sort: QuerySort<Channel>) {
-        chatDomain.queryChannelsLoadMore(filter, sort).enqueue()
-    }
-
-    private fun loadMoreChannelsWithOfflinePlugin(filter: FilterObject, sort: QuerySort<Channel>) {
-        chatClient.queryChannels(chatClient.nextPageQueryChannelsRequest(filter, sort)).enqueue()
     }
 
     /**

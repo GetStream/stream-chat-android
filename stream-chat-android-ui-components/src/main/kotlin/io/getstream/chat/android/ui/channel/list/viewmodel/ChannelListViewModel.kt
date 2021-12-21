@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
@@ -23,13 +24,14 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.extensions.nextPageQueryChannelsRequest
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
@@ -67,6 +69,8 @@ public class ChannelListViewModel(
     private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
 
+    private lateinit var queryChannelsState: QueryChannelsState
+
     init {
         stateMerger.addSource(filterLiveData) { filter ->
             if (filter != null) {
@@ -77,6 +81,10 @@ public class ChannelListViewModel(
 
     private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
+
+        val queryChannelsRequest =
+            QueryChannelsRequest(filter = filterObject, querySort = sort, limit = limit, messageLimit = messageLimit)
+        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
 
         chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
@@ -177,27 +185,23 @@ public class ChannelListViewModel(
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
             if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                loadMoreChannelsWithOfflinePlugin(filter)
+                queryChannelsState.nextPageRequest.value?.let {
+                    viewModelScope.launch {
+                        chatClient.queryChannels(it).enqueue(
+                            onError = { chatError ->
+                                logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                            }
+                        )
+                    }
+                }
             } else {
-                loadMoreChannelsWithChatDomain(filter)
+                chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
+                    onError = { chatError ->
+                        logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    }
+                )
             }
         }
-    }
-
-    private fun loadMoreChannelsWithChatDomain(filter: FilterObject) {
-        chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
-            onError = { chatError ->
-                logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
-            }
-        )
-    }
-
-    private fun loadMoreChannelsWithOfflinePlugin(filter: FilterObject) {
-        chatClient.queryChannels(chatClient.nextPageQueryChannelsRequest(filter, sort, limit, messageLimit)).enqueue(
-            onError = { chatError ->
-                logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
-            }
-        )
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {
