@@ -45,14 +45,15 @@ internal class RepositoryFacade constructor(
     SyncStateRepository by syncStateRepository,
     AttachmentRepository by attachmentRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
+    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = selectChannels(channelCIDs, forceCache, null)
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
+        forceCache: Boolean,
         pagination: AnyChannelPaginationRequest?,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.selectChannels(channelIds)
+        val channels = channelsRepository.selectChannels(channelIds, forceCache)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -84,7 +85,12 @@ internal class RepositoryFacade constructor(
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
-        insertUsers(channels.flatMap(Channel::users))
+        val users = channels.flatMap(Channel::users)
+        val olegUser = users.firstOrNull { it.id == "oleg" }
+        if (olegUser != null) {
+            android.util.Log.w("USER_UPDATES", "RepoFacade insertChannels, with Oleg's name is ${olegUser.name}")
+        }
+        insertUsers(users)
         channelsRepository.insertChannels(channels)
     }
 
@@ -118,6 +124,12 @@ internal class RepositoryFacade constructor(
         cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertChannelConfigs(it) }
+        val olegUser = users.firstOrNull { it.id == "oleg" }
+        if (olegUser != null) {
+            android.util.Log.w("USER_UPDATES", "Store channels state with Oleg's name is ${olegUser.name}")
+        } else {
+            android.util.Log.w("USER_UPDATES", "Store channels state without Oleg")
+        }
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)

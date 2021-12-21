@@ -13,7 +13,7 @@ internal interface MessageRepository {
         pagination: AnyChannelPaginationRequest?,
     ): List<Message>
 
-    suspend fun selectMessages(messageIds: List<String>): List<Message>
+    suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean = false): List<Message>
     suspend fun selectMessage(messageId: String): Message?
     suspend fun insertMessages(messages: List<Message>, cache: Boolean = false)
     suspend fun insertMessage(message: Message, cache: Boolean = false)
@@ -28,7 +28,7 @@ internal class MessageRepositoryImpl(
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,
     private val cacheSize: Int = 100,
-    private var messageCache: LruCache<String, Message> = LruCache(cacheSize)
+    private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
 ) : MessageRepository {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
 
@@ -72,15 +72,26 @@ internal class MessageRepositoryImpl(
         }
     }
 
-    override suspend fun selectMessages(messageIds: List<String>): List<Message> {
-        val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-        val cachedIds = messageIds - missingMessageIds
-        return cachedIds.mapNotNull { messageCache[it] } + messageDao.select(missingMessageIds)
-            .map { entity -> entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) } }
+    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
+        return if (forceCache) {
+            fetchMessages(messageIds)
+        } else {
+            val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
+            val cachedIds = messageIds - missingMessageIds
+            cachedIds.mapNotNull { messageCache[it] } + fetchMessages(missingMessageIds)
+        }
+    }
+
+    private suspend fun fetchMessages(messageIds: List<String>): List<Message> {
+        return messageDao.select(messageIds)
+            .map { entity ->
+                entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) }
+            }
     }
 
     override suspend fun selectMessage(messageId: String): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)?.filterReactions()
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
+            ?.filterReactions()
             ?.also { messageCache.put(it.id, it) }
     }
 
