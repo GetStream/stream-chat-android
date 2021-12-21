@@ -1,8 +1,8 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
-import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 
 /**
@@ -14,9 +14,10 @@ public fun interface ChannelNameFormatter {
      * Generates a name for the given channel.
      *
      * @param channel The channel whose data is used to generate the name.
+     * @param currentUser The currently logged in user.
      * @return The display name for the given channel.
      */
-    public fun formatChannelName(channel: Channel): String
+    public fun formatChannelName(channel: Channel, currentUser: User?): String
 
     public companion object {
         /**
@@ -56,11 +57,12 @@ private class DefaultChannelNameFormatter(
      * Generates a name for the given channel.
      *
      * @param channel The channel whose data is used to generate the name.
+     * @param currentUser The currently logged in user.
      * @return The display name for the given channel.
      */
-    override fun formatChannelName(channel: Channel): String {
+    override fun formatChannelName(channel: Channel, currentUser: User?): String {
         return channel.name.takeIf { it.isNotEmpty() }
-            ?: channel.getUsersExcludingCurrent()
+            ?: channel.getOtherUsers(currentUser)
                 .joinToString(limit = maxMembers) { it.name }
                 .takeIf { it.isNotEmpty() }
             ?: context.getString(R.string.stream_compose_untitled_channel)
