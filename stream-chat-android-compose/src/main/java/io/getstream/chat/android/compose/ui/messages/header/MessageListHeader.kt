@@ -134,7 +134,6 @@ public fun DefaultMessageHeaderTitle(
     onHeaderActionClick: (Channel) -> Unit = {},
     connectionState: ConnectionState = ConnectionState.CONNECTED,
 ) {
-
     val title = when (messageMode) {
         MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
         is MessageMode.MessageThread -> stringResource(id = R.string.stream_compose_thread_title)

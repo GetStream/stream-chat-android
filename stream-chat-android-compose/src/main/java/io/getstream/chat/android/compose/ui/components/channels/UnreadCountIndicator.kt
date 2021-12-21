@@ -48,7 +48,7 @@ public fun UnreadCountIndicator(
 }
 
 /**
- * A caption that is shown when a user has more than 99 unread messages.
+ * The unread count that's shown for many messages.
  */
 private const val UNREAD_COUNT_MANY = "99+"
 
