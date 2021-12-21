@@ -12,6 +12,10 @@ import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 
+/**
+ * Markdown based implementation of [ChatMessageTextTransformer] that parses the message text as Markdown
+ * and apply it to [TextView].
+ */
 public class MarkdownTextTransformer(context: Context) : ChatMessageTextTransformer {
     private val markwon: Markwon = Markwon.builder(context)
         .usePlugin(CorePlugin.create())
@@ -21,6 +25,10 @@ public class MarkdownTextTransformer(context: Context) : ChatMessageTextTransfor
         .usePlugin(SoftBreakAddsNewLinePlugin.create())
         .build()
 
+    /**
+     * Parses a given [MessageListItem.MessageItem] as markdown and sets the formatted string to the [TextView].
+     * It also adds links to the textview which are removed due to markdown treatment.
+     */
     override fun transformAndApply(textView: TextView, messageItem: MessageListItem.MessageItem) {
         markwon.setMarkdown(textView, messageItem.message.text.fixItalicAtEnd())
         Linkify.addLinks(textView)
