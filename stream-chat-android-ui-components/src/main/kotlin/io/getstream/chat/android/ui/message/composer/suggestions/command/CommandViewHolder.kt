@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
  * @param onCommandSelected Callback invoked when command suggestion item is clicked.
  */
 internal class CommandViewHolder(
-    val binding: StreamUiItemCommandBinding,
+    private val binding: StreamUiItemCommandBinding,
     private val onCommandSelected: (Command) -> Unit,
 ) :
     SimpleListAdapter.ViewHolder<Command>(binding.root) {
