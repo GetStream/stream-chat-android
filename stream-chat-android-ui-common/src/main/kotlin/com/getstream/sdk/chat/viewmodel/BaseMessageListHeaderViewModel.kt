@@ -42,6 +42,9 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
                 _channelState.addSource(map(channelController.offlineChannelData) { channelController.toChannel() }) {
                     _channelState.value = it
                 }
+                _channelState.addSource(map(channelController.members) { channelController.toChannel() }) {
+                    _channelState.value = it
+                }
                 _anyOtherUsersOnline.addSource(
                     map(channelController.members) { members ->
                         members.asSequence()
