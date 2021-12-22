@@ -13,6 +13,15 @@ internal interface MessageRepository {
         pagination: AnyChannelPaginationRequest?,
     ): List<Message>
 
+    /**
+     * Selects messages by IDs.
+     *
+     * @param messageIds A list of [Message.id] as query specification.
+     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
+     * value is true.
+     *
+     * @return A list of messages found in repository.
+     */
     suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean = false): List<Message>
     suspend fun selectMessage(messageId: String): Message?
     suspend fun insertMessages(messages: List<Message>, cache: Boolean = false)
@@ -82,6 +91,7 @@ internal class MessageRepositoryImpl(
         }
     }
 
+    /** Fetches messages from [MessageDao] and cache values in [LruCache]. */
     private suspend fun fetchMessages(messageIds: List<String>): List<Message> {
         return messageDao.select(messageIds)
             .map { entity ->
