@@ -77,6 +77,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Users' updates done in runtime are now propagated to the `MessageListView` component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 - Fixed the display of image attachments on the pinned message list screen. [#2792](https://github.com/GetStream/stream-chat-android/pull/2792)
+-  Button for commands is now disabled in edit mode. 
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
