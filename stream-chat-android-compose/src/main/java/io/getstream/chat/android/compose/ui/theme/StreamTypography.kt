@@ -11,14 +11,16 @@ import androidx.compose.ui.unit.sp
  * Contains all the typography we provide for our components.
  *
  * @param title1 Used for big titles, like the image attachment overlay text.
+ * @param title3 Used for empty content text.
  * @param title3Bold Used for titles of app bars and bottom bars.
  * @param body Used for body content, such as messages.
  * @param bodyItalic Used for body content, italicized, like deleted message components.
  * @param bodyBold Used for emphasized body content, like small titles.
  * @param footnote Used for footnote information, like timestamps.
  * @param footnoteItalic Used for footnote information that's less important, like the deleted message text.
- * @param footnoteBold Used for footnote information in certain important items, like the thread reply text, or user
- * info components.
+ * @param footnoteBold Used for footnote information in certain important items, like the thread reply text,
+ * or user info components.
+ * @param captionBold Used for unread count indicator.
  */
 @Immutable
 public data class StreamTypography(
