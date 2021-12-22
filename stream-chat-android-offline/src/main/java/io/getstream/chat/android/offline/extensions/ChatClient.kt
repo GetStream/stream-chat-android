@@ -166,3 +166,11 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
         channelController.loadOlderMessages(messageLimit)
     }
 }
+
+public fun ChatClient.needsMarkRead(cid: String): Boolean {
+    validateCid(cid)
+    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val channelController = domainImpl.channel(cid)
+
+    return channelController.markRead()
+}
