@@ -121,8 +121,8 @@ fun MessageListHeader(
         )
     },
 
-    titleContent: @Composable RowScope.() -> Unit = {
-        DefaultMessageHeaderTitle(
+    centerContent: @Composable RowScope.() -> Unit = {
+        DefaultMessageListHeaderCenterContent(
             modifier = Modifier.weight(6f),
             channel = channel,
             messageMode = messageMode,
@@ -142,7 +142,7 @@ fun MessageListHeader(
 ```
 
 * `leadingContent`: Represents the leading content part of the header. By default the `BackButton`.
-* `titleContent`: Represents the core and center part of the header. Shows either more information about the channel using a `DefaultMessageHeaderTitle`, or a `NetworkLoadingView`, based on whether the network is available or not.
+* `centerContent`: Represents the core and center part of the header. Shows either more information about the channel using a `DefaultMessageHeaderTitle`, or a `NetworkLoadingView`, based on whether the network is available or not.
 * `trailingContent`: Represents the content at the end of the header. By default the 'ChannelAvatar'.
 
 You can override each of these parameters that represent different slots in the header.

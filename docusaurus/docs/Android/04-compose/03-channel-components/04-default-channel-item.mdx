@@ -108,7 +108,7 @@ fun DefaultChannelItem(
             currentUser = currentUser
         )
     },
-    detailsContent: @Composable RowScope.(ChannelItem) -> Unit = {
+    centerContent: @Composable RowScope.(ChannelItem) -> Unit = {
         ChannelDetails(
             channel = it.channel,
             isMuted = it.isMuted,
@@ -141,7 +141,7 @@ fun DefaultChannelItem(
 
 * `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
 * `leadingContent`: Customizable composable function that allows you to override the content that appears at the start of the list item. By default, it represents a `ChannelAvatar`.
-* `detailsContent`: Customizable composable function that allows you to override the center part of the list item. By default, it represents the `ChannelDetails` that show its name and the last message preview.
+* `centerConent`: Customizable composable function that allows you to override the center part of the list item. By default, it represents the `ChannelDetails` that show its name and the last message preview.
 * `trailingContent`: Customizable composable function that allows you to override the content that appears at the end of the list item. By default, it represents the `ChannelLastMessageInfo` that shows the unread message indicator if there are unread messages and the last message read state.
 * `divider`: Customizable composable function that allows you to override the content that appears at the bottom of the list item, as a divider.
 
