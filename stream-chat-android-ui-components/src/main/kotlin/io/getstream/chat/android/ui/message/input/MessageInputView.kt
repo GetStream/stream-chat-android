@@ -173,6 +173,7 @@ public class MessageInputView : ConstraintLayout {
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_edit_message)
                 binding.inputModeIcon.setImageDrawable(messageInputViewStyle.editInputModeIcon)
                 binding.messageInputFieldView.onEdit(newValue.oldMessage)
+                binding.commandsButton.isEnabled = false
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
 
@@ -708,13 +709,15 @@ public class MessageInputView : ConstraintLayout {
 
     private fun refreshControlsState() {
         with(binding) {
-            val commandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
+            val isCommandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
+            val isEditMode = messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !commandMode
-            commandsButton.isVisible = shouldShowCommandsButton() && !commandMode
-            commandsButton.isEnabled = !hasContent
+            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode
+            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isEditMode
+            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode
+            commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
     }
