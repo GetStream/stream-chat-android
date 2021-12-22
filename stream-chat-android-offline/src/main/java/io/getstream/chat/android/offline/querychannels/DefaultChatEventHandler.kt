@@ -13,26 +13,36 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Default implementation of [ChatEventHandler] which covers the default filter of channels.
- * It  adds or removes channels accordingly with the notification event received. Events handled are: [NotificationAddedToChannelEvent],
- * [NotificationMessageNewEvent], [NotificationRemovedFromChannelEvent].
- * This Handler will skip the even if the channel is already added or absent and no interaction is needed.
+ * The channel will be added if the current user is a member and it will be removed otherwise.
  *
- * This handler expects that the list of channels are the channels that we user is a member.
+ * @param channels The list of visible channels.
  */
 public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>) :
     BaseChatEventHandler() {
 
-    /** Handles [NotificationAddedToChannelEvent] event. It adds the channel, if it is absent. */
+    /**
+     *  Handles [NotificationAddedToChannelEvent] event. It adds the channel if it is absent.
+     *
+     * @param event Instance of [NotificationAddedToChannelEvent] that is being handled.
+     * @param filter [FilterObject] which is used to define an outcome.
+     */
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsent(event.channel)
+    ): EventHandlingResult = addIfChannelIsAbsent(channels, event.channel)
 
-    /** Handles [MemberAddedEvent] event. The event is skipped and should not arrive to this handler. */
+    /**
+     *  Handles [MemberAddedEvent] event. It adds the channel if it is absent.
+     *
+     * @param event Instance of [NotificationAddedToChannelEvent] that is being handled.
+     * @param filter [FilterObject] which is used to define an outcome.
+     * @param cachedChannel optional [Channel] object cached in database
+     */
     override fun handleMemberAddedEvent(
         event: MemberAddedEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
+        cachedChannel: Channel?,
+    ): EventHandlingResult = addIfChannelIsAbsent(channels, cachedChannel)
 
     /** Handles [ChannelUpdatedByUserEvent] event. The event is skipped. */
     override fun handleChannelUpdatedByUserEvent(
@@ -43,11 +53,11 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     /** Handles [ChannelUpdatedEvent] event. The event is skipped. */
     override fun handleChannelUpdatedEvent(
         event: ChannelUpdatedEvent,
-        filter: FilterObject
+        filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.Skip
 
     /**
-     * Handles [NotificationMessageNewEvent]. It makes a request to API to define outcome of handling.
+     * Handles [NotificationMessageNewEvent]. It adds the channel, if it is absent.
      *
      * @param event Instance of [NotificationMessageNewEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
@@ -55,21 +65,23 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     override fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsent(event.channel)
+    ): EventHandlingResult = addIfChannelIsAbsent(channels, event.channel)
 
     /**
-     * Handles [MemberRemovedEvent]. It makes a request to API to define outcome of handling.
+     * Handles [MemberRemovedEvent]. It removes the channel if it's present in the list
      *
      * @param event Instance of [MemberRemovedEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
+     * @param cachedChannel optional [Channel] object cached in database
      */
     override fun handleMemberRemovedEvent(
         event: MemberRemovedEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
+        cachedChannel: Channel?,
+    ): EventHandlingResult = removeIfChannelIsPresent(channels, cachedChannel)
 
     /**
-     * Handles [NotificationRemovedFromChannelEvent]. It makes a request to API to define outcome of handling.
+     * Handles [NotificationRemovedFromChannelEvent]. It removes the channel if it's present in the list
      *
      * @param event Instance of [NotificationRemovedFromChannelEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
@@ -77,28 +89,5 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = removeIfChannelIsPresent(event.channel)
-
-    /**
-     * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
-     * adds the channel.
-     */
-    private fun addIfChannelIsAbsent(channel: Channel): EventHandlingResult {
-        return if (channels.value.any { it.cid == channel.cid }) {
-            EventHandlingResult.Skip
-        } else {
-            EventHandlingResult.Add(channel)
-        }
-    }
-
-    /**
-     * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise it simply skips the event
-     */
-    private fun removeIfChannelIsPresent(channel: Channel): EventHandlingResult {
-        return if (channels.value.any { it.cid == channel.cid }) {
-            EventHandlingResult.Remove(channel.cid)
-        } else {
-            EventHandlingResult.Skip
-        }
-    }
+    ): EventHandlingResult = removeIfChannelIsPresent(channels, event.channel)
 }

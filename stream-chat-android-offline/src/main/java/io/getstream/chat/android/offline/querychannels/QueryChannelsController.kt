@@ -57,6 +57,7 @@ public class QueryChannelsController internal constructor(
     public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
     public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
     public val channels: StateFlow<List<Channel>> = mutableState.channels
+
     @Deprecated(
         message = "Use ChatDomain.channelMutes instead",
         replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
@@ -116,7 +117,11 @@ public class QueryChannelsController internal constructor(
         // update the info for that channel from the channel repo
         logger.logI("received channel event $event")
 
-        val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter)
+        val cachedChannel = if (event is CidEvent) {
+            domainImpl.getCachedChannel(event.cid)
+        } else null
+
+        val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter, cachedChannel)
         when (handlingResult) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
