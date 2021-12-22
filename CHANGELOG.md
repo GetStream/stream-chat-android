@@ -52,6 +52,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed a bug when hard deleted messages still remain in the UI.
+- Stabilized behavior of users' updates propagation across values of the channels and the messages. [#2803](https://github.com/GetStream/stream-chat-android/pull/2803)
 
 ### ⬆️ Improved
 
