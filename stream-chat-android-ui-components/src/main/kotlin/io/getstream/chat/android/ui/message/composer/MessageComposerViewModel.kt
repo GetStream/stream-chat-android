@@ -60,6 +60,10 @@ public class MessageComposerViewModel(
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
 
+    /**
+     * Initializing properties:
+     * - Listening to cooldownTimer value's updates and propagating the update to messageInputState.
+     */
     init {
         viewModelScope.launch {
             cooldownTimer.collect {
