@@ -33,9 +33,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -84,7 +87,7 @@ class MessagesActivity : AppCompatActivity() {
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
-        val selectedMessage = listViewModel.currentMessagesState.selectedMessage
+        val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -139,26 +142,43 @@ class MessagesActivity : AppCompatActivity() {
                 )
             }
 
-            if (selectedMessage != null) {
-                SelectedMessageMenu(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(horizontal = 20.dp)
-                        .wrapContentSize(),
-                    shape = ChatTheme.shapes.attachment,
-                    messageOptions = defaultMessageOptionsState(
-                        selectedMessage = selectedMessage,
+            if (selectedMessageState != null) {
+                val selectedMessage = selectedMessageState.message
+                if (selectedMessageState is SelectedMessageOptionsState) {
+                    SelectedMessageMenu(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 20.dp)
+                            .wrapContentSize(),
+                        shape = ChatTheme.shapes.attachment,
+                        messageOptions = defaultMessageOptionsState(
+                            selectedMessage = selectedMessage,
+                            currentUser = user,
+                            isInThread = listViewModel.isInThread
+                        ),
+                        message = selectedMessage,
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
+                        onDismiss = { listViewModel.removeOverlay() }
+                    )
+                } else if (selectedMessageState is SelectedMessageReactionsState) {
+                    SelectedReactionsMenu(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 20.dp)
+                            .wrapContentSize(),
+                        shape = ChatTheme.shapes.attachment,
+                        message = selectedMessage,
                         currentUser = user,
-                        isInThread = listViewModel.isInThread
-                    ),
-                    message = selectedMessage,
-                    onMessageAction = { action ->
-                        composerViewModel.performMessageAction(action)
-                        listViewModel.performMessageAction(action)
-                        listViewModel.removeOverlay()
-                    },
-                    onDismiss = { listViewModel.removeOverlay() }
-                )
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
+                        onDismiss = { listViewModel.removeOverlay() }
+                    )
+                }
             }
         }
     }

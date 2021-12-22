@@ -5,6 +5,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLifecycleOwner
 
 /**
@@ -25,6 +26,8 @@ public fun SystemBackPressedHandler(
     isEnabled: Boolean,
     onBackPressed: () -> Unit,
 ) {
+    if (LocalInspectionMode.current) return
+
     val backPressedDispatcher =
         (LocalLifecycleOwner.current as ComponentActivity).onBackPressedDispatcher
 

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.channel.header
+package io.getstream.chat.android.compose.ui.channels.header
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row

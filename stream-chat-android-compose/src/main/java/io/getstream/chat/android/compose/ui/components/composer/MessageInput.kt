@@ -16,6 +16,7 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * The default number of lines allowed in the input. The message input will become scrollable after
@@ -62,7 +63,9 @@ public fun MessageInput(
                 }
 
                 if (attachments.isNotEmpty() && activeAction !is Edit) {
-                    MessageInputAttachments(
+                    val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
+
+                    previewFactory?.previewContent?.invoke(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),

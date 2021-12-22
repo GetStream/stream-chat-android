@@ -38,11 +38,11 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
-import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
-import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
-import io.getstream.chat.android.compose.ui.channel.list.ChannelList
-import io.getstream.chat.android.compose.ui.channel.list.DefaultChannelItem
+import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
+import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
+import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
@@ -130,7 +130,7 @@ class ChannelActivity : AppCompatActivity() {
      */
     @Composable
     private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
-        DefaultChannelItem(
+        ChannelItem(
             channelItem = channelItem,
             currentUser = user,
             onChannelLongClick = { },
@@ -140,7 +140,7 @@ class ChannelActivity : AppCompatActivity() {
             },
             detailsContent = {
                 Text(
-                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
