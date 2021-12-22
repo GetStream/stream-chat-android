@@ -46,12 +46,13 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
      * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageInputState) {
-        val sendButtonVisible = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.cooldownTimer == 0
         binding.apply {
+            val sendButtonVisible = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.cooldownTimer == 0
             sendMessageButtonDisabled.isVisible = !sendButtonVisible
             sendMessageButtonEnabled.isVisible = sendButtonVisible
-            coolDownBadge.isVisible = state.cooldownTimer > 0
-            coolDownBadge.text = state.cooldownTimer.toString()
+            val coolDownTimerVisible = state.cooldownTimer > 0
+            coolDownBadge.isVisible = coolDownTimerVisible
+            if (coolDownTimerVisible) coolDownBadge.text = state.cooldownTimer.toString()
         }
     }
 }
