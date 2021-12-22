@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -115,7 +114,10 @@ public class ChannelListViewModel(
         return channelMutes.value.any { cid == it.channel.cid }
     }
 
-    private lateinit var queryChannelsState: QueryChannelsState
+    private var queryChannelsState: QueryChannelsState? = null
+
+    private val CHANNEL_LIMIT = 20
+    private val MESSAGE_LIMIT = 1
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
@@ -140,10 +142,10 @@ public class ChannelListViewModel(
 
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             val queryChannelsRequest = QueryChannelsRequest(
-                filter = queryConfig.value.filters,
+                filter = createQueryChannelsFilter(queryConfig.value.filters, ""),
                 querySort = queryConfig.value.querySort,
-                limit = 30,
-                messageLimit = 1
+                limit = CHANNEL_LIMIT,
+                messageLimit = MESSAGE_LIMIT
             )
             queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
         }
@@ -256,7 +258,6 @@ public class ChannelListViewModel(
     /**
      * Loads more data when the user reaches the end of the channels list.
      */
-    @SuppressLint("CheckResult")
     public fun loadMore() {
         val currentConfig = queryConfig.value
         val query = searchQuery.value
@@ -268,12 +269,19 @@ public class ChannelListViewModel(
         }
 
         channelsState = channelsState.copy(isLoadingMore = true)
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            queryChannelsState.nextPageRequest.value?.copy(filter = filter, querySort = currentConfig.querySort)
-                ?.let { chatClient.queryChannels(it) }
+        val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val currentQuery = queryChannelsState?.nextPageRequest?.value
+            currentQuery?.copy(
+                filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
+                querySort = currentConfig.querySort
+            )?.let {
+                chatClient.queryChannels(it)
+            }
         } else {
-            chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
+            chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort)
         }
+
+        call?.enqueue()
     }
 
     /**

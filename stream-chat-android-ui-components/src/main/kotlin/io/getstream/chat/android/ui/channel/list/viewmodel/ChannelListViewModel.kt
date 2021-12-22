@@ -69,7 +69,7 @@ public class ChannelListViewModel(
     private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
 
-    private lateinit var queryChannelsState: QueryChannelsState
+    private var queryChannelsState: QueryChannelsState? = null
 
     init {
         stateMerger.addSource(filterLiveData) { filter ->
@@ -190,7 +190,7 @@ public class ChannelListViewModel(
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
             if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                queryChannelsState.nextPageRequest.value?.let {
+                queryChannelsState?.nextPageRequest?.value?.let {
                     viewModelScope.launch {
                         chatClient.queryChannels(it).enqueue(
                             onError = { chatError ->
