@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.common.markdown
 
 import android.widget.TextView
 
-import kotlin.Deprecated;
+import kotlin.Deprecated
 
 @Deprecated(message = "ChatMarkdown is deprecated in favour of ChatMessageTextTransformer. " +
     "Use ChatMessageTextTransformer for text ui transformations."
