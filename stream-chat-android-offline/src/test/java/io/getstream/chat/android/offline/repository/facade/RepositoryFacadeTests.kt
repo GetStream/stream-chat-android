@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.repository.facade
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -40,9 +41,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             whenever(users.selectUser("userId")) doReturn user
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(channel1, channel2)
+            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")), any())) doReturn listOf(channel1, channel2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), false, paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
@@ -65,12 +66,12 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             )
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(
+            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")), any())) doReturn listOf(
                 channel1,
                 channelEntity2
             )
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), false, paginationRequest)
+            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
@@ -81,7 +82,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
         val message1 = randomMessage()
         val message2 = randomMessage()
-        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")))) doReturn listOf(message1, message2)
+        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(message1, message2)
 
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 

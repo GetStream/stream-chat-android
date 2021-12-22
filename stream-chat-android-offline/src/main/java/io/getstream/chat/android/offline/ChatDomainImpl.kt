@@ -892,7 +892,7 @@ internal class ChatDomainImpl internal constructor(
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest,
-    ): List<Channel> = repos.selectChannels(channelIds = channelIds, forceCache = false, pagination = pagination).applyPagination(pagination)
+    ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     override fun clean() {
         for (channelController in activeChannelMapImpl.values.toList()) {

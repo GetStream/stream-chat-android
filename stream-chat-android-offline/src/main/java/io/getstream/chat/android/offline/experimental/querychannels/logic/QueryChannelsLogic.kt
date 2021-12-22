@@ -61,11 +61,7 @@ internal class QueryChannelsLogic(
         val query =
             chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
 
-        return chatDomainImpl.repos.selectChannels(
-            channelIds = query.cids.toList(),
-            forceCache = false,
-            pagination = pagination
-        )
+        return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
             .also { logger.logI("found ${it.size} channels in offline storage") }
             .also { addChannels(it) }

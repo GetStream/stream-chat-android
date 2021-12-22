@@ -45,12 +45,12 @@ internal class RepositoryFacade constructor(
     SyncStateRepository by syncStateRepository,
     AttachmentRepository by attachmentRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = selectChannels(channelCIDs, forceCache, null)
+    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = selectChannels(channelCIDs, null, forceCache)
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
-        forceCache: Boolean,
         pagination: AnyChannelPaginationRequest?,
+        forceCache: Boolean = false,
     ): List<Channel> {
         // fetch the channel entities from room
         val channels = channelsRepository.selectChannels(channelIds, forceCache)
