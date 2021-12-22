@@ -595,7 +595,6 @@ public class ChannelController internal constructor(
     // This one needs to be public for flows such as running a message action
 
     internal fun upsertMessage(message: Message) {
-        android.util.Log.w("USER_UPDATES", "upsertMessage")
         channelLogic.upsertMessages(listOf(message))
     }
 

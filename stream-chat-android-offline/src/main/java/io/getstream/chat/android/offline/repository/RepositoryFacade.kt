@@ -85,12 +85,7 @@ internal class RepositoryFacade constructor(
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
-        val users = channels.flatMap(Channel::users)
-        val olegUser = users.firstOrNull { it.id == "oleg" }
-        if (olegUser != null) {
-            android.util.Log.w("USER_UPDATES", "RepoFacade insertChannels, with Oleg's name is ${olegUser.name}")
-        }
-        insertUsers(users)
+        insertUsers(channels.flatMap(Channel::users))
         channelsRepository.insertChannels(channels)
     }
 
@@ -124,12 +119,6 @@ internal class RepositoryFacade constructor(
         cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertChannelConfigs(it) }
-        val olegUser = users.firstOrNull { it.id == "oleg" }
-        if (olegUser != null) {
-            android.util.Log.w("USER_UPDATES", "Store channels state with Oleg's name is ${olegUser.name}")
-        } else {
-            android.util.Log.w("USER_UPDATES", "Store channels state without Oleg")
-        }
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
