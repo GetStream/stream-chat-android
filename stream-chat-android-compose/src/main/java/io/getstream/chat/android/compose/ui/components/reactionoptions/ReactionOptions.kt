@@ -34,13 +34,9 @@ public fun ReactionOptions(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
-        ReactionOptionItem(
-            modifier = Modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false),
-                onClick = { onReactionOptionSelected(option) }
-            ),
-            option = option
+        DefaultReactionOptionItem(
+            option = option,
+            onReactionOptionSelected = onReactionOptionSelected
         )
     },
 ) {
@@ -60,6 +56,27 @@ public fun ReactionOptions(
             itemContent(option)
         }
     }
+}
+
+/**
+ * The default reaction option item.
+ *
+ * @param option The represented option.
+ * @param onReactionOptionSelected The handler when the option is selected.
+ */
+@Composable
+internal fun DefaultReactionOptionItem(
+    option: ReactionOptionItemState,
+    onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
+) {
+    ReactionOptionItem(
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = rememberRipple(bounded = false),
+            onClick = { onReactionOptionSelected(option) }
+        ),
+        option = option
+    )
 }
 
 /**

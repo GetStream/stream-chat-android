@@ -37,8 +37,7 @@ internal class FilterObjectConverter {
     }
 
     @TypeConverter
-    fun objectToString(filterObject: FilterObject?): String? {
-        filterObject ?: return null
+    fun objectToString(filterObject: FilterObject): String {
         return adapter.toJson(filterObject.toMap())
     }
 }

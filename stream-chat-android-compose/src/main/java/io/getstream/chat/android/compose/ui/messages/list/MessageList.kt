@@ -30,15 +30,15 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
+ * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param itemContent Composable that represents each message item in a list. By default, we provide
- * the [DefaultMessageContainer] and connect the the long click handler with it.
- * Users can override this to provide fully custom UI and behavior.
+ * @param itemContent Composable that represents each item in a list. By default, we provide
+ * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
  */
 @Composable
 public fun MessageList(
@@ -46,6 +46,7 @@ public fun MessageList(
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
+    onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
@@ -55,15 +56,16 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
+    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageItem(
-            messageListItem = it,
-            onLongItemClick = onLongItemClick,
+    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
+        DefaultMessageContainer(
+            messageListItem = messageListItem,
+            onImagePreviewResult = onImagePreviewResult,
             onThreadClick = onThreadClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onLongItemClick = onLongItemClick,
+            onReactionsClick = onReactionsClick,
+            onGiphyActionClick = onGiphyActionClick
         )
     },
 ) {
@@ -73,6 +75,7 @@ public fun MessageList(
         onMessagesStartReached = onMessagesStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
+        onReactionsClick = onReactionsClick,
         onScrolledToBottom = onScrollToBottom,
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
@@ -82,59 +85,42 @@ public fun MessageList(
 }
 
 /**
- * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
- * users to connect the UI to their own data providers, as it relies on pure state.
+ * The default message container item.
  *
- * @param currentState The state of the component, represented by [MessagesState].
- * @param modifier Modifier for styling.
- * @param onMessagesStartReached Handler for pagination.
- * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
- * @param onScrolledToBottom Handler when the user scrolls to the bottom.
- * @param onThreadClick Handler for when the user taps on a message with an active thread.
- * @param onLongItemClick Handler for when the user long taps on an item.
- * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
- * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param itemContent Composable that represents each item in the list, that the user can override
- * for custom UI and behavior.
+ * @param messageListItem The state of the message list item.
+ * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
+ * @param onThreadClick Handler when the user taps on a thread within a message item.
+ * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions.
+ * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  */
 @Composable
-public fun MessageList(
-    currentState: MessagesState,
-    modifier: Modifier = Modifier,
-    onMessagesStartReached: () -> Unit = {},
-    onLastVisibleMessageChanged: (Message) -> Unit = {},
-    onScrolledToBottom: () -> Unit = {},
-    onThreadClick: (Message) -> Unit = {},
-    onLongItemClick: (Message) -> Unit = {},
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onGiphyActionClick: (GiphyAction) -> Unit = {},
-    loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
-    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageItem(
-            messageListItem = it,
-            onLongItemClick = onLongItemClick,
-            onThreadClick = onThreadClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
-        )
-    },
+internal fun DefaultMessageContainer(
+    messageListItem: MessageListItemState,
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onThreadClick: (Message) -> Unit,
+    onLongItemClick: (Message) -> Unit,
+    onReactionsClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit,
 ) {
-    val (isLoading, _, _, messages) = currentState
+    MessageContainer(
+        messageListItem = messageListItem,
+        onLongItemClick = onLongItemClick,
+        onReactionsClick = onReactionsClick,
+        onThreadClick = onThreadClick,
+        onGiphyActionClick = onGiphyActionClick,
+        onImagePreviewResult = onImagePreviewResult
+    )
+}
 
-    when {
-        isLoading -> loadingContent()
-        !isLoading && messages.isNotEmpty() -> Messages(
-            modifier = modifier,
-            messagesState = currentState,
-            onMessagesStartReached = onMessagesStartReached,
-            onLastVisibleMessageChanged = onLastVisibleMessageChanged,
-            onScrolledToBottom = onScrolledToBottom,
-            itemContent = itemContent
-        )
-        else -> emptyContent()
-    }
+/**
+ * The default message list loading indicator.
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultMessageListLoadingIndicator(modifier: Modifier) {
+    LoadingIndicator(modifier)
 }
 
 /**
@@ -154,5 +140,64 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
             color = ChatTheme.colors.textLowEmphasis,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+/**
+ * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
+ * users to connect the UI to their own data providers, as it relies on pure state.
+ *
+ * @param currentState The state of the component, represented by [MessagesState].
+ * @param modifier Modifier for styling.
+ * @param onMessagesStartReached Handler for pagination.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onScrolledToBottom Handler when the user scrolls to the bottom.
+ * @param onThreadClick Handler for when the user taps on a message with an active thread.
+ * @param onLongItemClick Handler for when the user long taps on an item.
+ * @param onReactionsClick Handler when the user taps on message reactions and selects them.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent Composable that represents the empty content if there are no messages.
+ * @param itemContent Composable that represents each item in the list, that the user can override
+ * for custom UI and behavior.
+ */
+@Composable
+public fun MessageList(
+    currentState: MessagesState,
+    modifier: Modifier = Modifier,
+    onMessagesStartReached: () -> Unit = {},
+    onLastVisibleMessageChanged: (Message) -> Unit = {},
+    onScrolledToBottom: () -> Unit = {},
+    onThreadClick: (Message) -> Unit = {},
+    onLongItemClick: (Message) -> Unit = {},
+    onReactionsClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
+    itemContent: @Composable (MessageListItemState) -> Unit = {
+        DefaultMessageContainer(
+            messageListItem = it,
+            onLongItemClick = onLongItemClick,
+            onThreadClick = onThreadClick,
+            onReactionsClick = onReactionsClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult
+        )
+    },
+) {
+    val (isLoading, _, _, messages) = currentState
+
+    when {
+        isLoading -> loadingContent()
+        !isLoading && messages.isNotEmpty() -> Messages(
+            modifier = modifier,
+            messagesState = currentState,
+            onMessagesStartReached = onMessagesStartReached,
+            onLastVisibleMessageChanged = onLastVisibleMessageChanged,
+            onScrolledToBottom = onScrolledToBottom,
+            itemContent = itemContent
+        )
+        else -> emptyContent()
     }
 }

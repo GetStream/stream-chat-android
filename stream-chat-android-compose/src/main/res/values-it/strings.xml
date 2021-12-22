@@ -57,6 +57,10 @@
     <string name="stream_compose_mute_user">Silenzia Utente</string>
     <string name="stream_compose_unmute_user">Riattiva Utente</string>
     <string name="stream_compose_flag_message">Segnala messaggio</string>
+    <plurals name="stream_compose_message_reactions">
+        <item quantity="one">%d Reazione al messaggio</item>
+        <item quantity="other">%d Reazioni al messaggio</item>
+    </plurals>
     <string name="stream_compose_delete_message_title">Cancella messaggio</string>
     <string name="stream_compose_delete_message_text">Sei sicuro di voler definitivamente cancellare questo messaggio?</string>
     <string name="stream_compose_flag_message_title">Segnala messaggio</string>

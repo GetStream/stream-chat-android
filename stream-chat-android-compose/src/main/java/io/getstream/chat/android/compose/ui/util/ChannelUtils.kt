@@ -93,3 +93,19 @@ public fun Channel.getMembersStatusText(context: Context, currentUser: User?): S
         }
     }
 }
+
+/**
+ * Returns a list of users that are members of the channel excluding the currently
+ * logged in user.
+ *
+ * @param currentUser The currently logged in user.
+ * @return The list of users in the channel without the current user.
+ */
+public fun Channel.getOtherUsers(currentUser: User?): List<User> {
+    val currentUserId = currentUser?.id
+    return if (currentUserId != null) {
+        members.filterNot { it.user.id == currentUserId }
+    } else {
+        members
+    }.map { it.user }
+}
