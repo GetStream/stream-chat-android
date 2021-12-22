@@ -23,4 +23,5 @@
   <string name="stream_ui_message_input_send_as_direct_message">"ダイレクトメッセージでも送信"</string>
   <string name="stream_ui_message_input_send_to_channel">"チャネルにも送ります"</string>
   <string name="stream_ui_message_input_slow_mode_hint">"スローモードオン"</string>
+  <string name="stream_ui_message_input_error_command_not_allowed">"メッセージの編集時にコマンドを使用することはできません"</string>
 </resources>
