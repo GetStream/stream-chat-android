@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.messages.composer
+package io.getstream.chat.android.common.composer
 
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
