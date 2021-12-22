@@ -116,7 +116,7 @@ public class ChannelListViewModel(
 
     private var queryChannelsState: QueryChannelsState? = null
 
-    private val CHANNEL_LIMIT = 20
+    private val CHANNEL_LIMIT = 30
     private val MESSAGE_LIMIT = 1
 
     /**
