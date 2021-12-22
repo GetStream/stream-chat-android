@@ -15,6 +15,16 @@ internal interface ChannelRepository {
     suspend fun insertChannels(channels: Collection<Channel>)
     suspend fun deleteChannel(cid: String)
     suspend fun selectChannelWithoutMessages(cid: String): Channel?
+
+    /**
+     * Select channels by full channel IDs [Channel.cid]
+     *
+     * @param channelCIDs A list of [Channel.cid] as query specification.
+     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
+     * value is true.
+     *
+     * @return A list of channels found in repository.
+     */
     suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean = false): List<Channel>
     suspend fun selectChannelsSyncNeeded(): List<Channel>
     suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
@@ -23,6 +33,7 @@ internal interface ChannelRepository {
     suspend fun selectMembersForChannel(cid: String): List<Member>
     suspend fun updateMembersForChannel(cid: String, members: List<Member>)
     suspend fun evictChannel(cid: String)
+
     @VisibleForTesting
     fun clearChannelCache()
 }

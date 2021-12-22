@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
-import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
@@ -12,7 +11,7 @@ import org.junit.runner.RunWith
 internal class DeleteReactionTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun reactionUseCase(): Unit = runBlocking {
+    fun reactionUseCase(): Unit = coroutineTest {
         val channelController =
             chatDomain.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
