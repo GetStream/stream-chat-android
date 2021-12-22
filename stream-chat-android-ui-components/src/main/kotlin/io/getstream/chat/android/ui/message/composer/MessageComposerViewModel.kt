@@ -198,7 +198,7 @@ public class MessageComposerViewModel(
             attachments = messageComposerController.selectedAttachments.value,
             validationErrors = messageComposerController.validationErrors.value,
             mentionSuggestions = messageComposerController.mentionSuggestions.value,
-            cooldownTimer = messageComposerController.cooldownTimer.value
+            coolDownTimer = messageComposerController.cooldownTimer.value
         )
     }
 }
