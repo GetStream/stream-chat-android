@@ -150,7 +150,7 @@ internal fun addIfChannelIsAbsent(channels: StateFlow<List<Channel>>, channel: C
 }
 
 /**
- * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise it simply skips the event
+ * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise, it simply skips the event.
  */
 internal fun removeIfChannelIsPresent(channels: StateFlow<List<Channel>>, channel: Channel?): EventHandlingResult {
     return if (channel != null && channels.value.any { it.cid == channel.cid }) {
