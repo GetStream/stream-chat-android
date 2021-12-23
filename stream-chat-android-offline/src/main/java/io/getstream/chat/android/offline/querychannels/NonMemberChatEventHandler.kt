@@ -65,7 +65,7 @@ public class NonMemberChatEventHandler(
      *
      * @param event Instance of [MemberRemovedEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
-     * @param cachedChannel optional [Channel] object cached in database
+     * @param cachedChannel optional [Channel] object cached in database.
      */
     override fun handleMemberRemovedEvent(
         event: MemberRemovedEvent,
