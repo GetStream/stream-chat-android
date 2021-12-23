@@ -63,10 +63,10 @@ public fun ChannelItem(
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelAvatar(channelItem = it, currentUser = currentUser)
+        DefaultChannelItemLeadingContent(channelItem = it, currentUser = currentUser)
     },
     centerContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelCenterContent(
+        DefaultChannelItemCenterContent(
             channel = it.channel,
             isMuted = it.isMuted,
             currentUser = currentUser,
@@ -76,7 +76,7 @@ public fun ChannelItem(
         )
     },
     trailingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelTrailingContent(
+        DefaultChannelItemTrailingContent(
             channel = it.channel,
             currentUser = currentUser,
             modifier = Modifier
@@ -119,13 +119,13 @@ public fun ChannelItem(
 }
 
 /**
- * Represents the default channel avatar.
+ * Represents the default leading content of [ChannelItem].
  *
  * @param channelItem The channel to show the avatar of.
  * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultChannelAvatar(
+internal fun DefaultChannelItemLeadingContent(
     channelItem: ChannelItemState,
     currentUser: User?,
 ) {
@@ -148,7 +148,7 @@ internal fun DefaultChannelAvatar(
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun DefaultChannelCenterContent(
+internal fun DefaultChannelItemCenterContent(
     channel: Channel,
     isMuted: Boolean,
     currentUser: User?,
@@ -212,7 +212,7 @@ internal fun DefaultChannelCenterContent(
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultChannelTrailingContent(
+internal fun DefaultChannelItemTrailingContent(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
@@ -250,7 +250,7 @@ public fun DefaultChannelTrailingContent(
 }
 
 /**
- * Preview of [DefaultChannelCenterContent] component for one-to-one conversation.
+ * Preview of [DefaultChannelItemCenterContent] component for one-to-one conversation.
  *
  * Should show a user name and the last message in the channel.
  */
@@ -265,7 +265,7 @@ private fun DefaultChannelCenterContentOneToOnePreview() {
 }
 
 /**
- * Preview of [DefaultChannelCenterContent] for muted channel.
+ * Preview of [DefaultChannelItemCenterContent] for muted channel.
  *
  * Should show a muted icon next to the channel name.
  */
@@ -279,7 +279,7 @@ private fun DefaultChannelCenterContentMutedPreview() {
 }
 
 /**
- * Preview of [DefaultChannelCenterContent] for a channel without messages.
+ * Preview of [DefaultChannelItemCenterContent] for a channel without messages.
  *
  * Should show only channel name that is centered vertically.
  */
@@ -290,7 +290,7 @@ private fun DefaultChannelCenterContentWithMessagePreview() {
 }
 
 /**
- * Shows [DefaultChannelCenterContent] preview for the provided parameters.
+ * Shows [DefaultChannelItemCenterContent] preview for the provided parameters.
  *
  * @param channel The channel used to show the preview.
  * @param isMuted If the channel is muted.
@@ -303,7 +303,7 @@ private fun DefaultChannelDetailsPreview(
     currentUser: User? = null,
 ) {
     ChatTheme {
-        DefaultChannelCenterContent(
+        DefaultChannelItemCenterContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
@@ -315,7 +315,7 @@ private fun DefaultChannelDetailsPreview(
 }
 
 /**
- * Preview of [DefaultChannelTrailingContent].
+ * Preview of [DefaultChannelItemTrailingContent].
  *
  * Should show unread count badge, delivery indicator and timestamp.
  */
@@ -323,7 +323,7 @@ private fun DefaultChannelDetailsPreview(
 @Composable
 private fun DefaultChannelTrailingContentPreview() {
     ChatTheme {
-        DefaultChannelTrailingContent(
+        DefaultChannelItemTrailingContent(
             channel = PreviewChannelData.channelWithMessages,
             currentUser = PreviewUserData.user1,
         )
