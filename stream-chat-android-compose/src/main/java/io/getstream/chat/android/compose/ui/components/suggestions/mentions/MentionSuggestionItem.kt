@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param onMentionSelected Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a mention item.
- * @param detailsContent Customizable composable function that represents the center content of a mention item.
+ * @param centerContent Customizable composable function that represents the center content of a mention item.
  * @param trailingContent Customizable composable function that represents the trailing content of the a mention item.
  */
 @Composable
@@ -42,8 +42,8 @@ public fun MentionSuggestionItem(
     leadingContent: @Composable RowScope.(User) -> Unit = {
         DefaultMentionSuggestionItemLeadingContent(user = it)
     },
-    detailsContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemDetailsContent(user = it)
+    centerContent: @Composable RowScope.(User) -> Unit = {
+        DefaultMentionSuggestionItemCenterContent(user = it)
     },
     trailingContent: @Composable RowScope.(User) -> Unit = {
         DefaultMentionSuggestionItemTrailingContent()
@@ -67,7 +67,7 @@ public fun MentionSuggestionItem(
 
         leadingContent(user)
 
-        detailsContent(user)
+        centerContent(user)
 
         trailingContent(user)
     }
@@ -90,12 +90,12 @@ internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
 }
 
 /**
- *  Represents the details portion of the mention item, that show the user name and the user ID.
+ *  Represents the center portion of the mention item, that show the user name and the user ID.
  *
  *  @param user The user to show the info for.
  */
 @Composable
-internal fun RowScope.DefaultMentionSuggestionItemDetailsContent(user: User) {
+internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
     Column(
         modifier = Modifier
             .weight(1f)

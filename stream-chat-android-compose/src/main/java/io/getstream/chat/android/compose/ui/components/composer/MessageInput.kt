@@ -19,12 +19,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLab
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * The default number of lines allowed in the input. The message input will become scrollable after
- * this threshold is exceeded.
- */
-private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6
-
-/**
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
  * when the input changes.
  *
@@ -87,3 +81,9 @@ public fun MessageInput(
         }
     )
 }
+
+/**
+ * The default number of lines allowed in the input. The message input will become scrollable after
+ * this threshold is exceeded.
+ */
+private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6
