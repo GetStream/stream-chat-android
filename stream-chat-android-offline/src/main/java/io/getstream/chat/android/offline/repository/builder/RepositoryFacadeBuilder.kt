@@ -65,7 +65,7 @@ internal class RepositoryFacadeBuilder {
         val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
         return RepositoryFacade(
-            userRepository = factory.createUserRepository(),
+            userRepository = userRepository,
             configsRepository = factory.createChannelConfigRepository(),
             channelsRepository = factory.createChannelRepository(getUser, getMessage),
             queryChannelsRepository = factory.createQueryChannelsRepository(),
