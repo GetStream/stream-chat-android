@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.flow.StateFlow
 
 /**
-* A [ChatEventHandler] factory. Allows to pass visible channels` list
+* A [ChatEventHandler] factory. Allows passing visible channels` list.
 */
 public open class ChatEventHandlerFactory {
 
