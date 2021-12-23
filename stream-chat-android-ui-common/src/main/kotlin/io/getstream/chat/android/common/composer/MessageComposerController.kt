@@ -205,43 +205,41 @@ public class MessageComposerController(
      * Sets up the observing operations for various composer states.
      */
     private fun setupComposerState() {
-        scope.launch {
-            input.onEach { input ->
-                state.value = state.value.copy(inputValue = input)
-            }.launchIn(scope)
+        input.onEach { input ->
+            state.value = state.value.copy(inputValue = input)
+        }.launchIn(scope)
 
-            selectedAttachments.onEach { selectedAttachments ->
-                state.value = state.value.copy(attachments = selectedAttachments)
-            }.launchIn(scope)
+        selectedAttachments.onEach { selectedAttachments ->
+            state.value = state.value.copy(attachments = selectedAttachments)
+        }.launchIn(scope)
 
-            lastActiveAction.onEach { activeAction ->
-                state.value = state.value.copy(action = activeAction)
-            }.launchIn(scope)
+        lastActiveAction.onEach { activeAction ->
+            state.value = state.value.copy(action = activeAction)
+        }.launchIn(scope)
 
-            validationErrors.onEach { validationErrors ->
-                state.value = state.value.copy(validationErrors = validationErrors)
-            }.launchIn(scope)
+        validationErrors.onEach { validationErrors ->
+            state.value = state.value.copy(validationErrors = validationErrors)
+        }.launchIn(scope)
 
-            mentionSuggestions.onEach { mentionSuggestions ->
-                state.value = state.value.copy(mentionSuggestions = mentionSuggestions)
-            }.launchIn(scope)
+        mentionSuggestions.onEach { mentionSuggestions ->
+            state.value = state.value.copy(mentionSuggestions = mentionSuggestions)
+        }.launchIn(scope)
 
-            commandSuggestions.onEach { commandSuggestions ->
-                state.value = state.value.copy(commandSuggestions = commandSuggestions)
-            }.launchIn(scope)
+        commandSuggestions.onEach { commandSuggestions ->
+            state.value = state.value.copy(commandSuggestions = commandSuggestions)
+        }.launchIn(scope)
 
-            cooldownTimer.onEach { cooldownTimer ->
-                state.value = state.value.copy(cooldownTimer = cooldownTimer)
-            }.launchIn(scope)
+        cooldownTimer.onEach { cooldownTimer ->
+            state.value = state.value.copy(cooldownTimer = cooldownTimer)
+        }.launchIn(scope)
 
-            messageMode.onEach { messageMode ->
-                state.value = state.value.copy(messageMode = messageMode)
-            }.launchIn(scope)
+        messageMode.onEach { messageMode ->
+            state.value = state.value.copy(messageMode = messageMode)
+        }.launchIn(scope)
 
-            alsoSendToChannel.onEach { alsoSendToChannel ->
-                state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
-            }.launchIn(scope)
-        }
+        alsoSendToChannel.onEach { alsoSendToChannel ->
+            state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
+        }.launchIn(scope)
     }
 
     /**
