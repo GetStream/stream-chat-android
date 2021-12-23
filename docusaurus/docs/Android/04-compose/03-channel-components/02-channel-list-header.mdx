@@ -3,7 +3,7 @@
 The `ChannelListHeader` component allows you to display a header for the channel screen. It sets up the following:
 
 * `leadingContent`: Shows the current user image. The style is applied from the `ChatTheme` wrapper. <!-- TODO WIP PAGE -->
-* `ChannelHeaderTitle`: A component that shows the title of the header, or a loading view if there's no network available.
+* `centerContent`: A component that shows the title of the header, or a loading view if there's no network available.
 * `trailingContent`: A customizable trailing action shown at the end of the header, exposed as a parameter.  `DefaultChannelListHeaderAction` by default.
 
 Let's see how to use the header.
@@ -83,15 +83,19 @@ fun ChannelListHeader(
     title: String = "",
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     connectionState = ConnectionState.CONNECTED,
-    leadingContent: @Composable RowScope.() -> Unit = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
-    titleContent: @Composable RowScope.() -> Unit = {
-        ChannelHeaderTitle(
+    leadingContent: @Composable RowScope.() -> Unit = {
+        DefaultChannelListHeaderLeadingContent(currentUser, onAvatarClick) 
+    },
+    centerContent: @Composable RowScope.() -> Unit = {
+        DefaultChannelListHeaderCenterContent(
             modifier = Modifier.weight(1f),
             connectionState = connectionState,
             title = title
         )
     },
-    trailingContent: @Composable RowScope.() -> Unit = { DefaultChannelListHeaderAction(onHeaderActionClick) },
+    trailingContent: @Composable RowScope.() -> Unit = {
+        DefaultChannelListHeaderTrailingContent(onHeaderActionClick) 
+    },
     ... // Action handlers
 )
 ```
@@ -103,7 +107,7 @@ fun ChannelListHeader(
 * `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onAvatarClick`,
     * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.
-* `titleContent`: Customizable composable function parameter that overrides the title content. This allows you to either:
+* `centerContent`: Customizable composable function parameter that overrides the center content. This allows you to either:
     * override the shown data but keep the UI, by passing in the `title` and `connectionState`.
     * or override both the UI and behavior by changing the `titleContent` parameter from the default to your own.
 * `trailingContent`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
