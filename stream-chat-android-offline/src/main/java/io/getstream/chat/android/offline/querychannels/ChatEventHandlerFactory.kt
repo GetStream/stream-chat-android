@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 public open class ChatEventHandlerFactory {
 
     /**
-     * Creates a [ChatEventHandler] instance
+     * Creates a [ChatEventHandler] instance.
      *
      * @param channels The visible channels` list.
      */
