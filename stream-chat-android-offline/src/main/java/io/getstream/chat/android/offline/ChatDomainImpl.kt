@@ -524,7 +524,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     /**
-     * Returns [Channel] object from repository if exists, null otherwise
+     * @return [Channel] object from repository if exists, null otherwise.
      */
     internal suspend fun getCachedChannel(cid: String): Channel? {
         return repos.selectChannelWithoutMessages(cid)
