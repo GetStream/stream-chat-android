@@ -33,7 +33,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         super.setup()
         runBlocking {
             chatDomainImpl.repos.insertUsers(data.userMap.values)
-            queryControllerImpl.chatEventHandler = ChatEventHandler { _, _ -> EventHandlingResult.Skip }
+            queryControllerImpl.chatEventHandler = ChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
         }
     }
 
@@ -109,7 +109,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `verify that a channel is correctly deleted when channel deleted event is received`(): Unit =
         coroutineTest {
-            queryControllerImpl.chatEventHandler = ChatEventHandler { _, _ -> EventHandlingResult.Skip }
+            queryControllerImpl.chatEventHandler = ChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
             val message =

@@ -464,7 +464,7 @@ A default `ChatEventHandlerFactory` implementation provides a `ChatEventHandler`
 public open class NonMemberChatEventHandlerFactory : ChatEventHandlerFactory() {
 
     public override fun chatEventHandler(channels: StateFlow<List<Channel>>): ChatEventHandler {
-        return NonMemberChatEventHandler(ChatClient.instance(), channels = channels)
+        return NonMemberChatEventHandler(channels = channels)
     }
 }
 ```
