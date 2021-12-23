@@ -21,7 +21,7 @@ public class NonMemberChatEventHandler(
 ) : BaseChatEventHandler() {
 
     /**
-     *  Handles [NotificationAddedToChannelEvent] event. It removes the channel if it's present in the list
+     *  Handles [NotificationAddedToChannelEvent] event. It removes the channel if it's present in the list.
      *
      * @param event Instance of [NotificationAddedToChannelEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
