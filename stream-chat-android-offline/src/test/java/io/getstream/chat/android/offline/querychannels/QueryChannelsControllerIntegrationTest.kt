@@ -52,7 +52,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
             }
             val sut = Fixture(chatDomainImpl, data.filter1)
-                .givenChannelEventsHandler { event, _ ->
+                .givenChannelEventsHandler { event, _, _ ->
                     when (event) {
                         is NotificationAddedToChannelEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -86,7 +86,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         runBlocking {
             val chatEventHandler = object : ChatEventHandler {
                 var didHandle = false
-                override fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult {
+                override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
                     didHandle = true
                     return EventHandlingResult.Skip
                 }
@@ -132,7 +132,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         coroutineTest {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
-                .givenChannelEventsHandler { event, _ ->
+                .givenChannelEventsHandler { event, _, _ ->
                     if (event is NotificationMessageNewEvent) {
                         EventHandlingResult.Add(event.channel)
                     } else {

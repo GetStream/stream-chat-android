@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /* Default filter to include FilterObject in a channel by its cid
 *
@@ -15,9 +14,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 * @param cid - The cid of the channel of the filter
 * @param filter - the filter to be included with the cid.
 */
-@InternalStreamChatApi
-public object ChannelFilterRequest {
-    public suspend fun filter(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
+internal object ChannelFilterRequest {
+    suspend fun filter(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
         client.queryChannelsInternal(
             QueryChannelsRequest(
                 filter = Filters.and(
