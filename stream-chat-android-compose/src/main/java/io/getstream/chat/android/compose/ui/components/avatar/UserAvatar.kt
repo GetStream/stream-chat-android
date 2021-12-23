@@ -73,16 +73,12 @@ public fun UserAvatar(
         }
     }
 
-    if (showOnlineIndicator && user.online) {
-        // Apply modifier to the outer box
-        Box(modifier = modifier) {
-            avatarContent(modifier = Modifier.fillMaxSize())
+    Box(modifier = modifier) {
+        avatarContent(modifier = Modifier.fillMaxSize())
 
+        if (showOnlineIndicator && user.online) {
             onlineIndicator()
         }
-    } else {
-        // Apply modifier to the avatar itself
-        avatarContent(modifier = modifier)
     }
 }
 
