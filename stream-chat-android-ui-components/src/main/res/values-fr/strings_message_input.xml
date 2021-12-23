@@ -23,5 +23,4 @@
   <string name="stream_ui_message_input_send_as_direct_message">"Envoyer aussi comme message direct"</string>
   <string name="stream_ui_message_input_send_to_channel">"Envoyer également au canal"</string>
   <string name="stream_ui_message_input_slow_mode_hint">"Mode lent activé"</string>
-  <string name="stream_ui_message_input_error_command_not_allowed">"Il n'est pas possible d'utiliser une commande lors de l'édition de messages"</string>
 </resources>

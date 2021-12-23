@@ -24,5 +24,4 @@
   <string name="stream_ui_message_input_send_as_direct_message">"सीधे मैसेज के रूप में भी भेजें"</string>
   <string name="stream_ui_message_input_send_to_channel">"चैनल पर भी भेजें"</string>
   <string name="stream_ui_message_input_slow_mode_hint">"स्लो मोड ऑन"</string>
-  <string name="stream_ui_message_input_error_command_not_allowed">संदेशों को संपादित करते समय कमांड का उपयोग करना संभव नहीं है</string>
 </resources>
