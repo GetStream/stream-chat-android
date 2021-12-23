@@ -6,6 +6,13 @@ package io.getstream.chat.android.compose.state
  * This is used to control if we want to show timestamps, or full date information.
  */
 public enum class DateFormatType {
+    /**
+     * Represents a date format with only timestamps.
+     */
     TIME,
+
+    /**
+     * Represents a date format with full date information.
+     */
     DATE,
 }
