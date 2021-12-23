@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Interface that handles events related to the particular set of channels. These channels correspond to particular [FilterObject].
@@ -101,11 +102,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.Skip
 
-    public open fun handleChannelEvent(
-        event: HasChannel,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult {
+    public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> handleNotificationAddedToChannelEvent(event, filter)
             is NotificationRemovedFromChannelEvent -> handleNotificationRemovedFromChannelEvent(event, filter)
@@ -133,9 +130,32 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
 
     override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
         return when (event) {
-            is HasChannel -> handleChannelEvent(event, filter, cachedChannel)
+            is HasChannel -> handleChannelEvent(event, filter)
             is CidEvent -> handleCidEvent(event, filter, cachedChannel)
             else -> EventHandlingResult.Skip
         }
+    }
+}
+
+/**
+ * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
+ * adds the channel.
+ */
+internal fun addIfChannelIsAbsent(channels: StateFlow<List<Channel>>, channel: Channel?): EventHandlingResult {
+    return if (channel == null || channels.value.any { it.cid == channel.cid }) {
+        EventHandlingResult.Skip
+    } else {
+        EventHandlingResult.Add(channel)
+    }
+}
+
+/**
+ * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise it simply skips the event
+ */
+internal fun removeIfChannelIsPresent(channels: StateFlow<List<Channel>>, channel: Channel?): EventHandlingResult {
+    return if (channel != null && channels.value.any { it.cid == channel.cid }) {
+        EventHandlingResult.Remove(channel.cid)
+    } else {
+        EventHandlingResult.Skip
     }
 }

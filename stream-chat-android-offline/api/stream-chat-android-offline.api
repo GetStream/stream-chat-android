@@ -520,7 +520,7 @@ public final class io/getstream/chat/android/offline/model/ConnectionState : jav
 
 public abstract class io/getstream/chat/android/offline/querychannels/BaseChatEventHandler : io/getstream/chat/android/offline/querychannels/ChatEventHandler {
 	public fun <init> ()V
-	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
+	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public abstract fun handleChannelUpdatedByUserEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedByUserEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public abstract fun handleChannelUpdatedEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun handleChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
