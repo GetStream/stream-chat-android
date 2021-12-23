@@ -100,7 +100,7 @@ internal class TextAndAttachmentsViewHolder(
         binding.messageText.isVisible = data.message.text.isNotEmpty()
         markdown.setText(binding.messageText, data.message.text)
 
-        if (diff?.attachments != false) {
+        if (diff?.attachments != false || diff.positions) {
             setupAttachment(data)
         }
 

@@ -383,7 +383,7 @@ public class ChannelController internal constructor(
     }
 
     private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState._messages.value[messageId]
+        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
         if (message != null) {
             val newAttachments = message.attachments.map { attachment ->
                 if (attachment.uploadId == uploadId) {
@@ -393,7 +393,8 @@ public class ChannelController internal constructor(
                 }
             }
             val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages = mutableState._messages.value + (updatedMessage.id to updatedMessage)
+            val newMessages =
+                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
             mutableState._messages.value = newMessages
         }
     }
@@ -606,8 +607,8 @@ public class ChannelController internal constructor(
     }
 
     public fun getMessage(messageId: String): Message? {
-        val copy = mutableState._messages.value
-        var message = copy[messageId]
+        val copy = mutableState.messageList.value
+        var message = copy.firstOrNull { it.id == messageId }
 
         if (mutableState.hideMessagesBefore != null) {
             if (message != null && message.wasCreatedBeforeOrAt(mutableState.hideMessagesBefore)) {
@@ -674,7 +675,7 @@ public class ChannelController internal constructor(
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
-                    replyTo = mutableState._messages.value[replyMessageId]
+                    replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
                 }.let(::upsertEventMessage)
 
                 channelLogic.setHidden(false)
@@ -798,10 +799,10 @@ public class ChannelController internal constructor(
     private fun upsertUserPresence(user: User) {
         val userId = user.id
         // members and watchers have users
-        val members = mutableState._members.value
-        val watchers = mutableState._watchers.value
-        val member = members[userId]?.copy()
-        val watcher = watchers[userId]
+        val members = mutableState.members.value
+        val watchers = mutableState.watchers.value
+        val member = members.firstOrNull { it.getUserId() == userId }?.copy()
+        val watcher = watchers.firstOrNull { it.id == userId }
         if (member != null) {
             member.user = user
             upsertMember(member)
@@ -825,9 +826,9 @@ public class ChannelController internal constructor(
         // updating messages is harder
         // user updates don't happen frequently, it's probably ok for this update to be sluggish
         // if it turns out to be slow we can do a simple reverse index from user -> message
-        val messages = mutableState._messages.value
+        val messages = mutableState.messageList.value
         val changedMessages = mutableListOf<Message>()
-        for (message in messages.values) {
+        for (message in messages) {
             var changed = false
             if (message.user.id == userId) {
                 message.user = user
@@ -968,25 +969,7 @@ public class ChannelController internal constructor(
         return Result(messageToBeDeleted)
     }
 
-    public fun toChannel(): Channel {
-        // recreate a channel object from the various observables.
-        val channelData = mutableState._channelData.value ?: ChannelData(channelType, channelId)
-
-        val messages = mutableState.sortedMessages.value
-        val members = mutableState._members.value.values.toList()
-        val watchers = mutableState._watchers.value.values.toList()
-        val reads = mutableState._reads.value.values.toList()
-        val watcherCount = mutableState._watcherCount.value
-
-        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
-        channel.config = mutableState.channelConfig.value
-        channel.unreadCount = mutableState._unreadCount.value
-        channel.lastMessageAt =
-            mutableState.lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
-        channel.hidden = mutableState._hidden.value
-
-        return channel
-    }
+    public fun toChannel(): Channel = mutableState.toChannel()
 
     internal suspend fun loadMessageById(
         messageId: String,
