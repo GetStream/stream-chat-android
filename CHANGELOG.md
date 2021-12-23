@@ -12,14 +12,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Updated dependency versions
-  - Kotlin 1.5.31
-  - Compose framework 1.0.5
-  - AndroidX
-  - Lottie 4.2.2
-  - OkHttp 4.9.3
-  - Room 2.4.0
-  - and other, see [#2771](https://github.com/GetStream/stream-chat-android/pull/2771) for more details
 
 ### ✅ Added
 
@@ -51,7 +43,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed a bug when hard deleted messages still remain in the UI.
 
 ### ⬆️ Improved
 
@@ -74,8 +65,74 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+
+# December 23th, 2021 - 4.25.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Updated dependency versions
+  - Kotlin 1.5.31
+  - Compose framework 1.0.5
+  - AndroidX
+  - Lottie 4.2.2
+  - OkHttp 4.9.3
+  - Room 2.4.0
+  - and other, see [#2771](https://github.com/GetStream/stream-chat-android/pull/2771) for more details
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed a bug when hard deleted messages still remain in the UI.
+- Stabilized behavior of users' updates propagation across values of the channels and the messages. [#2803](https://github.com/GetStream/stream-chat-android/pull/2803)
+
+### ⚠️ Changed
+- 🚨 Breaking change: Added `cachedChannel` parameter to `ChatEventHandler::handleChatEvent` [#2807](https://github.com/GetStream/stream-chat-android/pull/2807)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
 - Users' updates done in runtime are now propagated to the `MessageListView` component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 - Fixed the display of image attachments on the pinned message list screen. [#2792](https://github.com/GetStream/stream-chat-android/pull/2792)
+- Small bug fix for borders of attachments
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
@@ -90,7 +147,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -125,28 +181,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 - Removed some reduntant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 
 # December 9th, 2021 - 4.24.0

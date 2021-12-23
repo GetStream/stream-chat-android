@@ -100,8 +100,8 @@ internal class TotalUnreadCountTest {
 
         fun givenMockedRepositories(): Fixture {
             runBlocking {
-                whenever(repos.selectMessages(any())) doReturn emptyList()
-                whenever(repos.selectChannels(any())) doReturn emptyList()
+                whenever(repos.selectMessages(any(), any())) doReturn emptyList()
+                whenever(repos.selectChannels(any<List<String>>(), any<Boolean>())) doReturn emptyList()
             }
             return this
         }
