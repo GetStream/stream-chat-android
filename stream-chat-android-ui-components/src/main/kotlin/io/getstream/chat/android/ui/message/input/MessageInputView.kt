@@ -161,6 +161,7 @@ public class MessageInputView : ConstraintLayout {
     private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
         when (newValue) {
             is InputMode.Reply -> {
+                suggestionListController?.commandsEnabled = commandsEnabled
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_input_reply)
                 binding.inputModeIcon.setImageDrawable(messageInputViewStyle.replyInputModeIcon)
@@ -169,6 +170,7 @@ public class MessageInputView : ConstraintLayout {
             }
 
             is InputMode.Edit -> {
+                suggestionListController?.commandsEnabled = false
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_edit_message)
                 binding.inputModeIcon.setImageDrawable(messageInputViewStyle.editInputModeIcon)
@@ -178,6 +180,7 @@ public class MessageInputView : ConstraintLayout {
             }
 
             else -> {
+                suggestionListController?.commandsEnabled = commandsEnabled
                 binding.inputModeHeader.isVisible = false
                 if (previousValue is InputMode.Reply) {
                     binding.messageInputFieldView.onReplyDismissed()
