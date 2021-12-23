@@ -68,7 +68,7 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     ): EventHandlingResult = addIfChannelIsAbsent(channels, event.channel)
 
     /**
-     * Handles [MemberRemovedEvent]. It removes the channel if it's present in the list
+     * Handles [MemberRemovedEvent]. It removes the channel if it's present in the list.
      *
      * @param event Instance of [MemberRemovedEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
