@@ -182,6 +182,8 @@ public class MessageComposerViewModel(
             attachments = messageComposerController.selectedAttachments.value,
             validationErrors = messageComposerController.validationErrors.value,
             mentionSuggestions = messageComposerController.mentionSuggestions.value,
+            messageMode = messageComposerController.messageMode.value,
+            alsoSendToChannel = messageComposerController.alsoSendToChannel.value,
         )
     }
 }
