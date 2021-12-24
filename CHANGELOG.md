@@ -60,8 +60,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Removed `QueryChannelsLoadMore` usecase.
-- `QueryChannelsController::loadMore` is removed and logic is moved into `ChatDomain`.
+- Removed `QueryChannelsLoadMore` usecase. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
+- `QueryChannelsController::loadMore` is removed and logic is moved into `ChatDomain`. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 
 
 ## stream-chat-android-ui-common
@@ -93,7 +93,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
-- When querying for more channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled.
+- When querying for more channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 
 ### ❌ Removed
 
@@ -125,7 +125,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Changed various component names, removed unused/redundant component blocks and moved to Default components [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 - Changed some of the component types regarding the message item [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
 - Moved message item components to `components.messages` [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
-- When querying for more channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled.
+- When querying for more channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 
 ### ❌ Removed
 - Removed some reduntant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
