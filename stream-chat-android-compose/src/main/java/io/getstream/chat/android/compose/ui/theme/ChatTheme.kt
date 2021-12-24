@@ -117,62 +117,94 @@ public fun ChatTheme(
     }
 }
 
+/**
+ * Contains ease-of-use accessors for different properties used to style and customize the app
+ * look and feel.
+ */
 public object ChatTheme {
-
     /**
-     * These represent the default ease-of-use accessors for different properties used to style and customize the app
-     * look and feel.
+     * Retrieves the current [StreamColors] at the call site's position in the hierarchy.
      */
     public val colors: StreamColors
         @Composable
         @ReadOnlyComposable
         get() = LocalColors.current
 
+    /**
+     * Retrieves the current [StreamDimens] at the call site's position in the hierarchy.
+     */
     public val dimens: StreamDimens
         @Composable
         @ReadOnlyComposable
         get() = LocalDimens.current
 
+    /**
+     * Retrieves the current [StreamTypography] at the call site's position in the hierarchy.
+     */
     public val typography: StreamTypography
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current
 
+    /**
+     * Retrieves the current [StreamShapes] at the call site's position in the hierarchy.
+     */
     public val shapes: StreamShapes
         @Composable
         @ReadOnlyComposable
         get() = LocalShapes.current
 
+    /**
+     * Retrieves the current list of [AttachmentFactory] at the call site's position in the hierarchy.
+     */
     public val attachmentFactories: List<AttachmentFactory>
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentFactories.current
 
+    /**
+     * Retrieves the current list of [AttachmentPreviewHandler] at the call site's position in the hierarchy.
+     */
     public val attachmentPreviewHandlers: List<AttachmentPreviewHandler>
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentPreviewHandlers.current
 
+    /**
+     * Retrieves the current reactions at the call site's position in the hierarchy.
+     */
     public val reactionTypes: Map<String, Int>
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionTypes.current
 
+    /**
+     * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.
+     */
     public val dateFormatter: DateFormatter
         @Composable
         @ReadOnlyComposable
         get() = LocalDateFormatter.current
 
+    /**
+     * Retrieves the current [ChannelNameFormatter] at the call site's position in the hierarchy.
+     */
     public val channelNameFormatter: ChannelNameFormatter
         @Composable
         @ReadOnlyComposable
         get() = LocalChannelNameFormatter.current
 
+    /**
+     * Retrieves the current [MessagePreviewFormatter] at the call site's position in the hierarchy.
+     */
     public val messagePreviewFormatter: MessagePreviewFormatter
         @Composable
         @ReadOnlyComposable
         get() = LocalMessagePreviewFormatter.current
 
+    /**
+     * Retrieves the current [MessageAlignmentProvider] at the call site's position in the hierarchy.
+     */
     public val messageAlignmentProvider: MessageAlignmentProvider
         @Composable
         @ReadOnlyComposable

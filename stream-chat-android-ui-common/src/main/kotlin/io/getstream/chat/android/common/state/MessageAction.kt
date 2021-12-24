@@ -56,7 +56,7 @@ public class Delete(message: Message) : MessageAction(message)
 public class Flag(message: Message) : MessageAction(message)
 
 /**
- * Show a mute user dialog, for another user.
+ * Mutes or unmutes the user who sent the message.
  */
 public class MuteUser(message: Message) : MessageAction(message)
 

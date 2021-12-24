@@ -108,7 +108,7 @@ public fun AttachmentsPicker(
         Card(
             modifier = modifier.clickable(
                 indication = null,
-                onClick = { },
+                onClick = {},
                 interactionSource = remember { MutableInteractionSource() }
             ),
             elevation = 4.dp,

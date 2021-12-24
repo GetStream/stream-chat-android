@@ -1,7 +1,9 @@
 package io.getstream.chat.android.ui.message.composer
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -13,6 +15,8 @@ import io.getstream.chat.android.common.state.Reply
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -38,6 +42,11 @@ public class MessageComposerViewModel(
     public val messageInputState: StateFlow<MessageInputState> = _messageInputState
 
     /**
+     * Represents the remaining time until the user is allowed to send the next message.
+     */
+    public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
+
+    /**
      * UI state of the current composer input.
      */
     public val input: MutableStateFlow<String> = messageComposerController.input
@@ -56,6 +65,23 @@ public class MessageComposerViewModel(
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
+
+    /**
+     * Represents the list of available commands in the channel.
+     */
+    public val availableCommands: Flow<List<Command>> = messageComposerController.commands
+
+    /**
+     * Initializing properties:
+     * - Listening to cooldownTimer value's updates and propagating the update to messageInputState.
+     */
+    init {
+        viewModelScope.launch {
+            cooldownTimer.collect {
+                updateMessageInputState()
+            }
+        }
+    }
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -186,6 +212,16 @@ public class MessageComposerViewModel(
     }
 
     /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected in the command suggestion list popup.
+     */
+    public fun selectCommand(command: Command) {
+        messageComposerController.selectCommand(command)
+        updateMessageInputState()
+    }
+
+    /**
      * Disposes the inner [MessageComposerController].
      */
     override fun onCleared() {
@@ -203,6 +239,8 @@ public class MessageComposerViewModel(
             attachments = messageComposerController.selectedAttachments.value,
             validationErrors = messageComposerController.validationErrors.value,
             mentionSuggestions = messageComposerController.mentionSuggestions.value,
+            coolDownTimer = messageComposerController.cooldownTimer.value,
+            commandSuggestions = messageComposerController.commandSuggestions.value,
             messageMode = messageComposerController.messageMode.value,
             alsoSendToChannel = messageComposerController.alsoSendToChannel.value,
         )

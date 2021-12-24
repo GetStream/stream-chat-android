@@ -59,6 +59,11 @@ public class MessageComposerController(
     private val scope = CoroutineScope(DispatcherProvider.Main)
 
     /**
+     * Full message composer state holding all the required information.
+     */
+    public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
+
+    /**
      * UI state of the current composer input.
      */
     public val input: MutableStateFlow<String> = MutableStateFlow("")
@@ -101,7 +106,7 @@ public class MessageComposerController(
     /**
      * Represents the list of available commands in the channel.
      */
-    private var commands: List<Command> = emptyList()
+    public val commands: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
 
     /**
      * Represents the maximum allowed message length in the message input.
@@ -180,7 +185,7 @@ public class MessageComposerController(
 
                 channelController.channelConfig.onEach {
                     maxMessageLength = it.maxMessageLength
-                    commands = it.commands
+                    commands.value = it.commands
                 }.launchIn(scope)
 
                 channelController.members.onEach { members ->
@@ -192,6 +197,49 @@ public class MessageComposerController(
                 }.launchIn(scope)
             }
         }
+
+        setupComposerState()
+    }
+
+    /**
+     * Sets up the observing operations for various composer states.
+     */
+    private fun setupComposerState() {
+        input.onEach { input ->
+            state.value = state.value.copy(inputValue = input)
+        }.launchIn(scope)
+
+        selectedAttachments.onEach { selectedAttachments ->
+            state.value = state.value.copy(attachments = selectedAttachments)
+        }.launchIn(scope)
+
+        lastActiveAction.onEach { activeAction ->
+            state.value = state.value.copy(action = activeAction)
+        }.launchIn(scope)
+
+        validationErrors.onEach { validationErrors ->
+            state.value = state.value.copy(validationErrors = validationErrors)
+        }.launchIn(scope)
+
+        mentionSuggestions.onEach { mentionSuggestions ->
+            state.value = state.value.copy(mentionSuggestions = mentionSuggestions)
+        }.launchIn(scope)
+
+        commandSuggestions.onEach { commandSuggestions ->
+            state.value = state.value.copy(commandSuggestions = commandSuggestions)
+        }.launchIn(scope)
+
+        cooldownTimer.onEach { cooldownTimer ->
+            state.value = state.value.copy(coolDownTime = cooldownTimer)
+        }.launchIn(scope)
+
+        messageMode.onEach { messageMode ->
+            state.value = state.value.copy(messageMode = messageMode)
+        }.launchIn(scope)
+
+        alsoSendToChannel.onEach { alsoSendToChannel ->
+            state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
+        }.launchIn(scope)
     }
 
     /**
@@ -471,7 +519,7 @@ public class MessageComposerController(
     public fun toggleCommandsVisibility() {
         val isHidden = commandSuggestions.value.isEmpty()
 
-        commandSuggestions.value = if (isHidden) commands else emptyList()
+        commandSuggestions.value = if (isHidden) commands.value else emptyList()
     }
 
     /**
@@ -495,7 +543,7 @@ public class MessageComposerController(
 
         commandSuggestions.value = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
-            commands.filter { it.name.startsWith(commandPattern) }
+            commands.value.filter { it.name.startsWith(commandPattern) }
         } else {
             emptyList()
         }

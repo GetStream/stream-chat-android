@@ -14,11 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
+import io.getstream.chat.android.compose.previewdata.PreviewMembersData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelOptionState
@@ -149,4 +153,25 @@ public fun buildDefaultChannelOptionsState(
             action = Cancel,
         )
     )
+}
+
+/**
+ * Preview of [ChannelOptions].
+ *
+ * Should show a list of available actions for the channel.
+ */
+@Preview(showBackground = true, name = "ChannelOptions Preview")
+@Composable
+private fun ChannelOptionsPreview() {
+    ChatTheme {
+        ChannelOptions(
+            options = buildDefaultChannelOptionsState(
+                selectedChannel = PreviewChannelData.channelWithMessages,
+                currentUser = PreviewUserData.user1,
+                isMuted = false,
+                channelMembers = PreviewMembersData.manyMembers
+            ),
+            onChannelOptionClick = {}
+        )
+    }
 }

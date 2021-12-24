@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.previewdata
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import java.util.Date
 
 /**
  * Provides sample channels that will be used to render previews.
@@ -39,5 +40,18 @@ internal object PreviewChannelData {
             Member(user = PreviewUserData.user4),
             Member(user = PreviewUserData.user5),
         )
+    }
+
+    val channelWithMessages: Channel = Channel().apply {
+        members = listOf(
+            Member(user = PreviewUserData.user1),
+            Member(user = PreviewUserData.user2),
+        )
+        messages = listOf(
+            PreviewMessageData.message1,
+            PreviewMessageData.message2
+        )
+        unreadCount = 2
+        lastMessageAt = Date()
     }
 }

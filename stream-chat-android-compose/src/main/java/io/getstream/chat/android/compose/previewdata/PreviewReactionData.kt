@@ -1,45 +1,33 @@
 package io.getstream.chat.android.compose.previewdata
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.client.models.Reaction
 
 /**
  * Provides sample reactions that will be used to render component previews.
  */
 internal object PreviewReactionData {
 
-    @Composable
-    fun oneReaction(): List<ReactionOptionItemState> = listOf(
-        ReactionOptionItemState(
-            painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-            isSelected = true,
-            type = "like",
-        ),
+    private val reaction1: Reaction = Reaction(
+        type = "like",
+        user = PreviewUserData.user1
     )
 
-    @Composable
-    fun manyReactions(): List<ReactionOptionItemState> = listOf(
-        ReactionOptionItemState(
-            painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-            isSelected = true,
-            type = "like"
-        ),
-        ReactionOptionItemState(
-            painter = painterResource(R.drawable.stream_compose_ic_reaction_love),
-            isSelected = true,
-            type = "love"
-        ),
-        ReactionOptionItemState(
-            painter = painterResource(R.drawable.stream_compose_ic_reaction_wut),
-            isSelected = true,
-            type = "wow"
-        ),
-        ReactionOptionItemState(
-            painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_down),
-            isSelected = true,
-            type = "sad"
-        ),
+    private val reaction2: Reaction = Reaction(
+        type = "love",
+        user = PreviewUserData.user2
     )
+
+    private val reaction3: Reaction = Reaction(
+        type = "wow",
+        user = PreviewUserData.user3
+    )
+
+    private val reaction4: Reaction = Reaction(
+        type = "sad",
+        user = PreviewUserData.user4
+    )
+
+    val oneReaction: List<Reaction> = listOf(reaction1)
+
+    val manyReaction: List<Reaction> = listOf(reaction1, reaction2, reaction3, reaction4)
 }

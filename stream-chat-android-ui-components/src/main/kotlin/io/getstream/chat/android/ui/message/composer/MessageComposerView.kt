@@ -13,12 +13,15 @@ import androidx.core.view.children
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
+import io.getstream.chat.android.ui.message.composer.suggestions.command.DefaultCommandSuggestionsContent
+import io.getstream.chat.android.ui.message.composer.suggestions.mention.DefaultMentionSuggestionsContent
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
@@ -61,6 +64,25 @@ public class MessageComposerView : ConstraintLayout {
     private val mentionSuggestionsContent: View = mentionSuggestionsContentOverride ?: defaultMentionSuggestionsView
 
     /**
+     * Default implementation of [commandSuggestionsContent].
+     */
+    private val defaultCommandSuggestionsView: View by lazy {
+        DefaultCommandSuggestionsContent(context).apply {
+            onCommandSelected = { onCommandSuggestionSelected(it) }
+        }
+    }
+
+    /**
+     * Handle to a custom command suggestions view set with [setCommandSuggestionsContent].
+     */
+    private var commandSuggestionsContentOverride: View? = null
+
+    /**
+     * Command suggestions list shown in a popup window above the [MessageComposerView].
+     */
+    private val commandSuggestionsContent: View = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
+
+    /**
      * Callback invoked when send button is clicked.
      */
     public var onSendMessageClicked: () -> Unit = {}
@@ -91,9 +113,19 @@ public class MessageComposerView : ConstraintLayout {
     public var onMentionSuggestionSelected: (User) -> Unit = {}
 
     /**
+     * Callback invoked when one of command suggestions is selected.
+     */
+    public var onCommandSuggestionSelected: (Command) -> Unit = {}
+
+    /**
      * Callback invoked when "send also to channel" checkbox was clicked.
      */
     public var onSendAlsoToChannelChanged: (Boolean) -> Unit = {}
+
+    /**
+     * List of all the available commands. This value is used to display command suggestions popup when the "commands" button is clicked.
+     */
+    public var availableCommands: List<Command> = emptyList()
 
     public constructor(context: Context) : this(context, null)
 
@@ -136,6 +168,9 @@ public class MessageComposerView : ConstraintLayout {
                                 show(it, AttachmentSelectionDialogFragment.TAG)
                             }
                     }
+                }
+                onCommandsButtonClicked = {
+                    renderCommandsSuggestions(MessageInputState(commandSuggestions = availableCommands))
                 }
             }
             removeAllViews()
@@ -186,10 +221,43 @@ public class MessageComposerView : ConstraintLayout {
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.bottomContent.children.first() as? MessageComposerChild)?.renderState(state)
 
-        if (state.mentionSuggestions.isNotEmpty()) {
-            renderMentionSuggestions(state)
-        } else {
-            suggestionsPopup?.dismiss()
+        updateSuggestionsPopup(state)
+    }
+
+    /**
+     * Re-renders suggestions popup window for the given [MessageInputState] instance.
+     *
+     * @param state [MessageInputState] for which the suggestions popup is updated.
+     */
+    private fun updateSuggestionsPopup(state: MessageInputState) {
+        when {
+            state.mentionSuggestions.isNotEmpty() -> renderMentionSuggestions(state)
+            state.commandSuggestions.isNotEmpty() -> renderCommandsSuggestions(state)
+            else -> suggestionsPopup?.dismiss()
+        }
+    }
+
+    /**
+     * Displays list of command suggestions, or updates it according to the [MessageInputState.commandSuggestions] list.
+     *
+     * @param state Current instance of [MessageInputState].
+     */
+    private fun renderCommandsSuggestions(state: MessageInputState) {
+        (commandSuggestionsContent as? MessageComposerChild)?.renderState(state)
+        val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(commandSuggestionsContent)
+        popupWindow.apply {
+            val offset = computeSuggestionsPopupVerticalOffset(commandSuggestionsContent)
+            if (isShowing) {
+                update(
+                    this@MessageComposerView,
+                    0,
+                    offset,
+                    -1,
+                    -1,
+                )
+            } else {
+                showAsDropDown(this@MessageComposerView, 0, offset)
+            }
         }
     }
 
@@ -200,36 +268,46 @@ public class MessageComposerView : ConstraintLayout {
      */
     private fun renderMentionSuggestions(state: MessageInputState) {
         (mentionSuggestionsContent as? MessageComposerChild)?.renderState(state)
-
-        val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow()
+        val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(mentionSuggestionsContent)
         popupWindow.apply {
-            mentionSuggestionsContent.measure(
-                MeasureSpec.makeMeasureSpec(Resources.getSystem().displayMetrics.widthPixels,
-                    MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            )
-            val offset = mentionSuggestionsContent.measuredHeight + this@MessageComposerView.height
+            val offset = computeSuggestionsPopupVerticalOffset(mentionSuggestionsContent)
             if (isShowing) {
                 update(
                     this@MessageComposerView,
                     0,
-                    -offset,
+                    offset,
                     -1,
                     -1,
                 )
             } else {
-                showAsDropDown(this@MessageComposerView, 0, -offset)
+                showAsDropDown(this@MessageComposerView, 0, offset)
             }
         }
     }
 
     /**
-     * Creates new [PopupWindow] dedicated to displaying suggestions (e.g. mentions list, commands).
+     * Computes vertical offset of suggestions [PopupWindow] for the provided suggestions content [View].
+     *
+     * @param suggestionsContent Current suggestions content. Either [mentionSuggestionsContent] or [commandSuggestionsContent].
+     *
+     * @return Px value of the vertical offset of suggestions popup for the given [suggestionsContent] param.
      */
-    private fun createSuggestionPopupWindow(): PopupWindow {
+    private fun computeSuggestionsPopupVerticalOffset(suggestionsContent: View): Int {
+        suggestionsContent.measure(
+            MeasureSpec.makeMeasureSpec(Resources.getSystem().displayMetrics.widthPixels,
+                MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        )
+        return -(suggestionsContent.measuredHeight + this@MessageComposerView.height)
+    }
+
+    /**
+     * Creates new [PopupWindow] dedicated to displaying suggestions (e.g. available mention, command suggestions).
+     */
+    private fun createSuggestionPopupWindow(content: View): PopupWindow {
         val onDismissListener = PopupWindow.OnDismissListener { suggestionsPopup = null }
         return PopupWindow(
-            mentionSuggestionsContent,
+            content,
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply {
@@ -296,6 +374,7 @@ public class MessageComposerView : ConstraintLayout {
         binding.bottomContent.addView(view, layoutParams)
     }
 
+
     /**
      * Sets custom mention suggestions content view. It must implement [MessageComposerChild] interface, and should
      * render mention suggestions according to the received state. List of currently available mention suggestions is propagated
@@ -305,6 +384,17 @@ public class MessageComposerView : ConstraintLayout {
      */
     public fun <V> setMentionSuggestionsContent(view: V) where V : View, V : MessageComposerChild {
         mentionSuggestionsContentOverride = view
+    }
+
+    /**
+     * Sets custom command suggestions content view. It must implement [MessageComposerChild] interface, and should
+     * render command suggestions according to the received state. List of currently available command suggestions is propagated
+     * to the [view] in the [MessageComposerChild.renderState] hook function.
+     *
+     * @param view The [View] which shows command suggestions list and allows to choose one of them.
+     */
+    public fun <V> setCommandSuggestionsContent(view: V) where V : View, V : MessageComposerChild {
+        commandSuggestionsContentOverride = view
     }
 
     private companion object {

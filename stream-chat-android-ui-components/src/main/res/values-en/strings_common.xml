@@ -9,6 +9,5 @@
     <string name="stream_ui_user_status_last_seen_just_now">Last seen just now</string>
 
     <!-- Message Preview (User in Mention List and Search Result List) -->
-    <string name="stream_ui_message_preview_file">File: %1$s</string>
     <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>

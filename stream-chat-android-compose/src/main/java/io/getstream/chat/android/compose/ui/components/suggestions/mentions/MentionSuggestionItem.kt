@@ -25,43 +25,28 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Represents the default mention suggestion item in the mention suggestion list popup.
+ * Represents the mention suggestion item in the mention suggestion list popup.
  *
  * @param user The user that will be used to autocomplete the mention.
  * @param modifier Modifier for styling.
  * @param onMentionSelected Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a mention item.
- * @param detailsContent Customizable composable function that represents the center content of a mention item.
+ * @param centerContent Customizable composable function that represents the center content of a mention item.
  * @param trailingContent Customizable composable function that represents the trailing content of the a mention item.
  */
 @Composable
-public fun DefaultMentionSuggestionItem(
+public fun MentionSuggestionItem(
     user: User,
     onMentionSelected: (User) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemLeadingContent(
-            user = it,
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .size(ChatTheme.dimens.mentionSuggestionItemAvatarSize)
-        )
+        DefaultMentionSuggestionItemLeadingContent(user = it)
     },
-    detailsContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemDetailsContent(
-            user = it,
-            modifier = Modifier
-                .weight(1f)
-                .wrapContentHeight()
-        )
+    centerContent: @Composable RowScope.(User) -> Unit = {
+        DefaultMentionSuggestionItemCenterContent(user = it)
     },
     trailingContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemTrailingContent(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .size(24.dp)
-
-        )
+        DefaultMentionSuggestionItemTrailingContent()
     },
 ) {
     Row(
@@ -82,7 +67,7 @@ public fun DefaultMentionSuggestionItem(
 
         leadingContent(user)
 
-        detailsContent(user)
+        centerContent(user)
 
         trailingContent(user)
     }
@@ -92,32 +77,30 @@ public fun DefaultMentionSuggestionItem(
  * Represents the default content shown at the start of the mention list item.
  *
  * @param user The user item to show the content for.
- * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultMentionSuggestionItemLeadingContent(
-    user: User,
-    modifier: Modifier = Modifier,
-) {
+internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
     UserAvatar(
-        modifier = modifier,
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .size(ChatTheme.dimens.mentionSuggestionItemAvatarSize),
         user = user,
         showOnlineIndicator = true,
     )
 }
 
 /**
- *  Represents the details portion of the mention item, that show the user name and the user ID.
+ *  Represents the center portion of the mention item, that show the user name and the user ID.
  *
  *  @param user The user to show the info for.
- *  @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultMentionSuggestionItemDetailsContent(
-    user: User,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
+internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .wrapContentHeight()
+    ) {
         Text(
             text = user.name,
             style = ChatTheme.typography.bodyBold,
@@ -137,15 +120,13 @@ public fun DefaultMentionSuggestionItemDetailsContent(
 
 /**
  * Represents the default content shown at the end of the mention list item.
- *
- * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultMentionSuggestionItemTrailingContent(
-    modifier: Modifier = Modifier,
-) {
+internal fun DefaultMentionSuggestionItemTrailingContent() {
     Icon(
-        modifier = modifier,
+        modifier = Modifier
+            .padding(start = 8.dp)
+            .size(24.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_mention),
         contentDescription = null,
         tint = ChatTheme.colors.primaryAccent

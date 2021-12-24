@@ -1,16 +1,9 @@
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -21,7 +14,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -39,10 +31,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent Leading vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
- * By default [ReactionOptions].
- * @param bodyContent Trailing vertical Composable that allows the user to customize the content shown in [SelectedMessageOptions].
- * By Default [MessageOptions].
+ * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
+ * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog. By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(
@@ -55,67 +45,76 @@ public fun SelectedMessageMenu(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        ReactionOptions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+        DefaultSelectedMessageReactionOptions(
+            message = message,
             reactionTypes = reactionTypes,
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.type),
-                        message = message
-                    )
-                )
-            },
-            ownReactions = message.ownReactions
+            onMessageAction = onMessageAction
         )
     },
-    bodyContent: @Composable ColumnScope.() -> Unit = {
-        MessageOptions(
-            options = messageOptions,
-            onMessageOptionSelected = {
-                onMessageAction(it.action)
-            }
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        DefaultSelectedMessageOptions(
+            messageOptions = messageOptions,
+            onMessageAction = onMessageAction
         )
     },
 ) {
-    Box(
-        modifier = Modifier
-            .background(overlayColor)
-            .fillMaxSize()
-            .clickable(
-                onClick = onDismiss,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
-    ) {
-        Card(
-            modifier = modifier
-                .clickable(
-                    onClick = {},
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
-            shape = shape,
-            backgroundColor = ChatTheme.colors.barsBackground
-        ) {
-            SelectedMessageOptions(
-                modifier = Modifier
-                    .padding(top = 12.dp),
-                message = message,
-                reactionTypes = reactionTypes,
-                messageOptions = messageOptions,
-                onMessageAction = onMessageAction,
-                headerContent = headerContent,
-                bodyContent = bodyContent
-            )
-        }
-    }
+    SelectedMessageDialog(
+        modifier = modifier,
+        shape = shape,
+        overlayColor = overlayColor,
+        onDismiss = onDismiss,
+        headerContent = headerContent,
+        centerContent = centerContent
+    )
+}
 
-    SystemBackPressedHandler(isEnabled = true) {
-        onDismiss()
-    }
+/**
+ * Default reaction options for the selected message.
+ *
+ * @param message The selected message.
+ * @param reactionTypes Available reactions.
+ * @param onMessageAction Handler when the user selects a reaction.
+ */
+@Composable
+internal fun DefaultSelectedMessageReactionOptions(
+    message: Message,
+    reactionTypes: Map<String, Int>,
+    onMessageAction: (MessageAction) -> Unit,
+) {
+    ReactionOptions(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        reactionTypes = reactionTypes,
+        onReactionOptionSelected = {
+            onMessageAction(
+                React(
+                    reaction = Reaction(messageId = message.id, type = it.type),
+                    message = message
+                )
+            )
+        },
+        ownReactions = message.ownReactions
+    )
+}
+
+/**
+ * Default selected message options.
+ *
+ * @param messageOptions The available options.
+ * @param onMessageAction Handler when the user selects an option.
+ */
+@Composable
+internal fun DefaultSelectedMessageOptions(
+    messageOptions: List<MessageOptionItemState>,
+    onMessageAction: (MessageAction) -> Unit,
+) {
+    MessageOptions(
+        options = messageOptions,
+        onMessageOptionSelected = {
+            onMessageAction(it.action)
+        }
+    )
 }
 
 /**

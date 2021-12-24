@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLe
 /**
  * Default leading content of [MessageComposerView].
  */
-internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
+public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
     /**
      * Handle to layout binding.
      */
@@ -21,11 +21,16 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
      */
     public var onAttachmentsButtonClicked: () -> Unit = {}
 
-    constructor(context: Context) : this(context, null)
+    /**
+     * Callback invoked when commands button is clicked.
+     */
+    public var onCommandsButtonClicked: () -> Unit = {}
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
         attrs,
         defStyleAttr) {
         init()
@@ -37,6 +42,7 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
         binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClicked() }
+        binding.commandsButton.setOnClickListener { onCommandsButtonClicked() }
     }
 
     /**
