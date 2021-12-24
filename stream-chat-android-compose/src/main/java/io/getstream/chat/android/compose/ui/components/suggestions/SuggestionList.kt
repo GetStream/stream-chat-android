@@ -22,7 +22,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param shape The shape of suggestion list popup.
  * @param contentPadding The inner content padding inside the popup.
  * @param headerContent The content shown at the top of a suggestion list popup.
- * @param content The content shown inside the suggestion list popup.
+ * @param centerContent The content shown inside the suggestion list popup.
  */
 @Composable
 public fun SuggestionList(
@@ -30,7 +30,7 @@ public fun SuggestionList(
     shape: Shape = ChatTheme.shapes.suggestionList,
     contentPadding: PaddingValues = PaddingValues(vertical = ChatTheme.dimens.suggestionListPadding),
     headerContent: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
+    centerContent: @Composable () -> Unit,
 ) {
     Popup(popupPositionProvider = SuggestionListPositionProvider()) {
         Card(
@@ -42,7 +42,7 @@ public fun SuggestionList(
             Column(Modifier.padding(contentPadding)) {
                 headerContent()
 
-                content()
+                centerContent()
             }
         }
     }

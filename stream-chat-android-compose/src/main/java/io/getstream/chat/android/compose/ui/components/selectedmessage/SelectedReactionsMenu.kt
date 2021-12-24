@@ -35,7 +35,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
- * @param bodyContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
+ * @param centerContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
  */
 @Composable
 public fun SelectedReactionsMenu(
@@ -54,8 +54,8 @@ public fun SelectedReactionsMenu(
             onMessageAction = onMessageAction
         )
     },
-    bodyContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsBodyContent(
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        DefaultSelectedReactionsCenterContent(
             message = message,
             currentUser = currentUser
         )
@@ -67,7 +67,7 @@ public fun SelectedReactionsMenu(
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        bodyContent = bodyContent
+        centerContent = centerContent
     )
 }
 
@@ -102,13 +102,13 @@ internal fun DefaultSelectedReactionsHeaderContent(
 }
 
 /**
- * Default body content for the selected reactions menu.
+ * Default center content for the selected reactions menu.
  *
  * @param message The selected message.
  * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultSelectedReactionsBodyContent(
+internal fun DefaultSelectedReactionsCenterContent(
     message: Message,
     currentUser: User?,
 ) {
