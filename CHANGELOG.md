@@ -202,28 +202,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ❌ Removed
 - Removed some reduntant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 # December 9th, 2021 - 4.24.0
 ## stream-chat-android-offline
 ### 🐞 Fixed
