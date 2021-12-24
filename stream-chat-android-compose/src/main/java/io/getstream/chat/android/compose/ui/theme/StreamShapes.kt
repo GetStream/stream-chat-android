@@ -32,6 +32,11 @@ public data class StreamShapes(
     public val attachmentSiteLabel: Shape,
 ) {
     public companion object {
+        /**
+         * Builds the default shapes for our theme.
+         *
+         * @return A [StreamShapes] that holds our default shapes.
+         */
         public fun defaultShapes(): StreamShapes = StreamShapes(
             avatar = CircleShape,
             myMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp),
