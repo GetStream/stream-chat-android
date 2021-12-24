@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
+import com.getstream.sdk.chat.utils.Linkify
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.transformer.DefaultChatTextTransformer
@@ -49,6 +50,7 @@ public object ChatUI {
     private val defaultMarkdown: ChatMarkdown by lazy {
         ChatMarkdown { textView, message ->
             textView.text = message
+            Linkify.addLinks(textView)
         }
     }
 
