@@ -47,6 +47,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `memberLimit` to `ChatDomain::queryChannels` and `ChatDomain::queryChannelsLoadMore` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
 
 ### ⚠️ Changed
 
@@ -72,6 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `memberLimit` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
 
 ### ⚠️ Changed
 
