@@ -90,6 +90,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var onMentionSuggestionSelected: (User) -> Unit = {}
 
+    /**
+     * Callback invoked when "send also to channel" checkbox was clicked.
+     */
+    public var onSendAlsoToChannelChanged: (Boolean) -> Unit = {}
+
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -152,6 +157,13 @@ public class MessageComposerView : ConstraintLayout {
             removeAllViews()
             addView(defaultTrailingContent)
         }
+        binding.bottomContent.apply {
+            val defaultBottomContent = MessageComposerDefaultBottomContent(context).apply {
+                onSendAlsoToChannelSelected = { onSendAlsoToChannelChanged(it) }
+            }
+            removeAllViews()
+            addView(defaultBottomContent)
+        }
     }
 
     /**
@@ -172,6 +184,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.trailingContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
+        (binding.bottomContent.children.first() as? MessageComposerChild)?.renderState(state)
 
         if (state.mentionSuggestions.isNotEmpty()) {
             renderMentionSuggestions(state)
@@ -267,6 +280,20 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerChild {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(view, layoutParams)
+    }
+
+    /**
+     * Sets custom trailing content view.
+     *
+     * @param view The [View] which replaces default bottom content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
+     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
+     */
+    public fun <V> setBottomContent(
+        view: V,
+        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
+    ) where V : View, V : MessageComposerChild {
+        binding.bottomContent.removeAllViews()
+        binding.bottomContent.addView(view, layoutParams)
     }
 
     /**

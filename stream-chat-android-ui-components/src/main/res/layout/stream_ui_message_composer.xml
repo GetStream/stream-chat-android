@@ -4,6 +4,7 @@
     >
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/mainContentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -41,4 +42,14 @@
             />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <FrameLayout
+        android:id="@+id/bottomContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainContentContainer"
+        />
 </merge>
