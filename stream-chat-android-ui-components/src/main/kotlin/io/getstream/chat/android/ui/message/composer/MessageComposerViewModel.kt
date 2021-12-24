@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.composer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -59,6 +60,11 @@ public class MessageComposerViewModel(
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
+
+    /**
+     * Represents the list of available commands in the channel.
+     */
+    public val availableCommands: Flow<List<Command>> = messageComposerController.commands
 
     /**
      * Initializing properties:
@@ -185,6 +191,16 @@ public class MessageComposerViewModel(
     }
 
     /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected in the command suggestion list popup.
+     */
+    public fun selectCommand(command: Command) {
+        messageComposerController.selectCommand(command)
+        updateMessageInputState()
+    }
+
+    /**
      * Disposes the inner [MessageComposerController].
      */
     override fun onCleared() {
@@ -202,7 +218,8 @@ public class MessageComposerViewModel(
             attachments = messageComposerController.selectedAttachments.value,
             validationErrors = messageComposerController.validationErrors.value,
             mentionSuggestions = messageComposerController.mentionSuggestions.value,
-            coolDownTimer = messageComposerController.cooldownTimer.value
+            coolDownTimer = messageComposerController.cooldownTimer.value,
+            commandSuggestions = messageComposerController.commandSuggestions.value,
         )
     }
 }

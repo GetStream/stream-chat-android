@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.suggestions.mention
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageInputState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
-import io.getstream.chat.android.ui.message.composer.suggestions.mention.MentionsAdapter
+import io.getstream.chat.android.ui.message.composer.MessageComposerChild
 
 /**
  * Default implementation of mention suggestions view. Displayed in a popup above [MessageComposerView] when there are
@@ -62,4 +62,3 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
         adapter.setItems(state.mentionSuggestions)
     }
 }
-
