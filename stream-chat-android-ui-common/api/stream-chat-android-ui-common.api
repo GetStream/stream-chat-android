@@ -809,7 +809,7 @@ public final class io/getstream/chat/android/common/state/MessageInputState {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAction ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun getAttachments ()Ljava/util/List;
-	public final fun getCooldownTimer ()I
+	public final fun getCoolDownTimer ()I
 	public final fun getInputValue ()Ljava/lang/String;
 	public final fun getMentionSuggestions ()Ljava/util/List;
 	public final fun getValidationErrors ()Ljava/util/List;

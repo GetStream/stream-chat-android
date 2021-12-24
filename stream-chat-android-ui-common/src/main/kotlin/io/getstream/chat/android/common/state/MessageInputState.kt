@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.models.User
  * @param action The currently active [MessageAction].
  * @param validationErrors The list of validation errors.
  * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
- * @param cooldownTimer The amount of time left until the user is allowed to send the next message.
+ * @param coolDownTimer The amount of time left until the user is allowed to send the next message.
  */
 public data class MessageInputState(
     val inputValue: String = "",
@@ -19,5 +19,5 @@ public data class MessageInputState(
     val action: MessageAction? = null,
     val validationErrors: List<ValidationError> = emptyList(),
     val mentionSuggestions: List<User> = emptyList(),
-    val cooldownTimer: Int = 0,
+    val coolDownTimer: Int = 0,
 )
