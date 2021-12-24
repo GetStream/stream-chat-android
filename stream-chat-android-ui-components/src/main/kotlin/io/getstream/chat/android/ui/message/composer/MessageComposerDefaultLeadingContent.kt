@@ -8,30 +8,45 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 
 /**
- * Default leading content of [MessageComposerView]
+ * Default leading content of [MessageComposerView].
  */
-internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
+public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
+    /**
+     * Handle to layout binding.
+     */
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
-    constructor(context: Context) : this(context, null)
+    /**
+     * Callback invoked when attachments button is clicked.
+     */
+    public var onAttachmentsButtonClicked: () -> Unit = {}
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    /**
+     * Callback invoked when commands button is clicked.
+     */
+    public var onCommandsButtonClicked: () -> Unit = {}
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    public constructor(context: Context) : this(context, null)
+
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
         attrs,
         defStyleAttr) {
         init()
     }
 
     /**
-     * Initial UI rendering and setting up callbacks
+     * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
+        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClicked() }
+        binding.commandsButton.setOnClickListener { onCommandsButtonClicked() }
     }
 
     /**
-     * Re-rendering the UI according to the new state
+     * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageInputState) {
     }

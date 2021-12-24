@@ -1,8 +1,11 @@
 package io.getstream.chat.android.ui.message.composer
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
@@ -12,6 +15,8 @@ import io.getstream.chat.android.common.state.Reply
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -26,12 +31,20 @@ public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
 
+    /**
+     * Current UI state of message input.
+     */
     private val _messageInputState: MutableStateFlow<MessageInputState> = MutableStateFlow(MessageInputState())
 
     /**
      * UI state of the message input component.
      */
     public val messageInputState: StateFlow<MessageInputState> = _messageInputState
+
+    /**
+     * Represents the remaining time until the user is allowed to send the next message.
+     */
+    public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
 
     /**
      * UI state of the current composer input.
@@ -49,13 +62,30 @@ public class MessageComposerViewModel(
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
 
     /**
+     * Represents the list of available commands in the channel.
+     */
+    public val availableCommands: Flow<List<Command>> = messageComposerController.commands
+
+    /**
+     * Initializing properties:
+     * - Listening to cooldownTimer value's updates and propagating the update to messageInputState.
+     */
+    init {
+        viewModelScope.launch {
+            cooldownTimer.collect {
+                updateMessageInputState()
+            }
+        }
+    }
+
+    /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.
      */
-    public fun setMessageInput(value: String): Unit {
+    public fun setMessageInput(value: String) {
         messageComposerController.setMessageInput(value)
-        _messageInputState.value = _messageInputState.value.copy(value)
+        updateMessageInputState()
     }
 
     /**
@@ -87,8 +117,10 @@ public class MessageComposerViewModel(
      *
      * @param attachments The attachments to store and show in the composer.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
+    public fun addSelectedAttachments(attachments: List<Attachment>) {
         messageComposerController.addSelectedAttachments(attachments)
+        updateMessageInputState()
+    }
 
     /**
      * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
@@ -97,8 +129,10 @@ public class MessageComposerViewModel(
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
+    public fun removeSelectedAttachment(attachment: Attachment) {
         messageComposerController.removeSelectedAttachment(attachment)
+        updateMessageInputState()
+    }
 
     /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
@@ -110,6 +144,15 @@ public class MessageComposerViewModel(
      */
     public fun sendMessage(message: Message): Unit = messageComposerController.sendMessage(message).also {
         setMessageInput("")
+        clearSelectedAttachments()
+    }
+
+    /**
+     * Removes all the selected attachments.
+     */
+    private fun clearSelectedAttachments() {
+        messageComposerController.selectedAttachments.value = emptyList()
+        updateMessageInputState()
     }
 
     /**
@@ -136,4 +179,47 @@ public class MessageComposerViewModel(
      * user left the relevant thread.
      */
     public fun leaveThread(): Unit = messageComposerController.leaveThread()
+
+    /**
+     * Autocompletes the current text input with the mention from the selected user.
+     *
+     * @param user The user that is used to autocomplete the mention.
+     */
+    public fun selectMention(user: User) {
+        messageComposerController.selectMention(user)
+        updateMessageInputState()
+    }
+
+    /**
+     * Switches the message composer to the command input mode.
+     *
+     * @param command The command that was selected in the command suggestion list popup.
+     */
+    public fun selectCommand(command: Command) {
+        messageComposerController.selectCommand(command)
+        updateMessageInputState()
+    }
+
+    /**
+     * Disposes the inner [MessageComposerController].
+     */
+    override fun onCleared() {
+        super.onCleared()
+        messageComposerController.onCleared()
+    }
+
+    /**
+     * Recomputes current [MessageInputState] and updates [MessageComposerViewModel._messageInputState].
+     */
+    private fun updateMessageInputState() {
+        val oldState = _messageInputState.value
+        _messageInputState.value = oldState.copy(
+            inputValue = messageComposerController.input.value,
+            attachments = messageComposerController.selectedAttachments.value,
+            validationErrors = messageComposerController.validationErrors.value,
+            mentionSuggestions = messageComposerController.mentionSuggestions.value,
+            coolDownTimer = messageComposerController.cooldownTimer.value,
+            commandSuggestions = messageComposerController.commandSuggestions.value,
+        )
+    }
 }

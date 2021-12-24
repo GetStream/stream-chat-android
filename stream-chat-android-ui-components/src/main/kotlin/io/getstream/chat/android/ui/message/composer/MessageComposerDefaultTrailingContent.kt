@@ -9,14 +9,17 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 
 /**
- * Default trailing content of [MessageComposerView]
+ * Default trailing content of [MessageComposerView].
  */
 internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageComposerChild {
     /**
-     * Lambda invoked when send button is clicked
+     * Callback invoked when send button is clicked.
      */
-    var onSendButtonClickListener: () -> Unit = {}
+    var onSendButtonClicked: () -> Unit = {}
 
+    /**
+     * Handle to layout binding.
+     */
     private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
 
     constructor(context: Context) : this(context, null)
@@ -30,23 +33,26 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     }
 
     /**
-     * Initial UI rendering and setting up callbacks
+     * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
         binding.sendMessageButtonEnabled.setOnClickListener {
-            onSendButtonClickListener()
+            onSendButtonClicked()
         }
     }
 
     /**
-     * Re-rendering the UI according to the new state
+     * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageInputState) {
-        val sendButtonEnabled = state.inputValue.isNotEmpty()
         binding.apply {
-            sendMessageButtonDisabled.isVisible = !sendButtonEnabled
-            sendMessageButtonEnabled.isVisible = sendButtonEnabled
+            val sendButtonVisible = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.coolDownTimer == 0
+            sendMessageButtonDisabled.isVisible = !sendButtonVisible
+            sendMessageButtonEnabled.isVisible = sendButtonVisible
+            val coolDownTimerVisible = state.coolDownTimer > 0
+            coolDownBadge.isVisible = coolDownTimerVisible
+            if (coolDownTimerVisible) coolDownBadge.text = state.coolDownTimer.toString()
         }
     }
 }

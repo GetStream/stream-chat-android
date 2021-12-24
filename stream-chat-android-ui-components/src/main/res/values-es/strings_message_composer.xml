@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_composer_error_message_length">Tamaño máximo de mensaje (%d) excedido.</string>
+    <string name="stream_ui_message_composer_error_file_size">El fichero es demasiado grande - Máximo %s.</string>
+    <string name="stream_ui_message_composer_error_attachment_count">No es posible añadir más de %d archivos adjuntos.</string>
+</resources>
