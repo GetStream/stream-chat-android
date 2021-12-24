@@ -200,9 +200,9 @@ internal fun RowScope.DefaultChannelItemCenterContent(
 }
 
 /**
- * Represents the default trailing content for the channel item: the information
- * about the last message for the channel item, such as its read state, timestamp
- * and how many unread messages the user has.
+ * Represents the default trailing content for the channel item. By default it shows
+ * the the information about the last message for the channel item, such as its read state,
+ * timestamp and how many unread messages the user has.
  *
  * @param channel The channel to show the info for.
  * @param currentUser The currently logged in user, used for data handling.
