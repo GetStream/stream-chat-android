@@ -26,7 +26,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param overlayColor The color applied to the overlay.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param headerContent The content shown at the top of the dialog.
- * @param bodyContent The content shown in the dialog.
+ * @param centerContent The content shown in the dialog.
  */
 @Composable
 internal fun SelectedMessageDialog(
@@ -35,7 +35,7 @@ internal fun SelectedMessageDialog(
     overlayColor: Color = ChatTheme.colors.overlay,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {},
-    bodyContent: @Composable ColumnScope.() -> Unit = {},
+    centerContent: @Composable ColumnScope.() -> Unit = {},
 ) {
     Box(
         modifier = Modifier
@@ -60,7 +60,7 @@ internal fun SelectedMessageDialog(
             Column(modifier = Modifier.padding(top = 12.dp)) {
                 headerContent()
 
-                bodyContent()
+                centerContent()
             }
         }
     }

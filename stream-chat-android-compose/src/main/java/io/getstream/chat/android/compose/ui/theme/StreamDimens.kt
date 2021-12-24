@@ -72,6 +72,11 @@ public data class StreamDimens(
     public val userReactionItemIconSize: Dp,
 ) {
     public companion object {
+        /**
+         * Builds the default dimensions for our theme.
+         *
+         * @return A [StreamDimens] instance holding our default dimensions.
+         */
         public fun defaultDimens(): StreamDimens = StreamDimens(
             channelItemVerticalPadding = 12.dp,
             channelItemHorizontalPadding = 8.dp,
