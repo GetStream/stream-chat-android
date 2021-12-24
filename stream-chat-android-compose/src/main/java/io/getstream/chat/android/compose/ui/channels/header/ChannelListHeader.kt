@@ -44,9 +44,10 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.
  * By default it shows a [UserAvatar].
- * @param trailingContent Custom composable that allows the user to completely replace the default header
- * action. If nothing is passed in, the default element will be built, using the [onHeaderActionClick]
- * parameter as its handler, and it will represent [DefaultChannelListHeaderAction].
+ * @param centerContent Custom composable that allows the user to replace the default header center content.
+ * By default it either shows a text with [title] or [connectionState].
+ * @param trailingContent Custom composable that allows the user to replace the default leading content.
+ * By default it shows an action icon.
  */
 @Composable
 public fun ChannelListHeader(
@@ -62,14 +63,16 @@ public fun ChannelListHeader(
             onAvatarClick
         )
     },
-    titleContent: @Composable RowScope.() -> Unit = {
-        DefaultChannelHeaderTitle(
+    centerContent: @Composable RowScope.() -> Unit = {
+        DefaultChannelListHeaderCenterContent(
             modifier = Modifier.weight(1f),
             connectionState = connectionState,
             title = title
         )
     },
-    trailingContent: @Composable RowScope.() -> Unit = { DefaultChannelListHeaderAction(onHeaderActionClick) },
+    trailingContent: @Composable RowScope.() -> Unit = {
+        DefaultChannelListHeaderTrailingContent(onHeaderActionClick)
+    },
 ) {
     Surface(
         modifier = modifier
@@ -86,7 +89,7 @@ public fun ChannelListHeader(
 
             leadingContent()
 
-            titleContent()
+            centerContent()
 
             trailingContent()
         }
@@ -119,7 +122,7 @@ internal fun DefaultChannelHeaderLeadingContent(
 }
 
 /**
- * Represents the channel header's title slot. It either shows a [Text] if [connectionState] is
+ * Represents the channel header's center slot. It either shows a [Text] if [connectionState] is
  * [ConnectionState.CONNECTED], or a [NetworkLoadingIndicator] if there is no connections.
  *
  * @param connectionState The state of WebSocket connection.
@@ -127,7 +130,7 @@ internal fun DefaultChannelHeaderLeadingContent(
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun DefaultChannelHeaderTitle(
+internal fun DefaultChannelListHeaderCenterContent(
     connectionState: ConnectionState,
     title: String,
     modifier: Modifier = Modifier,
@@ -148,14 +151,14 @@ internal fun DefaultChannelHeaderTitle(
 }
 
 /**
- * Represents the default action for the ChannelList header.
+ * Represents the default trailing content for the [ChannelListHeader], which is an action icon.
  *
  * @param onHeaderActionClick Handler for when the user taps on the action.
  * @param modifier Modifier for styling.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun DefaultChannelListHeaderAction(
+internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

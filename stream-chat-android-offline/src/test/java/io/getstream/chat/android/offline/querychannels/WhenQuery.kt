@@ -185,7 +185,7 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                     on { toChannel() } doReturn channel
                 }
             }
-            whenever(repositories.selectChannels(any(), any())) doReturn dbChannels
+            whenever(repositories.selectChannels(any(), any(), any())) doReturn dbChannels
         }
 
         fun givenNetworkChannels(channels: List<Channel>) = apply {

@@ -100,7 +100,7 @@ internal class TextAndAttachmentsViewHolder(
         binding.messageText.isVisible = data.message.text.isNotEmpty()
         messageTextTransformer.transformAndApply(binding.messageText, data)
 
-        if (diff?.attachments != false) {
+        if (diff?.attachments != false || diff.positions) {
             setupAttachment(data)
         }
 
