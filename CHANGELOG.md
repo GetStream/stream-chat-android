@@ -12,6 +12,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- 🚨 Breaking change: Markdown support is moved into a standalone module `stream-chat-android-markdown-transformer` which is not included by default. You can use it with `ChatUI.messageTextTransformer` to add Markdown support to your app. You can find more information [here](https://getstream.io/chat/docs/sdk/android/ui/chatui/#markdown). [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 
 ### ✅ Added
 
@@ -54,7 +55,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Removed `QueryChannelsLoadMore` usecase. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 - `QueryChannelsController::loadMore` is removed and logic is moved into `ChatDomain`. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 
@@ -72,8 +72,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatMessageTextTransformer` to transform messages and set them to `TextView`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 
 ### ⚠️ Changed
+- `ChatUI.markdown` is deprecated in favour of `ChatUI.messageTextTransformer`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 
 ### ❌ Removed
 
@@ -157,11 +159,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `hard` flag to `MessageListViewModel.Event.DeleteMessage`.
   You can use `MessageListView::setMessageDeleteHandler` and pass `MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true)` to hard delete messages using `MessageListViewModel`.
   Check [MessageListViewModelBinding](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding.kt#L37) for further details. [#2772](https://github.com/GetStream/stream-chat-android/pull/2772)
-- Added `ChatMessageTextTransformer` to transform messages and set them to `TextView`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
-- `ChatUI.markdown` is deprecated in favour of `ChatUI.messageTextTransformer`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 - When querying for more channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 
 ### ❌ Removed
