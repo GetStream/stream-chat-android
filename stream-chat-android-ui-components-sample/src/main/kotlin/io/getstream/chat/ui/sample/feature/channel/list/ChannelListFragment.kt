@@ -38,6 +38,7 @@ class ChannelListFragment : Fragment() {
                 Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
             ),
+            chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
     }
     private val searchViewModel: SearchViewModel by viewModels()

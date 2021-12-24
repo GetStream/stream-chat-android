@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
@@ -124,13 +125,16 @@ internal class EventHandlerImpl(
         val batchBuilder = EventBatchUpdate.Builder()
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
+        val users: List<User> = events.filterIsInstance<UserEvent>().mapNotNull { it.user } +
+            events.filterIsInstance<HasOwnUser>().map { it.me }
+
         // For some reason backend is not sending us the user instance into some events that they should
         // and we are not able to identify which event type is. Gson, because it is using reflection,
         // inject a null instance into property `user` that doesn't allow null values.
         // This is a workaround, while we identify which event type is, that omit null values without
         // break our public API
         @Suppress("USELESS_CAST")
-        batchBuilder.addUsers(events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? })
+        batchBuilder.addUsers(users)
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {

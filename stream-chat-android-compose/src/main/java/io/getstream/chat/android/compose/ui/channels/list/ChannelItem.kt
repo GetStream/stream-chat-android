@@ -49,7 +49,7 @@ import io.getstream.chat.android.compose.ui.util.getLastMessage
  * @param modifier Modifier for styling.
  * @param leadingContent Customizable composable function that represents the leading content of a channel item, usually
  * the avatar that holds an image of the channel or its members.
- * @param detailsContent Customizable composable function that represents the center content of a channel item, usually
+ * @param centerContent Customizable composable function that represents the center content of a channel item, usually
  * holding information about its name and the last message.
  * @param trailingContent Customizable composable function that represents the trailing content of the a channel item,
  * usually information about the last message and the number of unread messages.
@@ -63,10 +63,10 @@ public fun ChannelItem(
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelAvatar(channelItem = it, currentUser = currentUser)
+        DefaultChannelItemLeadingContent(channelItem = it, currentUser = currentUser)
     },
-    detailsContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelDetails(
+    centerContent: @Composable RowScope.(ChannelItemState) -> Unit = {
+        DefaultChannelItemCenterContent(
             channel = it.channel,
             isMuted = it.isMuted,
             currentUser = currentUser,
@@ -76,7 +76,7 @@ public fun ChannelItem(
         )
     },
     trailingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelTrailingContent(
+        DefaultChannelItemTrailingContent(
             channel = it.channel,
             currentUser = currentUser,
             modifier = Modifier
@@ -111,7 +111,7 @@ public fun ChannelItem(
         ) {
             leadingContent(channelItem)
 
-            detailsContent(channelItem)
+            centerContent(channelItem)
 
             trailingContent(channelItem)
         }
@@ -119,13 +119,13 @@ public fun ChannelItem(
 }
 
 /**
- * Represents the default channel avatar.
+ * Represents the default leading content of [ChannelItem].
  *
  * @param channelItem The channel to show the avatar of.
  * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultChannelAvatar(
+internal fun DefaultChannelItemLeadingContent(
     channelItem: ChannelItemState,
     currentUser: User?,
 ) {
@@ -139,7 +139,7 @@ internal fun DefaultChannelAvatar(
 }
 
 /**
- * Represents the details portion of the channel item, that shows the channel display name and the last message text
+ * Represents the center portion of the channel item, that shows the channel display name and the last message text
  * preview.
  *
  * @param channel The channel to show the info for.
@@ -148,7 +148,7 @@ internal fun DefaultChannelAvatar(
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun DefaultChannelDetails(
+internal fun DefaultChannelItemCenterContent(
     channel: Channel,
     isMuted: Boolean,
     currentUser: User?,
@@ -212,7 +212,7 @@ internal fun DefaultChannelDetails(
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultChannelTrailingContent(
+internal fun DefaultChannelItemTrailingContent(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
@@ -250,13 +250,13 @@ public fun DefaultChannelTrailingContent(
 }
 
 /**
- * Preview of [DefaultChannelDetails] component for one-to-one conversation.
+ * Preview of [DefaultChannelItemCenterContent] component for one-to-one conversation.
  *
  * Should show a user name and the last message in the channel.
  */
 @Preview(showBackground = true, name = "ChannelDetails Preview (One-to-one conversation)")
 @Composable
-private fun DefaultChannelDetailsOneToOnePreview() {
+private fun DefaultChannelCenterContentOneToOnePreview() {
     DefaultChannelDetailsPreview(
         channel = PreviewChannelData.channelWithMessages,
         isMuted = false,
@@ -265,13 +265,13 @@ private fun DefaultChannelDetailsOneToOnePreview() {
 }
 
 /**
- * Preview of [DefaultChannelDetails] for muted channel.
+ * Preview of [DefaultChannelItemCenterContent] for muted channel.
  *
  * Should show a muted icon next to the channel name.
  */
 @Preview(showBackground = true, name = "ChannelDetails Preview (Muted channel)")
 @Composable
-private fun DefaultChannelDetailsMutedPreview() {
+private fun DefaultChannelCenterContentMutedPreview() {
     DefaultChannelDetailsPreview(
         channel = PreviewChannelData.channelWithMessages,
         isMuted = true
@@ -279,18 +279,18 @@ private fun DefaultChannelDetailsMutedPreview() {
 }
 
 /**
- * Preview of [DefaultChannelDetails] for a channel without messages.
+ * Preview of [DefaultChannelItemCenterContent] for a channel without messages.
  *
  * Should show only channel name that is centered vertically.
  */
 @Preview(showBackground = true, name = "ChannelDetails Preview (Without message)")
 @Composable
-private fun DefaultChannelDetailsWithMessagePreview() {
+private fun DefaultChannelCenterContentWithMessagePreview() {
     DefaultChannelDetailsPreview(channel = PreviewChannelData.channelWithImage)
 }
 
 /**
- * Shows [DefaultChannelDetails] preview for the provided parameters.
+ * Shows [DefaultChannelItemCenterContent] preview for the provided parameters.
  *
  * @param channel The channel used to show the preview.
  * @param isMuted If the channel is muted.
@@ -303,7 +303,7 @@ private fun DefaultChannelDetailsPreview(
     currentUser: User? = null,
 ) {
     ChatTheme {
-        DefaultChannelDetails(
+        DefaultChannelItemCenterContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
@@ -315,7 +315,7 @@ private fun DefaultChannelDetailsPreview(
 }
 
 /**
- * Preview of [DefaultChannelTrailingContent].
+ * Preview of [DefaultChannelItemTrailingContent].
  *
  * Should show unread count badge, delivery indicator and timestamp.
  */
@@ -323,7 +323,7 @@ private fun DefaultChannelDetailsPreview(
 @Composable
 private fun DefaultChannelTrailingContentPreview() {
     ChatTheme {
-        DefaultChannelTrailingContent(
+        DefaultChannelItemTrailingContent(
             channel = PreviewChannelData.channelWithMessages,
             currentUser = PreviewUserData.user1,
         )

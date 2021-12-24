@@ -16,11 +16,11 @@ public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.
      *
      * @return The [Intent] to start the [ImagePreviewActivity].
      */
-    override fun createIntent(context: Context, data: Input): Intent {
+    override fun createIntent(context: Context, input: Input): Intent {
         return ImagePreviewActivity.getIntent(
             context,
-            messageId = data.messageId,
-            attachmentPosition = data.initialPosition
+            messageId = input.messageId,
+            attachmentPosition = input.initialPosition
         )
     }
 
