@@ -787,7 +787,7 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun getAlsoSendToChannel ()Z
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getCommandSuggestions ()Ljava/util/List;
-	public final fun getCooldownTimer ()I
+	public final fun getCoolDownTime ()I
 	public final fun getInputValue ()Ljava/lang/String;
 	public final fun getMentionSuggestions ()Ljava/util/List;
 	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;

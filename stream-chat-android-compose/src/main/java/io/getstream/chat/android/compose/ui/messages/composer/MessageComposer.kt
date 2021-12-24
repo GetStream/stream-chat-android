@@ -39,7 +39,7 @@ import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.composer.CooldownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
@@ -121,7 +121,7 @@ public fun MessageComposer(
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultComposeInputContent(
+        DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
@@ -131,7 +131,7 @@ public fun MessageComposer(
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
             value = it.inputValue,
-            cooldownTimer = it.cooldownTimer,
+            coolDownTime = it.coolDownTime,
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             onSendMessage = { input, attachments ->
@@ -238,7 +238,7 @@ public fun MessageComposer(
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultComposeInputContent(
+        DefaultComposerInputContent(
             messageComposerState = messageComposerState,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
@@ -248,7 +248,7 @@ public fun MessageComposer(
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
             value = it.inputValue,
-            cooldownTimer = it.cooldownTimer,
+            coolDownTime = it.coolDownTime,
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             onSendMessage = onSendMessage
@@ -477,7 +477,7 @@ internal fun DefaultComposerLabel() {
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * */
 @Composable
-public fun RowScope.DefaultComposeInputContent(
+public fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
@@ -499,7 +499,7 @@ public fun RowScope.DefaultComposeInputContent(
  * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
  *
  * @param value The input value.
- * @param cooldownTimer The amount of time left in cooldown mode.
+ * @param coolDownTime The amount of time left in cool-down mode.
  * @param attachments The selected attachments.
  * @param validationErrors List of errors for message validation.
  * @param onSendMessage Handler when the user wants to send a message.
@@ -507,15 +507,15 @@ public fun RowScope.DefaultComposeInputContent(
 @Composable
 internal fun DefaultMessageComposerTrailingContent(
     value: String,
-    cooldownTimer: Int,
+    coolDownTime: Int,
     attachments: List<Attachment>,
     validationErrors: List<ValidationError>,
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
     val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
 
-    if (cooldownTimer > 0) {
-        CooldownIndicator(cooldownTimer = cooldownTimer)
+    if (coolDownTime > 0) {
+        CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         IconButton(
             enabled = isInputValid,

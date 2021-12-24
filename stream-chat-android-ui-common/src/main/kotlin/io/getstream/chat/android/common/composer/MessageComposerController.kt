@@ -230,7 +230,7 @@ public class MessageComposerController(
         }.launchIn(scope)
 
         cooldownTimer.onEach { cooldownTimer ->
-            state.value = state.value.copy(cooldownTimer = cooldownTimer)
+            state.value = state.value.copy(coolDownTime = cooldownTimer)
         }.launchIn(scope)
 
         messageMode.onEach { messageMode ->

@@ -1,6 +1,6 @@
 # MessageComposer
 
-The `MessageComposer` is arguably one of the most important components when building the Chat experience. It allows users to send messages and attachments to the chat, participating in conversation.
+The `MessageComposer` is arguably one of the most important components when building the Chat experience. It allows users to participate in the chat by sending messages and attachments.
 
 There are two versions of the composer that we provide:
 
@@ -28,8 +28,7 @@ fun MyCustomUi() {
             MessageComposer(
                 modifier = Modifier // 2 - customize the component
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.Center),
+                    .wrapContentHeight(),
                 viewModel = composerViewModel, // 3 - provide ViewModel
                 // 4 - customize actions
                 onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
@@ -51,7 +50,7 @@ Because it doesn't make sense to use the `MessageComposer` as a standalone compo
 In this example, you took the following steps:
 
 * **Step 1**: You set up the `MessageComposer` as a `bottomBar` of a `Scaffold`. This way you dedicate the space on the screen while fitting in the rest of your content.
-* **Step 2**: You customize the `MessageComposer` using a set of `Modifier`s to make it fill the width and wrap the height, as well as align it to the center of the parent.
+* **Step 2**: You customize the `MessageComposer` using a set of `Modifier`s to make it fill the parent width and wrap its height.
 * **Step 3**: You pass in the `ViewModel` to bind the composer to. This helps it load all the info it needs to show various states.
 * **Step 4**: You customize some of the actions of the composer to propagate them to other parts of your business logic.
 * **Step 5**: You can set up the rest of your UI in the `Scaffold` body, which can be any of our other components or your custom UI.
