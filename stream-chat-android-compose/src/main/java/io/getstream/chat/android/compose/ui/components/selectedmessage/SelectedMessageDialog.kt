@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -57,7 +55,7 @@ internal fun SelectedMessageDialog(
             shape = shape,
             backgroundColor = ChatTheme.colors.barsBackground
         ) {
-            Column(modifier = Modifier.padding(top = 12.dp)) {
+            Column(modifier) {
                 headerContent()
 
                 centerContent()
