@@ -17,7 +17,7 @@ internal class MessageComposerDefaultLeadingContent : FrameLayout, MessageCompos
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     /**
-     * Callback invoked whn attachments button is clicked.
+     * Callback invoked when attachments button is clicked.
      */
     public var onAttachmentsButtonClicked: () -> Unit = {}
 
