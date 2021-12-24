@@ -164,11 +164,11 @@ internal class ChannelMutableState(
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
-        val channelData = _channelData.value ?: ChannelData(channelType, channelId)
+        val channelData = channelData.value
 
         val messages = sortedMessages.value
-        val members = _members.value.values.toList()
-        val watchers = _watchers.value.values.toList()
+        val members = members.value
+        val watchers = watchers.value
         val reads = _reads.value.values.toList()
         val watcherCount = _watcherCount.value
 

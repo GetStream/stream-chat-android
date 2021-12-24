@@ -26,33 +26,24 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Represents the default command suggestion item in the command suggestion list popup.
+ * Represents the command suggestion item in the command suggestion list popup.
  *
  * @param command The command to display.
  * @param modifier Modifier for styling.
  * @param onCommandSelected Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a command item.
- * @param detailsContent Customizable composable function that represents the details content of a command item.
+ * @param centerContent Customizable composable function that represents the center content of a command item.
  */
 @Composable
-public fun DefaultCommandSuggestionItem(
+public fun CommandSuggestionItem(
     command: Command,
     modifier: Modifier = Modifier,
     onCommandSelected: (Command) -> Unit = {},
     leadingContent: @Composable RowScope.(Command) -> Unit = {
-        DefaultCommandSuggestionItemLeadingContent(
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .size(ChatTheme.dimens.commandSuggestionItemIconSize)
-        )
+        DefaultCommandSuggestionItemLeadingContent()
     },
-    detailsContent: @Composable RowScope.(Command) -> Unit = {
-        DefaultCommandSuggestionItemDetailsContent(
-            command = it,
-            modifier = Modifier
-                .weight(1f)
-                .wrapContentHeight()
-        )
+    centerContent: @Composable RowScope.(Command) -> Unit = {
+        DefaultCommandSuggestionItemCenterContent(command = it)
     },
 ) {
     Row(
@@ -72,34 +63,32 @@ public fun DefaultCommandSuggestionItem(
     ) {
         leadingContent(command)
 
-        detailsContent(command)
+        centerContent(command)
     }
 }
 
 /**
  * Represents the default content shown at the start of the command list item.
- *
- * @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultCommandSuggestionItemLeadingContent(
-    modifier: Modifier = Modifier,
-) {
+internal fun DefaultCommandSuggestionItemLeadingContent() {
     Image(
-        modifier = modifier,
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .size(ChatTheme.dimens.commandSuggestionItemIconSize),
         painter = painterResource(id = R.drawable.stream_compose_ic_giphy),
         contentDescription = null
     )
 }
 
 /**
- *  Represents the details portion of the command item, that show the user name and the user ID.
+ *  Represents the center portion of the command item, that show the user name and the user ID.
  *
  *  @param command The user to show the info for.
  *  @param modifier Modifier for styling.
  */
 @Composable
-public fun DefaultCommandSuggestionItemDetailsContent(
+internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
     command: Command,
     modifier: Modifier = Modifier,
 ) {
@@ -110,7 +99,9 @@ public fun DefaultCommandSuggestionItemDetailsContent(
     )
 
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .weight(1f)
+            .wrapContentHeight(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

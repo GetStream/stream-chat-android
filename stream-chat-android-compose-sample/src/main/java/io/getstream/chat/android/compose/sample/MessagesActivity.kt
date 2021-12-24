@@ -8,12 +8,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -23,19 +27,25 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Keyboard
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -84,7 +94,7 @@ class MessagesActivity : AppCompatActivity() {
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
-        val selectedMessage = listViewModel.currentMessagesState.selectedMessage
+        val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -139,26 +149,43 @@ class MessagesActivity : AppCompatActivity() {
                 )
             }
 
-            if (selectedMessage != null) {
-                SelectedMessageMenu(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(horizontal = 20.dp)
-                        .wrapContentSize(),
-                    shape = ChatTheme.shapes.attachment,
-                    messageOptions = defaultMessageOptionsState(
-                        selectedMessage = selectedMessage,
+            if (selectedMessageState != null) {
+                val selectedMessage = selectedMessageState.message
+                if (selectedMessageState is SelectedMessageOptionsState) {
+                    SelectedMessageMenu(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 20.dp)
+                            .wrapContentSize(),
+                        shape = ChatTheme.shapes.attachment,
+                        messageOptions = defaultMessageOptionsState(
+                            selectedMessage = selectedMessage,
+                            currentUser = user,
+                            isInThread = listViewModel.isInThread
+                        ),
+                        message = selectedMessage,
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
+                        onDismiss = { listViewModel.removeOverlay() }
+                    )
+                } else if (selectedMessageState is SelectedMessageReactionsState) {
+                    SelectedReactionsMenu(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 20.dp)
+                            .wrapContentSize(),
+                        shape = ChatTheme.shapes.attachment,
+                        message = selectedMessage,
                         currentUser = user,
-                        isInThread = listViewModel.isInThread
-                    ),
-                    message = selectedMessage,
-                    onMessageAction = { action ->
-                        composerViewModel.performMessageAction(action)
-                        listViewModel.performMessageAction(action)
-                        listViewModel.removeOverlay()
-                    },
-                    onDismiss = { listViewModel.removeOverlay() }
-                )
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
+                        onDismiss = { listViewModel.removeOverlay() }
+                    )
+                }
             }
         }
     }
@@ -197,9 +224,31 @@ class MessagesActivity : AppCompatActivity() {
                                 color = ChatTheme.colors.textLowEmphasis
                             )
                         }
-                    }
+                    },
+                    innerTrailingContent = {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = rememberRipple()
+                                ) {
+                                    val state = composerViewModel.messageComposerState.value
+
+                                    composerViewModel.sendMessage(
+                                        composerViewModel.buildNewMessage(
+                                            state.inputValue, state.attachments
+                                        )
+                                    )
+                                },
+                            painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                            tint = ChatTheme.colors.primaryAccent,
+                            contentDescription = null
+                        )
+                    },
                 )
-            }
+            },
+            trailingContent = { Spacer(modifier = Modifier.size(8.dp)) }
         )
     }
 
