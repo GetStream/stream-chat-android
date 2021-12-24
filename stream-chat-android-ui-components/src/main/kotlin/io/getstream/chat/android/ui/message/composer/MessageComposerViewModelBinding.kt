@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
  * @param onDismissMessage Callback invoked when user dismisses the message. Default implementation clears input value in view model.
  * @param onAttachmentsSelected Callback invoked when user selects list of attachments in attachments picker.
  * @param onRemoveAttachment Callback invoked when user attempts to remove the attachment.
- * @param onMentionSuggestionSelected Callback invoked when selects one of the mention suggestions.
+ * @param onMentionSuggestionSelected Callback invoked when user selects one of the mention suggestions.
+ * @param onSendAlsoToChannelChanged Callback invoked when user checks or unchecks "send also to channel" checkbox.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
@@ -30,6 +31,7 @@ public fun MessageComposerViewModel.bindView(
     onAttachmentsSelected: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
     onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     onMentionSuggestionSelected: (User) -> Unit = { selectMention(it) },
+    onSendAlsoToChannelChanged: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
 ) {
     view.onSendMessageClicked = {
         val message = buildNewMessage()
@@ -45,6 +47,8 @@ public fun MessageComposerViewModel.bindView(
     view.onAttachmentRemovedHandler = onRemoveAttachment
 
     view.onMentionSuggestionSelected = onMentionSuggestionSelected
+
+    view.onSendAlsoToChannelChanged = onSendAlsoToChannelChanged
 
     lifecycleOwner.lifecycleScope.launch {
         messageInputState.collect {

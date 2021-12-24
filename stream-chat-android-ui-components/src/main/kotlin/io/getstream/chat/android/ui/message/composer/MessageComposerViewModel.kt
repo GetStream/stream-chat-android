@@ -43,6 +43,11 @@ public class MessageComposerViewModel(
     public val input: MutableStateFlow<String> = messageComposerController.input
 
     /**
+     * If the message will be shown in the channel after it is sent.
+     */
+    public val alsoSendToChannel: MutableStateFlow<Boolean> = messageComposerController.alsoSendToChannel
+
+    /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
     public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
@@ -63,13 +68,26 @@ public class MessageComposerViewModel(
     }
 
     /**
+     * Called when the "Also send as a direct message" checkbox is checked or unchecked.
+     *
+     * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
+     */
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
+        messageComposerController.setAlsoSendToChannel(alsoSendToChannel)
+        updateMessageInputState()
+    }
+
+    /**
      * Called when the message mode changes and the internal state needs to be updated.
      *
      * This affects the business logic.
      *
      * @param messageMode The current message mode.
      */
-    public fun setMessageMode(messageMode: MessageMode): Unit = messageComposerController.setMessageMode(messageMode)
+    public fun setMessageMode(messageMode: MessageMode) {
+        messageComposerController.setMessageMode(messageMode)
+        updateMessageInputState()
+    }
 
     /**
      * Handles the selected [messageAction].
@@ -152,7 +170,10 @@ public class MessageComposerViewModel(
      * It also dismisses any currently active message actions, such as [Edit] and [Reply], as the
      * user left the relevant thread.
      */
-    public fun leaveThread(): Unit = messageComposerController.leaveThread()
+    public fun leaveThread() {
+        messageComposerController.leaveThread()
+        updateMessageInputState()
+    }
 
     /**
      * Autocompletes the current text input with the mention from the selected user.
