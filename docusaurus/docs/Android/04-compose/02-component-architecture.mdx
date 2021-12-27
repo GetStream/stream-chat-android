@@ -35,7 +35,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
         ChatTheme { // Theme wrapper
             ChannelsScreen(
                 title = stringResource(id = R.string.app_name),
-                onItemClick = ::openMessages,
+                onItemClick = {
+                    // On item clicked action
+                },
                 onHeaderClickAction = {
                     // Header action
                 },
@@ -79,6 +81,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     setContent {
         ChatTheme { // Theme wrapper
             ChannelList(
+                modifier = Modifier.fillMaxSize(),
                 viewModel = channelListViewModel,
                 onChannelClick = ::openMessages,
             )
@@ -106,7 +109,8 @@ They offer fully customizable behavior as well as customizable UI where it makes
 
 * `Avatar`: Shows an image provided as a parameter, in a shape defined by the `ChatTheme`. Fully customizable in terms of size, shape, alignment and more.
 * `SearchInput`: Shows a leading icon for search, an input field to write your query and a trailing icon to clear the input. The leading icon can be fully customized, as well as the listeners for state changes.
-* `MessageList` and `ChannelList`: We offer stateless alternatives to some `ViewModel` powered components, if you don't want to use our `ViewModel` and want to customize the behavior, as well as the UI. 
+* `MessageList` and `ChannelList`: We offer stateless alternatives to some `ViewModel` powered components, if you don't want to use our `ViewModel` and want to customize the behavior, as well as the UI.
+* `MessageComposer`: A stateless alternative not backed by a `ViewModel`. Useful if you want more control over the component.
 
 ### Usage
 
@@ -121,7 +125,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
         SearchInput(
             query = queryState, // Connect the value to the state holder
-            modifier = Modifier.fillMaxWidth().padding(16.dp), // Customize the looks
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp, horizontal = 24.dp), // Customize the looks
             onValueChange = {
                 queryState = it // Change the value when typing
             }
