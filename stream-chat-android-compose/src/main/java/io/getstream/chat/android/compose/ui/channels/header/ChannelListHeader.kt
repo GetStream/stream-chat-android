@@ -155,7 +155,6 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
  * Represents the default trailing content for the [ChannelListHeader], which is an action icon.
  *
  * @param onHeaderActionClick Handler for when the user taps on the action.
- * @param modifier Modifier for styling.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
