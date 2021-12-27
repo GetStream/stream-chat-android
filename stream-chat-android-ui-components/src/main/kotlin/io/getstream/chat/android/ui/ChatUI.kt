@@ -1,16 +1,17 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
+import android.widget.TextView
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.Linkify
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
-import io.getstream.chat.android.ui.transformer.DefaultChatTextTransformer
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
@@ -50,7 +51,6 @@ public object ChatUI {
     private val defaultMarkdown: ChatMarkdown by lazy {
         ChatMarkdown { textView, message ->
             textView.text = message
-            Linkify.addLinks(textView)
         }
     }
 
@@ -67,7 +67,14 @@ public object ChatUI {
         }
 
     private var textTransformerOverride: ChatMessageTextTransformer? = null
-    private val defaultTextTransformer: ChatMessageTextTransformer by lazy { DefaultChatTextTransformer() }
+    private val defaultTextTransformer: ChatMessageTextTransformer by lazy {
+        object : AutoLinkableTextTransformer {
+            override fun transformer(textView: TextView, messageItem: MessageListItem.MessageItem) {
+                // Bypass to markdown by default for backwards compatibility.
+                markdown.setText(textView, messageItem.message.text)
+            }
+        }
+    }
 
     /**
      * Allows customising the message text's format or style.

@@ -209,6 +209,8 @@ ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView: TextView,
 }
 ```
 
+If you are using a custom `ChatMessageTextTransformer`, make sure to set `android:autoLink` property to `TextView`
+
 ### Markdown
 
 The SDK provides a standalone Markdown module `stream-chat-android-markdown-transformer` that contains `MarkdownTextTransformer` which is an implementation of `ChatMessageTextTransformer`. It uses [Markwon](https://github.com/noties/Markwon) library internally.
@@ -216,6 +218,8 @@ The SDK provides a standalone Markdown module `stream-chat-android-markdown-tran
 ```kotlin
 ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
 ```
+
+If you use `MarkdownTextTransformer`, don't use `android:autoLink` attribute because it'll break the markdown [Linkify](https://noties.io/Markwon/docs/v4/linkify/) implementation.
 
 Then the SDK will parse Markdown automatically:
 

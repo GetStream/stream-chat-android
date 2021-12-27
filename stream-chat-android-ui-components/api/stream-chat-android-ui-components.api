@@ -2604,6 +2604,15 @@ public abstract class io/getstream/chat/android/ui/suggestion/list/adapter/viewh
 	protected final fun getContext ()Landroid/content/Context;
 }
 
+public abstract interface class io/getstream/chat/android/ui/transformer/AutoLinkableTextTransformer : io/getstream/chat/android/ui/transformer/ChatMessageTextTransformer {
+	public abstract fun transformAndApply (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
+	public abstract fun transformer (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
+}
+
+public final class io/getstream/chat/android/ui/transformer/AutoLinkableTextTransformer$DefaultImpls {
+	public static fun transformAndApply (Lio/getstream/chat/android/ui/transformer/AutoLinkableTextTransformer;Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/transformer/ChatMessageTextTransformer {
 	public abstract fun transformAndApply (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
 }
