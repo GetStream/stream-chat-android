@@ -5,7 +5,7 @@
     <item quantity="other">"%s 및 %d명 입력중"</item>
   </plurals>
   <plurals name="stream_compose_message_reactions">
-    <item quantity="other">%d개의 공감</item>
+    <item quantity="other">"%d개의 공감"</item>
   </plurals>
   <string name="stream_compose_cancel">"취소"</string>
   <string name="stream_compose_channel_info_delete_conversation">"대화 삭제하기"</string>
