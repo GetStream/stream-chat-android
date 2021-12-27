@@ -129,13 +129,11 @@ internal fun DefaultChannelHeaderLeadingContent(
  *
  * @param connectionState The state of WebSocket connection.
  * @param title The title to show.
- * @param modifier Modifier for styling.
  */
 @Composable
 internal fun RowScope.DefaultChannelListHeaderCenterContent(
     connectionState: ConnectionState,
     title: String,
-    modifier: Modifier = Modifier,
 ) {
     if (connectionState == ConnectionState.CONNECTED) {
         Text(
@@ -149,7 +147,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
             color = ChatTheme.colors.textHighEmphasis
         )
     } else {
-        NetworkLoadingIndicator(modifier = modifier)
+        NetworkLoadingIndicator(modifier = Modifier.weight(1f))
     }
 }
 
@@ -163,10 +161,9 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
 @Composable
 internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier
+        modifier = Modifier
             .size(40.dp)
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
@@ -188,7 +185,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
  *
  * Should show a user avatar, a title, and an action button.
  */
-@Preview
+@Preview(name = "ChannelListHeader Preview (Connected state)")
 @Composable
 private fun ChannelListHeaderForConnectedStatePreview() {
     ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTED)
@@ -199,7 +196,7 @@ private fun ChannelListHeaderForConnectedStatePreview() {
  *
  * Should show a user avatar, "Waiting for network" caption, and an action button.
  */
-@Preview
+@Preview(name = "ChannelListHeader Preview (Connecting state)")
 @Composable
 private fun ChannelListHeaderForConnectingStatePreview() {
     ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTING)
