@@ -163,7 +163,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture(scope)
-                .givenChatEventHandler { event, _ ->
+                .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is ChannelUpdatedEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -185,7 +185,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture(scope)
-                .givenChatEventHandler { _, _ -> EventHandlingResult.Skip }
+                .givenChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
 
@@ -202,7 +202,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture(scope)
-                .givenChatEventHandler { event, _ ->
+                .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is ChannelUpdatedByUserEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -225,7 +225,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture(scope)
-                .givenChatEventHandler { _, _ -> EventHandlingResult.Skip }
+                .givenChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
                 .addInitialChannel(channel)
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -262,7 +262,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
             }
             val queryController = Fixture(scope)
                 .addInitialChannel(channel)
-                .givenChatEventHandler { _, _ -> EventHandlingResult.Skip }
+                .givenChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -350,7 +350,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture(scope)
-                .givenChatEventHandler { event, _ ->
+                .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is NotificationAddedToChannelEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -374,7 +374,7 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
     private var currentUser: User? = null
     private var channelType: String = ""
     private val initialCids = mutableSetOf<String>()
-    private var chatEventHandler = ChatEventHandler { chatEvent, _ ->
+    private var chatEventHandler = ChatEventHandler { chatEvent, _, _ ->
         when (chatEvent) {
             is HasChannel -> {
                 if (chatEvent.channel.members.any { member -> member.user.id == currentUser!!.id }) {

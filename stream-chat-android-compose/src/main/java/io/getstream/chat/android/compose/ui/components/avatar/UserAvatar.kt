@@ -43,11 +43,11 @@ public fun UserAvatar(
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
-        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+        DefaultOnlineIndicator(onlineIndicatorAlignment)
     },
     onClick: (() -> Unit)? = null,
 ) {
-    val avatarContent: (@Composable (modifier: Modifier) -> Unit) = @Composable { innerModifier ->
+    Box(modifier = modifier) {
         if (user.image.isNotBlank()) {
             val authorImage = if (LocalInspectionMode.current) {
                 // Show hardcoded avatar from resources when rendering preview
@@ -57,7 +57,7 @@ public fun UserAvatar(
             }
 
             Avatar(
-                modifier = innerModifier,
+                modifier = Modifier.fillMaxSize(),
                 shape = shape,
                 painter = authorImage,
                 contentDescription = contentDescription,
@@ -65,25 +65,25 @@ public fun UserAvatar(
             )
         } else {
             InitialsAvatar(
-                modifier = innerModifier,
+                modifier = Modifier.fillMaxSize(),
                 initials = user.initials,
                 shape = shape,
                 onClick = onClick
             )
         }
-    }
 
-    if (showOnlineIndicator && user.online) {
-        // Apply modifier to the outer box
-        Box(modifier = modifier) {
-            avatarContent(modifier = Modifier.fillMaxSize())
-
+        if (showOnlineIndicator && user.online) {
             onlineIndicator()
         }
-    } else {
-        // Apply modifier to the avatar itself
-        avatarContent(modifier = modifier)
     }
+}
+
+/**
+ * The default online indicator for channel members.
+ */
+@Composable
+internal fun BoxScope.DefaultOnlineIndicator(onlineIndicatorAlignment: OnlineIndicatorAlignment) {
+    OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
 }
 
 @Preview

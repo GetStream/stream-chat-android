@@ -3,9 +3,7 @@ package io.getstream.chat.android.ui.common.extensions.internal
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
@@ -14,15 +12,18 @@ import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.isSystem
 
-internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
-    ChannelListPayloadDiff(
+internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
+    val usersChanged = getUsersExcludingCurrent() != other.getUsersExcludingCurrent()
+    return ChannelListPayloadDiff(
         nameChanged = name != other.name,
-        avatarViewChanged = getUsersExcludingCurrent() != other.getUsersExcludingCurrent(),
+        avatarViewChanged = usersChanged,
+        usersChanged = usersChanged,
         readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage(),
         unreadCountChanged = unreadCount != other.unreadCount,
         extraDataChanged = extraData != other.extraData
     )
+}
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
     val currentUser = ChatDomain.instance().user.value
@@ -47,22 +48,9 @@ internal fun Channel.getLastMessagePreviewText(
             val previewText: SpannableString =
                 message.text.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
 
-            val attachments: SpannableString? = message.attachments
-                .takeIf { it.isNotEmpty() }
-                ?.mapNotNull { attachment ->
-                    attachment.title?.let { title ->
-                        val prefix = getAttachmentPrefix(attachment)
-                        if (prefix != null) {
-                            "$prefix $title"
-                        } else {
-                            title
-                        }
-                    } ?: attachment.name
-                }
-                ?.joinToString()
-                ?.italicize()
+            val attachmentsText: SpannableString? = message.getAttachmentsText()
 
-            listOf(sender, previewText, attachments)
+            listOf(sender, previewText, attachmentsText)
                 .filterNot { it.isNullOrEmpty() }
                 .joinTo(SpannableStringBuilder(), ": ")
         }
@@ -75,10 +63,4 @@ internal var Channel.isMuted: Boolean
     get() = extraData[EXTRA_DATA_MUTED] as Boolean? ?: false
     set(value) {
         extraData[EXTRA_DATA_MUTED] = value
-    }
-
-private fun getAttachmentPrefix(attachment: Attachment): String? =
-    when (attachment.type) {
-        ModelType.attach_giphy -> "/giphy"
-        else -> null
     }

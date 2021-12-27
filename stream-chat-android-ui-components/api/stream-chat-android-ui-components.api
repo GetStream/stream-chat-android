@@ -464,15 +464,16 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 }
 
 public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff {
-	public fun <init> (ZZZZZZ)V
+	public fun <init> (ZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
 	public final fun component5 ()Z
 	public final fun component6 ()Z
-	public final fun copy (ZZZZZZ)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;ZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
+	public final fun component7 ()Z
+	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarViewChanged ()Z
 	public final fun getExtraDataChanged ()Z
@@ -480,6 +481,7 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 	public final fun getNameChanged ()Z
 	public final fun getReadStateChanged ()Z
 	public final fun getUnreadCountChanged ()Z
+	public final fun getUsersChanged ()Z
 	public final fun hasDifference ()Z
 	public fun hashCode ()I
 	public final fun plus (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
@@ -563,8 +565,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;

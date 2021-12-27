@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import okhttp3.internal.userAgent
 
 internal class ChannelListItemAdapter(
     private val viewHolderFactory: ChannelListItemViewHolderFactory,
@@ -54,6 +55,7 @@ internal class ChannelListItemAdapter(
         private val FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(
             nameChanged = true,
             avatarViewChanged = true,
+            usersChanged = true,
             lastMessageChanged = true,
             readStateChanged = true,
             unreadCountChanged = true,
@@ -63,6 +65,7 @@ internal class ChannelListItemAdapter(
         val EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(
             nameChanged = false,
             avatarViewChanged = false,
+            usersChanged = false,
             lastMessageChanged = false,
             readStateChanged = false,
             unreadCountChanged = false,

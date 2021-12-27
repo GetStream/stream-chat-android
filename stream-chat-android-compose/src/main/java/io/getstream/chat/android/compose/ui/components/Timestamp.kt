@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.components
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import com.getstream.sdk.chat.utils.formatTime
@@ -28,9 +29,13 @@ public fun Timestamp(
     formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
 ) {
-    val timestamp = when (formatType) {
-        TIME -> formatter.formatTime(date)
-        DATE -> formatter.formatDate(date)
+    val timestamp = if (LocalInspectionMode.current) {
+        "13:49"
+    } else {
+        when (formatType) {
+            TIME -> formatter.formatTime(date)
+            DATE -> formatter.formatDate(date)
+        }
     }
 
     Text(

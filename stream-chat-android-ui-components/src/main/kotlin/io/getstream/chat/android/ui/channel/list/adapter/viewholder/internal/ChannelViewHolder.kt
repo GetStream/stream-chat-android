@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -162,7 +163,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun configureForeground(diff: ChannelListPayloadDiff, channel: Channel) {
         binding.itemForegroundView.apply {
             diff.run {
-                if (nameChanged) {
+                if (nameChanged || (channel.isAnonymousChannel() && diff.usersChanged)) {
                     configureChannelNameLabel()
                 }
 

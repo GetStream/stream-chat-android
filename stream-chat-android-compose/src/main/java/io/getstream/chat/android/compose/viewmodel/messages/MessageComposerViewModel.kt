@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -13,6 +14,7 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -26,6 +28,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
+
+    /**
+     * The full UI state that has all the required data.
+     */
+    public val messageComposerState: StateFlow<MessageComposerState> = messageComposerController.state
 
     /**
      * UI state of the current composer input.

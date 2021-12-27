@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <plurals name="stream_compose_member_count">
+  <plurals name="stream_compose_member_count">
     <item quantity="one">"%1d Miembro"</item>
     <item quantity="other">"%1d Miembros"</item>
   </plurals>
