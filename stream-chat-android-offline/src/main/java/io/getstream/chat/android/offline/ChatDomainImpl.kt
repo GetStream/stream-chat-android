@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -81,7 +82,6 @@ import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
-import io.getstream.chat.android.offline.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendGiphy
@@ -947,7 +947,8 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> = client.loadOlderMessages(cid, messageLimit)
+    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
+        client.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)
@@ -964,18 +965,25 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = QueryChannelsLoadMore(this).invoke(filter, sort, limit, messageLimit)
+    ): Call<List<Channel>> {
+        return CoroutineCall(scope) {
+            val queryChannelsController = queryChannels(filter, sort)
+            val oldChannels = queryChannelsController.channels.value
+            val pagination = queryChannelsController.loadMoreRequest(limit, messageLimit)
+            queryChannelsController.runQuery(pagination).map { it - oldChannels.toSet() }
+        }
+    }
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = QueryChannelsLoadMore(this).invoke(filter, sort, messageLimit)
+    ): Call<List<Channel>> = queryChannelsLoadMore(filter, sort, limit = CHANNEL_LIMIT, messageLimit = messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = QueryChannelsLoadMore(this).invoke(filter, sort)
+    ): Call<List<Channel>> = queryChannelsLoadMore(filter, sort, limit = CHANNEL_LIMIT, messageLimit = MESSAGE_LIMIT)
 
     /**
      * Loads more messages for the specified thread.

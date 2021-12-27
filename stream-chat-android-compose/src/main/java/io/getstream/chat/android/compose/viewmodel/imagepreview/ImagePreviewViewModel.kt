@@ -63,6 +63,11 @@ public class ImagePreviewViewModel(
         this.isShowingOptions = isShowingOptions
     }
 
+    /**
+     * Toggles if we're showing the gallery screen.
+     *
+     * @param isShowingGallery If we need to show or hide the gallery.
+     */
     public fun toggleGallery(isShowingGallery: Boolean) {
         this.isShowingGallery = isShowingGallery
     }

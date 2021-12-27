@@ -32,7 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param onCommandSelected Handler when the user taps on an item.
  * @param leadingContent Customizable composable function that represents the leading content of a command item.
- * @param detailsContent Customizable composable function that represents the details content of a command item.
+ * @param centerContent Customizable composable function that represents the center content of a command item.
  */
 @Composable
 public fun CommandSuggestionItem(
@@ -42,8 +42,8 @@ public fun CommandSuggestionItem(
     leadingContent: @Composable RowScope.(Command) -> Unit = {
         DefaultCommandSuggestionItemLeadingContent()
     },
-    detailsContent: @Composable RowScope.(Command) -> Unit = {
-        DefaultCommandSuggestionItemDetailsContent(command = it)
+    centerContent: @Composable RowScope.(Command) -> Unit = {
+        DefaultCommandSuggestionItemCenterContent(command = it)
     },
 ) {
     Row(
@@ -63,7 +63,7 @@ public fun CommandSuggestionItem(
     ) {
         leadingContent(command)
 
-        detailsContent(command)
+        centerContent(command)
     }
 }
 
@@ -82,13 +82,13 @@ internal fun DefaultCommandSuggestionItemLeadingContent() {
 }
 
 /**
- *  Represents the details portion of the command item, that show the user name and the user ID.
+ *  Represents the center portion of the command item, that show the user name and the user ID.
  *
  *  @param command The user to show the info for.
  *  @param modifier Modifier for styling.
  */
 @Composable
-internal fun RowScope.DefaultCommandSuggestionItemDetailsContent(
+internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
     command: Command,
     modifier: Modifier = Modifier,
 ) {
