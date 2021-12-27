@@ -133,8 +133,8 @@ class ChannelActivity : AppCompatActivity() {
         ChannelItem(
             channelItem = channelItem,
             currentUser = user,
-            onChannelLongClick = { },
-            onChannelClick = { },
+            onChannelLongClick = {},
+            onChannelClick = {},
             trailingContent = {
                 Spacer(modifier = Modifier.width(8.dp))
             },
@@ -193,8 +193,8 @@ class ChannelActivity : AppCompatActivity() {
                 )
             }
 
-            val currentSelectedChannel = selectedChannel
-            if (currentSelectedChannel != null) {
+            val selectedChannel = selectedChannel
+            if (selectedChannel != null) {
                 ChannelInfo(
                     modifier = Modifier
                         .padding(16.dp)
@@ -202,8 +202,8 @@ class ChannelActivity : AppCompatActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
-                    selectedChannel = currentSelectedChannel,
+                    isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
+                    selectedChannel = selectedChannel,
                     currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )
