@@ -87,6 +87,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
 
 ### ⚠️ Changed
+- Updated [ChatTheme documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/). [#2833](https://github.com/GetStream/stream-chat-android/pull/2833)
 
 ### ❌ Removed
 
