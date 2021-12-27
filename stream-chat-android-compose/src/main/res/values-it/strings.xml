@@ -39,7 +39,7 @@
   <string name="stream_compose_flag_message">"Segnala messaggio"</string>
   <string name="stream_compose_flag_message_text">"Vuoi mandare una copia di questo messaggio ad un moderatore?"</string>
   <string name="stream_compose_flag_message_title">"Segnala messaggio"</string>
-  <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
+  <string name="stream_compose_member_count_online">"%1$s, %2$d Online"</string>
   <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
   <string name="stream_compose_message_composer_error_attachment_count">"Attenzione: il limite massimo di %1$d file è stato superato."</string>
   <string name="stream_compose_message_composer_error_file_size">"File troppo grande - max %1$s."</string>
@@ -58,5 +58,9 @@
   <string name="stream_compose_search_input_hint">"Cerca i canali per nome"</string>
   <string name="stream_compose_thread_reply">"Rispondi nella conversazione"</string>
   <string name="stream_compose_unmute_user">"Riattiva Utente"</string>
+  <string name="stream_compose_untitled_channel">"Canale senza nome"</string>
+  <string name="stream_compose_user_status_last_seen">"Ultimo accesso %1$s fa"</string>
+  <string name="stream_compose_user_status_last_seen_just_now">"Ultimo accesso di recente"</string>
   <string name="stream_compose_user_status_online">"Online"</string>
+  <string name="stream_compose_waiting_for_network">"Attendo la rete"</string>
 </resources>

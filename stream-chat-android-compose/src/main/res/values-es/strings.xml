@@ -40,7 +40,7 @@
   <string name="stream_compose_flag_message_text">"¿Quieres enviar una copia de este mensaje al moderador para una mejor investigación?"</string>
   <string name="stream_compose_flag_message_title">"Marcar Mensaje"</string>
   <string name="stream_compose_member_count_online">"%1$s, %2$d Conectados"</string>
-  <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+  <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
   <string name="stream_compose_message_composer_error_attachment_count">"No es posible añadir más de %1$d archivos adjuntos."</string>
   <string name="stream_compose_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %1$s."</string>
   <string name="stream_compose_message_composer_error_message_length">"Tamaño máximo de mensaje (%1$d) excedido."</string>
