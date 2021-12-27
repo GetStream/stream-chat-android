@@ -66,7 +66,11 @@ internal class EventBatchUpdate private constructor(
     }
 
     fun addUsers(newUsers: List<User>) {
-        userMap += newUsers.associateBy(User::id)
+        newUsers.forEach { user ->
+            if (userMap.containsKey(user.id).not()) {
+                userMap[user.id] = user
+            }
+        }
     }
 
     fun addUser(newUser: User) {
@@ -111,10 +115,12 @@ internal class EventBatchUpdate private constructor(
         }
 
         suspend fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
+            // Update users in DB in order to fetch channels and messages with sync data.
+            domainImpl.repos.insertUsers(users)
             val messageMap: Map<String, Message> =
-                domainImpl.repos.selectMessages(messagesToFetch.toList()).associateBy(Message::id)
+                domainImpl.repos.selectMessages(messagesToFetch.toList(), forceCache = true).associateBy(Message::id)
             val channelMap: Map<String, Channel> =
-                domainImpl.repos.selectChannels(channelsToFetch.toList()).associateBy(Channel::cid)
+                domainImpl.repos.selectChannels(channelsToFetch.toList(), forceCache = true).associateBy(Channel::cid)
             return EventBatchUpdate(
                 domainImpl,
                 channelMap.toMutableMap(),

@@ -138,7 +138,7 @@ class ChannelActivity : AppCompatActivity() {
             trailingContent = {
                 Spacer(modifier = Modifier.width(8.dp))
             },
-            detailsContent = {
+            centerContent = {
                 Text(
                     text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                     style = ChatTheme.typography.bodyBold,

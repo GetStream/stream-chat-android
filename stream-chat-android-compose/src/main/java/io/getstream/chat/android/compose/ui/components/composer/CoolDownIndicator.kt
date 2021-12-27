@@ -17,12 +17,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Represent a timer that show the remaining time until the user is allowed to send the next message.
  *
- * @param cooldownTimer The amount of time left until the user is allowed to sent the next message.
+ * @param coolDownTime The amount of time left until the user is allowed to sent the next message.
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun CooldownIndicator(
-    cooldownTimer: Int,
+public fun CoolDownIndicator(
+    coolDownTime: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -33,7 +33,7 @@ public fun CooldownIndicator(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = cooldownTimer.toString(),
+            text = coolDownTime.toString(),
             color = Color.White,
             textAlign = TextAlign.Center,
             style = ChatTheme.typography.bodyBold

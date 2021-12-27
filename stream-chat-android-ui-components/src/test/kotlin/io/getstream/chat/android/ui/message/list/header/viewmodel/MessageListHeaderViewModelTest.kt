@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Channel
@@ -53,7 +54,7 @@ internal class MessageListHeaderViewModelTest {
         val mockObserver: Observer<Channel> = spy()
 
         channelHeaderViewModel.channelState.observeForever(mockObserver)
-        verify(mockObserver).onChanged(eq(channel))
+        verify(mockObserver, times(2)).onChanged(eq(channel))
     }
 
     @Test
