@@ -103,11 +103,15 @@ fun ChannelInfo(
 	..., // State and actions
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
+    headerContent: @Composable ColumnScope.() -> Unit = { ... },
+    centerContent: @Composable ColumnScope.() -> Unit = { ... },
 )
 ```
 
 * `modifier`: Used to style the root of the `ChannelInfo`, which is a `Card` component. Useful for the component size and padding, background, alignment and more.
 * `shape`: Used for the `Card` shape. By default, we position the element at the bottom of the screen with the top corners being rounded, which imitates a bottom drawer component. If you want to use the `ChannelInfo` as a dialog, you can change the shape to have all round corners, or to be flat.
+* `headerContent`: Customizable composable function parameter that overrides the header content with channel members.
+* `centerContent`: Customizable composable function parameter that overrides the center content with channel options.
 
 Here's an example of customizing this component to imitate a dialog:
 
