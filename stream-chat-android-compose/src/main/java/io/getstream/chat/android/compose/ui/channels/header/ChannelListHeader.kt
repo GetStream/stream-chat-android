@@ -23,9 +23,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -59,19 +61,20 @@ public fun ChannelListHeader(
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
         DefaultChannelHeaderLeadingContent(
-            currentUser,
-            onAvatarClick
+            currentUser = currentUser,
+            onAvatarClick = onAvatarClick
         )
     },
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultChannelListHeaderCenterContent(
-            modifier = Modifier.weight(1f),
             connectionState = connectionState,
             title = title
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        DefaultChannelListHeaderTrailingContent(onHeaderActionClick)
+        DefaultChannelListHeaderTrailingContent(
+            onHeaderActionClick = onHeaderActionClick
+        )
     },
 ) {
     Surface(
@@ -86,7 +89,6 @@ public fun ChannelListHeader(
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
             leadingContent()
 
             centerContent()
@@ -127,17 +129,16 @@ internal fun DefaultChannelHeaderLeadingContent(
  *
  * @param connectionState The state of WebSocket connection.
  * @param title The title to show.
- * @param modifier Modifier for styling.
  */
 @Composable
-internal fun DefaultChannelListHeaderCenterContent(
+internal fun RowScope.DefaultChannelListHeaderCenterContent(
     connectionState: ConnectionState,
     title: String,
-    modifier: Modifier = Modifier,
 ) {
     if (connectionState == ConnectionState.CONNECTED) {
         Text(
-            modifier = modifier
+            modifier = Modifier
+                .weight(1f)
                 .wrapContentWidth()
                 .padding(horizontal = 16.dp),
             text = title,
@@ -146,7 +147,7 @@ internal fun DefaultChannelListHeaderCenterContent(
             color = ChatTheme.colors.textHighEmphasis
         )
     } else {
-        NetworkLoadingIndicator(modifier = modifier)
+        NetworkLoadingIndicator(modifier = Modifier.weight(1f))
     }
 }
 
@@ -154,16 +155,14 @@ internal fun DefaultChannelListHeaderCenterContent(
  * Represents the default trailing content for the [ChannelListHeader], which is an action icon.
  *
  * @param onHeaderActionClick Handler for when the user taps on the action.
- * @param modifier Modifier for styling.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier
+        modifier = Modifier
             .size(40.dp)
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
@@ -176,6 +175,50 @@ internal fun DefaultChannelListHeaderTrailingContent(
             painter = painterResource(id = R.drawable.stream_compose_ic_new_chat),
             contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
             tint = Color.White,
+        )
+    }
+}
+
+/**
+ * Preview of [ChannelListHeader] for the client that is connected to the WS.
+ *
+ * Should show a user avatar, a title, and an action button.
+ */
+@Preview(name = "ChannelListHeader Preview (Connected state)")
+@Composable
+private fun ChannelListHeaderForConnectedStatePreview() {
+    ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTED)
+}
+
+/**
+ * Preview of [ChannelListHeader] for the client that is trying to connect to the WS.
+ *
+ * Should show a user avatar, "Waiting for network" caption, and an action button.
+ */
+@Preview(name = "ChannelListHeader Preview (Connecting state)")
+@Composable
+private fun ChannelListHeaderForConnectingStatePreview() {
+    ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTING)
+}
+
+/**
+ * Shows [ChannelListHeader] preview for the provided parameters.
+ *
+ * @param title The title used to show the preview.
+ * @param currentUser The currently logged in user.
+ * @param connectionState The state of WS connection.
+ */
+@Composable
+private fun ChannelListHeaderPreview(
+    title: String = "Stream Chat",
+    currentUser: User? = PreviewUserData.user1,
+    connectionState: ConnectionState = ConnectionState.CONNECTED,
+) {
+    ChatTheme {
+        ChannelListHeader(
+            title = title,
+            currentUser = currentUser,
+            connectionState = connectionState
         )
     }
 }
