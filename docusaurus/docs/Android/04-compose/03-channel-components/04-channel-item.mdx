@@ -1,8 +1,12 @@
 # ChannelItem
 
-The `ChannelItem` component represents `ChannelList` items.
+The `ChannelItem` component represents the `ChannelList` items that are shown by default, if you don't customize its `itemContent`.
 
-However, you can also use the `ChannelItem`, and customize its Slot APIs, in case you want only replace a specific part of the default UI. 
+However, you can also use the `ChannelItem`, and customize its Slot APIs, in case you want only replace a specific part of the default UI.
+
+:::note
+The `ChannelItem` is great if you want default UI or replace specific slots, however, you can still completely override the `itemContent` parameter of the `ChannelList`, if you need even more custom UI.
+:::
 
 Let's see how to use and customize this component.
 
@@ -15,7 +19,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     setContent {
-        val user by ... // fetch user from ChatDomain or ViewModel
+        val user by listViewModel.user.collectAsState() // Fetch user
 
         ChatTheme {
             ChannelList(
@@ -48,9 +52,9 @@ The `ChannelItem` signature exposes the following actions that can be intercepte
 ```kotlin
 @Composable
 fun ChannelItem(
+    ... // State and UI customization
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
-    ... // State and other UI-related customization options 
 )
 ```
 
@@ -115,7 +119,7 @@ Here's a simple example for building your own channel item, by overriding the me
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    
     setContent {
         val user by listViewModel.user.collectAsState() // Fetch user
 
@@ -130,7 +134,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 
 @Composable
-private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
+fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
     ChannelItem(
         channelItem = channelItem,
         currentUser = user,
