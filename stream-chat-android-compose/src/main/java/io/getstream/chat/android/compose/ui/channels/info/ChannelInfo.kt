@@ -1,10 +1,15 @@
 package io.getstream.chat.android.compose.ui.channels.info
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -34,10 +39,10 @@ import io.getstream.chat.android.compose.ui.util.isOneToOne
  * @param isMuted If the channel is muted for the current user.
  * @param currentUser The currently logged-in user data.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
+ * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
  * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
- * @param onDismiss Handler called when the dialog is dismissed.
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
  */
@@ -47,10 +52,10 @@ public fun ChannelInfo(
     isMuted: Boolean,
     currentUser: User?,
     onChannelOptionClick: (ChannelAction) -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
         DefaultChannelInfoHeaderContent(
             selectedChannel = selectedChannel,
@@ -142,19 +147,54 @@ internal fun DefaultChannelInfoCenterContent(
 }
 
 /**
- * Preview of [ChannelInfo] for a channel with many members.
+ * Preview of [ChannelInfo] styled as a centered modal dialog.
  *
- * Should show a list of channel members and available channel actions.
+ * Should show a centered dialog with channel members and channel options.
  */
-@Preview(showBackground = true, name = "ChannelInfo Preview")
+@Preview(showBackground = true, name = "ChannelInfo Preview (Centered dialog)")
 @Composable
-private fun ChannelInfoPreview() {
+private fun ChannelInfoInCenteredDialogPreview() {
     ChatTheme {
-        ChannelInfo(
-            selectedChannel = PreviewChannelData.channelWithManyMembers,
-            isMuted = false,
-            currentUser = PreviewUserData.user1,
-            onChannelOptionClick = {},
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelInfo(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.Center),
+                shape = RoundedCornerShape(16.dp),
+                selectedChannel = PreviewChannelData.channelWithManyMembers,
+                isMuted = false,
+                currentUser = PreviewUserData.user1,
+                onChannelOptionClick = {},
+                onDismiss = {}
+            )
+        }
+    }
+}
+
+/**
+ * Preview of [ChannelInfo] styled as a bottom sheet dialog.
+ *
+ * Should show a bottom sheet dialog with channel members and channel options.
+ */
+@Preview(showBackground = true, name = "ChannelInfo Preview (Bottom sheet dialog)")
+@Composable
+private fun ChannelInfoInBottomSheetDialogPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelInfo(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter),
+                shape = ChatTheme.shapes.bottomSheet,
+                selectedChannel = PreviewChannelData.channelWithManyMembers,
+                isMuted = false,
+                currentUser = PreviewUserData.user1,
+                onChannelOptionClick = {},
+                onDismiss = {}
+            )
+        }
     }
 }

@@ -28,21 +28,22 @@ fun MyCustomUi() {
 
         if (selectedChannel != null) {
             ChannelInfo(
-                modifier = Modifier // Aligning the content to the bottom
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter),
+                modifier = Modifier
+                    .fillMaxWidth() // Fill width
+                    .wrapContentHeight() // Wrap height
+                    .align(Alignment.BottomCenter), // Aligning the content to the bottom
                 selectedChannel = selectedChannel,
                 isMuted = isMuted,
-                user = user,
+                currentUser = user,
                 onChannelOptionClick = { listViewModel.onChannelAction(it) },
+                onDismiss = { listViewModel.dismissChannelAction() }
             )
         }
     }
 }
 ```
 
-For the `ChannelInfo` component to work, you need to provide a the `selectedChannel` and `user` parameters.
+For the `ChannelInfo` component to work, you need to provide a the `selectedChannel`, `isMuted` and `currentUser` parameters.
 
 In the example above, you fetch the data from a `ChannelListViewModel` that you use in the rest of the UI. But you can also provide the data manually, if you decide not to use our components, like the `ChannelList`.
 
@@ -58,21 +59,23 @@ Finally, you can see a list of `ChannelOption` items, which are different depend
 
 ## Handling Actions
 
-`ChannelInfo` exposes one action you can handle, as per the signature:
+The `ChannelInfo` exposes two actions you can handle, as per the signature:
 
 ```kotlin
 @Composable
 fun ChannelInfo(
-    ..., // state & styling,
+    ..., // State & styling,
     onChannelOptionClick: (ChannelListAction) -> Unit,
+    onDismiss: () -> Unit = {},
 )
 ```
 
 * `onChannelOptionClick`: Handler when the user taps on any channel option in the list.
+* `onDismiss`: Handler when the dialog is dismissed.
 
-By providing this handler, you can choose what happens when the user selects options like "Leave Group", "Delete Conversation", "Cancel" and more. You can react to these actions, update your UI state and show new UI if needed.
+By providing a `onChannelOptionClick` handler, you can choose what happens when the user selects options like "Leave Group", "Delete Conversation", "Mute channel", "Cancel" and more. You can react to these actions, update your UI state and show new UI if needed.
 
-An example of providing a handler can be seen here:
+If you want to customize the actions, you can do the following:
 
 ```kotlin
 ChannelInfo(
@@ -83,11 +86,12 @@ ChannelInfo(
         } else {
             listViewModel.onChannelAction(action)
         }
-    }
+    },
+    onDismiss = { listViewModel.dismissChannelAction() }
 )
 ```
 
-In the snippet above, you set up a `onChannelOptionClick` handler to open a new `Activity` if the user decides to view more info, otherwise, you send the action to the `listViewModel` and store it to update the state.
+In the snippet above, you set up a `onChannelOptionClick` handler to open a new `Activity` if the user decides to view more info, otherwise, you send the action to the `listViewModel` and store it to update the state. In addition, we configured the `onDismiss` handler to dismiss the dialog.
 
 ## Customization
 
@@ -96,7 +100,7 @@ This component offers the following customization options:
 ```kotlin
 @Composable
 fun ChannelInfo(
-	..., // state and actions
+	..., // State and actions
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 )
@@ -111,8 +115,8 @@ Here's an example of customizing this component to imitate a dialog:
 ChannelInfo(
     modifier = Modifier
         .padding(16.dp) // Adding padding to the component
-        .wrapContentWidth() // Wrap width and height
-        .wrapContentHeight()
+        .fillMaxWidth() // Fill width
+        .wrapContentHeight() // Wrap height
         .align(Alignment.Center), // Centering the component
     shape = RoundedCornerShape(16.dp), // Rounded corners for all sides
     ... // State

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
@@ -64,6 +63,8 @@ class ChannelActivity : AppCompatActivity() {
 
     private val listViewModel: ChannelListViewModel by viewModels { factory }
 
+    @ExperimentalFoundationApi
+    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -179,6 +180,7 @@ class ChannelActivity : AppCompatActivity() {
 
                 SearchInput(
                     modifier = Modifier
+                        .background(color = ChatTheme.colors.appBackground)
                         .fillMaxWidth()
                         .padding(8.dp),
                     query = query,
@@ -201,14 +203,15 @@ class ChannelActivity : AppCompatActivity() {
                 ChannelInfo(
                     modifier = Modifier
                         .padding(16.dp)
-                        .wrapContentWidth()
+                        .fillMaxWidth()
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
                     isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
                     selectedChannel = selectedChannel,
                     currentUser = user,
-                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
+                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) },
+                    onDismiss = { listViewModel.dismissChannelAction() }
                 )
             }
         }

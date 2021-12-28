@@ -55,7 +55,7 @@ internal fun SelectedMessageDialog(
             shape = shape,
             backgroundColor = ChatTheme.colors.barsBackground
         ) {
-            Column(modifier) {
+            Column {
                 headerContent()
 
                 centerContent()
