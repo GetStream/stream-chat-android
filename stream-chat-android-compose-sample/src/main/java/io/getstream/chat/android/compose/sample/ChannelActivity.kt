@@ -63,8 +63,6 @@ class ChannelActivity : AppCompatActivity() {
 
     private val listViewModel: ChannelListViewModel by viewModels { factory }
 
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
