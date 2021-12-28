@@ -209,8 +209,10 @@ ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView: TextView,
 }
 ```
 
-Stream UI TextView components doesn't have `android:autoLink` property set because it conflicts with Markdown plugins.
-If you want to use a custom `ChatMessageTextTransformer` with text autolink, you can use `AutoLinkableTextTransformer`. After applying the transformation, it also makes the links clickable.
+Stream UI TextView components don't have `android:autoLink` property set because it conflicts with Markdown plugins.
+:::note
+You can use `AutoLinkableTextTransformer` if you want to apply custom transformation but keep links clickable.
+:::
 
 ### Markdown
 
