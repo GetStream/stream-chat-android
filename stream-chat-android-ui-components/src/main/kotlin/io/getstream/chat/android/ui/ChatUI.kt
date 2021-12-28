@@ -1,8 +1,6 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import android.widget.TextView
-import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
@@ -68,11 +66,9 @@ public object ChatUI {
 
     private var textTransformerOverride: ChatMessageTextTransformer? = null
     private val defaultTextTransformer: ChatMessageTextTransformer by lazy {
-        object : AutoLinkableTextTransformer {
-            override fun transformer(textView: TextView, messageItem: MessageListItem.MessageItem) {
-                // Bypass to markdown by default for backwards compatibility.
-                markdown.setText(textView, messageItem.message.text)
-            }
+        AutoLinkableTextTransformer { textView, messageItem ->
+            // Bypass to markdown by default for backwards compatibility.
+            markdown.setText(textView, messageItem.message.text)
         }
     }
 

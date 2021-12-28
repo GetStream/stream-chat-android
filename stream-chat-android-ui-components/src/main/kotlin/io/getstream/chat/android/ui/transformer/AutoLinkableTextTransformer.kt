@@ -9,10 +9,8 @@ import com.getstream.sdk.chat.utils.Linkify
  *
  * By default our SDK text views don't have `android:autoLink` set due to a limitation in Markdown linkify implementation.
  */
-public interface AutoLinkableTextTransformer :
+public class AutoLinkableTextTransformer(public val transformer: (textView: TextView, messageItem: MessageListItem.MessageItem) -> Unit) :
     ChatMessageTextTransformer {
-
-    public fun transformer(textView: TextView, messageItem: MessageListItem.MessageItem)
 
     override fun transformAndApply(textView: TextView, messageItem: MessageListItem.MessageItem) {
         transformer(textView, messageItem)
