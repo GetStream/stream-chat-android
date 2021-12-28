@@ -52,7 +52,6 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
-import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -67,7 +66,6 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelBinding;
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown;
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.common.style.TextStyle;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
@@ -91,6 +89,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem;
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory;
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder;
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer;
 import io.getstream.chat.docs.R;
 import kotlin.coroutines.Continuation;
 
@@ -934,11 +933,11 @@ public class Android {
 
     class MarkdownCustomization {
         public void customizeMarkdown() {
-            ChatMarkdown markdown = (textView, text) -> {
-                textView.setText(applyMarkdown(text));
+            ChatMessageTextTransformer markdown = (textView, messageItem) -> {
+                textView.setText(applyMarkdown(messageItem.getMessage().getText()));
             };
 
-            ChatUI.INSTANCE.setMarkdown(markdown);
+            ChatUI.INSTANCE.setMessageTextTransformer(markdown);
         }
 
         private String applyMarkdown(String text) {
