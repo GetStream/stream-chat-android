@@ -43,7 +43,7 @@ fun MyCustomUi() {
 }
 ```
 
-For the `ChannelInfo` component to work, you need to provide a the `selectedChannel`, `isMuted` and `currentUser` parameters.
+For the `ChannelInfo` component to work, you need to provide `selectedChannel`, `isMuted` and `currentUser` parameters.
 
 In the example above, you fetch the data from a `ChannelListViewModel` that you use in the rest of the UI. But you can also provide the data manually, if you decide not to use our components, like the `ChannelList`.
 
@@ -73,7 +73,7 @@ fun ChannelInfo(
 * `onChannelOptionClick`: Handler when the user taps on any channel option in the list.
 * `onDismiss`: Handler when the dialog is dismissed.
 
-By providing a `onChannelOptionClick` handler, you can choose what happens when the user selects options like "Leave Group", "Delete Conversation", "Mute channel", "Cancel" and more. You can react to these actions, update your UI state and show new UI if needed.
+By providing an `onChannelOptionClick` handler, you can choose what happens when the user selects options like "Leave Group", "Delete Conversation", "Mute channel", "Cancel" and more. You can react to these actions, update your UI state and show new UI if needed.
 
 If you want to customize the actions, you can do the following:
 
@@ -91,7 +91,7 @@ ChannelInfo(
 )
 ```
 
-In the snippet above, you set up a `onChannelOptionClick` handler to open a new `Activity` if the user decides to view more info, otherwise, you send the action to the `listViewModel` and store it to update the state. In addition, we configured the `onDismiss` handler to dismiss the dialog.
+In the snippet above, you set up an `onChannelOptionClick` handler to open a new `Activity` if the user decides to view more info, otherwise, you send the action to the `listViewModel` and store it to update the state. In addition, we configured the `onDismiss` handler to dismiss the dialog.
 
 ## Customization
 
