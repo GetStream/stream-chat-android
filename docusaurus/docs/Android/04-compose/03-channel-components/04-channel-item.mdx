@@ -2,10 +2,10 @@
 
 The `ChannelItem` component represents the `ChannelList` items that are shown by default, if you don't customize its `itemContent`.
 
-However, you can also use the `ChannelItem`, and customize its Slot APIs, in case you want only replace a specific part of the default UI.
+However, you can also use the `ChannelItem`, and customize its Slot APIs, in case you want only to replace a specific part of the default UI.
 
 :::note
-The `ChannelItem` is great if you want default UI or replace specific slots, however, you can still completely override the `itemContent` parameter of the `ChannelList`, if you need even more custom UI.
+The `ChannelItem` is great if you want the default UI or replace specific slots, however, you can still completely override the `itemContent` parameter of the `ChannelList`, if you need even more custom UI.
 :::
 
 Let's see how to use and customize this component.
@@ -43,7 +43,7 @@ The snippet above will generate the following UI.
 
 ![The Default ChannelList Component](../../assets/compose_default_channel_list_component.png)
 
-In order to fully utilize the `ChannelItem` let's see how to handle its actions and how to customize its Slot APIs.
+To fully utilize the `ChannelItem` let's see how to handle its actions and how to customize its Slot APIs.
 
 ## Handling Actions
 
@@ -52,7 +52,7 @@ The `ChannelItem` signature exposes the following actions that can be intercepte
 ```kotlin
 @Composable
 fun ChannelItem(
-    ... // State and UI customization
+    ..., // State and UI customization
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
 )
