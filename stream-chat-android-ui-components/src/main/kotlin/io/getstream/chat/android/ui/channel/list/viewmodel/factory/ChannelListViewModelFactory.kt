@@ -18,6 +18,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
  * @param sort How to sort the channels, defaults to last_updated.
  * @param limit How many channels to return.
  * @param memberLimit The number of members per channel.
+ * @param messageLimit The number of messages to fetch for each channel.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  *
  * @see Filters
