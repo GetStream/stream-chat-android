@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +29,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -102,13 +102,17 @@ class ChannelActivity : AppCompatActivity() {
     private fun MyCustomUiSimplified() {
         val user by ChatDomain.instance().user.collectAsState()
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            ChannelListHeader(
-                title = stringResource(id = R.string.app_name),
-                currentUser = user
-            )
-
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                ChannelListHeader(
+                    title = stringResource(id = R.string.app_name),
+                    currentUser = user
+                )
+            }
+        ) {
             ChannelList(
+                modifier = Modifier.fillMaxSize(),
                 itemContent = {
                     CustomChannelListItem(channelItem = it, user = user)
                 },
@@ -117,10 +121,9 @@ class ChannelActivity : AppCompatActivity() {
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .height(0.5.dp)
-                            .align(CenterHorizontally)
                             .background(color = ChatTheme.colors.textLowEmphasis)
                     )
-                },
+                }
             )
         }
     }
