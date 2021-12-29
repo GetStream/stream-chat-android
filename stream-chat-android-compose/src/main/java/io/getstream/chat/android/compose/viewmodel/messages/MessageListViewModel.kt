@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -68,6 +69,11 @@ import java.util.concurrent.TimeUnit
  * we show a separator, if it's enabled in the list.
  */
 private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+/**
+ * The default limit for messages count in requests.
+ */
+private const val DEFAULT_MESSAGE_LIMIT: Int = 30
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -187,6 +193,11 @@ public class MessageListViewModel(
      * Represents the latest message we've seen in the active thread.
      */
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
+
+    /**
+     * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
+     */
+    private val logger = ChatLogger.get("MessageListViewModel")
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -435,12 +446,35 @@ public class MessageListViewModel(
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
-            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
-            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
-                .enqueue()
+            threadLoadMore(messageMode)
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
+        }
+    }
+
+    /**
+     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
+     *
+     * @param threadMode Current thread mode.
+     */
+    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
+        threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
+            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
+            chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
+                .enqueue()
+        } else {
+            if (threadMode.threadState != null) {
+                chatClient.getRepliesMore(
+                    messageId = threadMode.parentMessage.id,
+                    firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
+                    limit = DEFAULT_MESSAGE_LIMIT,
+                ).enqueue()
+            } else {
+                threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
+                logger.logW("Thread state must be not null for offline plugin thread load more!")
+            }
         }
     }
 
