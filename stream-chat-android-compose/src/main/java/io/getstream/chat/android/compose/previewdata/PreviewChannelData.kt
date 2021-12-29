@@ -38,7 +38,7 @@ internal object PreviewChannelData {
             Member(user = PreviewUserData.user2),
             Member(user = PreviewUserData.user3),
             Member(user = PreviewUserData.user4),
-            Member(user = PreviewUserData.user5),
+            Member(user = PreviewUserData.userWithoutImage),
         )
     }
 
