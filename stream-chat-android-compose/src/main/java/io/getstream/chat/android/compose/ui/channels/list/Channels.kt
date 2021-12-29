@@ -21,6 +21,8 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
  * @param modifier Modifier for styling.
  * @param itemContent Customizable UI component, that represents each item in the list.
  * @param divider Customizable UI component, that represents item dividers.
+ *
+ * TODO: Reinstate keys in items once https://issuetracker.google.com/issues/212279111 gets fixed.
  */
 @Composable
 public fun Channels(

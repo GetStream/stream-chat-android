@@ -40,6 +40,8 @@ import kotlin.math.abs
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param itemContent Composable that represents the item that displays each message.
  * @param modifier Modifier for styling.
+ *
+ * TODO: Reinstate keys in items once https://issuetracker.google.com/issues/212279111 gets fixed.
  */
 @Composable
 public fun Messages(

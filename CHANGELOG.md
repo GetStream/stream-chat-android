@@ -178,6 +178,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Fixed the message grouping logic to now include date separators when splitting message groups [#2770](https://github.com/GetStream/stream-chat-android/pull/2770)
 - Fixed a small issue with user avatars flickering [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
+- Fixed faulty scrolling behavior in `Channels` and `Messages` by temporarily removing keys inside `LazyColum`s. [#2844](https://github.com/GetStream/stream-chat-android/pull/2844) 
 
 ### ⬆️ Improved
 - Improved the UI for message footers to be more respective of thread replies [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
@@ -185,6 +186,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Improved the API structure more, made the components package more clear [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 - Improved the way to customize the message item types and containers [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
 - Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Updated primary accent colors in order to achieve a better contrast ratio for accessibility [#2844](https://github.com/GetStream/stream-chat-android/pull/2844)
+- Removed default background color from `MessageItem` [#2844](https://github.com/GetStream/stream-chat-android/pull/2844)
 
 ### ✅ Added
 - Added site name labels to link attachments for websites using the Open Graph protocol [#2785](https://github.com/GetStream/stream-chat-android/pull/2785)
