@@ -18,10 +18,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channel.list.ChannelAction
+import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelOptionsState
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isOneToOne
@@ -66,7 +66,7 @@ public fun ChannelInfo(
         )
     },
 ) {
-    SelectedMessageDialog(
+    SimpleMenu(
         modifier = modifier,
         shape = shape,
         overlayColor = overlayColor,
