@@ -39,8 +39,7 @@ public fun Channels(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(
-            items = channelItems,
-            key = { it.channel.cid }
+            items = channelItems
         ) { item ->
             itemContent(item)
 

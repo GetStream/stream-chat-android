@@ -66,10 +66,7 @@ public fun Messages(
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             itemsIndexed(
-                messages,
-                key = { _, item ->
-                    if (item is MessageItemState) item.message.id else item.toString()
-                }
+                messages
             ) { index, item ->
                 itemContent(item)
 
