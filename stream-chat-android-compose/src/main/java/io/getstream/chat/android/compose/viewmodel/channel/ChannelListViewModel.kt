@@ -125,9 +125,14 @@ public class ChannelListViewModel(
     private val CHANNEL_LIMIT = 30
 
     /**
-     * Default value of the number of messages to include in each channel when querying channels,
+     * Default value of the number of messages to include in each channel when querying channels.
      */
     private val MESSAGE_LIMIT = 1
+
+    /**
+     * Default value of the number of members to include in each channel when querying channels.
+     */
+    private val MEMBER_LIMIT = 30
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
@@ -155,7 +160,8 @@ public class ChannelListViewModel(
                 filter = createQueryChannelsFilter(queryConfig.value.filters, ""),
                 querySort = queryConfig.value.querySort,
                 limit = CHANNEL_LIMIT,
-                messageLimit = MESSAGE_LIMIT
+                messageLimit = MESSAGE_LIMIT,
+                memberLimit = MEMBER_LIMIT,
             )
             queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
         }

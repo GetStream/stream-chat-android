@@ -43,7 +43,8 @@ import kotlinx.coroutines.launch
  * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
- * @param chatEventHandler The instance of [ChatEventHandler] that will be used to handle channel updates event for this combination of [sort] and [filter].
+ * @param memberLimit The number of members to fetch per channel.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
@@ -51,6 +52,7 @@ public class ChannelListViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
+    private val memberLimit: Int = 30,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
@@ -84,46 +86,56 @@ public class ChannelListViewModel(
 
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             val queryChannelsRequest =
-                QueryChannelsRequest(filter = filterObject,
+                QueryChannelsRequest(
+                    filter = filterObject,
                     querySort = sort,
                     limit = limit,
-                    messageLimit = messageLimit)
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                )
             queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
         }
 
-        chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
-            if (queryChannelsControllerResult.isSuccess) {
-                val queryChannelsController = queryChannelsControllerResult.data()
+        chatDomain.queryChannels(
+            filter = filterObject,
+            sort = sort,
+            limit = limit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        )
+            .enqueue { queryChannelsControllerResult ->
+                if (queryChannelsControllerResult.isSuccess) {
+                    val queryChannelsController = queryChannelsControllerResult.data()
 
-                queryChannelsController.chatEventHandler =
-                    chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
+                    queryChannelsController.chatEventHandler =
+                        chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
 
-                val channelState = queryChannelsController.channelsState.map { channelState ->
-                    handleChannelState(channelState, chatDomain.channelMutes.value)
-                }.asLiveData()
+                    val channelState = queryChannelsController.channelsState.map { channelState ->
+                        handleChannelState(channelState, chatDomain.channelMutes.value)
+                    }.asLiveData()
 
-                stateMerger.addSource(channelState) { state -> stateMerger.value = state }
+                    stateMerger.addSource(channelState) { state -> stateMerger.value = state }
 
-                stateMerger.addSource(chatDomain.channelMutes.asLiveData()) { channelMutes ->
-                    val state = stateMerger.value
+                    stateMerger.addSource(chatDomain.channelMutes.asLiveData()) { channelMutes ->
+                        val state = stateMerger.value
 
-                    if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
-                    } else {
-                        stateMerger.value = state?.copy()
+                        if (state?.channels?.isNotEmpty() == true) {
+                            stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
+                        } else {
+                            stateMerger.value = state?.copy()
+                        }
                     }
-                }
 
-                paginationStateMerger.addSource(queryChannelsController.loadingMore.asLiveData()) { loadingMore ->
-                    setPaginationState { copy(loadingMore = loadingMore) }
+                    paginationStateMerger.addSource(queryChannelsController.loadingMore.asLiveData()) { loadingMore ->
+                        setPaginationState { copy(loadingMore = loadingMore) }
+                    }
+                    paginationStateMerger.addSource(queryChannelsController.endOfChannels.asLiveData()) { endOfChannels ->
+                        setPaginationState { copy(endOfChannels = endOfChannels) }
+                    }
+                } else {
+                    logger.logE("Could not query channels. Error: ${queryChannelsControllerResult.error()}")
                 }
-                paginationStateMerger.addSource(queryChannelsController.endOfChannels.asLiveData()) { endOfChannels ->
-                    setPaginationState { copy(endOfChannels = endOfChannels) }
-                }
-            } else {
-                logger.logE("Could not query channels. Error: ${queryChannelsControllerResult.error()}")
             }
-        }
     }
 
     private fun handleChannelState(
@@ -200,7 +212,13 @@ public class ChannelListViewModel(
                     }
                 }
             } else {
-                chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
+                chatDomain.queryChannelsLoadMore(
+                    filter = filter,
+                    sort = sort,
+                    limit = limit,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                ).enqueue(
                     onError = { chatError ->
                         logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
