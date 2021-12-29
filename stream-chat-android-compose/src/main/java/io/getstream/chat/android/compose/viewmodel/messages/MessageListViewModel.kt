@@ -473,14 +473,11 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user taps on a message that has a thread active. This changes the current
-     * [messageMode] to [Thread] and loads the thread data.
+     * Triggered when the user taps on a message that has a thread active.
      *
      * @param message The selected message with a thread.
      */
     public fun openMessageThread(message: Message) {
-        this.messageMode = MessageMode.MessageThread(message)
-
         loadThread(message)
     }
 
@@ -531,13 +528,11 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads the thread data and changes the current [messageMode] to be [Thread].
+     * Loads the thread data.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        messageMode = MessageMode.MessageThread(parentMessage)
-
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             loadThreadWithOfflinePlugin(parentMessage)
         } else {
@@ -546,12 +541,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads thread data using ChatDomain approach. The data is loaded by fetching the [ThreadController] first, based
-     * on the [parentMessage], after which we observe specific data from the thread.
+     * Changes the current [messageMode] to be [Thread] and loads thread data using ChatDomain approach.
+     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage], after which we observe
+     * specific data from the thread.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithChatDomain(parentMessage: Message) {
+        messageMode = MessageMode.MessageThread(parentMessage)
         chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
@@ -563,12 +560,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads thread data using ChatClient directly. The data is observed by using [ThreadState].
+     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val threadState = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        messageMode = MessageMode.MessageThread(parentMessage, threadState)
         observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
     }
 
