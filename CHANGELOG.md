@@ -48,6 +48,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `memberLimit` to `ChatDomain::queryChannels` and `ChatDomain::queryChannelsLoadMore` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
 
 ### ⚠️ Changed
 
@@ -72,8 +73,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `memberLimit` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
 - Added `ChatMessageTextTransformer` to transform messages and set them to `TextView`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 - Added `AutoLinkableTextTransformer` which is an implementation of `ChatMessageTextTransformer`. After applying the transformer, it also makes links clickable in TextView. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
+
 ### ⚠️ Changed
 - `ChatUI.markdown` is deprecated in favour of `ChatUI.messageTextTransformer`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 
