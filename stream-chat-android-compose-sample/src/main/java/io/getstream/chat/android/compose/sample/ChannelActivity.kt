@@ -135,8 +135,8 @@ class ChannelActivity : AppCompatActivity() {
         ChannelItem(
             channelItem = channelItem,
             currentUser = user,
-            onChannelLongClick = { },
-            onChannelClick = { },
+            onChannelLongClick = {},
+            onChannelClick = {},
             trailingContent = {
                 Spacer(modifier = Modifier.width(8.dp))
             },

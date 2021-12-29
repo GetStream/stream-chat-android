@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.components.selectedmessage
+package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +17,7 @@ import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Represents a modal dialog that is shown when either message or message reactions are selected.
+ * Represents a reusable and generic modal menu useful for showing info about selected items.
  *
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of the dialog.
@@ -27,7 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param centerContent The content shown in the dialog.
  */
 @Composable
-internal fun SelectedMessageDialog(
+public fun SimpleMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
