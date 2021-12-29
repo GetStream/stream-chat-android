@@ -105,7 +105,7 @@ private class Fixture {
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
         val mockCall: Call<List<Channel>> = mock()
-        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any())) doReturn mockCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any(), any())) doReturn mockCall
         whenever(chatDomain.queryChannelsLoadMore(any(), any(), any())) doReturn mockCall
         whenever(chatDomain.queryChannelsLoadMore(any(), any())) doReturn mockCall
         whenever(mockCall.enqueue()) doAnswer {

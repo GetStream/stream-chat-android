@@ -686,8 +686,9 @@ public class Android {
             QuerySort<Channel> sort = new QuerySort<>();
             int limit = 10;
             int messageLimit = 1;
+            int memberLimit = 30;
 
-            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit)
+            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit, memberLimit)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final List<Channel> channels = result.data();
