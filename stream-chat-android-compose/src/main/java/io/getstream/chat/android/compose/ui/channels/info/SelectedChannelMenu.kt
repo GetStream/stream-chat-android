@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.ui.util.isOneToOne
  * @param centerContent The content shown at the center of the dialog.
  */
 @Composable
-public fun ChannelInfo(
+public fun SelectedChannelMenu(
     selectedChannel: Channel,
     isMuted: Boolean,
     currentUser: User?,
@@ -57,13 +57,13 @@ public fun ChannelInfo(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultChannelInfoHeaderContent(
+        DefaultSelectedChannelMenuHeaderContent(
             selectedChannel = selectedChannel,
             currentUser = currentUser
         )
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultChannelInfoCenterContent(
+        DefaultSelectedChannelMenuCenterContent(
             selectedChannel = selectedChannel,
             currentUser = currentUser,
             isMuted = isMuted,
@@ -82,13 +82,13 @@ public fun ChannelInfo(
 }
 
 /**
- * Represents the default content shown at the top of [ChannelInfo] dialog.
+ * Represents the default content shown at the top of [SelectedChannelMenu] dialog.
  *
  * @param selectedChannel The channel the user selected.
  * @param currentUser The currently logged-in user data.
  */
 @Composable
-internal fun DefaultChannelInfoHeaderContent(
+internal fun DefaultSelectedChannelMenuHeaderContent(
     selectedChannel: Channel,
     currentUser: User?,
 ) {
@@ -122,7 +122,7 @@ internal fun DefaultChannelInfoHeaderContent(
 }
 
 /**
- * Represents the default content shown at the center of [ChannelInfo] dialog.
+ * Represents the default content shown at the center of [SelectedChannelMenu] dialog.
  *
  * @param selectedChannel The channel the user selected.
  * @param currentUser The currently logged-in user data.
@@ -130,7 +130,7 @@ internal fun DefaultChannelInfoHeaderContent(
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  */
 @Composable
-internal fun DefaultChannelInfoCenterContent(
+internal fun DefaultSelectedChannelMenuCenterContent(
     selectedChannel: Channel,
     currentUser: User?,
     isMuted: Boolean,
@@ -147,16 +147,16 @@ internal fun DefaultChannelInfoCenterContent(
 }
 
 /**
- * Preview of [ChannelInfo] styled as a centered modal dialog.
+ * Preview of [SelectedChannelMenu] styled as a centered modal dialog.
  *
  * Should show a centered dialog with channel members and channel options.
  */
-@Preview(showBackground = true, name = "ChannelInfo Preview (Centered dialog)")
+@Preview(showBackground = true, name = "SelectedChannelMenu Preview (Centered dialog)")
 @Composable
-private fun ChannelInfoInCenteredDialogPreview() {
+private fun SelectedChannelMenuCenteredDialogPreview() {
     ChatTheme {
         Box(modifier = Modifier.fillMaxSize()) {
-            ChannelInfo(
+            SelectedChannelMenu(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
@@ -174,16 +174,16 @@ private fun ChannelInfoInCenteredDialogPreview() {
 }
 
 /**
- * Preview of [ChannelInfo] styled as a bottom sheet dialog.
+ * Preview of [SelectedChannelMenu] styled as a bottom sheet dialog.
  *
  * Should show a bottom sheet dialog with channel members and channel options.
  */
-@Preview(showBackground = true, name = "ChannelInfo Preview (Bottom sheet dialog)")
+@Preview(showBackground = true, name = "SelectedChannelMenu Preview (Bottom sheet dialog)")
 @Composable
-private fun ChannelInfoInBottomSheetDialogPreview() {
+private fun SelectedChannelMenuBottomSheetDialogPreview() {
     ChatTheme {
         Box(modifier = Modifier.fillMaxSize()) {
-            ChannelInfo(
+            SelectedChannelMenu(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()

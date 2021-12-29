@@ -39,7 +39,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
@@ -153,7 +153,7 @@ class ChannelActivity : AppCompatActivity() {
     /**
      * An example of what a custom UI can be, when not using [ChannelsScreen].
      *
-     * It's important to note that if we want to use the [ChannelInfo] to expose information and
+     * It's important to note that if we want to use the [SelectedChannelMenu] to expose information and
      * options that the user can make with each channel, we need to use a [Box] and overlap the
      * two elements. This makes it easier as it's all presented in the same layer, rather than being
      * wrapped in drawers or more components.
@@ -198,7 +198,7 @@ class ChannelActivity : AppCompatActivity() {
 
             val selectedChannel = selectedChannel
             if (selectedChannel != null) {
-                ChannelInfo(
+                SelectedChannelMenu(
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth()
