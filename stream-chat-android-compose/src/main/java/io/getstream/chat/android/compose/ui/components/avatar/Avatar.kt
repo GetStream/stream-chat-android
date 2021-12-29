@@ -9,6 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.compose.R
@@ -26,6 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param contentDescription Description of the image.
  * @param onClick OnClick action, that can be nullable.
  */
+@ExperimentalCoilApi
 @Composable
 public fun Avatar(
     imageUrl: String,
@@ -47,7 +49,7 @@ public fun Avatar(
         )
         return
     }
-    if (imageUrl.isNullOrBlank()) {
+    if (imageUrl.isBlank()) {
         InitialsAvatar(
             modifier = modifier,
             initials = initials,
@@ -60,22 +62,28 @@ public fun Avatar(
 
     val painter = rememberImagePainter(data = imageUrl)
 
-    if (painter.state is ImagePainter.State.Error) {
-        InitialsAvatar(
-            modifier = modifier,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            onClick = onClick
-        )
-    } else {
-        ImageAvatar(
-            modifier = modifier,
-            shape = shape,
-            painter = painter,
-            contentDescription = contentDescription,
-            onClick = onClick
-        )
+    when (painter.state) {
+        is ImagePainter.State.Error -> {
+            InitialsAvatar(
+                modifier = modifier,
+                initials = initials,
+                shape = shape,
+                textStyle = textStyle,
+                onClick = onClick
+            )
+        }
+        is ImagePainter.State.Loading,
+        is ImagePainter.State.Success,
+        is ImagePainter.State.Empty,
+        -> {
+            ImageAvatar(
+                modifier = modifier,
+                shape = shape,
+                painter = painter,
+                contentDescription = contentDescription,
+                onClick = onClick
+            )
+        }
     }
 }
 

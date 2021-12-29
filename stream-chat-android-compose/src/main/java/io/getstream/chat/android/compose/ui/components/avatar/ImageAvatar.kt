@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Avatar/image that renders whatever image the [painter] provides. It allows for customization,
+ * Renders an image the [painter] provides. It allows for customization,
  * uses the 'avatar' shape from [ChatTheme.shapes] for the clipping and exposes an [onClick] action.
  *
  * @param painter The painter for the image.
