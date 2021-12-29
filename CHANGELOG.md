@@ -95,6 +95,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [ChannelsScreen documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/). [#2839](https://github.com/GetStream/stream-chat-android/pull/2839)
 - Updated [ChannelItem documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-item/). [#2832](https://github.com/GetStream/stream-chat-android/pull/2832)
 - Updated [ChannelListHeader documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list-header/). [#2828](https://github.com/GetStream/stream-chat-android/pull/2828)
+- Updated [Component Architecture documentation](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/). [#2834](https://github.com/GetStream/stream-chat-android/pull/2834)
 - Renamed the `ChannelInfo` component to `SelectedChannelMenu`. [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)  
 - Updated [SelectedChannelMenu documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/selected-channel-menu/). [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
 
