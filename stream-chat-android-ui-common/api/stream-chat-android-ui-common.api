@@ -735,12 +735,15 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread;
+	public final fun component2 ()Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getParentMessage ()Lio/getstream/chat/android/client/models/Message;
+	public final fun getThreadState ()Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
