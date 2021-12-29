@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -771,6 +772,39 @@ public class ChatClient internal constructor(
             limit = limit,
             next = next,
             sort = sort,
+        )
+    }
+
+    /**
+     * Returns a list of message pinned in the channel.
+     * You can sort the list by specifying [sort] parameter.
+     * Keep in mind that for now we only support sorting by [Message.pinnedAt]
+     * The list can be paginated in a few different ways using [limit] and [pagination]
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param limit Max limit messages to be fetched.
+     * @param sort Desired attachment's types list.
+     * @param pagination Provides different options for pagination.
+     *
+     * @return Executable async [Call] responsible for getting pinned messages.
+     *
+     * @see [PinnedMessagesPagination]
+     */
+    @CheckResult
+    public fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        return api.getPinnedMessages(
+            channelType = channelType,
+            channelId = channelId,
+            limit = limit,
+            sort = sort,
+            pagination = pagination,
         )
     }
 

@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.Date
 
 public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
 
@@ -21,6 +23,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
         val canLoadMore: Boolean,
         val results: List<Message>,
         val isLoading: Boolean,
+        val nextDate: Date,
     )
 
     private companion object {
@@ -30,10 +33,12 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
             results = emptyList(),
             isLoading = false,
             canLoadMore = true,
+            nextDate = Date(),
         )
     }
 
     private val scope = CoroutineScope(DispatcherProvider.Main + SupervisorJob())
+    private val channelClient by lazy { ChatClient.instance().channel(cid) }
 
     override fun onCleared() {
         super.onCleared()
@@ -46,7 +51,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
-    private val logger = ChatLogger.get("MentionListViewModel")
+    private val logger = ChatLogger.get("PinnedMessageListViewModel")
 
     init {
         scope.launch {
@@ -54,6 +59,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
                 results = emptyList(),
                 isLoading = true,
                 canLoadMore = true,
+                nextDate = Date(),
             )
             fetchServerResults()
         }
@@ -81,27 +87,28 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
 
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
-        val channelFilter = Filters.eq("cid", cid)
-        val messageFilter = Filters.eq("pinned", true)
 
-        logger.logD("Getting pinned messages (cid: $cid, offset: ${currentState.results.size}, limit: $QUERY_LIMIT)")
+        logger.logD("Getting pinned messages (cid: $cid, before: ${currentState.nextDate}, limit: $QUERY_LIMIT)")
 
-        val result = ChatClient.instance()
-            .searchMessages(
-                channelFilter = channelFilter,
-                messageFilter = messageFilter,
-                offset = currentState.results.size,
-                limit = QUERY_LIMIT,
+        val result = channelClient.getPinnedMessages(
+            limit = QUERY_LIMIT,
+            sort = QuerySort.desc(Message::pinnedAt),
+            pagination = PinnedMessagesPagination.BeforeDate(
+                date = currentState.nextDate,
+                inclusive = false,
             )
+        )
             .await()
 
         if (result.isSuccess) {
-            val messages = result.data().messages
+            val messages = result.data()
             logger.logD("Got ${messages.size} messages")
             _state.value = currentState.copy(
                 results = currentState.results + messages,
                 isLoading = false,
-                canLoadMore = messages.size == QUERY_LIMIT
+                canLoadMore = messages.size == QUERY_LIMIT,
+                // Date() should only be assigned when messages are empty
+                nextDate = messages.lastOrNull()?.pinnedAt ?: Date()
             )
         } else {
             logger.logD("Error ${result.error().message}")
