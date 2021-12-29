@@ -924,7 +924,8 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<QueryChannelsController> = QueryChannels(this).invoke(filter, sort, limit, messageLimit)
+        memberLimit: Int,
+    ): Call<QueryChannelsController> = QueryChannels(this).invoke(filter, sort, limit, messageLimit, memberLimit)
 
     /**
      * Returns a thread controller for the given channel and message id.
@@ -965,11 +966,16 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
+        memberLimit: Int,
     ): Call<List<Channel>> {
         return CoroutineCall(scope) {
             val queryChannelsController = queryChannels(filter, sort)
             val oldChannels = queryChannelsController.channels.value
-            val pagination = queryChannelsController.loadMoreRequest(limit, messageLimit)
+            val pagination = queryChannelsController.loadMoreRequest(
+                channelLimit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
             queryChannelsController.runQuery(pagination).map { it - oldChannels.toSet() }
         }
     }
@@ -978,12 +984,24 @@ internal class ChatDomainImpl internal constructor(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = queryChannelsLoadMore(filter, sort, limit = CHANNEL_LIMIT, messageLimit = messageLimit)
+    ): Call<List<Channel>> = queryChannelsLoadMore(
+        filter = filter,
+        sort = sort,
+        limit = CHANNEL_LIMIT,
+        messageLimit = messageLimit,
+        memberLimit = MEMBER_LIMIT,
+    )
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = queryChannelsLoadMore(filter, sort, limit = CHANNEL_LIMIT, messageLimit = MESSAGE_LIMIT)
+    ): Call<List<Channel>> = queryChannelsLoadMore(
+        filter = filter,
+        sort = sort,
+        limit = CHANNEL_LIMIT,
+        messageLimit = MESSAGE_LIMIT,
+        memberLimit = MEMBER_LIMIT,
+    )
 
     /**
      * Loads more messages for the specified thread.
