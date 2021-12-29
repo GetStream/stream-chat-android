@@ -1,11 +1,11 @@
 # ChannelItem
 
-The `ChannelItem` component represents the `ChannelList` items that are shown by default, if you don't customize its `itemContent`.
+The `ChannelItem` component represents the `ChannelList` items that are shown by default if you don't customize its `itemContent`.
 
-However, you can also use the `ChannelItem`, and customize its Slot APIs, in case you want only to replace a specific part of the default UI.
+However, you can also use the `ChannelItem` and customize its Slot APIs, in case you want only to replace a specific part of the default UI.
 
 :::note
-The `ChannelItem` is great if you want the default UI or replace specific slots, however, you can still completely override the `itemContent` parameter of the `ChannelList`, if you need even more custom UI.
+The `ChannelItem` is great if you want the default UI or replace specific slots, when building a `ChannelList`.
 :::
 
 Let's see how to use and customize this component.
@@ -58,8 +58,8 @@ fun ChannelItem(
 )
 ```
 
-* `onChannelClick`: Handler for the user tapping on an item. Useful for starting the `MessagesScreen` in your app.
-* `onChannelLongClick`: Handler for the user long tapping on an item. Useful when you want to control how state changes or what UI you want to show, when the user selects an item in the list.
+* `onChannelClick`: Handler when the user taps on an item. Useful for starting the `MessagesScreen`.
+* `onChannelLongClick`: Handler when the user long taps on an item. Use it to control state changes when the user selects a `Channel` in the list.
 
 Here's an example of using the default component, but overriding the behavior:
 
@@ -74,11 +74,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     ChannelItem(
                         channelItem = channelItem,
                         currentUser = user,
-                        onChannelLongClick = { 
-                            viewModel.selectChannel(it.channel) 
+                        onChannelLongClick = {
+                            viewModel.selectChannel(it)
                         },
                         onChannelClick = {
-                            // Open messages screen                 
+                            showMessages(it)
                         },
                     )
                 }
@@ -88,9 +88,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-In the example above, we customized the `onChannelLongClick`  and `onChannelClick` action handlers, to open the messages screen when the user taps on an item, or to store the selected channel state in the `ViewModel`, on long taps.
+In the example above, we customized `onChannelLongClick`  and `onChannelClick` handlers to show the messages screen when the user taps on an item and store the selected channel state in the `ViewModel`, on long taps.
 
-This way, you get more control over what happens when the user interacts with the items, but you still have the default UI that you don't have to implement.
+This way, you get more control over what happens when the user interacts with the items, but you still have the default UI that you don't have to implement yourself.
 
 Read on to learn how to customize the UI.
 
@@ -109,10 +109,10 @@ fun ChannelItem(
 )
 ```
 
-* `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
-* `leadingContent`: Customizable composable function that allows you to override the content that appears at the start of the list item. By default, it represents a `ChannelAvatar`.
-* `centerConent`: Customizable composable function that allows you to override the center part of the list item. By default, it represents the `ChannelDetails` that show its name and the last message preview.
-* `trailingContent`: Customizable composable function that allows you to override the content that appears at the end of the list item. By default, it represents the `ChannelLastMessageInfo` that shows the unread message indicator if there are unread messages and the last message read state.
+* `modifier`: The modifier for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
+* `leadingContent`: Customizable composable that allows you to override the content that appears at the start of the list item. By default, it represents a `ChannelAvatar`.
+* `centerConent`: Customizable composable that allows you to override the center part of the list item. By default, it represents the `ChannelDetails` that show its name and the last message preview.
+* `trailingContent`: Customizable composable that allows you to override the content that appears at the end of the list item. By default, it represents the `ChannelLastMessageInfo` that shows the unread message indicator if there are unread messages and the last message read state.
 
 Here's a simple example for building your own channel item, by overriding the mentioned parameters:
 
@@ -160,4 +160,4 @@ The snippet above will generate the following UI:
 
 ![Custom ChannelItem Component](../../assets/compose_custom_channel_list_item.png)
 
-It was really easy to provide a completely custom UI for the channel items, while still keeping the same functionality and actions of the rest of the screen and the list items.
+It was really easy to provide a completely custom UI for the channel items while still keeping the same functionality and actions of the rest of the screen.
