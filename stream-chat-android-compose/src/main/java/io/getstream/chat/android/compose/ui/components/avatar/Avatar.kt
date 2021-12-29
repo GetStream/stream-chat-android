@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -24,6 +25,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
  * @param textStyle The text style of the [initials] text.
+ * @param placeholderPainter The placeholder to render while loading is in progress.
  * @param contentDescription Description of the image.
  * @param onClick OnClick action, that can be nullable.
  */
@@ -35,6 +37,7 @@ public fun Avatar(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
+    placeholderPainter: Painter? = null,
     contentDescription: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -62,28 +65,30 @@ public fun Avatar(
 
     val painter = rememberImagePainter(data = imageUrl)
 
-    when (painter.state) {
-        is ImagePainter.State.Error -> {
-            InitialsAvatar(
-                modifier = modifier,
-                initials = initials,
-                shape = shape,
-                textStyle = textStyle,
-                onClick = onClick
-            )
-        }
-        is ImagePainter.State.Loading,
-        is ImagePainter.State.Success,
-        is ImagePainter.State.Empty,
-        -> {
-            ImageAvatar(
-                modifier = modifier,
-                shape = shape,
-                painter = painter,
-                contentDescription = contentDescription,
-                onClick = onClick
-            )
-        }
+    if (painter.state is ImagePainter.State.Error) {
+        InitialsAvatar(
+            modifier = modifier,
+            initials = initials,
+            shape = shape,
+            textStyle = textStyle,
+            onClick = onClick
+        )
+    } else if (painter.state is ImagePainter.State.Loading && placeholderPainter != null) {
+        ImageAvatar(
+            modifier = modifier,
+            shape = shape,
+            painter = placeholderPainter,
+            contentDescription = contentDescription,
+            onClick = onClick
+        )
+    } else {
+        ImageAvatar(
+            modifier = modifier,
+            shape = shape,
+            painter = painter,
+            contentDescription = contentDescription,
+            onClick = onClick
+        )
     }
 }
 
