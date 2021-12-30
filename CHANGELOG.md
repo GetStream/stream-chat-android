@@ -36,7 +36,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added support to paginate messages pinned in a channel. [#2848](https://github.com/GetStream/stream-chat-android/pull/2848).
 
 ### ⚠️ Changed
 
@@ -107,6 +106,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 30th, 2021 - 4.25.1
+## stream-chat-android-client
+### ✅ Added
+- Added support to paginate messages pinned in a channel. [#2848](https://github.com/GetStream/stream-chat-android/pull/2848).
 
 
 # December 23th, 2021 - 4.25.0
