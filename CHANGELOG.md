@@ -94,6 +94,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - You can now define a `placeholderPainter` for the `Avatar` that is shown while the image is loading. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 
 ### ⚠️ Changed
+- Updated [ChatTheme documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/). [#2833](https://github.com/GetStream/stream-chat-android/pull/2833)
 - Updated [ChannelsScreen documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/). [#2839](https://github.com/GetStream/stream-chat-android/pull/2839)
 - Updated [ChannelItem documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-item/). [#2832](https://github.com/GetStream/stream-chat-android/pull/2832)
 - Updated [ChannelListHeader documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list-header/). [#2828](https://github.com/GetStream/stream-chat-android/pull/2828)
