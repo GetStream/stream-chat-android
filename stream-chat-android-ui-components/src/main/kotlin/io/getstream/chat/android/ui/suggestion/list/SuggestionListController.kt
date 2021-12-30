@@ -83,7 +83,13 @@ public class SuggestionListController(
     }
 
     private companion object {
-        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
-        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
+        /**
+         * Pattern used for matching commands. Includes [Pattern.MULTILINE] flag for proper newline support.
+         */
+        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$", Pattern.MULTILINE)
+        /**
+         * Pattern used for matching mentions. Includes [Pattern.MULTILINE] flag for proper newline support.
+         */
+        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
     }
 }
