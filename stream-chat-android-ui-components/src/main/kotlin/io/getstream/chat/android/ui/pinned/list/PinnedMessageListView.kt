@@ -81,6 +81,7 @@ public class PinnedMessageListView : ViewFlipper {
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
 
         adapter.submitList(messages)
+        scrollListener.enablePagination()
     }
 
     public fun showLoading() {
