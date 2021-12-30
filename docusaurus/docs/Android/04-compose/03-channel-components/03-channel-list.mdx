@@ -1,6 +1,6 @@
 # ChannelList
 
-The `ChannelList` component allows you to build paginated list of `Channel` items with exposed long tap and single tap actions. We provide two versions of the `ChannelList` component:
+The `ChannelList` component allows you to build a paginated list of `Channel` items with exposed long tap and single tap actions. We provide two versions of the `ChannelList` component:
 
 * **Bound**: This version binds itself to a `ChannelListViewModel` and loads all the required data. It also connects long item tap and pagination events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list, which doesn't depend on a `ViewModel`, and instead depends on pure state from external sources to render its UI.
@@ -63,7 +63,7 @@ fun ChannelList(
 * `viewModel`: The instance of the `ChannelListViewModel` that this component reads data from and sends events to. Pass in your own instance if you want more control over your business logic, such as changing `Channel` filters or sort order in runtime.
 * `onLastItemReached`: Handler for the user reaching the last item in the list to trigger pagination. You don't need to override this if you're using the default `viewModel`, but if you're using a custom one, you can add custom behavior.
 * `onChannelClick`: Handler when the user taps on an item. Useful for starting the `MessagesScreen`.
-* `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions, if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
+* `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
 
 Here's an example of using the default `viewModel`, but overriding the behavior:
 
@@ -151,7 +151,7 @@ fun ChannelList(
 * `loadingContent`: Customizable composable that allows you to override the default loading indicator when loading the initial data set.
 * `emptyContent`: Customizable composable that allows you to override the empty state, when there are no channels available. 
 * `emptySearchContent`: Customizable composable that allows you to override the empty state, when there are no channels matching the search query.
-* `itemContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda, when building your custom UI.
+* `itemContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda when building your custom UI.
 * `divider`: Customizable composable that allows you to override the item divider.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
@@ -199,4 +199,4 @@ The snippet above will generate the following UI:
 
 As you can see, the items are now within a card and show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.
 
-And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.
+And you can customize the `emptyContent` and the `loadingContent` to your needs if you need custom UI there.
