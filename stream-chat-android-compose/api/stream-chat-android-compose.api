@@ -68,6 +68,7 @@ public abstract class io/getstream/chat/android/compose/state/channel/list/Chann
 public final class io/getstream/chat/android/compose/state/channel/list/ChannelItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Channel;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
 	public final fun component2 ()Z
 	public final fun copy (Lio/getstream/chat/android/client/models/Channel;Z)Lio/getstream/chat/android/compose/state/channel/list/ChannelItemState;
