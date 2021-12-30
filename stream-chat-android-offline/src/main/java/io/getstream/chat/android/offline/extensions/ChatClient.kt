@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
 
@@ -187,6 +188,12 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
 public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
     val domainImpl = domainImpl()
     return CoroutineCall(domainImpl.scope) {
-        domainImpl.createNewChannel(channel)
+        CreateChannelService(
+            client = this@createChannel,
+            repositoryFacade = domainImpl.repos,
+            getChannelController = domainImpl::channel,
+            callRetryService = domainImpl.callRetryService(),
+            activeQueries = domainImpl.getActiveQueries(),
+        ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
     }
 }

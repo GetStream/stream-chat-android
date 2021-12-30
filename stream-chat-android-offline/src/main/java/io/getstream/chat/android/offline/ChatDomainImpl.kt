@@ -45,6 +45,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.toMut
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
@@ -69,7 +70,6 @@ import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.CancelMessage
-import io.getstream.chat.android.offline.usecase.CreateChannel
 import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
@@ -412,60 +412,6 @@ internal class ChatDomainImpl internal constructor(
         replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
     )
     suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
-
-    internal suspend fun createNewChannel(channel: Channel): Result<Channel> =
-        try {
-            val online = isOnline()
-            channel.createdAt = channel.createdAt ?: Date()
-            channel.syncStatus = if (online) {
-                SyncStatus.IN_PROGRESS
-            } else {
-                SyncStatus.SYNC_NEEDED
-            }
-
-            val currentUser = user.value
-
-            if (currentUser != null && channel.createdBy != currentUser) {
-                channel.createdBy = currentUser
-            }
-
-            val channelController = this.channel(channel.cid)
-            channelController.updateDataFromChannel(channel)
-
-            // Update Room State
-            repos.insertChannel(channel)
-
-            // Add to query controllers
-            for (query in activeQueryMapImpl.values) {
-                query.updateQueryChannelCollectionByNewChannel(channel)
-            }
-
-            // make the API call and follow retry policy
-            if (online) {
-                val runnable = {
-                    val members = channel.members.map(Member::getUserId)
-                    client.createChannel(channel.type, channel.id, members, channel.extraData)
-                }
-                val result = runAndRetry(runnable)
-                if (result.isSuccess) {
-                    channel.syncStatus = SyncStatus.COMPLETED
-                    repos.insertChannel(channel)
-                    Result(result.data())
-                } else {
-                    if (result.error().isPermanent()) {
-                        channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                    } else {
-                        channel.syncStatus = SyncStatus.SYNC_NEEDED
-                    }
-                    repos.insertChannel(channel)
-                    Result(result.error())
-                }
-            } else {
-                Result(channel)
-            }
-        } catch (e: IllegalStateException) {
-            Result(ChatError(cause = e))
-        }
 
     fun addError(error: ChatError) {
         _errorEvent.value = Event(error)
@@ -1020,7 +966,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun createChannel(channel: Channel): Call<Channel> = CreateChannel(this).invoke(channel)
+    override fun createChannel(channel: Channel): Call<Channel> = client.createChannel(channel)
 
     override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
 

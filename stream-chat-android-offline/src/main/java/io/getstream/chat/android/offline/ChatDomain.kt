@@ -332,6 +332,13 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
+    @Deprecated(
+        message = "createChannel is deprecated. Use extension function ChatClient::createChannel instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().createChannel(channel)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+    )
     @CheckResult
     public fun createChannel(channel: Channel): Call<Channel>
 
