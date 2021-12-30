@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -83,7 +82,6 @@ public fun MessageListHeader(
             onBackPressed = onBackPressed,
         )
     },
-
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderCenterContent(
             modifier = Modifier.weight(1f),
@@ -113,7 +111,7 @@ public fun MessageListHeader(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
@@ -162,7 +160,7 @@ public fun DefaultMessageListHeaderCenterContent(
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
+            .height(IntrinsicSize.Max)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,

@@ -1,7 +1,13 @@
 # MessageListHeader
 
 The `MessageListHeader` component is a clean, stateless component, that doesn't require a `ViewModel`. It allows you to customize the data, design style, action
-handlers and the internal components that represent the leading and trailing actions and the title content.
+handlers and override the internal composable slots.
+
+Out of the box it sets the following:
+
+* **Back button:** A button to use for navigating back.
+* **Header content:** Displays information such as the name of the current channel, number of participants, connection and typing status and message mode.
+* **Channel avatar:** The image set for the current channel or tiles of member avatars if no image is set.
 
 Let's see how to use it in your UI.
 
@@ -12,34 +18,35 @@ To use the component, simply combine it with the rest of your UI, e.g. in `setCo
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    
-    // Load the data for the header here
-    
-    setContent {
-        Column(Modifier.fillMaxSize()) {
-            MessageListHeader(
-                channel,
-                currentUser,
-                connectionState,
-                messageMode,
-                modifier = Modifier.fillMaxWidth(),
-                onBackPressed = { },
-                onHeaderActionClick = { },
-            )
 
-            // Rest of your UI
+    // Load the data for the header here
+
+    setContent {
+        ChatTheme {
+            Column(Modifier.fillMaxSize()) {
+                MessageListHeader(
+                    modifier = Modifier.wrapContentHeight(),
+                    channel = channel,
+                    currentUser = currentUser,
+                    connectionState = connectionState,
+                    messageMode = messageMode,
+                    onBackPressed = { },
+                    onHeaderActionClick = { },
+                )
+
+                // Rest of your UI
+            }
         }
     }
-}
 ```
 
-This component doesn't have its own `ViewModel`, as it's stateless. You need to provide the data to the header, otherwise it doesn't know what to render.
+This component is stateless and therefore does not have it's own `ViewModel`. You need to provide the data to the header, otherwise it doesn't know what to render.
 
-We recommend using either our `ChatDomain` directly and combining information you get from it, or the `MessageListViewModel`, in pair with the rest of our components, for ease of use.
+We recommend using either our `ChatDomain` directly and combining information you get from it, or the `MessageListViewModel`. For greater ease of use you can use it with the rest of our components.
 
-The snippet above, after providing the data, generates the following UI:
+With the correct data provided the snippet above generates the following UI:
 
-![Default MessagesScreen component](../../assets/compose_default_message_list_header_component.png)
+![Default MessageListHeader component](../../assets/compose_default_message_list_header_component.png)
 
 Now let's see how to handle the header actions.
 
@@ -56,30 +63,24 @@ fun MessageListHeader(
 )
 ```
 
-* `onBackPressed`: Handler for the `BackButton` click action.
+* `onBackPressed`: Handler for the header `BackButton` click action.
 * `onHeaderActionClick`: Handler when the user clicks on the title for more information about the channel.
+
+:::note
+The `leadingContent` uses the `onBackPressed` parameter as its default action, while the `centerContent` uses the `onHeaderActionClick` parameter as its default action. If you want to keep the same UI but change the behavior, you need to override `onBackPressed` or `onHeaderActionClick`. Otherwise, skip over to [Customization](#customization) to learn how to customize the UI.
+:::
 
 To customize these actions, simply use the `MessageListHeader` with the rest of your UI components, like within `setContent`, and pass in the required actions:
 
 ```kotlin
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Load required data
-
-        setContent {
-            Column(Modifier.fillMaxSize()) {
-                MessageListHeader(
-                    ..., // State
-                    onBackPressed = { finish() },
-                    onHeaderActionClick = { 
-                      // Show your custom UI
-                    }
-                )
-
-                // Rest of your UI
-            }
-        }
+MessageListHeader(
+    ..., // State
+    onBackPressed = { finish() },
+    onHeaderActionClick = {
+      // Show your custom UI
     }
+)
+}
 ```
 
 This way it's easy to combine the actions from this component with your custom UI and logic.
@@ -120,11 +121,12 @@ fun MessageListHeader(
             onBackPressed = onBackPressed,
         )
     },
-
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderCenterContent(
-            modifier = Modifier.weight(6f),
+            modifier = Modifier.weight(1f),
             channel = channel,
+            currentUser = currentUser,
+            typingUsers = typingUsers,
             messageMode = messageMode,
             onHeaderActionClick = onHeaderActionClick,
             connectionState = connectionState
@@ -132,7 +134,7 @@ fun MessageListHeader(
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChannelAvatar(
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier.size(40.dp),
             channel = channel,
             currentUser = currentUser,
             contentDescription = channel.name,
@@ -142,8 +144,56 @@ fun MessageListHeader(
 ```
 
 * `leadingContent`: Represents the leading content part of the header. By default the `BackButton`.
-* `centerContent`: Represents the core and center part of the header. Shows either more information about the channel using a `DefaultMessageHeaderTitle`, or a `NetworkLoadingView`, based on whether the network is available or not.
-* `trailingContent`: Represents the content at the end of the header. By default the 'ChannelAvatar'.
+    * override the default behavior but keep the UI by overriding `onBackPressed`
+    * or override both the UI and the default behavior by overriding `leadingContent`
+* `centerContent`: Represents the core and center part of the header. Shows information about the channel using `DefaultMessageListHeaderCenterContent`.
+    * override the default behavior but keep the UI by overriding `onHeaderActionClick`
+    * or override both the UI and the default behavior by overriding `centerContent`
+* `trailingContent`: Represents the content at the end of the header. By default the `ChannelAvatar`.
+    * override both the UI and the default behavior by overriding `trailingContent`
 
-You can override each of these parameters that represent different slots in the header.
+**Here's an example of customizing the UI:**
+
+First create a button with a drawable of your choosing.
+
+```kotlin
+@Composable
+fun InfoButton() {
+    IconButton(
+        onClick = {
+            // Handle on click
+        }
+    ) {
+        Icon(
+            modifier = Modifier.height(40.dp),
+            painter = painterResource(id = R.drawable.ic_info),
+            contentDescription = "info button",
+            tint = Color.Black
+        )
+    }
+}
+```
+
+Then place that button into the `trailingContent` slot while placing our own `ChannelAvatar` component into the `leadingContent` slot.
+
+```kotlin
+MessageListHeader(
+    ... // State
+    leadingContent = {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
+            channel = channel,
+            currentUser = currentUser,
+            contentDescription = channelName,
+        )
+    },
+    trailingContent = { InfoButton() }
+)
+)
+```
+
+The resulting UI looks like this:
+
+![Custom MessageListHeader component](../../assets/compose_custom_message_list_header_component.png)
+
 <!-- TODO WIP PAGE If you want to build a fully custom header, read our [Building Custom Screens](../_07-guides/06-building-custom-screens.mdx) guide. -->
