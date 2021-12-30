@@ -13,7 +13,7 @@ The **bound** version of the list uses the **stateless** list internally. That w
 
 Based on the provided state, the component shows the following UI:
 
-* Loading view if we're loading the initial data.
+* Loading indicator if we're loading the initial data.
 * Empty view if loading is done but there is no data to show.
 * The list of channels with pagination.
 
@@ -61,7 +61,7 @@ fun ChannelList(
 ```
 
 * `viewModel`: The instance of the `ChannelListViewModel` that this component reads data from and sends events to. Pass in your own instance if you want more control over your business logic, such as changing `Channel` filters or sort order in runtime.
-* `onLastItemReached`: Handler for the user reaching the last item in the list to trigger pagination. You don't need to override this if you're using the default `viewModel`, but if you're using a custom one, you can add custom behavior.
+* `onLastItemReached`: Handler when the user reaches the last item in the list to trigger pagination. You don't need to override this if you're using the default `viewModel`, but if you're using a custom one, you can add custom behavior.
 * `onChannelClick`: Handler when the user taps on an item. Useful for starting the `MessagesScreen`.
 * `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
 
