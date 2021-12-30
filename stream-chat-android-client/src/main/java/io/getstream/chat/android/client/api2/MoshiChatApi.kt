@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api2
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -31,6 +32,7 @@ import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -477,6 +479,24 @@ internal class MoshiChatApi(
             connectionId = connectionId,
             body = emptyMap(),
         ).toUnitCall()
+    }
+
+    override fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        return channelApi.getPinnedMessages(
+            channelType = channelType,
+            channelId = channelId,
+            payload = PinnedMessagesRequest.create(
+                limit = limit,
+                sort = sort,
+                pagination = pagination,
+            ),
+        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
     }
 
     override fun updateChannel(
