@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
+import io.getstream.chat.android.compose.ui.components.avatar.ImageAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -29,7 +29,7 @@ public fun QuotedMessage(
     val painter = rememberImagePainter(data = message.user.image)
 
     Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
-        Avatar(
+        ImageAvatar(
             modifier = Modifier
                 .size(24.dp),
             painter = painter

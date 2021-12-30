@@ -12,7 +12,7 @@ import androidx.compose.ui.zIndex
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
+import io.getstream.chat.android.compose.ui.components.avatar.ImageAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -62,7 +62,7 @@ public fun ThreadParticipants(
                 index + 1
             }.toFloat()
 
-            Avatar(
+            ImageAvatar(
                 modifier = itemPadding
                     .zIndex(itemPosition)
                     .size(itemSize)

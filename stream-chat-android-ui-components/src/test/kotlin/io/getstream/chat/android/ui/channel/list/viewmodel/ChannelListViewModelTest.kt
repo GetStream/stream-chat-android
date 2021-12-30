@@ -99,7 +99,8 @@ private class Fixture {
                 any(),
                 eq(ChannelListViewModel.DEFAULT_SORT),
                 any(),
-                any()
+                any(),
+                any(),
             )
         ) doReturn queryChannelsCall
         whenever(queryChannelsControllerResult.isSuccess) doReturn true
@@ -123,7 +124,7 @@ private class Fixture {
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
-        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any())) doReturn queryChannelsLoadMoreCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any(), any())) doReturn queryChannelsLoadMoreCall
         whenever(chatClient.queryChannels(any())) doReturn queryChannelsLoadMoreCall
         whenever(queryChannelsLoadMoreCall.enqueue(any())) doAnswer {
             val channels = channelsStateFlow.value + moreChannels
