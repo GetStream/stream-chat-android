@@ -697,18 +697,17 @@ public class ChannelClient internal constructor(
     }
 
     /**
-     * Returns a list of message pinned in the channel.
+     * Returns a list of messages pinned in the channel.
      * You can sort the list by specifying [sort] parameter.
-     * Keep in mind that for now we only support sorting by [Message.pinnedAt]
-     * The list can be paginated in a few different ways using [limit] and [pagination]
+     * Keep in mind that for now we only support sorting by [Message.pinnedAt].
+     * The list can be paginated in a few different ways using [limit] and [pagination].
+     * @see [PinnedMessagesPagination]
      *
-     * @param limit Max limit messages to be fetched.
-     * @param sort Desired attachment's types list.
+     * @param limit Max limit of messages to be fetched.
+     * @param sort Parameter by which we sort the messages.
      * @param pagination Provides different options for pagination.
      *
      * @return Executable async [Call] responsible for getting pinned messages.
-     *
-     * @see [PinnedMessagesPagination]
      */
     @CheckResult
     public fun getPinnedMessages(

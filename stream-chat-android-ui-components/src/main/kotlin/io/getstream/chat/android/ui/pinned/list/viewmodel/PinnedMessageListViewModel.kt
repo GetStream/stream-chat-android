@@ -11,14 +11,30 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.Date
 
+/**
+ * ViewModel responsible for providing pinned messages in the channel.
+ * Pinned messages are provided in a descending order based on [Message.pinnedAt].
+ * Can be bound to the view using [PinnedMessageListViewModel.bindView] function.
+ *
+ * @param cid The full channel id. ie messaging:123.
+ */
 public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
 
+    /**
+     * Represents the pinned messages state, used to render the required UI.
+     *
+     * @param canLoadMore If we've reached the end of messages, to stop triggering pagination.
+     * @param results The messages to render.
+     * @param isLoading If we're currently loading data (initial load).
+     * @param nextDate Date used to fetch next page of the messages.
+     */
     public data class State(
         val canLoadMore: Boolean,
         val results: List<Message>,
@@ -40,15 +56,27 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
     private val scope = CoroutineScope(DispatcherProvider.Main + SupervisorJob())
     private val channelClient by lazy { ChatClient.instance().channel(cid) }
 
+    /**
+     * Called when [PinnedMessageListViewModel] is no longer used and will be destroyed.
+     * Calls super and cancels the scope tied to this [ViewModel].
+     */
     override fun onCleared() {
         super.onCleared()
         scope.cancel()
     }
 
     private val _state: MutableLiveData<State> = MutableLiveData(INITIAL_STATE)
+
+    /**
+     * The current pinned messages' state.
+     */
     public val state: LiveData<State> = _state
 
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()
+
+    /**
+     * One shot error events when query fails.
+     */
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
     private val logger = ChatLogger.get("PinnedMessageListViewModel")
@@ -65,6 +93,11 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
         }
     }
 
+    /**
+     * Loads more data when requested.
+     *
+     * Does nothing if the end of the list has already been reached or loading is already in progress.
+     */
     public fun loadMore() {
         scope.launch {
             val currentState = _state.value!!
@@ -85,6 +118,9 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
         }
     }
 
+    /**
+     * Fetches pinned messages based on the current state.
+     */
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
 
@@ -107,8 +143,8 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
                 results = currentState.results + messages,
                 isLoading = false,
                 canLoadMore = messages.size == QUERY_LIMIT,
-                // Date() should only be assigned when messages are empty
-                nextDate = messages.lastOrNull()?.pinnedAt ?: Date()
+                // currentState.nextDate should only be assigned when messages are empty
+                nextDate = messages.lastOrNull()?.pinnedAt ?: currentState.nextDate
             )
         } else {
             logger.logD("Error ${result.error().message}")

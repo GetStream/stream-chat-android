@@ -776,20 +776,19 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Returns a list of message pinned in the channel.
+     * Returns a list of messages pinned in the channel.
      * You can sort the list by specifying [sort] parameter.
-     * Keep in mind that for now we only support sorting by [Message.pinnedAt]
-     * The list can be paginated in a few different ways using [limit] and [pagination]
+     * Keep in mind that for now we only support sorting by [Message.pinnedAt].
+     * The list can be paginated in a few different ways using [limit] and [pagination].
+     * @see [PinnedMessagesPagination]
      *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param limit Max limit messages to be fetched.
-     * @param sort Desired attachment's types list.
+     * @param channelType The channel type. (e.g. messaging, livestream)
+     * @param channelId The id of the channel we're querying.
+     * @param limit Max limit of messages to be fetched.
+     * @param sort Parameter by which we sort the messages.
      * @param pagination Provides different options for pagination.
      *
      * @return Executable async [Call] responsible for getting pinned messages.
-     *
-     * @see [PinnedMessagesPagination]
      */
     @CheckResult
     public fun getPinnedMessages(
