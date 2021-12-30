@@ -17,6 +17,12 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
+/**
+ * Implementation of [Plugin] that brings support for the offline feature.
+ * The entry point of all offline state ([OfflinePlugin.state]) and behavior ([OfflinePlugin.logic]).
+ *
+ * @param config Configuration options for this plugin.
+ */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
 public class OfflinePlugin(private val config: Config) : Plugin {

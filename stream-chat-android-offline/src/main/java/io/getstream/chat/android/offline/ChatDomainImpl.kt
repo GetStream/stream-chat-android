@@ -413,11 +413,11 @@ internal class ChatDomainImpl internal constructor(
     )
     suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
 
-    internal suspend fun createNewChannel(c: Channel): Result<Channel> =
+    internal suspend fun createNewChannel(channel: Channel): Result<Channel> =
         try {
             val online = isOnline()
-            c.createdAt = c.createdAt ?: Date()
-            c.syncStatus = if (online) {
+            channel.createdAt = channel.createdAt ?: Date()
+            channel.syncStatus = if (online) {
                 SyncStatus.IN_PROGRESS
             } else {
                 SyncStatus.SYNC_NEEDED
@@ -425,43 +425,43 @@ internal class ChatDomainImpl internal constructor(
 
             val currentUser = user.value
 
-            if (currentUser != null && c.createdBy != currentUser) {
-                c.createdBy = currentUser
+            if (currentUser != null && channel.createdBy != currentUser) {
+                channel.createdBy = currentUser
             }
 
-            val channelController = channel(c.cid)
-            channelController.updateDataFromChannel(c)
+            val channelController = this.channel(channel.cid)
+            channelController.updateDataFromChannel(channel)
 
             // Update Room State
-            repos.insertChannel(c)
+            repos.insertChannel(channel)
 
             // Add to query controllers
             for (query in activeQueryMapImpl.values) {
-                query.updateQueryChannelCollectionByNewChannel(c)
+                query.updateQueryChannelCollectionByNewChannel(channel)
             }
 
             // make the API call and follow retry policy
             if (online) {
                 val runnable = {
-                    val members = c.members.map { it.getUserId() }
-                    client.createChannel(c.type, c.id, members, c.extraData)
+                    val members = channel.members.map(Member::getUserId)
+                    client.createChannel(channel.type, channel.id, members, channel.extraData)
                 }
                 val result = runAndRetry(runnable)
                 if (result.isSuccess) {
-                    c.syncStatus = SyncStatus.COMPLETED
-                    repos.insertChannel(c)
+                    channel.syncStatus = SyncStatus.COMPLETED
+                    repos.insertChannel(channel)
                     Result(result.data())
                 } else {
                     if (result.error().isPermanent()) {
-                        c.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                        channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
                     } else {
-                        c.syncStatus = SyncStatus.SYNC_NEEDED
+                        channel.syncStatus = SyncStatus.SYNC_NEEDED
                     }
-                    repos.insertChannel(c)
+                    repos.insertChannel(channel)
                     Result(result.error())
                 }
             } else {
-                Result(c)
+                Result(channel)
             }
         } catch (e: IllegalStateException) {
             Result(ChatError(cause = e))

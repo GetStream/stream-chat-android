@@ -22,6 +22,13 @@ import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
 
 /**
+ * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
+ */
+private fun domainImpl(): ChatDomainImpl {
+    return domainImpl()
+}
+
+/**
  * Query members of a channel.
  *
  * @param cid CID of the Channel whose members we are querying.
@@ -72,7 +79,7 @@ public fun ChatClient.searchUsersByName(
 public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
     validateCid(cid)
 
-    val domainImpl = ChatDomain.instance() as ChatDomainImpl
+    val domainImpl = domainImpl()
     return CoroutineCall(domainImpl.scope) {
         domainImpl.replayEvents(cid)
     }
@@ -90,7 +97,7 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.replyMessage(message)
@@ -107,7 +114,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  */
 @CheckResult
 public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
-    DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)
+    DownloadAttachment(domainImpl()).invoke(attachment)
 
 /**
  * Keystroke should be called whenever a user enters text into the message input.
@@ -122,7 +129,7 @@ public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
 public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.keystroke(parentId)
@@ -142,7 +149,7 @@ public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boo
 public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.stopTyping(parentId)
@@ -160,9 +167,26 @@ public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Bo
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     validateCid(cid)
 
-    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
     return CoroutineCall(domainImpl.scope) {
         channelController.loadOlderMessages(messageLimit)
+    }
+}
+
+/**
+ * Creates a new channel. Will retry according to the retry policy if it fails.
+ *
+ * @param channel The channel object.
+ *
+ * @return Executable async [Call] responsible for creating a channel.
+ *
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
+@CheckResult
+public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
+    val domainImpl = domainImpl()
+    return CoroutineCall(domainImpl.scope) {
+        domainImpl.createNewChannel(channel)
     }
 }
