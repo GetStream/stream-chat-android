@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.extensions
 
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.message.users
@@ -26,3 +27,21 @@ internal fun Message.updateUsers(users: Map<String, User>): Message =
     } else {
         this
     }
+
+/**
+ * Fills [Message.mentionedUsersIds] based on [Message.text] and [Channel.members].
+ */
+internal fun Message.populateMentions(channel: Channel) {
+    if ('@' !in text) {
+        return
+    }
+
+    val text = text.lowercase()
+    mentionedUsersIds = channel.members.mapNotNullTo(mutableListOf()) { member ->
+        if (text.contains("@${member.user.name.lowercase()}")) {
+            member.user.id
+        } else {
+            null
+        }
+    }
+}
