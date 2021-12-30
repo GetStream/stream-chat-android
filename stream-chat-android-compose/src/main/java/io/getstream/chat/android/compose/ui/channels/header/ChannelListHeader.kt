@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +44,8 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param title The title to display, when the network is available.
  * @param currentUser The currently logged in user, to load its image in the avatar.
  * @param connectionState The state of WS connection used to switch between the title and the network loading view.
+ * @param color Changes the color of the header.
+ * @param shape Changes the shape of the header.
  * @param onAvatarClick Action handler when the user taps on an avatar.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.
@@ -57,6 +61,8 @@ public fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
+    color: Color = ChatTheme.colors.barsBackground,
+    shape: Shape = RectangleShape,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -81,7 +87,8 @@ public fun ChannelListHeader(
         modifier = modifier
             .fillMaxWidth(),
         elevation = 4.dp,
-        color = ChatTheme.colors.barsBackground,
+        color = color,
+        shape = shape
     ) {
         Row(
             Modifier
