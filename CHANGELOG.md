@@ -44,6 +44,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed populating mentions after editing the message. `Message::mentionedUsers` shouldn't be empty if edited message contains mentioned users. [#2852](https://github.com/GetStream/stream-chat-android/pull/2852)
 
 ### ⬆️ Improved
 
