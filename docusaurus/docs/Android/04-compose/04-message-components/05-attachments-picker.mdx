@@ -41,7 +41,7 @@ Because the `AttachmentsPicker` is a **bound** component, you should rely on the
 
 The code above will show the following UI:
 
- ![Default AttachmentsPicker component](../../assets/compose_default_attachments_picker_component.png)
+![Default AttachmentsPicker component](../../assets/compose_default_attachments_picker_component.png)
 
 As you can see, the picker is really easy to add to the UI, and it lets your users choose from different types of attachments when sending their messages.
 
@@ -57,8 +57,10 @@ fun AttachmentsPicker(
 )
 ```
 
-* `onAttachmentsSelected`: Handler when attachments are selected and confirmed, by clicking on the **Send** button.
-* `onDismiss`: Handler when the picker is dismissed, by clicking outside of the picker area.
+Handler when the user reaches the last item i
+
+* `onAttachmentsSelected`: Handler when the user selects and confirms attachments by clicking on the **Confirm selection** button.
+* `onDismiss`: Handler when the picker is dismissed by clicking outside of the picker area or pressing the system back button.
 
 To customize the behavior of the picker, simply override these actions to fit your UI needs, like in the following example:
 
@@ -89,7 +91,7 @@ You can customize the `AttachmentsPicker` using the following parameters:
 
 ```kotlin
 fun AttachmentsPicker(
-    ..., //
+    ..., // ViewModel and action handlers
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 )
@@ -104,7 +106,7 @@ Here's an example of a fullscreen `AttachmentsPicker` dialog:
 AttachmentsPicker(
     attachmentsPickerViewModel = attachmentsPickerViewModel,
     modifier = Modifier.fillMaxSize(), // Fill all the available space
-    shape = RectangleShape, // No rounded corners
+    shape = RectangleShape, // Use a shape without rounded corners
     onAttachmentsSelected = { attachments ->
         // Handle selected attachments
     },
