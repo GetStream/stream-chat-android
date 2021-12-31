@@ -87,5 +87,35 @@ This is a very simple way to customize the behavior and connect the `AttachmentP
 
 You can customize the `AttachmentsPicker` using the following parameters:
 
+```kotlin
+fun AttachmentsPicker(
+    ..., //
+    modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.bottomSheet,
+)
+```
+
 * `modifier`: Allows you to customize the root content component of the picker and change its size, padding and more.
-* `shape`: Allows you to override the `AttachmentPicker` shape.
+* `shape`: Allows you to override the `AttachmentsPicker` shape.
+
+Here's an example of a fullscreen `AttachmentsPicker` dialog:
+
+```kotlin
+AttachmentsPicker(
+    attachmentsPickerViewModel = attachmentsPickerViewModel,
+    modifier = Modifier.fillMaxSize(), // Fill all the available space
+    shape = RectangleShape, // No rounded corners
+    onAttachmentsSelected = { attachments ->
+        // Handle selected attachments
+    },
+    onDismiss = {
+        // Handle dismiss
+    }
+)
+```
+
+This snippet will provide the following UI:
+
+![The AttachmentsPicker Component](../../assets/compose_custom_attachments_picker_component.png)
+
+As you can see, the `AttachmentsPicker` component now occupies the whole screen.
