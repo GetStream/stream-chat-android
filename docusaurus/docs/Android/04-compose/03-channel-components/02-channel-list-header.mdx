@@ -81,6 +81,9 @@ fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState = ConnectionState.CONNECTED,
+    color: Color = ChatTheme.colors.barsBackground,
+    shape: Shape = ChatTheme.shapes.header,
+    elevation: Dp = ChatTheme.dimens.headerElevation,
     leadingContent: @Composable RowScope.() -> Unit = { ... },
     centerContent: @Composable RowScope.() -> Unit = { ... },
     trailingContent: @Composable RowScope.() -> Unit = { ... },
@@ -88,10 +91,13 @@ fun ChannelListHeader(
 )
 ```
 
-* `modifier`: Modifier for the root component styling. You can add things like background, elevation, padding and more.
+* `modifier`: Modifier for the root component. You can use it to add padding or change the dimensions and such, however attributes such as color, shape and elevation have their own parameters.
 * `title`: The text to show when you're connected to the Internet.
 * `currentUser`: The state of the current user, for displaying the `Avatar`.
 * `connectionState`: The state of WebSocket connection, used to switch between the title and the `NetworkLoadingView`.
+* `color`: The color of the header.
+* `shape`: The shape of the header.
+* `elevation`: The elevation of the header.
 * `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onAvatarClick`,
     * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.

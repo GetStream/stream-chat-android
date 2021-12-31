@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
  * @param userReactionItemWidth The width of user reaction item.
  * @param userReactionItemAvatarSize The size of a user avatar in the user reaction item.
  * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
+ * @param headerElevation The elevation of the header.
  */
 @Immutable
 public data class StreamDimens(
@@ -70,6 +71,7 @@ public data class StreamDimens(
     public val userReactionItemWidth: Dp,
     public val userReactionItemAvatarSize: Dp,
     public val userReactionItemIconSize: Dp,
+    public val headerElevation: Dp,
 ) {
     public companion object {
         /**
@@ -108,6 +110,7 @@ public data class StreamDimens(
             userReactionItemWidth = 80.dp,
             userReactionItemIconSize = 24.dp,
             userReactionItemAvatarSize = 64.dp,
+            headerElevation = 4.dp,
         )
     }
 }

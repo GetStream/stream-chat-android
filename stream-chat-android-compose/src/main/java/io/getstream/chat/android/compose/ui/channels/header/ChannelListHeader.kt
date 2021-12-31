@@ -21,11 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -44,8 +44,9 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param title The title to display, when the network is available.
  * @param currentUser The currently logged in user, to load its image in the avatar.
  * @param connectionState The state of WS connection used to switch between the title and the network loading view.
- * @param color Changes the color of the header.
- * @param shape Changes the shape of the header.
+ * @param color The color of the header.
+ * @param shape The shape of the header.
+ * @param elevation The elevation of the header.
  * @param onAvatarClick Action handler when the user taps on an avatar.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.
@@ -62,7 +63,8 @@ public fun ChannelListHeader(
     currentUser: User? = null,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
     color: Color = ChatTheme.colors.barsBackground,
-    shape: Shape = RectangleShape,
+    shape: Shape = ChatTheme.shapes.header,
+    elevation: Dp = ChatTheme.dimens.headerElevation,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -86,7 +88,7 @@ public fun ChannelListHeader(
     Surface(
         modifier = modifier
             .fillMaxWidth(),
-        elevation = 4.dp,
+        elevation = elevation,
         color = color,
         shape = shape
     ) {

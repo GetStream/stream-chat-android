@@ -40,11 +40,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 ```
 
-This component is stateless and therefore does not have it's own `ViewModel`. You need to provide the data to the header, otherwise it doesn't know what to render.
+This component is stateless and doesn't have it's own `ViewModel`. You need to provide the data to the header, otherwise it doesn't know what to render.
 
-We recommend using either our `ChatDomain` directly and combining information you get from it, or the `MessageListViewModel`. For greater ease of use you can use it with the rest of our components.
+We recommend using either our `ChatDomain` directly or the `MessageListViewModel` for the required state. For greater ease of use you can use it with the rest of our components.
 
-With the correct data provided the snippet above generates the following UI:
+With the correct data the snippet above generates the following UI:
 
 ![Default MessageListHeader component](../../assets/compose_default_message_list_header_component.png)
 
@@ -63,11 +63,13 @@ fun MessageListHeader(
 )
 ```
 
-* `onBackPressed`: Handler for the header `BackButton` click action.
-* `onHeaderActionClick`: Handler when the user clicks on the title for more information about the channel.
+* `onBackPressed`: Handler used when the user clicks on the back button.
+* `onHeaderActionClick`: Handler used when the user clicks on the title for more information about the channel.
 
 :::note
-The `leadingContent` uses the `onBackPressed` parameter as its default action, while the `centerContent` uses the `onHeaderActionClick` parameter as its default action. If you want to keep the same UI but change the behavior, you need to override `onBackPressed` or `onHeaderActionClick`. Otherwise, skip over to [Customization](#customization) to learn how to customize the UI.
+The `leadingContent` uses `onBackPressed` as its default action, while the `centerContent` uses `onHeaderActionClick`. If you want to keep the same UI but change the behavior, you can override `onBackPressed` or `onHeaderActionClick`.
+
+Otherwise, skip over to [Customization](#customization) to learn how to customize the UI.
 :::
 
 To customize these actions, simply use the `MessageListHeader` with the rest of your UI components, like within `setContent`, and pass in the required actions:
@@ -78,9 +80,9 @@ MessageListHeader(
     onBackPressed = { finish() },
     onHeaderActionClick = {
       // Show your custom UI
-    }
+    },
+    ... // Content
 )
-}
 ```
 
 This way it's easy to combine the actions from this component with your custom UI and logic.
@@ -94,17 +96,27 @@ As the component is fully state-dependent, you can customize the data it shows, 
 fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
-    connectionState = ConnectionState.CONNECTED,
-    messageMode: MessageMode = Normal,
-    ..., // content
-    ... // actions
+    modifier: Modifier = Modifier,
+    typingUsers: List<User> = emptyList(),
+    messageMode: MessageMode = MessageMode.Normal,
+    connectionState: ConnectionState = ConnectionState.CONNECTED,
+    color: Color = ChatTheme.colors.barsBackground,
+    shape: Shape = ChatTheme.shapes.header,
+    elevation: Dp = ChatTheme.dimens.headerElevation,
+    ..., // Handlers
+    ... // Content
 )
 ```
 
 * `channel`: The information about the current channel, used to show the member count, name and avatar data.
 * `currentUser`: Currently logged in user, used to differentiate it from other users, when loading the channel image.
-* `connectionState`: The state of WebSocket connection, used to switch between the member count text and the the `NetworkLoadingView`.
+* `modifier`: Modifier for the root component. You can use it to add padding or change the dimensions and such, however attributes such as color, shape and elevation have their own parameters.
+* `typingUsers`: List of typing users used to show their names along with a typing indicator.
 * `messageMode`: Used to determine the header title. If we're in a thread, we show a title saying who the owner of the parent message is.
+* `connectionState`: The state of WebSocket connection, used to switch between the member count text and the network status information.
+* `color`: The color of the header.
+* `shape`: The shape of the header.
+* `elevation`: The elevation of the header.
 
 These will change what data is displayed in the header.
 
@@ -114,12 +126,7 @@ You can also customize the content of the header, using the following parameters
 @Composable
 fun MessageListHeader(
     leadingContent: @Composable RowScope.() -> Unit = {
-        BackButton(
-            modifier = Modifier
-                .size(36.dp),
-            imageVector = Icons.Default.ArrowBack,
-            onBackPressed = onBackPressed,
-        )
+        DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
     },
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderCenterContent(
@@ -133,23 +140,21 @@ fun MessageListHeader(
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        ChannelAvatar(
-            modifier = Modifier.size(40.dp),
+        DefaultMessageListHeaderTrailingContent(
             channel = channel,
-            currentUser = currentUser,
-            contentDescription = channel.name,
+            currentUser = currentUser
         )
     },
 )
 ```
 
-* `leadingContent`: Represents the leading content part of the header. By default the `BackButton`.
+* `leadingContent`: Represents the leading content part of the header. By default shows a back button.
     * override the default behavior but keep the UI by overriding `onBackPressed`
     * or override both the UI and the default behavior by overriding `leadingContent`
-* `centerContent`: Represents the core and center part of the header. Shows information about the channel using `DefaultMessageListHeaderCenterContent`.
+* `centerContent`: Represents the core and center part of the header. By default shows information about the channel.
     * override the default behavior but keep the UI by overriding `onHeaderActionClick`
     * or override both the UI and the default behavior by overriding `centerContent`
-* `trailingContent`: Represents the content at the end of the header. By default the `ChannelAvatar`.
+* `trailingContent`: Represents the content at the end of the header. By default shows the channel avatar.
     * override both the UI and the default behavior by overriding `trailingContent`
 
 **Here's an example of customizing the UI:**

@@ -21,12 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
@@ -53,8 +53,9 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param typingUsers The list of typing users.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
  * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
- * @param color Changes the color of the header.
- * @param shape Changes the shape of the header.
+ * @param color The color of the header.
+ * @param shape The shape of the header.
+ * @param elevation The elevation of the header.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
@@ -71,16 +72,12 @@ public fun MessageListHeader(
     messageMode: MessageMode = MessageMode.Normal,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
     color: Color = ChatTheme.colors.barsBackground,
-    shape: Shape = RectangleShape,
+    shape: Shape = ChatTheme.shapes.header,
+    elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (Channel) -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
-        BackButton(
-            modifier = Modifier
-                .size(36.dp),
-            imageVector = Icons.Default.ArrowBack,
-            onBackPressed = onBackPressed,
-        )
+        DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
     },
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderCenterContent(
@@ -94,17 +91,15 @@ public fun MessageListHeader(
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        ChannelAvatar(
-            modifier = Modifier.size(40.dp),
+        DefaultMessageListHeaderTrailingContent(
             channel = channel,
-            currentUser = currentUser,
-            contentDescription = channel.name,
+            currentUser = currentUser
         )
     },
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        elevation = 4.dp,
+        elevation = elevation,
         color = color,
         shape = shape
     ) {
@@ -122,6 +117,21 @@ public fun MessageListHeader(
             trailingContent()
         }
     }
+}
+
+/**
+ * Represents the leading content of [MessageListHeader]. By default shows a back button.
+ *
+ * @param onBackPressed Handler that propagates the back button click event.
+ */
+@Composable
+internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
+    BackButton(
+        modifier = Modifier
+            .size(36.dp),
+        imageVector = Icons.Default.ArrowBack,
+        onBackPressed = onBackPressed,
+    )
 }
 
 /**
@@ -222,6 +232,22 @@ public fun DefaultMessageListHeaderCenterContent(
             )
         }
     }
+}
+
+/**
+ * Represents the trailing content of [MessageListHeader]. By default shows the channel avatar.
+ *
+ * @param channel The channel used to display the avatar.
+ * @param currentUser The current user. Used for choosing which avatar to display.
+ * */
+@Composable
+internal fun DefaultMessageListHeaderTrailingContent(channel: Channel, currentUser: User?) {
+    ChannelAvatar(
+        modifier = Modifier.size(40.dp),
+        channel = channel,
+        currentUser = currentUser,
+        contentDescription = channel.name,
+    )
 }
 
 @Preview(name = "MessageListHeader Preview (Connected)")
