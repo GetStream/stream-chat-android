@@ -84,9 +84,9 @@ public class SuggestionListController(
 
     private companion object {
         /**
-         * Pattern used for matching commands. Includes [Pattern.MULTILINE] flag for proper newline support.
+         * Pattern used for matching commands.
          */
-        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$", Pattern.MULTILINE)
+        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
         /**
          * Pattern used for matching mentions. Includes [Pattern.MULTILINE] flag for proper newline support.
          */
