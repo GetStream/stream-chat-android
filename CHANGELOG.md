@@ -105,6 +105,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [ChannelListHeader documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list-header/). [#2828](https://github.com/GetStream/stream-chat-android/pull/2828)
 - Updated [Component Architecture documentation](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/). [#2834](https://github.com/GetStream/stream-chat-android/pull/2834)
 - Updated [ChannelList documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list/). [#2847](https://github.com/GetStream/stream-chat-android/pull/2847)
+- Updated [AttachmentsPicker documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/attachments-picker/) [#2860](https://github.com/GetStream/stream-chat-android/pull/2860)
 
 ### ❌ Removed
 
