@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
+import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -55,6 +56,7 @@ public fun Messages(
     val coroutineScope = rememberCoroutineScope()
 
     val currentListState = if (parentMessageId != null) rememberLazyListState() else state
+    val firstVisibleItemIndex = currentListState.firstVisibleItemIndex
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -105,9 +107,12 @@ public fun Messages(
             }
         }
 
-        val firstVisibleItemIndex = currentListState.firstVisibleItemIndex
-
         when {
+            newMessageState == Other && firstVisibleItemIndex < 3 -> {
+                coroutineScope.launch {
+                    currentListState.animateScrollToItem(0)
+                }
+            }
             newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     currentListState.scrollToItem(5)
@@ -115,7 +120,7 @@ public fun Messages(
                 currentListState.animateScrollToItem(0)
             }
 
-            abs(firstVisibleItemIndex) >= 2 -> {
+            abs(firstVisibleItemIndex) >= 3 -> {
                 MessagesScrollingOption(
                     unreadCount = messagesState.unreadCount,
                     modifier = Modifier.align(Alignment.BottomEnd),

@@ -85,11 +85,14 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed a small issue with user avatars flickering [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
+- Fixed faulty scrolling behavior in `Messages` by adding an autoscroll. [#2844](https://github.com/GetStream/stream-chat-android/pull/2844) 
 
 ### ⬆️ Improved
 - Added an animation to the `ChannelInfo` component.
 - Avatars now show fallback initials in case there was an error while loading images from the network. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Updated primary accent colors in order to achieve a better contrast ratio for accessibility [#2844](https://github.com/GetStream/stream-chat-android/pull/2844)
+- Removed default background color from `MessageItem` [#2844](https://github.com/GetStream/stream-chat-android/pull/2844)
 
 ### ✅ Added
 - Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
