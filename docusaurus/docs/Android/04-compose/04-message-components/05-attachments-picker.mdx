@@ -1,10 +1,10 @@
 # AttachmentsPicker
 
-The `AttachmentsPicker` component allows users to pick media, file and media capture attachments to send to the chat. The picker is a **bound component**, that loads all the data and prepares it for the user.
+The `AttachmentsPicker` component allows users to pick media, file or media capture attachments to send to the chat. The picker is a **bound component** that loads all the data and prepares it for the user.
 
 Internally, it sets up the following components:
 
-* Picker options: The header in the picker that shows different types of attachment options people can choose from — media, files and media capture, as well as the **Send** button.
+* Picker options: The header in the picker that shows different types of attachment options people can choose from — media, files or media capture, as well as the **Confirm selection** button.
 * Image picker: Shows a gallery of images to choose from the device.
 * File picker: Shows a list of files to choose from the device. Also allows the user to open the file browser and pick more files from the system.
 * Media capture: Shows the media capture option to the user and opens a media capture `Activity`.
@@ -59,8 +59,8 @@ fun AttachmentsPicker(
 
 Handler when the user reaches the last item i
 
-* `onAttachmentsSelected`: Handler when the user selects and confirms attachments by clicking on the **Confirm selection** button.
-* `onDismiss`: Handler when the picker is dismissed by clicking outside of the picker area or pressing the system back button.
+* `onAttachmentsSelected`: Handler when the user selects and confirms selection by clicking on the **Confirm selection** button.
+* `onDismiss`: Handler when the picker is dismissed by clicking outside of the picker area or by pressing the system back button.
 
 To customize the behavior of the picker, simply override these actions to fit your UI needs, like in the following example:
 
