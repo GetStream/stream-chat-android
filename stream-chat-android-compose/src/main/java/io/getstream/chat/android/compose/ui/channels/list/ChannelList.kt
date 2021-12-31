@@ -2,12 +2,14 @@ package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
@@ -16,6 +18,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
@@ -106,9 +110,9 @@ public fun ChannelList(
  *
  * If there is data available and it is not empty, we show [Channels].
  *
- * @param modifier Modifier for styling.
- * @param currentUser The data of the current user, used various states.
  * @param channelsState Current state of the Channel list, represented by [ChannelsState].
+ * @param currentUser The data of the current user, used various states.
+ * @param modifier Modifier for styling.
  * @param onLastItemReached Handler for pagination, when the user reaches the end of the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
@@ -238,4 +242,73 @@ public fun DefaultChannelItemDivider() {
             .height(0.5.dp)
             .background(color = ChatTheme.colors.borders)
     )
+}
+
+/**
+ * Preview of [ChannelItem] for a list of channels.
+ *
+ * Should show a list of channels.
+ */
+@Preview(showBackground = true, name = "ChannelList Preview (Content state)")
+@Composable
+private fun ChannelListForContentStatePreview() {
+    ChannelListPreview(
+        ChannelsState(
+            isLoading = false,
+            channelItems = listOf(
+                ChannelItemState(channel = PreviewChannelData.channelWithImage),
+                ChannelItemState(channel = PreviewChannelData.channelWithMessages),
+                ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
+                ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
+                ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser)
+            )
+        )
+    )
+}
+
+/**
+ * Preview of [ChannelItem] for an empty state.
+ *
+ * Should show an empty placeholder.
+ */
+@Preview(showBackground = true, name = "ChannelList Preview (Empty state)")
+@Composable
+private fun ChannelListForEmptyStatePreview() {
+    ChannelListPreview(
+        ChannelsState(
+            isLoading = false,
+            channelItems = emptyList()
+        )
+    )
+}
+
+/**
+ * Preview of [ChannelItem] for a loading state.
+ *
+ * Should show a progress indicator.
+ */
+@Preview(showBackground = true, name = "ChannelList Preview (Loading state)")
+@Composable
+private fun ChannelListForLoadingStatePreview() {
+    ChannelListPreview(
+        ChannelsState(
+            isLoading = true
+        )
+    )
+}
+
+/**
+ * Shows [ChannelList] preview for the provided parameters.
+ *
+ * @param channelsState The current state of the component.
+ */
+@Composable
+private fun ChannelListPreview(channelsState: ChannelsState) {
+    ChatTheme {
+        ChannelList(
+            modifier = Modifier.fillMaxSize(),
+            channelsState = channelsState,
+            currentUser = PreviewUserData.user1,
+        )
+    }
 }
