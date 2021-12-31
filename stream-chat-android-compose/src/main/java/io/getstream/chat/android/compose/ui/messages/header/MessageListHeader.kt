@@ -50,7 +50,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
- * [DefaultMessageHeaderCenterContent].
+ * [DefaultMessageListHeaderCenterContent].
  * @param trailingContent The content shown at the end of the header, by default a [ChannelAvatar].
  */
 @Composable
