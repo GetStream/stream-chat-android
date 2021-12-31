@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
  * @param channelItemVerticalPadding The vertical content padding inside channel list item.
  * @param channelItemHorizontalPadding The horizontal content padding inside channel list item.
  * @param channelAvatarSize The size of channel avatar.
- * @param channelInfoUserItemWidth The width of a member tile in the channel info dialog.
- * @param channelInfoUserItemHorizontalPadding The padding inside a member tile in the channel info dialog.
- * @param channelInfoUserItemAvatarSize The size of a member avatar in the channel info dialog.
+ * @param selectedChannelMenuUserItemWidth The width of a member tile in the selected channel menu.
+ * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel menu.
+ * @param selectedChannelMenuUserItemAvatarSize The size of a member avatar in the selected channel menu.
  * @param attachmentsContentImageWidth The width of image attachments in the message list.
  * @param attachmentsContentImageHeight The height of image attachments in the message list.
  * @param attachmentsContentGiphyWidth The with of Giphy attachments in the message list.
@@ -44,9 +44,9 @@ public data class StreamDimens(
     public val channelItemVerticalPadding: Dp,
     public val channelItemHorizontalPadding: Dp,
     public val channelAvatarSize: Dp,
-    public val channelInfoUserItemWidth: Dp,
-    public val channelInfoUserItemHorizontalPadding: Dp,
-    public val channelInfoUserItemAvatarSize: Dp,
+    public val selectedChannelMenuUserItemWidth: Dp,
+    public val selectedChannelMenuUserItemHorizontalPadding: Dp,
+    public val selectedChannelMenuUserItemAvatarSize: Dp,
     public val attachmentsContentImageWidth: Dp,
     public val attachmentsContentImageHeight: Dp,
     public val attachmentsContentGiphyWidth: Dp,
@@ -83,9 +83,9 @@ public data class StreamDimens(
             channelItemVerticalPadding = 12.dp,
             channelItemHorizontalPadding = 8.dp,
             channelAvatarSize = 40.dp,
-            channelInfoUserItemWidth = 80.dp,
-            channelInfoUserItemHorizontalPadding = 8.dp,
-            channelInfoUserItemAvatarSize = 64.dp,
+            selectedChannelMenuUserItemWidth = 80.dp,
+            selectedChannelMenuUserItemHorizontalPadding = 8.dp,
+            selectedChannelMenuUserItemAvatarSize = 64.dp,
             attachmentsContentImageWidth = 250.dp,
             attachmentsContentImageHeight = 200.dp,
             attachmentsContentGiphyWidth = 250.dp,

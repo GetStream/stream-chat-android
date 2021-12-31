@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
@@ -40,7 +39,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
@@ -154,7 +153,7 @@ class ChannelActivity : AppCompatActivity() {
     /**
      * An example of what a custom UI can be, when not using [ChannelsScreen].
      *
-     * It's important to note that if we want to use the [ChannelInfo] to expose information and
+     * It's important to note that if we want to use the [SelectedChannelMenu] to expose information and
      * options that the user can make with each channel, we need to use a [Box] and overlap the
      * two elements. This makes it easier as it's all presented in the same layer, rather than being
      * wrapped in drawers or more components.
@@ -166,7 +165,7 @@ class ChannelActivity : AppCompatActivity() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel by remember { listViewModel.selectedChannel }
+        val selectedChannel by listViewModel.selectedChannel
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -179,6 +178,7 @@ class ChannelActivity : AppCompatActivity() {
 
                 SearchInput(
                     modifier = Modifier
+                        .background(color = ChatTheme.colors.appBackground)
                         .fillMaxWidth()
                         .padding(8.dp),
                     query = query,
@@ -198,17 +198,18 @@ class ChannelActivity : AppCompatActivity() {
 
             val selectedChannel = selectedChannel
             if (selectedChannel != null) {
-                ChannelInfo(
+                SelectedChannelMenu(
                     modifier = Modifier
                         .padding(16.dp)
-                        .wrapContentWidth()
+                        .fillMaxWidth()
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
                     isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
                     selectedChannel = selectedChannel,
                     currentUser = user,
-                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
+                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) },
+                    onDismiss = { listViewModel.dismissChannelAction() }
                 )
             }
         }

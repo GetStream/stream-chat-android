@@ -560,15 +560,17 @@ public final class io/getstream/chat/android/compose/ui/channels/header/Composab
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class io/getstream/chat/android/compose/ui/channels/info/ChannelInfoKt {
-	public static final fun ChannelInfo-ueL0Wzs (Lio/getstream/chat/android/client/models/Channel;ZLio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-}
-
-public final class io/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelInfoKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$ChannelInfoKt;
+public final class io/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$SelectedChannelMenuKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/info/ComposableSingletons$SelectedChannelMenuKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/channels/info/SelectedChannelMenuKt {
+	public static final fun SelectedChannelMenu-Ic2awPA (Lio/getstream/chat/android/client/models/Channel;ZLio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/ChannelItemKt {
@@ -1339,9 +1341,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun getAttachmentsContentImageWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentLinkWidth-D9Ej5fM ()F
 	public final fun getChannelAvatarSize-D9Ej5fM ()F
-	public final fun getChannelInfoUserItemAvatarSize-D9Ej5fM ()F
-	public final fun getChannelInfoUserItemHorizontalPadding-D9Ej5fM ()F
-	public final fun getChannelInfoUserItemWidth-D9Ej5fM ()F
 	public final fun getChannelItemHorizontalPadding-D9Ej5fM ()F
 	public final fun getChannelItemVerticalPadding-D9Ej5fM ()F
 	public final fun getCommandSuggestionItemHorizontalPadding-D9Ej5fM ()F
@@ -1352,6 +1351,9 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun getMentionSuggestionItemHorizontalPadding-D9Ej5fM ()F
 	public final fun getMentionSuggestionItemVerticalPadding-D9Ej5fM ()F
 	public final fun getMessageOptionsItemHeight-D9Ej5fM ()F
+	public final fun getSelectedChannelMenuUserItemAvatarSize-D9Ej5fM ()F
+	public final fun getSelectedChannelMenuUserItemHorizontalPadding-D9Ej5fM ()F
+	public final fun getSelectedChannelMenuUserItemWidth-D9Ej5fM ()F
 	public final fun getSuggestionListElevation-D9Ej5fM ()F
 	public final fun getSuggestionListMaxHeight-D9Ej5fM ()F
 	public final fun getSuggestionListPadding-D9Ej5fM ()F
