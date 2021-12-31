@@ -91,6 +91,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added an animation to the `ChannelInfo` component.
 - Avatars now show fallback initials in case there was an error while loading images from the network. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Added multiline mentions support [#2859](https://github.com/GetStream/stream-chat-android/pull/2859)
 
 ### ✅ Added
 - Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
