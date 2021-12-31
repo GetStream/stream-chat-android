@@ -573,7 +573,7 @@ public class MessageComposerController(
         /**
          * The regex pattern used to check if the message ends with incomplete mention.
          */
-        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
+        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
 
         /**
          * The regex pattern used to check if the message ends with incomplete command.
