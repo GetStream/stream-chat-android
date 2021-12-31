@@ -165,7 +165,7 @@ class ChannelActivity : AppCompatActivity() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel by remember { listViewModel.selectedChannel }
+        val selectedChannel by listViewModel.selectedChannel
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
