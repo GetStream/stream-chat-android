@@ -257,7 +257,7 @@ private fun MessageListHeaderConnectedPreview() {
         MessageListHeader(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1
         )
@@ -271,7 +271,7 @@ private fun MessageListHeaderConnectingPreview() {
         MessageListHeader(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
             connectionState = ConnectionState.CONNECTING
@@ -286,7 +286,7 @@ private fun MessageListHeaderOfflinePreview() {
         MessageListHeader(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
             connectionState = ConnectionState.OFFLINE
@@ -301,7 +301,7 @@ private fun MessageListHeaderUserTypingPreview() {
         MessageListHeader(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
             typingUsers = listOf(PreviewUserData.user2)
@@ -316,7 +316,7 @@ private fun MessageListHeaderManyMembersPreview() {
         MessageListHeader(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .wrapContentHeight(),
             channel = PreviewChannelData.channelWithManyMembers,
             currentUser = PreviewUserData.user1,
         )
