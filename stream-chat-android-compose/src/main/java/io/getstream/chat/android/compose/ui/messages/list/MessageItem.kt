@@ -206,6 +206,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
+            textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false
         )
     } else {
