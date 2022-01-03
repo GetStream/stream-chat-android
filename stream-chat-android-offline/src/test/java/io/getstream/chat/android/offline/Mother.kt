@@ -469,7 +469,7 @@ internal fun randomChannelInfo(
 )
 
 internal fun randomChannel(
-    cid: String = randomString(),
+    cid: String = randomCID(),
     id: String = randomString(),
     type: String = randomString(),
     watcherCount: Int = randomInt(),

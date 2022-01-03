@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -149,6 +150,15 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
     ): Call<Unit>
+
+    @CheckResult
+    fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>>
 
     @CheckResult
     fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>>

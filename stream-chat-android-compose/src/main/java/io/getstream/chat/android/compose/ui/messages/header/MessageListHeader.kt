@@ -49,8 +49,8 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
- * @param titleContent The content shown in the middle of the header and represents the core information, by default
- * [DefaultMessageHeaderTitle].
+ * @param centerContent The content shown in the middle of the header and represents the core information, by default
+ * [DefaultMessageListHeaderCenterContent].
  * @param trailingContent The content shown at the end of the header, by default a [ChannelAvatar].
  */
 @Composable
@@ -72,8 +72,8 @@ public fun MessageListHeader(
         )
     },
 
-    titleContent: @Composable RowScope.() -> Unit = {
-        DefaultMessageHeaderTitle(
+    centerContent: @Composable RowScope.() -> Unit = {
+        DefaultMessageListHeaderCenterContent(
             modifier = Modifier.weight(1f),
             channel = channel,
             currentUser = currentUser,
@@ -106,7 +106,7 @@ public fun MessageListHeader(
 
             leadingContent()
 
-            titleContent()
+            centerContent()
 
             trailingContent()
         }
@@ -114,8 +114,8 @@ public fun MessageListHeader(
 }
 
 /**
- * Default header title, that handles if we should show a loading view for network,
- * or the channel information.
+ * Represents the center content of [MessageListHeader]. By default shows header title, that handles
+ * if we should show a loading view for network, or the channel information.
  *
  * @param channel The channel used for the title information.
  * @param modifier Modifier for styling.
@@ -125,7 +125,7 @@ public fun MessageListHeader(
  * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  */
 @Composable
-public fun DefaultMessageHeaderTitle(
+public fun DefaultMessageListHeaderCenterContent(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,

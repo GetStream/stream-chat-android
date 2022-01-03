@@ -12,14 +12,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Updated dependency versions
-  - Kotlin 1.5.31
-  - Compose framework 1.0.5
-  - AndroidX
-  - Lottie 4.2.2
-  - OkHttp 4.9.3
-  - Room 2.4.0
-  - and other, see [#2771](https://github.com/GetStream/stream-chat-android/pull/2771) for more details
+- 🚨 Breaking change: Markdown support is moved into a standalone module `stream-chat-android-markdown-transformer` which is not included by default. You can use it with `ChatUI.messageTextTransformer` to add Markdown support to your app. You can find more information [here](https://getstream.io/chat/docs/sdk/android/ui/chatui/#markdown). [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
 
 ### ✅ Added
 
@@ -51,16 +44,18 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed a bug when hard deleted messages still remain in the UI.
-- Stabilized behavior of users' updates propagation across values of the channels and the messages. [#2803](https://github.com/GetStream/stream-chat-android/pull/2803)
+- Fixed populating mentions after editing the message. `Message::mentionedUsers` shouldn't be empty if edited message contains mentioned users. [#2852](https://github.com/GetStream/stream-chat-android/pull/2852)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `memberLimit` to `ChatDomain::queryChannels` and `ChatDomain::queryChannelsLoadMore` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `QueryChannelsLoadMore` usecase. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
+- `QueryChannelsController::loadMore` is removed and logic is moved into `ChatDomain`. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -75,9 +70,117 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added `memberLimit` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
+- Added `ChatMessageTextTransformer` to transform messages and set them to `TextView`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
+- Added `AutoLinkableTextTransformer` which is an implementation of `ChatMessageTextTransformer`. After applying the transformer, it also makes links clickable in TextView. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
+
+### ⚠️ Changed
+- `ChatUI.markdown` is deprecated in favour of `ChatUI.messageTextTransformer`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed a small issue with user avatars flickering [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
+
+### ⬆️ Improved
+- Added an animation to the `SelectedChannelMenu` component.
+- Added an animation to the `ChannelInfo` component.
+- Avatars now show fallback initials in case there was an error while loading images from the network. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
+- Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Added multiline mentions support [#2859](https://github.com/GetStream/stream-chat-android/pull/2859)
+
+### ✅ Added
+- Added the `headerContent` and `centerContent` Slot APIs for the `SelectedChannelMenu` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
+- Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
+- You can now define a `placeholderPainter` for the `Avatar` that is shown while the image is loading. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
+- Added more Slot APIs to the`MessageComposer` and `MessageInput` components [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+
+### ⚠️ Changed
+- Updated [ChatTheme documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/). [#2833](https://github.com/GetStream/stream-chat-android/pull/2833)
+- Updated [ChannelsScreen documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/). [#2839](https://github.com/GetStream/stream-chat-android/pull/2839)
+- Updated [ChannelItem documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-item/). [#2832](https://github.com/GetStream/stream-chat-android/pull/2832)
+- Updated [ChannelListHeader documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list-header/). [#2828](https://github.com/GetStream/stream-chat-android/pull/2828)
+- Updated [Component Architecture documentation](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/). [#2834](https://github.com/GetStream/stream-chat-android/pull/2834)
+- Updated [SelectedChannelMenu documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/selected-channel-menu/). [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
+- Updated [ChannelList documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list/). [#2847](https://github.com/GetStream/stream-chat-android/pull/2847)
+- Updated [AttachmentsPicker documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/attachments-picker/) [#2860](https://github.com/GetStream/stream-chat-android/pull/2860)
+- Renamed the `ChannelInfo` component to `SelectedChannelMenu`. [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
+- Updated [Overview documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/). [#2836](https://github.com/GetStream/stream-chat-android/pull/2836)
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+
+# December 30th, 2021 - 4.25.1
+## stream-chat-android-client
+### ✅ Added
+- Added support to paginate messages pinned in a channel. [#2848](https://github.com/GetStream/stream-chat-android/pull/2848).
+
+
+# December 23th, 2021 - 4.25.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Updated dependency versions
+  - Kotlin 1.5.31
+  - Compose framework 1.0.5
+  - AndroidX
+  - Lottie 4.2.2
+  - OkHttp 4.9.3
+  - Room 2.4.0
+  - and other, see [#2771](https://github.com/GetStream/stream-chat-android/pull/2771) for more details
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed a bug when hard deleted messages still remain in the UI.
+- Stabilized behavior of users' updates propagation across values of the channels and the messages. [#2803](https://github.com/GetStream/stream-chat-android/pull/2803)
+
+### ⚠️ Changed
+- 🚨 Breaking change: Added `cachedChannel` parameter to `ChatEventHandler::handleChatEvent` [#2807](https://github.com/GetStream/stream-chat-android/pull/2807)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
 - Users' updates done in runtime are now propagated to the `MessageListView` component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 - Fixed the display of image attachments on the pinned message list screen. [#2792](https://github.com/GetStream/stream-chat-android/pull/2792)
 -  Button for commands is now disabled in edit mode. 
+- Small bug fix for borders of attachments
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 and Japanese 🇯🇵 translation.
@@ -92,6 +195,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
+
 ### ❌ Removed
 
 ## stream-chat-android-compose
@@ -125,28 +229,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 - Removed some reduntant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 
 # December 9th, 2021 - 4.24.0

@@ -252,6 +252,7 @@ public sealed interface ChatDomain {
      * @param sort the sort for the channels, by default will sort on last_message_at.
      * @param limit the number of channels to retrieve
      * @param messageLimit how many messages to fetch per channel.
+     * @param memberLimit The number of members per channel.
      *
      * @return Executable async [Call] responsible for loading more channels.
      *
@@ -265,6 +266,7 @@ public sealed interface ChatDomain {
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
+        memberLimit: Int,
     ): Call<List<Channel>>
 
     /**

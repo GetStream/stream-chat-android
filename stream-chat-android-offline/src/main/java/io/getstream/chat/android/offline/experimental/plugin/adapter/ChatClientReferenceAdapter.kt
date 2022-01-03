@@ -15,7 +15,7 @@ import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
 /**
- * Adapter for [ChatClient] that wraps some it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
+ * Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
  */
 public class ChatClientReferenceAdapter(private val chatClient: ChatClient) {
     /** Reference request of the channels query. */

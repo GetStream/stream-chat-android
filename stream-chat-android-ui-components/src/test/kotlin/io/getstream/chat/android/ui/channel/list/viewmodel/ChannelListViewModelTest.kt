@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
@@ -80,6 +81,7 @@ private class Fixture {
     private val chatDomain: ChatDomain = mock {
         on(it.channelMutes) doReturn MutableStateFlow(emptyList())
     }
+    private val chatClient: ChatClient = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsCall = TestCall(queryChannelsControllerResult)
     private val queryChannelsLoadMoreCall: Call<List<Channel>> = mock()
@@ -97,7 +99,8 @@ private class Fixture {
                 any(),
                 eq(ChannelListViewModel.DEFAULT_SORT),
                 any(),
-                any()
+                any(),
+                any(),
             )
         ) doReturn queryChannelsCall
         whenever(queryChannelsControllerResult.isSuccess) doReturn true
@@ -121,7 +124,8 @@ private class Fixture {
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
-        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any())) doReturn queryChannelsLoadMoreCall
+        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any(), any())) doReturn queryChannelsLoadMoreCall
+        whenever(chatClient.queryChannels(any())) doReturn queryChannelsLoadMoreCall
         whenever(queryChannelsLoadMoreCall.enqueue(any())) doAnswer {
             val channels = channelsStateFlow.value + moreChannels
             channelsStateFlow.value = channels
@@ -130,5 +134,5 @@ private class Fixture {
         return this
     }
 
-    fun please() = ChannelListViewModel(chatDomain = chatDomain)
+    fun please() = ChannelListViewModel(chatDomain = chatDomain, chatClient = chatClient)
 }

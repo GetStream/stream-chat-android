@@ -5,11 +5,12 @@ import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdownImpl
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
  * ChatUI handles any configuration for the Chat UI elements.
@@ -45,11 +46,40 @@ public object ChatUI {
         }
 
     private var markdownOverride: ChatMarkdown? = null
-    private val defaultMarkdown: ChatMarkdown by lazy { ChatMarkdownImpl(appContext) }
+    private val defaultMarkdown: ChatMarkdown by lazy {
+        ChatMarkdown { textView, message ->
+            textView.text = message
+        }
+    }
+
+    @Deprecated(message = "ChatUI.markdown is deprecated. Markdown support is extracted into another module. " +
+        "See docs for more reference",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            expression = "ChatUI.messageTextTransformer")
+    )
     public var markdown: ChatMarkdown
         get() = markdownOverride ?: defaultMarkdown
         set(value) {
             markdownOverride = value
+        }
+
+    private var textTransformerOverride: ChatMessageTextTransformer? = null
+    private val defaultTextTransformer: ChatMessageTextTransformer by lazy {
+        AutoLinkableTextTransformer { textView, messageItem ->
+            // Bypass to markdown by default for backwards compatibility.
+            markdown.setText(textView, messageItem.message.text)
+        }
+    }
+
+    /**
+     * Allows customising the message text's format or style.
+     * For example, it can be used to provide markdown support in chat or it can be used to highlight specific messages by making them bold etc.
+     */
+    public var messageTextTransformer: ChatMessageTextTransformer
+        get() = textTransformerOverride ?: defaultTextTransformer
+        set(value) {
+            textTransformerOverride = value
         }
 
     private var avatarBitmapFactoryOverride: AvatarBitmapFactory? = null
