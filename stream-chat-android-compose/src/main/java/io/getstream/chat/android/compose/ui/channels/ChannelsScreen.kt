@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,7 +39,7 @@ import io.getstream.chat.android.compose.state.channel.list.MuteChannel
 import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
@@ -90,7 +89,7 @@ public fun ChannelsScreen(
         )
     )
 
-    val selectedChannel by remember { listViewModel.selectedChannel }
+    val selectedChannel by listViewModel.selectedChannel
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
@@ -152,7 +151,7 @@ public fun ChannelsScreen(
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
         ) {
-            ChannelInfo(
+            SelectedChannelMenu(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .animateEnterExit(
@@ -186,10 +185,10 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_channel_info_leave_group_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title
                 ),
                 message = stringResource(
-                    id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
@@ -199,10 +198,10 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_title
                 ),
                 message = stringResource(
-                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },

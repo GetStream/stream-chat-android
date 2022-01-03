@@ -176,18 +176,26 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort, limit, messageLimit)
+        memberLimit: Int,
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(
+        filter = filter,
+        sort = sort,
+        limit = limit,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+    )
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort, messageLimit)
+    ): Call<List<Channel>> =
+        chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort, messageLimit = messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort)
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort)
 
     override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
         chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)

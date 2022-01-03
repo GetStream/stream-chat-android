@@ -22,15 +22,13 @@ import java.util.regex.Pattern
 @InternalStreamChatApi
 public object Linkify {
 
-    private val COMPARATOR: Comparator<LinkSpec> = object : Comparator<LinkSpec> {
-        override fun compare(a: LinkSpec, b: LinkSpec): Int {
-            return when {
-                a.start < b.start -> -1
-                a.end > b.end -> -1
-                a.start > b.start -> 1
-                a.end < b.end -> 1
-                else -> 0
-            }
+    private val COMPARATOR: Comparator<LinkSpec> = Comparator { a, b ->
+        when {
+            a.start < b.start -> -1
+            a.end > b.end -> -1
+            a.start > b.start -> 1
+            a.end < b.end -> 1
+            else -> 0
         }
     }
 
@@ -110,31 +108,31 @@ public object Linkify {
     }
 
     private fun makeUrl(
-        url: String,
+        url: String?,
         prefixes: Array<String>,
         matcher: Matcher,
         filter: Linkify.TransformFilter?,
-    ): String {
-        var url = url
-        if (filter != null) {
-            url = filter.transformUrl(matcher, url)
-        }
+    ): String? {
+        if (url == null) return null
+
+        var transformedUrl = filter?.transformUrl(matcher, url) ?: url
+
         var hasPrefix = false
         for (i in prefixes.indices) {
-            if (url.regionMatches(0, prefixes[i], 0, prefixes[i].length, ignoreCase = true)) {
+            if (transformedUrl.regionMatches(0, prefixes[i], 0, prefixes[i].length, ignoreCase = true)) {
                 hasPrefix = true
 
                 // Fix capitalization if necessary
-                if (!url.regionMatches(0, prefixes[i], 0, prefixes[i].length, ignoreCase = false)) {
-                    url = prefixes[i] + url.substring(prefixes[i].length)
+                if (!transformedUrl.regionMatches(0, prefixes[i], 0, prefixes[i].length, ignoreCase = false)) {
+                    transformedUrl = prefixes[i] + transformedUrl.substring(prefixes[i].length)
                 }
                 break
             }
         }
         if (!hasPrefix && prefixes.isNotEmpty()) {
-            url = prefixes[0] + url
+            transformedUrl = prefixes[0] + transformedUrl
         }
-        return url
+        return transformedUrl
     }
 
     private fun gatherLinks(
@@ -150,7 +148,7 @@ public object Linkify {
             val start = m.start()
             val end = m.end()
             if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
-                val url: String = makeUrl(m.group(0), schemes, m, transformFilter)
+                val url: String? = makeUrl(m.group(0), schemes, m, transformFilter)
                 val spec = LinkSpec(url = url, start = start, end = end)
                 links.add(spec)
             }
