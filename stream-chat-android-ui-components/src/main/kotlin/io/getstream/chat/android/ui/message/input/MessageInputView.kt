@@ -717,8 +717,7 @@ public class MessageInputView : ConstraintLayout {
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isEditMode
+            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode
             commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
