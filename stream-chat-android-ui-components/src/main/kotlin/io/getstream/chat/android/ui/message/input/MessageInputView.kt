@@ -728,7 +728,7 @@ public class MessageInputView : ConstraintLayout {
         val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
 
         val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
-        return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && isEditMode
+        return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && !isEditMode
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
