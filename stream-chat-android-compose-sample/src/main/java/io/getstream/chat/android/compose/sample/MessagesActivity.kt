@@ -78,7 +78,6 @@ class MessagesActivity : AppCompatActivity() {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     channelId = channelId,
-                    messageLimit = 30,
                     onBackPressed = { finish() },
                     onHeaderActionClick = {}
                 )
