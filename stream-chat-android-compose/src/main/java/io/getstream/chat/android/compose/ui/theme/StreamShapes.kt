@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
  * @param bottomSheet The shape of components used as bottom sheets.
  * @param suggestionList The shape of suggestion list popup.
  * @param attachmentSiteLabel The shape of the label showing website name over link attachments.
- * @param header The shape of the headers.
+ * @param header The shape of the headers, such as the ones appearing on the Channel or Message screens.
  */
 @Immutable
 public data class StreamShapes(

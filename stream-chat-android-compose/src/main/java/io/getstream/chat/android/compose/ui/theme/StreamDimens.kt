@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
  * @param userReactionItemWidth The width of user reaction item.
  * @param userReactionItemAvatarSize The size of a user avatar in the user reaction item.
  * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
- * @param headerElevation The elevation of the header.
+ * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message screens.
  */
 @Immutable
 public data class StreamDimens(

@@ -38,6 +38,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             }
         }
     }
+}
 ```
 
 This component is stateless and doesn't have its own `ViewModel`. You need to provide the data to the header, otherwise it doesn't know what to render.
@@ -113,7 +114,7 @@ fun MessageListHeader(
 * `modifier`: Modifier for the root component. You can use it to add padding or change the dimensions and such, however attributes such as color, shape and elevation have their own parameters.
 * `typingUsers`: List of typing users used to show their names along with a typing indicator.
 * `messageMode`: Used to determine the header title. If we're in a thread, we show a title saying who the owner of the parent message is.
-* `connectionState`: The state of WebSocket connection, used to switch between the member count text and the network status information.
+* `connectionState`: Used to switch between the member count text and the network status information.
 * `color`: The color of the header.
 * `shape`: The shape of the header.
 * `elevation`: The elevation of the header.
@@ -148,18 +149,13 @@ fun MessageListHeader(
 )
 ```
 
-* `leadingContent`: Represents the leading content part of the header. By default shows a back button.
-    * override the default behavior but keep the UI by overriding `onBackPressed`
-    * or override both the UI and the default behavior by overriding `leadingContent`
-* `centerContent`: Represents the core and center part of the header. By default shows information about the channel.
-    * override the default behavior but keep the UI by overriding `onHeaderActionClick`
-    * or override both the UI and the default behavior by overriding `centerContent`
-* `trailingContent`: Represents the content at the end of the header. By default shows the channel avatar.
-    * override both the UI and the default behavior by overriding `trailingContent`
+* `leadingContent`: Represents the content at the beginning of the header. By default shows a back button that you can override or customize the behavior of `onBackPressed`.
+* `centerContent`: Represents the core and center part of the header. By default shows information about the channel that you can override or customize the behavior of `onHeaderActionClick`.
+* `trailingContent`: Represents the content at the end of the header. By default shows the channel avatar that you can override.
 
 **Here's an example of customizing the UI:**
 
-First, create a button with a drawable of your choosing.
+First, create a button with a drawable of your choosing:
 
 ```kotlin
 @Composable
@@ -179,7 +175,7 @@ fun InfoButton() {
 }
 ```
 
-Then place that button into the `trailingContent` slot while placing our own `ChannelAvatar` component into the `leadingContent` slot.
+Then place that button into the `trailingContent` slot while placing our own `ChannelAvatar` component into the `leadingContent` slot:
 
 ```kotlin
 MessageListHeader(

@@ -98,15 +98,9 @@ fun ChannelListHeader(
 * `color`: The color of the header.
 * `shape`: The shape of the header.
 * `elevation`: The elevation of the header.
-* `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
-    * override the default behavior but keep the UI by overriding `onAvatarClick`,
-    * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.
-* `centerContent`: Customizable composable function parameter that overrides the center content. This allows you to either:
-    * override the shown data but keep the UI, by passing in the `title` and `connectionState`.
-    * or override both the UI and behavior by changing the `centerContent` parameter from the default to your own.
-* `trailingContent`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
-    * override the default behavior but keep the UI by overriding `onHeaderActionClick`,
-    * or override both the UI and behavior by changing the `trailingContent` parameter from the default to your own.
+* `leadingContent`: Represents the content at the beginning of the header. By default shows the channel avatar that you can override or change the behavior of `onAvatarClick`.
+* `centerContent`: Represents the core and center part of the header. By default shows the title and the network status that you can override.
+* `trailingContent`: Represents the content at the end of the header. By default shows a button that you can override or change the behavior of `trailingContent`.
 
 Here's an example of customizing the UI of the header:
 
