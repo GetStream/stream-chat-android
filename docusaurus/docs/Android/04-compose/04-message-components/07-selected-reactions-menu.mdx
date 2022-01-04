@@ -2,7 +2,7 @@
 
 The `SelectedReactionsMenu` is a component that displays a list of message reactions with the users who left them. If a message already contains reactions, the user can tap on the section with reactions to show the component.
 
-This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. Internally, it contains the following parts:
+This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. The component shows the following UI:
 
 * **Reaction options**: The top part that shows a list of reactions the user can use to react to the message.
 * **User reactions**: The main part that shows a list of users with their reactions left for the message.
@@ -64,7 +64,7 @@ To handle these actions, you can override them like so:
 
 ```kotlin
 if (selectedMessageState is SelectedMessageReactionsState) {
-    SelectedMessageMenu(
+    SelectedReactionsMenu(
         ..., // State and options
         onMessageAction = { action ->
             composerViewModel.onMessageAction(action)
