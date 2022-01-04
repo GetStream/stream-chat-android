@@ -51,7 +51,7 @@ Here are the actions exposed by the `SelectedReactionsMenu` component:
 ```kotlin
 @Composable
 fun SelectedReactionsMenu(
-    ..., // State and options
+    ..., // State
     onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit = {},
 )
@@ -65,7 +65,7 @@ To handle these actions, you can override them like so:
 ```kotlin
 if (selectedMessageState is SelectedMessageReactionsState) {
     SelectedReactionsMenu(
-        ..., // State and options
+        ..., // State
         onMessageAction = { action ->
             composerViewModel.onMessageAction(action)
 			listViewModel.onMessageAction(action)
