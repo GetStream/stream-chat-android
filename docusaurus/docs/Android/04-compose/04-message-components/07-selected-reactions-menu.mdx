@@ -1,11 +1,11 @@
 # SelectedReactionsMenu
 
-The `SelectedReactionsMenu` is a component that displays message reactions. If a message already contains reactions, the user can tap on the section with reactions to show the `SelectedReactionsMenu`.
+The `SelectedReactionsMenu` is a component that displays a list of message reactions with the users who left them. If a message already contains reactions, the user can tap on the section with reactions to show the component.
 
 This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. Internally, it contains the following parts:
 
-* **Reaction options**: Shows a list of reactions the user can use to react to the message.
-* **User reactions**: Shows a list of users with their reactions for the message.
+* **Reaction options**: The top part that shows a list of reactions the user can use to react to the message.
+* **User reactions**: The main part that shows a list of users with their reactions left for the message.
 
 Let's check how to use the component!
 
@@ -42,7 +42,7 @@ The aforementioned code produces the following UI:
 
 The component shows reactions from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) on the top, followed by a list of message reactions.
 
-To dismiss the menu just tap outside of the dialog or press the system back button.
+To dismiss the component just tap outside of the dialog or press the system back button.
 
 ## Handling Actions
 
@@ -169,7 +169,7 @@ if (selectedMessageState is SelectedMessageReactionsState) {
 
 The example above shows how to replace the header content with a custom `Text`.
 
-The UI Looks like this:
+The result looks like this:
 
 ![Custom SelectedReactionsMenu component with a custom header content](../../assets/compose_custom_selected_reactions_menu_custom_header_slot.png)
 
