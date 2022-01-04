@@ -55,7 +55,7 @@ public fun SimpleMenu(
             shape = shape,
             backgroundColor = ChatTheme.colors.barsBackground
         ) {
-            Column(modifier) {
+            Column {
                 headerContent()
 
                 centerContent()
