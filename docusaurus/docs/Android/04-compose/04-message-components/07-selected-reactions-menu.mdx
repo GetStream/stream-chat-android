@@ -1,47 +1,44 @@
-# SelectedMessageMenu
+# SelectedReactionsMenu
 
-The `SelectedMessageMenu` component allows you to show different message options to the user when they select a message in the `MessageList`. This is usually done by long tapping on a message item.
+The `SelectedReactionsMenu` component allows you to show a list of user reactions left for the message when they select message reactions in the `MessageList`. This is usually done by tapping on message item reaction.
 
 This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. Internally, it sets up the following components:
 
 * **Reaction options**: Shows a list of reactions the user can use to react to the message. Those reactions are shown as `ReactionOptionItem`s.
-* **Message options**: Shows a list of actions the user can take with the selected message, such as **delete**, **edit**, **reply to**, **flag message**, **copy message**, **mute user** and **start a thread** actions.
+* **User reactions**: Shows a list of reactions left for the message.
 
 Let's see how to use it!
 
 ## Usage
 
-If you're using the [`MessagesScreen`](./01-messages-screen.mdx), the `SelectedMessageMenu` is already set up for you. To use the `SelectedMessageMenu` in your custom screens, simply add it to your UI, like so:
+If you're using the [`MessagesScreen`](./01-messages-screen.mdx), the `SelectedReactionsMenu` is already set up for you. To use the `SelectedReactionsMenu` in your custom screens, simply add it to your UI, like so:
 
 ```kotlin
 // The rest of your UI
-if (selectedMessageState is SelectedMessageOptionsState) {
+if (selectedMessageState is SelectedMessageReactionsState) {
     val selectedMessage = selectedMessageState.message
-    SelectedMessageMenu(
+    SelectedReactionsMenu(
         modifier = Modifier.align(Alignment.BottomCenter),
-        // Define your message options
-        messageOptions = defaultMessageOptionsState(
-            selectedMessage = selectedMessage,
-            currentUser = user,
-            isInThread = listViewModel.isInThread
-        ),
-        // The message you selected
+        // The currently logged-in user
+        currentUser = user,
+        // The message whose reactions you selected
         message = selectedMessage,
         onMessageAction = { action ->
             // Handle message action
         },
-        onDismiss = {
+        onDismiss = { 
             // Handle dismiss
         }
     )
 }
+
 ```
 
-As you can see, adding the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageOptionsState`, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
+As you can see, adding the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageReactionsState`, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
 
 The small snippet of code above produces the following UI:
 
-![Default SelectedMessageMenu component](../../assets/compose_default_selected_message_menu.png)
+![Default SelectedReactionsMenu component](../../assets/compose_default_selected_reactions_menu.png)
 
 The component shows reactions from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) on the top, followed by the message actions you passed in.
 
@@ -49,7 +46,7 @@ The menu overlay has a darker background and tapping it will dismiss the compone
 
 ## Handling Actions
 
-`SelectedMessageMenu` exposes the following actions:
+`SelectedReactionsMenu` exposes the following actions:
 
 ```kotlin
 @Composable
@@ -66,7 +63,7 @@ fun SelectedMessageMenu(
 To handle these actions, you can override them like so:
 
 ```kotlin
-if (selectedMessageState is SelectedMessageOptionsState) {
+if (selectedMessageState is SelectedMessageReactionsState) {
     SelectedMessageMenu(
         ..., // State and options
         onMessageAction = { action ->
@@ -92,23 +89,22 @@ You can customize the reactions you show, as well as the message options in this
 
 ```kotlin
 @Composable
-fun SelectedMessageMenu(
+fun SelectedReactionsMenu(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    messageOptions: List<MessageOption>,
     ... // Message and actions
 )
 ```
 
 * `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
-* `messageOptions`: Allows you to customize which message options are shown in the overlay. You can use `defaultMessageOptions()` to get the default actions that we expose in our SDK.
 
 If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 
-By default `SelectedMessageMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
+By default `SelectedReactionsMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
 ```kotlin
-if (selectedMessageState is SelectedMessageOptionsState) {
-    SelectedMessageMenu(
+if (selectedMessageState is SelectedMessageReactionsState){
+    // Use a Modifier to customize the appearance
+    SelectedReactionsMenu(
         // Use a Modifier to customize the appearance
         modifier = Modifier
             .align(Alignment.Center)
@@ -116,11 +112,12 @@ if (selectedMessageState is SelectedMessageOptionsState) {
             .wrapContentSize(),
         // Assign a different shape to the Composable element
         shape = ChatTheme.shapes.attachment,
+        currentUser = user,
         onMessageAction = { action ->
             // Handle message action
         },
-        onDismiss = {
-            // Handle dismiss
+        onDismiss = { 
+            // Handle dismiss 
         },
         ...
     )
@@ -129,13 +126,13 @@ if (selectedMessageState is SelectedMessageOptionsState) {
 
 The code above will produce the following UI:
 
-![Stylised SelectedMessageMenu component](../../assets/compose_custom_selected_message_menu_shape_and_alignment.png)
+![Custom SelectedReactionsMenu component](../../assets/compose_custom_selected_reactions_menu_shape_and_alignment.png)
 
 `SelectedMessageMenu` provides you with Composable slots that are ready for more extensive customizations.
 
 ```kotlin
 @Composable
-fun SelectedMessageMenu(
+fun SelectedReactionsMenu(
     ...,
     headerContent: @Composable ColumnScope.() -> Unit = {
         // Header content
@@ -146,13 +143,13 @@ fun SelectedMessageMenu(
 )
 ```
 * `headerContent`: Allows you to customize what content you show on the top part of the menu. By default it shows `ReactionOptions`
-* `centerContent`: Allows you to customize what content you show on the center part of the menu. By default it shows `MessageOptions`
+* `centerContent`: Allows you to customize what content you show on the center part of the menu. By default it shows `UserReactions`
 
 You can easily override either slot:
 
 ```kotlin
-if (selectedMessageState is SelectedMessageOptionsState) {
-    SelectedMessageMenu(
+if (selectedMessageState is SelectedMessageReactionsState) {
+    SelectedReactionsMenu(
             ...,
             // Custom header content
             headerContent = {
@@ -163,7 +160,7 @@ if (selectedMessageState is SelectedMessageOptionsState) {
                         .padding(horizontal = 8.dp),
                     style = ChatTheme.typography.body,
                     color = ChatTheme.colors.textHighEmphasis,
-                    text = "Available Message Options")
+                    text = "User Reactions")
             }
         )
 }
@@ -173,6 +170,6 @@ The example above shows how to replace the header content with a custom `Text`.
 
 The UI Looks like this:
 
-![Stylised SelectedMessageMenu component with a custom headerContent](../../assets/compose_selected_message_menu_custom_header_slot.png)
+![Custom SelectedReactionsMenu component with a custom header content](../../assets/compose_custom_selected_reactions_menu_custom_header_slot.png)
 
 
