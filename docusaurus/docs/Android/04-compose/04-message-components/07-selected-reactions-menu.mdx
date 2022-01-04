@@ -1,13 +1,13 @@
 # SelectedReactionsMenu
 
-The `SelectedReactionsMenu` component allows you to show a list of user reactions left for the message when they select message reactions in the `MessageList`. This is usually done by tapping on message item reaction.
+The `SelectedReactionsMenu` is a component that displays message reactions. If a message already contains reactions, the user can tap on the section with reactions to show the `SelectedReactionsMenu`.
 
-This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. Internally, it sets up the following components:
+This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. Internally, it contains the following parts:
 
-* **Reaction options**: Shows a list of reactions the user can use to react to the message. Those reactions are shown as `ReactionOptionItem`s.
-* **User reactions**: Shows a list of reactions left for the message.
+* **Reaction options**: Shows a list of reactions the user can use to react to the message.
+* **User reactions**: Shows a list of users with their reactions for the message.
 
-Let's see how to use it!
+Let's check how to use the component!
 
 ## Usage
 
@@ -34,31 +34,31 @@ if (selectedMessageState is SelectedMessageReactionsState) {
 
 ```
 
-As you can see, adding the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageReactionsState`, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
+As you can see, showing the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageReactionsState`, you pass in the the currently logged in user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
 
-The small snippet of code above produces the following UI:
+The aforementioned code produces the following UI:
 
 ![Default SelectedReactionsMenu component](../../assets/compose_default_selected_reactions_menu.png)
 
-The component shows reactions from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) on the top, followed by the message actions you passed in.
+The component shows reactions from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) on the top, followed by a list of message reactions.
 
-The menu overlay has a darker background and tapping it will dismiss the component, as will pressing the system back button.
+To dismiss the menu just tap outside of the dialog or press the system back button.
 
 ## Handling Actions
 
-`SelectedReactionsMenu` exposes the following actions:
+Here are the actions exposed by the `SelectedReactionsMenu` component:
 
 ```kotlin
 @Composable
-fun SelectedMessageMenu(
+fun SelectedReactionsMenu(
     ..., // State and options
     onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit = {},
 )
 ```
 
-* `onMessageAction`: Handler for the user triggering any message actions, such as **reply**, **edit**, **delete**, **react** and others.
-* `onDismiss`: Handler for when the component is dismissed by clicking outside of the component UI or pressing the system back button.
+* `onMessageAction`: Handler for the user performing an action such as leaving a reaction.
+* `onDismiss`: Handler when the menu is dismissed by clicking outside of the dialog area or by pressing the system back button.
 
 To handle these actions, you can override them like so:
 
@@ -85,7 +85,7 @@ Next, let's see how to customize the overlay.
 
 ## Customization
 
-You can customize the reactions you show, as well as the message options in this component:
+You can customize the reactions you show:
 
 ```kotlin
 @Composable
@@ -95,14 +95,14 @@ fun SelectedReactionsMenu(
 )
 ```
 
-* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
+* `reactionTypes`: Allows you customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
 
-If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
+If you want to customize the reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 
 By default `SelectedReactionsMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
 ```kotlin
-if (selectedMessageState is SelectedMessageReactionsState){
+if (selectedMessageState is SelectedMessageReactionsState) {
     // Use a Modifier to customize the appearance
     SelectedReactionsMenu(
         // Use a Modifier to customize the appearance
@@ -128,7 +128,7 @@ The code above will produce the following UI:
 
 ![Custom SelectedReactionsMenu component](../../assets/compose_custom_selected_reactions_menu_shape_and_alignment.png)
 
-`SelectedMessageMenu` provides you with Composable slots that are ready for more extensive customizations.
+`SelectedReactionsMenu` provides you with Composable slots that are ready for more extensive customizations.
 
 ```kotlin
 @Composable
