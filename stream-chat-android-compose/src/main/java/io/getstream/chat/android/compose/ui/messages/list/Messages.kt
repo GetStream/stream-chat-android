@@ -108,12 +108,12 @@ public fun Messages(
         }
 
         when {
-            newMessageState == Other && firstVisibleItemIndex < 3 -> {
+            !currentListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
                 coroutineScope.launch {
                     currentListState.animateScrollToItem(0)
                 }
             }
-            newMessageState == MyOwn -> coroutineScope.launch {
+            !currentListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     currentListState.scrollToItem(5)
                 }
@@ -127,7 +127,7 @@ public fun Messages(
                     onClick = {
                         coroutineScope.launch {
                             if (firstVisibleItemIndex > 5) {
-                                currentListState.scrollToItem(5) // TODO - Try a custom animation spec
+                                currentListState.scrollToItem(5)
                             }
                             currentListState.animateScrollToItem(0)
                         }
