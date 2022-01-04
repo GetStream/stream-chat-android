@@ -87,12 +87,16 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed a small issue with user avatars flickering [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
+- Fixed faulty scrolling behavior in `Messages` by adding an autoscroll. [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
+- Fixed the font size of avatar initials in the message list. [2862](https://github.com/GetStream/stream-chat-android/pull/2862)
 
 ### ⬆️ Improved
 - Added an animation to the `SelectedChannelMenu` component.
 - Added an animation to the `ChannelInfo` component.
 - Avatars now show fallback initials in case there was an error while loading images from the network. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Updated primary accent colors in order to achieve a better contrast ratio for accessibility [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
+- Removed default background color from `MessageItem` [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Added multiline mentions support [#2859](https://github.com/GetStream/stream-chat-android/pull/2859)
 
 ### ✅ Added
@@ -111,6 +115,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [ChannelList documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list/). [#2847](https://github.com/GetStream/stream-chat-android/pull/2847)
 - Updated [AttachmentsPicker documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/attachments-picker/) [#2860](https://github.com/GetStream/stream-chat-android/pull/2860)
 - Renamed the `ChannelInfo` component to `SelectedChannelMenu`. [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
+- Updated [Overview documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/). [#2836](https://github.com/GetStream/stream-chat-android/pull/2836)
 
 ### ❌ Removed
 
@@ -178,6 +183,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Users' updates done in runtime are now propagated to the `MessageListView` component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 - Fixed the display of image attachments on the pinned message list screen. [#2792](https://github.com/GetStream/stream-chat-android/pull/2792)
+-  Button for commands is now disabled in edit mode. [#2812](https://github.com/GetStream/stream-chat-android/pull/2812)
 - Small bug fix for borders of attachments
 
 ### ⬆️ Improved
