@@ -161,6 +161,7 @@ public class MessageInputView : ConstraintLayout {
     private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
         when (newValue) {
             is InputMode.Reply -> {
+                suggestionListController?.commandsEnabled = commandsEnabled
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_input_reply)
                 binding.inputModeIcon.setImageDrawable(messageInputViewStyle.replyInputModeIcon)
@@ -169,14 +170,17 @@ public class MessageInputView : ConstraintLayout {
             }
 
             is InputMode.Edit -> {
+                suggestionListController?.commandsEnabled = false
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_edit_message)
                 binding.inputModeIcon.setImageDrawable(messageInputViewStyle.editInputModeIcon)
                 binding.messageInputFieldView.onEdit(newValue.oldMessage)
+                binding.commandsButton.isEnabled = false
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
 
             else -> {
+                suggestionListController?.commandsEnabled = commandsEnabled
                 binding.inputModeHeader.isVisible = false
                 if (previousValue is InputMode.Reply) {
                     binding.messageInputFieldView.onReplyDismissed()
@@ -708,20 +712,23 @@ public class MessageInputView : ConstraintLayout {
 
     private fun refreshControlsState() {
         with(binding) {
-            val commandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
+            val isCommandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
+            val isEditMode = messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !commandMode
-            commandsButton.isVisible = shouldShowCommandsButton() && !commandMode
-            commandsButton.isEnabled = !hasContent
+            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode
+            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode
+            commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
     }
 
     private fun shouldShowCommandsButton(): Boolean {
+        val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
+
         val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
-        return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled
+        return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && !isEditMode
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
