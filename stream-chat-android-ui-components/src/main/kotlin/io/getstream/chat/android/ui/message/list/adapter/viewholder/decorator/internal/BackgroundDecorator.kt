@@ -26,11 +26,11 @@ internal class BackgroundDecorator(private val messageBackgroundFactory: Message
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        viewHolder.binding.messageContainer.background =
-            messageBackgroundFactory.textAndAttachmentMessageBackground(
-                viewHolder.binding.messageContainer.context,
-                data
-            )
+        // viewHolder.binding.messageContainer.background =
+        //     messageBackgroundFactory.textAndAttachmentMessageBackground(
+        //         viewHolder.binding.messageContainer.context,
+        //         data
+        //     )
     }
 
     override fun decorateDeletedMessage(
