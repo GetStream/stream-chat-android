@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -16,6 +17,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
@@ -30,10 +32,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param message The selected message.
  * @param currentUser The currently logged in user.
  * @param onMessageAction Handler that propagates click events on each item.
+ * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of [SelectedReactionsMenu].
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
+ * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
  * @param centerContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
@@ -43,16 +47,20 @@ public fun SelectedReactionsMenu(
     message: Message,
     currentUser: User?,
     onMessageAction: (MessageAction) -> Unit,
+    onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedReactionsHeaderContent(
             message = message,
             reactionTypes = reactionTypes,
-            onMessageAction = onMessageAction
+            showMoreReactionsDrawableRes = showMoreReactionsDrawableRes,
+            onMessageAction = onMessageAction,
+            onShowMoreReactionsSelected = onShowMoreReactionsSelected
         )
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
@@ -77,19 +85,24 @@ public fun SelectedReactionsMenu(
  *
  * @param message The selected message.
  * @param reactionTypes Available reactions.
+ * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
  * @param onMessageAction Handler when the user selects a reaction.
+ * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more button.
  */
 @Composable
 internal fun DefaultSelectedReactionsHeaderContent(
     message: Message,
     reactionTypes: Map<String, Int>,
+    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
+    onShowMoreReactionsSelected: () -> Unit,
 ) {
     ReactionOptions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
         reactionTypes = reactionTypes,
+        showMoreReactionsDrawableRes = showMoreReactionsDrawableRes,
         onReactionOptionSelected = {
             onMessageAction(
                 React(
@@ -98,6 +111,7 @@ internal fun DefaultSelectedReactionsHeaderContent(
                 )
             )
         },
+        onShowMoreReactionsSelected = onShowMoreReactionsSelected,
         ownReactions = message.ownReactions
     )
 }
@@ -166,7 +180,8 @@ private fun OneSelectedReactionMenuPreview() {
         SelectedReactionsMenu(
             message = message,
             currentUser = PreviewUserData.user1,
-            onMessageAction = {}
+            onMessageAction = {},
+            onShowMoreReactionsSelected = {}
         )
     }
 }
@@ -183,7 +198,8 @@ private fun ManySelectedReactionsMenuPreview() {
         SelectedReactionsMenu(
             message = message,
             currentUser = PreviewUserData.user1,
-            onMessageAction = {}
+            onMessageAction = {},
+            onShowMoreReactionsSelected = {}
         )
     }
 }
