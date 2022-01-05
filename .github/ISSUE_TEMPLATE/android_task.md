@@ -1,8 +1,8 @@
 ---
-name: [Core/UI Components/Compose (choose one, delete rest)] SDK task
-about: Create a new task for the UI Components SDK.
-title: '[Core/UI Components/Compose (choose one, delete rest)] - '
-labels: [core/ui-components/compose (choose one, delete rest)]
+name: Android Chat SDK task
+about: Create a new task for the Android Chat SDK.
+title: ''
+labels: core/ui-components/compose (choose one, delete rest)
 assignees: ''
 ---
 
