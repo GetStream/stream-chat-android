@@ -23,7 +23,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
-import kotlin.math.min
 
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -79,58 +78,32 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     fun showGiphy(attachment: Attachment, containerView: View, maxWidth: Int) {
-        val url = attachment.giphyUrl(GiphyInfoType.FIXED_HEIGHT) ?: return
+        val url = attachment.giphyUrl(GiphyInfoType.FIXED_HEIGHT)
+        val fallbackUrl = attachment.run {
+            attachment.imagePreviewUrl
+                ?: titleLink
+                ?: ogUrl
+        }
+
 
         binding.giphyLabel.isVisible = true
 
-        // if (style.giphyConstantSizeEnabled) {
-        //     binding.imageView.updateLayoutParams {
-        //         height = style.giphyHeight
-        //     }
-        // } else {
-        //     giphyLayoutUpdate(attachment, containerView, maxWidth)
-        // }
+        if (url != null) {
+            showImageByUrl(url) {}
+        } else if (fallbackUrl != null) {
+            binding.imageView.updateLayoutParams {
+                height = style.giphyHeight
+            }
 
-        showImageByUrl(url) {}
-    }
-
-    // private fun giphyLayoutUpdate(attachment: Attachment, containerView: View, maxWidth: Int) {
-    //     attachment.giphyInfo(GiphyInfoType.ORIGINAL)?.let { giphyInfo ->
-    //         containerView.updateLayoutParams {
-    //             width = parseWidth(giphyInfo, maxWidth)
-    //             height = parseHeight(giphyInfo, maxWidth)
-    //         }
-    //
-    //         binding.imageView.updateLayoutParams {
-    //             height = parseHeight(giphyInfo, maxWidth) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-    //             width = parseWidth(giphyInfo, maxWidth) - DEFAULT_MARGIN_FOR_CONTAINER_DP.dpToPx()
-    //         }
-    //     }
-    // }
-
-    private fun parseWidth(giphyInfo: GiphyInfo, maxWidth: Int): Int {
-        return min(maxWidth, giphyInfo.width)
-    }
-
-    private fun parseHeight(giphyInfo: GiphyInfo, maxWidth: Int): Int {
-        return when {
-            giphyInfo.width > maxWidth -> giphyInfo.height.times(maxWidth.toFloat()).div(giphyInfo.width).toInt()
-
-            else -> giphyInfo.height
+            showImageByUrl(fallbackUrl) {}
         }
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-        binding.loadImage.isVisible = isLoading
     }
 
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
             placeholderDrawable = style.placeholderIcon,
-            // onStart = { showLoading(true) },
             onComplete = {
-                // showLoading(false)
                 onCompleteCallback()
             }
         )
@@ -148,23 +121,23 @@ internal class MediaAttachmentView : ConstraintLayout {
         bottomRight: Float,
         bottomLeft: Float,
     ) {
-        // ShapeAppearanceModel.Builder()
-        //     .setTopLeftCornerSize(topLeft)
-        //     .setTopRightCornerSize(topRight)
-        //     .setBottomRightCornerSize(bottomRight)
-        //     .setBottomLeftCornerSize(bottomLeft)
-        //     .build()
-        //     .let(this::setImageShape)
+        ShapeAppearanceModel.Builder()
+            .setTopLeftCornerSize(topLeft)
+            .setTopRightCornerSize(topRight)
+            .setBottomRightCornerSize(bottomRight)
+            .setBottomLeftCornerSize(bottomLeft)
+            .build()
+            .let(this::setImageShape)
     }
 
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
-        // binding.imageView.shapeAppearanceModel = shapeAppearanceModel
-        // binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-        //     setTint(style.imageBackgroundColor)
-        // }
-        // binding.moreCount.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-        //     setTint(style.moreCountOverlayColor)
-        // }
+        binding.imageView.shapeAppearanceModel = shapeAppearanceModel
+        binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(style.imageBackgroundColor)
+        }
+        binding.moreCount.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(style.moreCountOverlayColor)
+        }
     }
 
     private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
@@ -191,11 +164,7 @@ internal class MediaAttachmentView : ConstraintLayout {
         @Px val height: Int,
     )
 
-    private fun Attachment.giphyUrl(type: GiphyInfoType): String? =
-        giphyInfo(type)?.url
-            // ?: imagePreviewUrl
-            // ?: titleLink
-            // ?: ogUrl
+    private fun Attachment.giphyUrl(type: GiphyInfoType): String? = giphyInfo(type)?.url
 
     companion object {
         private const val NO_MORE_COUNT = 0
