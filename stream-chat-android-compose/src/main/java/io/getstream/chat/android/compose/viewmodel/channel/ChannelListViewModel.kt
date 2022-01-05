@@ -120,21 +120,6 @@ public class ChannelListViewModel(
     private var queryChannelsState: QueryChannelsState? = null
 
     /**
-     * Default value of number of channels to return when querying channels.
-     */
-    private val CHANNEL_LIMIT = 30
-
-    /**
-     * Default value of the number of messages to include in each channel when querying channels.
-     */
-    private val MESSAGE_LIMIT = 1
-
-    /**
-     * Default value of the number of members to include in each channel when querying channels.
-     */
-    private val MEMBER_LIMIT = 30
-
-    /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
@@ -384,5 +369,22 @@ public class ChannelListViewModel(
     private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
         return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
+    }
+
+    private companion object {
+        /**
+         * Default value of number of channels to return when querying channels.
+         */
+        private const val CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of the number of messages to include in each channel when querying channels.
+         */
+        private const val MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of the number of members to include in each channel when querying channels.
+         */
+        private const val MEMBER_LIMIT = 30
     }
 }
