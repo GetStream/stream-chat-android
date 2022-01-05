@@ -82,9 +82,7 @@ internal class GiphyAttachmentViewHolder(
 
         val attachment = data.message.attachments.first()
 
-        binding.messageContainer.post {
-            showGiphy(attachment, binding.messageContainer, binding.messageContainer.width)
-        }
+        showGiphy(attachment, binding.messageContainer, binding.messageContainer.width)
     }
 
     private fun showGiphy(attachment: Attachment, containerView: View, maxWidth: Int) {
