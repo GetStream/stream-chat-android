@@ -116,6 +116,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [AttachmentsPicker documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/attachments-picker/) [#2860](https://github.com/GetStream/stream-chat-android/pull/2860)
 - Renamed the `ChannelInfo` component to `SelectedChannelMenu`. [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
 - Updated [Overview documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/). [#2836](https://github.com/GetStream/stream-chat-android/pull/2836)
+- Updated [Custom Attachments documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/) with minor sentence formatting changes [#2878](https://github.com/GetStream/stream-chat-android/pull/2878)
 
 ### ❌ Removed
 
