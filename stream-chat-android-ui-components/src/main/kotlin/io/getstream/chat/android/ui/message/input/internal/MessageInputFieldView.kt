@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.core.view.isVisible
@@ -61,7 +62,18 @@ internal class MessageInputFieldView : FrameLayout {
     internal val selectedAttachmentsCount: StateFlow<Int> = _selectedAttachmentsCount
 
     var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
-        if (oldMode != newMode) onModeChanged(newMode)
+        if (oldMode != newMode) {
+            onModeChanged(newMode)
+        }
+    }
+
+    private fun modeChangeIsAllowed(oldMode: Mode, newMode: Mode): Boolean {
+        return if (oldMode is Mode.EditMessageMode && newMode is Mode.CommandMode) {
+            false.also {
+                Toast.makeText(context, "It is not possible to use a command when editing messages", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } else true
     }
 
     var messageText: String
@@ -69,8 +81,10 @@ internal class MessageInputFieldView : FrameLayout {
             val text = binding.messageEditText.text?.toString() ?: String.EMPTY
             return mode.let { messageMode ->
                 when (messageMode) {
-                    is Mode.CommandMode -> text.substringAfter("/${messageMode.command.name} ")
-                        .let { "/${messageMode.command.name} $it" }
+                    is Mode.CommandMode -> {
+                        text.substringAfter("/${messageMode.command.name} ")
+                            .let { "/${messageMode.command.name} $it" }
+                    }
                     else -> text
                 }
             }
@@ -186,8 +200,12 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun autoCompleteCommand(command: Command) {
-        messageText = "/${command.name} "
-        mode = Mode.CommandMode(command)
+        val newMode = Mode.CommandMode(command)
+
+        if (modeChangeIsAllowed(mode, newMode)) {
+            messageText = "/${command.name} "
+            mode = newMode
+        }
     }
 
     fun autoCompleteUser(user: User) {

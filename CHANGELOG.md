@@ -73,6 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
 
 ### ⬆️ Improved
+- Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
 
 ### ✅ Added
 - Added `memberLimit` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
@@ -86,15 +87,20 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed a small issue with user avatars flickering. [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
+- Fixed a small issue with user avatars flickering [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
+- Fixed faulty scrolling behavior in `Messages` by adding an autoscroll. [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Fixed the font size of avatar initials in the message list. [2862](https://github.com/GetStream/stream-chat-android/pull/2862)
+- Fixed faulty scrolling behavior in `Channels` by adding an autoscroll. [#2887](  https://github.com/GetStream/stream-chat-android/pull/2887)
 
 ### ⬆️ Improved
 - Added an animation to the `SelectedChannelMenu` component.
 - Added an animation to the `ChannelInfo` component.
 - Avatars now show fallback initials in case there was an error while loading images from the network. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Updated primary accent colors in order to achieve a better contrast ratio for accessibility [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
+- Removed default background color from `MessageItem` [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Added multiline mentions support [#2859](https://github.com/GetStream/stream-chat-android/pull/2859)
+- Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
 
 ### ✅ Added
 - Added the `headerContent` and `centerContent` Slot APIs for the `SelectedChannelMenu` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
@@ -180,6 +186,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Users' updates done in runtime are now propagated to the `MessageListView` component. [#2769](https://github.com/GetStream/stream-chat-android/pull/2769)
 - Fixed the display of image attachments on the pinned message list screen. [#2792](https://github.com/GetStream/stream-chat-android/pull/2792)
+-  Button for commands is now disabled in edit mode. [#2812](https://github.com/GetStream/stream-chat-android/pull/2812)
 - Small bug fix for borders of attachments
 
 ### ⬆️ Improved
@@ -208,6 +215,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed the orientation and UI of ThreadParticipants [#2765](https://github.com/GetStream/stream-chat-android/pull/2765)
 - Improved the API structure more, made the components package more clear [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 - Improved the way to customize the message item types and containers [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
+- Added more parameters to the stateless version of the MessageComposer for consistency [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Added color and shape parameters to `MessageListHeader` and `ChannelListHeader` components [#2855](https://github.com/GetStream/stream-chat-android/pull/2855)
 
 ### ✅ Added
 - Added site name labels to link attachments for websites using the Open Graph protocol [#2785](https://github.com/GetStream/stream-chat-android/pull/2785)
@@ -227,9 +236,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Changed various component names, removed unused/redundant component blocks and moved to Default components [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 - Changed some of the component types regarding the message item [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
 - Moved message item components to `components.messages` [#2791](https://github.com/GetStream/stream-chat-android/pull/2791)
+- When querying for more channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled. [#2790](https://github.com/GetStream/stream-chat-android/pull/2790)
+- Updated [MessageListHeader Documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list-header/) [#2855](https://github.com/GetStream/stream-chat-android/pull/2855)
 
 ### ❌ Removed
-- Removed some reduntant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
+- Removed some redundant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
 
 # December 9th, 2021 - 4.24.0
