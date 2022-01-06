@@ -118,11 +118,14 @@ public fun ChannelsScreen(
             }
 
         ) {
-            Column(Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = ChatTheme.colors.appBackground)
+            ) {
                 if (isShowingSearch) {
                     SearchInput(
                         modifier = Modifier
-                            .background(color = ChatTheme.colors.appBackground)
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth(),
                         query = searchQuery,

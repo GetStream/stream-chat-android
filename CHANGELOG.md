@@ -89,6 +89,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed a small issue with user avatars flickering [#2822](https://github.com/GetStream/stream-chat-android/pull/2822)
 - Fixed faulty scrolling behavior in `Messages` by adding an autoscroll. [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Fixed the font size of avatar initials in the message list. [2862](https://github.com/GetStream/stream-chat-android/pull/2862)
+- Fixed faulty scrolling behavior in `Channels` by adding an autoscroll. [#2887](  https://github.com/GetStream/stream-chat-android/pull/2887)
 
 ### ⬆️ Improved
 - Added an animation to the `SelectedChannelMenu` component.
