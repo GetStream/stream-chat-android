@@ -15,6 +15,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
     public abstract fun getClosedX(): Float
     public abstract fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float>
     public abstract fun isSwipeEnabled(): Boolean
+    public abstract fun isSwiped(): Boolean
     protected var listener: ChannelListView.SwipeListener? = null
     protected var swiping: Boolean = false
 

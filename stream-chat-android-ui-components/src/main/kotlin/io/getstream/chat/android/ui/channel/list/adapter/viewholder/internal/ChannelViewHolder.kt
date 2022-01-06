@@ -32,6 +32,8 @@ import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
+import io.getstream.chat.android.ui.utils.isRtlLayout
+import kotlin.math.absoluteValue
 
 internal class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
@@ -115,17 +117,30 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     override fun getOpenedX(): Float {
-        return -optionsMenuWidth
+        val isRtl = context.isRtlLayout
+
+        return if (isRtl) optionsMenuWidth else -optionsMenuWidth
     }
 
     override fun getClosedX(): Float {
         return 0f
     }
 
+    override fun isSwiped(): Boolean {
+        val swipeLimit = getOpenedX().absoluteValue / 2
+        val swipe = getSwipeView().x.absoluteValue
+
+        return swipe >= swipeLimit
+    }
+
     override fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float> {
-        val openedX = getOpenedX()
-        val closedX = getClosedX()
-        return openedX.coerceAtMost(closedX)..openedX.coerceAtLeast(closedX)
+        val isRtl = context.isRtlLayout
+
+        return if (isRtl) {
+            getClosedX()..getOpenedX()
+        } else {
+            getOpenedX()..getClosedX()
+        }
     }
 
     override fun isSwipeEnabled(): Boolean {

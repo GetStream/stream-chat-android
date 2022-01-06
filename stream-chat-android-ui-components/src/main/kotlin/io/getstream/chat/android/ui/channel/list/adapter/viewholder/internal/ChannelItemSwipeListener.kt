@@ -42,18 +42,21 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
 
     override fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
         // determine snap value
-        val openedX = viewHolder.getOpenedX()
-        val snapValue = when {
-            viewHolder.getSwipeView().x <= openedX / 2 -> openedX
-            else -> viewHolder.getClosedX()
+        val snapValue = if (viewHolder.isSwiped()) {
+            viewHolder.getOpenedX()
+        } else {
+            viewHolder.getClosedX()
         }
+
         // animate to snap
         viewHolder.getSwipeView().animateSwipeTo(snapValue)
-        // determine swipe state
-        val swipeState = when {
-            snapValue < 0 -> SwipeState.Open
-            else -> SwipeState.Closed
+
+        val swipeState = if (viewHolder.isSwiped()) {
+            SwipeState.Open
+        } else {
+            SwipeState.Closed
         }
+
         // persist swipe state for the current item
         swipeStateByPosition[adapterPosition] = swipeState
         // potentially reset all other items
