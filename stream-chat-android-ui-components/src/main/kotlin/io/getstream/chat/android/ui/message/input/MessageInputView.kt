@@ -158,6 +158,10 @@ public class MessageInputView : ConstraintLayout {
         init(attrs)
     }
 
+    public fun setInputTextDirection(direction: Int) {
+        binding.messageInputFieldView.textDirection = direction
+    }
+
     private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
         when (newValue) {
             is InputMode.Reply -> {
