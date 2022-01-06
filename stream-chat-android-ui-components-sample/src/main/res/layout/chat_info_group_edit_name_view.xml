@@ -35,7 +35,7 @@
         android:textColorHint="@color/stream_ui_text_color_hint"
         android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         app:layout_constraintBaseline_toBaselineOf="@+id/labelTextView"
         app:layout_constraintEnd_toStartOf="@id/cancelButton"
         app:layout_constraintStart_toEndOf="@id/labelTextView"

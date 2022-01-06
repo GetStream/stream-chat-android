@@ -29,7 +29,7 @@
             android:textColor="@color/stream_ui_text_color_primary"
             android:textSize="@dimen/stream_ui_text_large"
             android:textStyle="bold"
-            android:textDirection="anyRtl"
+            android:textDirection="firstStrongLtr"
             />
 
         <TextView
@@ -41,7 +41,7 @@
             android:singleLine="true"
             android:textColor="@color/stream_ui_text_color_secondary"
             android:textSize="@dimen/stream_ui_text_small"
-            android:textDirection="anyRtl"
+            android:textDirection="firstStrongLtr"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -67,7 +67,7 @@
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
         android:text="@string/stream_ui_channel_list_view_info"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         app:drawableStartCompat="@drawable/stream_ui_ic_single_user"
         />
 
@@ -76,7 +76,7 @@
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
         android:text="@string/stream_ui_channel_list_leave_channel"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         app:drawableStartCompat="@drawable/stream_ui_ic_leave_group"
         />
 
@@ -87,7 +87,7 @@
         android:text="@string/stream_ui_channel_list_delete_channel"
         android:textColor="@color/stream_ui_accent_red"
         android:visibility="gone"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         app:drawableStartCompat="@drawable/stream_ui_ic_delete"
         tools:visibility="visible"
         />
@@ -97,7 +97,7 @@
         style="@style/StreamUiChannelActionsButtonStyle"
         android:layout_width="match_parent"
         android:text="@string/stream_ui_channel_list_dismiss_dialog"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         app:drawableStartCompat="@drawable/stream_ui_ic_clear"
         />
 

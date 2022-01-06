@@ -39,7 +39,7 @@
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:textColor="@color/stream_ui_white"
-            android:textDirection="anyRtl"
+            android:textDirection="firstStrongLtr"
             />
 
     </FrameLayout>

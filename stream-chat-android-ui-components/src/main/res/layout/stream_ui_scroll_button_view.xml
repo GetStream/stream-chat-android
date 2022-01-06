@@ -42,7 +42,7 @@
         android:textSize="@dimen/stream_ui_scroll_button_unread_badge_text_size"
         android:textStyle="bold"
         android:visibility="gone"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         tools:text="5"
         tools:visibility="visible"
         />

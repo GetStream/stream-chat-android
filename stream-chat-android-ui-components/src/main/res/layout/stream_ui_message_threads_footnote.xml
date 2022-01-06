@@ -62,7 +62,7 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
-        android:textDirection="anyRtl"
+        android:textDirection="firstStrongLtr"
         app:layout_goneMarginStart="26dp"
         app:layout_goneMarginEnd="26dp"
         app:layout_constraintStart_toEndOf="@id/secondTheirUserImage"
