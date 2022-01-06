@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -87,7 +86,6 @@ public fun ChannelItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = ChatTheme.colors.appBackground)
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
