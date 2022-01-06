@@ -10,5 +10,5 @@ import io.getstream.chat.android.client.models.Channel
  */
 public data class ChannelItemState(
     val channel: Channel,
-    val isMuted: Boolean,
+    val isMuted: Boolean = false,
 )

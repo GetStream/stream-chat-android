@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -22,6 +23,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param users The users to show.
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
+ * @param textStyle The [TextStyle] that will be used for the initials.
  * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
@@ -29,6 +31,7 @@ public fun GroupAvatar(
     users: List<User>,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
+    textStyle: TextStyle = ChatTheme.typography.captionBold,
     onClick: (() -> Unit)? = null,
 ) {
     val avatarUsers = users.take(4)
@@ -58,6 +61,7 @@ public fun GroupAvatar(
                             .fillMaxSize(),
                         user = avatarUsers[imageIndex],
                         shape = RectangleShape,
+                        textStyle = textStyle,
                         showOnlineIndicator = false
                     )
                 }
@@ -77,6 +81,7 @@ public fun GroupAvatar(
                             .fillMaxSize(),
                         user = avatarUsers[imageIndex],
                         shape = RectangleShape,
+                        textStyle = textStyle,
                         showOnlineIndicator = false
                     )
                 }

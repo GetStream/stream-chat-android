@@ -81,6 +81,9 @@ fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState = ConnectionState.CONNECTED,
+    color: Color = ChatTheme.colors.barsBackground,
+    shape: Shape = ChatTheme.shapes.header,
+    elevation: Dp = ChatTheme.dimens.headerElevation,
     leadingContent: @Composable RowScope.() -> Unit = { ... },
     centerContent: @Composable RowScope.() -> Unit = { ... },
     trailingContent: @Composable RowScope.() -> Unit = { ... },
@@ -88,19 +91,16 @@ fun ChannelListHeader(
 )
 ```
 
-* `modifier`: Modifier for the root component styling. You can add things like background, elevation, padding and more.
+* `modifier`: Modifier for the root component. You can use it to add padding or change the dimensions and such, however attributes such as color, shape and elevation have their own parameters.
 * `title`: The text to show when you're connected to the Internet.
 * `currentUser`: The state of the current user, for displaying the `Avatar`.
 * `connectionState`: The state of WebSocket connection, used to switch between the title and the `NetworkLoadingView`.
-* `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
-    * override the default behavior but keep the UI by overriding `onAvatarClick`,
-    * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.
-* `centerContent`: Customizable composable function parameter that overrides the center content. This allows you to either:
-    * override the shown data but keep the UI, by passing in the `title` and `connectionState`.
-    * or override both the UI and behavior by changing the `centerContent` parameter from the default to your own.
-* `trailingContent`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
-    * override the default behavior but keep the UI by overriding `onHeaderActionClick`,
-    * or override both the UI and behavior by changing the `trailingContent` parameter from the default to your own.
+* `color`: The color of the header.
+* `shape`: The shape of the header.
+* `elevation`: The elevation of the header.
+* `leadingContent`: Represents the content at the beginning of the header. By default shows the channel avatar that you can override or change the behavior of `onAvatarClick`.
+* `centerContent`: Represents the core and center part of the header. By default shows the title and the network status that you can override.
+* `trailingContent`: Represents the content at the end of the header. By default shows a button that you can override or change the behavior of `trailingContent`.
 
 Here's an example of customizing the UI of the header:
 
