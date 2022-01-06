@@ -461,7 +461,6 @@ public class MessageListViewModel(
     private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
             chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
                 .enqueue()
         } else {
