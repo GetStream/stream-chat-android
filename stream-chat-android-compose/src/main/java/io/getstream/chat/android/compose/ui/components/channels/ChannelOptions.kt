@@ -104,7 +104,7 @@ public fun buildDefaultChannelOptionsState(
 
     return listOfNotNull(
         ChannelOptionState(
-            title = stringResource(id = R.string.stream_compose_channel_info_view_info),
+            title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
             iconColor = ChatTheme.colors.textLowEmphasis,
@@ -112,7 +112,7 @@ public fun buildDefaultChannelOptionsState(
         ),
         if (canLeaveChannel) {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_leave_group),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
                 iconColor = ChatTheme.colors.textLowEmphasis,
@@ -121,7 +121,7 @@ public fun buildDefaultChannelOptionsState(
         } else null,
         if (isMuted) {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_unmute_channel),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_channel),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_unmute),
                 iconColor = ChatTheme.colors.textLowEmphasis,
@@ -129,7 +129,7 @@ public fun buildDefaultChannelOptionsState(
             )
         } else {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_mute_channel),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_channel),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_mute),
                 iconColor = ChatTheme.colors.textLowEmphasis,
@@ -138,7 +138,7 @@ public fun buildDefaultChannelOptionsState(
         },
         if (canDeleteChannel) {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                 iconColor = ChatTheme.colors.errorAccent,
@@ -146,7 +146,7 @@ public fun buildDefaultChannelOptionsState(
             )
         } else null,
         ChannelOptionState(
-            title = stringResource(id = R.string.stream_compose_channel_info_dismiss),
+            title = stringResource(id = R.string.stream_compose_selected_channel_menu_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
             iconColor = ChatTheme.colors.textLowEmphasis,

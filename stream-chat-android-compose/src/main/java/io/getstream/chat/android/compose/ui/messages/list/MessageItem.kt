@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -141,7 +142,7 @@ public fun MessageItem(
     }
 
     val backgroundColor =
-        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else ChatTheme.colors.appBackground
+        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else Color.Transparent
     val shouldAnimateBackground = !message.pinned && focusState != null
 
     val color = if (shouldAnimateBackground) animateColorAsState(
@@ -206,6 +207,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
+            textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false
         )
     } else {

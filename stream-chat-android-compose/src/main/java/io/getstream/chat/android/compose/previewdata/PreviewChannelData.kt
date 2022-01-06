@@ -10,6 +10,7 @@ import java.util.Date
 internal object PreviewChannelData {
 
     val channelWithImage: Channel = Channel().apply {
+        cid = "channelType:channelId1"
         image = "https://picsum.photos/id/237/128/128"
         members = listOf(
             Member(user = PreviewUserData.user1),
@@ -18,6 +19,7 @@ internal object PreviewChannelData {
     }
 
     val channelWithOnlineUser: Channel = Channel().apply {
+        cid = "channelType:channelId2"
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2.copy(online = true)),
@@ -25,6 +27,7 @@ internal object PreviewChannelData {
     }
 
     val channelWithFewMembers: Channel = Channel().apply {
+        cid = "channelType:channelId3"
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
@@ -33,16 +36,18 @@ internal object PreviewChannelData {
     }
 
     val channelWithManyMembers: Channel = Channel().apply {
+        cid = "channelType:channelId4"
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
             Member(user = PreviewUserData.user3),
             Member(user = PreviewUserData.user4),
-            Member(user = PreviewUserData.user5),
+            Member(user = PreviewUserData.userWithoutImage),
         )
     }
 
     val channelWithMessages: Channel = Channel().apply {
+        cid = "channelType:channelId5"
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
