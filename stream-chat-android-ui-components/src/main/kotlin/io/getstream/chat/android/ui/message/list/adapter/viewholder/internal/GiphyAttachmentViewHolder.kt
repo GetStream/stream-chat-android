@@ -6,7 +6,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.constrainViewEndToEndOfView
+import com.getstream.sdk.chat.utils.extensions.constrainViewStartToEndOfView
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -74,6 +77,15 @@ internal class GiphyAttachmentViewHolder(
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
 
+        binding.root.updateConstraints {
+            if (data.isTheirs) {
+                constrainViewStartToEndOfView(binding.messageContainer, binding.marginStart)
+            } else {
+                constrainViewEndToEndOfView(binding.messageContainer, binding.marginEnd)
+            }
+
+        }
+
         imageCorners(binding.mediaAttachmentView, data)
 
         modifiedListeners(listeners)?.let { listeners ->
@@ -82,7 +94,9 @@ internal class GiphyAttachmentViewHolder(
 
         val attachment = data.message.attachments.first()
 
-        showGiphy(attachment, binding.messageContainer, binding.messageContainer.width)
+        if (diff?.attachments == true) {
+            showGiphy(attachment, binding.messageContainer, binding.messageContainer.width)
+        }
     }
 
     private fun showGiphy(attachment: Attachment, containerView: View, maxWidth: Int) {
