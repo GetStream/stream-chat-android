@@ -19,6 +19,7 @@ import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -35,7 +36,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
- * @param bodyContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
+ * @param centerContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
  */
 @Composable
 public fun SelectedReactionsMenu(
@@ -54,20 +55,20 @@ public fun SelectedReactionsMenu(
             onMessageAction = onMessageAction
         )
     },
-    bodyContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsBodyContent(
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        DefaultSelectedReactionsCenterContent(
             message = message,
             currentUser = currentUser
         )
     },
 ) {
-    SelectedMessageDialog(
+    SimpleMenu(
         modifier = modifier,
         shape = shape,
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        bodyContent = bodyContent
+        centerContent = centerContent
     )
 }
 
@@ -87,7 +88,7 @@ internal fun DefaultSelectedReactionsHeaderContent(
     ReactionOptions(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
         reactionTypes = reactionTypes,
         onReactionOptionSelected = {
             onMessageAction(
@@ -102,13 +103,13 @@ internal fun DefaultSelectedReactionsHeaderContent(
 }
 
 /**
- * Default body content for the selected reactions menu.
+ * Default center content for the selected reactions menu.
  *
  * @param message The selected message.
  * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultSelectedReactionsBodyContent(
+internal fun DefaultSelectedReactionsCenterContent(
     message: Message,
     currentUser: User?,
 ) {

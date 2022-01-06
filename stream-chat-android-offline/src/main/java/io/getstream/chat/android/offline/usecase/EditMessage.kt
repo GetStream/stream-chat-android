@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.populateMentions
 import io.getstream.chat.android.offline.utils.validateCid
 
 internal class EditMessage(private val domainImpl: ChatDomainImpl) {
@@ -20,8 +21,11 @@ internal class EditMessage(private val domainImpl: ChatDomainImpl) {
         val cid = message.cid
         validateCid(cid)
 
-        val channelController = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
+            val channelController = domainImpl.channel(cid)
+
+            message.populateMentions(channelController.toChannel())
+
             channelController.editMessage(message)
         }
     }

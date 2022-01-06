@@ -1,6 +1,6 @@
 # ChannelList
 
-The `ChannelList` component allows you to build paginated list of `Channel` items, with exposed long tap and single tap actions. We provide two versions of the `ChannelList` component:
+The `ChannelList` component allows you to build a paginated list of `Channel` items with exposed long tap and single tap actions. We provide two versions of the `ChannelList` component:
 
 * **Bound**: This version binds itself to a `ChannelListViewModel` and loads all the required data. It also connects long item tap and pagination events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list, which doesn't depend on a `ViewModel`, and instead depends on pure state from external sources to render its UI.
@@ -13,9 +13,9 @@ The **bound** version of the list uses the **stateless** list internally. That w
 
 Based on the provided state, the component shows the following UI:
 
-* `LoadingView`: If we're loading the initial data.
-* `EmptyView`: If loading is done but there is no data to show.
-* The list of channels: Channel items with various actions like item taps and long taps and pagination.
+* Loading indicator if we're loading the initial data.
+* Empty view if loading is done but there is no data to show.
+* The list of channels with pagination.
 
 Let's see how to show a list of channels.
 
@@ -55,15 +55,15 @@ fun ChannelList(
     ),
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
-    onChannelLongClick: (Channel) -> Unit = { viewModel.onChannelSelected(it) },
+    onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
     ... // Other UI-related parameters
 )
 ```
 
-* `viewModel`: The instance of the `ChannelListViewModel` that this component reads data from and sends event to. Pass in your own instance if you want more control over your business logic, such as changing `Channel` filters or sort order in runtime.
-* `onLastItemReached`: Handler called when reaching the last item in the list, to trigger pagination. You don't need to override this if you're using the default `viewModel`, but if you're using a custom one, you can add custom behavior.
-* `onChannelClick`: Handler for the user tapping on an item. Useful for starting the `MessagesScreen` in your app.
-* `onChannelLongClick`: Handler for the user long tapping on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions, if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
+* `viewModel`: The instance of the `ChannelListViewModel` that this component reads data from and sends events to. Pass in your own instance if you want more control over your business logic, such as changing `Channel` filters or sort order in runtime.
+* `onLastItemReached`: Handler when the user reaches the last item in the list to trigger pagination. You don't need to override this if you're using the default `viewModel`, but if you're using a custom one, you can add custom behavior.
+* `onChannelClick`: Handler when the user taps on an item. Useful for starting the `MessagesScreen`.
+* `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
 
 Here's an example of using the default `viewModel`, but overriding the behavior:
 
@@ -82,12 +82,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     onChannelLongClick = { // Custom long tap handler
                         selectedChannel = it
                     },
-                    onChannelClick = ::openMessages, // Single tap handler
+                    onChannelClick = {
+                        // Start the MessagesScreen          
+                    },
                 )
-
-                // Show custom UI once the state changes
+                
                 if (selectedChannel != null) {
-                    
+                    // Show custom UI
                 }
             }
         }
@@ -110,13 +111,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
             Box(modifier = Modifier.fillMaxSize()) {
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
-                    viewModel = listViewModel, // passing in our ViewModel
-                    onChannelClick = ::openMessages
+                    viewModel = listViewModel, // Passing in our ViewModel
+                    onChannelClick = {
+                        // Start the MessagesScreen
+                    }
                 )
 
-                // reading ViewModel state
                 if (listViewModel.selectedChannel != null) {
-                        // show some custom UI
+                    // Show custom UI
                 }
             }
         }
@@ -135,42 +137,32 @@ If you're looking to customize the UI of the `ChannelList`, there are a few ways
 ```kotlin
 @Composable
 fun ChannelList(
+    // State and action handlers
     modifier: Modifier = Modifier,
-    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyView(modifier) },
-    emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
-        DefaultChannelSearchEmptyView(
-            searchQuery = searchQuery,
-            modifier = modifier
-        )
-    },
-    itemContent: @Composable (ChannelItem) -> Unit = { channelItem ->
-        DefaultChannelItem(
-            channelItem = channelItem,
-            viewModel.user.value,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
-    },
-    ... // State & actions
+    loadingContent: @Composable () -> Unit = { ... },
+    emptyContent: @Composable () -> Unit = { ... },
+    emptySearchContent: @Composable (String) -> Unit = { ... },
+    itemContent: @Composable (ChannelItem) -> Unit = { ... },
+    divider: @Composable () -> Unit = { ... },
 )
 ```
 
-* `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
-* `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
-* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available. 
-* `emptySearchContent`: Customizable composable function that allows you to override the empty state, when there are no channels matching the search query.
-* `itemContent`: Customizable composable function that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda, when building your custom UI.
+* `modifier`: The modifier for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
+* `loadingContent`: Customizable composable that allows you to override the default loading indicator when loading the initial data set.
+* `emptyContent`: Customizable composable that allows you to override the empty state, when there are no channels available. 
+* `emptySearchContent`: Customizable composable that allows you to override the empty state, when there are no channels matching the search query.
+* `itemContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda when building your custom UI.
+* `divider`: Customizable composable that allows you to override the item divider.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
 
 ```kotlin
 @Composable
 fun CustomChannelListItem() {
-    val user by ... // fetch user from ChatDomain or ViewModel
+    val user by listViewModel.user.collectAsState() // Fetch user
 
     ChannelList(
-        ..., // set up state
+        ..., // Set up state
         itemContent = { // Customize the channel items
             Card(modifier = Modifier
                 .padding(2.dp)
@@ -190,7 +182,7 @@ fun CustomChannelListItem() {
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text = ChatTheme.channelNameFormatter.format(it.channel),
+                        text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
                         style = ChatTheme.typography.bodyBold,
                         maxLines = 1,
                     )
@@ -207,4 +199,4 @@ The snippet above will generate the following UI:
 
 As you can see, the items are now within a card and show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.
 
-And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.
+And you can customize the `emptyContent` and the `loadingContent` to your needs if you need custom UI there.

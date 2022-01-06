@@ -10,8 +10,10 @@ import io.getstream.chat.android.offline.experimental.plugin.Config
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
 
@@ -49,5 +51,8 @@ class ChatInitializer(private val context: Context) {
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
             .build()
+
+        // Using markdown as text transformer
+        ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
     }
 }

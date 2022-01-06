@@ -1,18 +1,24 @@
 package io.getstream.chat.android.compose.ui.channels
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +39,7 @@ import io.getstream.chat.android.compose.state.channel.list.MuteChannel
 import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
@@ -57,6 +63,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 public fun ChannelsScreen(
     filters: FilterObject = Filters.and(
@@ -82,7 +89,7 @@ public fun ChannelsScreen(
         )
     )
 
-    val selectedChannel by remember { listViewModel.selectedChannel }
+    val selectedChannel by listViewModel.selectedChannel
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
@@ -111,11 +118,14 @@ public fun ChannelsScreen(
             }
 
         ) {
-            Column(Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = ChatTheme.colors.appBackground)
+            ) {
                 if (isShowingSearch) {
                     SearchInput(
                         modifier = Modifier
-                            .background(color = ChatTheme.colors.appBackground)
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth(),
                         query = searchQuery,
@@ -138,16 +148,28 @@ public fun ChannelsScreen(
             }
         }
 
-        val currentSelectedChannel = selectedChannel
-        if (currentSelectedChannel != null) {
-            ChannelInfo(
+        val selectedChannel = selectedChannel ?: Channel()
+        AnimatedVisibility(
+            visible = selectedChannel.cid.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
+            SelectedChannelMenu(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter),
-                selectedChannel = currentSelectedChannel,
+                    .align(Alignment.BottomCenter)
+                    .animateEnterExit(
+                        enter = slideInVertically(
+                            initialOffsetY = { height -> height },
+                            animationSpec = tween()
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { height -> height },
+                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
+                        )
+                    ),
+                selectedChannel = selectedChannel,
                 currentUser = user,
-                isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
+                isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
@@ -155,7 +177,8 @@ public fun ChannelsScreen(
                         is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
                         else -> listViewModel.performChannelAction(action)
                     }
-                }
+                },
+                onDismiss = { listViewModel.dismissChannelAction() }
             )
         }
 
@@ -165,10 +188,10 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_channel_info_leave_group_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title
                 ),
                 message = stringResource(
-                    id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
@@ -178,10 +201,10 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_title
                 ),
                 message = stringResource(
-                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },

@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
@@ -57,6 +56,7 @@ public class QueryChannelsController internal constructor(
     public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
     public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
     public val channels: StateFlow<List<Channel>> = mutableState.channels
+
     @Deprecated(
         message = "Use ChatDomain.channelMutes instead",
         replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
@@ -116,7 +116,11 @@ public class QueryChannelsController internal constructor(
         // update the info for that channel from the channel repo
         logger.logI("received channel event $event")
 
-        val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter)
+        val cachedChannel = if (event is CidEvent) {
+            domainImpl.getCachedChannel(event.cid)
+        } else null
+
+        val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter, cachedChannel)
         when (handlingResult) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
@@ -191,15 +195,6 @@ public class QueryChannelsController internal constructor(
             .intersect(cIds)
             .map { it to domainImpl.channel(it).toChannel() }
             .toMap()
-    }
-
-    internal suspend fun loadMore(
-        channelLimit: Int = CHANNEL_LIMIT,
-        messageLimit: Int = MESSAGE_LIMIT,
-    ): Result<List<Channel>> {
-        val oldChannels = mutableState._channels.value.values
-        val pagination = loadMoreRequest(channelLimit, messageLimit)
-        return runQuery(pagination).map { it - oldChannels }
     }
 
     private suspend fun addChannel(channel: Channel) = queryChannelsLogic.addChannel(channel)

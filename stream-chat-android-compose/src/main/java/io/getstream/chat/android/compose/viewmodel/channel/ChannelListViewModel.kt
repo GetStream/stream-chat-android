@@ -8,18 +8,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.Flow
@@ -111,6 +115,11 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Current query channels state that contains filter, sort and other states related to channels query.
+     */
+    private var queryChannelsState: QueryChannelsState? = null
+
+    /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
@@ -129,6 +138,17 @@ public class ChannelListViewModel(
                         channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
                     }
                 }
+        }
+
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val queryChannelsRequest = QueryChannelsRequest(
+                filter = createQueryChannelsFilter(queryConfig.value.filters, ""),
+                querySort = queryConfig.value.querySort,
+                limit = CHANNEL_LIMIT,
+                messageLimit = MESSAGE_LIMIT,
+                memberLimit = MEMBER_LIMIT,
+            )
+            queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
         }
     }
 
@@ -250,7 +270,19 @@ public class ChannelListViewModel(
         }
 
         channelsState = channelsState.copy(isLoadingMore = true)
-        chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
+        val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val currentQuery = queryChannelsState?.nextPageRequest?.value
+            currentQuery?.copy(
+                filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
+                querySort = currentConfig.querySort
+            )?.let {
+                chatClient.queryChannels(it)
+            }
+        } else {
+            chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort)
+        }
+
+        call?.enqueue()
     }
 
     /**
@@ -337,5 +369,22 @@ public class ChannelListViewModel(
     private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
         return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
+    }
+
+    private companion object {
+        /**
+         * Default value of number of channels to return when querying channels.
+         */
+        private const val CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of the number of messages to include in each channel when querying channels.
+         */
+        private const val MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of the number of members to include in each channel when querying channels.
+         */
+        private const val MEMBER_LIMIT = 30
     }
 }

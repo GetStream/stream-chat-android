@@ -34,12 +34,12 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.compose.ui.components.composer.CooldownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
@@ -66,13 +66,14 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
- * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
- * @param commandPopupContent Customizable composable function that represents the instant command suggestions popup.
+ * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
+ * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param integrations A view that represents custom integrations. By default, we provide
  * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
  * their own integrations, which they need to hook up to their own data providers and UI.
- * @param label The input field label (hint).
- * @param input The input field for the composer, [MessageInput] by default.
+ * @param label Customizable composable that represents the input field label (hint).
+ * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
+ * @param trailingContent Customizable composable that represents the trailing content of the composer, send button by default.
  */
 @Composable
 public fun MessageComposer(
@@ -120,27 +121,28 @@ public fun MessageComposer(
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        MessageInput(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .weight(1f),
-            label = label,
+        DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved
+            onAttachmentRemoved = onAttachmentRemoved,
+            label = label
+        )
+    },
+    trailingContent: @Composable (MessageComposerState) -> Unit = {
+        DefaultMessageComposerTrailingContent(
+            value = it.inputValue,
+            coolDownTime = it.coolDownTime,
+            validationErrors = it.validationErrors,
+            attachments = it.attachments,
+            onSendMessage = { input, attachments ->
+                val message = viewModel.buildNewMessage(input, attachments)
+
+                onSendMessage(message)
+            }
         )
     },
 ) {
-    val value by viewModel.input.collectAsState()
-    val selectedAttachments by viewModel.selectedAttachments.collectAsState()
-    val activeAction by viewModel.lastActiveAction.collectAsState(null)
-    val validationErrors by viewModel.validationErrors.collectAsState()
-    val mentionSuggestions by viewModel.mentionSuggestions.collectAsState()
-    val commandSuggestions by viewModel.commandSuggestions.collectAsState()
-    val cooldownTimer by viewModel.cooldownTimer.collectAsState()
-    val messageMode by viewModel.messageMode.collectAsState()
-    val alsoSendToChannel by viewModel.alsoSendToChannel.collectAsState()
+    val messageComposerState by viewModel.messageComposerState.collectAsState()
 
     MessageComposer(
         modifier = modifier,
@@ -158,18 +160,8 @@ public fun MessageComposer(
         commandPopupContent = commandPopupContent,
         integrations = integrations,
         input = input,
-        messageComposerState = MessageComposerState(
-            inputValue = value,
-            attachments = selectedAttachments,
-            action = activeAction,
-            validationErrors = validationErrors,
-            mentionSuggestions = mentionSuggestions,
-            commandSuggestions = commandSuggestions,
-            cooldownTimer = cooldownTimer,
-            messageMode = messageMode,
-            alsoSendToChannel = alsoSendToChannel,
-        ),
-        shouldShowIntegrations = true,
+        trailingContent = trailingContent,
+        messageComposerState = messageComposerState,
         onCancelAction = onCancelAction
     )
 }
@@ -179,29 +171,40 @@ public fun MessageComposer(
  * manual way to handle and represent data and various operations.
  *
  * @param messageComposerState The state of the message input.
- * @param onSendMessage Handler when the user taps on the send message button.
- * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
+ * @param onSendMessage Handler when the user wants to send a message.
+ * @param modifier Modifier for styling.
+ * @param onAttachmentsClick Handler for the default Attachments integration.
+ * @param onCommandsClick Handler for the default Commands integration.
+ * @param onValueChange Handler when the input field value changes.
+ * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
+ * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
- * @param modifier Modifier for styling.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
- * @param mentionPopupContent Customizable composable function that represents the mention suggestions popup.
- * @param commandPopupContent Customizable composable function that represents the instant command suggestions popup.
- * @param shouldShowIntegrations If we should show or hide integrations.
- * @param integrations Composable that represents integrations for the composer, such as Attachments.
- * @param input Composable that represents the input field in the composer.
+ * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
+ * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
+ * @param integrations A view that represents custom integrations. By default, we provide
+ * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
+ * their own integrations, which they need to hook up to their own data providers and UI.
+ * @param label Customizable composable that represents the input field label (hint).
+ * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
+ * @param trailingContent Customizable composable that represents the trailing content of the composer, send button by default.
  */
 @Composable
 public fun MessageComposer(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
-    onCancelAction: () -> Unit,
-    onMentionSelected: (User) -> Unit,
-    onCommandSelected: (Command) -> Unit,
-    onAlsoSendToChannelSelected: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onAttachmentsClick: () -> Unit = {},
+    onCommandsClick: () -> Unit = {},
+    onValueChange: (String) -> Unit = {},
+    onAttachmentRemoved: (Attachment) -> Unit = {},
+    onCancelAction: () -> Unit = {},
+    onMentionSelected: (User) -> Unit = {},
+    onCommandSelected: (Command) -> Unit = {},
+    onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
@@ -226,11 +229,33 @@ public fun MessageComposer(
             onCommandSelected = onCommandSelected
         )
     },
-    shouldShowIntegrations: Boolean = true,
-    integrations: @Composable RowScope.(MessageComposerState) -> Unit,
-    input: @Composable RowScope.(MessageComposerState) -> Unit,
+    integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
+        DefaultComposerIntegrations(
+            messageInputState = it,
+            onAttachmentsClick = onAttachmentsClick,
+            onCommandsClick = onCommandsClick
+        )
+    },
+    label: @Composable () -> Unit = { DefaultComposerLabel() },
+    input: @Composable RowScope.(MessageComposerState) -> Unit = {
+        DefaultComposerInputContent(
+            messageComposerState = messageComposerState,
+            onValueChange = onValueChange,
+            onAttachmentRemoved = onAttachmentRemoved,
+            label = label,
+        )
+    },
+    trailingContent: @Composable (MessageComposerState) -> Unit = {
+        DefaultMessageComposerTrailingContent(
+            value = it.inputValue,
+            coolDownTime = it.coolDownTime,
+            validationErrors = it.validationErrors,
+            attachments = it.attachments,
+            onSendMessage = onSendMessage
+        )
+    },
 ) {
-    val (value, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions, cooldownTimer) = messageComposerState
+    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
 
     MessageInputValidationError(validationErrors)
 
@@ -247,7 +272,7 @@ public fun MessageComposer(
                 verticalAlignment = Bottom
             ) {
 
-                if (shouldShowIntegrations && activeAction !is Edit) {
+                if (activeAction !is Edit) {
                     integrations(messageComposerState)
                 } else {
                     Spacer(
@@ -257,27 +282,7 @@ public fun MessageComposer(
 
                 input(messageComposerState)
 
-                if (cooldownTimer > 0) {
-                    CooldownIndicator(cooldownTimer = cooldownTimer)
-                } else {
-                    val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
-
-                    IconButton(
-                        enabled = isInputValid,
-                        content = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                                contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                                tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
-                            )
-                        },
-                        onClick = {
-                            if (isInputValid) {
-                                onSendMessage(value, attachments)
-                            }
-                        }
-                    )
-                }
+                trailingContent(messageComposerState)
             }
 
             footerContent(messageComposerState)
@@ -388,17 +393,6 @@ internal fun DefaultCommandPopupContent(
 }
 
 /**
- * Default input field label that the user can override in [MessageComposer].
- */
-@Composable
-internal fun DefaultComposerLabel() {
-    Text(
-        text = stringResource(id = R.string.stream_compose_message_label),
-        color = ChatTheme.colors.textLowEmphasis
-    )
-}
-
-/**
  * Composable that represents the message composer integrations (special actions).
  *
  * Currently just shows the Attachment picker action.
@@ -459,6 +453,84 @@ internal fun DefaultComposerIntegrations(
                 )
             },
             onClick = onCommandsClick
+        )
+    }
+}
+
+/**
+ * Default input field label that the user can override in [MessageComposer].
+ */
+@Composable
+internal fun DefaultComposerLabel() {
+    Text(
+        text = stringResource(id = R.string.stream_compose_message_label),
+        color = ChatTheme.colors.textLowEmphasis
+    )
+}
+
+/**
+ * Represents the default input content of the Composer.
+ *
+ * @param label Customizable composable that represents the input field label (hint).
+ * @param messageComposerState The state of the message input.
+ * @param onValueChange Handler when the input field value changes.
+ * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
+ * */
+@Composable
+public fun RowScope.DefaultComposerInputContent(
+    messageComposerState: MessageComposerState,
+    onValueChange: (String) -> Unit,
+    onAttachmentRemoved: (Attachment) -> Unit,
+    label: @Composable () -> Unit,
+) {
+    MessageInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .weight(1f),
+        label = label,
+        messageComposerState = messageComposerState,
+        onValueChange = onValueChange,
+        onAttachmentRemoved = onAttachmentRemoved
+    )
+}
+
+/**
+ * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
+ *
+ * @param value The input value.
+ * @param coolDownTime The amount of time left in cool-down mode.
+ * @param attachments The selected attachments.
+ * @param validationErrors List of errors for message validation.
+ * @param onSendMessage Handler when the user wants to send a message.
+ */
+@Composable
+internal fun DefaultMessageComposerTrailingContent(
+    value: String,
+    coolDownTime: Int,
+    attachments: List<Attachment>,
+    validationErrors: List<ValidationError>,
+    onSendMessage: (String, List<Attachment>) -> Unit,
+) {
+    val isInputValid = (value.isNotEmpty() || attachments.isNotEmpty()) && validationErrors.isEmpty()
+
+    if (coolDownTime > 0) {
+        CoolDownIndicator(coolDownTime = coolDownTime)
+    } else {
+        IconButton(
+            enabled = isInputValid,
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                    contentDescription = stringResource(id = R.string.stream_compose_send_message),
+                    tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                )
+            },
+            onClick = {
+                if (isInputValid) {
+                    onSendMessage(value, attachments)
+                }
+            }
         )
     }
 }

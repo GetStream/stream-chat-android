@@ -6,8 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
@@ -17,14 +20,18 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
@@ -36,7 +43,8 @@ import kotlinx.coroutines.flow.map
  * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
- * @param chatEventHandler The instance of [ChatEventHandler] that will be used to handle channel updates event for this combination of [sort] and [filter].
+ * @param memberLimit The number of members to fetch per channel.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
@@ -44,7 +52,9 @@ public class ChannelListViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
+    private val memberLimit: Int = 30,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -61,6 +71,8 @@ public class ChannelListViewModel(
     private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
 
+    private var queryChannelsState: QueryChannelsState? = null
+
     init {
         stateMerger.addSource(filterLiveData) { filter ->
             if (filter != null) {
@@ -72,39 +84,58 @@ public class ChannelListViewModel(
     private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
 
-        chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
-            if (queryChannelsControllerResult.isSuccess) {
-                val queryChannelsController = queryChannelsControllerResult.data()
-
-                queryChannelsController.chatEventHandler =
-                    chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
-
-                val channelState = queryChannelsController.channelsState.map { channelState ->
-                    handleChannelState(channelState, chatDomain.channelMutes.value)
-                }.asLiveData()
-
-                stateMerger.addSource(channelState) { state -> stateMerger.value = state }
-
-                stateMerger.addSource(chatDomain.channelMutes.asLiveData()) { channelMutes ->
-                    val state = stateMerger.value
-
-                    if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
-                    } else {
-                        stateMerger.value = state?.copy()
-                    }
-                }
-
-                paginationStateMerger.addSource(queryChannelsController.loadingMore.asLiveData()) { loadingMore ->
-                    setPaginationState { copy(loadingMore = loadingMore) }
-                }
-                paginationStateMerger.addSource(queryChannelsController.endOfChannels.asLiveData()) { endOfChannels ->
-                    setPaginationState { copy(endOfChannels = endOfChannels) }
-                }
-            } else {
-                logger.logE("Could not query channels. Error: ${queryChannelsControllerResult.error()}")
-            }
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val queryChannelsRequest =
+                QueryChannelsRequest(
+                    filter = filterObject,
+                    querySort = sort,
+                    limit = limit,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                )
+            queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
         }
+
+        chatDomain.queryChannels(
+            filter = filterObject,
+            sort = sort,
+            limit = limit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        )
+            .enqueue { queryChannelsControllerResult ->
+                if (queryChannelsControllerResult.isSuccess) {
+                    val queryChannelsController = queryChannelsControllerResult.data()
+
+                    queryChannelsController.chatEventHandler =
+                        chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
+
+                    val channelState = queryChannelsController.channelsState.map { channelState ->
+                        handleChannelState(channelState, chatDomain.channelMutes.value)
+                    }.asLiveData()
+
+                    stateMerger.addSource(channelState) { state -> stateMerger.value = state }
+
+                    stateMerger.addSource(chatDomain.channelMutes.asLiveData()) { channelMutes ->
+                        val state = stateMerger.value
+
+                        if (state?.channels?.isNotEmpty() == true) {
+                            stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
+                        } else {
+                            stateMerger.value = state?.copy()
+                        }
+                    }
+
+                    paginationStateMerger.addSource(queryChannelsController.loadingMore.asLiveData()) { loadingMore ->
+                        setPaginationState { copy(loadingMore = loadingMore) }
+                    }
+                    paginationStateMerger.addSource(queryChannelsController.endOfChannels.asLiveData()) { endOfChannels ->
+                        setPaginationState { copy(endOfChannels = endOfChannels) }
+                    }
+                } else {
+                    logger.logE("Could not query channels. Error: ${queryChannelsControllerResult.error()}")
+                }
+            }
     }
 
     private fun handleChannelState(
@@ -170,11 +201,29 @@ public class ChannelListViewModel(
 
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
-            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit).enqueue(
-                onError = { chatError ->
-                    logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                queryChannelsState?.nextPageRequest?.value?.let {
+                    viewModelScope.launch {
+                        chatClient.queryChannels(it).enqueue(
+                            onError = { chatError ->
+                                logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                            }
+                        )
+                    }
                 }
-            )
+            } else {
+                chatDomain.queryChannelsLoadMore(
+                    filter = filter,
+                    sort = sort,
+                    limit = limit,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                ).enqueue(
+                    onError = { chatError ->
+                        logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    }
+                )
+            }
         }
     }
 

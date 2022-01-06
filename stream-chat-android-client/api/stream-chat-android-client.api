@@ -52,6 +52,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getNotifications ()Lio/getstream/chat/android/client/notifications/ChatNotifications;
+	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getPlugins ()Ljava/util/Collection;
 	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -399,6 +400,83 @@ public final class io/getstream/chat/android/client/api/models/Pagination : java
 	public static fun values ()[Lio/getstream/chat/android/client/api/models/Pagination;
 }
 
+public abstract class io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+}
+
+public final class io/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterDate : io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+	public fun <init> (Ljava/util/Date;Z)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun component2 ()Z
+	public final fun copy (Ljava/util/Date;Z)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterDate;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterDate;Ljava/util/Date;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterDate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDate ()Ljava/util/Date;
+	public final fun getInclusive ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterMessage : io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+	public fun <init> (Ljava/lang/String;Z)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Z
+	public final fun copy (Ljava/lang/String;Z)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterMessage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterMessage;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AfterMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInclusive ()Z
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundDate : io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+	public fun <init> (Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundDate;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundDate;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundDate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDate ()Ljava/util/Date;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundMessage : io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundMessage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundMessage;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$AroundMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeDate : io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+	public fun <init> (Ljava/util/Date;Z)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun component2 ()Z
+	public final fun copy (Ljava/util/Date;Z)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeDate;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeDate;Ljava/util/Date;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeDate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDate ()Ljava/util/Date;
+	public final fun getInclusive ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeMessage : io/getstream/chat/android/client/api/models/PinnedMessagesPagination {
+	public fun <init> (Ljava/lang/String;Z)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Z
+	public final fun copy (Ljava/lang/String;Z)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeMessage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeMessage;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination$BeforeMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInclusive ()Z
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public class io/getstream/chat/android/client/api/models/QueryChannelRequest : io/getstream/chat/android/client/api/models/ChannelRequest {
 	public fun <init> ()V
 	public final fun filteringOlderMessages ()Z
@@ -626,6 +704,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun getImageAttachments (II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public final fun getPinnedMessages (ILio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun hide (Z)Lio/getstream/chat/android/client/call/Call;

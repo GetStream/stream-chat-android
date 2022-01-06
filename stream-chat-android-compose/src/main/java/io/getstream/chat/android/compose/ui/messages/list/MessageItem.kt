@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -82,12 +83,12 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * current user.
  * @param headerContent The content shown at the top of a message list item. By default, we provide
  * [DefaultMessageItemHeaderContent], which shows a list of reactions for the message.
+ *  @param centerContent The content shown at the center of a message list item. By default, we provide
+ * [DefaultMessageItemCenterContent], which shows the message bubble with text and attachments.
  * @param footerContent The content shown at the bottom of a message list item. By default, we provide
  * [DefaultMessageItemFooterContent], which shows the information like thread participants, upload status, etc.
  * @param trailingContent The content shown at the end of a message list item. By default, we provide
  * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
- * @param content The content shown at the center of a message list item. By default, we provide
- * [DefaultMessageItemContent], which shows the message bubble with text and attachments.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -108,19 +109,19 @@ public fun MessageItem(
             onReactionsClick = onReactionsClick
         )
     },
-    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemFooterContent(messageItem = it)
-    },
-    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemTrailingContent(messageItem = it)
-    },
-    content: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemContent(
+    centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
+        DefaultMessageItemCenterContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
             onGiphyActionClick = onGiphyActionClick
         )
+    },
+    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
+        DefaultMessageItemFooterContent(messageItem = it)
+    },
+    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
+        DefaultMessageItemTrailingContent(messageItem = it)
     },
 ) {
     val (message, _, _, _, focusState) = messageItem
@@ -141,7 +142,7 @@ public fun MessageItem(
     }
 
     val backgroundColor =
-        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else ChatTheme.colors.appBackground
+        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else Color.Transparent
     val shouldAnimateBackground = !message.pinned && focusState != null
 
     val color = if (shouldAnimateBackground) animateColorAsState(
@@ -175,7 +176,7 @@ public fun MessageItem(
             Column(horizontalAlignment = messageAlignment.contentAlignment) {
                 headerContent(messageItem)
 
-                content(messageItem)
+                centerContent(messageItem)
 
                 footerContent(messageItem)
             }
@@ -206,6 +207,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
+            textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false
         )
     } else {
@@ -354,7 +356,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @Composable
-internal fun DefaultMessageItemContent(
+internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},

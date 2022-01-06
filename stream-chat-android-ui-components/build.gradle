@@ -76,12 +76,6 @@ dependencies {
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
 
-    // Markdown
-    implementation Dependencies.markwonCore
-    implementation Dependencies.markwonLinkify
-    implementation Dependencies.markwonextStrikethrough
-    implementation Dependencies.markwonImage
-
     // Tests
     testImplementation project(":stream-chat-android-test")
 

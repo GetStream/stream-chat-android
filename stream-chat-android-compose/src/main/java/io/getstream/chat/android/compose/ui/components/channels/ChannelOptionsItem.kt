@@ -24,7 +24,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Default component for channel info options.
+ * Default component for selected channel menu options.
  *
  * @param title The text title of the action.
  * @param titleColor The color of the title.
@@ -72,7 +72,7 @@ internal fun ChannelOptionsItem(
 private fun ChannelOptionsItemPreview() {
     ChatTheme {
         ChannelOptionsItem(
-            title = stringResource(id = R.string.stream_compose_channel_info_view_info),
+            title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
             leadingIcon = {
                 Icon(

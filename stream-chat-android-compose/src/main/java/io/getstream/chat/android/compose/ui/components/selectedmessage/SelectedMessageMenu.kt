@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
@@ -32,7 +33,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param reactionTypes The available reactions within the menu.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
- * @param bodyContent The content shown in the [SelectedMessageMenu] dialog. By Default [MessageOptions].
+ * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog. By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(
@@ -51,20 +52,20 @@ public fun SelectedMessageMenu(
             onMessageAction = onMessageAction
         )
     },
-    bodyContent: @Composable ColumnScope.() -> Unit = {
+    centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedMessageOptions(
             messageOptions = messageOptions,
             onMessageAction = onMessageAction
         )
     },
 ) {
-    SelectedMessageDialog(
+    SimpleMenu(
         modifier = modifier,
         shape = shape,
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        bodyContent = bodyContent
+        centerContent = centerContent
     )
 }
 
@@ -84,7 +85,7 @@ internal fun DefaultSelectedMessageReactionOptions(
     ReactionOptions(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
         reactionTypes = reactionTypes,
         onReactionOptionSelected = {
             onMessageAction(

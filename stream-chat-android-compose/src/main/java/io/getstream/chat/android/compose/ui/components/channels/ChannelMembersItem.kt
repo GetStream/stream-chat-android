@@ -34,7 +34,7 @@ internal fun ChannelMembersItem(
     ) {
 
         UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.channelInfoUserItemAvatarSize),
+            modifier = Modifier.size(ChatTheme.dimens.selectedChannelMenuUserItemAvatarSize),
             user = member.user,
             contentDescription = memberName
         )
