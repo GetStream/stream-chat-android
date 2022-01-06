@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -23,6 +24,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
+import java.util.Date
 
 class Messages(
     val client: ChatClient,
@@ -425,15 +427,36 @@ class Messages(
             }
         }
 
-        fun searchForAllPinnedMessages() {
-            client.searchMessages(
-                offset = 0,
-                limit = 30,
-                channelFilter = Filters.`in`("cid", "channelType:channelId"),
-                messageFilter = Filters.eq("pinned", true),
+        fun paginateOverAllPinnedMessages() {
+            // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
+            channelClient.getPinnedMessages(
+                limit = 10,
+                sort = QuerySort.desc(Message::pinnedAt),
+                pagination = PinnedMessagesPagination.BeforeDate(
+                    date = Date(),
+                    inclusive = false,
+                ),
             ).enqueue { result ->
                 if (result.isSuccess) {
-                    val pinnedMessages = result.data().messages
+                    val pinnedMessages: List<Message> = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
+
+            // You can use a pinnedAt date retrieved from the previous request to get the next page
+            val nextDate = Date()
+            // List the next page of pinned messages
+            channelClient.getPinnedMessages(
+                limit = 10,
+                sort = QuerySort.desc(Message::pinnedAt),
+                pagination = PinnedMessagesPagination.BeforeDate(
+                    date = nextDate,
+                    inclusive = false,
+                ),
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    val pinnedMessages: List<Message> = result.data()
                 } else {
                     // Handle result.error()
                 }
