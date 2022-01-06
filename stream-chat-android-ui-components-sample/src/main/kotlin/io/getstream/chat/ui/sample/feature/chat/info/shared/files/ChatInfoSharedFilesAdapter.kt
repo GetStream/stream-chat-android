@@ -31,11 +31,11 @@ class ChatInfoSharedFilesAdapter : ListAdapter<SharedAttachment, BaseViewHolder<
         return when (viewType) {
             TYPE_FILE ->
                 ChatInfoSharedFileItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoSharedFileViewHolder(it, attachmentClickListener) }
             TYPE_FILE_DATE_DIVIDER ->
                 ChatInfoSharedFileDateDividerBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoSharedFileDateDividerViewHolder(it, dateFormat) }
 
             else -> throw IllegalArgumentException("Unhandled view type ($viewType)")

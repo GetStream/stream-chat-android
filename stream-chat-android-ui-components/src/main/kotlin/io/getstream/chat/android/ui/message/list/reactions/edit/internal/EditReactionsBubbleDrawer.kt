@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.view.View
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
+import io.getstream.chat.android.ui.utils.isRtlLayout
 
 private const val LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_DP = 2
 
@@ -42,7 +43,7 @@ internal class EditReactionsBubbleDrawer(
         this.isSingleReaction = isSingleReaction
 
         val bubblePaint = if (isMyMessage) bubblePaintMine else bubblePaintTheirs
-        val isRtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val isRtl = context.isRtlLayout
 
         drawBubbleRoundRect(canvas, bubblePaint)
         drawLargeTailBubble(canvas, bubblePaint, isRtl)

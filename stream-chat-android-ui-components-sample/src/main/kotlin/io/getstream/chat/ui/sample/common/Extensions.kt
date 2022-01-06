@@ -31,10 +31,6 @@ fun Fragment.showToast(@StringRes resId: Int) {
     showToast(getString(resId))
 }
 
-fun Context.appThemeContext(): Context {
-    return ContextThemeWrapper(this, R.style.AppTheme)
-}
-
 fun Fragment.showToast(text: String) {
     Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
 }
@@ -120,3 +116,7 @@ const val CHANNEL_ARG_DRAFT = "draft"
 
 val Channel.isDraft: Boolean
     get() = getExtraValue(CHANNEL_ARG_DRAFT, false)
+
+
+val Context.appThemeContext : Context
+    get() = ContextThemeWrapper(this, R.style.AppTheme)

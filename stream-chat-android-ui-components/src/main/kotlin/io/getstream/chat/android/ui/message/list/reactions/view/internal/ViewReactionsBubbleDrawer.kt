@@ -7,6 +7,7 @@ import android.graphics.Path
 import android.view.View
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.utils.isRtlLayout
 
 internal class ViewReactionsBubbleDrawer(
     private val viewReactionsViewStyle: ViewReactionsViewStyle,
@@ -53,7 +54,7 @@ internal class ViewReactionsBubbleDrawer(
         this.bubbleWidth = bubbleWidth
         this.isSingleReaction = isSingleReaction
 
-        val isRtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val isRtl = context.isRtlLayout
 
         val path = Path().apply {
             op(createBubbleRoundRectPath(), Path.Op.UNION)

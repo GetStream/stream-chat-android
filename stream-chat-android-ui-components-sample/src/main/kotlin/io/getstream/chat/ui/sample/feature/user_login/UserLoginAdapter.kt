@@ -22,7 +22,7 @@ class UserLoginAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context.appThemeContext())
+        val inflater = LayoutInflater.from(parent.context.appThemeContext)
         return if (viewType == VIEW_TYPE_OPTIONS) {
             OptionsViewHolder(ItemOptionsBinding.inflate(inflater, parent, false))
         } else {

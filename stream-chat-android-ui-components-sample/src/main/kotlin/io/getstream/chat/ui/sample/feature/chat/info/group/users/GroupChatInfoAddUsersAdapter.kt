@@ -25,7 +25,7 @@ class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdap
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         return ChatInfoGroupAddUsersItemBinding
-            .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+            .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
             .let(::UserViewHolder)
     }
 

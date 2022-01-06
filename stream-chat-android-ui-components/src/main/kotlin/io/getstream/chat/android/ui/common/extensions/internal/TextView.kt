@@ -9,6 +9,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
 import androidx.core.content.ContextCompat
+import io.getstream.chat.android.ui.utils.isRtlLayout
 
 internal fun TextView.setTextSizePx(@Px size: Float) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
@@ -32,7 +33,7 @@ internal fun TextView.setStartDrawableWithSize(@DrawableRes id: Int, @DimenRes s
 
 internal fun TextView.setStartDrawableWithSize(drawable: Drawable?, @DimenRes sizeRes: Int) {
     val size = resources.getDimensionPixelSize(sizeRes)
-    val isRtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+    val isRtl = context.isRtlLayout
 
     drawable?.setBounds(0, 0, size, size)
 
@@ -48,7 +49,7 @@ internal fun TextView.setStartDrawableWithSize(drawable: Drawable?, @DimenRes si
  * nothing will be drawn on the left side of the text.
  */
 internal fun TextView.setStartDrawable(drawable: Drawable?) {
-    val isRtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+    val isRtl = context.isRtlLayout
 
     if (isRtl) {
         setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)

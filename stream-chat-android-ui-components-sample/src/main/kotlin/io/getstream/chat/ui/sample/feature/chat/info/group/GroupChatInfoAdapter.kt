@@ -24,15 +24,15 @@ class GroupChatInfoAdapter : ChatInfoAdapter() {
         return when (viewType) {
             TYPE_GROUP_MEMBER_ITEM ->
                 ChatInfoGroupMemberItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoGroupMemberViewHolder(it, memberClickListener) }
             TYPE_MEMBERS_SEPARATOR ->
                 ChatInfoMembersSeparatorItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoMembersSeparatorViewHolder(it, membersSeparatorClickListener) }
             TYPE_EDIT_GROUP_NAME ->
                 ChatInfoGroupNameItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoGroupNameViewHolder(it, nameChangedListener) }
             else -> super.onCreateViewHolder(parent, viewType)
         }

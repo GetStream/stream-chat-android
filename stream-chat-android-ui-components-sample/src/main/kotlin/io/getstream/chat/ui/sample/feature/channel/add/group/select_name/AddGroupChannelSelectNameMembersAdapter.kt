@@ -27,7 +27,7 @@ class AddGroupChannelSelectNameMembersAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         return AddGroupChannelSelectNameMemberItemBinding
-            .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+            .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
             .let(::MemberViewHolder)
     }
 

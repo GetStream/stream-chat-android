@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.list.background
 import android.content.Context
 import android.view.View
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.ui.utils.isRtlLayout
 
 internal object ShapeAppearanceModelFactory {
 
@@ -17,7 +18,7 @@ internal object ShapeAppearanceModelFactory {
             .setAllCornerSizes(radius)
             .apply {
                 if (isBottomPosition) {
-                    val isRtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+                    val isRtl = context.isRtlLayout
 
                     when {
                         !isRtl && isMine -> setBottomRightCornerSize(bottomEndCorner)

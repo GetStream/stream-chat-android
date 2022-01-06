@@ -30,19 +30,19 @@ open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
         return when (viewType) {
             TYPE_MEMBER_ITEM ->
                 ChatInfoMemberItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let(::ChatInfoMemberViewHolder)
             TYPE_OPTION ->
                 ChatInfoOptionItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoOptionViewHolder(it, chatInfoOptionClickListener) }
             TYPE_STATEFUL_OPTION ->
                 ChatInfoStatefulOptionItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { ChatInfoStatefulOptionViewHolder(it, chatInfoStatefulOptionChangedListener) }
             TYPE_SEPARATOR ->
                 ChatInfoSeparatorItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext()), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let(::ChatInfoSeparatorViewHolder)
             else -> throw IllegalArgumentException("Unhandled chat info view type ($viewType)")
         }
