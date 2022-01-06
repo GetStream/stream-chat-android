@@ -85,10 +85,8 @@ internal class MediaAttachmentView : ConstraintLayout {
                 ?: ogUrl
         }
 
-
         binding.giphyLabel.isVisible = true
-
-
+        
         showImageByUrl(url ?: fallbackUrl ?: return) {}
     }
 
