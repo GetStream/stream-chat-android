@@ -447,18 +447,18 @@ public class MessageListViewModel(
     /**
      * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
-     * @param threadMode Current thread mode.
+     * @param messageMode Represents the current message thread mode.
      */
-    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
+    private fun threadLoadMore(messageMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-            chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
+            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
                 .enqueue()
         } else {
-            if (threadMode.threadState != null) {
+            if (messageMode.threadState != null) {
                 chatClient.getRepliesMore(
-                    messageId = threadMode.parentMessage.id,
-                    firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
+                    messageId = messageMode.parentMessage.id,
+                    firstId = messageMode.threadState?.oldestInThread?.value?.id ?: messageMode.parentMessage.id,
                     limit = DEFAULT_MESSAGE_LIMIT,
                 ).enqueue()
             } else {
@@ -688,6 +688,16 @@ public class MessageListViewModel(
         return groupedMessages.reversed()
     }
 
+    /**
+     * Decides if we need to add a date separator or not.
+     *
+     * If the user disables them, we don't add any separators, otherwise we check if there are previous messages or if
+     * the time difference between two messages is higher than the threshold.
+     *
+     * @param previousMessage The previous message.
+     * @param message The current message.
+     * @return If we should add a date separator to the list.
+     */
     private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
         return if (!showDateSeparators) {
             false
