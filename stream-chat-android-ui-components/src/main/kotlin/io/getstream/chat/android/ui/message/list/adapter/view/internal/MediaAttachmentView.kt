@@ -88,15 +88,8 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         binding.giphyLabel.isVisible = true
 
-        if (url != null) {
-            showImageByUrl(url) {}
-        } else if (fallbackUrl != null) {
-            binding.imageView.updateLayoutParams {
-                height = style.giphyHeight
-            }
 
-            showImageByUrl(fallbackUrl) {}
-        }
+        showImageByUrl(url ?: fallbackUrl ?: return) {}
     }
 
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
