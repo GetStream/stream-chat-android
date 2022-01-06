@@ -38,7 +38,7 @@
             android:layout_marginStart="22dp"
             android:layout_marginBottom="20dp"
             android:visibility="gone"
-            android:textDirection="locale"
+            android:textDirection="anyRtl"
             app:layout_constraintBottom_toBottomOf="@+id/backButton"
             app:layout_constraintStart_toStartOf="@+id/backButton"
             tools:text="2"
@@ -58,7 +58,7 @@
         android:lineSpacingExtra="5sp"
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        android:textDirection="locale"
+        android:textDirection="anyRtl"
         app:layout_constraintBottom_toTopOf="@+id/subtitleContainer"
         app:layout_constraintEnd_toStartOf="@+id/avatarView"
         app:layout_constraintStart_toEndOf="@+id/backButtonContainer"
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_disconnected"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-                android:textDirection="locale"
+                android:textDirection="anyRtl"
                 />
 
         </LinearLayout>
@@ -125,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_offline"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-                android:textDirection="locale"
+                android:textDirection="anyRtl"
                 />
 
             <TextView
@@ -138,7 +138,7 @@
                 android:text="@string/stream_ui_message_list_header_retry"
                 android:textColor="@color/stream_ui_accent_blue"
                 android:visibility="gone"
-                android:textDirection="locale"
+                android:textDirection="anyRtl"
                 />
         </LinearLayout>
 
@@ -158,7 +158,7 @@
             android:layout_gravity="center"
             android:textAppearance="@style/StreamUiTextAppearance.Footnote"
             tools:text="Online for 10 mins"
-            android:textDirection="locale"
+            android:textDirection="anyRtl"
             />
 
     </FrameLayout>

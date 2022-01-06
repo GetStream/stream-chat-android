@@ -56,7 +56,7 @@
             android:singleLine="true"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             android:textColor="@color/stream_ui_accent_blue"
-            android:textDirection="locale"
+            android:textDirection="anyRtl"
             tools:text="Link"
             />
 

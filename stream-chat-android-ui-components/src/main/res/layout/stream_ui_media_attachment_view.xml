@@ -61,7 +61,7 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="@color/stream_ui_literal_white"
             android:textSize="@dimen/stream_ui_message_media_attachment_more_count_text_size"
-            android:textDirection="locale"
+            android:textDirection="anyRtl"
             tools:text="+9"
             />
 

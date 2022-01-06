@@ -12,6 +12,6 @@
     android:paddingBottom="12dp"
     android:textAppearance="@style/StreamUiTextAppearance.Caption1Bold"
     android:textColor="@color/stream_ui_text_color_secondary"
-    android:textDirection="locale"
+    android:textDirection="anyRtl"
     tools:text="Automod blocked your message"
     />

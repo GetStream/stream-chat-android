@@ -49,7 +49,7 @@
         android:textColor="@color/stream_ui_text_color_primary"
         android:textColorHint="@color/stream_ui_text_color_hint"
         android:textSize="@dimen/stream_ui_text_medium"
-        android:textDirection="locale"
+        android:textDirection="anyRtl"
         app:drawableTint="@color/stream_ui_grey"
         app:layout_constraintBottom_toBottomOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"

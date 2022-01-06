@@ -10,6 +10,6 @@
     android:textAlignment="center"
     android:background="@drawable/stream_ui_bg_gradient"
     android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-    android:textDirection="locale"
+    android:textDirection="anyRtl"
     tools:text="1 Reply"
     />
