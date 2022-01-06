@@ -523,6 +523,7 @@ public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewhold
 	public abstract fun getSwipeView ()Landroid/view/View;
 	protected final fun getSwiping ()Z
 	public abstract fun isSwipeEnabled ()Z
+	public abstract fun isSwiped ()Z
 	protected final fun setListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setSwipeListener (Landroid/view/View;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	protected final fun setSwiping (Z)V
@@ -1097,6 +1098,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setCommandsEnabled (Z)V
 	public final fun setCooldownInterval (I)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
+	public final fun setInputTextDirection (I)V
 	public final fun setMaxMessageLength (I)V
 	public final fun setMaxMessageLengthHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler;)V
 	public final fun setMentionsEnabled (Z)V
