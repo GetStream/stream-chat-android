@@ -73,6 +73,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
 
 ### ⬆️ Improved
+- Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
 
 ### ✅ Added
 - Added `memberLimit` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
@@ -99,6 +100,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated primary accent colors in order to achieve a better contrast ratio for accessibility [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Removed default background color from `MessageItem` [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Added multiline mentions support [#2859](https://github.com/GetStream/stream-chat-android/pull/2859)
+- Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
 
 ### ✅ Added
 - Added the `headerContent` and `centerContent` Slot APIs for the `SelectedChannelMenu` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
