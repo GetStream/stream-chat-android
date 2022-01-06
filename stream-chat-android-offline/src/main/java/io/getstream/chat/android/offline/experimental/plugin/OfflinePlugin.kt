@@ -96,6 +96,9 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         limit: Int,
     ): Unit = logic.thread(messageId).onGetRepliesMoreResult(result, messageId, firstId, limit)
 
+    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
+        logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
+
     internal fun clear() {
         logic.clear()
         state.clear()

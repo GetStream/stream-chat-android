@@ -1214,6 +1214,7 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
         return api.markRead(channelType, channelId)
+            .precondition { onChannelMarkReadPrecondition(channelType, channelId) }
     }
 
     @CheckResult
