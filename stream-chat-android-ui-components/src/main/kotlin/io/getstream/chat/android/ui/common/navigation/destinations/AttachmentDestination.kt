@@ -100,6 +100,7 @@ public open class AttachmentDestination(
             playableContent(mimeType, type) -> {
                 val intent = Intent(context, AttachmentMediaActivity::class.java).apply {
                     putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType)
+                    putExtra(AttachmentMediaActivity.FILE_TYPE_KEY, type)
                     putExtra(AttachmentMediaActivity.URL_KEY, url)
                     putExtra(AttachmentMediaActivity.HEADER_TITLE_KEY, title)
                 }
