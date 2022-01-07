@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 
 apply plugin: "com.github.ben-manes.versions"
@@ -8,6 +9,7 @@ apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
+apply plugin: ReleasePlugin
 
 buildscript {
     repositories {
@@ -62,6 +64,10 @@ allprojects {
 
 unitTestDebugScript {
     outputPath = "unit-tests-command.sh"
+}
+
+releaseScript {
+    changelogPath = "CHANGELOG.md"
 }
 
 task clean(type: Delete) {
