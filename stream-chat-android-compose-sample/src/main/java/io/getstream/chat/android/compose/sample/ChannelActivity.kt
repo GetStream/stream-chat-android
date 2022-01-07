@@ -17,9 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,11 +37,11 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
-import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
-import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
-import io.getstream.chat.android.compose.ui.channel.list.ChannelList
-import io.getstream.chat.android.compose.ui.channel.list.DefaultChannelItem
+import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
+import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
@@ -102,13 +101,17 @@ class ChannelActivity : AppCompatActivity() {
     private fun MyCustomUiSimplified() {
         val user by ChatDomain.instance().user.collectAsState()
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            ChannelListHeader(
-                title = stringResource(id = R.string.app_name),
-                currentUser = user
-            )
-
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                ChannelListHeader(
+                    title = stringResource(id = R.string.app_name),
+                    currentUser = user
+                )
+            }
+        ) {
             ChannelList(
+                modifier = Modifier.fillMaxSize(),
                 itemContent = {
                     CustomChannelListItem(channelItem = it, user = user)
                 },
@@ -117,10 +120,9 @@ class ChannelActivity : AppCompatActivity() {
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .height(0.5.dp)
-                            .align(CenterHorizontally)
                             .background(color = ChatTheme.colors.textLowEmphasis)
                     )
-                },
+                }
             )
         }
     }
@@ -130,17 +132,17 @@ class ChannelActivity : AppCompatActivity() {
      */
     @Composable
     private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
-        DefaultChannelItem(
+        ChannelItem(
             channelItem = channelItem,
             currentUser = user,
-            onChannelLongClick = { },
-            onChannelClick = { },
+            onChannelLongClick = {},
+            onChannelClick = {},
             trailingContent = {
                 Spacer(modifier = Modifier.width(8.dp))
             },
-            detailsContent = {
+            centerContent = {
                 Text(
-                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
@@ -151,7 +153,7 @@ class ChannelActivity : AppCompatActivity() {
     /**
      * An example of what a custom UI can be, when not using [ChannelsScreen].
      *
-     * It's important to note that if we want to use the [ChannelInfo] to expose information and
+     * It's important to note that if we want to use the [SelectedChannelMenu] to expose information and
      * options that the user can make with each channel, we need to use a [Box] and overlap the
      * two elements. This makes it easier as it's all presented in the same layer, rather than being
      * wrapped in drawers or more components.
@@ -163,7 +165,7 @@ class ChannelActivity : AppCompatActivity() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel by remember { listViewModel.selectedChannel }
+        val selectedChannel by listViewModel.selectedChannel
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -176,6 +178,7 @@ class ChannelActivity : AppCompatActivity() {
 
                 SearchInput(
                     modifier = Modifier
+                        .background(color = ChatTheme.colors.appBackground)
                         .fillMaxWidth()
                         .padding(8.dp),
                     query = query,
@@ -193,19 +196,20 @@ class ChannelActivity : AppCompatActivity() {
                 )
             }
 
-            val currentSelectedChannel = selectedChannel
-            if (currentSelectedChannel != null) {
-                ChannelInfo(
+            val selectedChannel = selectedChannel
+            if (selectedChannel != null) {
+                SelectedChannelMenu(
                     modifier = Modifier
                         .padding(16.dp)
-                        .wrapContentWidth()
+                        .fillMaxWidth()
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    isMuted = listViewModel.isChannelMuted(currentSelectedChannel.cid),
-                    selectedChannel = currentSelectedChannel,
+                    isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
+                    selectedChannel = selectedChannel,
                     currentUser = user,
-                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
+                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) },
+                    onDismiss = { listViewModel.dismissChannelAction() }
                 )
             }
         }

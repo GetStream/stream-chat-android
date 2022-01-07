@@ -14,11 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
+import io.getstream.chat.android.compose.previewdata.PreviewMembersData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelOptionState
@@ -100,7 +104,7 @@ public fun buildDefaultChannelOptionsState(
 
     return listOfNotNull(
         ChannelOptionState(
-            title = stringResource(id = R.string.stream_compose_channel_info_view_info),
+            title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
             iconColor = ChatTheme.colors.textLowEmphasis,
@@ -108,7 +112,7 @@ public fun buildDefaultChannelOptionsState(
         ),
         if (canLeaveChannel) {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_leave_group),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
                 iconColor = ChatTheme.colors.textLowEmphasis,
@@ -117,7 +121,7 @@ public fun buildDefaultChannelOptionsState(
         } else null,
         if (isMuted) {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_unmute_channel),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_channel),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_unmute),
                 iconColor = ChatTheme.colors.textLowEmphasis,
@@ -125,7 +129,7 @@ public fun buildDefaultChannelOptionsState(
             )
         } else {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_mute_channel),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_channel),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_mute),
                 iconColor = ChatTheme.colors.textLowEmphasis,
@@ -134,7 +138,7 @@ public fun buildDefaultChannelOptionsState(
         },
         if (canDeleteChannel) {
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                 iconColor = ChatTheme.colors.errorAccent,
@@ -142,11 +146,32 @@ public fun buildDefaultChannelOptionsState(
             )
         } else null,
         ChannelOptionState(
-            title = stringResource(id = R.string.stream_compose_channel_info_dismiss),
+            title = stringResource(id = R.string.stream_compose_selected_channel_menu_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = Cancel,
         )
     )
+}
+
+/**
+ * Preview of [ChannelOptions].
+ *
+ * Should show a list of available actions for the channel.
+ */
+@Preview(showBackground = true, name = "ChannelOptions Preview")
+@Composable
+private fun ChannelOptionsPreview() {
+    ChatTheme {
+        ChannelOptions(
+            options = buildDefaultChannelOptionsState(
+                selectedChannel = PreviewChannelData.channelWithMessages,
+                currentUser = PreviewUserData.user1,
+                isMuted = false,
+                channelMembers = PreviewMembersData.manyMembers
+            ),
+            onChannelOptionClick = {}
+        )
+    }
 }

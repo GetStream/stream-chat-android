@@ -150,13 +150,23 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Should delete message`() {
+    fun `When delete event doesn't have hard flag Should delete message`() {
         val viewModel = MessageListViewModel(CID, domain = domain, client = client)
         viewModel.state.observeAll()
 
-        viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
+        viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = false))
 
         verify(domain).deleteMessage(MESSAGE, false)
+    }
+
+    @Test
+    fun `When delete event has hard flag Should hard delete message`() {
+        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true))
+
+        verify(domain).deleteMessage(MESSAGE, true)
     }
 
     @Test

@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.previewdata.PreviewReactionData
+import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -55,7 +55,7 @@ public fun MessageReactions(
 @Composable
 private fun OneMessageReactionPreview() {
     ChatTheme {
-        MessageReactions(options = PreviewReactionData.oneReaction())
+        MessageReactions(options = PreviewReactionOptionData.oneReaction())
     }
 }
 
@@ -66,6 +66,6 @@ private fun OneMessageReactionPreview() {
 @Composable
 private fun ManyMessageReactionsPreview() {
     ChatTheme {
-        MessageReactions(options = PreviewReactionData.manyReactions())
+        MessageReactions(options = PreviewReactionOptionData.manyReactions())
     }
 }

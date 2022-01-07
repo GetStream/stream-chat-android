@@ -2,26 +2,24 @@ package io.getstream.chat.android.compose.ui.components.composer
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.compose.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
-
-/**
- * The default number of lines allowed in the input. The message input will become scrollable after
- * this threshold is exceeded.
- */
-private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
@@ -32,7 +30,9 @@ private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param modifier Modifier for styling.
  * @param maxLines The number of lines that are allowed in the input.
- * @param label Composable function that represents the label UI, when there's no input/focus.
+ * @param label Composable that represents the label UI, when there's no input.
+ * @param innerLeadingContent Composable that represents the persistent inner leading content.
+ * @param innerTrailingContent Composable that represents the persistent inner trailing content.
  */
 @Composable
 public fun MessageInput(
@@ -42,6 +42,8 @@ public fun MessageInput(
     modifier: Modifier = Modifier,
     maxLines: Int = DEFAULT_MESSAGE_INPUT_MAX_LINES,
     label: @Composable () -> Unit = { DefaultComposerLabel() },
+    innerLeadingContent: @Composable RowScope.() -> Unit = {},
+    innerTrailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     val (value, attachments, activeAction) = messageComposerState
 
@@ -62,7 +64,9 @@ public fun MessageInput(
                 }
 
                 if (attachments.isNotEmpty() && activeAction !is Edit) {
-                    MessageInputAttachments(
+                    val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
+
+                    previewFactory?.previewContent?.invoke(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),
@@ -73,14 +77,29 @@ public fun MessageInput(
                     Spacer(modifier = Modifier.size(16.dp))
                 }
 
-                Box(modifier = Modifier.padding(horizontal = 4.dp)) {
-                    if (value.isEmpty()) {
-                        label()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    innerLeadingContent()
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        innerTextField()
+
+                        if (value.isEmpty()) {
+                            label()
+                        }
                     }
 
-                    innerTextField()
+                    innerTrailingContent()
                 }
             }
         }
     )
 }
+
+/**
+ * The default number of lines allowed in the input. The message input will become scrollable after
+ * this threshold is exceeded.
+ */
+private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6

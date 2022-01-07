@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -64,8 +65,22 @@ import java.util.concurrent.Executors
 
 private val fixture = JFixture()
 
+internal fun randomChannelVisibleEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    user: User = randomUser(),
+) = ChannelVisibleEvent(
+    type = EventType.CHANNEL_VISIBLE,
+    createdAt = createdAt,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    user = user
+)
+
 internal fun randomUserStartWatchingEvent(
-    type: String = randomString(),
     createdAt: Date = randomDate(),
     cid: String = randomString(),
     watcherCount: Int = randomInt(),
@@ -73,7 +88,7 @@ internal fun randomUserStartWatchingEvent(
     channelId: String = randomString(),
     user: User = randomUser(),
 ) = UserStartWatchingEvent(
-    type = type,
+    type = EventType.USER_WATCHING_START,
     createdAt = createdAt,
     cid = cid,
     watcherCount = watcherCount,
@@ -454,7 +469,7 @@ internal fun randomChannelInfo(
 )
 
 internal fun randomChannel(
-    cid: String = randomString(),
+    cid: String = randomCID(),
     id: String = randomString(),
     type: String = randomString(),
     watcherCount: Int = randomInt(),

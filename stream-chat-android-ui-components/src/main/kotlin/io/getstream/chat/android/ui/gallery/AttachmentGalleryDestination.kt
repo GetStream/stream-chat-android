@@ -39,7 +39,7 @@ public class AttachmentGalleryDestination(
 
     public fun register(activityResultRegistry: ActivityResultRegistry) {
         launcher = activityResultRegistry.register(
-            "attachment_gallery_launcher",
+            "attachment_gallery_launcher#${hashCode()}",
             AttachmentGalleryResultContract()
         ) { result ->
             when (result) {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -28,6 +29,8 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -68,6 +71,11 @@ import java.util.concurrent.TimeUnit
 private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
 
 /**
+ * The default limit for messages count in requests.
+ */
+private const val DEFAULT_MESSAGE_LIMIT: Int = 30
+
+/**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
@@ -89,7 +97,7 @@ public class MessageListViewModel(
     private val enforceUniqueReactions: Boolean = true,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
-    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD)
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD),
 ) : ViewModel() {
 
     /**
@@ -142,10 +150,10 @@ public class MessageListViewModel(
         get() = messageMode is MessageMode.MessageThread
 
     /**
-     * Gives us information if we're showing the selected message overlay.
+     * Gives us information if we have selected a message.
      */
     public val isShowingOverlay: Boolean
-        get() = messagesState.selectedMessage != null || threadMessagesState.selectedMessage != null
+        get() = messagesState.selectedMessageState != null || threadMessagesState.selectedMessageState != null
 
     /**
      * Gives us information about the online state of the device.
@@ -185,6 +193,11 @@ public class MessageListViewModel(
      * Represents the latest message we've seen in the active thread.
      */
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
+
+    /**
+     * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
+     */
+    private val logger = ChatLogger.get("MessageListViewModel")
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -381,22 +394,13 @@ public class MessageListViewModel(
 
         if (message.id == lastSeenMessage.id) return
 
-        val lastSeenMessageDate = message.createdAt ?: Date()
+        val lastSeenMessageDate = lastSeenMessage.createdAt ?: Date()
         val currentMessageDate = message.createdAt ?: Date()
 
         if (currentMessageDate < lastSeenMessageDate) {
             return
         }
-        val messages = currentMessagesState.messageItems
-
-        val currentMessagePosition =
-            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
-        val lastSeenMessagePosition =
-            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
-
-        if (currentMessagePosition < lastSeenMessagePosition) {
-            updateLastSeenMessageState(message)
-        }
+        updateLastSeenMessageState(message)
     }
 
     /**
@@ -433,9 +437,7 @@ public class MessageListViewModel(
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
-            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
-            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
-                .enqueue()
+            threadLoadMore(messageMode)
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
@@ -443,28 +445,63 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user long taps on and selects a message. This updates the internal state
-     * and allows our UI to re-render it and show an overlay.
+     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
-     * @param message The selected message.
+     * @param messageMode Represents the current message thread mode.
      */
-    public fun selectMessage(message: Message?) {
-        if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(selectedMessage = message)
+    private fun threadLoadMore(messageMode: MessageMode.MessageThread) {
+        threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
+            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
+                .enqueue()
         } else {
-            messagesState = messagesState.copy(selectedMessage = message)
+            if (messageMode.threadState != null) {
+                chatClient.getRepliesMore(
+                    messageId = messageMode.parentMessage.id,
+                    firstId = messageMode.threadState?.oldestInThread?.value?.id ?: messageMode.parentMessage.id,
+                    limit = DEFAULT_MESSAGE_LIMIT,
+                ).enqueue()
+            } else {
+                threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
+                logger.logW("Thread state must be not null for offline plugin thread load more!")
+            }
         }
     }
 
     /**
-     * Triggered when the user taps on a message that has a thread active. This changes the current
-     * [messageMode] to [Thread] and loads the thread data.
+     * Triggered when the user long taps on and selects a message.
+     *
+     * @param message The selected message.
+     */
+    public fun selectMessage(message: Message?) {
+        val selectedMessageState = message?.let(::SelectedMessageOptionsState)
+        if (isInThread) {
+            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
+        } else {
+            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
+        }
+    }
+
+    /**
+     * Triggered when the user taps on and selects message reactions.
+     *
+     * @param message The message that contains the reactions.
+     */
+    public fun selectReactions(message: Message?) {
+        val selectedMessageState = message?.let(::SelectedMessageReactionsState)
+        if (isInThread) {
+            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
+        } else {
+            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
+        }
+    }
+
+    /**
+     * Triggered when the user taps on a message that has a thread active.
      *
      * @param message The selected message with a thread.
      */
     public fun openMessageThread(message: Message) {
-        this.messageMode = MessageMode.MessageThread(message)
-
         loadThread(message)
     }
 
@@ -505,7 +542,7 @@ public class MessageListViewModel(
                 messageActions = messageActions + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
-            is MuteUser -> muteUser(messageAction.message.user)
+            is MuteUser -> updateUserMute(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
             else -> {
@@ -515,13 +552,11 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads the thread data and changes the current [messageMode] to be [Thread].
+     * Loads the thread data.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        messageMode = MessageMode.MessageThread(parentMessage)
-
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             loadThreadWithOfflinePlugin(parentMessage)
         } else {
@@ -530,12 +565,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads thread data using ChatDomain approach. The data is loaded by fetching the [ThreadController] first, based
-     * on the [parentMessage], after which we observe specific data from the thread.
+     * Changes the current [messageMode] to be [Thread] and loads thread data using ChatDomain approach.
+     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage], after which we observe
+     * specific data from the thread.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithChatDomain(parentMessage: Message) {
+        messageMode = MessageMode.MessageThread(parentMessage)
         chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
@@ -547,12 +584,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads thread data using ChatClient directly. The data is observed by using [ThreadState].
+     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val threadState = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        messageMode = MessageMode.MessageThread(parentMessage, threadState)
         observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
     }
 
@@ -649,6 +688,16 @@ public class MessageListViewModel(
         return groupedMessages.reversed()
     }
 
+    /**
+     * Decides if we need to add a date separator or not.
+     *
+     * If the user disables them, we don't add any separators, otherwise we check if there are previous messages or if
+     * the time difference between two messages is higher than the threshold.
+     *
+     * @param previousMessage The previous message.
+     * @param message The current message.
+     * @return If we should add a date separator to the list.
+     */
     private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
         return if (!showDateSeparators) {
             false
@@ -699,12 +748,18 @@ public class MessageListViewModel(
     }
 
     /**
-     * Mutes the user that sent a particular message.
+     * Mutes or unmutes the user that sent a particular message.
      *
-     * @param user The user to mute.
+     * @param user The user to mute or unmute.
      */
-    private fun muteUser(user: User) {
-        chatClient.muteUser(user.id).enqueue()
+    private fun updateUserMute(user: User) {
+        val isUserMuted = chatDomain.muted.value.any { it.target.id == user.id }
+
+        if (isUserMuted) {
+            chatClient.unmuteUser(user.id)
+        } else {
+            chatClient.muteUser(user.id)
+        }.enqueue()
     }
 
     /**
@@ -745,7 +800,7 @@ public class MessageListViewModel(
      */
     public fun leaveThread() {
         messageMode = MessageMode.Normal
-        messagesState = messagesState.copy(selectedMessage = null)
+        messagesState = messagesState.copy(selectedMessageState = null)
         threadMessagesState = MessagesState()
         lastSeenThreadMessage = null
         threadJob?.cancel()
@@ -755,8 +810,8 @@ public class MessageListViewModel(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
      */
     public fun removeOverlay() {
-        threadMessagesState = threadMessagesState.copy(selectedMessage = null)
-        messagesState = messagesState.copy(selectedMessage = null)
+        threadMessagesState = threadMessagesState.copy(selectedMessageState = null)
+        messagesState = messagesState.copy(selectedMessageState = null)
     }
 
     /**

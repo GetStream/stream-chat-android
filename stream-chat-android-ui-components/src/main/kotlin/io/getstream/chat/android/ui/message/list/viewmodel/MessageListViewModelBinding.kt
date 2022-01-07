@@ -34,7 +34,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
-    view.setMessageDeleteHandler { onEvent(DeleteMessage(it)) }
+    view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
     view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
     view.setMessagePinHandler { onEvent(MessageListViewModel.Event.PinMessage(it)) }

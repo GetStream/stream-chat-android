@@ -45,14 +45,15 @@ internal class RepositoryFacade constructor(
     SyncStateRepository by syncStateRepository,
     AttachmentRepository by attachmentRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
+    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = selectChannels(channelCIDs, null, forceCache)
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
+        forceCache: Boolean = false,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.selectChannels(channelIds)
+        val channels = channelsRepository.selectChannels(channelIds, forceCache)
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html

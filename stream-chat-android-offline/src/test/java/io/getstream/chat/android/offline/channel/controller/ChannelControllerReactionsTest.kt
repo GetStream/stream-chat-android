@@ -153,7 +153,7 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
 
     @Test
     fun `when deleting a reaction while offline, status must be right and reaction inserted`() =
-        runBlockingTest {
+        coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
