@@ -75,6 +75,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
 - Fixed the loading/playback speed of GIFs. [#2914](https://github.com/GetStream/stream-chat-android/pull/2914)
 - Fixed scroll persisting after long tapping on an item in the message list. [#2916](https://github.com/GetStream/stream-chat-android/pull/2916)
+- Handlling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
 
 ### ⬆️ Improved
 - Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
