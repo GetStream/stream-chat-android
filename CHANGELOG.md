@@ -98,12 +98,15 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated primary accent colors in order to achieve a better contrast ratio for accessibility [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Removed default background color from `MessageItem` [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Added multiline mentions support [#2859](https://github.com/GetStream/stream-chat-android/pull/2859)
+- `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 
 ### ✅ Added
 - Added the `headerContent` and `centerContent` Slot APIs for the `SelectedChannelMenu` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
 - Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
 - You can now define a `placeholderPainter` for the `Avatar` that is shown while the image is loading. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more Slot APIs to the`MessageComposer` and `MessageInput` components [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)  
+- Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 
 ### ⚠️ Changed
 - Updated [ChatTheme documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/). [#2833](https://github.com/GetStream/stream-chat-android/pull/2833)
