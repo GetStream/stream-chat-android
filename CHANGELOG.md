@@ -39,6 +39,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Member::banned` property that represents, if the channel member is banned. []()
+- Added `Member::channelRole` property that represents the user's channel-level role. []()
 
 ### ⚠️ Changed
 
