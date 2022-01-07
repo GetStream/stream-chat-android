@@ -71,6 +71,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
+- Fixed the loading/playback speed of GIFs. [#2914](https://github.com/GetStream/stream-chat-android/pull/2914)
 
 ### ⬆️ Improved
 - Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
@@ -91,6 +92,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed faulty scrolling behavior in `Messages` by adding an autoscroll. [#2857](https://github.com/GetStream/stream-chat-android/pull/2857)
 - Fixed the font size of avatar initials in the message list. [2862](https://github.com/GetStream/stream-chat-android/pull/2862)
 - Fixed faulty scrolling behavior in `Channels` by adding an autoscroll. [#2887](  https://github.com/GetStream/stream-chat-android/pull/2887)
+- Fixed the loading/playback speed of GIFs. [#2914](https://github.com/GetStream/stream-chat-android/pull/2914)
 
 ### ⬆️ Improved
 - Added an animation to the `SelectedChannelMenu` component.
