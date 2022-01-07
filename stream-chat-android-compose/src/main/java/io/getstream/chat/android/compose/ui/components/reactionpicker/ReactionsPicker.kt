@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.components.reactionpicker
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of [ReactionsPicker].
  * @param overlayColor The color applied to the overlay.
+ * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
  * @param onDismiss Handler called when the menu is dismissed.
  * @param reactionTypes The available reactions.
  * @param headerContent The content shown on the top of [ReactionsPicker]. By default empty.
@@ -40,14 +42,16 @@ public fun ReactionsPicker(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
+    cells: GridCells = GridCells.Fixed(5),
     onDismiss: () -> Unit = {},
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultReactionsPickerCenterContent(
-            reactionTypes = reactionTypes,
             message = message,
-            onMessageAction = onMessageAction
+            onMessageAction = onMessageAction,
+            cells = cells,
+            reactionTypes = reactionTypes
         )
     },
 ) {
@@ -66,6 +70,7 @@ public fun ReactionsPicker(
  *
  * @param message The selected message.
  * @param onMessageAction Handler that propagates click events on each item.
+ * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
  * @param reactionTypes The available reactions.
  */
 @ExperimentalFoundationApi
@@ -73,6 +78,7 @@ public fun ReactionsPicker(
 internal fun DefaultReactionsPickerCenterContent(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
+    cells: GridCells = GridCells.Fixed(5),
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes
 ) {
     ExtendedReactionsOptions(
@@ -86,7 +92,8 @@ internal fun DefaultReactionsPickerCenterContent(
                     message = message
                 )
             )
-        }
+        },
+        cells = cells
     )
 }
 

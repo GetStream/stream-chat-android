@@ -26,7 +26,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param ownReactions A list of user's own reactions.
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
- * @param cellCount The number of cells per column.
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
  * @param reactionTypes All available reactions.
  * @param itemContent Composable that allows the user to customize the individual items shown in [ExtendedReactionsOptions].
@@ -38,8 +37,7 @@ public fun ExtendedReactionsOptions(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
-    cellCount: Int = 5,
-    cells: GridCells = GridCells.Fixed(cellCount),
+    cells: GridCells = GridCells.Fixed(5),
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultExtendedReactionsItemContent(
@@ -104,8 +102,8 @@ internal fun ExtendedReactionOptionsPreview() {
 }
 
 /**
-* Preview for [ExtendedReactionsOptions] with a selected reaction.
-*/
+ * Preview for [ExtendedReactionsOptions] with a selected reaction.
+ */
 @ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview (With Own Reaction)")
 @Composable
