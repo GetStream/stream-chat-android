@@ -13,7 +13,7 @@ internal fun Member.toEntity(): MemberEntity = MemberEntity(
     inviteRejectedAt = inviteRejectedAt,
     shadowBanned = shadowBanned,
     banned = banned,
-    channelRole = channelRole ?: "",
+    channelRole = channelRole,
 )
 
 internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> User): Member = Member(

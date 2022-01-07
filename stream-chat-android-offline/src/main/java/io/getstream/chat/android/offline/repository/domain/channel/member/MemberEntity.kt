@@ -33,5 +33,5 @@ internal data class MemberEntity(
     var banned: Boolean = false,
 
     /** The user's channel-level role. */
-    val channelRole: String = "",
+    val channelRole: String? = null,
 )
