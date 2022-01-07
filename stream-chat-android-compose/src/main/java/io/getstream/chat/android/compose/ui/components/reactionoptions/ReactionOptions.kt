@@ -27,6 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more button.
  * @param modifier Modifier for styling.
+ * @param numberOfReactionsShown The maximum number of reactions shown before the show more reactions button is displayed.
  * @param horizontalArrangement Used for changing the arrangement.
  * @param reactionTypes All available reactions.
  * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.

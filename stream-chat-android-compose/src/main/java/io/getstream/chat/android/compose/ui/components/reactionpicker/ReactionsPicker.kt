@@ -13,20 +13,35 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
+/**
+ * Displays all of the available reactions the user can set on a message.
+ *
+ * @param message The selected message.
+ * @param onMessageAction Handler that propagates click events on each item.
+ * @param modifier Modifier for styling.
+ * @param shape Changes the shape of [ReactionsPicker].
+ * @param overlayColor The color applied to the overlay.
+ * @param onDismiss Handler called when the menu is dismissed.
+ * @param reactionTypes The available reactions.
+ * @param headerContent The content shown on the top of [ReactionsPicker]. By default empty.
+ * @param centerContent The content shown at the center of [ReactionsPicker].
+ * By default displays all available reactions.
+ */
 @ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     onDismiss: () -> Unit = {},
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultReactionsPickerCenterContent(
@@ -46,12 +61,19 @@ public fun ReactionsPicker(
     )
 }
 
+/**
+ * The Default center content for the [ReactionsPicker]. Shows all available reactions.
+ *
+ * @param message The selected message.
+ * @param onMessageAction Handler that propagates click events on each item.
+ * @param reactionTypes The available reactions.
+ */
 @ExperimentalFoundationApi
 @Composable
 internal fun DefaultReactionsPickerCenterContent(
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes
 ) {
     ExtendedReactionsOptions(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
@@ -68,13 +90,16 @@ internal fun DefaultReactionsPickerCenterContent(
     )
 }
 
+/**
+ * Preview of [ReactionsPicker] with a reaction selected.
+ */
 @ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ReactionPicker Preview")
 @Composable
 internal fun ReactionPickerPreview() {
     ChatTheme {
         ReactionsPicker(
-            message = Message(),
+            message = PreviewMessageData.messageWithOwnReaction,
             onMessageAction = {}
         )
     }

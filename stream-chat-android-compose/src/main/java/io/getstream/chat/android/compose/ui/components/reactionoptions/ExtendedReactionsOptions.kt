@@ -20,6 +20,18 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
+/**
+ * Displays all available reactions a user can set on a message.
+ *
+ * @param ownReactions A list of user's own reactions.
+ * @param onReactionOptionSelected Handler that propagates click events on each item.
+ * @param modifier Modifier for styling.
+ * @param cellCount The number of cells per column.
+ * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
+ * @param reactionTypes All available reactions.
+ * @param itemContent Composable that allows the user to customize the individual items shown in [ExtendedReactionsOptions].
+ * By default shows individual reactions.
+ */
 @ExperimentalFoundationApi
 @Composable
 public fun ExtendedReactionsOptions(
@@ -53,6 +65,12 @@ public fun ExtendedReactionsOptions(
     }
 }
 
+/**
+ * The default item content inside [ExtendedReactionsOptions]. Shows an individual reaction.
+ *
+ * @param option Individual reaction option.
+ * @param onReactionOptionSelected Handler that propagates click events on each item.
+ */
 @Composable
 internal fun DefaultExtendedReactionsItemContent(
     option: ReactionOptionItemState,
@@ -70,6 +88,9 @@ internal fun DefaultExtendedReactionsItemContent(
     )
 }
 
+/**
+ * Preview for [ExtendedReactionsOptions].
+ */
 @ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview")
 @Composable
@@ -82,6 +103,9 @@ internal fun ExtendedReactionOptionsPreview() {
     }
 }
 
+/**
+* Preview for [ExtendedReactionsOptions] with a selected reaction.
+*/
 @ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview (With Own Reaction)")
 @Composable
@@ -90,7 +114,7 @@ internal fun ExtendedReactionOptionsWithOwnReactionPreview() {
         ExtendedReactionsOptions(
             ownReactions = listOf(
                 Reaction(
-                    messageId = "",
+                    messageId = "messageId",
                     type = "haha"
                 )
             ),
