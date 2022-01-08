@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
@@ -85,17 +86,47 @@ public class ChannelListViewModel(
         stateMerger.value = INITIAL_STATE
 
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            val queryChannelsRequest =
-                QueryChannelsRequest(
-                    filter = filterObject,
-                    querySort = sort,
-                    limit = limit,
-                    messageLimit = messageLimit,
-                    memberLimit = memberLimit,
-                )
-            queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+            initWithOfflinePlugin(filterObject)
+        } else {
+            initWithChatDomain(filterObject)
         }
+    }
 
+    private fun initWithOfflinePlugin(filterObject: FilterObject) {
+        val queryChannelsRequest =
+            QueryChannelsRequest(
+                filter = filterObject,
+                querySort = sort,
+                limit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+        queryChannelsState?.let { queryChannelsState ->
+            queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
+            stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
+                stateMerger.value = handleChannelStateNews(channelsState, chatDomain.channelMutes.value)
+            }
+            stateMerger.addSource(chatDomain.channelMutes.asLiveData()) { channelMutes ->
+                val state = stateMerger.value
+
+                if (state?.channels?.isNotEmpty() == true) {
+                    stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
+                } else {
+                    stateMerger.value = state?.copy()
+                }
+            }
+
+            paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
+                setPaginationState { copy(loadingMore = loadingMore) }
+            }
+            paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
+                setPaginationState { copy(endOfChannels = endOfChannels) }
+            }
+        }
+    }
+
+    private fun initWithChatDomain(filterObject: FilterObject) {
         chatDomain.queryChannels(
             filter = filterObject,
             sort = sort,
@@ -111,7 +142,7 @@ public class ChannelListViewModel(
                         chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
 
                     val channelState = queryChannelsController.channelsState.map { channelState ->
-                        handleChannelState(channelState, chatDomain.channelMutes.value)
+                        handleChannelStateNews(channelState, chatDomain.channelMutes.value)
                     }.asLiveData()
 
                     stateMerger.addSource(channelState) { state -> stateMerger.value = state }
@@ -138,7 +169,26 @@ public class ChannelListViewModel(
             }
     }
 
-    private fun handleChannelState(
+    private fun handleChannelStateNews(
+        channelState: ChannelsStateData,
+        channelMutes: List<ChannelMute>,
+    ): State {
+        return when (channelState) {
+            is ChannelsStateData.NoQueryActive,
+            is ChannelsStateData.Loading,
+            -> State(isLoading = true, emptyList())
+            is ChannelsStateData.OfflineNoResults -> State(
+                isLoading = false,
+                channels = emptyList(),
+            )
+            is ChannelsStateData.Result -> State(
+                isLoading = false,
+                channels = parseMutedChannels(channelState.channels, channelMutes),
+            )
+        }
+    }
+
+    private fun handleChannelStateNews(
         channelState: QueryChannelsController.ChannelsState,
         channelMutes: List<ChannelMute>,
     ): State {

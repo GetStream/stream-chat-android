@@ -1065,6 +1065,7 @@ public class ChatClient internal constructor(
             .doOnResult(scope) { result ->
                 plugins.forEach { it.onQueryChannelsResult(result, request) }
             }
+            .precondition { onQueryChannelsPrecondition(request) }
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
