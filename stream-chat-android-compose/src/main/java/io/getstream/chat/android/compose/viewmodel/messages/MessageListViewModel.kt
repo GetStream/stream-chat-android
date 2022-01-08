@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -69,6 +70,11 @@ import java.util.concurrent.TimeUnit
  * we show a separator, if it's enabled in the list.
  */
 private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+/**
+ * The default limit for messages count in requests.
+ */
+private const val DEFAULT_MESSAGE_LIMIT: Int = 30
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -188,6 +194,11 @@ public class MessageListViewModel(
      * Represents the latest message we've seen in the active thread.
      */
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
+
+    /**
+     * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
+     */
+    private val logger = ChatLogger.get("MessageListViewModel")
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -432,12 +443,34 @@ public class MessageListViewModel(
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
-            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
-            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
-                .enqueue()
+            threadLoadMore(messageMode)
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
+        }
+    }
+
+    /**
+     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
+     *
+     * @param messageMode Represents the current message thread mode.
+     */
+    private fun threadLoadMore(messageMode: MessageMode.MessageThread) {
+        threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
+            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
+                .enqueue()
+        } else {
+            if (messageMode.threadState != null) {
+                chatClient.getRepliesMore(
+                    messageId = messageMode.parentMessage.id,
+                    firstId = messageMode.threadState?.oldestInThread?.value?.id ?: messageMode.parentMessage.id,
+                    limit = DEFAULT_MESSAGE_LIMIT,
+                ).enqueue()
+            } else {
+                threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
+                logger.logW("Thread state must be not null for offline plugin thread load more!")
+            }
         }
     }
 
@@ -470,14 +503,11 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user taps on a message that has a thread active. This changes the current
-     * [messageMode] to [Thread] and loads the thread data.
+     * Triggered when the user taps on a message that has a thread active.
      *
      * @param message The selected message with a thread.
      */
     public fun openMessageThread(message: Message) {
-        this.messageMode = MessageMode.MessageThread(message)
-
         loadThread(message)
     }
 
@@ -528,13 +558,11 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads the thread data and changes the current [messageMode] to be [Thread].
+     * Loads the thread data.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        messageMode = MessageMode.MessageThread(parentMessage)
-
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             loadThreadWithOfflinePlugin(parentMessage)
         } else {
@@ -543,12 +571,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads thread data using ChatDomain approach. The data is loaded by fetching the [ThreadController] first, based
-     * on the [parentMessage], after which we observe specific data from the thread.
+     * Changes the current [messageMode] to be [Thread] and loads thread data using ChatDomain approach.
+     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage], after which we observe
+     * specific data from the thread.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithChatDomain(parentMessage: Message) {
+        messageMode = MessageMode.MessageThread(parentMessage)
         chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
             if (result.isSuccess) {
                 val controller = result.data()
@@ -560,12 +590,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads thread data using ChatClient directly. The data is observed by using [ThreadState].
+     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
      *
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val threadState = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        messageMode = MessageMode.MessageThread(parentMessage, threadState)
         observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
     }
 
@@ -662,6 +694,16 @@ public class MessageListViewModel(
         return groupedMessages.reversed()
     }
 
+    /**
+     * Decides if we need to add a date separator or not.
+     *
+     * If the user disables them, we don't add any separators, otherwise we check if there are previous messages or if
+     * the time difference between two messages is higher than the threshold.
+     *
+     * @param previousMessage The previous message.
+     * @param message The current message.
+     * @return If we should add a date separator to the list.
+     */
     private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
         return if (!showDateSeparators) {
             false
