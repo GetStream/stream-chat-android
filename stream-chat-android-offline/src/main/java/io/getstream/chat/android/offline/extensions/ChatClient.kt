@@ -167,6 +167,13 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
     }
 }
 
+/**
+ * Checks if channel needs to be marked read.
+ *
+ * @param cid The full channel id i.e. "messaging:123".
+ *
+ * @return True if channel is needed to be marked otherwise false.
+ */
 public fun ChatClient.needsMarkRead(cid: String): Boolean {
     validateCid(cid)
     val domainImpl = ChatDomain.instance as ChatDomainImpl

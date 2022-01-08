@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSepara
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -267,7 +268,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onEndRegionReached()
             }
             is Event.LastMessageRead -> {
-                domain.markRead(cid).enqueue(
+                val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                    cid.cidToTypeAndId().let { (channelType, channelId) ->
+                        client.markRead(channelType, channelId)
+                    }
+                } else {
+                    domain.markRead(cid)
+                }
+                call.enqueue(
                     onError = { chatError ->
                         logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
                     }
@@ -378,7 +386,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     ?.message
 
                 if (message != null) {
-                    _targetMessage.value = message
+                    _targetMessage.value = message!!
                 } else {
                     domain.loadMessageById(
                         cid,

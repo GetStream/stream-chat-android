@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -408,7 +409,12 @@ public class MessageListViewModel(
             messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
 
-        chatDomain.markRead(channelId).enqueue()
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val (channelType, channelId) = channelId.cidToTypeAndId()
+            chatClient.markRead(channelType, channelId).enqueue()
+        } else {
+            chatDomain.markRead(channelId).enqueue()
+        }
     }
 
     /**
