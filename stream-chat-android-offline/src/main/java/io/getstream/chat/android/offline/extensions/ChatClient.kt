@@ -26,7 +26,7 @@ import io.getstream.chat.android.offline.utils.validateCid
  * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
  */
 private fun domainImpl(): ChatDomainImpl {
-    return domainImpl()
+    return ChatDomain.instance as ChatDomainImpl
 }
 
 /**
