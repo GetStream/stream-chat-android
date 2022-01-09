@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -124,32 +125,50 @@ public class ChannelListViewModel(
      */
     init {
         viewModelScope.launch {
-            searchQuery.combine(queryConfig) { query, config -> query to config }
-                .collectLatest { (query, config) ->
-                    val result = chatDomain.queryChannels(
-                        filter = createQueryChannelsFilter(config.filters, query),
-                        sort = config.querySort
-                    ).await()
+            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                initWithOfflinePlugin()
+            } else {
+                initWithChatDomain()
+            }
+        }
+    }
 
-                    if (result.isSuccess) {
-                        observeChannels(controller = result.data(), searchQuery = query)
+    private suspend fun initWithChatDomain() {
+        searchQuery.combine(queryConfig) { query, config -> query to config }
+            .collectLatest { (query, config) ->
+                val result = chatDomain.queryChannels(
+                    filter = createQueryChannelsFilter(config.filters, query),
+                    sort = config.querySort
+                ).await()
+
+                if (result.isSuccess) {
+                    observeChannels(controller = result.data(), searchQuery = query)
+                } else {
+                    result.error().cause?.printStackTrace()
+                    channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
+                }
+            }
+    }
+
+    private suspend fun initWithOfflinePlugin() {
+        searchQuery.combine(queryConfig) { query, config -> query to config }
+            .collectLatest { (query, config) ->
+                val queryChannelsRequest = QueryChannelsRequest(
+                    filter = createQueryChannelsFilter(config.filters, query),
+                    querySort = config.querySort,
+                    limit = CHANNEL_LIMIT,
+                    messageLimit = MESSAGE_LIMIT,
+                    memberLimit = MEMBER_LIMIT,
+                )
+                queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+                queryChannelsState?.let {
+                    if (queryChannelsState?.channels?.value?.isNotEmpty() == true) {
+                        observeChannels(it, searchQuery = query)
                     } else {
-                        result.error().cause?.printStackTrace()
                         channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
                     }
                 }
-        }
-
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            val queryChannelsRequest = QueryChannelsRequest(
-                filter = createQueryChannelsFilter(queryConfig.value.filters, ""),
-                querySort = queryConfig.value.querySort,
-                limit = CHANNEL_LIMIT,
-                messageLimit = MESSAGE_LIMIT,
-                memberLimit = MEMBER_LIMIT,
-            )
-            queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
-        }
+            }
     }
 
     /**
@@ -208,6 +227,41 @@ public class ChannelListViewModel(
                             channelItems = createChannelItems(state.channels, channelMutes),
                             isLoadingMore = false,
                             endOfChannels = controller.endOfChannels.value,
+                            searchQuery = searchQuery
+                        )
+                    }
+                }
+            }.collectLatest { newState -> channelsState = newState }
+    }
+
+    /**
+     * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
+     *
+     * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [queryChannelsState].
+     */
+    private suspend fun observeChannels(queryChannelsState: QueryChannelsState, searchQuery: String) {
+        chatDomain.channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
+            .map { (channelMutes, state) ->
+                when (state) {
+                    ChannelsStateData.NoQueryActive,
+                    ChannelsStateData.Loading,
+                    -> channelsState.copy(
+                        isLoading = true,
+                        searchQuery = searchQuery
+                    )
+                    ChannelsStateData.OfflineNoResults -> {
+                        channelsState.copy(
+                            isLoading = false,
+                            channelItems = emptyList(),
+                            searchQuery = searchQuery
+                        )
+                    }
+                    is ChannelsStateData.Result -> {
+                        channelsState.copy(
+                            isLoading = false,
+                            channelItems = createChannelItems(state.channels, channelMutes),
+                            isLoadingMore = false,
+                            endOfChannels = queryChannelsState.endOfChannels.value,
                             searchQuery = searchQuery
                         )
                     }
