@@ -394,22 +394,13 @@ public class MessageListViewModel(
 
         if (message.id == lastSeenMessage.id) return
 
-        val lastSeenMessageDate = message.createdAt ?: Date()
+        val lastSeenMessageDate = lastSeenMessage.createdAt ?: Date()
         val currentMessageDate = message.createdAt ?: Date()
 
         if (currentMessageDate < lastSeenMessageDate) {
             return
         }
-        val messages = currentMessagesState.messageItems
-
-        val currentMessagePosition =
-            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
-        val lastSeenMessagePosition =
-            messages.indexOfFirst { it is MessageItemState && it.message.id == message.id }
-
-        if (currentMessagePosition < lastSeenMessagePosition) {
-            updateLastSeenMessageState(message)
-        }
+        updateLastSeenMessageState(message)
     }
 
     /**
@@ -461,7 +452,6 @@ public class MessageListViewModel(
     private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
             chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
                 .enqueue()
         } else {
@@ -698,6 +688,16 @@ public class MessageListViewModel(
         return groupedMessages.reversed()
     }
 
+    /**
+     * Decides if we need to add a date separator or not.
+     *
+     * If the user disables them, we don't add any separators, otherwise we check if there are previous messages or if
+     * the time difference between two messages is higher than the threshold.
+     *
+     * @param previousMessage The previous message.
+     * @param message The current message.
+     * @return If we should add a date separator to the list.
+     */
     private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
         return if (!showDateSeparators) {
             false

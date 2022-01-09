@@ -4,10 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -19,14 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
@@ -46,11 +53,14 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param typingUsers The list of typing users.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
  * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
+ * @param color The color of the header.
+ * @param shape The shape of the header.
+ * @param elevation The elevation of the header.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
- * [DefaultMessageHeaderCenterContent].
+ * [DefaultMessageListHeaderCenterContent].
  * @param trailingContent The content shown at the end of the header, by default a [ChannelAvatar].
  */
 @Composable
@@ -61,17 +71,14 @@ public fun MessageListHeader(
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     connectionState: ConnectionState = ConnectionState.CONNECTED,
+    color: Color = ChatTheme.colors.barsBackground,
+    shape: Shape = ChatTheme.shapes.header,
+    elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (Channel) -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
-        BackButton(
-            modifier = Modifier
-                .size(36.dp),
-            imageVector = Icons.Default.ArrowBack,
-            onBackPressed = onBackPressed,
-        )
+        DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
     },
-
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderCenterContent(
             modifier = Modifier.weight(1f),
@@ -84,23 +91,22 @@ public fun MessageListHeader(
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        ChannelAvatar(
-            modifier = Modifier.size(40.dp),
+        DefaultMessageListHeaderTrailingContent(
             channel = channel,
-            currentUser = currentUser,
-            contentDescription = channel.name,
+            currentUser = currentUser
         )
     },
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        elevation = 4.dp,
-        color = ChatTheme.colors.barsBackground,
+        elevation = elevation,
+        color = color,
+        shape = shape
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
@@ -111,6 +117,21 @@ public fun MessageListHeader(
             trailingContent()
         }
     }
+}
+
+/**
+ * Represents the leading content of [MessageListHeader]. By default shows a back button.
+ *
+ * @param onBackPressed Handler that propagates the back button click event.
+ */
+@Composable
+internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
+    BackButton(
+        modifier = Modifier
+            .size(36.dp),
+        imageVector = Icons.Default.ArrowBack,
+        onBackPressed = onBackPressed,
+    )
 }
 
 /**
@@ -149,7 +170,7 @@ public fun DefaultMessageListHeaderCenterContent(
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
+            .height(IntrinsicSize.Max)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -210,5 +231,94 @@ public fun DefaultMessageListHeaderCenterContent(
                 textStyle = subtitleTextStyle
             )
         }
+    }
+}
+
+/**
+ * Represents the trailing content of [MessageListHeader]. By default shows the channel avatar.
+ *
+ * @param channel The channel used to display the avatar.
+ * @param currentUser The current user. Used for choosing which avatar to display.
+ * */
+@Composable
+internal fun DefaultMessageListHeaderTrailingContent(channel: Channel, currentUser: User?) {
+    ChannelAvatar(
+        modifier = Modifier.size(40.dp),
+        channel = channel,
+        currentUser = currentUser,
+        contentDescription = channel.name,
+    )
+}
+
+@Preview(name = "MessageListHeader Preview (Connected)")
+@Composable
+private fun MessageListHeaderConnectedPreview() {
+    ChatTheme {
+        MessageListHeader(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            channel = PreviewChannelData.channelWithImage,
+            currentUser = PreviewUserData.user1
+        )
+    }
+}
+
+@Preview(name = "MessageListHeader Preview (Connecting)")
+@Composable
+private fun MessageListHeaderConnectingPreview() {
+    ChatTheme {
+        MessageListHeader(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            channel = PreviewChannelData.channelWithImage,
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.CONNECTING
+        )
+    }
+}
+
+@Preview(name = "MessageListHeader Preview (Offline)")
+@Composable
+private fun MessageListHeaderOfflinePreview() {
+    ChatTheme {
+        MessageListHeader(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            channel = PreviewChannelData.channelWithImage,
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.OFFLINE
+        )
+    }
+}
+
+@Preview(name = "MessageListHeader Preview (User Typing)")
+@Composable
+private fun MessageListHeaderUserTypingPreview() {
+    ChatTheme {
+        MessageListHeader(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            channel = PreviewChannelData.channelWithImage,
+            currentUser = PreviewUserData.user1,
+            typingUsers = listOf(PreviewUserData.user2)
+        )
+    }
+}
+
+@Preview(name = "MessageListHeader Preview (Many Members)")
+@Composable
+private fun MessageListHeaderManyMembersPreview() {
+    ChatTheme {
+        MessageListHeader(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            channel = PreviewChannelData.channelWithManyMembers,
+            currentUser = PreviewUserData.user1,
+        )
     }
 }

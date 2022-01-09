@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
-import io.getstream.chat.android.compose.ui.components.avatar.ImageAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -47,7 +48,6 @@ public fun ThreadParticipants(
         val itemSize = ChatTheme.dimens.threadParticipantItemSize
 
         participantsToShow.forEachIndexed { index, user ->
-            val painter = rememberImagePainter(data = user.image)
             val itemPadding = Modifier.padding(start = (index * (itemSize.value / 2)).dp)
 
             /**
@@ -62,12 +62,14 @@ public fun ThreadParticipants(
                 index + 1
             }.toFloat()
 
-            ImageAvatar(
+            Avatar(
                 modifier = itemPadding
                     .zIndex(itemPosition)
                     .size(itemSize)
                     .border(border = borderStroke, shape = ChatTheme.shapes.avatar),
-                painter = painter
+                imageUrl = user.image,
+                initials = user.initials,
+                textStyle = ChatTheme.typography.captionBold.copy(fontSize = 7.sp),
             )
         }
     }

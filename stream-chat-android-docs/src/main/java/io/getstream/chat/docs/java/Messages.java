@@ -16,11 +16,14 @@ import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
+import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
@@ -403,26 +406,28 @@ public class Messages {
             });
         }
 
-        public void searchForAllPinnedMessages() {
-            int offset = 0;
-            int limit = 10;
-            FilterObject channelFilter = Filters.in("cid", "channelType:channelId");
-            FilterObject messageFilter = Filters.eq("pinned", true);
+        public void paginateOverAllPinnedMessages() {
+            // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
+            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
+                    .enqueue(result -> {
+                        if (result.isSuccess()) {
+                            List<Message> pinnedMessages = result.data();
+                        } else {
+                            // Handle result.error()
+                        }
+                    });
 
-            client.searchMessages(
-                    channelFilter,
-                    messageFilter,
-                    offset,
-                    limit,
-                    null,
-                    null
-            ).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Message> pinnedMessages = result.data().getMessages();
-                } else {
-                    // Handle result.error()
-                }
-            });
+            // You can use a pinnedAt date retrieved from the previous request to get the next page
+            Date nextDate = new Date();
+            // List the next page of pinned messages
+            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
+                    .enqueue(result -> {
+                        if (result.isSuccess()) {
+                            List<Message> pinnedMessages = result.data();
+                        } else {
+                            // Handle result.error()
+                        }
+                    });
         }
     }
 
