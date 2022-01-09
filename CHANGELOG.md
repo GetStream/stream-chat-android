@@ -52,6 +52,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added `memberLimit` to `ChatDomain::queryChannels` and `ChatDomain::queryChannelsLoadMore` that allows modifying the number of members to fetch per channel. [#2826](https://github.com/GetStream/stream-chat-android/pull/2826)
+- Added `ChatClient::needsMarkRead` extension function to check if a channel can be marked as read. [#2920](https://github.com/GetStream/stream-chat-android/pull/2920)
 
 ### ⚠️ Changed
 
@@ -86,6 +87,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - `ChatUI.markdown` is deprecated in favour of `ChatUI.messageTextTransformer`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
+- `MessageListViewModel` now uses OfflinePlugin based `markRead` if it is enabled. [#2920](https://github.com/GetStream/stream-chat-android/pull/2920)
 
 ### ❌ Removed
 
@@ -124,6 +126,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [AttachmentsPicker documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/attachments-picker/) [#2860](https://github.com/GetStream/stream-chat-android/pull/2860)
 - Renamed the `ChannelInfo` component to `SelectedChannelMenu`. [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
 - Updated [Overview documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/). [#2836](https://github.com/GetStream/stream-chat-android/pull/2836)
+- `MessageListViewModel` now uses OfflinePlugin based `markRead` if it is enabled. [#2920](https://github.com/GetStream/stream-chat-android/pull/2920)
 
 ### ❌ Removed
 
