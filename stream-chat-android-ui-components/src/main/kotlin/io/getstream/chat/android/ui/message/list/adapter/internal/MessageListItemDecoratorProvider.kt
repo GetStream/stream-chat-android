@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.utils.DateFormatter
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.AvatarDecorator
@@ -23,7 +24,8 @@ internal class MessageListItemDecoratorProvider(
     isDirectMessage: () -> Boolean,
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
-    messageBackgroundFactory: MessageBackgroundFactory
+    messageBackgroundFactory: MessageBackgroundFactory,
+    deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
@@ -36,7 +38,7 @@ internal class MessageListItemDecoratorProvider(
         FailedIndicatorDecorator(),
         ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
         ReplyDecorator(messageListViewStyle.replyMessageStyle),
-        FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle),
+        FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle, deletedMessageListItemPredicate),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )
 
