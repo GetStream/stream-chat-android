@@ -158,8 +158,11 @@ public class MessageInputView : ConstraintLayout {
         init(attrs)
     }
 
+    /*
+    * Sets direction of MessageInputTextDirection. Default is TEXT_DIRECTION_FIRST_STRONG_LTR
+    */
     public fun setInputTextDirection(direction: Int) {
-        binding.messageInputFieldView.textDirection = direction
+        binding.messageInputFieldView.binding.messageEditText.textDirection = direction
     }
 
     private fun configInputMode(previousValue: InputMode, newValue: InputMode) {
