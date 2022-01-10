@@ -19,7 +19,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
-import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate.VisibleToEveryone
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate.VisibleToAuthorOnly
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
@@ -151,7 +152,7 @@ internal class FootnoteDecorator(
             }
             data.isNotBottomPosition()
                 || !data.message.isEphemeral() && !data.message.isDeleted()
-                || deletedMessageListItemPredicate != VisibleToEveryone -> textView.isVisible = false
+                || deletedMessageListItemPredicate != VisibleToAuthorOnly -> textView.isVisible = false
             else -> textView.apply {
                 isVisible = true
                 text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
