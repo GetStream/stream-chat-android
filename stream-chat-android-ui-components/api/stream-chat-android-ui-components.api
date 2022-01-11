@@ -106,14 +106,6 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 }
 
-public final class io/getstream/chat/android/ui/UiMode : java/lang/Enum {
-	public static final field DARK Lio/getstream/chat/android/ui/UiMode;
-	public static final field LIGHT Lio/getstream/chat/android/ui/UiMode;
-	public static final field SYSTEM Lio/getstream/chat/android/ui/UiMode;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/UiMode;
-	public static fun values ()[Lio/getstream/chat/android/ui/UiMode;
-}
-
 public class io/getstream/chat/android/ui/avatar/AvatarBitmapFactory {
 	public static final field Companion Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory$Companion;
 	public fun <init> (Landroid/content/Context;)V
