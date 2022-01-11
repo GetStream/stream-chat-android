@@ -38,9 +38,9 @@ public class StreamImageLoaderFactory(
             }
             .componentRegistry {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder(context))
+                    add(ImageDecoderDecoder(context, enforceMinimumFrameDelay = true))
                 } else {
-                    add(GifDecoder())
+                    add(GifDecoder(enforceMinimumFrameDelay = true))
                 }
             }
             .apply(builder)
