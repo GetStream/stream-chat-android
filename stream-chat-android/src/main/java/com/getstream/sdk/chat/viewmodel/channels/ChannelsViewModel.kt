@@ -28,6 +28,7 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
  */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
     private val filter: FilterObject? = null,
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
@@ -92,7 +93,9 @@ public class ChannelsViewModel(
     }
 
     public fun leaveChannel(channel: Channel) {
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        chatClient.getCurrentUser()?.let { user ->
+            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        }
     }
 
     public fun deleteChannel(channel: Channel) {

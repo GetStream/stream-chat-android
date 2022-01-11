@@ -537,6 +537,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] leaving a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "leaveChannel is deprecated. Use function ChatClient::removeMembers instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().removeMembers(channel.type, channel.id, listOf(userId))",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun leaveChannel(cid: String): Call<Unit>
 
     /**
