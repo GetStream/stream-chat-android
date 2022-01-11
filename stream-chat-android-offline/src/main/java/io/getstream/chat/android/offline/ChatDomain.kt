@@ -561,7 +561,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().setMessageForReply(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
