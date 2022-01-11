@@ -466,7 +466,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().stopTyping(cid, parentId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
