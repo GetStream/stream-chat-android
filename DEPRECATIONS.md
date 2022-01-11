@@ -4,10 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.04<br/>⌛ | 2022.03.04 ⌛ | Use `ChatUI.messageTextTransformer` instead. |
-| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.04<br/>⌛ | 2022.03.04 ⌛ | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
-| `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.21<br/>⌛ | 2022.02.21 ⌛ | Use `ChatClient#showChannel` instead |
-| `ChatDomain#loadOlderMessages` | 2021.12.21<br/>4.25.0 | 2022.01.21<br/>⌛ | 2022.02.21 ⌛ | Use `ChatClient#loadOlderMessages` instead |
+| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | Use `ChatUI.messageTextTransformer` instead. |
+| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
+| `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>⌛ | 2022.02.22 ⌛ | Use `ChatClient#showChannel` instead |
+| `ChatDomain#loadOlderMessages` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>⌛ | 2022.02.22 ⌛ | Use `ChatClient#loadOlderMessages` instead |
 | `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#stopTyping` instead |
 | `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#keystroke` instead |
 | `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.09<br/>4.24.0 | 2022.01.11<br/>4.26.0 | Use ChatDomain.mutedChannels instead |
