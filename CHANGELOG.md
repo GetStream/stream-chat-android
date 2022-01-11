@@ -88,6 +88,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - `ChatUI.markdown` is deprecated in favour of `ChatUI.messageTextTransformer`. [#2786](https://github.com/GetStream/stream-chat-android/pull/2786)
+- In the sample app the new behaviour for new messages is to count unread messages, instead of always scroll to bottom [#2865](https://github.com/GetStream/stream-chat-android/pull/)
 
 ### ❌ Removed
 
