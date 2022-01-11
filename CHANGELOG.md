@@ -114,6 +114,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
 - You can now define a `placeholderPainter` for the `Avatar` that is shown while the image is loading. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more Slot APIs to the`MessageComposer` and `MessageInput` components [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Added [SelectedReactionsMenu documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/selected-reactions-menu/). [#2868](https://github.com/GetStream/stream-chat-android/pull/2868)
 
 ### ⚠️ Changed
 - Updated [ChatTheme documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/). [#2833](https://github.com/GetStream/stream-chat-android/pull/2833)
@@ -127,6 +128,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Renamed the `ChannelInfo` component to `SelectedChannelMenu`. [#2838](https://github.com/GetStream/stream-chat-android/pull/2838)
 - Updated [Overview documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/). [#2836](https://github.com/GetStream/stream-chat-android/pull/2836)
 - Updated [Custom Attachments documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/) with minor sentence formatting changes [#2878](https://github.com/GetStream/stream-chat-android/pull/2878)
+- Updated [MessagesScreen documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) [#2866](https://github.com/GetStream/stream-chat-android/pull/2866)
 - Updated [MessageList documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list/). [#2869](https://github.com/GetStream/stream-chat-android/pull/2869)
 
 ### ❌ Removed
