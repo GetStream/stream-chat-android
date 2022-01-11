@@ -130,6 +130,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [Overview documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/). [#2836](https://github.com/GetStream/stream-chat-android/pull/2836)
 - Updated [Custom Attachments documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/) with minor sentence formatting changes [#2878](https://github.com/GetStream/stream-chat-android/pull/2878)
 - Updated [MessagesScreen documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) [#2866](https://github.com/GetStream/stream-chat-android/pull/2866)
+- Updated [MessageList documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list/). [#2869](https://github.com/GetStream/stream-chat-android/pull/2869)
 
 ### ❌ Removed
 
