@@ -39,6 +39,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Member::banned` property that represents, if the channel member is banned. []()
+- Added `Member::channelRole` property that represents the user's channel-level role. []()
 
 ### ⚠️ Changed
 
@@ -112,6 +114,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the `headerContent` and `centerContent` Slot APIs for the `ChannelInfo` component. [#2823](https://github.com/GetStream/stream-chat-android/pull/2823)
 - You can now define a `placeholderPainter` for the `Avatar` that is shown while the image is loading. [#2830](https://github.com/GetStream/stream-chat-android/pull/2830)
 - Added more Slot APIs to the`MessageComposer` and `MessageInput` components [#2809](https://github.com/GetStream/stream-chat-android/pull/2809)
+- Added [SelectedReactionsMenu documentation](https://getstream.io/chat/docs/sdk/android/compose/channel-components/selected-reactions-menu/). [#2868](https://github.com/GetStream/stream-chat-android/pull/2868)
 
 ### ⚠️ Changed
 - Updated [ChatTheme documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/). [#2833](https://github.com/GetStream/stream-chat-android/pull/2833)
