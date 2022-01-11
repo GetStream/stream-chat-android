@@ -3,7 +3,7 @@
 The `MessageList` component is a crucial part when building a chat experience. We support two versions of the `MessageList` component:
 
 * **Bound**: This version binds itself to the `MessageListViewModel` and loads all the required data. It also connects single and long item tap, pagination, and bottom reached events to the `ViewModel`.
-* **Stateless**: This is a stateless version of the list which doesn't know about the `ViewModel` and depends on pure state from external sources in order to render its UI.
+* **Stateless**: This is a stateless version of the list which doesn't know about the `ViewModel` and depends on pure state from external sources to render its UI.
 
 :::note 
 The **bound** version of the list uses the **stateless** list internally. That way, when providing the same state to either component, the behavior remains the same.
@@ -44,8 +44,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     setContent {
         ChatTheme {
             Column(
-                Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Top
+                Modifier.fillMaxSize()
             ) {
                 MessageListHeader(...)
 
@@ -95,14 +94,14 @@ fun MessageList(
 )
 ```
 
-* `onThreadClick`: Handler for the user tapping on a message with a thread.
-* `onLongItemClick`: Handler for the user long tapping on an item.
-* `onReactionsClick`: Handler used when the user taps on a reaction left on a message.
-* `onMessagesStartReached`: Handler for the user reaching the oldest message, to trigger pagination.
-* `onLastVisibleMessageChanged`: Handler when the user scrolls and the last visible item changes.
-* `onScrollToBottom`: Handler for the user reaching the newest message. Used to remove the "New message" or "Scroll to bottom" actions from the UI.
+* `onThreadClick`: Handler used when the user taps on a message with a thread.
+* `onLongItemClick`: Handler used when the user long taps on an item.
+* `onReactionsClick`: Handler used when the user taps on a reaction to a message.
+* `onMessagesStartReached`: Handler used when the user reaches the oldest message, to trigger pagination.
+* `onLastVisibleMessageChanged`: Handler used when the user scrolls and the last visible item changes.
+* `onScrollToBottom`: Handler used when the user reaches the newest message. Used to remove the "New message" or "Scroll to bottom" actions from the UI.
 * `onGiphyActionClick`: Handler used when the user clicks on one of the actions in a Giphy message. Giphy images with actions are displayed only directly after using the Giphy slash command.
-* `onImagePreviewResult`: Handler when the user receives a result from the Image Preview screen, after opening an image attachment.
+* `onImagePreviewResult`: Handler used when the user receives a result from the Image Preview screen, after opening an image attachment.
 
 You can customize the behavior here by providing your own actions, like so:
 
@@ -153,9 +152,9 @@ fun MessageList(
 ```
 
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
-* `loadingContent`: Composable function used while loading the message data. By default shows a loading indicator that you can override.
-* `emptyContent`: Composable function called when loading is finished and no messages are available. By default displays a message that you can override.
-* `itemContent`: Composable function that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItemState` inside the lambda when building your custom UI.
+* `loadingContent`: Used while loading the message data. By default shows a loading indicator that you can override.
+* `emptyContent`: An empty placeholder used when no messages are available. By default displays a message that you can override.
+* `itemContent`: Composable that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItemState` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:
 
