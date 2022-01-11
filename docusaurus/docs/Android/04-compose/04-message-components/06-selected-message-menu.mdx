@@ -71,11 +71,9 @@ if (selectedMessageState is SelectedMessageOptionsState) {
         ..., // State and options
         onMessageAction = { action ->
             composerViewModel.onMessageAction(action)
-			listViewModel.onMessageAction(action)
+            listViewModel.onMessageAction(action)
         },
-        onDismiss = {
-			listViewModel.removeOverlay()
-        }
+        onDismiss = { listViewModel.removeOverlay() }
     )
 }
 ```
@@ -93,14 +91,21 @@ You can customize the reactions you show, as well as the message options in this
 ```kotlin
 @Composable
 fun SelectedMessageMenu(
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    ..., // State
     messageOptions: List<MessageOption>,
-    ... // Message and actions
+    modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.bottomSheet,
+    overlayColor: Color = ChatTheme.colors.overlay,
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    ... // Actions and Slot APIs
 )
 ```
 
-* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
 * `messageOptions`: Allows you to customize which message options are shown in the overlay. You can use `defaultMessageOptions()` to get the default actions that we expose in our SDK.
+* `modifier`: Modifier for the dialog component.
+* `overlayColor`: Allows you to customize the color of the overlay.
+* `shape`: Allows you to customize the shape of the dialog.
+* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
 
 If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 

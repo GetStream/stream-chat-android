@@ -7,11 +7,11 @@ This is a **stateless component** that you can easily add to your UI if you're b
 * **Reaction options**: The top part that shows a list of reactions the user can use to react to the message.
 * **User reactions**: The main part that shows a list of users with their reactions left for the message.
 
-Let's check how to use the component!
+Let's see how to use the component!
 
 ## Usage
 
-If you're using the [`MessagesScreen`](./01-messages-screen.mdx), the `SelectedReactionsMenu` is already set up for you. To use the `SelectedReactionsMenu` in your custom screens, simply add it to your UI, like so:
+If you're using the [`MessagesScreen`](./01-messages-screen.mdx) component, the `SelectedReactionsMenu` component is already set up for you. To use the `SelectedReactionsMenu` component in your custom screens, simply add it to your UI, like so:
 
 ```kotlin
 // The rest of your UI
@@ -57,8 +57,8 @@ fun SelectedReactionsMenu(
 )
 ```
 
-* `onMessageAction`: Handler for the user performing an action such as leaving a reaction.
-* `onDismiss`: Handler when the menu is dismissed by clicking outside of the dialog area or by pressing the system back button.
+* `onMessageAction`: Handler used when the user performs an action such as leaving a reaction.
+* `onDismiss`: Handler used when the menu is dismissed by clicking outside of the dialog area or by pressing the system back button.
 
 To handle these actions, you can override them like so:
 
@@ -68,18 +68,16 @@ if (selectedMessageState is SelectedMessageReactionsState) {
         ..., // State
         onMessageAction = { action ->
             composerViewModel.onMessageAction(action)
-			listViewModel.onMessageAction(action)
+            listViewModel.onMessageAction(action)
         },
-        onDismiss = {
-			listViewModel.removeOverlay()
-        }
+        onDismiss = { listViewModel.removeOverlay() }
     )
 }
 ```
 
 In the snippet above, you propagate the `action` to the `composerViewModel` and `listViewModel`, for them to store the latest action. This will update the UI accordingly.
 
-Alternatively, you call `listViewModel.removeOverlay()` to remove the overlay from the screen, in `onDismiss()`. It's important to note that `onMessageAction()` calls `removeOverlay()` internally, to hide the overlay.
+Alternatively, you call `listViewModel.removeOverlay()` to remove the overlay from the screen in `onDismiss()`. It's important to note that `onMessageAction()` calls `removeOverlay()` internally to hide the overlay.
 
 Next, let's see how to customize the overlay.
 
@@ -90,14 +88,21 @@ You can customize the reactions you show:
 ```kotlin
 @Composable
 fun SelectedReactionsMenu(
+    ..., // State
+    modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.bottomSheet,
+    overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    ... // Message and actions
+    ... // Actions and Slot APIs
 )
 ```
 
-* `reactionTypes`: Allows you customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
+* `modifier`: Modifier for the dialog component.
+* `overlayColor`: Allows you to customize the color of the overlay.
+* `shape`: Allows you to customize the shape of the dialog.
+* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
 
-If you want to customize the reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
+If you want to customize the reactions, you can set up custom reactions, using [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 
 By default `SelectedReactionsMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
@@ -105,6 +110,7 @@ By default `SelectedReactionsMenu` looks like a bottom sheet, however you can cu
 if (selectedMessageState is SelectedMessageReactionsState) {
     // Use a Modifier to customize the appearance
     SelectedReactionsMenu(
+        ..., // State
         // Use a Modifier to customize the appearance
         modifier = Modifier
             .align(Alignment.Center)
@@ -151,19 +157,20 @@ You can easily override either slot:
 ```kotlin
 if (selectedMessageState is SelectedMessageReactionsState) {
     SelectedReactionsMenu(
-            ...,
-            // Custom header content
-            headerContent = {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .background(shape = ChatTheme.shapes.avatar, color = ChatTheme.colors.infoAccent)
-                        .padding(horizontal = 8.dp),
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textHighEmphasis,
-                    text = "User Reactions")
-            }
-        )
+        ...,
+        // Custom header content
+        headerContent = {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(shape = ChatTheme.shapes.avatar, color = ChatTheme.colors.infoAccent)
+                    .padding(horizontal = 8.dp),
+                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textHighEmphasis,
+                text = "User Reactions"
+            )
+        }
+    )
 }
 ```
 
