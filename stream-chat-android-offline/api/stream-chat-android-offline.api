@@ -27,7 +27,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun getInitialized ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
 	public abstract fun getOfflineEnabled ()Z
-	public abstract fun getOnline ()Landroidx/lifecycle/LiveData;
 	public abstract fun getRetryPolicy ()Lio/getstream/chat/android/livedata/utils/RetryPolicy;
 	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Landroidx/lifecycle/LiveData;
@@ -241,7 +240,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getOfflineEnabled ()Z
-	public abstract fun getOnline ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRetryPolicy ()Lio/getstream/chat/android/offline/utils/RetryPolicy;
 	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;

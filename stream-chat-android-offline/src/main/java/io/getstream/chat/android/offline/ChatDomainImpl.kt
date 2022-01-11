@@ -105,7 +105,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -206,14 +205,6 @@ internal class ChatDomainImpl internal constructor(
      * StateFlow<Boolean> that indicates if we are currently online
      */
     override val connectionState: StateFlow<ConnectionState> = _connectionState
-
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    override val online: StateFlow<Boolean> =
-        _connectionState.map { state -> state == ConnectionState.CONNECTED }
-            .stateIn(scope, SharingStarted.Eagerly, false)
 
     /**
      * The total unread message count for the current user.

@@ -62,15 +62,6 @@ public sealed interface ChatDomain {
     public val connectionState: StateFlow<ConnectionState>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online, connecting or offline.
-     */
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    public val online: StateFlow<Boolean>
-
-    /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */

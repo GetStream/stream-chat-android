@@ -74,13 +74,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
      */
     override val connectionState: LiveData<ConnectionState> = chatDomainStateFlow.connectionState.asLiveData()
 
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override val online: LiveData<Boolean> = chatDomainStateFlow.online.asLiveData()
-
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount.
