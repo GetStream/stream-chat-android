@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.11<br/>⌛ | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
 | `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | Use `ChatUI.messageTextTransformer` instead. |
 | `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
 | `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>⌛ | 2022.02.22 ⌛ | Use `ChatClient#showChannel` instead |

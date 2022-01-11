@@ -14,6 +14,8 @@ internal fun DownstreamMemberDto.toDomain(): Member =
         inviteAcceptedAt = invite_accepted_at,
         inviteRejectedAt = invite_rejected_at,
         shadowBanned = shadow_banned,
+        banned = banned,
+        channelRole = channel_role,
     )
 
 internal fun Member.toDto(): UpstreamMemberDto =
@@ -26,4 +28,6 @@ internal fun Member.toDto(): UpstreamMemberDto =
         invite_accepted_at = inviteAcceptedAt,
         invite_rejected_at = inviteRejectedAt,
         shadow_banned = shadowBanned,
+        banned = banned,
+        channel_role = channelRole,
     )
