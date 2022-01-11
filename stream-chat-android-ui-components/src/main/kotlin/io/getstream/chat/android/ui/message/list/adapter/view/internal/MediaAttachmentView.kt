@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -86,8 +87,26 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
 
         binding.giphyLabel.isVisible = true
-        
-        showImageByUrl(url ?: fallbackUrl ?: return) {}
+
+        val giphyInfo = attachment.giphyInfo(GiphyInfoType.ORIGINAL)
+
+        Log.d("MediaAttachmentView", "url: $url, width: ${giphyInfo?.width}, height: ${giphyInfo?.height}")
+        if (url == null) {
+            Log.d("MediaAttachmentView", "fallbackUrl: $fallbackUrl")
+        }
+
+        if (giphyInfo != null) {
+            binding.imageView.updateLayoutParams {
+                this.width =  giphyInfo.width
+            }
+            showImageByUrl(url ?: return) {}
+        } else {
+            binding.imageView.updateLayoutParams {
+                this.width =  GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx()
+                this.height =  GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
+            }
+            showImageByUrl(fallbackUrl ?: return) {}
+        }
     }
 
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
