@@ -75,7 +75,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
 - Fixed the loading/playback speed of GIFs. [#2914](https://github.com/GetStream/stream-chat-android/pull/2914)
 - Fixed scroll persisting after long tapping on an item in the message list. [#2916](https://github.com/GetStream/stream-chat-android/pull/2916)
-- Fixed footnote of messages showing "Only Visible to You". This message was visible even when deleted messages were visible to everyone. 
+- Fixed footnote of messages showing "Only Visible to You". This message was visible even when deleted messages were visible to everyone. [#2923](https://github.com/GetStream/stream-chat-android/pull/2923)
 
 ### ⬆️ Improved
 - Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
