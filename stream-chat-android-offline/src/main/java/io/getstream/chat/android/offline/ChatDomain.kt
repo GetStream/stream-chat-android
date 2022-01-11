@@ -579,7 +579,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().downloadAttachment(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
