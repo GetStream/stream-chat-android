@@ -131,6 +131,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
+    @Suppress("DEPRECATION_ERROR")
     override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
         chatDomainStateFlow.replayEventsForActiveChannels(cid)
 

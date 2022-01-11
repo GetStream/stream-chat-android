@@ -121,7 +121,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
