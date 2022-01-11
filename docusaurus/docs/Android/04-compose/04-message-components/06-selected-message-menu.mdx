@@ -80,7 +80,7 @@ if (selectedMessageState is SelectedMessageOptionsState) {
 
 In the snippet above, you propagate the `action` to the `composerViewModel` and `listViewModel`, for them to store the latest action. This will update the UI accordingly.
 
-Alternatively, you call `listViewModel.removeOverlay()` to remove the overlay from the screen, in `onDismiss()`. It's important to note that `onMessageAction()` calls `removeOverlay()` internally, to hide the overlay.
+Alternatively, you call `listViewModel.removeOverlay()` to remove the overlay from the screen in `onDismiss()`. It's important to note that `onMessageAction()` calls `removeOverlay()` internally to hide the overlay.
 
 Next, let's see how to customize the overlay.
 
