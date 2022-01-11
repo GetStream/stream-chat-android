@@ -446,7 +446,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().keystroke(cid, parentId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
