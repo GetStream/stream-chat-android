@@ -162,7 +162,6 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Qu
 	public abstract fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public abstract fun getLoading ()Landroidx/lifecycle/LiveData;
 	public abstract fun getLoadingMore ()Landroidx/lifecycle/LiveData;
-	public abstract fun getMutedChannelIds ()Landroidx/lifecycle/LiveData;
 	public abstract fun getRecoveryNeeded ()Z
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	public abstract fun setChatEventHandler (Lio/getstream/chat/android/offline/querychannels/ChatEventHandler;)V
@@ -598,7 +597,6 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public final fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getMutedChannelIds ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	public final fun query (IIILkotlin/coroutines/Continuation;)Ljava/lang/Object;
