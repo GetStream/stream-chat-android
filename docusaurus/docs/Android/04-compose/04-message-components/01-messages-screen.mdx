@@ -37,7 +37,7 @@ Next, learn more about handling screen actions.
 
 ## Handling Actions
 
-The `MessagesScreenComponent` exposes two actions, as per the signature:
+The `MessagesScreen` component exposes two actions, as per the signature:
 
 ```kotlin
 @Composable
@@ -58,7 +58,7 @@ MessagesScreen(
     ..., // State
     onBackPressed = { finish() }, // Navigation handler
     onHeaderActionClick = { channel ->
-        // Show conversation info
+        // Show channel info
     },
 )
 ```
@@ -72,12 +72,14 @@ Given that the `MessagesScreen` is a screen level solution, it offers limited cu
 fun MessagesScreen(
     messageLimit: Int = 30,
     showHeader: Boolean = true,
+    enforceUniqueReactions: Boolean = true,
     ... // action handlers and state
 )
 ```
 
 * `messageLimit`: The number of messages per query.
 * `showHeader`: Controls whether the messages header is shown or not.
+* `enforceUniqueReactions`: Controls whether a user can leave multiple reactions to a message.
 
 If you set `showHeader` to `false` you'll get the following UI:
 
