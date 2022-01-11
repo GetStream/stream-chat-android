@@ -4,8 +4,8 @@ The `SelectedMessageMenu` component allows you to show different message options
 
 This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. Internally, it sets up the following components:
 
-* Reaction options: Shows a list of reactions the user can use to react to the message. Those reactions are shown as `ReactionOptionItem`s.
-* Message options: Shows a list of actions the user can take with the selected message, such as **delete**, **edit**, **reply to**, **flag message**, **copy message**, **mute user** and **start a thread** actions.
+* **Reaction options**: Shows a list of reactions the user can use to react to the message. Those reactions are shown as `ReactionOptionItem`s.
+* **Message options**: Shows a list of actions the user can take with the selected message, such as **delete**, **edit**, **reply to**, **flag message**, **copy message**, **mute user** and **start a thread** actions.
 
 Let's see how to use it!
 
@@ -15,8 +15,10 @@ If you're using the [`MessagesScreen`](./01-messages-screen.mdx), the `SelectedM
 
 ```kotlin
 // The rest of your UI
-if (selectedMessage != null) {
+if (selectedMessageState is SelectedMessageOptionsState) {
+    val selectedMessage = selectedMessageState.message
     SelectedMessageMenu(
+        modifier = Modifier.align(Alignment.BottomCenter),
         // Define your message options
         messageOptions = defaultMessageOptionsState(
             selectedMessage = selectedMessage,
@@ -35,7 +37,7 @@ if (selectedMessage != null) {
 }
 ```
 
-As you can see, adding the menu is very simple. If a `selectedMessage` exists, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
+As you can see, showing the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageOptionsState`, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
 
 The small snippet of code above produces the following UI:
 
@@ -44,6 +46,7 @@ The small snippet of code above produces the following UI:
 The component shows reactions from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) on the top, followed by the message actions you passed in.
 
 The menu overlay has a darker background and tapping it will dismiss the component, as will pressing the system back button.
+
 ## Handling Actions
 
 `SelectedMessageMenu` exposes the following actions:
@@ -63,23 +66,21 @@ fun SelectedMessageMenu(
 To handle these actions, you can override them like so:
 
 ```kotlin
-if (selectedMessage != null) {
+if (selectedMessageState is SelectedMessageOptionsState) {
     SelectedMessageMenu(
         ..., // State and options
         onMessageAction = { action ->
             composerViewModel.onMessageAction(action)
-			listViewModel.onMessageAction(action)
+            listViewModel.onMessageAction(action)
         },
-        onDismiss = {
-			listViewModel.removeOverlay()
-        }
+        onDismiss = { listViewModel.removeOverlay() }
     )
 }
 ```
 
 In the snippet above, you propagate the `action` to the `composerViewModel` and `listViewModel`, for them to store the latest action. This will update the UI accordingly.
 
-Alternatively, you call `listViewModel.removeOverlay()` to remove the overlay from the screen, in `onDismiss()`. It's important to note that `onMessageAction()` calls `removeOverlay()` internally, to hide the overlay.
+Alternatively, you call `listViewModel.removeOverlay()` to remove the overlay from the screen in `onDismiss()`. It's important to note that `onMessageAction()` calls `removeOverlay()` internally to hide the overlay.
 
 Next, let's see how to customize the overlay.
 
@@ -90,21 +91,28 @@ You can customize the reactions you show, as well as the message options in this
 ```kotlin
 @Composable
 fun SelectedMessageMenu(
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    ..., // State
     messageOptions: List<MessageOption>,
-    ... // message and actions
+    modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.bottomSheet,
+    overlayColor: Color = ChatTheme.colors.overlay,
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    ... // Actions and Slot APIs
 )
 ```
 
-* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
 * `messageOptions`: Allows you to customize which message options are shown in the overlay. You can use `defaultMessageOptions()` to get the default actions that we expose in our SDK.
+* `modifier`: Modifier for the dialog component.
+* `overlayColor`: Allows you to customize the color of the overlay.
+* `shape`: Allows you to customize the shape of the dialog.
+* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
 
 If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 
 By default `SelectedMessageMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
 ```kotlin
-if (selectedMessage != null) {
+if (selectedMessageState is SelectedMessageOptionsState) {
     SelectedMessageMenu(
         // Use a Modifier to customize the appearance
         modifier = Modifier
@@ -137,18 +145,19 @@ fun SelectedMessageMenu(
     headerContent: @Composable ColumnScope.() -> Unit = {
         // Header content
     },
-    bodyContent: @Composable ColumnScope.() -> Unit = {
-        // Body content
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        // Center content
     }
 )
 ```
-* `headerContent`: Allows you to customize what content you show on the top part of the menu. By default it shows `ReactionOptions`
-* `bodyContent`: Allows you to customize what content you show on the bottom part of the menu. By default it shows `MessageOptions`
+
+* `headerContent`: Allows you to customize the content shown at the top of the menu. By default it shows reaction options.
+* `centerContent`: Allows you to customize the content shown at the center of the menu. By default it shows message options.
 
 You can easily override either slot:
 
 ```kotlin
-if (selectedMessage != null) {
+if (selectedMessageState is SelectedMessageOptionsState) {
     SelectedMessageMenu(
             ...,
             // Custom header content
