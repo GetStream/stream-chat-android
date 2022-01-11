@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
-import io.getstream.chat.android.compose.ui.components.avatar.ImageAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -26,13 +26,14 @@ public fun QuotedMessage(
     message: Message,
     modifier: Modifier = Modifier,
 ) {
-    val painter = rememberImagePainter(data = message.user.image)
+    val user = message.user
 
     Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
-        ImageAvatar(
-            modifier = Modifier
-                .size(24.dp),
-            painter = painter
+        Avatar(
+            modifier = Modifier.size(24.dp),
+            imageUrl = user.image,
+            initials = user.initials,
+            textStyle = ChatTheme.typography.captionBold,
         )
 
         Spacer(modifier = Modifier.size(8.dp))
