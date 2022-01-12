@@ -21,8 +21,8 @@ stream-chat-android-ui-components           @GetStream/android-developers-ui
 stream-chat-android-ui-components-sample    @GetStream/android-developers-ui
 
 # Compose
-stream-chat-android-compose             @GetStream/android-developers-compose
-stream-chat-android-compose-sample      @GetStream/android-developers-compose
+stream-chat-android-compose             @GetStream/android-developers-ui
+stream-chat-android-compose-sample      @GetStream/android-developers-ui
 
 
 ### Top level files and directories
@@ -53,7 +53,7 @@ docs                                    @GetStream/android-developers
 docusaurus                              @GetStream/android-developers
 docusaurus/docs/Android/02-client       @GetStream/android-developers-core
 docusaurus/docs/Android/03-ui           @GetStream/android-developers-ui
-docusaurus/docs/Android/04-compose      @GetStream/android-developers-compose
+docusaurus/docs/Android/04-compose      @GetStream/android-developers-ui
 dokkasaurus_filter.json                 @leandroBorgesFerreira
 
 # Misc
