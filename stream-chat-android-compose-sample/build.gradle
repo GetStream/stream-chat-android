@@ -67,12 +67,19 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Versions.KOTLIN
         kotlinCompilerExtensionVersion Versions.COMPOSE
     }
 
     lintOptions {
         disable 'MissingTranslation'
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-Xopt-in=kotlin.RequiresOptIn',
+        ]
     }
 }
 

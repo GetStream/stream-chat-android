@@ -15,7 +15,11 @@ public class ImagePreviewViewModelFactory(
     private val messageId: String,
 ) : ViewModelProvider.Factory {
 
+    /**
+     * Creates a new instance of [ImagePreviewViewModel] class.
+     */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return ImagePreviewViewModel(chatClient, chatDomain, messageId) as T
     }
 }

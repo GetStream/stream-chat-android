@@ -8,9 +8,14 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.offline.experimental.plugin.Config
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 
+@OptIn(InternalStreamChatApi::class)
 class ChatApp : Application() {
 
     companion object {
@@ -23,16 +28,23 @@ class ChatApp : Application() {
         dateFormatter = DateFormatter.from(this)
 
         setupStreamSdk()
+        initializeToggleService()
         connectUser()
     }
 
+    @OptIn(InternalStreamChatApi::class)
+    private fun initializeToggleService() {
+        ToggleService.init(applicationContext, mapOf(ToggleService.TOGGLE_KEY_OFFLINE to BuildConfig.DEBUG))
+    }
+
+    @OptIn(ExperimentalStreamChatApi::class)
     private fun setupStreamSdk() {
-        val client = ChatClient.Builder("qx5us2v6xvmh", applicationContext)
+        val offlinePlugin = OfflinePlugin(Config(userPresence = true, persistenceEnabled = true))
+
+        ChatClient.Builder("qx5us2v6xvmh", applicationContext)
             .logLevel(ChatLogLevel.ALL)
             .notifications(createNotificationConfig(), createNotificationHandler())
-            .build()
-        ChatDomain.Builder(client, applicationContext)
-            .userPresenceEnabled()
+            .withPlugin(offlinePlugin)
             .build()
     }
 

@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -107,3 +108,61 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 @CheckResult
 public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
     DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)
+
+/**
+ * Keystroke should be called whenever a user enters text into the message input.
+ * It automatically calls stopTyping when the user stops typing after 5 seconds.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+ *
+ * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
+ */
+@CheckResult
+public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
+    validateCid(cid)
+
+    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val channelController = chatDomain.channel(cid)
+    return CoroutineCall(chatDomain.scope) {
+        channelController.keystroke(parentId)
+    }
+}
+
+/**
+ * StopTyping should be called when the user submits the text and finishes typing.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+ *
+ * @return Executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
+ * false if it wasn't sent.
+ */
+@CheckResult
+public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
+    validateCid(cid)
+
+    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val channelController = chatDomain.channel(cid)
+    return CoroutineCall(chatDomain.scope) {
+        channelController.stopTyping(parentId)
+    }
+}
+
+/**
+ * Loads older messages for the channel.
+ *
+ * @param cid The full channel id i.e. "messaging:123".
+ * @param messageLimit How many new messages to load.
+ *
+ * @return The channel wrapped in [Call]. This channel contains older requested messages.
+ */
+public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
+    validateCid(cid)
+
+    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.loadOlderMessages(messageLimit)
+    }
+}

@@ -147,6 +147,9 @@ public class MessageListView : ConstraintLayout {
     private var threadStartHandler = ThreadStartHandler {
         throw IllegalStateException("onStartThreadHandler must be set.")
     }
+    private var replyMessageClickListener = ReplyMessageClickListener {
+        // no-op
+    }
     private var messageFlagHandler = MessageFlagHandler {
         throw IllegalStateException("onMessageFlagHandler must be set.")
     }
@@ -275,8 +278,14 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_MESSAGE_CLICK_LISTENER =
         MessageClickListener { message ->
-            if (message.replyCount > 0) {
-                threadStartHandler.onStartThread(message)
+            when {
+                message.replyCount > 0 -> {
+                    threadStartHandler.onStartThread(message)
+                }
+
+                message.replyMessageId != null -> {
+                    replyMessageClickListener.onReplyClick(message.replyMessageId!!)
+                }
             }
         }
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
@@ -525,17 +534,10 @@ public class MessageListView : ConstraintLayout {
                 }
             }
 
-            binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-            scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
-
-            NewMessagesBehaviour.parseValue(
-                tArray.getInt(
-                    R.styleable.MessageListView_streamUiNewMessagesBehaviour,
-                    NewMessagesBehaviour.COUNT_UPDATE.value
-                )
-            ).also {
-                scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
-            }
+            val style = requireStyle()
+            binding.scrollToBottomButton.setScrollButtonViewStyle(style.scrollButtonViewStyle)
+            scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
+            scrollHelper.alwaysScrollToBottom = style.scrollButtonBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }
 
         if (background == null) {
@@ -1140,6 +1142,14 @@ public class MessageListView : ConstraintLayout {
     public fun setUserReactionClickListener(userReactionClickListener: UserReactionClickListener?) {
         this.userReactionClickListener = userReactionClickListener ?: DEFAULT_USER_REACTION_CLICK_LISTENER
     }
+
+    /* Set the click listener to be used when a message that is a reply is clicked
+    *
+    * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
+    */
+    public fun setReplyMessageClickListener(replyMessageClickListener: ReplyMessageClickListener) {
+        this.replyMessageClickListener = replyMessageClickListener
+    }
     //endregion
 
     //region Handler setters
@@ -1368,6 +1378,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageClickListener {
         public fun onMessageClick(message: Message)
+    }
+
+    public fun interface ReplyMessageClickListener {
+        public fun onReplyClick(replyMessageId: String)
     }
 
     public fun interface MessageRetryListener {

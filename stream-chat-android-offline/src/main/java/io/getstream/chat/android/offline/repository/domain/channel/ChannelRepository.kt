@@ -15,13 +15,25 @@ internal interface ChannelRepository {
     suspend fun insertChannels(channels: Collection<Channel>)
     suspend fun deleteChannel(cid: String)
     suspend fun selectChannelWithoutMessages(cid: String): Channel?
-    suspend fun selectChannels(channelCIDs: List<String>): List<Channel>
+
+    /**
+     * Select channels by full channel IDs [Channel.cid]
+     *
+     * @param channelCIDs A list of [Channel.cid] as query specification.
+     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
+     * value is true.
+     *
+     * @return A list of channels found in repository.
+     */
+    suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean = false): List<Channel>
     suspend fun selectChannelsSyncNeeded(): List<Channel>
     suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date)
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
     suspend fun selectMembersForChannel(cid: String): List<Member>
     suspend fun updateMembersForChannel(cid: String, members: List<Member>)
+    suspend fun evictChannel(cid: String)
+
     @VisibleForTesting
     fun clearChannelCache()
 }
@@ -55,16 +67,23 @@ internal class ChannelRepositoryImpl(
         return selectChannels(listOf(cid)).getOrNull(0)
     }
 
-    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
+    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> {
         if (channelCIDs.isEmpty()) {
             return emptyList()
         }
-        val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
-        val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
-        val dbChannels = channelDao.select(missingChannelIds).map { it.toModel(getUser, getMessage) }.toMutableList()
-        updateCache(dbChannels)
-        dbChannels.addAll(cachedChannels)
-        return dbChannels
+        return if (forceCache) {
+            fetchChannels(channelCIDs)
+        } else {
+            val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
+            val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
+            val dbChannels = fetchChannels(missingChannelIds).toMutableList()
+            dbChannels.addAll(cachedChannels)
+            dbChannels
+        }
+    }
+
+    private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
+        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }.also(::updateCache)
     }
 
     override suspend fun selectChannelsSyncNeeded(): List<Channel> {
@@ -107,6 +126,10 @@ internal class ChannelRepositoryImpl(
         for (channel in channels) {
             channelCache.put(channel.cid, channel)
         }
+    }
+
+    override suspend fun evictChannel(cid: String) {
+        channelCache.remove(cid)
     }
 
     override fun clearChannelCache() {

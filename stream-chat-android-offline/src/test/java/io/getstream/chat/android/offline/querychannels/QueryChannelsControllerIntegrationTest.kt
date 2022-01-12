@@ -5,9 +5,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.reset
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -50,12 +47,12 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
 
     @Test
     fun `Given the same channels in cache and BE When observing channels Should receive the correct number of events with channels`(): Unit =
-        runBlocking {
+        coroutineTest {
             val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
                 DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
             }
             val sut = Fixture(chatDomainImpl, data.filter1)
-                .givenChannelEventsHandler { event, _ ->
+                .givenChannelEventsHandler { event, _, _ ->
                     when (event) {
                         is NotificationAddedToChannelEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -89,7 +86,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         runBlocking {
             val chatEventHandler = object : ChatEventHandler {
                 var didHandle = false
-                override fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult {
+                override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
                     didHandle = true
                     return EventHandlingResult.Skip
                 }
@@ -114,7 +111,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         }
 
     @Test
-    fun `Given three channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = runBlocking {
+    fun `Given three channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = coroutineTest {
         val sut = Fixture(chatDomainImpl, data.filter1)
             .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
             .get()
@@ -132,10 +129,10 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
 
     @Test
     fun `Given hidden channel and channel events handler that add channel on new message When handle NotificationMessageNewEvent Should add channel to list`(): Unit =
-        runBlocking {
+        coroutineTest {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
-                .givenChannelEventsHandler { event, _ ->
+                .givenChannelEventsHandler { event, _, _ ->
                     if (event is NotificationMessageNewEvent) {
                         EventHandlingResult.Add(event.channel)
                     } else {
@@ -158,48 +155,6 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             )
 
             sut.channels.value shouldBeEqualTo listOf(data.channel1, data.channel2, data.channel3)
-        }
-
-    @Test
-    fun `Given channel in the list and default events handler When handle NotificationMessageNewEvent Should not make request to API`(): Unit =
-        runBlocking {
-            val sut = Fixture(chatDomainImpl, data.filter1)
-                .givenChannelsInOfflineStorage(data.channel1, data.channel2)
-                .givenChannelEventsHandler(DefaultChatEventHandler(client, queryControllerImpl.channels))
-                .get()
-            sut.query()
-            reset(client)
-
-            sut.handleEvent(
-                mock<NotificationMessageNewEvent> {
-                    on { it.channel } doReturn data.channel2
-                    on { it.cid } doReturn data.channel2.cid
-                }
-            )
-
-            verifyZeroInteractions(client)
-        }
-
-    @Test
-    fun `Given channel is not in the list and default events handler When handle NotificationMessageNewEvent Should make request to API`(): Unit =
-        runBlocking {
-            val sut = Fixture(chatDomainImpl, data.filter1)
-                .givenChannelsInOfflineStorage(data.channel1)
-                .givenChannelEventsHandler(DefaultChatEventHandler(client, queryControllerImpl.channels))
-                .get()
-            sut.query()
-            reset(client)
-            whenever(client.channel(any())) doReturn channelClientMock
-            whenever(client.queryChannelsInternal(any())) doReturn emptyList<Channel>().asCall()
-
-            sut.handleEvent(
-                mock<NotificationMessageNewEvent> {
-                    on { it.channel } doReturn data.channel2
-                    on { it.cid } doReturn data.channel2.cid
-                }
-            )
-
-            verify(client).queryChannelsInternal(any())
         }
 
     private class Fixture(

@@ -7,9 +7,9 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -25,7 +25,7 @@ internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
-    private val markdown: ChatMarkdown,
+    private val messageTextTransformer: ChatMessageTextTransformer,
     private val attachmentViewFactory: AttachmentViewFactory,
     private val style: MessageListItemStyle,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
@@ -100,9 +100,9 @@ internal class TextAndAttachmentsViewHolder(
         super.bindData(data, diff)
 
         binding.messageText.isVisible = data.message.text.isNotEmpty()
-        markdown.setText(binding.messageText, data.message.text)
+        messageTextTransformer.transformAndApply(binding.messageText, data)
 
-        if (diff?.attachments != false) {
+        if (diff?.attachments != false || diff.positions) {
             setupAttachment(data)
         }
 

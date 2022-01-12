@@ -37,7 +37,7 @@ internal object PreviewUserData {
         image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128"
     }
 
-    val user6: User = User().apply {
+    private val user6: User = User().apply {
         id = "jaewoong"
         name = "Jaewoong Eum"
         image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128"

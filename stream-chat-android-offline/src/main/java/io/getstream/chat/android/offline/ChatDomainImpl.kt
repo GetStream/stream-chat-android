@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
+import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
@@ -10,6 +11,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -31,6 +33,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -38,13 +41,17 @@ import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -55,6 +62,7 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -67,17 +75,13 @@ import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
-import io.getstream.chat.android.offline.usecase.GetThread
 import io.getstream.chat.android.offline.usecase.HideChannel
-import io.getstream.chat.android.offline.usecase.Keystroke
 import io.getstream.chat.android.offline.usecase.LeaveChannel
 import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
-import io.getstream.chat.android.offline.usecase.LoadOlderMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
-import io.getstream.chat.android.offline.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendGiphy
@@ -85,13 +89,12 @@ import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.ShuffleGiphy
-import io.getstream.chat.android.offline.usecase.StopTyping
-import io.getstream.chat.android.offline.usecase.ThreadLoadMore
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
+import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -102,7 +105,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -112,7 +114,6 @@ import java.util.InputMismatchException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
-private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
@@ -150,7 +151,7 @@ internal class ChatDomainImpl internal constructor(
     internal var appContext: Context,
     private val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    override val retryPolicy: RetryPolicy = DefaultRetryPolicy()
+    override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,
@@ -204,14 +205,6 @@ internal class ChatDomainImpl internal constructor(
      * StateFlow<Boolean> that indicates if we are currently online
      */
     override val connectionState: StateFlow<ConnectionState> = _connectionState
-
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    override val online: StateFlow<Boolean> =
-        _connectionState.map { state -> state == ConnectionState.CONNECTED }
-            .stateIn(scope, SharingStarted.Eagerly, false)
 
     /**
      * The total unread message count for the current user.
@@ -270,6 +263,10 @@ internal class ChatDomainImpl internal constructor(
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
+    /** State flow of latest cached users. Usually it has size of 100 as max size of LRU cache in [UserRepository].*/
+    internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+        private set
+
     private fun clearState() {
         _initialized.value = false
         _connectionState.value = ConnectionState.OFFLINE
@@ -279,6 +276,7 @@ internal class ChatDomainImpl internal constructor(
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
+        latestUsers = MutableStateFlow(emptyMap())
     }
 
     internal fun setUser(user: User) {
@@ -295,6 +293,7 @@ internal class ChatDomainImpl internal constructor(
             setOfflineEnabled(offlineEnabled)
         }.build()
 
+        latestUsers = repos.observeLatestUsers()
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
@@ -513,6 +512,13 @@ internal class ChatDomainImpl internal constructor(
     internal fun channel(cid: String): ChannelController {
         val (channelType, channelId) = cid.cidToTypeAndId()
         return channel(channelType, channelId)
+    }
+
+    /**
+     * @return [Channel] object from repository if exists, null otherwise.
+     */
+    internal suspend fun getCachedChannel(cid: String): Channel? {
+        return repos.selectChannelWithoutMessages(cid)
     }
 
     internal fun channel(
@@ -896,7 +902,8 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> = client.replayEventsForActiveChannels(cid)
+    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
+        client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
@@ -908,13 +915,32 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<QueryChannelsController> = QueryChannels(this).invoke(filter, sort, limit, messageLimit)
+        memberLimit: Int,
+    ): Call<QueryChannelsController> = QueryChannels(this).invoke(filter, sort, limit, messageLimit, memberLimit)
 
-    override fun getThread(cid: String, parentId: String): Call<ThreadController> =
-        GetThread(this).invoke(cid, parentId)
+    /**
+     * Returns a thread controller for the given channel and message id.
+     *
+     * @param cid The full channel id. ie messaging:123.
+     * @param parentId The message id for the parent of this thread.
+     *
+     * @see io.getstream.chat.android.offline.thread.ThreadController
+     */
+    @CheckResult
+    override fun getThread(cid: String, parentId: String): Call<ThreadController> {
+        validateCid(cid)
+        return CoroutineCall(scope) {
+            Result.success(
+                channel(cid).getThread(
+                    offlinePlugin.state.thread(parentId).toMutableState(),
+                    offlinePlugin.logic.thread(parentId)
+                )
+            )
+        }
+    }
 
     override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        LoadOlderMessages(this).invoke(cid, messageLimit)
+        client.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)
@@ -931,21 +957,59 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = QueryChannelsLoadMore(this).invoke(filter, sort, limit, messageLimit)
+        memberLimit: Int,
+    ): Call<List<Channel>> {
+        return CoroutineCall(scope) {
+            val queryChannelsController = queryChannels(filter, sort)
+            val oldChannels = queryChannelsController.channels.value
+            val pagination = queryChannelsController.loadMoreRequest(
+                channelLimit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+            queryChannelsController.runQuery(pagination).map { it - oldChannels.toSet() }
+        }
+    }
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = QueryChannelsLoadMore(this).invoke(filter, sort, messageLimit)
+    ): Call<List<Channel>> = queryChannelsLoadMore(
+        filter = filter,
+        sort = sort,
+        limit = CHANNEL_LIMIT,
+        messageLimit = messageLimit,
+        memberLimit = MEMBER_LIMIT,
+    )
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = QueryChannelsLoadMore(this).invoke(filter, sort)
+    ): Call<List<Channel>> = queryChannelsLoadMore(
+        filter = filter,
+        sort = sort,
+        limit = CHANNEL_LIMIT,
+        messageLimit = MESSAGE_LIMIT,
+        memberLimit = MEMBER_LIMIT,
+    )
 
-    override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
-        ThreadLoadMore(this).invoke(cid, parentId, messageLimit)
+    /**
+     * Loads more messages for the specified thread.
+     *
+     * @param cid The full channel id i. e. messaging:123.
+     * @param parentId The parentId of the thread.
+     * @param messageLimit How many new messages to load.
+     */
+    override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {
+        validateCid(cid)
+        require(parentId.isNotEmpty()) { "parentId can't be empty" }
+
+        return CoroutineCall(scope) {
+            val threadController = getThread(cid, parentId).execute().data()
+            threadController.loadOlderMessages(messageLimit)
+        }
+    }
 
     override fun createChannel(channel: Channel): Call<Channel> = CreateChannel(this).invoke(channel)
 
@@ -970,11 +1034,9 @@ internal class ChatDomainImpl internal constructor(
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         DeleteReaction(this).invoke(cid, reaction)
 
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
-        Keystroke(this).invoke(cid, parentId)
+    override fun keystroke(cid: String, parentId: String?): Call<Boolean> = client.keystroke(cid, parentId)
 
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
-        StopTyping(this).invoke(cid, parentId)
+    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> = client.stopTyping(cid, parentId)
 
     override fun markRead(cid: String): Call<Boolean> = MarkRead(this).invoke(cid)
 
@@ -989,7 +1051,8 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteChannel(cid: String): Call<Unit> = DeleteChannel(this).invoke(cid)
 
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> = client.setMessageForReply(cid, message)
+    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
+        client.setMessageForReply(cid, message)
 
     override fun downloadAttachment(attachment: Attachment): Call<Unit> = client.downloadAttachment(attachment)
 

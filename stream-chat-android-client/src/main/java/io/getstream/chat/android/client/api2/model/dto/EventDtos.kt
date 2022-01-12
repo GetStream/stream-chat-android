@@ -285,6 +285,7 @@ internal data class NotificationRemovedFromChannelEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
+    val channel: DownstreamChannelDto,
     val member: DownstreamMemberDto,
 ) : ChatEventDto()
 

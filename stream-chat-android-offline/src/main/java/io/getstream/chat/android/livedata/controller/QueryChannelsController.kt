@@ -69,13 +69,6 @@ public sealed interface QueryChannelsController {
      */
     public val loadingMore: LiveData<Boolean>
 
-    @Deprecated(
-        message = "Use ChatDomain.mutedChannels instead",
-        replaceWith = ReplaceWith("ChatDomain.instance().mutedChannels"),
-        level = DeprecationLevel.WARNING,
-    )
-    public val mutedChannelIds: LiveData<List<String>>
-
     public sealed class ChannelsState {
         /** The QueryChannelsController is initialized but no query is currently running.
          * If you know that a query will be started you typically want to display a loading icon.

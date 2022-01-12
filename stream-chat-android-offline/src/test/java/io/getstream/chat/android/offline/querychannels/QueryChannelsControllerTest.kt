@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -43,17 +44,21 @@ import org.amshove.kluent.shouldNotContain
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class QueryChannelsControllerTest {
+internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
+
+    private val scope = TestCoroutineScope()
+
+    override fun getTestScope(): TestCoroutineScope = scope
 
     @Test
     fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
-        runBlockingTest {
+        coroutineTest {
             val currentUser = randomUser()
             val newChannel = randomChannel(
                 members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
             )
             val channelController = mock<ChannelController>()
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenChannelFilterResponse(listOf(newChannel))
                 .givenCurrentUser(currentUser)
                 .givenNewChannelControllerForChannel(channelController)
@@ -66,7 +71,7 @@ internal class QueryChannelsControllerTest {
 
     @Test
     fun `when add channel if filter matches should post value to liveData with the same channel ID`() =
-        runBlockingTest {
+        coroutineTest {
             val currentUser = randomUser()
             val cid = randomCID()
             val newChannel = randomChannel(
@@ -75,7 +80,7 @@ internal class QueryChannelsControllerTest {
                 type = cid.substringBefore(":"),
                 members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
             )
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenChannelFilterResponse(listOf(newChannel))
                 .givenCurrentUser(currentUser)
                 .givenChannelType(newChannel.type)
@@ -91,7 +96,7 @@ internal class QueryChannelsControllerTest {
 
     @Test
     fun `when add channel twice if filter matches should post value to liveData only one value`() =
-        runBlockingTest {
+        coroutineTest {
             val currentUser = randomUser()
             val cid = randomCID()
             val newChannel = randomChannel(
@@ -100,7 +105,7 @@ internal class QueryChannelsControllerTest {
                 type = cid.substringBefore(":"),
                 members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
             )
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenChannelFilterResponse(listOf(newChannel))
                 .givenCurrentUser(currentUser)
                 .givenChannelType(newChannel.type)
@@ -119,7 +124,7 @@ internal class QueryChannelsControllerTest {
     fun `Given channel without current user as member When refresh channel Should not change flow value`() =
         runBlockingTest {
             val cid = "channelType:channelId"
-            val sut = Fixture()
+            val sut = Fixture(scope)
                 .givenChannelFilterResponse(emptyList())
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel()
@@ -141,7 +146,7 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
 
@@ -157,8 +162,8 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
-                .givenChatEventHandler { event, _ ->
+            val queryController = Fixture(scope)
+                .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is ChannelUpdatedEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -179,8 +184,8 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
-                .givenChatEventHandler { _, _ -> EventHandlingResult.Skip }
+            val queryController = Fixture(scope)
+                .givenChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
 
@@ -196,8 +201,8 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
-                .givenChatEventHandler { event, _ ->
+            val queryController = Fixture(scope)
+                .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is ChannelUpdatedByUserEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -219,8 +224,8 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
-                .givenChatEventHandler { _, _ -> EventHandlingResult.Skip }
+            val queryController = Fixture(scope)
+                .givenChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
                 .addInitialChannel(channel)
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -237,7 +242,7 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
                 .addInitialChannel(channel)
@@ -255,9 +260,9 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .addInitialChannel(channel)
-                .givenChatEventHandler { _, _ -> EventHandlingResult.Skip }
+                .givenChatEventHandler { _, _, _ -> EventHandlingResult.Skip }
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -274,7 +279,7 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .addInitialChannel(channel)
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
@@ -292,7 +297,7 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .addInitialChannel(channel)
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -309,7 +314,7 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .addInitialChannel(channel)
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -326,7 +331,7 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
+            val queryController = Fixture(scope)
                 .addInitialChannel(channel)
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
@@ -344,8 +349,8 @@ internal class QueryChannelsControllerTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
-            val queryController = Fixture()
-                .givenChatEventHandler { event, _ ->
+            val queryController = Fixture(scope)
+                .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is NotificationAddedToChannelEvent -> EventHandlingResult.Add(event.channel)
                         else -> EventHandlingResult.Skip
@@ -360,16 +365,16 @@ internal class QueryChannelsControllerTest {
         }
 }
 
-private class Fixture {
+@OptIn(ExperimentalCoroutinesApi::class)
+private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
     private var querySort: QuerySort<Channel> = QuerySort()
-    private val testCoroutineScope = TestCoroutineScope()
 
     private var currentUser: User? = null
     private var channelType: String = ""
     private val initialCids = mutableSetOf<String>()
-    private var chatEventHandler = ChatEventHandler { chatEvent, _ ->
+    private var chatEventHandler = ChatEventHandler { chatEvent, _, _ ->
         when (chatEvent) {
             is HasChannel -> {
                 if (chatEvent.channel.members.any { member -> member.user.id == currentUser!!.id }) {
@@ -422,11 +427,12 @@ private class Fixture {
     @OptIn(ExperimentalStreamChatApi::class)
     fun get(): QueryChannelsController {
         val filter = Filters.neutral()
-        val mutableState = QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope)
+        val mutableState =
+            QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope, MutableStateFlow(emptyMap()))
         return QueryChannelsController(
             chatDomainImpl,
             mutableState,
-            QueryChannelsLogic(mutableState, chatDomainImpl),
+            QueryChannelsLogic(mutableState, chatDomainImpl, chatClient),
         ).apply {
             chatEventHandler = this@Fixture.chatEventHandler
             queryChannelsSpec.cids = initialCids

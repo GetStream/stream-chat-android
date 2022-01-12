@@ -3,9 +3,9 @@ package io.getstream.chat.android.offline.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.populateMentions
 import io.getstream.chat.android.offline.utils.validateCid
 
 internal class SendMessage(private val domainImpl: ChatDomainImpl) {
@@ -26,30 +26,12 @@ internal class SendMessage(private val domainImpl: ChatDomainImpl) {
         return CoroutineCall(domainImpl.scope) {
             val channelController = domainImpl.channel(cid)
 
-            populateMentions(message, channelController.toChannel())
+            message.populateMentions(channelController.toChannel())
 
             if (message.replyMessageId != null) {
                 channelController.replyMessage(null)
             }
             channelController.sendMessage(message)
-        }
-    }
-
-    private fun populateMentions(
-        message: Message,
-        channel: Channel,
-    ) {
-        if ('@' !in message.text) {
-            return
-        }
-
-        val text = message.text.lowercase()
-        message.mentionedUsersIds = channel.members.mapNotNullTo(mutableListOf()) { member ->
-            if (text.contains("@${member.user.name.lowercase()}")) {
-                member.user.id
-            } else {
-                null
-            }
         }
     }
 }

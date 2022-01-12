@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -36,9 +37,11 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
@@ -90,7 +93,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -147,10 +149,8 @@ public class ChatClient internal constructor(
                     val user = event.me
                     val connectionId = event.connectionId
                     socketStateService.onConnected(connectionId)
-                    userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
-                    storePushNotificationsConfig(user.id, user.name)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -163,12 +163,22 @@ public class ChatClient internal constructor(
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
                         }
-                    }.exhaustive
+                    }
                 }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
                 }
                 else -> Unit // Ignore other events
+            }
+
+            val currentUser = when {
+                event is HasOwnUser -> event.me
+                event is UserEvent && event.user.id == getCurrentUser()?.id ?: "" -> event.user
+                else -> null
+            }
+            currentUser?.let { updatedCurrentUser ->
+                userStateService.onUserUpdated(updatedCurrentUser)
+                storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
             }
         }
         logger.logI("Initialised: " + getVersion())
@@ -308,7 +318,6 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        @Suppress("DEPRECATION_ERROR")
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -551,7 +560,7 @@ public class ChatClient internal constructor(
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
-        }.exhaustive
+        }
     }
 
     public fun addSocketListener(listener: SocketListener) {
@@ -766,6 +775,38 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Returns a list of messages pinned in the channel.
+     * You can sort the list by specifying [sort] parameter.
+     * Keep in mind that for now we only support sorting by [Message.pinnedAt].
+     * The list can be paginated in a few different ways using [limit] and [pagination].
+     * @see [PinnedMessagesPagination]
+     *
+     * @param channelType The channel type. (e.g. messaging, livestream)
+     * @param channelId The id of the channel we're querying.
+     * @param limit Max limit of messages to be fetched.
+     * @param sort Parameter by which we sort the messages.
+     * @param pagination Provides different options for pagination.
+     *
+     * @return Executable async [Call] responsible for getting pinned messages.
+     */
+    @CheckResult
+    public fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        return api.getPinnedMessages(
+            channelType = channelType,
+            channelId = channelId,
+            limit = limit,
+            sort = sort,
+            pagination = pagination,
+        )
+    }
+
     @CheckResult
     public fun getFileAttachments(
         channelType: String,
@@ -825,18 +866,39 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
-    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        return api.getReplies(messageId, limit)
-    }
+    @InternalStreamChatApi
+    @ExperimentalStreamChatApi
+    public fun getRepliesInternal(messageId: String, limit: Int): Call<List<Message>> = api.getReplies(messageId, limit)
+
+    @CheckResult
+    @InternalStreamChatApi
+    @ExperimentalStreamChatApi
+    public fun getRepliesMoreInternal(
+        messageId: String,
+        firstId: String,
+        limit: Int,
+    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
+
+    @CheckResult
+    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> =
+        api.getReplies(messageId, limit)
+            .doOnStart(scope) { plugins.forEach { it.onGetRepliesRequest(messageId, limit) } }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onGetRepliesResult(result, messageId, limit) }
+            }
+            .precondition { onGetRepliesPrecondition(messageId, limit) }
 
     @CheckResult
     public fun getRepliesMore(
         messageId: String,
         firstId: String,
         limit: Int,
-    ): Call<List<Message>> {
-        return api.getRepliesMore(messageId, firstId, limit)
-    }
+    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
+        .doOnStart(scope) { plugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
+        .doOnResult(scope) { result ->
+            plugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
+        }
+        .precondition { onGetRepliesMorePrecondition(messageId, firstId, limit) }
 
     @CheckResult
     public fun sendAction(request: SendActionRequest): Call<Message> {
@@ -1599,8 +1661,6 @@ public class ChatClient internal constructor(
 
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
-        private var baseTimeout = 30_000L
-        private var cdnTimeout = 30_000L
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
@@ -1676,24 +1736,6 @@ public class ChatClient internal constructor(
          */
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
-            return this
-        }
-
-        @Deprecated(
-            message = "Use okHttpClient() to set the timeouts",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun baseTimeout(timeout: Long): Builder {
-            baseTimeout = timeout
-            return this
-        }
-
-        @Deprecated(
-            message = "Use okHttpClient() to set the timeouts",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun cdnTimeout(timeout: Long): Builder {
-            cdnTimeout = timeout
             return this
         }
 
@@ -1791,8 +1833,6 @@ public class ChatClient internal constructor(
                 httpUrl = "https://$baseUrl/",
                 cdnHttpUrl = "https://$cdnUrl/",
                 wssUrl = "wss://$baseUrl/",
-                baseTimeout = baseTimeout,
-                cdnTimeout = cdnTimeout,
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )

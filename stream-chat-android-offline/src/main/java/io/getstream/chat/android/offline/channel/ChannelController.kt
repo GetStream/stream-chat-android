@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.channel
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
@@ -75,6 +74,8 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
@@ -109,7 +110,6 @@ public class ChannelController internal constructor(
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
     messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
-
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
     public val cid: String by mutableState::cid
@@ -130,7 +130,7 @@ public class ChannelController internal constructor(
     private val messageSendingService: MessageSendingService =
         messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
 
-    internal val unfilteredMessages by mutableState::unfilteredMessages
+    internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
 
     public val messages: StateFlow<List<Message>> = mutableState.messages
@@ -164,10 +164,14 @@ public class ChannelController internal constructor(
     public val channelConfig: StateFlow<Config> by mutableState::channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
-    internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
-        ThreadController(threadId, this, domainImpl)
-            .also { domainImpl.scope.launch { it.loadOlderMessages() } }
-    }
+    internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
+        threadControllerMap.getOrPut(threadState.parentId) {
+            ThreadController(
+                threadState,
+                threadLogic,
+                client
+            ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
+        }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
         if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
@@ -267,12 +271,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun show(): Result<Unit> {
-        channelLogic.setHidden(false)
-        val result = channelClient.show().await()
-        if (result.isSuccess) {
-            domainImpl.repos.setHiddenForChannel(cid, false)
-        }
-        return result
+        return channelClient.show().await()
     }
 
     /** Leave the channel action. Fires an API request. */
@@ -300,76 +299,24 @@ public class ChannelController internal constructor(
         runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(domainImpl.userPresence))
     }
 
-    private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
-        val messages = mutableState.sortedMessages.value
-        return if (messages.isNotEmpty()) {
-            when (direction) {
-                Pagination.GREATER_THAN_OR_EQUAL,
-                Pagination.GREATER_THAN,
-                -> {
-                    messages.last().id
-                }
-                Pagination.LESS_THAN,
-                Pagination.LESS_THAN_OR_EQUAL,
-                -> {
-                    messages.first().id
-                }
-            }
-        } else {
-            null
-        }
-    }
-
-    /**
-     *  Loads a list of messages before the oldest message in the current list.
-     */
+    /** Loads a list of messages before the oldest message in the current list. */
     internal suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                getLoadMoreBaseMessageId(Pagination.LESS_THAN)?.let {
-                    messageFilterDirection = Pagination.LESS_THAN
-                    messageFilterValue = it
-                }
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit = limit, baseMessageId = null))
     }
 
-    /**
-     *  Loads a list of messages after the newest message in the current list.
-     */
+    /** Loads a list of messages after the newest message in the current list. */
     internal suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                getLoadMoreBaseMessageId(Pagination.GREATER_THAN)?.let {
-                    messageFilterDirection = Pagination.GREATER_THAN
-                    messageFilterValue = it
-                }
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit = limit, baseMessageId = null))
     }
 
-    /**
-     *  Loads a list of messages before the message with particular message id.
-     */
-    internal suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                messageFilterDirection = Pagination.LESS_THAN
-                messageFilterValue = messageId
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+    /** Loads a list of messages before the message with particular message id. */
+    private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(channelLogic.olderWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
-    /**
-     *  Loads a list of messages after the message with particular message id.
-     */
-    internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                messageFilterDirection = Pagination.GREATER_THAN
-                messageFilterValue = messageId
-            }.toWatchChannelRequest(domainImpl.userPresence)
-        )
+    /** Loads a list of messages after the message with particular message id. */
+    private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(channelLogic.newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
@@ -436,7 +383,7 @@ public class ChannelController internal constructor(
     }
 
     private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState._messages.value[messageId]
+        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
         if (message != null) {
             val newAttachments = message.attachments.map { attachment ->
                 if (attachment.uploadId == uploadId) {
@@ -446,7 +393,8 @@ public class ChannelController internal constructor(
                 }
             }
             val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages = mutableState._messages.value + (updatedMessage.id to updatedMessage)
+            val newMessages =
+                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
             mutableState._messages.value = newMessages
         }
     }
@@ -512,7 +460,7 @@ public class ChannelController internal constructor(
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
         val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
-        removeLocalMessage(message)
+
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
             processedMessage.apply {
@@ -659,8 +607,8 @@ public class ChannelController internal constructor(
     }
 
     public fun getMessage(messageId: String): Message? {
-        val copy = mutableState._messages.value
-        var message = copy[messageId]
+        val copy = mutableState.messageList.value
+        var message = copy.firstOrNull { it.id == messageId }
 
         if (mutableState.hideMessagesBefore != null) {
             if (message != null && message.wasCreatedBeforeOrAt(mutableState.hideMessagesBefore)) {
@@ -727,13 +675,17 @@ public class ChannelController internal constructor(
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
-                    replyTo = mutableState._messages.value[replyMessageId]
+                    replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
                 }.let(::upsertEventMessage)
 
                 channelLogic.setHidden(false)
             }
             is MessageDeletedEvent -> {
-                upsertEventMessage(event.message)
+                if (event.hardDelete) {
+                    removeLocalMessage(event.message)
+                } else {
+                    upsertEventMessage(event.message)
+                }
                 channelLogic.setHidden(false)
             }
             is NotificationMessageNewEvent -> {
@@ -847,10 +799,10 @@ public class ChannelController internal constructor(
     private fun upsertUserPresence(user: User) {
         val userId = user.id
         // members and watchers have users
-        val members = mutableState._members.value
-        val watchers = mutableState._watchers.value
-        val member = members[userId]?.copy()
-        val watcher = watchers[userId]
+        val members = mutableState.members.value
+        val watchers = mutableState.watchers.value
+        val member = members.firstOrNull { it.getUserId() == userId }?.copy()
+        val watcher = watchers.firstOrNull { it.id == userId }
         if (member != null) {
             member.user = user
             upsertMember(member)
@@ -874,9 +826,9 @@ public class ChannelController internal constructor(
         // updating messages is harder
         // user updates don't happen frequently, it's probably ok for this update to be sluggish
         // if it turns out to be slow we can do a simple reverse index from user -> message
-        val messages = mutableState._messages.value
+        val messages = mutableState.messageList.value
         val changedMessages = mutableListOf<Message>()
-        for (message in messages.values) {
+        for (message in messages) {
             var changed = false
             if (message.user.id == userId) {
                 message.user = user
@@ -1017,43 +969,7 @@ public class ChannelController internal constructor(
         return Result(messageToBeDeleted)
     }
 
-    public fun toChannel(): Channel {
-        // recreate a channel object from the various observables.
-        val channelData = mutableState._channelData.value ?: ChannelData(channelType, channelId)
-
-        val messages = mutableState.sortedMessages.value
-        val members = mutableState._members.value.values.toList()
-        val watchers = mutableState._watchers.value.values.toList()
-        val reads = mutableState._reads.value.values.toList()
-        val watcherCount = mutableState._watcherCount.value
-
-        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
-        channel.config = mutableState.channelConfig.value
-        channel.unreadCount = mutableState._unreadCount.value
-        channel.lastMessageAt =
-            mutableState.lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
-        channel.hidden = mutableState._hidden.value
-
-        return channel
-    }
-
-    internal suspend fun loadOlderThreadMessages(
-        threadId: String,
-        limit: Int,
-        firstMessage: Message? = null,
-    ): Result<List<Message>> {
-        val result = if (firstMessage != null) {
-            client.getRepliesMore(threadId, firstMessage.id, limit).await()
-        } else {
-            client.getReplies(threadId, limit).await()
-        }
-        if (result.isSuccess) {
-            val newMessages = result.data()
-            channelLogic.upsertMessages(newMessages)
-            // Note that we don't handle offline storage for threads at the moment.
-        }
-        return result
-    }
+    public fun toChannel(): Channel = mutableState.toChannel()
 
     internal suspend fun loadMessageById(
         messageId: String,
@@ -1066,10 +982,8 @@ public class ChannelController internal constructor(
             ?: domainImpl.repos.selectMessage(messageId)
             ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         upsertMessage(message)
-        domainImpl.scope.launch {
-            loadOlderMessages(messageId, newerMessagesOffset)
-            loadNewerMessages(messageId, olderMessagesOffset)
-        }
+        loadOlderMessages(messageId, newerMessagesOffset)
+        loadNewerMessages(messageId, olderMessagesOffset)
         return Result(message)
     }
 

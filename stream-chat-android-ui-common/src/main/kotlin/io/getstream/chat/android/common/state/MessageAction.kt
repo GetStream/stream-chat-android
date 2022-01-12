@@ -41,6 +41,11 @@ public class Copy(message: Message) : MessageAction(message)
 public class Edit(message: Message) : MessageAction(message)
 
 /**
+ * Pins or unpins the message from the channel.
+ */
+public class Pin(message: Message) : MessageAction(message)
+
+/**
  * Show a delete dialog for owned message.
  */
 public class Delete(message: Message) : MessageAction(message)
@@ -51,7 +56,7 @@ public class Delete(message: Message) : MessageAction(message)
 public class Flag(message: Message) : MessageAction(message)
 
 /**
- * Show a mute user dialog, for another user.
+ * Mutes or unmutes the user who sent the message.
  */
 public class MuteUser(message: Message) : MessageAction(message)
 

@@ -1,17 +1,16 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdownImpl
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
  * ChatUI handles any configuration for the Chat UI elements.
@@ -47,11 +46,40 @@ public object ChatUI {
         }
 
     private var markdownOverride: ChatMarkdown? = null
-    private val defaultMarkdown: ChatMarkdown by lazy { ChatMarkdownImpl(appContext) }
+    private val defaultMarkdown: ChatMarkdown by lazy {
+        ChatMarkdown { textView, message ->
+            textView.text = message
+        }
+    }
+
+    @Deprecated(message = "ChatUI.markdown is deprecated. Markdown support is extracted into another module. " +
+        "See docs for more reference",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            expression = "ChatUI.messageTextTransformer")
+    )
     public var markdown: ChatMarkdown
         get() = markdownOverride ?: defaultMarkdown
         set(value) {
             markdownOverride = value
+        }
+
+    private var textTransformerOverride: ChatMessageTextTransformer? = null
+    private val defaultTextTransformer: ChatMessageTextTransformer by lazy {
+        AutoLinkableTextTransformer { textView, messageItem ->
+            // Bypass to markdown by default for backwards compatibility.
+            markdown.setText(textView, messageItem.message.text)
+        }
+    }
+
+    /**
+     * Allows customising the message text's format or style.
+     * For example, it can be used to provide markdown support in chat or it can be used to highlight specific messages by making them bold etc.
+     */
+    public var messageTextTransformer: ChatMessageTextTransformer
+        get() = textTransformerOverride ?: defaultTextTransformer
+        set(value) {
+            textTransformerOverride = value
         }
 
     private var avatarBitmapFactoryOverride: AvatarBitmapFactory? = null
@@ -76,21 +104,5 @@ public object ChatUI {
         get() = mimeTypeIconProviderOverride ?: defaultMimeTypeIconProvider
         set(value) {
             mimeTypeIconProviderOverride = value
-        }
-
-    @Deprecated(
-        message = "This property is not used anymore. The SDK already provide a Day/Night theme",
-        replaceWith = ReplaceWith("AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public var uiMode: UiMode = UiMode.SYSTEM
-        set(value) {
-            Log.e("ChatUI", "[ERROR] ChatUI.uiMode is deprecated, you should use `AppCompatDelegate.setDefaultNightMode` [ERROR]")
-            field = value
-            when (value) {
-                UiMode.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                UiMode.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                UiMode.SYSTEM -> { }
-            }
         }
 }

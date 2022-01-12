@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
@@ -53,8 +54,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
 import kotlinx.coroutines.launch
@@ -124,13 +125,16 @@ internal class EventHandlerImpl(
         val batchBuilder = EventBatchUpdate.Builder()
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
+        val users: List<User> = events.filterIsInstance<UserEvent>().mapNotNull { it.user } +
+            events.filterIsInstance<HasOwnUser>().map { it.me }
+
         // For some reason backend is not sending us the user instance into some events that they should
         // and we are not able to identify which event type is. Gson, because it is using reflection,
         // inject a null instance into property `user` that doesn't allow null values.
         // This is a workaround, while we identify which event type is, that omit null values without
         // break our public API
         @Suppress("USELESS_CAST")
-        batchBuilder.addUsers(events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? })
+        batchBuilder.addUsers(users)
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -181,7 +185,7 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is NotificationMessageNewEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is ReactionUpdateEvent -> batchBuilder.addToFetchMessages(event.message.id)
-            }.exhaustive
+            }
         }
         // actually fetch the data
         val batch = batchBuilder.build(domainImpl)
@@ -374,7 +378,7 @@ internal class EventHandlerImpl(
                 is UserStopWatchingEvent,
                 is UserPresenceChangedEvent,
                 -> Unit
-            }.exhaustive
+            }
         }
 
         // execute the batch
@@ -393,12 +397,22 @@ internal class EventHandlerImpl(
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+                is MessageDeletedEvent -> {
+                    if (event.hardDelete) {
+                        domainImpl.repos.deleteChannelMessage(event.message)
+                        domainImpl.repos.evictChannel(event.cid)
+                    }
+                }
                 else -> Unit // Ignore other events
             }
         }
     }
 
     internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+        events.forEach { chatEvent ->
+            logger.logD("Received event: $chatEvent")
+        }
+
         val sortedEvents = events.sortedBy { it.createdAt }
         updateOfflineStorageFromEvents(sortedEvents)
 
@@ -449,10 +463,13 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        if (user != null && domainImpl.user.value?.id != user.id) {
-            ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
+        ownReactions = if (user != null && domainImpl.user.value?.id != user.id) {
+            batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
-            // for events of current user we keep "ownReactions" from the event
+            mergeReactions(
+                latestReactions.filter { it.userId == domainImpl.user.value?.id ?: "" },
+                batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
+            ).toMutableList()
         }
     }
 

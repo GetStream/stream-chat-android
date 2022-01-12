@@ -62,15 +62,6 @@ public sealed interface ChatDomain {
     public val connectionState: StateFlow<ConnectionState>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online, connecting or offline.
-     */
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    public val online: StateFlow<Boolean>
-
-    /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
@@ -137,7 +128,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
@@ -173,6 +164,7 @@ public sealed interface ChatDomain {
      * @param sort How to sort the channels (default is last_message_at).
      * @param limit The number of channels to retrieve.
      * @param messageLimit How many messages to retrieve per channel.
+     * @param memberLimit The number of members per channel.
      *
      * @return Executable async [Call] responsible for obtaining [QueryChannelsController].
      *
@@ -187,6 +179,7 @@ public sealed interface ChatDomain {
         sort: QuerySort<Channel>,
         limit: Int = 30,
         messageLimit: Int = 1,
+        memberLimit: Int = 30,
     ): Call<QueryChannelsController>
 
     /**
@@ -211,6 +204,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for loading older messages in a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "loadOlderMessages is deprecated. Use extension function ChatClient::loadOlderMessages instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
@@ -249,6 +250,7 @@ public sealed interface ChatDomain {
      * @param sort The sort for the channels, by default will sort on last_message_at.
      * @param limit The number of channels to retrieve.
      * @param messageLimit How many messages to fetch per channel.
+     * @param memberLimit The number of members per channel.
      *
      * @return Executable async [Call] responsible for loading more channels.
      *
@@ -262,6 +264,7 @@ public sealed interface ChatDomain {
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
+        memberLimit: Int,
     ): Call<List<Channel>>
 
     /**
@@ -443,6 +446,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "keystroke is deprecated. Use extension function ChatClient::keystroke instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().keystroke(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.ERROR
+    )
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
     /**
@@ -455,6 +466,14 @@ public sealed interface ChatDomain {
      * false if it wasn't sent.
      */
     @CheckResult
+    @Deprecated(
+        message = "stopTyping is deprecated. Use extension function ChatClient::stopTyping instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().stopTyping(cid, parentId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.ERROR
+    )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**
@@ -497,6 +516,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for hiding a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "Deprecated. Use ChatClient::showChannel instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().showChannel(channelType, channelId)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun showChannel(cid: String): Call<Unit>
 
     /**
@@ -534,7 +561,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().setMessageForReply(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
@@ -552,7 +579,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().downloadAttachment(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 

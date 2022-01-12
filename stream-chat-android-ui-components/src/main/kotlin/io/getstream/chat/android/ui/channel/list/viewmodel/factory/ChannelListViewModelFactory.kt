@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 
 /**
@@ -16,8 +17,9 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
  * @param filter How to filter the channels.
  * @param sort How to sort the channels, defaults to last_updated.
  * @param limit How many channels to return.
+ * @param memberLimit The number of members per channel.
  * @param messageLimit The number of messages to fetch for each channel.
- * @param chatEventHandler The instance of [ChatEventHandler] that will be used to handle channel updates event for this combination of [sort] and [filter].
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  *
  * @see Filters
  * @see QuerySort
@@ -27,7 +29,8 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
-    private val chatEventHandler: ChatEventHandler? = null,
+    private val memberLimit: Int = 30,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelListViewModel::class.java) {
@@ -35,6 +38,14 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         }
 
         @Suppress("UNCHECKED_CAST")
-        return ChannelListViewModel(ChatDomain.instance(), filter, sort, limit, messageLimit, chatEventHandler) as T
+        return ChannelListViewModel(
+            ChatDomain.instance(),
+            filter = filter,
+            sort = sort,
+            limit = limit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            chatEventHandlerFactory = chatEventHandlerFactory,
+        ) as T
     }
 }

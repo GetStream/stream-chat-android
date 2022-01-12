@@ -6,21 +6,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import java.util.Date
-
-private const val EXTRA_CHANNEL_MUTED: String = "isMuted"
-
-/**
- * Allows storing additional information if the channel is muted for the current user.
- *
- * @see [ChannelListViewModel.enrichMutedChannels]
- */
-public var Channel.isMuted: Boolean
-    get() = extraData[EXTRA_CHANNEL_MUTED] as Boolean? ?: false
-    set(value) {
-        extraData[EXTRA_CHANNEL_MUTED] = value
-    }
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -106,4 +92,20 @@ public fun Channel.getMembersStatusText(context: Context, currentUser: User?): S
             }
         }
     }
+}
+
+/**
+ * Returns a list of users that are members of the channel excluding the currently
+ * logged in user.
+ *
+ * @param currentUser The currently logged in user.
+ * @return The list of users in the channel without the current user.
+ */
+public fun Channel.getOtherUsers(currentUser: User?): List<User> {
+    val currentUserId = currentUser?.id
+    return if (currentUserId != null) {
+        members.filterNot { it.user.id == currentUserId }
+    } else {
+        members
+    }.map { it.user }
 }

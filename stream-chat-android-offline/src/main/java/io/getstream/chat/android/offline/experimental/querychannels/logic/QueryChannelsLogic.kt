@@ -1,5 +1,7 @@
 package io.getstream.chat.android.offline.experimental.querychannels.logic
 
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
@@ -7,11 +9,13 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChann
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.querychannels.ChannelFilterRequest
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -21,9 +25,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val chatDomainImpl: ChatDomainImpl,
+    private val client: ChatClient,
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
+
+    internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
+        ChannelFilterRequest.filter(client, cid, filter)
+            .map { channels -> channels.any { it.cid == cid } }
+            .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
+    }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         mutableState._currentRequest.value = request
@@ -47,7 +58,8 @@ internal class QueryChannelsLogic(
 
     private suspend fun fetchChannelsFromCache(pagination: AnyChannelPaginationRequest): List<Channel> {
         val queryChannelsSpec = mutableState.queryChannelsSpec
-        val query = chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
+        val query =
+            chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
 
         return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
@@ -108,11 +120,10 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Updates the state on the channelController based on the channel object we received from the API.
+     * Updates the state based on the channels collection we received from the API.
      *
      * @param channels The list of channels to update.
      * @param isFirstPage If it's the first page we set/replace the list of results. if it's not the first page we add to the list.
-     *
      */
     internal suspend fun updateOnlineChannels(
         channels: List<Channel>,
@@ -121,9 +132,7 @@ internal class QueryChannelsLogic(
         if (isFirstPage) {
             (mutableState._channels.value - channels.map { it.cid }).values
                 .map(Channel::cid)
-                .filterNot { cid ->
-                    mutableState.defaultChatEventHandler.channelFilter(cid, mutableState.filter)
-                }
+                .filterNot { cid -> channelFilter(cid, mutableState.filter) }
                 .let { removeChannels(it) }
         }
         mutableState.channelsOffset.value += channels.size

@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
@@ -52,7 +51,6 @@ internal class MessageOptionsView : FrameLayout {
                 isMessagePinned = isMessagePinned,
             )
         }
-        binding.blockTV.isVisible = false
         binding.messageOptionsContainer.setCardBackgroundColor(style.messageOptionsBackgroundColor)
     }
 
@@ -76,10 +74,8 @@ internal class MessageOptionsView : FrameLayout {
 
         binding.flagTV.configureListItem(textStyle, style.flagIcon)
         binding.muteTV.configureListItem(textStyle, style.muteIcon)
-        binding.blockTV.configureListItem(textStyle, style.blockIcon)
         binding.editTV.isVisible = false
         binding.deleteTV.isVisible = false
-        configureBlock(configuration = configuration, style = style)
         configureMute(
             configuration = configuration,
             style = style,
@@ -91,6 +87,7 @@ internal class MessageOptionsView : FrameLayout {
             style = style,
             isMessagePinned = isMessagePinned
         )
+        configureBlock(configuration = configuration, style = style)
     }
 
     private fun configureMineMessage(
@@ -124,7 +121,7 @@ internal class MessageOptionsView : FrameLayout {
             SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS, SyncStatus.AWAITING_ATTACHMENTS -> {
                 binding.threadReplyTV.isVisible = false
             }
-        }.exhaustive
+        }
 
         configureCopyMessage(configuration, style)
 
@@ -200,10 +197,9 @@ internal class MessageOptionsView : FrameLayout {
     }
 
     private fun configureBlock(configuration: Configuration, style: MessageListViewStyle) {
-        if (configuration.blockEnabled) {
-            binding.blockTV.configureListItem(style.messageOptionsText, style.replyIcon)
-        } else {
-            binding.blockTV.isVisible = false
+        binding.blockTV.isVisible = configuration.blockEnabled
+        if(configuration.blockEnabled) {
+            binding.blockTV.configureListItem(style.messageOptionsText, style.blockIcon)
         }
     }
 

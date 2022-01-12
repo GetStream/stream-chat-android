@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `When observing messages Should receive the correct number of events with messages`(): Unit = runBlocking {
+    fun `When observing messages Should receive the correct number of events with messages`(): Unit = coroutineTest {
         val counter = DiffUtilOperationCounter { old: List<Message>, new: List<Message> ->
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }
