@@ -54,15 +54,6 @@ public sealed interface ChatDomain {
     public val connectionState: LiveData<ConnectionState>
 
     /**
-     * LiveData<Boolean> that indicates if we are currently online
-     */
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    public val online: LiveData<Boolean>
-
-    /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
@@ -130,7 +121,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
@@ -455,7 +446,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().keystroke(cid, parentId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
@@ -475,7 +466,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().stopTyping(cid, parentId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
@@ -564,7 +555,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().setMessageForReply(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
@@ -581,7 +572,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().downloadAttachment(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
