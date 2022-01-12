@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel
 
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -215,7 +214,6 @@ public class ChannelController internal constructor(
      * @return whether the channel was marked as read or not
      */
     internal fun markRead(): Boolean {
-        Log.d("ChannelController", "markRead")
         if (!mutableState.channelConfig.value.readEventsEnabled) {
             return false
         }
@@ -671,7 +669,6 @@ public class ChannelController internal constructor(
     internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
-                Log.d("ChannelController", "NewMessageEvent - New message event!! Text: ${event.message.text}")
                 upsertEventMessage(event.message)
                 channelLogic.incrementUnreadCountIfNecessary(event.message)
                 channelLogic.setHidden(false)
@@ -692,7 +689,6 @@ public class ChannelController internal constructor(
                 channelLogic.setHidden(false)
             }
             is NotificationMessageNewEvent -> {
-                Log.d("ChannelController", "NotificationMessageNewEvent - New message event!!")
                 upsertEventMessage(event.message)
                 channelLogic.incrementUnreadCountIfNecessary(event.message)
                 channelLogic.setHidden(false)
@@ -880,7 +876,6 @@ public class ChannelController internal constructor(
     private fun updateRead(
         read: ChannelUserRead,
     ) {
-        Log.d("ChannelController", "updateRead")
         channelLogic.updateReads(listOf(read))
     }
 

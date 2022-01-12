@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.extensions
 
-import android.util.Log
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -58,7 +57,6 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
 internal fun Channel.incrementUnreadCount(currentUserId: String, message: Message) {
     read.firstOrNull { it.user.id == currentUserId }
         ?.let {
-            Log.d("incrementUnreadCount", "Before read: ${it.unreadMessages}. Now incrementing...")
             it.lastMessageSeenDate = message.createdAt
             it.unreadMessages++
         }

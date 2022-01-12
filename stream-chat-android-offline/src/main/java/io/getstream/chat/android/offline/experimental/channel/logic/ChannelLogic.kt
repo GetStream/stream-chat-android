@@ -129,7 +129,6 @@ internal class ChannelLogic(
     }
 
     private fun updateOldMessagesFromChannel(c: Channel) {
-        // Log.d("ChannelLogic", "updateOldMessagesFromChannel")
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -147,7 +146,6 @@ internal class ChannelLogic(
     }
 
     internal fun updateDataFromChannel(c: Channel) {
-        Log.d("ChannelLogic", "updateDataFromChannel")
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -194,7 +192,6 @@ internal class ChannelLogic(
 
         if (currentUserId?.let { message.shouldIncrementUnreadCount(it, mutableState._read.value?.lastMessageSeenDate) } == true) {
             val newUnreadCount = mutableState._unreadCount.value + 1
-            Log.d("ChannelLogic", "newUnreadCount: $newUnreadCount")
             mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read
                 .value
@@ -234,7 +231,6 @@ internal class ChannelLogic(
                 if (shouldUpdateByIncoming) {
                     mutableState._read.value = incomingUserRead
 
-                    // Log.d("ChannelLogic", "updateReads - unreadMessages: ${incomingUserRead.unreadMessages}")
                     mutableState._unreadCount.value = incomingUserRead.unreadMessages
                 } else {
                     // if the previous Read was more current, replace the item in the update map

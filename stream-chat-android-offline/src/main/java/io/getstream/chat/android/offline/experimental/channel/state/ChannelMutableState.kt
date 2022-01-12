@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.experimental.channel.state
 
-import android.util.Log
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Channel
@@ -175,7 +174,6 @@ internal class ChannelMutableState(
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = channelConfig.value
-        Log.d("ChannelMutableState", "ToChannel - unreadCount: ${unreadCount.value}")
         channel.unreadCount = _unreadCount.value
         channel.lastMessageAt =
             lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
