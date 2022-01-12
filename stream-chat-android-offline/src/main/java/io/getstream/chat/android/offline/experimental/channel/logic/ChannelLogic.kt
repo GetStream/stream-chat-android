@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.experimental.channel.logic
 
-import android.util.Log
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
