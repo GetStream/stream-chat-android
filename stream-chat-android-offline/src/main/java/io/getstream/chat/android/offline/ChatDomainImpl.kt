@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
+import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
@@ -647,6 +648,7 @@ internal class ChatDomainImpl internal constructor(
      * - API calls to create local channels, messages and reactions
      */
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
+        Log.d("ChatDomainImpl", "Connection recovered!!! ----")
         // 0. ensure load is complete
         initJob?.join()
 

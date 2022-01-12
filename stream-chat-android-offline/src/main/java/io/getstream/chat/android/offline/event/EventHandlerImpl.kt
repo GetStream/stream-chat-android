@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.event
 
+import android.util.Log
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -197,6 +198,7 @@ internal class EventHandlerImpl(
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
+                    Log.d("EventHandlerImpl", "NewMessageEvent - New message event!! --- Text: ${event.message.text}")
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
                     domainImpl.setTotalUnreadCount(event.totalUnreadCount)
@@ -211,11 +213,13 @@ internal class EventHandlerImpl(
                     batch.addMessageData(event.cid, event.message)
                 }
                 is MessageUpdatedEvent -> {
+                    Log.d("EventHandlerImpl", "MessageUpdatedEvent - New message event!! --- Text: ${event.message.text}")
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is NotificationMessageNewEvent -> {
+                    Log.d("EventHandlerImpl", "NotificationMessageNewEvent - New message event!! --- Text: ${event.message.text}")
                     event.message.enrichWithCid(event.cid)
                     domainImpl.setTotalUnreadCount(event.totalUnreadCount)
                     domainImpl.setChannelUnreadCount(event.unreadChannels)
