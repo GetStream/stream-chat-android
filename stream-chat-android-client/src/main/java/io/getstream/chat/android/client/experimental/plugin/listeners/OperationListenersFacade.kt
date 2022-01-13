@@ -8,4 +8,5 @@ public interface OperationListenersFacade :
     QueryChannelsListener,
     QueryChannelListener,
     SendMessageListener,
-    ThreadQueryListener
+    ThreadQueryListener,
+    GetMessageListener

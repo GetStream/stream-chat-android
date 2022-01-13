@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -95,6 +96,16 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         firstId: String,
         limit: Int,
     ): Unit = logic.thread(messageId).onGetRepliesMoreResult(result, messageId, firstId, limit)
+
+    override suspend fun onGetMessageResult(
+        result: Result<Message>,
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int
+    ): Unit = cid.cidToTypeAndId().let { (channelType, channelId) ->
+        logic.channel(channelType, channelId).onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    }
 
     internal fun clear() {
         logic.clear()

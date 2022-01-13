@@ -971,22 +971,6 @@ public class ChannelController internal constructor(
 
     public fun toChannel(): Channel = mutableState.toChannel()
 
-    internal suspend fun loadMessageById(
-        messageId: String,
-        newerMessagesOffset: Int,
-        olderMessagesOffset: Int,
-    ): Result<Message> {
-        val message = client.getMessage(messageId).await()
-            .takeIf { it.isSuccess }
-            ?.data()
-            ?: domainImpl.repos.selectMessage(messageId)
-            ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-        upsertMessage(message)
-        loadOlderMessages(messageId, newerMessagesOffset)
-        loadNewerMessages(messageId, olderMessagesOffset)
-        return Result(message)
-    }
-
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
     }

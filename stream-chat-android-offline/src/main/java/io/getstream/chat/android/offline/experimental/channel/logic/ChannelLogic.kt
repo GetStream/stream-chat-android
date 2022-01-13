@@ -1,9 +1,12 @@
 package io.getstream.chat.android.offline.experimental.channel.logic
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -35,7 +38,7 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener {
+) : QueryChannelListener, GetMessageListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -95,6 +98,50 @@ internal class ChannelLogic(
                 }
                 chatDomainImpl.addError(error)
             }
+    }
+
+    override suspend fun onGetMessageResult(
+        result: Result<Message>,
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int
+    ) {
+        val message = if (result.isSuccess) result.data() else chatDomainImpl.repos.selectMessage(messageId)
+        message?.let {
+            upsertMessages(listOf(message))
+            loadOlderMessages(messageId, newerMessagesOffset)
+            loadNewerMessages(messageId, olderMessagesOffset)
+        }
+    }
+
+    /** Loads a list of messages after the newest message in the current list. */
+    private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
+    }
+
+    /** Loads a list of messages before the message with particular message id. */
+    private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(olderWatchChannelRequest(limit = limit, baseMessageId = messageId))
+    }
+
+    private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
+        val preconditionResult = onQueryChannelPrecondition(mutableState.channelType, mutableState.channelId, request)
+        if (preconditionResult.isError) {
+            return Result.error(preconditionResult.error())
+        }
+
+        val offlineChannel = runChannelQueryOffline(request)
+
+        val onlineResult = ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request).await().also { result ->
+            onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
+        }
+
+        return when {
+            onlineResult.isSuccess -> onlineResult
+            offlineChannel != null -> Result.success(offlineChannel)
+            else -> onlineResult
+        }
     }
 
     internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {

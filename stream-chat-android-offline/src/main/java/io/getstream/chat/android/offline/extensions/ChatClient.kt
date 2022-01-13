@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -16,6 +17,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
@@ -177,18 +179,16 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
  *
  * @return Executable async [Call] responsible for loading a message.
  */
+@OptIn(ExperimentalStreamChatApi::class)
 @CheckResult
 public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
-    olderMessagesOffset: Int = 0,
-    newerMessagesOffset: Int = 0,
+    olderMessagesOffset: Int,
+    newerMessagesOffset: Int,
 ): Call<Message> {
-    validateCid(cid)
-
-    val domainImpl = ChatDomain.instance as ChatDomainImpl
-    val channelController = domainImpl.channel(cid)
-    return CoroutineCall(domainImpl.scope) {
-        channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
-    }
+    return this.getMessage(messageId)
+        .doOnResult((ChatDomain.instance as ChatDomainImpl).scope) { result ->
+            plugins.forEach { it.onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset) }
+        }
 }

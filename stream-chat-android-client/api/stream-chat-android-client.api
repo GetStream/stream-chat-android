@@ -1864,6 +1864,7 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 }
 
 public final class io/getstream/chat/android/client/experimental/plugin/Plugin$DefaultImpls {
+	public static fun onGetMessageResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMorePrecondition (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onGetRepliesMoreRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;I)V
 	public static fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;I)V
@@ -1879,10 +1880,20 @@ public final class io/getstream/chat/android/client/experimental/plugin/Plugin$D
 	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade : io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener {
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener {
+	public abstract fun onGetMessageResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener$DefaultImpls {
+	public static fun onGetMessageResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onGetMessageResult$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade : io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener, io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener {
 }
 
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade$DefaultImpls {
+	public static fun onGetMessageResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMorePrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onGetRepliesMoreRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;I)V
 	public static fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;I)V
