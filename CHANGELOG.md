@@ -43,7 +43,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-
+- Bug fixed in `DefaultChatEventHandler`. A user leaving a channel wasn't causing the channel to be removed from `ChannelListView` [#2933](https://github.com/GetStream/stream-chat-android/pull/2933)
 ### ⬆️ Improved
 
 ### ✅ Added
