@@ -534,17 +534,10 @@ public class MessageListView : ConstraintLayout {
                 }
             }
 
-            binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-            scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
-
-            NewMessagesBehaviour.parseValue(
-                tArray.getInt(
-                    R.styleable.MessageListView_streamUiNewMessagesBehaviour,
-                    NewMessagesBehaviour.COUNT_UPDATE.value
-                )
-            ).also {
-                scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
-            }
+            val style = requireStyle()
+            binding.scrollToBottomButton.setScrollButtonViewStyle(style.scrollButtonViewStyle)
+            scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
+            scrollHelper.alwaysScrollToBottom = style.scrollButtonBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }
 
         if (background == null) {

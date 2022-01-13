@@ -45,6 +45,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.toMut
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
@@ -69,7 +70,6 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.CancelMessage
 import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
@@ -105,7 +105,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -206,14 +205,6 @@ internal class ChatDomainImpl internal constructor(
      * StateFlow<Boolean> that indicates if we are currently online
      */
     override val connectionState: StateFlow<ConnectionState> = _connectionState
-
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    override val online: StateFlow<Boolean> =
-        _connectionState.map { state -> state == ConnectionState.CONNECTED }
-            .stateIn(scope, SharingStarted.Eagerly, false)
 
     /**
      * The total unread message count for the current user.
@@ -970,7 +961,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
 
-    override fun cancelMessage(message: Message): Call<Boolean> = CancelMessage(this).invoke(message)
+    override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
     override fun shuffleGiphy(message: Message): Call<Message> = ShuffleGiphy(this).invoke(message)
 

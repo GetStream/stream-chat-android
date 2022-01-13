@@ -13,6 +13,8 @@ internal data class UpstreamMemberDto(
     val invite_accepted_at: Date?,
     val invite_rejected_at: Date?,
     val shadow_banned: Boolean,
+    val banned: Boolean = false,
+    val channel_role: String?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -25,4 +27,6 @@ internal data class DownstreamMemberDto(
     val invite_accepted_at: Date?,
     val invite_rejected_at: Date?,
     val shadow_banned: Boolean = false,
+    val banned: Boolean = false,
+    val channel_role: String?,
 )
