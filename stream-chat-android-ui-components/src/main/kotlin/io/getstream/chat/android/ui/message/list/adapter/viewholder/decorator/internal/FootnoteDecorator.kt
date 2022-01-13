@@ -150,15 +150,29 @@ internal class FootnoteDecorator(
                 textView.isVisible = true
                 style.textStyleUserName.apply(textView)
             }
-            data.isNotBottomPosition()
-                || !data.message.isEphemeral() && !data.message.isDeleted()
-                || deletedMessageListItemPredicate != VisibleToAuthorOnly -> textView.isVisible = false
-            else -> textView.apply {
-                isVisible = true
-                text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
-                setLeftDrawable(style.iconOnlyVisibleToYou)
-                compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
+
+            data.isBottomPosition()
+                && data.message.isDeleted()
+                && deletedMessageListItemPredicate == VisibleToAuthorOnly -> {
+                showOnlyVisibleToYou(textView, style)
             }
+
+            data.isBottomPosition() && data.message.isEphemeral() -> {
+                showOnlyVisibleToYou(textView, style)
+            }
+            
+            else -> {
+                textView.isVisible = false
+            }
+        }
+    }
+
+    private fun showOnlyVisibleToYou(textView: TextView, style: MessageListItemStyle) {
+        textView.apply {
+            isVisible = true
+            text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
+            setLeftDrawable(style.iconOnlyVisibleToYou)
+            compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
         }
     }
 
