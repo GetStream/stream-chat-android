@@ -166,3 +166,25 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
         channelController.loadOlderMessages(messageLimit)
     }
 }
+
+/**
+ * Cancels the message of "ephemeral" type. Removes the message from local storage.
+ * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+ *
+ * @param message The message to send.
+ *
+ * @return Executable async [Call] responsible for canceling ephemeral message.
+ *
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
+@CheckResult
+public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
+    val cid = message.cid
+    validateCid(cid)
+
+    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.cancelEphemeralMessage(message)
+    }
+}

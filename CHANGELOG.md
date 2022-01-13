@@ -47,8 +47,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::cancelMessage`.
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain::cancelMessage` in favour of `ChatClient::cancelMessage`
 
 ### ❌ Removed
 
