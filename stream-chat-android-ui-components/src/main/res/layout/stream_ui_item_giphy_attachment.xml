@@ -68,7 +68,7 @@
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
             android:id="@+id/mediaAttachmentView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             />
 
         <TextView

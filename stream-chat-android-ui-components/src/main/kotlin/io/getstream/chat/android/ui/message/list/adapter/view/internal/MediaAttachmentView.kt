@@ -2,21 +2,18 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
-import android.view.View
 import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.images.loadAndResize
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -24,6 +21,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -31,16 +30,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     var giphyBadgeEnabled: Boolean = true
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
-        StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
-            it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            val padding = 1.dpToPx()
-            it.root.setPadding(padding, padding, padding, padding)
-            addView(it.root)
-            updateConstraints {
-                constrainViewToParentBySide(it.root, ConstraintSet.LEFT)
-                constrainViewToParentBySide(it.root, ConstraintSet.TOP)
-            }
-        }
+        StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater, this, true)
     private lateinit var style: MediaAttachmentViewStyle
 
     constructor(context: Context) : this(context, null, 0)
@@ -78,34 +68,29 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
     }
 
-    fun showGiphy(attachment: Attachment, containerView: View, maxWidth: Int) {
-        val url = attachment.giphyUrl(GiphyInfoType.FIXED_HEIGHT)
-        val fallbackUrl = attachment.run {
-            attachment.imagePreviewUrl
-                ?: titleLink
-                ?: ogUrl
+    fun showGiphy(attachment: Attachment) {
+        val url = attachment.giphyUrl(GiphyInfoType.FIXED_HEIGHT) ?: attachment.let {
+            it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
+        } ?: return
+
+        binding.loadImage.updateLayoutParams {
+            this.height = GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
         }
 
         binding.giphyLabel.isVisible = true
 
-        val giphyInfo = attachment.giphyInfo(GiphyInfoType.ORIGINAL)
+        CoroutineScope(DispatcherProvider.Main).launch {
+            binding.imageView.setImageDrawable(style.placeholderIcon)
 
-        Log.d("MediaAttachmentView", "url: $url, width: ${giphyInfo?.width}, height: ${giphyInfo?.height}")
-        if (url == null) {
-            Log.d("MediaAttachmentView", "fallbackUrl: $fallbackUrl")
-        }
-
-        if (giphyInfo != null) {
-            binding.imageView.updateLayoutParams {
-                this.width =  giphyInfo.width
+            binding.imageView.loadAndResize(
+                data = url,
+                placeholderDrawable = style.placeholderIcon,
+                maxHeight = GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx(),
+                container = this@MediaAttachmentView,
+                onStart = { binding.loadImage.isVisible = true }
+            ) {
+                binding.loadImage.isVisible = false
             }
-            showImageByUrl(url ?: return) {}
-        } else {
-            binding.imageView.updateLayoutParams {
-                this.width =  GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx()
-                this.height =  GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
-            }
-            showImageByUrl(fallbackUrl ?: return) {}
         }
     }
 
@@ -142,39 +127,10 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
-        binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(style.imageBackgroundColor)
-        }
         binding.moreCount.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.moreCountOverlayColor)
         }
     }
-
-    private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
-        val giphyInfoMap =
-            (extraData[ModelType.attach_giphy] as? Map<String, Any>?)?.get(field.value) as? Map<String, String>?
-
-        return giphyInfoMap?.let { map ->
-            GiphyInfo(
-                url = map["url"] ?: "",
-                width = map["width"]?.toInt() ?: GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx(),
-                height = map["height"]?.toInt() ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
-            )
-        }
-    }
-
-    internal enum class GiphyInfoType(val value: String) {
-        ORIGINAL("original"),
-        FIXED_HEIGHT("fixed_height")
-    }
-
-    internal data class GiphyInfo(
-        val url: String,
-        @Px val width: Int,
-        @Px val height: Int,
-    )
-
-    private fun Attachment.giphyUrl(type: GiphyInfoType): String? = giphyInfo(type)?.url
 
     companion object {
         private const val NO_MORE_COUNT = 0
@@ -182,5 +138,32 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         private const val GIPHY_INFO_DEFAULT_WIDTH_DP = 200
         private const val GIPHY_INFO_DEFAULT_HEIGHT_DP = 200
+
+        private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
+            val giphyInfoMap =
+                (extraData[ModelType.attach_giphy] as? Map<String, Any>?)?.get(field.value) as? Map<String, String>?
+
+            return giphyInfoMap?.let { map ->
+                GiphyInfo(
+                    url = map["url"] ?: "",
+                    width = map["width"]?.toInt() ?: GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx(),
+                    height = map["height"]?.toInt() ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
+                )
+            }
+        }
+
+        private enum class GiphyInfoType(val value: String) {
+            ORIGINAL("original"),
+            FIXED_HEIGHT("fixed_height"),
+            FIXED_HEIGHT_DOWNSAMPLED("fixed_height_downsampled")
+        }
+
+        private data class GiphyInfo(
+            val url: String,
+            @Px val width: Int,
+            @Px val height: Int,
+        )
+
+        private fun Attachment.giphyUrl(type: GiphyInfoType): String? = giphyInfo(type)?.url
     }
 }

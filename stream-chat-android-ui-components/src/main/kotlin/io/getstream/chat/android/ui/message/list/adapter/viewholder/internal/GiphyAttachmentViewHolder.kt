@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -14,7 +13,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.isReply
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemGiphyAttachmentBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
@@ -23,12 +21,13 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseM
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 internal class GiphyAttachmentViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
-    private val markdown: ChatMarkdown,
+    private val markdown: ChatMessageTextTransformer,
     internal val binding: StreamUiItemGiphyAttachmentBinding = StreamUiItemGiphyAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -71,7 +70,7 @@ internal class GiphyAttachmentViewHolder(
         super.bindData(data, diff)
 
         binding.messageText.isVisible = data.message.text.isNotEmpty()
-        markdown.setText(binding.messageText, data.message.text)
+        markdown.transformAndApply(binding.messageText, data)
 
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
@@ -83,7 +82,6 @@ internal class GiphyAttachmentViewHolder(
             } else {
                 constrainViewEndToEndOfView(binding.messageContainer, binding.marginEnd)
             }
-
         }
 
         imageCorners(binding.mediaAttachmentView, data)
@@ -95,16 +93,12 @@ internal class GiphyAttachmentViewHolder(
         val attachment = data.message.attachments.first()
 
         if (diff?.attachments == true) {
-            showGiphy(attachment, binding.messageContainer, binding.messageContainer.width)
+            showGiphy(attachment)
         }
     }
 
-    private fun showGiphy(attachment: Attachment, containerView: View, maxWidth: Int) {
-        binding.mediaAttachmentView.showGiphy(
-            attachment = attachment,
-            containerView = containerView,
-            maxWidth = maxWidth
-        )
+    private fun showGiphy(attachment: Attachment) {
+        binding.mediaAttachmentView.showGiphy(attachment = attachment)
     }
 
     private fun setListeners(
