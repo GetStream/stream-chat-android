@@ -166,3 +166,29 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
         channelController.loadOlderMessages(messageLimit)
     }
 }
+
+/**
+ * Loads message for a given message id and channel id.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageId The id of the message.
+ * @param olderMessagesOffset How many new messages to load before the requested message.
+ * @param newerMessagesOffset How many new messages to load after the requested message.
+ *
+ * @return Executable async [Call] responsible for loading a message.
+ */
+@CheckResult
+public fun ChatClient.loadMessageById(
+    cid: String,
+    messageId: String,
+    olderMessagesOffset: Int = 0,
+    newerMessagesOffset: Int = 0,
+): Call<Message> {
+    validateCid(cid)
+
+    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
+    }
+}

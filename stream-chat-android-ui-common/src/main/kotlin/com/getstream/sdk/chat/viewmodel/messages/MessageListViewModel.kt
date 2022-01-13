@@ -33,6 +33,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.MessagesStat
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -380,7 +381,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 if (message != null) {
                     _targetMessage.value = message
                 } else {
-                    domain.loadMessageById(
+                    client.loadMessageById(
                         cid,
                         event.messageId,
                         MESSAGES_LIMIT,
@@ -397,7 +398,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.RemoveAttachment -> {
                 val attachmentToBeDeleted = event.attachment
-                domain.loadMessageById(
+                client.loadMessageById(
                     cid,
                     event.messageId,
                     MESSAGES_LIMIT,
@@ -425,7 +426,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyAttachment -> {
                 val messageId = event.repliedMessageId
                 val cid = event.cid
-                domain.loadMessageById(
+                client.loadMessageById(
                     cid,
                     messageId,
                     MESSAGES_LIMIT,

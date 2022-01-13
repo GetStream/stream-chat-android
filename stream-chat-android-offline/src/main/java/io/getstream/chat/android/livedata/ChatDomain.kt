@@ -229,6 +229,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for loading a message.
      */
     @CheckResult
+    @Deprecated(
+        message = "loadMessageById is deprecated. Use extension function ChatClient::loadMessageById instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun loadMessageById(
         cid: String,
         messageId: String,

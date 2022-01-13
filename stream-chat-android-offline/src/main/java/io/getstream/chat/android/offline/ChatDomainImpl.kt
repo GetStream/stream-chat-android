@@ -48,6 +48,7 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
@@ -77,7 +78,6 @@ import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
-import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
@@ -950,7 +950,7 @@ internal class ChatDomainImpl internal constructor(
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> = LoadMessageById(this).invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    ): Call<Message> = client.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,

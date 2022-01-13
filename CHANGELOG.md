@@ -47,8 +47,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::loadMessageById`.
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain::loadMessageById` in favour of `ChatClient::loadMessageById`.
 
 ### ❌ Removed
 
