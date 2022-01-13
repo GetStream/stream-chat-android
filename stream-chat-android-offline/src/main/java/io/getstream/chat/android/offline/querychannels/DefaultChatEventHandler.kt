@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -17,8 +18,10 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param channels The list of visible channels.
  */
-public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>) :
-    BaseChatEventHandler() {
+public class DefaultChatEventHandler(
+    private val channels: StateFlow<List<Channel>>,
+    private val chatClient: ChatClient = ChatClient.instance()
+) : BaseChatEventHandler() {
 
     /**
      *  Handles [NotificationAddedToChannelEvent] event. It adds the channel if it is absent.
@@ -48,7 +51,13 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
+    ): EventHandlingResult {
+        val hasMember = event.channel.members.any { member ->
+            member.getUserId() == chatClient.getCurrentUser()?.id
+        }
+
+        return if (hasMember) EventHandlingResult.Add(event.channel) else EventHandlingResult.Remove(event.channelId)
+    }
 
     /** Handles [ChannelUpdatedEvent] event. The event is skipped. */
     override fun handleChannelUpdatedEvent(
