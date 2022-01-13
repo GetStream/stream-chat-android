@@ -45,6 +45,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.toMut
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
@@ -68,7 +69,6 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.CancelMessage
 import io.getstream.chat.android.offline.usecase.CreateChannel
 import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
@@ -1019,7 +1019,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
 
-    override fun cancelMessage(message: Message): Call<Boolean> = CancelMessage(this).invoke(message)
+    override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
     override fun shuffleGiphy(message: Message): Call<Message> = ShuffleGiphy(this).invoke(message)
 
