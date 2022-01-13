@@ -344,6 +344,14 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
+    @Deprecated(
+        message = "cancelMessage is deprecated. Use extension function ChatClient::cancelMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().cancelMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
