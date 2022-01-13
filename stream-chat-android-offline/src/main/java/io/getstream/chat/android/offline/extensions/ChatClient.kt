@@ -171,7 +171,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
  * Cancels the message of "ephemeral" type. Removes the message from local storage.
  * API call to remove the message is retried according to the retry policy specified on the chatDomain.
  *
- * @param message The message to send.
+ * @param message The `ephemeral` message to cancel.
  *
  * @return Executable async [Call] responsible for canceling ephemeral message.
  *
