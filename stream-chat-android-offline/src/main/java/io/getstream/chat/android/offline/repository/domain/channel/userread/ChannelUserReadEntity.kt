@@ -8,5 +8,8 @@ import java.util.Date
  */
 @JsonClass(generateAdapter = true)
 internal data class ChannelUserReadEntity(
-    val userId: String, val lastRead: Date?, val unreadMessages: Int, val lastMessageSeenDate: Date?
+    val userId: String,
+    val lastRead: Date?,
+    val unreadMessages: Int,
+    val lastMessageSeenDate: Date?,
 )
