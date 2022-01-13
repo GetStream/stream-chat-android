@@ -186,6 +186,11 @@ internal class ChannelLogic(
         mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
     }
 
+    /**
+     * Increments the unread count of the Channel is necessary
+     *
+     * @param message
+     */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id
 

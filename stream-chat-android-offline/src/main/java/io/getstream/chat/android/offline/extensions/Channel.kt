@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
+import java.util.Date
 
 /**
  * Returns all users including watchers of a channel that are associated with it.
@@ -54,10 +55,16 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
     }
 }
 
-internal fun Channel.incrementUnreadCount(currentUserId: String, message: Message) {
+/**
+ * Increments the unread count for this channel, for the user accordingly with currentUserId
+ *
+ * @param currentUserId The id of the user that should have the unread count incremented for this Channel
+ * @param lastMessageSeenDate The Date of the last message that the SDK is aware of
+ */
+internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date) {
     read.firstOrNull { it.user.id == currentUserId }
         ?.let {
-            it.lastMessageSeenDate = message.createdAt
+            it.lastMessageSeenDate = lastMessageSeenDate
             it.unreadMessages++
         }
 }
