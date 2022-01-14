@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
 
 /**
- * Listener for [ChatClient.markRead] requests
+ * Listener for [ChatClient.markRead] requests.
  */
 public interface ChannelMarkReadListener {
 
@@ -15,7 +15,7 @@ public interface ChannelMarkReadListener {
      * @param channelType Type of the channel to mark as read.
      * @param channelId Id of the channel to mark as read.
      *
-     * @return [Result.success] if precondition passes, otherwise [Result.error]
+     * @return [Result.success] if precondition passes, otherwise [Result.error].
      */
     public suspend fun onChannelMarkReadPrecondition(
         channelType: String,
