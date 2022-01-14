@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.experimental.querychannels.state
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -47,7 +48,7 @@ internal class QueryChannelsMutableState(
      * handler set by user or default one if there is no.
      */
     internal val eventHandler: ChatEventHandler
-        get() = chatEventHandler ?: DefaultChatEventHandler(_sortedChannels)
+        get() = chatEventHandler ?: DefaultChatEventHandler(_sortedChannels, ChatClient.instance())
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
     override val loading: StateFlow<Boolean> = _loading

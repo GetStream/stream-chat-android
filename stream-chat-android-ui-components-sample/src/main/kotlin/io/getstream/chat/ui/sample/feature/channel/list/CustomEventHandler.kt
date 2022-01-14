@@ -10,12 +10,12 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.querychannels.BaseChatEventHandler
-import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.querychannels.EventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.StateFlow
 
-class CustomChatEventHandlerFactory : ChatEventHandlerFactory() {
+class CustomChatEventHandlerFactory : EventHandlerFactory {
     override fun chatEventHandler(channels: StateFlow<List<Channel>>) = CustomChatEventHandler(channels)
 }
 

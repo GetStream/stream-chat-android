@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.StateFlow
 /**
 * A [ChatEventHandler] factory. Allows passing visible channels` list.
 */
-public open class ChatEventHandlerFactory {
+public open class ChatEventHandlerFactory(private val chatClient: ChatClient): EventHandlerFactory {
 
     /**
      * Creates a [ChatEventHandler] instance.
      *
      * @param channels The visible channels` list.
      */
-    public open fun chatEventHandler(channels: StateFlow<List<Channel>>, chatClient: ChatClient): ChatEventHandler {
+    override fun chatEventHandler(channels: StateFlow<List<Channel>>): ChatEventHandler {
         return DefaultChatEventHandler(channels = channels, chatClient)
     }
 }

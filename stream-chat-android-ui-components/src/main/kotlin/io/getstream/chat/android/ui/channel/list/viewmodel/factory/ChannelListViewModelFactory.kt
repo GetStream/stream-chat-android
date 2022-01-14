@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.channel.list.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
@@ -9,6 +10,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.querychannels.EventHandlerFactory
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 
 /**
@@ -30,7 +32,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
     private val memberLimit: Int = 30,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+    private val chatEventHandlerFactory: EventHandlerFactory = ChatEventHandlerFactory(ChatClient.instance()),
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelListViewModel::class.java) {

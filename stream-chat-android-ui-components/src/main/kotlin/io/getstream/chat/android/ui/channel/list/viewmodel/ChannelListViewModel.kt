@@ -27,6 +27,7 @@ import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.querychannels.EventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
@@ -53,8 +54,8 @@ public class ChannelListViewModel(
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
     private val memberLimit: Int = 30,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val chatEventHandlerFactory: EventHandlerFactory = ChatEventHandlerFactory(chatClient),
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -108,7 +109,7 @@ public class ChannelListViewModel(
                     val queryChannelsController = queryChannelsControllerResult.data()
 
                     queryChannelsController.chatEventHandler =
-                        chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels, chatClient)
+                        chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
 
                     val channelState = queryChannelsController.channelsState.map { channelState ->
                         handleChannelState(channelState, chatDomain.channelMutes.value)

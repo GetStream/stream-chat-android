@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
  */
 public class DefaultChatEventHandler(
     private val channels: StateFlow<List<Channel>>,
-    private val chatClient: ChatClient = ChatClient.instance()
+    private val chatClient: ChatClient
 ) : BaseChatEventHandler() {
 
     /**
