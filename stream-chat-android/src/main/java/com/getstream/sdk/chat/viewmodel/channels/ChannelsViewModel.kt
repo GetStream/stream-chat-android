@@ -28,7 +28,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
  */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    private val chatClient: ChatClient = ChatClient.instance(),
     private val filter: FilterObject? = null,
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
@@ -86,7 +85,7 @@ public class ChannelsViewModel(
         when (event) {
             is Event.ReachedEndOfList -> requestMoreChannels()
             is Event.LogoutClicked -> {
-                chatClient.disconnect()
+                ChatClient.instance().disconnect()
                 stateMerger.postValue(State.NavigateToLoginScreen)
             }
         }
@@ -98,8 +97,8 @@ public class ChannelsViewModel(
      * @param channel - The channel that the current user will leave
      */
     public fun leaveChannel(channel: Channel) {
-        chatClient.getCurrentUser()?.let { user ->
-            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        ChatClient.instance().getCurrentUser()?.let { user ->
+            ChatClient.instance().removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
         }
     }
 
