@@ -18,8 +18,16 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
+
+/**
+ * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
+ */
+private fun domainImpl(): ChatDomainImpl {
+    return ChatDomain.instance as ChatDomainImpl
+}
 
 /**
  * Query members of a channel.
@@ -72,7 +80,7 @@ public fun ChatClient.searchUsersByName(
 public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
     validateCid(cid)
 
-    val domainImpl = ChatDomain.instance() as ChatDomainImpl
+    val domainImpl = domainImpl()
     return CoroutineCall(domainImpl.scope) {
         domainImpl.replayEvents(cid)
     }
@@ -90,7 +98,7 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.replyMessage(message)
@@ -107,7 +115,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  */
 @CheckResult
 public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
-    DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)
+    DownloadAttachment(domainImpl()).invoke(attachment)
 
 /**
  * Keystroke should be called whenever a user enters text into the message input.
@@ -122,7 +130,7 @@ public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
 public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.keystroke(parentId)
@@ -142,7 +150,7 @@ public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boo
 public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.stopTyping(parentId)
@@ -160,9 +168,51 @@ public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Bo
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     validateCid(cid)
 
-    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
     return CoroutineCall(domainImpl.scope) {
         channelController.loadOlderMessages(messageLimit)
+    }
+}
+
+/**
+ * Cancels the message of "ephemeral" type. Removes the message from local storage.
+ * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+ *
+ * @param message The `ephemeral` message to cancel.
+ *
+ * @return Executable async [Call] responsible for canceling ephemeral message.
+ */
+public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
+    val cid = message.cid
+    validateCid(cid)
+
+    val domainImpl = domainImpl()
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.cancelEphemeralMessage(message)
+    }
+}
+
+/**
+ * Creates a new channel. Will retry according to the retry policy if it fails.
+ *
+ * @param channel The channel object.
+ *
+ * @return Executable async [Call] responsible for creating a channel.
+ *
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
+@CheckResult
+public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
+    val domainImpl = domainImpl()
+    return CoroutineCall(domainImpl.scope) {
+        CreateChannelService(
+            client = this@createChannel,
+            repositoryFacade = domainImpl.repos,
+            getChannelController = domainImpl::channel,
+            callRetryService = domainImpl.callRetryService(),
+            activeQueries = domainImpl.getActiveQueries(),
+        ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
     }
 }

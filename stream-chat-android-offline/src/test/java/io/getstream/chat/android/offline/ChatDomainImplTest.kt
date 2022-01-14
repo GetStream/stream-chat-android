@@ -37,7 +37,7 @@ internal class ChatDomainImplTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
             val sut = Fixture().get()
 
-            val result = sut.createNewChannel(newChannel)
+            val result = sut.createChannel(newChannel).execute()
 
             result.isSuccess shouldBeEqualTo true
             result.data().createdBy shouldBeEqualTo sut.user.value
