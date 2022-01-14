@@ -5,9 +5,9 @@ import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.flow.StateFlow
 
 /**
-* A [ChatEventHandler] factory. Allows passing visible channels` list.
-*/
-public open class ChatEventHandlerFactory(private val chatClient: ChatClient): EventHandlerFactory {
+ * A [ChatEventHandler] factory. Allows passing visible channels` list.
+ */
+public open class ChatEventHandlerFactory(private val chatClient: ChatClient) : EventHandlerFactory {
 
     /**
      * Creates a [ChatEventHandler] instance.
