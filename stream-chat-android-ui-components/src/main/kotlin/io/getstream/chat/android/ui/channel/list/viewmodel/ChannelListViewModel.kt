@@ -164,6 +164,11 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * This mothod makes the current user to leave the channel of the param
+     *
+     * @param channel - The channel that the current user will leave
+     */
     public fun leaveChannel(channel: Channel) {
         chatClient.getCurrentUser()?.let { user ->
             chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue(
