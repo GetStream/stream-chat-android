@@ -56,7 +56,7 @@ public class DefaultChatEventHandler(
             member.getUserId() == chatClient.getCurrentUser()?.id
         }
 
-        return if (hasMember) EventHandlingResult.Add(event.channel) else EventHandlingResult.Remove(event.channelId)
+        return if (hasMember) EventHandlingResult.Add(event.channel) else EventHandlingResult.Remove(event.cid)
     }
 
     /** Handles [ChannelUpdatedEvent] event. The event is skipped. */

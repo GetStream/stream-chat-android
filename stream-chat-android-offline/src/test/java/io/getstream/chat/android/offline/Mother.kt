@@ -481,7 +481,7 @@ internal fun randomChannel(
     syncStatus: SyncStatus = randomSyncStatus(),
     memberCount: Int = randomInt(),
     messages: List<Message> = mutableListOf(),
-    members: List<Member> = mutableListOf(),
+    members: List<Member> = listOf(randomMember()),
     watchers: List<User> = mutableListOf(),
     read: List<ChannelUserRead> = mutableListOf(),
     config: Config = Config(),
@@ -781,6 +781,22 @@ internal fun randomNotificationAddedToChannelEvent(
         channel = channel,
         totalUnreadCount = randomInt(),
         unreadChannels = randomInt(),
+    )
+}
+
+internal fun randomChannelUpdatedByUserEvent(
+    cid: String = randomString(),
+    channel: Channel = randomChannel()
+): ChannelUpdatedByUserEvent {
+    return ChannelUpdatedByUserEvent(
+        type = randomString(),
+        createdAt = Date(),
+        cid = cid,
+        channelType = randomString(),
+        channelId = randomString(),
+        user = randomUser(),
+        message = randomMessage(),
+        channel = channel,
     )
 }
 
