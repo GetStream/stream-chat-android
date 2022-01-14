@@ -448,18 +448,18 @@ public class MessageListViewModel(
     /**
      * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
-     * @param messageMode Represents the current message thread mode.
+     * @param threadMode Current thread mode.
      */
-    private fun threadLoadMore(messageMode: MessageMode.MessageThread) {
+    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
+            chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
                 .enqueue()
         } else {
-            if (messageMode.threadState != null) {
+            if (threadMode.threadState != null) {
                 chatClient.getRepliesMore(
-                    messageId = messageMode.parentMessage.id,
-                    firstId = messageMode.threadState?.oldestInThread?.value?.id ?: messageMode.parentMessage.id,
+                    messageId = threadMode.parentMessage.id,
+                    firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
                     limit = DEFAULT_MESSAGE_LIMIT,
                 ).enqueue()
             } else {
