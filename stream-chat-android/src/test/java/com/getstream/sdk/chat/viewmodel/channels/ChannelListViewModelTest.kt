@@ -75,7 +75,6 @@ internal class ChannelListViewModelTest {
 private class Fixture {
     private val user = createUser()
     private val chatDomain: ChatDomain = mock()
-    private val chatClient: ChatClient = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsCall = TestCall<QueryChannelsController>(queryChannelsControllerResult)
     private val queryChannelsController: QueryChannelsController = mock()
@@ -118,5 +117,5 @@ private class Fixture {
         return this
     }
 
-    fun please() = ChannelsViewModel(chatDomain = chatDomain, chatClient = chatClient)
+    fun please() = ChannelsViewModel(chatDomain = chatDomain)
 }
