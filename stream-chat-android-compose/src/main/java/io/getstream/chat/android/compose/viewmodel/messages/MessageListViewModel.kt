@@ -421,8 +421,8 @@ public class MessageListViewModel(
         }
 
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            val (channelType, channelId) = channelId.cidToTypeAndId()
-            chatClient.markRead(channelType, channelId).enqueue()
+            val (channelType, id) = channelId.cidToTypeAndId()
+            chatClient.markRead(channelType, id).enqueue()
         } else {
             chatDomain.markRead(channelId).enqueue()
         }
