@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
@@ -74,6 +75,7 @@ internal class ChannelListViewModelTest {
 private class Fixture {
     private val user = createUser()
     private val chatDomain: ChatDomain = mock()
+    private val chatClient: ChatClient = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsCall = TestCall<QueryChannelsController>(queryChannelsControllerResult)
     private val queryChannelsController: QueryChannelsController = mock()
@@ -116,5 +118,5 @@ private class Fixture {
         return this
     }
 
-    fun please() = ChannelsViewModel(chatDomain = chatDomain)
+    fun please() = ChannelsViewModel(chatDomain = chatDomain, chatClient = chatClient)
 }
