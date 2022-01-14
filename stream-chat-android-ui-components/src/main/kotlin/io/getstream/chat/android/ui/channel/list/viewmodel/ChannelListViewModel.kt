@@ -165,7 +165,7 @@ public class ChannelListViewModel(
     }
 
     /**
-     * This mothod makes the current user to leave the channel of the param
+     * This method makes the current user to leave the channel of the param
      *
      * @param channel - The channel that the current user will leave
      */
