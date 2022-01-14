@@ -57,15 +57,6 @@ public class QueryChannelsController internal constructor(
     public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
     public val channels: StateFlow<List<Channel>> = mutableState.channels
 
-    @Deprecated(
-        message = "Use ChatDomain.channelMutes instead",
-        replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
-        level = DeprecationLevel.ERROR,
-    )
-    public val mutedChannelIds: StateFlow<List<String>> =
-        domainImpl.channelMutes.map { channelMutes -> channelMutes.map { channelMute -> channelMute.channel.id } }
-            .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
-
     public val channelsState: StateFlow<ChannelsState> = mutableState.channelsStateData.map { state ->
         when (state) {
             io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Loading -> ChannelsState.Loading

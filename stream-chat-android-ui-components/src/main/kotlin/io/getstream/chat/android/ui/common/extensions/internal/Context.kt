@@ -19,9 +19,7 @@ import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.UiMode
 
 @Px
 internal fun Context.getDimension(@DimenRes dimen: Int): Int {
