@@ -108,7 +108,7 @@ public class ChannelListViewModel(
                     val queryChannelsController = queryChannelsControllerResult.data()
 
                     queryChannelsController.chatEventHandler =
-                        chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels)
+                        chatEventHandlerFactory.chatEventHandler(queryChannelsController.channels, chatClient)
 
                     val channelState = queryChannelsController.channelsState.map { channelState ->
                         handleChannelState(channelState, chatDomain.channelMutes.value)

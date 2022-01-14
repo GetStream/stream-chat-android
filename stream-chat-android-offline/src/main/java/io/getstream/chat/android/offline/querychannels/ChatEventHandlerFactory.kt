@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,7 +14,7 @@ public open class ChatEventHandlerFactory {
      *
      * @param channels The visible channels` list.
      */
-    public open fun chatEventHandler(channels: StateFlow<List<Channel>>): ChatEventHandler {
-        return DefaultChatEventHandler(channels = channels)
+    public open fun chatEventHandler(channels: StateFlow<List<Channel>>, chatClient: ChatClient): ChatEventHandler {
+        return DefaultChatEventHandler(channels = channels, chatClient)
     }
 }
