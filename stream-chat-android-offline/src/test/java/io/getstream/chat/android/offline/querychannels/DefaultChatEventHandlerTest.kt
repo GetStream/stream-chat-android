@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
@@ -16,7 +17,7 @@ internal class DefaultChatEventHandlerTest {
     fun `Given the channel is not present, When received NotificationAddedToChannelEvent, Should channel be added`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()), mock())
 
         val event = randomNotificationAddedToChannelEvent(cid, channel)
 
@@ -32,7 +33,7 @@ internal class DefaultChatEventHandlerTest {
     fun `Given the channel is present, When received NotificationAddedToChannelEvent, Should Event be skiped`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)), mock())
 
         val event = randomNotificationAddedToChannelEvent(cid, channel)
 
@@ -48,7 +49,7 @@ internal class DefaultChatEventHandlerTest {
     fun `Given the channel is not present, When received NotificationRemovedFromChannelEvent, Should channel be removed`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()), mock())
 
         val event = randomNotificationRemovedFromChannelEvent(cid, channel)
 
@@ -64,7 +65,7 @@ internal class DefaultChatEventHandlerTest {
     fun `Given the channel is present, When received NotificationRemovedFromChannelEvent, Should channel be removed`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)), mock())
 
         val event = randomNotificationRemovedFromChannelEvent(cid, channel)
 
@@ -80,7 +81,7 @@ internal class DefaultChatEventHandlerTest {
     fun `Given the channel is not present, When received NotificationMessageNewEvent, Should channel be added`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()), mock())
 
         val event = randomNotificationMessageNewEvent(cid, channel)
 
@@ -96,7 +97,7 @@ internal class DefaultChatEventHandlerTest {
     fun `Given the channel is not present, When received NotificationMessageNewEvent, Should event be skiped`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)), mock())
 
         val event = randomNotificationMessageNewEvent(cid, channel)
 
