@@ -224,10 +224,9 @@ public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
  *
  * @return True if channel is needed to be marked otherwise false.
  */
-public fun ChatClient.needsMarkRead(cid: String): Boolean {
+internal fun ChatClient.needsMarkRead(cid: String): Boolean {
     validateCid(cid)
-    val domainImpl = domainImpl()
-    val channelController = domainImpl.channel(cid)
+    val channelController = domainImpl().channel(cid)
 
     return channelController.markRead()
 }
