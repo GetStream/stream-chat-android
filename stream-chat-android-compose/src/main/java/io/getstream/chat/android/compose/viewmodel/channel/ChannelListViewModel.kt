@@ -336,7 +336,7 @@ public class ChannelListViewModel(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.deleteChannel(channel.id).enqueue()
+        chatDomain.deleteChannel(channel.cid).enqueue()
     }
 
     /**
