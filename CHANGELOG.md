@@ -68,7 +68,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Handlling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
+- Handling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
 
 ### ⬆️ Improved
 
@@ -80,6 +80,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed crashes caused by deleting channels [#2942](https://github.com/GetStream/stream-chat-android/pull/2942)
 
 ### ⬆️ Improved
 
