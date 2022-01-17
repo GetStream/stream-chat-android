@@ -1,9 +1,11 @@
 package io.getstream.chat.android.offline.experimental.channel.logic
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -22,6 +24,7 @@ import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
@@ -35,7 +38,7 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener {
+) : QueryChannelListener, ChannelMarkReadListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -96,6 +99,11 @@ internal class ChannelLogic(
                 chatDomainImpl.addError(error)
             }
     }
+
+    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
+        if (ChatClient.instance().needsMarkRead("$channelType:$channelId"))
+            Result.success(Unit)
+        else Result.error(ChatError("Can not mark channel as read with channel id: $channelId"))
 
     internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)

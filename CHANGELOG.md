@@ -48,6 +48,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added new extension function `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)
+- Added `ChatClient::needsMarkRead` extension function to check if a channel can be marked as read. [#2920](https://github.com/GetStream/stream-chat-android/pull/2920)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain::cancelMessage` in favour of `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)
