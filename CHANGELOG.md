@@ -32,6 +32,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed deserialization issue when parsing the `Message` object while searching for a message from a channel with 0 members. [#2947](https://github.com/GetStream/stream-chat-android/pull/2947)
 
 ### ⬆️ Improved
 
