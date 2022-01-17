@@ -162,11 +162,7 @@ public class ChannelListViewModel(
                 )
                 queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
                 queryChannelsState?.let {
-                    if (queryChannelsState?.channels?.value?.isNotEmpty() == true) {
-                        observeChannels(it, searchQuery = query)
-                    } else {
-                        channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
-                    }
+                    observeChannels(it, searchQuery = query)
                 }
             }
     }
@@ -180,6 +176,7 @@ public class ChannelListViewModel(
      *
      * @param filter The filter that was passed by the user.
      * @param searchQuery The search query used to filter the channels.
+     *
      * @return The filter that will be used to query channels.
      */
     private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
@@ -203,6 +200,9 @@ public class ChannelListViewModel(
      * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
+     *
+     * @param controller The controller used to query channels and their states.
+     * @param searchQuery The search query string used to search channels.
      */
     private suspend fun observeChannels(controller: QueryChannelsController, searchQuery: String) {
         chatDomain.channelMutes.combine(controller.channelsState, ::Pair)
@@ -238,6 +238,8 @@ public class ChannelListViewModel(
      * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [queryChannelsState].
+     * @param queryChannelsState The state that contains information about query channels.
+     * @param searchQuery The search query string used to search channels.
      */
     private suspend fun observeChannels(queryChannelsState: QueryChannelsState, searchQuery: String) {
         chatDomain.channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)

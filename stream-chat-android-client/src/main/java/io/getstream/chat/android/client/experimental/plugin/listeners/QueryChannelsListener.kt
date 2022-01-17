@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.experimental.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
@@ -15,6 +16,10 @@ public interface QueryChannelsListener {
     /**
      * Run precondition for the request. If it returns [Result.success] then the request is run otherwise it returns
      * [Result.error] and no request is made.
+     *
+     * @param request [QueryChannelRequest] which is going to be used for the request.
+     *
+     * @return [Result.success] if precondition passes otherwise [Result.error]
      */
     public suspend fun onQueryChannelsPrecondition(
         request: QueryChannelsRequest,
