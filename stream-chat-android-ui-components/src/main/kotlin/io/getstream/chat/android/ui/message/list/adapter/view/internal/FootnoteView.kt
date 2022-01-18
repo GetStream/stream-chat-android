@@ -62,6 +62,14 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
+    /**
+     * Shows the footnote for thread replies.
+     *
+     * @param isMine Whether this is the message if the current user.
+     * @param replyCount How many replies this thread has.
+     * @param threadParticipants How many participants this thread has.
+     * @param style [MessageListItemStyle] How many participants this thread has.
+     */
     fun showThreadRepliesFootnote(
         isMine: Boolean,
         replyCount: Int,

@@ -101,6 +101,13 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
+    /**
+     * Sets the background for message reply.
+     *
+     * @param message [Message] The message containing reply.
+     * @param isMine Whether the message is from the current user or not.
+     * @param style [MessageReplyStyle] contains the styles of the background.
+     */
     private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val shapeAppearanceModel = ShapeAppearanceModelFactory.create(
             context,
