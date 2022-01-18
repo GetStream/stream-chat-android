@@ -131,7 +131,10 @@ public class ChannelListViewModel(
                 .collectLatest { (query, config) ->
                     val result = chatDomain.queryChannels(
                         filter = createQueryChannelsFilter(config.filters, query),
-                        sort = config.querySort
+                        sort = config.querySort,
+                        messageLimit = messageLimit,
+                        limit = channelLimit,
+                        memberLimit = memberLimit
                     ).await()
 
                     if (result.isSuccess) {
