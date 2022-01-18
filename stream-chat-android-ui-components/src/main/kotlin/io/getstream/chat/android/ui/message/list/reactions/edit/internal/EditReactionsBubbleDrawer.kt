@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.list.reactions.edit.internal
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.view.View
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.utils.isRtlLayout
