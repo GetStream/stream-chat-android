@@ -37,7 +37,7 @@ internal fun Message.users(): List<User> {
 /**
  * Function that parses if the unread count should be increased or not.
  *
- * @param currentUserId The id of the user that the unread count should be evaluated
+ * @param currentUserId The id of the user that the unread count should be evaluated.
  * @param lastMessageAtDate The Date of the last message the SDK is aware of. This is normally the ChannelUserRead.lastMessageSeenDate.
  */
 internal fun Message.shouldIncrementUnreadCount(currentUserId: String, lastMessageAtDate: Date?): Boolean {
