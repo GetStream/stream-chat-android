@@ -216,3 +216,17 @@ public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
         ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
     }
 }
+
+/**
+ * Checks if channel needs to be marked read.
+ *
+ * @param cid The full channel id i.e. "messaging:123".
+ *
+ * @return True if channel is needed to be marked otherwise false.
+ */
+internal fun ChatClient.needsMarkRead(cid: String): Boolean {
+    validateCid(cid)
+    val channelController = domainImpl().channel(cid)
+
+    return channelController.markRead()
+}
