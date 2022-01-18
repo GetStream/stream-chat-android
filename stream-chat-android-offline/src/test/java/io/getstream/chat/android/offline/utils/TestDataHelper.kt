@@ -485,6 +485,7 @@ internal class TestDataHelper {
         channel1.type,
         channel1.id,
         user1,
+        null,
         channel1
     )
     val notificationChannelTruncated = NotificationChannelTruncatedEvent(
