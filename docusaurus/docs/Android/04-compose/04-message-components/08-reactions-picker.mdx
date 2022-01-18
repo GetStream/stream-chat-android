@@ -98,6 +98,8 @@ You can customize these either by overriding `ChatTheme.reactionTypes` or passin
 
 By default `ReactionsPicker` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
+For example, you can customize like so:
+
 ```kotlin
 ReactionsPicker(
     modifier = Modifier
@@ -136,10 +138,12 @@ public fun ReactionsPicker(
 )
 ```
 
+Apart from customization through modifiers, the component provides these slots:
+
 * `headerContent`: Allows you to customize what content you show on the top part of `ReactionsPicker`. Empty by default,
 * `centerContent`: Allows you to customize what content you show on the bottom part of `ReactionsPicker`. Shows reactions by default.
 
-First create a custom text label:
+As an example, let's override the header content. First create a custom text label:
 
 ```kotlin
 @Composable

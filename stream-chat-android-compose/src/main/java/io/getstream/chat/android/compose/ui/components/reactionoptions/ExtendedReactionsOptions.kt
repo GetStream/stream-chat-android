@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
  * @param reactionTypes All available reactions.
  * @param itemContent Composable that allows the user to customize the individual items shown in [ExtendedReactionsOptions].
- * By default shows individual reactions.
+ * By default it shows individual reactions.
  */
 @ExperimentalFoundationApi
 @Composable
@@ -87,7 +87,7 @@ internal fun DefaultExtendedReactionsItemContent(
 }
 
 /**
- * Preview for [ExtendedReactionsOptions].
+ * Preview for [ExtendedReactionsOptions] with no reaction selected.
  */
 @ExperimentalFoundationApi
 @Preview(showBackground = true, name = "ExtendedReactionOptions Preview")

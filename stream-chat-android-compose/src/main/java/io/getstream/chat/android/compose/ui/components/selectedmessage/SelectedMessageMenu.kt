@@ -34,7 +34,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param shape Changes the shape of [SelectedMessageMenu].
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
- * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
+ * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
  * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog. By Default [MessageOptions].
@@ -49,15 +49,15 @@ public fun SelectedMessageMenu(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
+    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedMessageReactionOptions(
             message = message,
             reactionTypes = reactionTypes,
-            showMoreReactionsDrawableRes = showMoreReactionsDrawableRes,
+            showMoreReactionsDrawableRes = showMoreReactionsIcon,
             onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected
+            showMoreReactionsIcon = onShowMoreReactionsSelected
         )
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
@@ -84,7 +84,7 @@ public fun SelectedMessageMenu(
  * @param reactionTypes Available reactions.
  * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
  * @param onMessageAction Handler when the user selects a reaction.
- * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more button.
+ * @param showMoreReactionsIcon Handler that propagates clicks on the show more button.
  */
 @Composable
 internal fun DefaultSelectedMessageReactionOptions(
@@ -92,14 +92,14 @@ internal fun DefaultSelectedMessageReactionOptions(
     reactionTypes: Map<String, Int>,
     @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
-    onShowMoreReactionsSelected: () -> Unit,
+    showMoreReactionsIcon: () -> Unit,
 ) {
     ReactionOptions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
         reactionTypes = reactionTypes,
-        showMoreReactionsDrawableRes = showMoreReactionsDrawableRes,
+        showMoreReactionsIcon = showMoreReactionsDrawableRes,
         onReactionOptionSelected = {
             onMessageAction(
                 React(
@@ -108,7 +108,7 @@ internal fun DefaultSelectedMessageReactionOptions(
                 )
             )
         },
-        onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+        onShowMoreReactionsSelected = showMoreReactionsIcon,
         ownReactions = message.ownReactions,
     )
 }

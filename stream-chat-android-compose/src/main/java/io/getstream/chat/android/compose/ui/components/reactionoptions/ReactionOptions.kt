@@ -30,7 +30,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param numberOfReactionsShown The maximum number of reactions shown before the show more reactions button is displayed.
  * @param horizontalArrangement Used for changing the arrangement.
  * @param reactionTypes All available reactions.
- * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
+ * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param itemContent Composable that allows the user to customize the individual items shown in [ReactionOptions].
  * By default shows individual reactions.
  */
@@ -40,10 +40,10 @@ public fun ReactionOptions(
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
-    numberOfReactionsShown: Int = 5,
+    numberOfReactionsShown: Int = DEFAULT_NUMBER_OF_REACTIONS_SHOWN,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
+    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultReactionOptionItem(
             option = option,
@@ -76,7 +76,7 @@ public fun ReactionOptions(
                     indication = rememberRipple(bounded = false),
                     onClick = { onShowMoreReactionsSelected() }
                 ),
-                painter = painterResource(id = showMoreReactionsDrawableRes),
+                painter = painterResource(id = showMoreReactionsIcon),
                 contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
                 tint = ChatTheme.colors.textLowEmphasis,
             )
@@ -122,3 +122,5 @@ private fun ReactionOptionsPreview() {
             )
     }
 }
+
+private const val DEFAULT_NUMBER_OF_REACTIONS_SHOWN = 5

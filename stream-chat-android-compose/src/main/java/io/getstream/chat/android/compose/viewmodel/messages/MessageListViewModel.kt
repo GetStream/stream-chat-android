@@ -476,8 +476,9 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
-        if (message != null)
+        if (message != null) {
             changeSelectMessageState(SelectedMessageOptionsState(message))
+        }
     }
 
     /**
@@ -486,8 +487,9 @@ public class MessageListViewModel(
      * @param message The message that contains the reactions.
      */
     public fun selectReactions(message: Message?) {
-        if (message != null)
+        if (message != null) {
             changeSelectMessageState(SelectedMessageReactionsState(message))
+        }
     }
 
     /**
@@ -496,8 +498,9 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectExtendedReactions(message: Message?) {
-        if (message != null)
+        if (message != null) {
             changeSelectMessageState(SelectedMessageReactionsPickerState(message))
+        }
     }
 
     /**

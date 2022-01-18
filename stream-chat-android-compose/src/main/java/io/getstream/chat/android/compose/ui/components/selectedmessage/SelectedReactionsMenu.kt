@@ -37,7 +37,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param shape Changes the shape of [SelectedReactionsMenu].
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
- * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
+ * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
  * @param centerContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
@@ -52,13 +52,13 @@ public fun SelectedReactionsMenu(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
-    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
+    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedReactionsHeaderContent(
             message = message,
             reactionTypes = reactionTypes,
-            showMoreReactionsDrawableRes = showMoreReactionsDrawableRes,
+            showMoreReactionsIcon = showMoreReactionsIcon,
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMoreReactionsSelected
         )
@@ -85,7 +85,7 @@ public fun SelectedReactionsMenu(
  *
  * @param message The selected message.
  * @param reactionTypes Available reactions.
- * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
+ * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onMessageAction Handler when the user selects a reaction.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more button.
  */
@@ -93,7 +93,7 @@ public fun SelectedReactionsMenu(
 internal fun DefaultSelectedReactionsHeaderContent(
     message: Message,
     reactionTypes: Map<String, Int>,
-    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
+    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
 ) {
@@ -102,7 +102,7 @@ internal fun DefaultSelectedReactionsHeaderContent(
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
         reactionTypes = reactionTypes,
-        showMoreReactionsDrawableRes = showMoreReactionsDrawableRes,
+        showMoreReactionsIcon = showMoreReactionsIcon,
         onReactionOptionSelected = {
             onMessageAction(
                 React(
