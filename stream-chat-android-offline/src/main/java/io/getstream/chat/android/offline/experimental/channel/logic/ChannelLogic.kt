@@ -187,9 +187,9 @@ internal class ChannelLogic(
     }
 
     /**
-     * Increments the unread count of the Channel is necessary
+     * Increments the unread count of the Channel if necessary.
      *
-     * @param message
+     * @param message [Message].
      */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id

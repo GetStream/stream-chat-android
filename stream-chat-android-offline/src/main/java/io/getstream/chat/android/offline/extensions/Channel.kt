@@ -56,10 +56,10 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
 }
 
 /**
- * Increments the unread count for this channel, for the user accordingly with currentUserId
+ * Increments channel's unread for the specific user.
  *
- * @param currentUserId The id of the user that should have the unread count incremented for this Channel
- * @param lastMessageSeenDate The Date of the last message that the SDK is aware of
+ * @param currentUserId The id of the user that should have the unread count incremented for this Channel.
+ * @param lastMessageSeenDate The Date of the last message that the SDK is aware of.
  */
 internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date?) {
     read.firstOrNull { it.user.id == currentUserId }
