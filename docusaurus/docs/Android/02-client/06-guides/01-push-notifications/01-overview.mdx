@@ -87,11 +87,11 @@ ChatClient.Builder("api-key", context)
 
 ### Customize Notification Style
 
-The SDK lets you define the theming and behavior of the notification UI that users see after they receive a push notification.```
+The SDK lets you define the theming and behavior of the notification UI that users see after they receive a push notification.
 To do this, implement the `NotificationHandler` interface and show your own notification.
 If you want to dismiss notifications when a user visits a channel or logs off of the app, you will need to implement methods for dismissing notifications on the `NotificationHandler` class.
 
-```kotlin {6,13,16}
+```kotlin {6,13,17}
 class MyNotificationHandler(private val context: Context) : NotificationHandler {
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

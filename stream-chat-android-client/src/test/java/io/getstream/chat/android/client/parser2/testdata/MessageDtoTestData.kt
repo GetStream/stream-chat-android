@@ -160,6 +160,66 @@ internal object MessageDtoTestData {
     )
 
     @Language("JSON")
+    val downstreamJsonWithChannelInfo =
+        """{
+          "attachments" : [],
+          "cid": "cid",
+          "created_at": "2020-06-10T11:04:31.0Z",
+          "html": "",
+          "i18n": {},
+          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "latest_reactions": [],
+          "mentioned_users": [],
+          "own_reactions": [],
+          "reaction_counts": {},
+          "reaction_scores": {},
+          "reply_count": 0,
+          "pinned": false,
+          "shadowed": false,
+          "show_in_channel": false,
+          "silent": false,
+          "text": "",
+          "thread_participants" : [],
+          "type": "",
+          "updated_at": "2020-06-10T11:04:31.588Z",
+          "user": ${UserDtoTestData.downstreamJson},
+          "channel": ${ChannelInfoDtoTestData.channelInfoJsonWithoutMemberCount}
+        }""".withoutWhitespace()
+    val downstreamMessageWithChannelInfo = DownstreamMessageDto(
+        id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+        cid = "cid",
+        text = "",
+        html = "",
+        parent_id = null,
+        command = null,
+        user = UserDtoTestData.downstreamUser,
+        silent = false,
+        shadowed = false,
+        created_at = Date(1591787071000),
+        updated_at = Date(1591787071588),
+        deleted_at = null,
+        extraData = emptyMap(),
+        type = "",
+        reply_count = 0,
+        reaction_counts = emptyMap(),
+        reaction_scores = emptyMap(),
+        latest_reactions = emptyList(),
+        own_reactions = emptyList(),
+        show_in_channel = false,
+        mentioned_users = emptyList(),
+        i18n = emptyMap(),
+        thread_participants = emptyList(),
+        attachments = emptyList(),
+        quoted_message_id = null,
+        quoted_message = null,
+        pinned = false,
+        pinned_by = null,
+        pinned_at = null,
+        pin_expires = null,
+        channel = ChannelInfoDtoTestData.channelInfoDtoWithoutMemberCount
+    )
+
+    @Language("JSON")
     val upstreamJson =
         """{
           "attachments": [${AttachmentDtoTestData.json}],
