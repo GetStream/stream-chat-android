@@ -201,6 +201,11 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         }
     }
 
+    /**
+     * Configured the background of the View.
+     *
+     * @param data [MessageListItem.MessageItem].
+     */
     fun setupBackground(data: MessageListItem.MessageItem) {
         background = ShapeAppearanceModelFactory.create(
             context,

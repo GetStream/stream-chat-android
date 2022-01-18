@@ -148,6 +148,11 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.setOnClickListener(onClick)
     }
 
+    /**
+     * Applies Constraints to a view.
+     *
+     * @param view [View].
+     */
     private fun ConstraintSet.constrainView(view: View) {
         constrainViewToParentBySide(view, ConstraintSet.TOP)
         constrainViewToParentBySide(view, ConstraintSet.START)

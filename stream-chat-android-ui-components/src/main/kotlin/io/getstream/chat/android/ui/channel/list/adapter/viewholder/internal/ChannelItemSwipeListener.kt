@@ -40,6 +40,14 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
         viewHolder.itemView.isPressed = false
     }
 
+    /**
+     * Called when swipe is completed.
+     *
+     * @param viewHolder [SwipeViewHolder].
+     * @param adapterPosition.
+     * @param x position in the X axis.
+     * @param y position in the Y axis.
+     */
     override fun onSwipeCompleted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {
         // determine snap value
         val snapValue = if (viewHolder.isSwiped()) {

@@ -15,14 +15,26 @@ import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
 /**
- * Default drawer of background of message items
+ * Default drawer of background of message items.
  */
 public open class MessageBackgroundFactoryImpl(private val style: MessageListItemStyle) : MessageBackgroundFactory {
 
+    /**
+     * Draws the background of plain text messages
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     override fun plainTextMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return defaultBackground(context, data)
     }
 
+    /**
+     * Draws the background of deleted messages,
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     override fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
             .let(::MaterialShapeDrawable)
@@ -31,10 +43,22 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
             }
     }
 
+    /**
+     * Draws the background of text and attachment messages,
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     override fun textAndAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return defaultBackground(context, data)
     }
 
+    /**
+     * Draws the default background of messages,
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     private fun defaultBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         val shapeAppearanceModel =
             shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
@@ -76,6 +100,9 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         }
     }
 
+    /**
+     * Draws the drawable to the used as background for Giphys.
+     */
     override fun giphyAppearanceModel(context: Context): Drawable {
         return shapeAppearanceModel(
             context,
