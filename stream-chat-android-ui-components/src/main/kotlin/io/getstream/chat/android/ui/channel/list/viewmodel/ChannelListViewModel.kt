@@ -165,9 +165,9 @@ public class ChannelListViewModel(
     }
 
     /**
-     * This method makes the current user to leave the channel of the param
+     * Removes the current user from the channel.
      *
-     * @param channel - The channel that the current user will leave
+     * @param channel The channel that the current user will leave.
      */
     public fun leaveChannel(channel: Channel) {
         chatClient.getCurrentUser()?.let { user ->

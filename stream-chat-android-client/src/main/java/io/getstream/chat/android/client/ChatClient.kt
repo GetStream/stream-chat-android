@@ -1309,7 +1309,7 @@ public class ChatClient internal constructor(
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param members The list of the members to be removed
+     * @param members The list of the members to be removed.
      */
     @CheckResult
     public fun removeMembers(
