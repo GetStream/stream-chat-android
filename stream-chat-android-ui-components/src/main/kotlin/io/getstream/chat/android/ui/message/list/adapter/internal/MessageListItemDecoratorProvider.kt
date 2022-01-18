@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
  * @param messageListViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
  * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
+ * @param deletedMessageListItemPredicate [MessageListView.MessageListItemPredicate] Predicate to hide or show the the deleted message accordingly to the logic provided.
  */
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
