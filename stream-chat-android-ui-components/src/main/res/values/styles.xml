@@ -278,7 +278,7 @@
         <item name="streamUiScrollButtonBadgeTextStyle">normal</item>
 
         <item name="streamUiLoadMoreThreshold">10</item>
-        <item name="streamUiNewMessagesBehaviour">scroll_to_bottom</item>
+        <item name="streamUiNewMessagesBehaviour">count_new_messages</item>
         <item name="streamUiRetryOptionIcon">@drawable/stream_ui_ic_send</item>
 
         <item name="streamUiBackgroundColor">@color/stream_ui_white_snow</item>

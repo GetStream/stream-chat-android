@@ -98,7 +98,9 @@ internal object ChannelDtoTestData {
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
-            "shadow_banned": false
+            "shadow_banned": false,
+            "banned": false,
+            "channel_role": "member"
            }
           ],
           "watchers": [${UserDtoTestData.downstreamJson}],
@@ -139,6 +141,8 @@ internal object ChannelDtoTestData {
                 invite_accepted_at = Date(1591787071588),
                 invite_rejected_at = null,
                 shadow_banned = false,
+                banned = false,
+                channel_role = "member",
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -212,7 +216,9 @@ internal object ChannelDtoTestData {
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
-            "shadow_banned": false
+            "shadow_banned": false,
+            "banned": false,
+            "channel_role": "member"
            }
           ],
           "watchers": [${UserDtoTestData.upstreamJson}],
@@ -253,6 +259,8 @@ internal object ChannelDtoTestData {
                 invite_accepted_at = Date(1591787071588),
                 invite_rejected_at = null,
                 shadow_banned = false,
+                banned = false,
+                channel_role = "member",
             ),
         ),
         watchers = listOf(UserDtoTestData.upstreamUser),

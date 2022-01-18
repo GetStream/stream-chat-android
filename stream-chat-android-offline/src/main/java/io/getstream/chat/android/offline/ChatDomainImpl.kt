@@ -45,6 +45,8 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.toMut
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.cancelMessage
+import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
@@ -68,8 +70,6 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.CancelMessage
-import io.getstream.chat.android.offline.usecase.CreateChannel
 import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
@@ -105,7 +105,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -207,14 +206,6 @@ internal class ChatDomainImpl internal constructor(
      */
     override val connectionState: StateFlow<ConnectionState> = _connectionState
 
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    override val online: StateFlow<Boolean> =
-        _connectionState.map { state -> state == ConnectionState.CONNECTED }
-            .stateIn(scope, SharingStarted.Eagerly, false)
-
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
@@ -276,11 +267,14 @@ internal class ChatDomainImpl internal constructor(
     internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
         private set
 
-    private fun clearState() {
-        _initialized.value = false
-        _connectionState.value = ConnectionState.OFFLINE
+    private fun clearUnreadCountState() {
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
+    }
+
+    private fun clearConnectionState() {
+        _initialized.value = false
+        _connectionState.value = ConnectionState.OFFLINE
         _banned.value = false
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
@@ -289,7 +283,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setUser(user: User) {
-        clearState()
+        clearConnectionState()
+        clearUnreadCountState()
 
         _user.value = user
 
@@ -384,7 +379,7 @@ internal class ChatDomainImpl internal constructor(
         job.cancelChildren()
         stopListening()
         stopClean()
-        clearState()
+        clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
         activeChannelMapImpl.values.forEach(ChannelController::cancelJobs)
         eventHandler.clear()
@@ -412,60 +407,6 @@ internal class ChatDomainImpl internal constructor(
         replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
     )
     suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
-
-    internal suspend fun createNewChannel(c: Channel): Result<Channel> =
-        try {
-            val online = isOnline()
-            c.createdAt = c.createdAt ?: Date()
-            c.syncStatus = if (online) {
-                SyncStatus.IN_PROGRESS
-            } else {
-                SyncStatus.SYNC_NEEDED
-            }
-
-            val currentUser = user.value
-
-            if (currentUser != null && c.createdBy != currentUser) {
-                c.createdBy = currentUser
-            }
-
-            val channelController = channel(c.cid)
-            channelController.updateDataFromChannel(c)
-
-            // Update Room State
-            repos.insertChannel(c)
-
-            // Add to query controllers
-            for (query in activeQueryMapImpl.values) {
-                query.updateQueryChannelCollectionByNewChannel(c)
-            }
-
-            // make the API call and follow retry policy
-            if (online) {
-                val runnable = {
-                    val members = c.members.map { it.getUserId() }
-                    client.createChannel(c.type, c.id, members, c.extraData)
-                }
-                val result = runAndRetry(runnable)
-                if (result.isSuccess) {
-                    c.syncStatus = SyncStatus.COMPLETED
-                    repos.insertChannel(c)
-                    Result(result.data())
-                } else {
-                    if (result.error().isPermanent()) {
-                        c.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                    } else {
-                        c.syncStatus = SyncStatus.SYNC_NEEDED
-                    }
-                    repos.insertChannel(c)
-                    Result(result.error())
-                }
-            } else {
-                Result(c)
-            }
-        } catch (e: IllegalStateException) {
-            Result(ChatError(cause = e))
-        }
 
     fun addError(error: ChatError) {
         _errorEvent.value = Event(error)
@@ -1020,11 +961,11 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun createChannel(channel: Channel): Call<Channel> = CreateChannel(this).invoke(channel)
+    override fun createChannel(channel: Channel): Call<Channel> = client.createChannel(channel)
 
     override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
 
-    override fun cancelMessage(message: Message): Call<Boolean> = CancelMessage(this).invoke(message)
+    override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
     override fun shuffleGiphy(message: Message): Call<Message> = ShuffleGiphy(this).invoke(message)
 
