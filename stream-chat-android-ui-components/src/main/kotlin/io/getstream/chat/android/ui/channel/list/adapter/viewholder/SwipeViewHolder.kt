@@ -10,12 +10,36 @@ import kotlin.math.absoluteValue
 
 public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
 
+    /**
+     * The view that will be swiped.
+     */
     public abstract fun getSwipeView(): View
+
+    /**
+     * The X position where the swipe view is considered to be opened.
+     */
     public abstract fun getOpenedX(): Float
+
+    /**
+     * The X position where the swipe view is considered to be closed.
+     */
     public abstract fun getClosedX(): Float
+
+    /**
+     * The range which the swipe view can slide
+     */
     public abstract fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float>
+
+    /**
+     * If swipe is enabled or disabled
+     */
     public abstract fun isSwipeEnabled(): Boolean
+
+    /**
+     * If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state
+     */
     public abstract fun isSwiped(): Boolean
+
     protected var listener: ChannelListView.SwipeListener? = null
     protected var swiping: Boolean = false
 

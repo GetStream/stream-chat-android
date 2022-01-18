@@ -170,6 +170,10 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageEditText.isVerticalFadingEdgeEnabled = enabled
     }
 
+    /**
+     * Sets the max file size of an attachment. Be aware that this doesn't change the limit of the accepted size of attachments
+     * in Stream's backend.
+     */
     fun setAttachmentMaxFileMb(size: Int) {
         attachmentMaxFileSize = size * AttachmentConstants.MB_IN_BYTES
 
@@ -177,6 +181,9 @@ internal class MessageInputFieldView : FrameLayout {
         selectedMediaAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
     }
 
+    /**
+     * Sets the typeface for [EditText] of MessageInputFieldView.
+     */
     fun setTextInputTypefaceStyle(typeface: Int) {
         val originalTypeface = binding.messageEditText.typeface
 

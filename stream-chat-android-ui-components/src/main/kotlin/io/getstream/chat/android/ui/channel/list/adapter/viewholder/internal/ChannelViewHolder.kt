@@ -116,16 +116,25 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         return binding.itemForegroundView.root
     }
 
+    /**
+     * The position whe the swipe view is swiped
+     */
     override fun getOpenedX(): Float {
         val isRtl = context.isRtlLayout
 
         return if (isRtl) optionsMenuWidth else -optionsMenuWidth
     }
 
+    /**
+     * The default position of swipe view
+     */
     override fun getClosedX(): Float {
         return 0f
     }
 
+    /**
+     * Whether the swipe view is swiped or not.
+     */
     override fun isSwiped(): Boolean {
         val swipeLimit = getOpenedX().absoluteValue / 2
         val swipe = getSwipeView().x.absoluteValue
@@ -133,6 +142,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         return swipe >= swipeLimit
     }
 
+    /**
+     * The range of the swipe
+     */
     override fun getSwipeDeltaRange(): ClosedFloatingPointRange<Float> {
         val isRtl = context.isRtlLayout
 

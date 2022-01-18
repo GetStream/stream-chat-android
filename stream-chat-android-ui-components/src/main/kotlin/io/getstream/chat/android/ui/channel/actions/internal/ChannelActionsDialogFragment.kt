@@ -168,6 +168,12 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         } ?: dismiss()
     }
 
+    /**
+     * Styles the action item.
+     *
+     * @param textStyle The style iof the text of the item.
+     * @param icon The icon to be drawn at the start of the item.
+     */
     private fun TextView.configureActionItem(textStyle: TextStyle, icon: Drawable) {
         setStartDrawable(icon)
         textStyle.apply(this)

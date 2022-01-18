@@ -117,6 +117,5 @@ const val CHANNEL_ARG_DRAFT = "draft"
 val Channel.isDraft: Boolean
     get() = getExtraValue(CHANNEL_ARG_DRAFT, false)
 
-
 val Context.appThemeContext : Context
     get() = ContextThemeWrapper(this, R.style.AppTheme)

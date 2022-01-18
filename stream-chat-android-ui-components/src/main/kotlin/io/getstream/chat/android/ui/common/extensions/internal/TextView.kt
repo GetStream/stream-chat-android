@@ -31,6 +31,9 @@ internal fun TextView.setStartDrawableWithSize(@DrawableRes id: Int, @DimenRes s
     setStartDrawableWithSize(ContextCompat.getDrawable(context, id), sizeRes)
 }
 
+/**
+ * Sets the start drawable of a [TextView] with a desired size.
+ */
 internal fun TextView.setStartDrawableWithSize(drawable: Drawable?, @DimenRes sizeRes: Int) {
     val size = resources.getDimensionPixelSize(sizeRes)
     val isRtl = context.isRtlLayout

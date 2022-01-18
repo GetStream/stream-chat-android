@@ -112,6 +112,14 @@ public class AvatarView : AppCompatImageView {
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
     }
 
+    /**
+     * Draws an yellow circle in one of the corners of the AvatarView to show that the user is online. The position of the
+     * circle is set accordingly with the configuration of [AvatarStyle] and the RTL support of the SDK.
+     *
+     * @param canvas [Canvas].
+     * @param isOnline If the user is online of not.
+     * @param avatarStyle [AvatarStyle] The style is used to set the position of the cicle.
+     */
     private fun drawOnlineStatus(canvas: Canvas, isOnline: Boolean, avatarStyle: AvatarStyle) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
             val isRtl = context.isRtlLayout
