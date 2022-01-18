@@ -336,7 +336,7 @@ public class ChannelListViewModel(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.deleteChannel(channel.id).enqueue()
+        chatDomain.deleteChannel(channel.cid).enqueue()
     }
 
     /**
@@ -348,7 +348,9 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        chatClient.getCurrentUser()?.let { user ->
+            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        }
     }
 
     /**

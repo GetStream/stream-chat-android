@@ -1244,9 +1244,16 @@ public class ChatClient internal constructor(
         return api.markAllRead()
     }
 
+    /**
+     * Marks the specified channel as read.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
         return api.markRead(channelType, channelId)
+            .precondition { onChannelMarkReadPrecondition(channelType, channelId) }
     }
 
     @CheckResult
@@ -1304,6 +1311,13 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Method to remove members of a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param members The list of the members to be removed.
+     */
     @CheckResult
     public fun removeMembers(
         channelType: String,

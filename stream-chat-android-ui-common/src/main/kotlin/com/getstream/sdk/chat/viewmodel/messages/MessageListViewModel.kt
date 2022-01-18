@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSepara
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -32,6 +33,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
@@ -267,7 +269,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onEndRegionReached()
             }
             is Event.LastMessageRead -> {
-                domain.markRead(cid).enqueue(
+                val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                    cid.cidToTypeAndId().let { (channelType, channelId) ->
+                        client.markRead(channelType, channelId)
+                    }
+                } else {
+                    domain.markRead(cid)
+                }
+                call.enqueue(
                     onError = { chatError ->
                         logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
                     }
@@ -378,7 +387,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     ?.message
 
                 if (message != null) {
-                    _targetMessage.value = message
+                    _targetMessage.value = message!!
                 } else {
                     domain.loadMessageById(
                         cid,
@@ -484,7 +493,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.CANCEL -> {
-                domain.cancelMessage(event.message).enqueue(
+                client.cancelMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"

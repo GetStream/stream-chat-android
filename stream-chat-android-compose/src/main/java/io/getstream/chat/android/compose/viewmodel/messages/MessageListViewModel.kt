@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -52,6 +53,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -421,7 +423,12 @@ public class MessageListViewModel(
             messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
 
-        chatDomain.markRead(channelId).enqueue()
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val (channelType, id) = channelId.cidToTypeAndId()
+            chatClient.markRead(channelType, id).enqueue()
+        } else {
+            chatDomain.markRead(channelId).enqueue()
+        }
     }
 
     /**
@@ -449,18 +456,18 @@ public class MessageListViewModel(
     /**
      * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
-     * @param messageMode Represents the current message thread mode.
+     * @param threadMode Current thread mode.
      */
-    private fun threadLoadMore(messageMode: MessageMode.MessageThread) {
+    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-            chatDomain.threadLoadMore(channelId, messageMode.parentMessage.id, messageLimit)
+            chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
                 .enqueue()
         } else {
-            if (messageMode.threadState != null) {
+            if (threadMode.threadState != null) {
                 chatClient.getRepliesMore(
-                    messageId = messageMode.parentMessage.id,
-                    firstId = messageMode.threadState?.oldestInThread?.value?.id ?: messageMode.parentMessage.id,
+                    messageId = threadMode.parentMessage.id,
+                    firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
                     limit = DEFAULT_MESSAGE_LIMIT,
                 ).enqueue()
             } else {
@@ -919,7 +926,7 @@ public class MessageListViewModel(
         when (action) {
             is SendGiphy -> chatDomain.sendGiphy(message)
             is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
-            is CancelGiphy -> chatDomain.cancelMessage(message)
+            is CancelGiphy -> chatClient.cancelMessage(message)
         }.exhaustive.enqueue()
     }
 }
