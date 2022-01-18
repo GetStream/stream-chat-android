@@ -19,6 +19,15 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 
+/**
+ * Provides all decorators that will be used in MessageListView items.
+ *
+ * @param dateFormatter [DateFormatter]. Formats the dates in the messages.
+ * @param isDirectMessage Checks if the message is direct of not. Used in the footnote.
+ * @param messageListViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
+ * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
+ * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
+ */
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,

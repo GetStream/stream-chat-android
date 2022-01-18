@@ -167,6 +167,12 @@ internal class FootnoteDecorator(
         }
     }
 
+    /**
+     * Shows the "Only visible to you" message.
+     *
+     * @param textView Where the message is displayed.
+     * @param style [MessageListItemStyle] The style of the message. The left icon style is defined there.
+     */
     private fun showOnlyVisibleToYou(textView: TextView, style: MessageListItemStyle) {
         textView.apply {
             isVisible = true
