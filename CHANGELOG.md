@@ -32,6 +32,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed deserialization issue when parsing the `Message` object while searching for a message from a channel with 0 members. [#2947](https://github.com/GetStream/stream-chat-android/pull/2947)
 
 ### ⬆️ Improved
 
@@ -49,6 +50,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added new extension function `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)
+- Added `ChatClient::needsMarkRead` extension function to check if a channel can be marked as read. [#2920](https://github.com/GetStream/stream-chat-android/pull/2920)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain::cancelMessage` in favour of `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)
@@ -68,7 +70,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Handlling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
+- Handling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
 
 ### ⬆️ Improved
 
@@ -80,6 +82,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed crashes caused by deleting channels [#2942](https://github.com/GetStream/stream-chat-android/pull/2942)
 
 ### ⬆️ Improved
 

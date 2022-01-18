@@ -1244,9 +1244,16 @@ public class ChatClient internal constructor(
         return api.markAllRead()
     }
 
+    /**
+     * Marks the specified channel as read.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
         return api.markRead(channelType, channelId)
+            .precondition { onChannelMarkReadPrecondition(channelType, channelId) }
     }
 
     @CheckResult
