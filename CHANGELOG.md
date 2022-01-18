@@ -32,7 +32,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed bug related to wrong count of unread messages when socket connected is not available.[#2927](https://github.com/GetStream/stream-chat-android/pull/2927)
+- Fixed bug related to the wrong unread messages count when a socket connection is not available. [#2927](https://github.com/GetStream/stream-chat-android/pull/2927)
 ### ⬆️ Improved
 
 ### ✅ Added
