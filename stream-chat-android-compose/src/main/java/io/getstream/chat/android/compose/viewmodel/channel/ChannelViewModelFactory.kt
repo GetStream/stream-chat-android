@@ -17,11 +17,22 @@ public class ChannelViewModelFactory(
     private val chatDomain: ChatDomain,
     private val querySort: QuerySort<Channel>,
     private val filters: FilterObject,
+    private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+    private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         ChannelListViewModel::class.java to {
-            ChannelListViewModel(chatClient, chatDomain, querySort, filters)
+            ChannelListViewModel(
+                chatClient = chatClient,
+                chatDomain = chatDomain,
+                initialSort = querySort,
+                initialFilters = filters,
+                channelLimit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit
+            )
         }
     )
 
@@ -34,5 +45,22 @@ public class ChannelViewModelFactory(
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
+    }
+
+    internal companion object {
+        /**
+         * Default value of number of channels to return when querying channels.
+         */
+        internal const val DEFAULT_CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of the number of messages to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of the number of members to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }

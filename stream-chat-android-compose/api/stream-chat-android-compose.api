@@ -1507,7 +1507,8 @@ public final class io/getstream/chat/android/compose/ui/util/UserUtilsKt {
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/FilterObject;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/FilterObject;III)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/FilterObject;IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteConversation (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun dismissChannelAction ()V
 	public final fun getActiveChannelAction ()Lio/getstream/chat/android/compose/state/channel/list/ChannelAction;
@@ -1533,7 +1534,8 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/FilterObject;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/FilterObject;III)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/FilterObject;IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
