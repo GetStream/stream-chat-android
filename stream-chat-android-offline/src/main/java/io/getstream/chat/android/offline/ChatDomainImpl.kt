@@ -267,11 +267,14 @@ internal class ChatDomainImpl internal constructor(
     internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
         private set
 
-    private fun clearState() {
-        _initialized.value = false
-        _connectionState.value = ConnectionState.OFFLINE
+    private fun clearUnreadCountState() {
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
+    }
+
+    private fun clearConnectionState() {
+        _initialized.value = false
+        _connectionState.value = ConnectionState.OFFLINE
         _banned.value = false
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
@@ -280,7 +283,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setUser(user: User) {
-        clearState()
+        clearConnectionState()
+        clearUnreadCountState()
 
         _user.value = user
 
@@ -375,7 +379,7 @@ internal class ChatDomainImpl internal constructor(
         job.cancelChildren()
         stopListening()
         stopClean()
-        clearState()
+        clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
         activeChannelMapImpl.values.forEach(ChannelController::cancelJobs)
         eventHandler.clear()

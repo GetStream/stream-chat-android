@@ -2298,19 +2298,22 @@ public final class io/getstream/chat/android/client/models/ChannelMute {
 }
 
 public final class io/getstream/chat/android/client/models/ChannelUserRead : io/getstream/chat/android/client/models/UserEntity {
-	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;I)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/util/Date;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()I
-	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;I)Lio/getstream/chat/android/client/models/ChannelUserRead;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/ChannelUserRead;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;IILjava/lang/Object;)Lio/getstream/chat/android/client/models/ChannelUserRead;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/util/Date;)Lio/getstream/chat/android/client/models/ChannelUserRead;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/ChannelUserRead;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/ChannelUserRead;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLastMessageSeenDate ()Ljava/util/Date;
 	public final fun getLastRead ()Ljava/util/Date;
 	public final fun getUnreadMessages ()I
 	public fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
+	public final fun setLastMessageSeenDate (Ljava/util/Date;)V
 	public final fun setLastRead (Ljava/util/Date;)V
 	public final fun setUnreadMessages (I)V
 	public fun setUser (Lio/getstream/chat/android/client/models/User;)V
