@@ -2,8 +2,10 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJson
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJsonWithChannelInfo
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessage
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithChannelInfo
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithoutExtraData
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
@@ -17,6 +19,12 @@ internal class DownstreamMessageDtoAdapterTest {
     fun `Deserialize JSON message with custom fields`() {
         val message = parser.fromJson(downstreamJson, DownstreamMessageDto::class.java)
         message shouldBeEqualTo downstreamMessage
+    }
+
+    @Test
+    fun `Deserialize JSON message with channel info`() {
+        val message = parser.fromJson(downstreamJsonWithChannelInfo, DownstreamMessageDto::class.java)
+        message shouldBeEqualTo downstreamMessageWithChannelInfo
     }
 
     @Test
