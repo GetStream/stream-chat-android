@@ -44,7 +44,7 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
      * Called when swipe is completed.
      *
      * @param viewHolder [SwipeViewHolder].
-     * @param adapterPosition.
+     * @param adapterPosition
      * @param x position in the X axis.
      * @param y position in the Y axis.
      */
