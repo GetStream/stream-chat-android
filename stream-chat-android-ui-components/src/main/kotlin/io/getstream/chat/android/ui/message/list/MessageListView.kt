@@ -655,7 +655,8 @@ public class MessageListView : ConstraintLayout {
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
-            messageBackgroundFactory
+            messageBackgroundFactory,
+            deletedMessageListItemPredicate
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

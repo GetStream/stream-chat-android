@@ -156,6 +156,9 @@ internal class ChannelLogic(
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
+
+        mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
+
         updateReads(c.read)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
@@ -191,21 +194,29 @@ internal class ChannelLogic(
         mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
     }
 
+    /**
+     * Increments the unread count of the Channel if necessary.
+     *
+     * @param message [Message].
+     */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id
-        if (currentUserId?.let(message::shouldIncrementUnreadCount) == true) {
+
+        if (currentUserId?.let { message.shouldIncrementUnreadCount(it, mutableState._read.value?.lastMessageSeenDate) } == true) {
             val newUnreadCount = mutableState._unreadCount.value + 1
             mutableState._unreadCount.value = newUnreadCount
-            mutableState._read.value = mutableState._read.value?.copy(unreadMessages = newUnreadCount)
+            mutableState._read.value = mutableState._read
+                .value
+                ?.copy(unreadMessages = newUnreadCount, lastMessageSeenDate = message.createdAt)
             mutableState._reads.value = mutableState._reads.value.apply {
                 this[currentUserId]?.unreadMessages = newUnreadCount
+                this[currentUserId]?.lastMessageSeenDate = message.createdAt
             }
         }
     }
 
     internal fun updateReads(reads: List<ChannelUserRead>) {
         chatDomainImpl.user.value?.let { currentUser ->
-
             val currentUserId = currentUser.id
             val previousUserIdToReadMap = mutableState._reads.value
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
@@ -216,6 +227,7 @@ internal class ChannelLogic(
              * to show in the channel list.
              */
             incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
+                incomingUserRead.lastMessageSeenDate = mutableState._read.value?.lastMessageSeenDate
 
                 // the previous last Read date that is most current
                 val previousLastRead =
@@ -230,6 +242,7 @@ internal class ChannelLogic(
 
                 if (shouldUpdateByIncoming) {
                     mutableState._read.value = incomingUserRead
+
                     mutableState._unreadCount.value = incomingUserRead.unreadMessages
                 } else {
                     // if the previous Read was more current, replace the item in the update map
