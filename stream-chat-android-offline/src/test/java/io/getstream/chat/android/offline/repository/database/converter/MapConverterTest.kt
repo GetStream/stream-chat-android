@@ -9,6 +9,7 @@ import java.util.Date
 
 internal class MapConverterTest {
     private val data = TestDataHelper()
+
     // read maps
     @Test
     fun testNullEncoding() {
@@ -21,7 +22,7 @@ internal class MapConverterTest {
     @Test
     fun testEncoding() {
         val converter = MapConverter()
-        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id, Date(), 0))
+        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id, Date(), 0, Date()))
         val output = converter.readMapToString(readMap)
         val converted = converter.stringToReadMap(output)
         converted shouldBeEqualTo readMap

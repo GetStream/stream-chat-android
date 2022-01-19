@@ -32,6 +32,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed bug related to the wrong unread messages count when a socket connection is not available. [#2927](https://github.com/GetStream/stream-chat-android/pull/2927)
 - Fixed deserialization issue when parsing the `Message` object while searching for a message from a channel with 0 members. [#2947](https://github.com/GetStream/stream-chat-android/pull/2947)
 
 ### ⬆️ Improved
@@ -39,6 +40,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain.leaveChannel`. Use ChatClient.removeMembers instead. [#2926](https://github.com/GetStream/stream-chat-android/pull/2926)
 
 ### ❌ Removed
 
@@ -84,8 +86,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed crashes caused by deleting channels [#2942](https://github.com/GetStream/stream-chat-android/pull/2942)
 
 ### ⬆️ Improved
+- `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 
 ### ✅ Added
+- Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
+- Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added ways to customize the channel, message and member query limit when building a ChannelListViewModel [#2948](https://github.com/GetStream/stream-chat-android/pull/2948)
 
 ### ⚠️ Changed
@@ -152,6 +157,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
 - Fixed the loading/playback speed of GIFs. [#2914](https://github.com/GetStream/stream-chat-android/pull/2914)
 - Fixed scroll persisting after long tapping on an item in the message list. [#2916](https://github.com/GetStream/stream-chat-android/pull/2916)
+- Fixed footnote of messages showing "Only Visible to You". This message was visible even when deleted messages were visible to everyone. [#2923](https://github.com/GetStream/stream-chat-android/pull/2923)
 
 ### ⬆️ Improved
 - Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)

@@ -34,8 +34,20 @@ internal fun Message.users(): List<User> {
         (pinnedBy?.let { listOf(it) } ?: emptyList())
 }
 
-internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean {
-    return user.id != currentUserId && !silent && !shadowed
+/**
+ * Function that parses if the unread count should be increased or not.
+ *
+ * @param currentUserId The id of the user that the unread count should be evaluated.
+ * @param lastMessageAtDate The Date of the last message the SDK is aware of. This is normally the ChannelUserRead.lastMessageSeenDate.
+ */
+internal fun Message.shouldIncrementUnreadCount(currentUserId: String, lastMessageAtDate: Date?): Boolean {
+    val isMoreRecent = if (createdAt != null && lastMessageAtDate != null) {
+        createdAt!! > lastMessageAtDate
+    } else {
+        true
+    }
+
+    return user.id != currentUserId && !silent && !shadowed && isMoreRecent
 }
 
 internal fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL

@@ -357,7 +357,9 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        chatClient.getCurrentUser()?.let { user ->
+            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        }
     }
 
     /**

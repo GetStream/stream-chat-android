@@ -59,7 +59,7 @@
     </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
 
-    <!-- Selected Message Overlay -->
+    <!-- Selected Message Menu -->
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
     <string name="stream_compose_copy_message">Copy Message</string>
@@ -72,6 +72,9 @@
         <item quantity="one">%d Message Reaction</item>
         <item quantity="other">%d Message Reactions</item>
     </plurals>
+
+    <!-- Reactions Picker -->
+    <string name="stream_compose_show_more_reactions">Show more reactions</string>
 
     <!-- Message Action Prompts -->
     <string name="stream_compose_delete_message_title">Delete message</string>

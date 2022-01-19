@@ -43,8 +43,13 @@ internal class EventBatchUpdate private constructor(
             channel.updateLastMessage(message)
 
             val currentUserId = domainImpl.user.value?.id
-            if (isNewMessage && currentUserId != null && message.shouldIncrementUnreadCount(currentUserId)) {
-                channel.incrementUnreadCount(currentUserId)
+
+            if (isNewMessage && currentUserId != null) {
+                val lastReadDate = channel.read.firstOrNull { it.user.id == currentUserId }?.lastMessageSeenDate
+
+                if (message.shouldIncrementUnreadCount(currentUserId, lastReadDate)) {
+                    channel.incrementUnreadCount(currentUserId, message.createdAt)
+                }
             }
         }
     }

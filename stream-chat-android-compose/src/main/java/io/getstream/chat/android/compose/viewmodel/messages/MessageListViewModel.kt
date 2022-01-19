@@ -31,7 +31,9 @@ import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -470,11 +472,8 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
-        val selectedMessageState = message?.let(::SelectedMessageOptionsState)
-        if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
-        } else {
-            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
+        if (message != null) {
+            changeSelectMessageState(SelectedMessageOptionsState(message))
         }
     }
 
@@ -484,7 +483,29 @@ public class MessageListViewModel(
      * @param message The message that contains the reactions.
      */
     public fun selectReactions(message: Message?) {
-        val selectedMessageState = message?.let(::SelectedMessageReactionsState)
+        if (message != null) {
+            changeSelectMessageState(SelectedMessageReactionsState(message))
+        }
+    }
+
+    /**
+     * Triggered when the user taps the show more reactions button.
+     *
+     * @param message The selected message.
+     */
+    public fun selectExtendedReactions(message: Message?) {
+        if (message != null) {
+            changeSelectMessageState(SelectedMessageReactionsPickerState(message))
+        }
+    }
+
+    /**
+     * Changes the state of [threadMessagesState] or [messagesState] depending
+     * on the thread mode.
+     *
+     * @param selectedMessageState The selected message state.
+     * */
+    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
         } else {
