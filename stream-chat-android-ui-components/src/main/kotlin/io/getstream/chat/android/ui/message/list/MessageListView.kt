@@ -363,8 +363,10 @@ public class MessageListView : ConstraintLayout {
 
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            val hasInvalidAttachments = message.attachments.any { it.upload != null || (it.uploadState != null && it.uploadState != Attachment.UploadState.Success) }
-            if (hasInvalidAttachments) return@AttachmentClickListener
+            val hasInvalidAttachments = message.attachments.any { it.uploadState != null }
+            if (hasInvalidAttachments) {
+                return@AttachmentClickListener
+            }
 
             val destination = when {
                 message.attachments.all(Attachment::isMedia) -> {
