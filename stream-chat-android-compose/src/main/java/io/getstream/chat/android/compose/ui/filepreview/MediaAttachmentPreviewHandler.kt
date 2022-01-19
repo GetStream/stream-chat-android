@@ -16,20 +16,18 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         val type = attachment.type
 
         if (assetUrl.isNullOrEmpty()) return false
-        if (mimeType.isNullOrEmpty()) return false
+
+        // Check if the base of Attachment.mimeType is audio or video
+        if (!mimeType.isNullOrEmpty() && (mimeType.contains(ModelType.attach_audio) || mimeType.contains(ModelType.attach_video))) return true
+
+        // If the previous check fails check Attachment.type for file type
         if (type.isNullOrEmpty()) return false
+        else if (type == ModelType.attach_audio || type == ModelType.attach_video) return true
 
-        val supportedMimeTypes = listOf(
-            MIME_TYPE_VIDEO,
-            MIME_TYPE_AUDIO,
-            // For compatibility with other client SDKs
-            MIME_SUBTYPE_MP4,
-            MIME_SUBTYPE_QUICKTIME
-        )
+        // Fallback in case we receive an incomplete mime type and both previous checks fail
+        val supportedMimeSubTypes = buildSubTypeList()
 
-        return supportedMimeTypes.any { mimeType.contains(it) } ||
-            type == ModelType.attach_audio ||
-            type == ModelType.attach_video
+        return supportedMimeSubTypes.any { mimeType?.contains(it) ?: false }
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
@@ -42,10 +40,30 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         )
     }
 
-    private companion object {
-        private const val MIME_TYPE_VIDEO = "video"
-        private const val MIME_TYPE_AUDIO = "audio"
-        private const val MIME_SUBTYPE_MP4 = "mp4"
-        private const val MIME_SUBTYPE_QUICKTIME = "quicktime"
-    }
+    private fun buildSubTypeList() = listOf(
+        // mp3
+        "mpeg-3", "x-mpeg3", "mp3", "mpeg", "x-mpeg",
+        // aac
+        "aac",
+        // webm
+        "webm",
+        // wav
+        "wav", "x-wav",
+        // flac
+        "flac", "x-flac",
+        // ac3
+        "ac3",
+        // ogg
+        "ogg", "x-ogg",
+        // mp4
+        "mp4",
+        // m4a
+        "x-m4a",
+        // matroska
+        "x-matroska",
+        // vorbis
+        "vorbis",
+        // quicktime
+        "quicktime"
+    )
 }
