@@ -58,6 +58,9 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
  * @param isShowingSearch If we show the search input or hide it.
+ * @param channelLimit The limit of channels queried per page.
+ * @param memberLimit The limit of members requested per channel.
+ * @param messageLimit The limit of messages requested per channel item.
  * @param onHeaderClickAction Handler for the default header action.
  * @param onItemClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
@@ -74,6 +77,9 @@ public fun ChannelsScreen(
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = false,
+    channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+    memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     onHeaderClickAction: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
@@ -82,10 +88,13 @@ public fun ChannelsScreen(
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
         factory = ChannelViewModelFactory(
-            ChatClient.instance(),
-            ChatDomain.instance(),
-            querySort,
-            filters
+            chatClient = ChatClient.instance(),
+            chatDomain = ChatDomain.instance(),
+            querySort = querySort,
+            filters = filters,
+            channelLimit = channelLimit,
+            memberLimit = memberLimit,
+            messageLimit = messageLimit
         )
     )
 

@@ -65,7 +65,7 @@ MessagesScreen(
 
 ## Customization
 
-Given that the `MessagesScreen` is a screen level solution, it offers limited customization. Currently, the only options offered in the signature are the following:
+Given that the `MessagesScreen` is a screen level solution, it offers limited customization. Currently, the options offered in the signature are the following:
 
 ```kotlin
 @Composable
@@ -73,6 +73,8 @@ fun MessagesScreen(
     messageLimit: Int = 30,
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
+    showDateSeparators: Boolean = true,
+    showSystemMessages: Boolean = true,
     ... // action handlers and state
 )
 ```
@@ -80,6 +82,8 @@ fun MessagesScreen(
 * `messageLimit`: The number of messages per query.
 * `showHeader`: Controls whether the messages header is shown or not.
 * `enforceUniqueReactions`: Controls whether the user can leave multiple reactions to a message.
+* `showDateSeparators`: Controls if we show date separator items.
+* `showSystemMessages`: Controls if we show system message items.
 
 If you set `showHeader` to `false` you'll get the following UI:
 

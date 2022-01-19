@@ -91,6 +91,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
+- Added ways to customize the channel, message and member query limit when building a ChannelListViewModel [#2948](https://github.com/GetStream/stream-chat-android/pull/2948)
 
 ### ⚠️ Changed
 
