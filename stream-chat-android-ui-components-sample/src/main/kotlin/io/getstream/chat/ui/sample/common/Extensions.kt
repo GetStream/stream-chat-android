@@ -10,6 +10,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -115,3 +116,6 @@ const val CHANNEL_ARG_DRAFT = "draft"
 
 val Channel.isDraft: Boolean
     get() = getExtraValue(CHANNEL_ARG_DRAFT, false)
+
+val Context.appThemeContext : Context
+    get() = ContextThemeWrapper(this, R.style.AppTheme)
