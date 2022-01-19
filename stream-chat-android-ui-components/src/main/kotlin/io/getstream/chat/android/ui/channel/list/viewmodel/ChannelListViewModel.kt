@@ -92,6 +92,10 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Initializes this ViewModel with OfflinePlugin implementation. It makes the initial query to request channels
+     * and starts to observe state changes.
+     */
     private fun initWithOfflinePlugin(filterObject: FilterObject) {
         val queryChannelsRequest =
             QueryChannelsRequest(
@@ -126,6 +130,12 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Initializes this ViewModel with ChatDomain implementation. It makes the initial query to request channels
+     * and starts to observe state changes.
+     *
+     * Note: This method can be removed once OfflinePlugin is completed and released.
+     */
     private fun initWithChatDomain(filterObject: FilterObject) {
         chatDomain.queryChannels(
             filter = filterObject,
@@ -169,6 +179,14 @@ public class ChannelListViewModel(
             }
     }
 
+    /**
+     * Handles update about [ChannelsStateData] changes and emit new [State].
+     *
+     * @param channelState Current state of the channels query.
+     * @param channelMutes List of muted channels.
+     *
+     * @return New [State] after handling channels state changes.
+     */
     private fun handleChannelStateNews(
         channelState: ChannelsStateData,
         channelMutes: List<ChannelMute>,

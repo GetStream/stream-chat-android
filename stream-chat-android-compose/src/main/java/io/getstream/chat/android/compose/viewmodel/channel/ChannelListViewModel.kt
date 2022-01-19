@@ -133,6 +133,12 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Initializes this ViewModel with ChatDomain implementation. It makes the initial query to request channels
+     * and starts to observe state changes.
+     *
+     * Note: This method can be removed once OfflinePlugin is completed and released.
+     */
     private suspend fun initWithChatDomain() {
         searchQuery.combine(queryConfig) { query, config -> query to config }
             .collectLatest { (query, config) ->
@@ -150,6 +156,10 @@ public class ChannelListViewModel(
             }
     }
 
+    /**
+     * Initializes this ViewModel with OfflinePlugin implementation. It makes the initial query to request channels
+     * and starts to observe state changes.
+     */
     private suspend fun initWithOfflinePlugin() {
         searchQuery.combine(queryConfig) { query, config -> query to config }
             .collectLatest { (query, config) ->
@@ -160,7 +170,8 @@ public class ChannelListViewModel(
                     messageLimit = MESSAGE_LIMIT,
                     memberLimit = MEMBER_LIMIT,
                 )
-                queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+                queryChannelsState =
+                    chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
                 queryChannelsState?.let {
                     observeChannels(it, searchQuery = query)
                 }
