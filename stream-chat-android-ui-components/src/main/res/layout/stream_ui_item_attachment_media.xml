@@ -69,7 +69,7 @@
         android:textColor="@color/stream_ui_white"
         android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
-        android:textDirection="firstStrongLtr"
+        android:textDirection="locale"
         app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"
         app:layout_constraintEnd_toEndOf="@id/mediaThumbnailImageView"
         tools:visibility="visible"

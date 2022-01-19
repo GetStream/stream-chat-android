@@ -22,7 +22,7 @@
             android:id="@+id/replyTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_reply"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left_grey"
             />
 
@@ -30,7 +30,7 @@
             android:id="@+id/threadReplyTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_thread_reply"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_thread_reply"
             />
 
@@ -38,7 +38,7 @@
             android:id="@+id/retryTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_resend_message"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             android:visibility="gone"
             tools:drawableStart="@drawable/stream_ui_ic_send"
             tools:visibility="visible"
@@ -48,7 +48,7 @@
             android:id="@+id/copyTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_copy_message"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_copy"
             />
 
@@ -56,7 +56,7 @@
             android:id="@+id/editTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_edit_message"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_edit"
             tools:visibility="visible"
@@ -66,7 +66,7 @@
             android:id="@+id/flagTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_flag_message"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_flag"
             tools:visibility="visible"
@@ -76,7 +76,7 @@
             android:id="@+id/pinTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_pin_message"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_pin"
             tools:visibility="visible"
@@ -86,7 +86,7 @@
             android:id="@+id/muteTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_mute_user"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_mute"
             tools:visibility="visible"
@@ -96,7 +96,7 @@
             android:id="@+id/blockTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_block_user"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             android:visibility="visible"
             tools:drawableStart="@drawable/stream_ui_ic_user_block"
             tools:visibility="visible"
@@ -106,7 +106,7 @@
             android:id="@+id/deleteTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_delete_message"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
             />
 

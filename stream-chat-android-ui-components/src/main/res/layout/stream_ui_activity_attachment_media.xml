@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:gravity="start"
             android:lines="1"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/headerLeftActionButton"

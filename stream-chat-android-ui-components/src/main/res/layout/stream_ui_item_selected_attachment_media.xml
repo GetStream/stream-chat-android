@@ -41,7 +41,7 @@
         android:textSize="12sp"
         android:paddingStart="7dp"
         android:paddingEnd="7dp"
-        android:textDirection="firstStrongLtr"
+        android:textDirection="locale"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

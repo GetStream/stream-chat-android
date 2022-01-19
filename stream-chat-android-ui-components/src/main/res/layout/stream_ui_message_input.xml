@@ -38,7 +38,7 @@
             android:gravity="center"
             android:text="@string/stream_ui_message_input_reply"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-            android:textDirection="firstStrongLtr"
+            android:textDirection="locale"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/dismissInputMode"
             app:layout_constraintStart_toEndOf="@id/inputModeIcon"

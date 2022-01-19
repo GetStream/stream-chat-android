@@ -4,5 +4,5 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:text="@string/stream_ui_channel_list_empty"
-    android:textDirection="firstStrongLtr"
+    android:textDirection="locale"
     />
