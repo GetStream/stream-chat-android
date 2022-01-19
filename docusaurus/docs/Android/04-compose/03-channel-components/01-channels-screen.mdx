@@ -101,6 +101,9 @@ fun ChannelsScreen(
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = true,
+    channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+    memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     ... // Action handlers
 )
 ```
@@ -110,6 +113,9 @@ fun ChannelsScreen(
 * `title`: The title of the `ChannelListHeader`.
 * `isShowingHeader`: Flag that affects if we show the `ChannelListHeader`. `true` by default.
 * `isShowingSearch`: Flag that affects if we show the `SearchInput`. `false` by default.
+* `channelLimit` The limit of channels queried per page.
+* `memberLimit` The limit of members requested per channel.
+* `messageLimit` The limit of messages requested per channel item.
 
 :::note
 Even though `ChannelsScreen` offers limited customization, you can still achieve a unique look and feel by modifying `ChatTheme` parameters.
