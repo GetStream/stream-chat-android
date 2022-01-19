@@ -32,7 +32,7 @@ public class MessagesViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val enforceUniqueReactions: Boolean = true,
-    private val messageLimit: Int = 30,
+    private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showDateSeparators: Boolean = true,
