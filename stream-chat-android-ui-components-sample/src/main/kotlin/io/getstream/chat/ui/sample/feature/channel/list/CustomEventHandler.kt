@@ -35,12 +35,12 @@ class CustomChatEventHandler(private val channels: StateFlow<List<Channel>>) : B
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, event.channel)
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     override fun handleChannelUpdatedEvent(
         event: ChannelUpdatedEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, event.channel)
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     override fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
