@@ -11,15 +11,23 @@ import io.getstream.chat.android.offline.ChatDomain
 /**
  * Builds the factory that contains all the dependencies required for the Channels Screen.
  * It currently provides the [ChannelListViewModel] using those dependencies.
+ *
+ * @param chatClient The client used to fetch data.
+ * @param chatDomain The domain used to fetch and persist data.
+ * @param querySort The sorting order for channels.
+ * @param filters The base filters used to filter out channels.
+ * @param channelLimit How many channels we fetch per page.
+ * @param memberLimit How many members are fetched for each channel item when loading channels.
+ * @param messageLimit How many messages are fetched for each channel item when loading channels.
  */
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val querySort: QuerySort<Channel>,
     private val filters: FilterObject,
-    private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
-    private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
-    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
+    private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+    private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
@@ -45,22 +53,5 @@ public class ChannelViewModelFactory(
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
-    }
-
-    internal companion object {
-        /**
-         * Default value of number of channels to return when querying channels.
-         */
-        internal const val DEFAULT_CHANNEL_LIMIT = 30
-
-        /**
-         * Default value of the number of messages to include in each channel when querying channels.
-         */
-        internal const val DEFAULT_MESSAGE_LIMIT = 1
-
-        /**
-         * Default value of the number of members to include in each channel when querying channels.
-         */
-        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }

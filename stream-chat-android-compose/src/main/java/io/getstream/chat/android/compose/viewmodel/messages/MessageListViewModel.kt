@@ -67,17 +67,6 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
- * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
- * we show a separator, if it's enabled in the list.
- */
-private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
-
-/**
- * The default limit for messages count in requests.
- */
-private const val DEFAULT_MESSAGE_LIMIT: Int = 30
-
-/**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
@@ -95,7 +84,7 @@ public class MessageListViewModel(
     public val chatDomain: ChatDomain,
     private val channelId: String,
     private val clipboardHandler: ClipboardHandler,
-    private val messageLimit: Int = 0,
+    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
@@ -907,5 +896,18 @@ public class MessageListViewModel(
             is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelMessage(message)
         }.exhaustive.enqueue()
+    }
+
+    internal companion object {
+        /**
+         * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
+         * we show a separator, if it's enabled in the list.
+         */
+        internal const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

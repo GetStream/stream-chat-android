@@ -43,15 +43,18 @@ import kotlinx.coroutines.launch
  * @param initialSort The initial sort used for [Channel]s.
  * @param initialFilters The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
+ * @param channelLimit How many channels we fetch per page.
+ * @param memberLimit How many members are fetched for each channel item when loading channels.
+ * @param messageLimit How many messages are fetched for each channel item when loading channels.
  */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
     initialSort: QuerySort<Channel>,
     private val initialFilters: FilterObject,
-    channelLimit: Int = ChannelViewModelFactory.DEFAULT_CHANNEL_LIMIT,
-    memberLimit: Int = ChannelViewModelFactory.DEFAULT_MEMBER_LIMIT,
-    messageLimit: Int = ChannelViewModelFactory.DEFAULT_MESSAGE_LIMIT,
+    channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+    memberLimit: Int = DEFAULT_MEMBER_LIMIT,
+    messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
 ) : ViewModel() {
 
     /**
@@ -375,5 +378,22 @@ public class ChannelListViewModel(
     private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
         return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
+    }
+
+    internal companion object {
+        /**
+         * Default value of number of channels to return when querying channels.
+         */
+        internal const val DEFAULT_CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of the number of messages to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of the number of members to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }
