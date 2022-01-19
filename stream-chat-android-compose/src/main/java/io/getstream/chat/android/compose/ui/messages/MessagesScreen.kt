@@ -76,13 +76,22 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 @Composable
 public fun MessagesScreen(
     channelId: String,
-    messageLimit: Int = 30,
+    messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
+    showDateSeparators: Boolean = true,
+    showSystemMessages: Boolean = true,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
-    val factory = buildViewModelFactory(LocalContext.current, channelId, enforceUniqueReactions, messageLimit)
+    val factory = buildViewModelFactory(
+        context = LocalContext.current,
+        channelId = channelId,
+        enforceUniqueReactions = enforceUniqueReactions,
+        messageLimit = messageLimit,
+        showSystemMessages = showSystemMessages,
+        showDateSeparators = showDateSeparators
+    )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = factory)
@@ -346,11 +355,15 @@ private fun buildViewModelFactory(
     channelId: String,
     enforceUniqueReactions: Boolean,
     messageLimit: Int,
+    showDateSeparators: Boolean,
+    showSystemMessages: Boolean,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
         channelId = channelId,
         enforceUniqueReactions = enforceUniqueReactions,
-        messageLimit = messageLimit
+        messageLimit = messageLimit,
+        showDateSeparators = showDateSeparators,
+        showSystemMessages = showSystemMessages
     )
 }
