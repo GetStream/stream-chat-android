@@ -75,6 +75,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Intercepted and blocked attachment preview for attachments which are not fully uploaded. [#2950](https://github.com/GetStream/stream-chat-android/pull/2950)
 
 ### ⬆️ Improved
+- Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
 
 ### ✅ Added
 
@@ -88,6 +89,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⬆️ Improved
 - `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
+- Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
 
 ### ✅ Added
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
