@@ -38,6 +38,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `systemMessage` parameter to `ChatClient::truncateChannel` and `ChannelClient:truncate` methods that represents a system message that will be displayed after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
+- Added the `message` parameter to the `ChannelTruncatedEvent` that represents a system message that will be displayed after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.leaveChannel`. Use ChatClient.removeMembers instead. [#2926](https://github.com/GetStream/stream-chat-android/pull/2926)
@@ -48,6 +50,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Utilized the `message` parameter of the `ChannelTruncatedEvent` to show a system message instantly after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
 
 ### ✅ Added
 - Added new extension function `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)

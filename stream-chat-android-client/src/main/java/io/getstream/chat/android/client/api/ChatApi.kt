@@ -229,6 +229,7 @@ internal interface ChatApi {
     fun truncateChannel(
         channelType: String,
         channelId: String,
+        systemMessage: Message?,
     ): Call<Channel>
 
     @CheckResult

@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
+import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
@@ -555,11 +556,13 @@ internal class MoshiChatApi(
     override fun truncateChannel(
         channelType: String,
         channelId: String,
+        systemMessage: Message?,
     ): Call<Channel> {
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
+            body = TruncateChannelRequest(message = systemMessage?.toDto())
         ).map(this::flattenChannel)
     }
 

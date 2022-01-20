@@ -1099,13 +1099,22 @@ public class ChatClient internal constructor(
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
+     * @param systemMessage The system message that will be shown in the channel.
      *
      * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
-    public fun truncateChannel(channelType: String, channelId: String): Call<Channel> {
-        return api.truncateChannel(channelType, channelId)
+    public fun truncateChannel(
+        channelType: String,
+        channelId: String,
+        systemMessage: Message? = null,
+    ): Call<Channel> {
+        return api.truncateChannel(
+            channelType = channelType,
+            channelId = channelId,
+            systemMessage = systemMessage
+        )
     }
 
     @CheckResult
