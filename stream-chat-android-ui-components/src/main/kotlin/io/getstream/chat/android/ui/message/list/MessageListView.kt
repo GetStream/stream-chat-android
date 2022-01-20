@@ -361,6 +361,14 @@ public class MessageListView : ConstraintLayout {
             _attachmentDeleteOptionHandler,
         )
 
+    /**
+     * Handles attachment clicks by default which open the attachment preview.
+     *
+     * Can be customized by [setAttachmentClickListener].
+     *
+     * In case the attachments are being uploaded, they cannot be opened for preview until all of the attachments within
+     * a message are uploaded.
+     */
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
             val hasInvalidAttachments = message.attachments.any { it.uploadState != null }
