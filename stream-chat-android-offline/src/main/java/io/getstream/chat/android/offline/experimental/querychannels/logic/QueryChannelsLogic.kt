@@ -36,6 +36,21 @@ internal class QueryChannelsLogic(
             .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
     }
 
+    /**
+     * Conditional check before queryChannels API call is invoked.
+     *
+     * Returns [Result.success] if there is no ongoing request otherwise [Result.error] to terminate the request.
+     */
+    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
+        val loader = loadingForCurrentRequest()
+        return if (loader.value) {
+            logger.logI("Another request to load channels is in progress. Ignoring this request.")
+            Result.error(ChatError("Another request to load messages is in progress. Ignoring this request."))
+        } else {
+            Result.success(Unit)
+        }
+    }
+
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         mutableState._currentRequest.value = request
         queryOffline(request.toPagination())
