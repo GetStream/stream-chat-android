@@ -72,6 +72,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Handling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
+- Intercepted and blocked attachment preview for attachments which are not fully uploaded. [#2950](https://github.com/GetStream/stream-chat-android/pull/2950)
 
 ### ⬆️ Improved
 - Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
