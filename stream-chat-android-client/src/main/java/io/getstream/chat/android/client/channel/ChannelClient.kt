@@ -360,12 +360,15 @@ public class ChannelClient internal constructor(
     /**
      * Removes all of the messages of the channel but doesn't affect the channel data or members.
      *
+     * @param systemMessage The system message object that will be shown in the channel.
+     *
      * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
-    public fun truncate(): Call<Channel> {
-        return client.truncateChannel(channelType, channelId)
+    @JvmOverloads
+    public fun truncate(systemMessage: Message? = null): Call<Channel> {
+        return client.truncateChannel(channelType, channelId, systemMessage)
     }
 
     /**

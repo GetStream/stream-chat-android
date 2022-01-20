@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
@@ -72,19 +72,19 @@ internal class AttachmentOptionsView : FrameLayout {
         ).use { array ->
             readConfiguration(array).run {
                 if (replyEnabled) {
-                    binding.reply.setLeftDrawable(replyIcon)
+                    binding.reply.setStartDrawable(replyIcon)
                 } else {
                     binding.reply.isVisible = false
                 }
 
                 if (showInChatEnabled) {
-                    binding.showInChat.setLeftDrawable(showInChatIcon)
+                    binding.showInChat.setStartDrawable(showInChatIcon)
                 } else {
                     binding.showInChat.isVisible = false
                 }
 
                 if (saveImageEnabled) {
-                    binding.saveImage.setLeftDrawable(saveImageIcon)
+                    binding.saveImage.setStartDrawable(saveImageIcon)
                 } else {
                     binding.saveImage.isVisible = false
                 }
@@ -178,6 +178,6 @@ internal class AttachmentOptionsView : FrameLayout {
 
     private fun TextView.configureListItem(icon: Int, textTint: Int) {
         this.setTextColor(textTint)
-        setLeftDrawable(icon)
+        setStartDrawable(icon)
     }
 }

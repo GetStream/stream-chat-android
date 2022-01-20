@@ -249,8 +249,25 @@ public class ChannelController internal constructor(
             }
     }
 
-    private fun removeMessagesBefore(date: Date) {
-        mutableState._messages.value = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
+    /**
+     * Removes messages before the given date and optionally adds a system message
+     * that was coming with the event.
+     *
+     * @param date The date used for generating result.
+     * @param systemMessage The system message to display.
+     */
+    private fun removeMessagesBefore(
+        date: Date,
+        systemMessage: Message? = null,
+    ) {
+        val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
+
+        if (systemMessage == null) {
+            mutableState._messages.value = messages
+        } else {
+            mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
+            channelLogic.updateLastMessageAtByNewMessages(listOf(systemMessage))
+        }
     }
 
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
@@ -744,9 +761,10 @@ public class ChannelController internal constructor(
                 removeMessagesBefore(event.createdAt)
                 mutableState._channelData.value = mutableState.channelData.value.copy(deletedAt = event.createdAt)
             }
-            is ChannelTruncatedEvent,
-            is NotificationChannelTruncatedEvent,
-            -> {
+            is ChannelTruncatedEvent -> {
+                removeMessagesBefore(event.createdAt, event.message)
+            }
+            is NotificationChannelTruncatedEvent -> {
                 removeMessagesBefore(event.createdAt)
             }
             is TypingStopEvent -> {

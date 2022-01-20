@@ -15,6 +15,7 @@
         android:paddingVertical="2dp"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textColor="@color/stream_ui_white"
+        android:textDirection="locale"
         tools:text="Today"
         />
 

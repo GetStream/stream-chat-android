@@ -26,6 +26,7 @@
         android:text="@string/stream_ui_message_input_no_files"
         android:textAppearance="@style/StreamUiTextAppearance.Headline"
         android:visibility="gone"
+        android:textDirection="locale"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
