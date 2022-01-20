@@ -73,7 +73,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
-- When querying for channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled. [#2921](https://github.com/GetStream/stream-chat-android/pull/2921)
 
 ### ❌ Removed
 
@@ -85,7 +84,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
-- When querying for channels, `ChannelListViewModel` now uses `OfflinePlugin` based approach if it is enabled. [#2921](https://github.com/GetStream/stream-chat-android/pull/2921)
 
 ### ❌ Removed
 
