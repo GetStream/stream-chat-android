@@ -30,6 +30,7 @@
             android:layout_gravity="center"
             android:text="@string/stream_ui_attachment_gallery_overview_title"
             android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            android:textDirection="locale"
             />
 
     </FrameLayout>
