@@ -270,7 +270,7 @@ internal class ChannelLogic(
         }
     }
 
-    private fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
+    internal fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
         if (newMessages.isEmpty()) {
             return
         }
