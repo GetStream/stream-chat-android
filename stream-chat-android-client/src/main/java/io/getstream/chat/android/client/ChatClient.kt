@@ -51,6 +51,7 @@ import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -303,6 +304,8 @@ public class ChatClient internal constructor(
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()
     }
+
+    public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
