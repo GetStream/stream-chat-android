@@ -30,7 +30,6 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                     oldMessage.extraData == newMessage.extraData &&
                     oldMessage.pinned == newMessage.pinned &&
                     oldMessage.user == newMessage.user &&
-                    oldMessage.mentionedUsersIds == newMessage.mentionedUsersIds &&
                     oldMessage.mentionedUsers == newMessage.mentionedUsers
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
@@ -59,7 +58,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 positions = oldItem.positions != newItem.positions,
                 pinned = oldMessage.pinned != newMessage.pinned,
                 user = oldMessage.user != newMessage.user,
-                mentions = (oldMessage.mentionedUsersIds != newMessage.mentionedUsersIds) || (oldMessage.mentionedUsers != newMessage.mentionedUsers)
+                mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers
             )
         } else {
             null
