@@ -10,6 +10,7 @@ public data class MessageListItemPayloadDiff(
     val positions: Boolean,
     val pinned: Boolean,
     val user: Boolean,
+    val mentions: Boolean,
 ) {
     public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff {
         return MessageListItemPayloadDiff(
@@ -22,6 +23,7 @@ public data class MessageListItemPayloadDiff(
             positions = positions || other.positions,
             pinned = pinned || other.pinned,
             user = user || other.user,
+            mentions = mentions || other.mentions
         )
     }
 }
