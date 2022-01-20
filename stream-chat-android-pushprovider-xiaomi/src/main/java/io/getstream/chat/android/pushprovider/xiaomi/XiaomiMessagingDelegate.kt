@@ -1,5 +1,8 @@
 package io.getstream.chat.android.pushprovider.xiaomi
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import com.xiaomi.mipush.sdk.MiPushClient
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
@@ -13,6 +16,12 @@ import kotlin.jvm.Throws
  * Helper class for delegating Xiaomi push messages to the Stream Chat SDK.
  */
 public object XiaomiMessagingDelegate {
+
+    private val mapAdapter: JsonAdapter<MutableMap<String, String>> by lazy {
+        Moshi.Builder()
+            .build()
+            .adapter(Types.newParameterizedType(Map::class.java, String::class.java, String::class.java))
+    }
 
     /**
      * Handles [miPushMessage] from Xiaomi.
@@ -58,16 +67,28 @@ public object XiaomiMessagingDelegate {
                 )
             }
     }
+
+    /**
+     * Transform [MiPushMessage.content] into a [Map].
+     *
+     * Return a [Map] obtained from the value of [MiPushMessage.content] or an empty map if content was empty.
+     */
+    private val MiPushMessage.contentMap: Map<String, String>
+        get() = mapAdapter.fromJson(content) ?: emptyMap()
+
+    private fun MiPushMessage.toPushMessage() =
+        contentMap.let {
+            PushMessage(
+                channelId = it["channel_id"]!!,
+                messageId = it["message_id"]!!,
+                channelType = it["channel_type"]!!,
+            )
+        }
+
+    private fun MiPushMessage.isValid() =
+        contentMap.let {
+            !it["channel_id"].isNullOrBlank() &&
+                !it["message_id"].isNullOrBlank() &&
+                !it["channel_type"].isNullOrBlank()
+        }
 }
-
-private fun MiPushMessage.toPushMessage() =
-    PushMessage(
-        channelId = extra["channel_id"]!!,
-        messageId = extra["message_id"]!!,
-        channelType = extra["channel_type"]!!,
-    )
-
-private fun MiPushMessage.isValid() =
-    !extra["channel_id"].isNullOrBlank() &&
-        !extra["message_id"].isNullOrBlank() &&
-        !extra["channel_type"].isNullOrBlank()
