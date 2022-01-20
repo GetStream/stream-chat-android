@@ -362,7 +362,7 @@ public class MessageListView : ConstraintLayout {
         )
 
     /**
-     * Handles attachment clicks by default which open the attachment preview.
+     * Handles attachment clicks which by default open the attachment preview.
      *
      * Can be customized by [setAttachmentClickListener].
      *
