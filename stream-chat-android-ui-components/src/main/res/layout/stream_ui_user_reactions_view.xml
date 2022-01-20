@@ -23,6 +23,7 @@
             android:layout_gravity="center_horizontal"
             android:singleLine="true"
             android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            android:textDirection="locale"
             tools:text="12 Message reactions"
             />
 
