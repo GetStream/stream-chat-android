@@ -62,7 +62,7 @@ public class ViewReactionsView : RecyclerView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        bubbleDrawer.drawReactionsBubble(canvas, width, isMyMessage, isSingleReaction)
+        bubbleDrawer.drawReactionsBubble(context, canvas, width, isMyMessage, isSingleReaction)
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {

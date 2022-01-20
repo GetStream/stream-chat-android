@@ -3,6 +3,7 @@
     android:height="20dp"
     android:viewportWidth="20"
     android:viewportHeight="20"
+    android:autoMirrored="true"
     >
     <path
         android:fillColor="@color/stream_ui_attach_button"

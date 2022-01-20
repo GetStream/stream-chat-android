@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
@@ -168,8 +168,14 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         } ?: dismiss()
     }
 
+    /**
+     * Styles the action item.
+     *
+     * @param textStyle The style iof the text of the item.
+     * @param icon The icon to be drawn at the start of the item.
+     */
     private fun TextView.configureActionItem(textStyle: TextStyle, icon: Drawable) {
-        setLeftDrawable(icon)
+        setStartDrawable(icon)
         textStyle.apply(this)
     }
 

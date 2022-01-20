@@ -28,6 +28,7 @@
         android:paddingTop="@dimen/stream_ui_spacing_tiny"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
         android:visibility="gone"
+        android:textDirection="locale"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -87,6 +88,7 @@
             android:paddingBottom="@dimen/stream_ui_spacing_small"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_accent_blue"
+            android:textDirection="locale"
             tools:text="@tools:sample/lorem"
             />
 
