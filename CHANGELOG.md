@@ -72,6 +72,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Handling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
+- Fixed a bug when changes to the mentioned users in a message were not propagated to the UI. [2951](https://github.com/GetStream/stream-chat-android/pull/2951)
 
 ### ⬆️ Improved
 
