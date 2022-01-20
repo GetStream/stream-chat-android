@@ -15,11 +15,13 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.getUpdatedAtOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate.VisibleToAuthorOnly
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
@@ -31,6 +33,7 @@ internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
+    private val deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
 ) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
@@ -146,14 +149,35 @@ internal class FootnoteDecorator(
                 textView.isVisible = true
                 style.textStyleUserName.apply(textView)
             }
-            data.isNotBottomPosition() -> textView.isVisible = false
-            !data.message.isEphemeral() && !data.message.isDeleted() -> textView.isVisible = false
-            else -> textView.apply {
-                isVisible = true
-                text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
-                setLeftDrawable(style.iconOnlyVisibleToYou)
-                compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
+
+            data.isBottomPosition()
+                && data.message.isDeleted()
+                && deletedMessageListItemPredicate == VisibleToAuthorOnly -> {
+                showOnlyVisibleToYou(textView, style)
             }
+
+            data.isBottomPosition() && data.message.isEphemeral() -> {
+                showOnlyVisibleToYou(textView, style)
+            }
+
+            else -> {
+                textView.isVisible = false
+            }
+        }
+    }
+
+    /**
+     * Shows the "Only visible to you" message.
+     *
+     * @param textView Where the message is displayed.
+     * @param style [MessageListItemStyle] The style of the message. The left icon style is defined there.
+     */
+    private fun showOnlyVisibleToYou(textView: TextView, style: MessageListItemStyle) {
+        textView.apply {
+            isVisible = true
+            text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
+            setStartDrawable(style.iconOnlyVisibleToYou)
+            compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
         }
     }
 

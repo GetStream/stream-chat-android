@@ -232,13 +232,20 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Removes the current user from the channel.
+     *
+     * @param channel The channel that the current user will leave.
+     */
     public fun leaveChannel(channel: Channel) {
-        chatDomain.leaveChannel(channel.cid).enqueue(
-            onError = { chatError ->
-                logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
-                _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
-            }
-        )
+        chatClient.getCurrentUser()?.let { user ->
+            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue(
+                onError = { chatError ->
+                    logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
+                }
+            )
+        }
     }
 
     public fun deleteChannel(channel: Channel) {

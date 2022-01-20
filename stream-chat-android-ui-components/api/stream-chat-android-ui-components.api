@@ -168,10 +168,10 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView$AvatarShape : 
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
-	public static final field BOTTOM_LEFT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static final field BOTTOM_RIGHT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static final field TOP_LEFT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static final field TOP_RIGHT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static final field BOTTOM_END Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static final field BOTTOM_START Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static final field TOP_END Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
+	public static final field TOP_START Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 }
@@ -515,6 +515,7 @@ public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewhold
 	public abstract fun getSwipeView ()Landroid/view/View;
 	protected final fun getSwiping ()Z
 	public abstract fun isSwipeEnabled ()Z
+	public abstract fun isSwiped ()Z
 	protected final fun setListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setSwipeListener (Landroid/view/View;Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	protected final fun setSwiping (Z)V
@@ -919,6 +920,7 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
+	public static final field FILE_TYPE_KEY Ljava/lang/String;
 	public static final field HEADER_TITLE_KEY Ljava/lang/String;
 	public static final field TYPE_KEY Ljava/lang/String;
 	public static final field URL_KEY Ljava/lang/String;
@@ -1088,6 +1090,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setCommandsEnabled (Z)V
 	public final fun setCooldownInterval (I)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
+	public final fun setInputTextDirection (I)V
 	public final fun setMaxMessageLength (I)V
 	public final fun setMaxMessageLengthHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler;)V
 	public final fun setMentionsEnabled (Z)V

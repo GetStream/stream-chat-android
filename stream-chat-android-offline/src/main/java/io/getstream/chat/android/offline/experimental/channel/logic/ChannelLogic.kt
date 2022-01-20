@@ -1,9 +1,11 @@
 package io.getstream.chat.android.offline.experimental.channel.logic
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -22,6 +24,7 @@ import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
@@ -35,7 +38,7 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener {
+) : QueryChannelListener, ChannelMarkReadListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -97,6 +100,11 @@ internal class ChannelLogic(
             }
     }
 
+    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
+        if (ChatClient.instance().needsMarkRead("$channelType:$channelId"))
+            Result.success(Unit)
+        else Result.error(ChatError("Can not mark channel as read with channel id: $channelId"))
+
     internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)
         loader.value = true
@@ -148,6 +156,9 @@ internal class ChannelLogic(
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
+
+        mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
+
         updateReads(c.read)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
@@ -183,21 +194,29 @@ internal class ChannelLogic(
         mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
     }
 
+    /**
+     * Increments the unread count of the Channel if necessary.
+     *
+     * @param message [Message].
+     */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id
-        if (currentUserId?.let(message::shouldIncrementUnreadCount) == true) {
+
+        if (currentUserId?.let { message.shouldIncrementUnreadCount(it, mutableState._read.value?.lastMessageSeenDate) } == true) {
             val newUnreadCount = mutableState._unreadCount.value + 1
             mutableState._unreadCount.value = newUnreadCount
-            mutableState._read.value = mutableState._read.value?.copy(unreadMessages = newUnreadCount)
+            mutableState._read.value = mutableState._read
+                .value
+                ?.copy(unreadMessages = newUnreadCount, lastMessageSeenDate = message.createdAt)
             mutableState._reads.value = mutableState._reads.value.apply {
                 this[currentUserId]?.unreadMessages = newUnreadCount
+                this[currentUserId]?.lastMessageSeenDate = message.createdAt
             }
         }
     }
 
     internal fun updateReads(reads: List<ChannelUserRead>) {
         chatDomainImpl.user.value?.let { currentUser ->
-
             val currentUserId = currentUser.id
             val previousUserIdToReadMap = mutableState._reads.value
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
@@ -208,6 +227,7 @@ internal class ChannelLogic(
              * to show in the channel list.
              */
             incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
+                incomingUserRead.lastMessageSeenDate = mutableState._read.value?.lastMessageSeenDate
 
                 // the previous last Read date that is most current
                 val previousLastRead =
@@ -222,6 +242,7 @@ internal class ChannelLogic(
 
                 if (shouldUpdateByIncoming) {
                     mutableState._read.value = incomingUserRead
+
                     mutableState._unreadCount.value = incomingUserRead.unreadMessages
                 } else {
                     // if the previous Read was more current, replace the item in the update map

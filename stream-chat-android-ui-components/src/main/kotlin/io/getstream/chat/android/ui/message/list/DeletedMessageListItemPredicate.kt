@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.list
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.ChatClient
 
 /**
  * Predicate class used to filter [MessageListItem.MessageItem] items which are deleted. Used by [MessageListView.setDeletedMessageListItemPredicate].
@@ -29,7 +30,9 @@ public sealed class DeletedMessageListItemPredicate : MessageListView.MessageLis
      */
     public object VisibleToAuthorOnly : DeletedMessageListItemPredicate() {
         override fun predicate(item: MessageListItem): Boolean {
-            return true
+            return ChatClient.instance().getCurrentUser()?.let { user ->
+                item is MessageListItem.MessageItem && item.message.user.id == user.id
+            } ?: false
         }
     }
 }

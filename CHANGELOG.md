@@ -32,12 +32,15 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed bug related to the wrong unread messages count when a socket connection is not available. [#2927](https://github.com/GetStream/stream-chat-android/pull/2927)
+- Fixed deserialization issue when parsing the `Message` object while searching for a message from a channel with 0 members. [#2947](https://github.com/GetStream/stream-chat-android/pull/2947)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain.leaveChannel`. Use ChatClient.removeMembers instead. [#2926](https://github.com/GetStream/stream-chat-android/pull/2926)
 
 ### ❌ Removed
 
@@ -48,6 +51,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added new extension function `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)
+- Added `ChatClient::needsMarkRead` extension function to check if a channel can be marked as read. [#2920](https://github.com/GetStream/stream-chat-android/pull/2920)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain::cancelMessage` in favour of `ChatClient::cancelMessage`. [#2928](https://github.com/GetStream/stream-chat-android/pull/2928)
@@ -67,8 +71,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Handling video attachments that's don't have mime-type, but have type. [2919](https://github.com/GetStream/stream-chat-android/pull/2919)
 
 ### ⬆️ Improved
+- Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
 
 ### ✅ Added
 
@@ -78,10 +84,16 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed crashes caused by deleting channels [#2942](https://github.com/GetStream/stream-chat-android/pull/2942)
 
 ### ⬆️ Improved
+- `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
+- Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
 
 ### ✅ Added
+- Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
+- Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
+- Added ways to customize the channel, message and member query limit when building a ChannelListViewModel [#2948](https://github.com/GetStream/stream-chat-android/pull/2948)
 
 ### ⚠️ Changed
 
@@ -147,6 +159,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed displaying mentions popup when text contains multiple lines. [#2851](https://github.com/GetStream/stream-chat-android/pull/2851)
 - Fixed the loading/playback speed of GIFs. [#2914](https://github.com/GetStream/stream-chat-android/pull/2914)
 - Fixed scroll persisting after long tapping on an item in the message list. [#2916](https://github.com/GetStream/stream-chat-android/pull/2916)
+- Fixed footnote of messages showing "Only Visible to You". This message was visible even when deleted messages were visible to everyone. [#2923](https://github.com/GetStream/stream-chat-android/pull/2923)
 
 ### ⬆️ Improved
 - Improved the way thread pagination works. [#2845](https://github.com/GetStream/stream-chat-android/pull/2845)
@@ -244,6 +257,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `hard` flag to `MessageListViewModel.Event.DeleteMessage`.
   You can use `MessageListView::setMessageDeleteHandler` and pass `MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true)` to hard delete messages using `MessageListViewModel`.
   Check [MessageListViewModelBinding](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding.kt#L37) for further details. [#2772](https://github.com/GetStream/stream-chat-android/pull/2772)
+- Rtl support was added. If the app has `android:supportsRtl="true"` and the locale of the device needs Rtl support, the SDK will draw the components from the right-to-left instead the default way (left-to-right) [#2799](https://github.com/GetStream/stream-chat-android/pull/2799)
 
 ### ⚠️ Changed
 - Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)

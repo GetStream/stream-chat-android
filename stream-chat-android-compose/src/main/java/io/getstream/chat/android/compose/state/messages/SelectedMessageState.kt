@@ -18,3 +18,8 @@ public class SelectedMessageOptionsState(message: Message) : SelectedMessageStat
  * Represents a state when message reactions were selected.
  */
 public class SelectedMessageReactionsState(message: Message) : SelectedMessageState(message)
+
+/**
+ * Represents a state when the show more reactions button was clicked.
+ */
+public class SelectedMessageReactionsPickerState(message: Message) : SelectedMessageState(message)

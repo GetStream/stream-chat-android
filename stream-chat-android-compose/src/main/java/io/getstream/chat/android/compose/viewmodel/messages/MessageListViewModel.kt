@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -30,7 +31,9 @@ import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -66,17 +69,6 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
- * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
- * we show a separator, if it's enabled in the list.
- */
-private const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
-
-/**
- * The default limit for messages count in requests.
- */
-private const val DEFAULT_MESSAGE_LIMIT: Int = 30
-
-/**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
@@ -94,7 +86,7 @@ public class MessageListViewModel(
     public val chatDomain: ChatDomain,
     private val channelId: String,
     private val clipboardHandler: ClipboardHandler,
-    private val messageLimit: Int = 0,
+    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
@@ -420,7 +412,12 @@ public class MessageListViewModel(
             messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
 
-        chatDomain.markRead(channelId).enqueue()
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val (channelType, id) = channelId.cidToTypeAndId()
+            chatClient.markRead(channelType, id).enqueue()
+        } else {
+            chatDomain.markRead(channelId).enqueue()
+        }
     }
 
     /**
@@ -475,11 +472,8 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
-        val selectedMessageState = message?.let(::SelectedMessageOptionsState)
-        if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
-        } else {
-            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
+        if (message != null) {
+            changeSelectMessageState(SelectedMessageOptionsState(message))
         }
     }
 
@@ -489,7 +483,29 @@ public class MessageListViewModel(
      * @param message The message that contains the reactions.
      */
     public fun selectReactions(message: Message?) {
-        val selectedMessageState = message?.let(::SelectedMessageReactionsState)
+        if (message != null) {
+            changeSelectMessageState(SelectedMessageReactionsState(message))
+        }
+    }
+
+    /**
+     * Triggered when the user taps the show more reactions button.
+     *
+     * @param message The selected message.
+     */
+    public fun selectExtendedReactions(message: Message?) {
+        if (message != null) {
+            changeSelectMessageState(SelectedMessageReactionsPickerState(message))
+        }
+    }
+
+    /**
+     * Changes the state of [threadMessagesState] or [messagesState] depending
+     * on the thread mode.
+     *
+     * @param selectedMessageState The selected message state.
+     * */
+    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
         } else {
@@ -901,5 +917,18 @@ public class MessageListViewModel(
             is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelMessage(message)
         }.exhaustive.enqueue()
+    }
+
+    internal companion object {
+        /**
+         * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
+         * we show a separator, if it's enabled in the list.
+         */
+        internal const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

@@ -44,12 +44,18 @@ import kotlinx.coroutines.launch
  * @param initialSort The initial sort used for [Channel]s.
  * @param initialFilters The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
+ * @param channelLimit How many channels we fetch per page.
+ * @param memberLimit How many members are fetched for each channel item when loading channels.
+ * @param messageLimit How many messages are fetched for each channel item when loading channels.
  */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
     initialSort: QuerySort<Channel>,
     private val initialFilters: FilterObject,
+    private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+    private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
 ) : ViewModel() {
 
     /**
@@ -144,7 +150,10 @@ public class ChannelListViewModel(
             .collectLatest { (query, config) ->
                 val result = chatDomain.queryChannels(
                     filter = createQueryChannelsFilter(config.filters, query),
-                    sort = config.querySort
+                    sort = config.querySort,
+                    messageLimit = messageLimit,
+                    limit = channelLimit,
+                    memberLimit = memberLimit
                 ).await()
 
                 if (result.isSuccess) {
@@ -166,9 +175,9 @@ public class ChannelListViewModel(
                 val queryChannelsRequest = QueryChannelsRequest(
                     filter = createQueryChannelsFilter(config.filters, query),
                     querySort = config.querySort,
-                    limit = CHANNEL_LIMIT,
-                    messageLimit = MESSAGE_LIMIT,
-                    memberLimit = MEMBER_LIMIT,
+                    limit = channelLimit,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
                 )
                 queryChannelsState =
                     chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
@@ -403,7 +412,7 @@ public class ChannelListViewModel(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.deleteChannel(channel.id).enqueue()
+        chatDomain.deleteChannel(channel.cid).enqueue()
     }
 
     /**
@@ -415,7 +424,9 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        chatClient.getCurrentUser()?.let { user ->
+            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        }
     }
 
     /**
@@ -438,20 +449,20 @@ public class ChannelListViewModel(
         return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
     }
 
-    private companion object {
+    internal companion object {
         /**
          * Default value of number of channels to return when querying channels.
          */
-        private const val CHANNEL_LIMIT = 30
+        internal const val DEFAULT_CHANNEL_LIMIT = 30
 
         /**
          * Default value of the number of messages to include in each channel when querying channels.
          */
-        private const val MESSAGE_LIMIT = 1
+        internal const val DEFAULT_MESSAGE_LIMIT = 1
 
         /**
          * Default value of the number of members to include in each channel when querying channels.
          */
-        private const val MEMBER_LIMIT = 30
+        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }
