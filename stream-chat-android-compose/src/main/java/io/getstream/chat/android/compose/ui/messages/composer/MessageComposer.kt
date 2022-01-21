@@ -292,7 +292,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty()) {
+        if (commandSuggestions.isNotEmpty() && messageComposerState.attachments.isEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }
