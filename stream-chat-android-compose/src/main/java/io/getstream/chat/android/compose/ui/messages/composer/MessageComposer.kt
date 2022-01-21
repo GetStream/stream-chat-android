@@ -408,8 +408,12 @@ internal fun DefaultComposerIntegrations(
     onCommandsClick: () -> Unit,
 ) {
     val hasTextInput = messageInputState.inputValue.isNotEmpty()
+    val hasAttachments = messageInputState.attachments.isNotEmpty()
     val hasCommandInput = messageInputState.inputValue.startsWith("/")
     val hasCommandSuggestions = messageInputState.commandSuggestions.isNotEmpty()
+    val hasMentionSuggestions = messageInputState.mentionSuggestions.isNotEmpty()
+
+    val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
 
     Row(
         modifier = Modifier
@@ -418,7 +422,7 @@ internal fun DefaultComposerIntegrations(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            enabled = !hasCommandInput,
+            enabled = isAttachmentsButtonEnabled,
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
@@ -426,15 +430,15 @@ internal fun DefaultComposerIntegrations(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
                     contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = if (hasCommandInput) ChatTheme.colors.disabled else ChatTheme.colors.textLowEmphasis,
+                    tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
                 )
             },
             onClick = onAttachmentsClick
         )
 
-        val commandsButtonTint = if (hasCommandSuggestions && !hasTextInput) {
+        val commandsButtonTint = if (hasCommandSuggestions && !hasTextInput && !hasAttachments) {
             ChatTheme.colors.primaryAccent
-        } else if (!hasTextInput) {
+        } else if (!hasTextInput && !hasAttachments) {
             ChatTheme.colors.textLowEmphasis
         } else {
             ChatTheme.colors.disabled
@@ -444,7 +448,7 @@ internal fun DefaultComposerIntegrations(
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
-            enabled = !hasTextInput,
+            enabled = !hasTextInput && !hasAttachments,
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
