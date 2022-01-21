@@ -18,25 +18,25 @@ internal fun AppSettingsAPIResponse.toDomain(): AppSettings {
 internal fun AppDto.toDomain(): App {
     return App(
         name = name,
-        fileUploadConfig = fileUploadConfigDto.toDomain(),
-        imageUploadConfig = imageUploadConfigDto.toDomain(),
+        fileUploadConfig = file_upload_config.toDomain(),
+        imageUploadConfig = image_upload_config.toDomain(),
     )
 }
 
 internal fun FileUploadConfigDto.toDomain(): FileUploadConfig {
     return FileUploadConfig(
-        allowedFileExtensions = allowedFileExtensions,
-        allowedMimeTypes = allowedMimeTypes,
-        blockedFileExtensions = blockedFileExtensions,
-        blockedMimeTypes = blockedMimeTypes,
+        allowedFileExtensions = allowed_file_extensions,
+        allowedMimeTypes = allowed_mime_types,
+        blockedFileExtensions = blocked_file_extensions,
+        blockedMimeTypes = blocked_mime_types,
     )
 }
 
 internal fun ImageUploadConfigDto.toDomain(): ImageUploadConfig {
     return ImageUploadConfig(
-        allowedFileExtensions = allowedFileExtensions,
-        allowedMimeTypes = allowedMimeTypes,
-        blockedFileExtensions = blockedFileExtensions,
-        blockedMimeTypes = blockedMimeTypes,
+        allowedFileExtensions = allowed_file_extensions,
+        allowedMimeTypes = allowed_mime_types,
+        blockedFileExtensions = blocked_file_extensions,
+        blockedMimeTypes = blocked_mime_types,
     )
 }
