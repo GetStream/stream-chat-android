@@ -115,7 +115,7 @@ internal class MoshiChatApi(
     }
 
     override fun appSettings(): Call<AppSettings> {
-        return configApi.getAppConfiguration().map(AppSettingsAPIResponse::toDomain)
+        return configApi.getAppSettings().map(AppSettingsAPIResponse::toDomain)
     }
 
     override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {

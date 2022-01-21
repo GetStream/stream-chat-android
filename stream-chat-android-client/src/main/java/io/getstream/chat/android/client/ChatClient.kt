@@ -305,6 +305,9 @@ public class ChatClient internal constructor(
         warmUp()
     }
 
+    /**
+     * Get the current settings of the app. Check [AppSettings].
+     */
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
