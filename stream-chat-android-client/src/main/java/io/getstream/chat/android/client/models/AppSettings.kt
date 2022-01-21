@@ -12,11 +12,11 @@ public data class AppSettings(
 )
 
 /**
- * The representation of the app, with its configurations
+ * The representation of the app, with its configurations.
  *
- * @param name The name of the app
- * @param fileUploadConfig [FileUploadConfig] The configuration of file uploads
- * @param imageUploadConfig [FileUploadConfig] The configuration of image uploads
+ * @param name The name of the app.
+ * @param fileUploadConfig [FileUploadConfig] The configuration of file uploads.
+ * @param imageUploadConfig [FileUploadConfig] The configuration of image uploads.
  */
 @JsonClass(generateAdapter = true)
 public data class App(
@@ -26,12 +26,12 @@ public data class App(
 )
 
 /**
- * The configuration of file upload
+ * The configuration of file upload.
  *
- * @param allowedFileExtensions Allowed file extensions
- * @param allowedFileExtensions Allowed mime types
- * @param blockedFileExtensions Blocked mime types
- * @param blockedMimeTypes Blocked mime types
+ * @param allowedFileExtensions Allowed file extensions.
+ * @param allowedFileExtensions Allowed mime types.
+ * @param blockedFileExtensions Blocked mime types.
+ * @param blockedMimeTypes Blocked mime types.
  */
 @JsonClass(generateAdapter = true)
 public data class FileUploadConfig(
@@ -42,12 +42,12 @@ public data class FileUploadConfig(
 )
 
 /**
- * The configuration of image upload
+ * The configuration of image upload.
  *
- * @param allowedFileExtensions Allowed file extensions
- * @param allowedFileExtensions Allowed mime types
- * @param blockedFileExtensions Blocked mime types
- * @param blockedMimeTypes Blocked mime types
+ * @param allowedFileExtensions Allowed file extensions.
+ * @param allowedFileExtensions Allowed mime types.
+ * @param blockedFileExtensions Blocked mime types.
+ * @param blockedMimeTypes Blocked mime types.
  */
 @JsonClass(generateAdapter = true)
 public data class ImageUploadConfig(

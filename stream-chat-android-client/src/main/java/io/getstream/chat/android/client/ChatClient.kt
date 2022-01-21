@@ -307,6 +307,8 @@ public class ChatClient internal constructor(
 
     /**
      * Get the current settings of the app. Check [AppSettings].
+     *
+     * @return [AppSettings] the settings of the app.
      */
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
