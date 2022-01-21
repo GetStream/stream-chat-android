@@ -967,6 +967,14 @@ internal class ChatDomainImpl internal constructor(
 
     override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
+    /**
+     * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
+     * Returns new "ephemeral" message with new giphy url.
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     *
+     * @param message The message to send.
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
+     */
     override fun shuffleGiphy(message: Message): Call<Message> = client.shuffleGiphy(message)
 
     override fun sendGiphy(message: Message): Call<Message> = SendGiphy(this).invoke(message)

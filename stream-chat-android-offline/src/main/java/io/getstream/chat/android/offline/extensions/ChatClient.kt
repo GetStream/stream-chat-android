@@ -231,6 +231,14 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
     return channelController.markRead()
 }
 
+/**
+ * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
+ * Returns new "ephemeral" message with new giphy url.
+ * API call to remove the message is retried according to the retry policy specified on the chatDomain
+ *
+ * @param message The message to send.
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
 internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
     val cid = message.cid
     val domainImpl = domainImpl()
