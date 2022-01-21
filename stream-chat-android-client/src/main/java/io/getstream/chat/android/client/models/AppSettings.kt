@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 /**
  * App settings, as they are configured in the dashboard.
  *
- * @param app [App] The configurations of the app
+ * @param app [App] The configurations of the app.
  */
 public data class AppSettings(
     val app: App
