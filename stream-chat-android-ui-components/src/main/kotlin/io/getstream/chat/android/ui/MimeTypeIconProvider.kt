@@ -63,10 +63,10 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         if (mimeType == null) {
             return R.drawable.stream_ui_ic_file
         }
-        return mimeTypesToIconResMap[mimeType] ?: if (mimeType.contains(ModelType.attach_audio)) {
-            R.drawable.stream_ui_ic_file_audio_generic
-        } else {
-            R.drawable.stream_ui_ic_file
+        return mimeTypesToIconResMap[mimeType] ?: when {
+            mimeType.contains(ModelType.attach_audio) -> R.drawable.stream_ui_ic_file_audio_generic
+            mimeType.contains(ModelType.attach_video) -> R.drawable.stream_ui_ic_file_video_generic
+            else -> R.drawable.stream_ui_ic_file
         }
     }
 }

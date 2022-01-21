@@ -27,7 +27,7 @@ internal object MimeTypeIconProvider {
         ModelType.attach_mime_ppt to R.drawable.stream_compose_ic_file_ppt,
         ModelType.attach_mime_pptx to R.drawable.stream_compose_ic_file_pptx,
         ModelType.attach_mime_mov to R.drawable.stream_compose_ic_file_mov,
-        ModelType.attach_mime_mp4 to R.drawable.stream_compose_ic_file_mov,
+        ModelType.attach_mime_mp4 to R.drawable.stream_compose_ic_file_mp4,
         ModelType.attach_mime_m4a to R.drawable.stream_compose_ic_file_m4a,
         ModelType.attach_mime_mp3 to R.drawable.stream_compose_ic_file_mp3,
         // For compatibility with other front end SDKs
@@ -46,10 +46,10 @@ internal object MimeTypeIconProvider {
         if (mimeType == null) {
             return R.drawable.stream_compose_ic_file_generic
         }
-        return mimeTypesToIconResMap[mimeType] ?: if (mimeType.contains(ModelType.attach_audio)) {
-            R.drawable.stream_compose_ic_audio_generic
-        } else {
-            R.drawable.stream_compose_ic_file_generic
+        return mimeTypesToIconResMap[mimeType] ?: when {
+            mimeType.contains(ModelType.attach_audio) -> R.drawable.stream_compose_ic_file_audio_generic
+            mimeType.contains(ModelType.attach_video) -> R.drawable.stream_compose_ic_file_video_generic
+            else -> R.drawable.stream_compose_ic_file_generic
         }
     }
 }
