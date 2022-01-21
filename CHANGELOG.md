@@ -40,7 +40,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 - Added the `systemMessage` parameter to `ChatClient::truncateChannel` and `ChannelClient:truncate` methods that represents a system message that will be displayed after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
 - Added the `message` parameter to the `ChannelTruncatedEvent` that represents a system message that will be displayed after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
-- Added method to consult the settings of the app. Use `ChatClient.instance().appSettings().enqueue` to request the settings of your app. [#2960](https://github.com/GetStream/stream-chat-android/pull/2960)
+- Added method to consult the settings of the app. Use `ChatClient.instance().appSettings()` to request the settings of your app. [#2960](https://github.com/GetStream/stream-chat-android/pull/2960)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.leaveChannel`. Use ChatClient.removeMembers instead. [#2926](https://github.com/GetStream/stream-chat-android/pull/2926)
