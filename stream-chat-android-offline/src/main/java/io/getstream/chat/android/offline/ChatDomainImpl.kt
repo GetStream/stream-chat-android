@@ -53,6 +53,7 @@ import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.extensions.shuffleGiphy
 import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
@@ -88,7 +89,6 @@ import io.getstream.chat.android.offline.usecase.SendGiphy
 import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
-import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
@@ -967,7 +967,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
-    override fun shuffleGiphy(message: Message): Call<Message> = ShuffleGiphy(this).invoke(message)
+    override fun shuffleGiphy(message: Message): Call<Message> = client.shuffleGiphy(message)
 
     override fun sendGiphy(message: Message): Call<Message> = SendGiphy(this).invoke(message)
 

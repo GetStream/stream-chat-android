@@ -230,3 +230,15 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
 
     return channelController.markRead()
 }
+
+internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
+    val cid = message.cid
+    val domainImpl = domainImpl()
+
+    validateCid(cid)
+
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.shuffleGiphy(message)
+    }
+}
