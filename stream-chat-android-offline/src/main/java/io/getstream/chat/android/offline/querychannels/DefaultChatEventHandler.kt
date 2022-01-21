@@ -90,5 +90,4 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = removeIfChannelIsPresent(channels, event.channel)
-
 }
