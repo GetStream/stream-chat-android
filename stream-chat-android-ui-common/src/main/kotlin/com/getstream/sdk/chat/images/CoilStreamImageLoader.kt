@@ -126,7 +126,6 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             result.drawable
         } ?: return
 
-        // TODO figure out if we can make this more consistent
         val widthToHeightRatio = (drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()).coerceAtMost(1.3f)
         val height = drawable.intrinsicHeight.dpToPx().coerceAtMost(maxHeight)
         val width = drawable.intrinsicWidth.dpToPx().coerceAtMost((height * widthToHeightRatio).toInt())
@@ -140,18 +139,13 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             this.width = width
         }
 
-        if (drawable is ScaleDrawable) {
-            val child = drawable.child
-            target.setImageDrawable(child)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && child is AnimatedImageDrawable) {
-                child.start()
-            } else if (child is MovieDrawable) {
-                child.start()
-            }
-        } else {
-            target.setImageDrawable(drawable)
+        if (drawable is ScaleDrawable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable) {
+            (drawable.child as AnimatedImageDrawable).start()
+        } else if (drawable is MovieDrawable) {
+            drawable.start()
         }
+
+        target.setImageDrawable(drawable)
     }
 
     override fun loadVideoThumbnail(

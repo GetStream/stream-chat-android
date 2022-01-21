@@ -40,6 +40,7 @@ public data class MediaAttachmentViewStyle(
     internal companion object {
         private const val DEFAULT_HEIGHT_DP = 200
 
+        // TODO - Split into GiphyMediaAttachmentView and MediaAttachmentView styles
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,

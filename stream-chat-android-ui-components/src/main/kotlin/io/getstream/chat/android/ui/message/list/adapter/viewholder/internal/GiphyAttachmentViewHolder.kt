@@ -18,7 +18,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadD
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
@@ -92,9 +92,7 @@ internal class GiphyAttachmentViewHolder(
 
         val attachment = data.message.attachments.first()
 
-        if (diff?.attachments == true) {
-            showGiphy(attachment)
-        }
+        showGiphy(attachment)
     }
 
     private fun showGiphy(attachment: Attachment) {
@@ -102,7 +100,7 @@ internal class GiphyAttachmentViewHolder(
     }
 
     private fun setListeners(
-        mediaAttachmentView: MediaAttachmentView,
+        mediaAttachmentView: GiphyMediaAttachmentView,
         listeners: MessageListListenerContainer,
         data: MessageListItem.MessageItem,
     ) {
@@ -110,9 +108,13 @@ internal class GiphyAttachmentViewHolder(
             listeners.messageLongClickListener.onMessageLongClick(data.message)
             true
         }
+
+        mediaAttachmentView.setOnClickListener {
+            listeners.attachmentClickListener.onAttachmentClick(data.message, data.message.attachments.first())
+        }
     }
 
-    private fun imageCorners(mediaAttachmentView: MediaAttachmentView, data: MessageListItem.MessageItem) {
+    private fun imageCorners(mediaAttachmentView: GiphyMediaAttachmentView, data: MessageListItem.MessageItem) {
         val topLeftCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
         val topRightCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
         val bottomRightCorner = if (data.message.hasText() || (data.isMine && data.isBottomPosition())) {
