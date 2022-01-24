@@ -144,7 +144,7 @@ internal class ChannelControllerTypingTests : SynchronizedCoroutineTest {
                 ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(emptyMap()))
             return ChannelController(
                 mutableState,
-                ChannelLogic(mutableState, chatDomainImpl, chatClient),
+                ChannelLogic(mutableState, chatDomainImpl),
                 chatClient,
                 chatDomainImpl,
             )

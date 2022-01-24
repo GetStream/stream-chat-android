@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
@@ -240,13 +241,23 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
  * @see io.getstream.chat.android.offline.utils.RetryPolicy
  */
 internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
-    val cid = message.cid
     val domainImpl = domainImpl()
-    val channelController = domainImpl.channel(cid)
-
-    validateCid(cid)
 
     return CoroutineCall(domainImpl.scope) {
-        channelController.sendGiphy(message)
+        val cid = message.cid
+        val channelController = domainImpl.channel(cid)
+        val channelClient = channel(channelController.channelType, channelController.channelId)
+
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf("" to ""))
+        }
+
+        validateCid(cid)
+
+        domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }.also { resultMessage ->
+            if (resultMessage.isSuccess) {
+                channelController.removeLocalMessage(resultMessage.data())
+            }
+        }
     }
 }

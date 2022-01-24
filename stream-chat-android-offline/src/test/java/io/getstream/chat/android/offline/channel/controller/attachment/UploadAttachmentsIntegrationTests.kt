@@ -73,7 +73,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
         val mutableState =
             ChannelMutableState(channelType, channelId, testCoroutines.scope, userFlow, MutableStateFlow(emptyMap()))
         channelController =
-            ChannelController(mutableState, ChannelLogic(mutableState, domainImpl, chatClient), chatClient, domainImpl)
+            ChannelController(mutableState, ChannelLogic(mutableState, domainImpl), chatClient, domainImpl)
     }
 
     @Test

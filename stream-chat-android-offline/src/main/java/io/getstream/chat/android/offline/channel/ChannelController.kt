@@ -453,10 +453,6 @@ public class ChannelController internal constructor(
         return Result(true)
     }
 
-    internal suspend fun sendGiphy(message: Message): Result<Message> {
-        return channelLogic.sendGiphy(message)
-    }
-
     internal suspend fun shuffleGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
@@ -624,7 +620,7 @@ public class ChannelController internal constructor(
         return message
     }
 
-    private fun removeLocalMessage(message: Message) {
+    internal fun removeLocalMessage(message: Message) {
         mutableState._messages.value = mutableState._messages.value - message.id
     }
 

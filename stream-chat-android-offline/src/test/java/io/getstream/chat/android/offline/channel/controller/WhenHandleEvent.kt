@@ -87,7 +87,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelController = ChannelController(
             mutableState,
-            ChannelLogic(mutableState, chatDomain, chatClient, attachmentUrlValidator),
+            ChannelLogic(mutableState, chatDomain, attachmentUrlValidator),
             client = chatClient,
             domainImpl = chatDomain,
         )
