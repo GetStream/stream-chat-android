@@ -34,6 +34,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Fixed bug related to the wrong unread messages count when a socket connection is not available. [#2927](https://github.com/GetStream/stream-chat-android/pull/2927)
 - Fixed deserialization issue when parsing the `Message` object while searching for a message from a channel with 0 members. [#2947](https://github.com/GetStream/stream-chat-android/pull/2947)
+- Fixed memory leak related to database initialization.[#2974](https://github.com/GetStream/stream-chat-android/pull/2974)
 
 ### ⬆️ Improved
 
