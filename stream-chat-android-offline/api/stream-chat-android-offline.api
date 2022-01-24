@@ -451,7 +451,6 @@ public final class io/getstream/chat/android/offline/experimental/extensions/Cha
 
 public abstract interface class io/getstream/chat/android/offline/experimental/global/GlobalState {
 	public abstract fun clean ()V
-	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;

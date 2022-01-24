@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
@@ -54,8 +53,6 @@ internal class GlobalMutableState(private val chatDomainImpl: ChatDomainImpl) : 
     override fun isConnecting(): Boolean = chatDomainImpl.isConnecting()
 
     override fun isInitialized(): Boolean = chatDomainImpl.isInitialized()
-
-    override fun getActiveQueries(): List<QueryChannelsController> = chatDomainImpl.getActiveQueries()
 
     override fun clean() = chatDomainImpl.clean()
 

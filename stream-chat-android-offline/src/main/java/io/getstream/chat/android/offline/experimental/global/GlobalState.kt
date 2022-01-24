@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
@@ -100,11 +99,6 @@ public interface GlobalState {
      * @return True if initialized otherwise False.
      */
     public fun isInitialized(): Boolean
-
-    /**
-     *
-     */
-    public fun getActiveQueries(): List<QueryChannelsController>
 
     /**
      * Cleans the current state.

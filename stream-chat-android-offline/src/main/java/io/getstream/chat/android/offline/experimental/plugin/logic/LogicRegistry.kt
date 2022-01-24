@@ -63,6 +63,13 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         }
     }
 
+    /**
+     * Returns list of  [QueryChannelsLogic] of all query channel requests.
+     *
+     * @return List of [QueryChannelsLogic]
+     */
+    fun getActiveQueryChannelsLogic(): List<QueryChannelsLogic> = queryChannels.values.toList()
+
     fun clear() {
         queryChannels.clear()
         channels.clear()
