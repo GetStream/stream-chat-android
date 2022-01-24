@@ -38,7 +38,7 @@ import kotlin.math.max
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
-    chatClient: ChatClient = ChatClient.instance(),
+    chatClient: ChatClient,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : QueryChannelListener, ChannelMarkReadListener {
 

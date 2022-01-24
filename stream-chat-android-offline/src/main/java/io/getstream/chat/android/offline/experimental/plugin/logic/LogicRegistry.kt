@@ -48,7 +48,7 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
-            ChannelLogic(stateRegistry.channel(channelType, channelId).toMutableState(), chatDomain)
+            ChannelLogic(stateRegistry.channel(channelType, channelId).toMutableState(), chatDomain, chatDomain.client)
         }
     }
 

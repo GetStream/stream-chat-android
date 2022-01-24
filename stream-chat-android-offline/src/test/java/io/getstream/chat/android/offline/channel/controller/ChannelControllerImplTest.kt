@@ -47,7 +47,7 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
         channelController =
             ChannelController(
                 mutableState,
-                ChannelLogic(mutableState, chatDomainImpl),
+                ChannelLogic(mutableState, chatDomainImpl, clientMock),
                 clientMock,
                 chatDomainImpl
             )

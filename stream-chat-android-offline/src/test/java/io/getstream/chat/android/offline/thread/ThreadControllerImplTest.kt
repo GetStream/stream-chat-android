@@ -51,7 +51,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
             }
         setMessages(channelMessages)
 
-        val channelLogic = ChannelLogic(channelMutableState, chatDomainImpl)
+        val channelLogic = ChannelLogic(channelMutableState, chatDomainImpl, clientMock)
         threadMutableState = ThreadMutableState(threadId, channelMutableState, chatDomainImpl.scope)
         val threadLogic = ThreadLogic(threadMutableState, channelLogic)
         threadController = ThreadController(threadMutableState, threadLogic, clientMock)

@@ -85,7 +85,8 @@ internal class WhenSendMessage {
     fun setup() {
         Shadows.shadowOf(MimeTypeMap.getSingleton())
         val mutableState = ChannelMutableState(channelType, channelId, scope, userFlow, MutableStateFlow(emptyMap()))
-        channelController = ChannelController(mutableState, ChannelLogic(mutableState, domainImpl), chatClient, domainImpl)
+        channelController =
+            ChannelController(mutableState, ChannelLogic(mutableState, domainImpl, chatClient), chatClient, domainImpl)
     }
 
     @Test

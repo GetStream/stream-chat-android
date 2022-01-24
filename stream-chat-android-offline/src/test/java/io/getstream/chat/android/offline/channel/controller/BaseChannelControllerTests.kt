@@ -62,7 +62,7 @@ internal open class BaseChannelControllerTests {
             )
         sut = ChannelController(
             mutableState,
-            ChannelLogic(mutableState, chatDomainImpl),
+            ChannelLogic(mutableState, chatDomainImpl, chatClient),
             chatClient,
             chatDomainImpl,
         )

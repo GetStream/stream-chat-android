@@ -259,7 +259,7 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
                 ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(mapOf(user.id to user)))
             channelControllerImpl = ChannelController(
                 mutableState,
-                ChannelLogic(mutableState, chatDomainImpl),
+                ChannelLogic(mutableState, chatDomainImpl, chatClient),
                 chatClient,
                 chatDomainImpl,
                 messageSendingServiceFactory = mock(),

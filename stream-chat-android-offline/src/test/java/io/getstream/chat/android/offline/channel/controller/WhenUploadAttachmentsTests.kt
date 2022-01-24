@@ -203,7 +203,7 @@ internal class WhenUploadAttachmentsTests {
             )
             return ChannelController(
                 mutableState = mutableState,
-                channelLogic = ChannelLogic(mutableState, chatDomainImpl),
+                channelLogic = ChannelLogic(mutableState, chatDomainImpl, chatClient),
                 client = chatClient,
                 domainImpl = chatDomainImpl,
                 attachmentUploader = uploader
