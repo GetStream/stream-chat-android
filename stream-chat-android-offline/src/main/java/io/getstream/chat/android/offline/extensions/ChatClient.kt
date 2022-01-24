@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
@@ -16,11 +17,15 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
+
+private const val KEY_MESSAGE_ACTION = "image_action"
+private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
 
 /**
  * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
@@ -240,13 +245,30 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
  * @see io.getstream.chat.android.offline.utils.RetryPolicy
  */
 internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
-    val cid = message.cid
     val domainImpl = domainImpl()
-
-    validateCid(cid)
-
-    val channelController = domainImpl.channel(cid)
     return CoroutineCall(domainImpl.scope) {
-        channelController.shuffleGiphy(message)
+        val cid = message.cid
+        val channelController = domainImpl.channel(cid)
+        val channelClient = channel(channelController.channelType, channelController.channelId)
+
+        validateCid(cid)
+
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
+        }
+
+        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
+
+        if (result.isSuccess) {
+            val processedMessage: Message = result.data()
+            processedMessage.apply {
+                syncStatus = SyncStatus.COMPLETED
+                domainImpl.repos.insertMessage(this)
+            }
+            channelController.upsertMessage(processedMessage)
+            Result(processedMessage)
+        } else {
+            Result(result.error())
+        }
     }
 }

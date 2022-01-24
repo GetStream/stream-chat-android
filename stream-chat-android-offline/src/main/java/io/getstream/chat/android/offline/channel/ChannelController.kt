@@ -476,7 +476,8 @@ public class ChannelController internal constructor(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
-        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
+
+        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
 
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
