@@ -255,7 +255,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
 
     MessageInputValidationError(validationErrors)
 
@@ -292,7 +292,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty() && messageComposerState.attachments.isEmpty()) {
+        if (commandSuggestions.isNotEmpty() && attachments.isEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }
@@ -414,6 +414,7 @@ internal fun DefaultComposerIntegrations(
     val hasMentionSuggestions = messageInputState.mentionSuggestions.isNotEmpty()
 
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
+    val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
     Row(
         modifier = Modifier
@@ -436,9 +437,9 @@ internal fun DefaultComposerIntegrations(
             onClick = onAttachmentsClick
         )
 
-        val commandsButtonTint = if (hasCommandSuggestions && !hasTextInput && !hasAttachments) {
+        val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
             ChatTheme.colors.primaryAccent
-        } else if (!hasTextInput && !hasAttachments) {
+        } else if (isCommandsButtonEnabled) {
             ChatTheme.colors.textLowEmphasis
         } else {
             ChatTheme.colors.disabled
@@ -448,7 +449,7 @@ internal fun DefaultComposerIntegrations(
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
-            enabled = !hasTextInput && !hasAttachments,
+            enabled = isCommandsButtonEnabled,
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),

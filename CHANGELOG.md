@@ -94,8 +94,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 - `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
-- Improved `MessageComposer` UX by disabling commands when attachments or text are present. [#2816](https://github.com/GetStream/stream-chat-android/issues/2816)
-- Improved `MessageComposer` UX by disabling attachment integration button when popups with suggestions are present. [#2816](https://github.com/GetStream/stream-chat-android/issues/2816)
+- Improved `MessageComposer` UX by disabling commands when attachments or text are present. [#2961](https://github.com/GetStream/stream-chat-android/pull/2961)
+- Improved `MessageComposer` UX by disabling attachment integration button when popups with suggestions are present. [#2961](https://github.com/GetStream/stream-chat-android/pull/2961)
 
 ### ✅ Added
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
