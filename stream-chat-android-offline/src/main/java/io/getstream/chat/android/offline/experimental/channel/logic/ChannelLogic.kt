@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.experimental.channel.logic
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -37,10 +38,12 @@ import kotlin.math.max
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
+    chatClient: ChatClient = ChatClient.instance(),
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : QueryChannelListener, ChannelMarkReadListener {
 
     private val logger = ChatLogger.get("Query channel request")
+    private val channelClient = chatClient.channel(mutableState.channelType, mutableState.channelId)
 
     private fun loadingStateByRequest(request: QueryChannelRequest) = when {
         request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
@@ -350,7 +353,28 @@ internal class ChannelLogic(
         }
     }
 
+    internal suspend fun sendGiphy(message: Message): Result<Message> {
+        val request = SendActionRequest(
+            message.cid,
+            message.id,
+            message.type,
+            mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
+        )
+
+        val result = chatDomainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
+
+        removeLocalMessage(message)
+
+        return if (result.isSuccess) Result(result.data()) else Result(result.error())
+    }
+
+    private fun removeLocalMessage(message: Message) {
+        mutableState._messages.value = mutableState._messages.value - message.id
+    }
+
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
+        private const val KEY_MESSAGE_ACTION = "image_action"
+        private const val MESSAGE_ACTION_SEND = "send"
     }
 }
