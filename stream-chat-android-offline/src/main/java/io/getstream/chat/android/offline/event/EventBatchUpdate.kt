@@ -86,12 +86,28 @@ internal class EventBatchUpdate private constructor(
         // actually insert the data
         domainImpl.user.value?.id?.let { userMap -= it }
 
+        enrichChannelsWithCapabilities()
+
         domainImpl.repos.storeStateForChannels(
             users = userMap.values.toList(),
             channels = channelMap.values.updateUsers(userMap),
             messages = messageMap.values.toList().updateUsers(userMap),
             cacheForMessages = true
         )
+    }
+
+    /**
+     * Enriches channels with capabilities if needed.
+     * Channels from events don't contain ownCapabilities field therefore,
+     * they need to be enriched based on capabilities stored in the cache.
+     */
+    private suspend fun enrichChannelsWithCapabilities() {
+        val channelsWithoutCapabilities = channelMap.values
+            .filter { channel -> channel.ownCapabilities.isEmpty() }
+            .map { channel -> channel.cid }
+        val cachedChannels = domainImpl.repos.selectChannels(channelsWithoutCapabilities)
+
+        channelMap.putAll(cachedChannels.associateBy(Channel::cid))
     }
 
     internal class Builder {
