@@ -353,6 +353,11 @@ internal class ChannelLogic(
         }
     }
 
+    /**
+     * Sends giphy to the message provided as a parameter
+     *
+     * @param message [Message]
+     */
     internal suspend fun sendGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
@@ -368,6 +373,11 @@ internal class ChannelLogic(
         return if (result.isSuccess) Result(result.data()) else Result(result.error())
     }
 
+    /**
+     * Remove a local message from the current list
+     *
+     * @param message [Message]
+     */
     private fun removeLocalMessage(message: Message) {
         mutableState._messages.value = mutableState._messages.value - message.id
     }
