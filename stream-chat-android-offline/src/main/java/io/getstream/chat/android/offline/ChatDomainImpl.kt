@@ -182,7 +182,13 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     val defaultConfig: Config = Config(connectEventsEnabled = true, muteEnabled = true)
-    internal var repos: RepositoryFacade = createNoOpRepos()
+    internal var repos: RepositoryFacade
+        get() = _repos ?: createNoOpRepos()
+        set(value) {
+            _repos = value
+        }
+
+    private var _repos: RepositoryFacade? = null
 
     private val _initialized = MutableStateFlow(false)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
