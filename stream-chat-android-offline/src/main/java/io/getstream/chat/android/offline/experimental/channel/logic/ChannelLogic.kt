@@ -361,7 +361,5 @@ internal class ChannelLogic(
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
-        private const val KEY_MESSAGE_ACTION = "image_action"
-        private const val MESSAGE_ACTION_SEND = "send"
     }
 }

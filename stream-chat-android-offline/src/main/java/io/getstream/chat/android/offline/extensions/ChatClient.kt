@@ -249,7 +249,7 @@ internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
         val channelClient = channel(channelController.channelType, channelController.channelId)
 
         val request = message.run {
-            SendActionRequest(cid, id, type, mapOf("" to ""))
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
         }
 
         validateCid(cid)
@@ -261,3 +261,6 @@ internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
         }
     }
 }
+
+private const val KEY_MESSAGE_ACTION = "image_action"
+private const val MESSAGE_ACTION_SEND = "send"
