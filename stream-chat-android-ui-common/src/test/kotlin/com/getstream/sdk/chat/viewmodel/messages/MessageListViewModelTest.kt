@@ -145,7 +145,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        // TODO: Review this test
+        // TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)
         @Suppress("DEPRECATION_ERROR")
         verify(domain).loadOlderMessages(CID, MESSAGES_LIMIT)
     }

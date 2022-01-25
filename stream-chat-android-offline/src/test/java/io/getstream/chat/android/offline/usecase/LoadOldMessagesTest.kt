@@ -74,7 +74,7 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn failedCall("the call failed")
 
         // Now backend fails, so the cache request must work for a successful result.
-        // TODO: Review this test
+        // TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)
         @Suppress("DEPRECATION_ERROR")
         val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
 
