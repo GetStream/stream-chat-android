@@ -18,7 +18,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun FileAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments ->
         attachments.any {
-            it.uploadId != null || it.upload != null || it.type == ModelType.attach_file || it.type == ModelType.attach_video || it.type == ModelType.attach_video
+            it.uploadId != null || it.upload != null || it.type == ModelType.attach_file || it.type == ModelType.attach_video || it.type == ModelType.attach_audio
         }
     },
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->

@@ -22,7 +22,7 @@ public fun interface MimeTypeIconProvider {
 }
 
 /**
- * Provides icons for files attachments.
+ * Provides icons for file attachments.
  */
 public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
 

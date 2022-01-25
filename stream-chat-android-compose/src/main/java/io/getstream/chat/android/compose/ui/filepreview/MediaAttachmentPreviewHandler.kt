@@ -25,9 +25,12 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         else if (type == ModelType.attach_audio || type == ModelType.attach_video) return true
 
         // Fallback in case we receive an incomplete mime type and both previous checks fail
-        val supportedMimeSubTypes = buildSubTypeList()
-
-        return supportedMimeSubTypes.any { mimeType?.contains(it) ?: false }
+        return if (mimeType == null) {
+            false
+        } else {
+            val supportedMimeSubTypes = buildMimeSubTypeList()
+            supportedMimeSubTypes.any { subtype -> subtype in mimeType }
+        }
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
@@ -40,7 +43,10 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         )
     }
 
-    private fun buildSubTypeList() = listOf(
+    /**
+     * Provides a list of MIME subtypes.
+     */
+    private fun buildMimeSubTypeList() = listOf(
         // mp3
         "mpeg-3", "x-mpeg3", "mp3", "mpeg", "x-mpeg",
         // aac

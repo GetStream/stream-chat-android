@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.R
 
 /**
- * Provides icons for files attachments.
+ * Provides icons for file attachments.
  */
 internal object MimeTypeIconProvider {
 
