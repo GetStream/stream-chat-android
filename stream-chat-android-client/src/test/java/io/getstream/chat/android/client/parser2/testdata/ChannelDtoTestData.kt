@@ -160,7 +160,7 @@ internal object ChannelDtoTestData {
         team = "team1",
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
-        own_capabilities = listOf(ChannelCapabilities.ConnectEvents, ChannelCapabilities.PinMessage),
+        own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
         extraData = mapOf("draft" to true),
     )
 
