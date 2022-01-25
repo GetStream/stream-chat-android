@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class GroupChatInfoViewModel(
     private val cid: String,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    chatClient: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
@@ -89,8 +89,10 @@ class GroupChatInfoViewModel(
 
     private fun leaveChannel() {
         viewModelScope.launch {
-            val result = chatDomain.leaveChannel(cid).await()
-            if (result.isSuccess) {
+            val result = chatClient.getCurrentUser()?.let { user ->
+                chatClient.removeMembers(channelClient.channelType, channelClient.channelId, listOf(user.id)).await()
+            }
+            if (result?.isSuccess == true) {
                 _events.value = Event(UiEvent.RedirectToHome)
             } else {
                 _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError))

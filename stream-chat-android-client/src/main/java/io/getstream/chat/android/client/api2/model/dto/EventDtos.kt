@@ -36,6 +36,7 @@ internal data class ChannelTruncatedEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto?,
+    val message: DownstreamMessageDto?,
     val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 

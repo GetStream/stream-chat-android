@@ -101,7 +101,7 @@ public data class ChannelHiddenEvent(
 ) : CidEvent(), UserEvent
 
 /**
- * Triggered when a channels' history is truncated
+ * Triggered when a channels' history is truncated. Could contain system [message].
  */
 public data class ChannelTruncatedEvent(
     override val type: String,
@@ -110,6 +110,7 @@ public data class ChannelTruncatedEvent(
     override val channelType: String,
     override val channelId: String,
     val user: User?,
+    val message: Message?,
     override val channel: Channel,
 ) : CidEvent(), HasChannel
 

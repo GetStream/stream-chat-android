@@ -249,8 +249,25 @@ public class ChannelController internal constructor(
             }
     }
 
-    private fun removeMessagesBefore(date: Date) {
-        mutableState._messages.value = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
+    /**
+     * Removes messages before the given date and optionally adds a system message
+     * that was coming with the event.
+     *
+     * @param date The date used for generating result.
+     * @param systemMessage The system message to display.
+     */
+    private fun removeMessagesBefore(
+        date: Date,
+        systemMessage: Message? = null,
+    ) {
+        val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
+
+        if (systemMessage == null) {
+            mutableState._messages.value = messages
+        } else {
+            mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
+            channelLogic.updateLastMessageAtByNewMessages(listOf(systemMessage))
+        }
     }
 
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
@@ -436,22 +453,6 @@ public class ChannelController internal constructor(
         return Result(true)
     }
 
-    internal suspend fun sendGiphy(message: Message): Result<Message> {
-        val request = SendActionRequest(
-            message.cid,
-            message.id,
-            message.type,
-            mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
-        )
-        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
-        removeLocalMessage(message)
-        return if (result.isSuccess) {
-            Result(result.data())
-        } else {
-            Result(result.error())
-        }
-    }
-
     internal suspend fun shuffleGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
@@ -459,7 +460,8 @@ public class ChannelController internal constructor(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
-        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
+
+        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
 
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
@@ -619,8 +621,8 @@ public class ChannelController internal constructor(
         return message
     }
 
-    private fun removeLocalMessage(message: Message) {
-        mutableState._messages.value = mutableState._messages.value - message.id
+    internal fun removeLocalMessage(message: Message) {
+        channelLogic.removeLocalMessage(message)
     }
 
     public fun clean() {
@@ -744,9 +746,10 @@ public class ChannelController internal constructor(
                 removeMessagesBefore(event.createdAt)
                 mutableState._channelData.value = mutableState.channelData.value.copy(deletedAt = event.createdAt)
             }
-            is ChannelTruncatedEvent,
-            is NotificationChannelTruncatedEvent,
-            -> {
+            is ChannelTruncatedEvent -> {
+                removeMessagesBefore(event.createdAt, event.message)
+            }
+            is NotificationChannelTruncatedEvent -> {
                 removeMessagesBefore(event.createdAt)
             }
             is TypingStopEvent -> {
@@ -1041,6 +1044,5 @@ public class ChannelController internal constructor(
     internal companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-        private const val MESSAGE_ACTION_SEND = "send"
     }
 }

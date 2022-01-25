@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
+import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
@@ -136,6 +137,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: TruncateChannelRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/query")

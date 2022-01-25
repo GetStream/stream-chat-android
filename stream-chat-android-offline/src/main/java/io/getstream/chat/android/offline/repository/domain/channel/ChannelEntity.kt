@@ -51,6 +51,8 @@ internal data class ChannelEntity(
     val syncStatus: SyncStatus,
     /** channel's team */
     val team: String,
+    /** Channel's capabilities available for the current user. */
+    val ownCapabilities: Set<String>,
 ) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)

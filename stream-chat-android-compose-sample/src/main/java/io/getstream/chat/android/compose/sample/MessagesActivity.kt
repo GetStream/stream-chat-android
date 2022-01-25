@@ -41,9 +41,11 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
@@ -70,6 +72,7 @@ class MessagesActivity : AppCompatActivity() {
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
+    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
@@ -150,40 +153,64 @@ class MessagesActivity : AppCompatActivity() {
 
             if (selectedMessageState != null) {
                 val selectedMessage = selectedMessageState.message
-                if (selectedMessageState is SelectedMessageOptionsState) {
-                    SelectedMessageMenu(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 20.dp)
-                            .wrapContentSize(),
-                        shape = ChatTheme.shapes.attachment,
-                        messageOptions = defaultMessageOptionsState(
-                            selectedMessage = selectedMessage,
+                when (selectedMessageState) {
+                    is SelectedMessageOptionsState -> {
+                        SelectedMessageMenu(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            messageOptions = defaultMessageOptionsState(
+                                selectedMessage = selectedMessage,
+                                currentUser = user,
+                                isInThread = listViewModel.isInThread
+                            ),
+                            message = selectedMessage,
+                            onMessageAction = { action ->
+                                composerViewModel.performMessageAction(action)
+                                listViewModel.performMessageAction(action)
+                            },
+                            onShowMoreReactionsSelected = {
+                                listViewModel.selectExtendedReactions(selectedMessage)
+                            },
+                            onDismiss = { listViewModel.removeOverlay() }
+                        )
+                    }
+                    is SelectedMessageReactionsState -> {
+                        SelectedReactionsMenu(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            message = selectedMessage,
                             currentUser = user,
-                            isInThread = listViewModel.isInThread
-                        ),
-                        message = selectedMessage,
-                        onMessageAction = { action ->
-                            composerViewModel.performMessageAction(action)
-                            listViewModel.performMessageAction(action)
-                        },
-                        onDismiss = { listViewModel.removeOverlay() }
-                    )
-                } else if (selectedMessageState is SelectedMessageReactionsState) {
-                    SelectedReactionsMenu(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 20.dp)
-                            .wrapContentSize(),
-                        shape = ChatTheme.shapes.attachment,
-                        message = selectedMessage,
-                        currentUser = user,
-                        onMessageAction = { action ->
-                            composerViewModel.performMessageAction(action)
-                            listViewModel.performMessageAction(action)
-                        },
-                        onDismiss = { listViewModel.removeOverlay() }
-                    )
+                            onMessageAction = { action ->
+                                composerViewModel.performMessageAction(action)
+                                listViewModel.performMessageAction(action)
+                            },
+                            onShowMoreReactionsSelected = {
+                                listViewModel.selectExtendedReactions(selectedMessage)
+                            },
+                            onDismiss = { listViewModel.removeOverlay() }
+                        )
+                    }
+                    is SelectedMessageReactionsPickerState -> {
+                        ReactionsPicker(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            message = selectedMessage,
+                            onMessageAction = { action ->
+                                composerViewModel.performMessageAction(action)
+                                listViewModel.performMessageAction(action)
+                            },
+                            onDismiss = { listViewModel.removeOverlay() }
+                        )
+                    }
                 }
             }
         }

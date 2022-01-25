@@ -29,5 +29,6 @@ internal fun DownstreamChannelDto.toDomain(): Channel =
         team = team,
         cooldown = cooldown,
         pinnedMessages = pinned_messages.map(DownstreamMessageDto::toDomain),
+        ownCapabilities = own_capabilities.toSet(),
         extraData = extraData.toMutableMap(),
     )

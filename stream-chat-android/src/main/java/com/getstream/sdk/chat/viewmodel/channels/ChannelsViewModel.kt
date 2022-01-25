@@ -91,8 +91,15 @@ public class ChannelsViewModel(
         }
     }
 
+    /**
+     * Removes the current user from the channel.
+     *
+     * @param channel The channel that the current user will leave.
+     */
     public fun leaveChannel(channel: Channel) {
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        ChatClient.instance().getCurrentUser()?.let { user ->
+            ChatClient.instance().removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        }
     }
 
     public fun deleteChannel(channel: Channel) {

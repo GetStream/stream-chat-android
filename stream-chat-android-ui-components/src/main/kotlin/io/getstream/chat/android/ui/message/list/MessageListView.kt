@@ -70,17 +70,22 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageClickLis
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageDeleteHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageEditHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageFlagHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.MessageListItemTransformer
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageLongClickListener
+import io.getstream.chat.android.ui.message.list.MessageListView.MessagePinHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageReactionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageReplyHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
+import io.getstream.chat.android.ui.message.list.MessageListView.MessageUnpinHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ReplyMessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadStartHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserMuteHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.UserReactionClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserUnmuteHandler
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
@@ -356,8 +361,21 @@ public class MessageListView : ConstraintLayout {
             _attachmentDeleteOptionHandler,
         )
 
+    /**
+     * Handles attachment clicks which by default open the attachment preview.
+     *
+     * Can be customized by [setAttachmentClickListener].
+     *
+     * In case the attachments are being uploaded, they cannot be opened for preview until all of the attachments within
+     * a message are uploaded.
+     */
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
+            val hasInvalidAttachments = message.attachments.any { it.uploadState != null }
+            if (hasInvalidAttachments) {
+                return@AttachmentClickListener
+            }
+
             val destination = when {
                 message.attachments.all(Attachment::isMedia) -> {
                     val filteredAttachments = message.attachments
@@ -647,7 +665,8 @@ public class MessageListView : ConstraintLayout {
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
-            messageBackgroundFactory
+            messageBackgroundFactory,
+            deletedMessageListItemPredicate
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
