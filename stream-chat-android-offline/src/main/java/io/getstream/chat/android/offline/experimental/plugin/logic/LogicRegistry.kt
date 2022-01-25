@@ -64,7 +64,7 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     }
 
     /**
-     * Returns list of  [QueryChannelsLogic] of all query channel requests.
+     * Returns list of [QueryChannelsLogic] for all query channel requests.
      *
      * @return List of [QueryChannelsLogic]
      */
