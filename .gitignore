@@ -1,11 +1,6 @@
 *.iml
 .composite
 buildSrc/build
-stream-chat-android-sample/release/*
-stream-chat-android-sample/.sign/keystore.properties
-stream-chat-android-sample/.sign/keystore.properties.asc
-stream-chat-android-sample/.sign/release.keystore
-stream-chat-android-sample/.sign/release.keystore.asc
 .gradle
 /local.properties
 
