@@ -707,6 +707,8 @@ class Android {
         fun loadMoreMessages() {
             val chatDomain = ChatDomain.instance()
 
+            // TODO: Review docs (https://github.com/GetStream/stream-chat-android/issues/2976)
+            @Suppress("DEPRECATION_ERROR")
             chatDomain.loadOlderMessages("messaging:123", 10)
                 .enqueue { result ->
                     if (result.isSuccess) {
