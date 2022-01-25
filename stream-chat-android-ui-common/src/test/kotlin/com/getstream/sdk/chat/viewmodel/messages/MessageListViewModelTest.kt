@@ -104,7 +104,6 @@ internal class MessageListViewModelTest {
         whenever(domain.threadLoadMore(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
-        whenever(domain.loadOlderMessages(any(), any())) doReturn loadOlderMessagesCall
         whenever(domain.deleteMessage(any(), any())) doReturn deleteMessageCall
         whenever(domain.getThread(any(), any())) doReturn getThreadCall
         whenever(getThreadResult.isSuccess) doReturn true
@@ -146,6 +145,8 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
+        // TODO: Review this test
+        @Suppress("DEPRECATION_ERROR")
         verify(domain).loadOlderMessages(CID, MESSAGES_LIMIT)
     }
 

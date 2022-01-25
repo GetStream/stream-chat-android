@@ -624,6 +624,7 @@ public class Android {
         public void loadMoreMessages() {
             ChatDomain chatDomain = ChatDomain.instance();
 
+            // TODO: Review docs
             chatDomain.loadOlderMessages("messaging:123", 10)
                     .enqueue(result -> {
                         if (result.isSuccess()) {

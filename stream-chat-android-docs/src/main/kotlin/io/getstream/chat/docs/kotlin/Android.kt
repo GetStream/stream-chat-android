@@ -707,6 +707,8 @@ class Android {
         fun loadMoreMessages() {
             val chatDomain = ChatDomain.instance()
 
+            // TODO: Review docs
+            @Suppress("DEPRECATION_ERROR")
             chatDomain.loadOlderMessages("messaging:123", 10)
                 .enqueue { result ->
                     if (result.isSuccess) {

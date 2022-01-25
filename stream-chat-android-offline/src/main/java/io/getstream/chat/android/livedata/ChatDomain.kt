@@ -203,7 +203,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 

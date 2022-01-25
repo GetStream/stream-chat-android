@@ -74,6 +74,8 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
         whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn failedCall("the call failed")
 
         // Now backend fails, so the cache request must work for a successful result.
+        // TODO: Review this test
+        @Suppress("DEPRECATION_ERROR")
         val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
 
         result.isSuccess.shouldBeTrue()
