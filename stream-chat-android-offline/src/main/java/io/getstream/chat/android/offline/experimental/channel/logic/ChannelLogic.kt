@@ -350,6 +350,15 @@ internal class ChannelLogic(
         }
     }
 
+    /**
+     * Remove a local message from the current list.
+     *
+     * @param message The [Message] to remove.
+     */
+    internal fun removeLocalMessage(message: Message) {
+        mutableState._messages.value = mutableState._messages.value - message.id
+    }
+
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
     }

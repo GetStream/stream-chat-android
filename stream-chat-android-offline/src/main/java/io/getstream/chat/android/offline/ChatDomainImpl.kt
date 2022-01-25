@@ -52,7 +52,9 @@ import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
+import io.getstream.chat.android.offline.extensions.sendGiphy
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.extensions.shuffleGiphy
 import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
@@ -84,11 +86,9 @@ import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
-import io.getstream.chat.android.offline.usecase.SendGiphy
 import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
-import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
@@ -967,9 +967,25 @@ internal class ChatDomainImpl internal constructor(
 
     override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
-    override fun shuffleGiphy(message: Message): Call<Message> = ShuffleGiphy(this).invoke(message)
+    /**
+     * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
+     * Returns new "ephemeral" message with new giphy url.
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     *
+     * @param message The message to send.
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
+     */
+    override fun shuffleGiphy(message: Message): Call<Message> = client.shuffleGiphy(message)
 
-    override fun sendGiphy(message: Message): Call<Message> = SendGiphy(this).invoke(message)
+    /**
+     * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
+     * Returns new "ephemeral" message with new giphy url.
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param message The message to send.
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
+     */
+    override fun sendGiphy(message: Message): Call<Message> = client.sendGiphy(message)
 
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
