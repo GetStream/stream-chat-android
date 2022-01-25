@@ -12,53 +12,53 @@ package io.getstream.chat.android.client.models
  */
 public object ChannelCapabilities {
     /** Ability to ban channel members. */
-    public const val BanChannelMembers: String = "ban-channel-members"
+    public const val BAN_CHANNEL_MEMBERS: String = "ban-channel-members"
     /** Ability to receive connect events. */
-    public const val ConnectEvents: String = "connect-events"
+    public const val CONNECT_EVENTS: String = "connect-events"
     /** Ability to delete any message from the channel. */
-    public const val DeleteAnyMessage: String = "delete-any-message"
+    public const val DELETE_ANY_MESSAGE: String = "delete-any-message"
     /** Ability to delete the channel. */
-    public const val DeleteChannel: String = "delete-channel"
+    public const val DELETE_CHANNEL: String = "delete-channel"
     /** Ability to delete own messages from the channel. */
-    public const val DeleteOwnMessage: String = "delete-own-message"
+    public const val DELETE_OWN_MESSAGE: String = "delete-own-message"
     /** Ability to flag a message. */
-    public const val FlagMessage: String = "flag-message"
+    public const val FLAG_MESSAGE: String = "flag-message"
     /** Ability to freeze or unfreeze the channel. */
-    public const val FreezeChannel: String = "freeze-channel"
+    public const val FREEZE_CHANNEL: String = "freeze-channel"
     /** Ability to leave the channel (remove own membership). */
-    public const val LeaveChannel: String = "leave-channel"
+    public const val LEAVE_CHANNEL: String = "leave-channel"
     /** Ability to mute the channel. */
-    public const val MuteChannel: String = "mute-channel"
+    public const val MUTE_CHANNEL: String = "mute-channel"
     /** Ability to pin a message. */
-    public const val PinMessage: String = "pin-message"
+    public const val PIN_MESSAGE: String = "pin-message"
     /** Ability to quote a message. */
-    public const val QuoteMessage: String = "quote-message"
+    public const val QUOTE_MESSAGE: String = "quote-message"
     /** Ability to receive read events. */
-    public const val ReadEvents: String = "read-events"
+    public const val READ_EVENTS: String = "read-events"
     /** Ability to use message search. */
-    public const val SearchMessages: String = "search-messages"
+    public const val SEARCH_MESSAGES: String = "search-messages"
     /** Ability to send custom events. */
-    public const val SendCustomEvents: String = "send-custom-events"
+    public const val SEND_CUSTOM_EVENTS: String = "send-custom-events"
     /** Ability to attach links to messages. */
-    public const val SendLinks: String = "send-links"
+    public const val SEND_LINKS: String = "send-links"
     /** Ability to send a message. */
-    public const val SendMessage: String = "send-message"
+    public const val SEND_MESSAGE: String = "send-message"
     /** Ability to send reactions. */
-    public const val SendReaction: String = "send-reaction"
+    public const val SEND_REACTION: String = "send-reaction"
     /** Ability to thread reply to a message. */
-    public const val SendReply: String = "send-reply"
+    public const val SEND_REPLY: String = "send-reply"
     /** Ability to enable or disable slow mode. */
-    public const val SetChannelCooldown: String = "set-channel-cooldown"
+    public const val SET_CHANNEL_COOLDOWN: String = "set-channel-cooldown"
     /** Ability to send and receive typing events. */
-    public const val TypingEvents: String = "typing-events"
+    public const val TYPING_EVENTS: String = "typing-events"
     /** Ability to update any message in the channel. */
-    public const val UpdateAnyMessage: String = "update-any-message"
+    public const val UPDATE_ANY_MESSAGE: String = "update-any-message"
     /** Ability to update channel data. */
-    public const val UpdateChannel: String = "update-channel"
+    public const val UPDATE_CHANNEL: String = "update-channel"
     /** Ability to update channel members. */
-    public const val UpdateChannelMembers: String = "update-channel-members"
+    public const val UPDATE_CHANNEL_MEMBERS: String = "update-channel-members"
     /** Ability to update own messages in the channel. */
-    public const val UpdateOwnMessage: String = "update-own-message"
+    public const val UPDATE_OWN_MESSAGE: String = "update-own-message"
     /** Ability to upload message attachments. */
-    public const val UploadFile: String = "upload-file"
+    public const val UPLOAD_FILE: String = "upload-file"
 }

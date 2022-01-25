@@ -2326,32 +2326,32 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 }
 
 public final class io/getstream/chat/android/client/models/ChannelCapabilities {
-	public static final field BanChannelMembers Ljava/lang/String;
-	public static final field ConnectEvents Ljava/lang/String;
-	public static final field DeleteAnyMessage Ljava/lang/String;
-	public static final field DeleteChannel Ljava/lang/String;
-	public static final field DeleteOwnMessage Ljava/lang/String;
-	public static final field FlagMessage Ljava/lang/String;
-	public static final field FreezeChannel Ljava/lang/String;
+	public static final field BAN_CHANNEL_MEMBERS Ljava/lang/String;
+	public static final field CONNECT_EVENTS Ljava/lang/String;
+	public static final field DELETE_ANY_MESSAGE Ljava/lang/String;
+	public static final field DELETE_CHANNEL Ljava/lang/String;
+	public static final field DELETE_OWN_MESSAGE Ljava/lang/String;
+	public static final field FLAG_MESSAGE Ljava/lang/String;
+	public static final field FREEZE_CHANNEL Ljava/lang/String;
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/ChannelCapabilities;
-	public static final field LeaveChannel Ljava/lang/String;
-	public static final field MuteChannel Ljava/lang/String;
-	public static final field PinMessage Ljava/lang/String;
-	public static final field QuoteMessage Ljava/lang/String;
-	public static final field ReadEvents Ljava/lang/String;
-	public static final field SearchMessages Ljava/lang/String;
-	public static final field SendCustomEvents Ljava/lang/String;
-	public static final field SendLinks Ljava/lang/String;
-	public static final field SendMessage Ljava/lang/String;
-	public static final field SendReaction Ljava/lang/String;
-	public static final field SendReply Ljava/lang/String;
-	public static final field SetChannelCooldown Ljava/lang/String;
-	public static final field TypingEvents Ljava/lang/String;
-	public static final field UpdateAnyMessage Ljava/lang/String;
-	public static final field UpdateChannel Ljava/lang/String;
-	public static final field UpdateChannelMembers Ljava/lang/String;
-	public static final field UpdateOwnMessage Ljava/lang/String;
-	public static final field UploadFile Ljava/lang/String;
+	public static final field LEAVE_CHANNEL Ljava/lang/String;
+	public static final field MUTE_CHANNEL Ljava/lang/String;
+	public static final field PIN_MESSAGE Ljava/lang/String;
+	public static final field QUOTE_MESSAGE Ljava/lang/String;
+	public static final field READ_EVENTS Ljava/lang/String;
+	public static final field SEARCH_MESSAGES Ljava/lang/String;
+	public static final field SEND_CUSTOM_EVENTS Ljava/lang/String;
+	public static final field SEND_LINKS Ljava/lang/String;
+	public static final field SEND_MESSAGE Ljava/lang/String;
+	public static final field SEND_REACTION Ljava/lang/String;
+	public static final field SEND_REPLY Ljava/lang/String;
+	public static final field SET_CHANNEL_COOLDOWN Ljava/lang/String;
+	public static final field TYPING_EVENTS Ljava/lang/String;
+	public static final field UPDATE_ANY_MESSAGE Ljava/lang/String;
+	public static final field UPDATE_CHANNEL Ljava/lang/String;
+	public static final field UPDATE_CHANNEL_MEMBERS Ljava/lang/String;
+	public static final field UPDATE_OWN_MESSAGE Ljava/lang/String;
+	public static final field UPLOAD_FILE Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/ChannelMute {
