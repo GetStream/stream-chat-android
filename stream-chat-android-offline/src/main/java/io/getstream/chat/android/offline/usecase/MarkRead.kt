@@ -25,7 +25,7 @@ internal class MarkRead(private val domainImpl: ChatDomainImpl) {
             channelController.markRead().let { markedRead ->
                 if (markedRead) {
                     domainImpl.client
-                        .markRead(channelController.channelType, channelController.channelId)
+                        .markReadInternal(channelController.channelType, channelController.channelId)
                         .await()
                 }
 
