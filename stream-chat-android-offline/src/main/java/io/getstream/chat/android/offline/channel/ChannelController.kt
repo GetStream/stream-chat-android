@@ -453,22 +453,6 @@ public class ChannelController internal constructor(
         return Result(true)
     }
 
-    internal suspend fun sendGiphy(message: Message): Result<Message> {
-        val request = SendActionRequest(
-            message.cid,
-            message.id,
-            message.type,
-            mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
-        )
-        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
-        removeLocalMessage(message)
-        return if (result.isSuccess) {
-            Result(result.data())
-        } else {
-            Result(result.error())
-        }
-    }
-
     internal suspend fun shuffleGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
@@ -637,8 +621,8 @@ public class ChannelController internal constructor(
         return message
     }
 
-    private fun removeLocalMessage(message: Message) {
-        mutableState._messages.value = mutableState._messages.value - message.id
+    internal fun removeLocalMessage(message: Message) {
+        channelLogic.removeLocalMessage(message)
     }
 
     public fun clean() {
@@ -1060,6 +1044,5 @@ public class ChannelController internal constructor(
     internal companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-        private const val MESSAGE_ACTION_SEND = "send"
     }
 }
