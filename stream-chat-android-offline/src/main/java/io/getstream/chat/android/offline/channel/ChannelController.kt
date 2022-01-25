@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.channel
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
@@ -451,29 +450,6 @@ public class ChannelController internal constructor(
         domainImpl.repos.deleteChannelMessage(message)
         removeLocalMessage(message)
         return Result(true)
-    }
-
-    internal suspend fun shuffleGiphy(message: Message): Result<Message> {
-        val request = SendActionRequest(
-            message.cid,
-            message.id,
-            message.type,
-            mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
-        )
-
-        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
-
-        return if (result.isSuccess) {
-            val processedMessage: Message = result.data()
-            processedMessage.apply {
-                syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertMessage(this)
-            }
-            upsertMessage(processedMessage)
-            Result(processedMessage)
-        } else {
-            Result(result.error())
-        }
     }
 
     internal suspend fun sendImage(file: File): Result<String> {
@@ -1039,10 +1015,5 @@ public class ChannelController internal constructor(
                 Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
             )
         }
-    }
-
-    internal companion object {
-        private const val KEY_MESSAGE_ACTION = "image_action"
-        private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
     }
 }
