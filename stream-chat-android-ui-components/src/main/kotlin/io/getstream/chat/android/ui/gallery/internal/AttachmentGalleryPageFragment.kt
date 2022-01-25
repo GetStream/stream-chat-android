@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.getstream.sdk.chat.disposable.DisposableList
+import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
@@ -12,6 +14,8 @@ internal class AttachmentGalleryPageFragment : Fragment() {
 
     private var _binding: StreamUiItemImageGalleryBinding? = null
     private val binding get() = _binding!!
+
+    private val disposableList = DisposableList()
 
     private val imageUrl: String by lazy {
         requireNotNull(requireArguments().getString(ARG_IMAGE_URL)) { "Image URL must not be null" }
@@ -28,7 +32,7 @@ internal class AttachmentGalleryPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding.photoView) {
-            load(data = imageUrl)
+            load(data = imageUrl).addToDisposableList(disposableList)
             setOnClickListener {
                 imageClickListener()
             }

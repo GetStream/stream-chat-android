@@ -12,6 +12,8 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
+import com.getstream.sdk.chat.disposable.CoilDisposable
+import com.getstream.sdk.chat.disposable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
@@ -45,9 +47,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Disposable {
         val context = target.context
-        target.loadAny(data, context.streamImageLoader) {
+        val disposable = target.loadAny(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
@@ -58,6 +60,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             )
             applyTransformation(transformation)
         }
+
+        return CoilDisposable(disposable)
     }
 
     override fun load(
@@ -67,9 +71,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Disposable {
         val context = target.context
-        target.loadAny(data, context.streamImageLoader) {
+        val disposable = target.loadAny(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderDrawable?.let(::placeholder)
             listener(
@@ -80,6 +84,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             )
             applyTransformation(transformation)
         }
+
+        return CoilDisposable(disposable)
     }
 
     override fun loadVideoThumbnail(
@@ -89,9 +95,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Disposable {
         val context = target.context
-        target.loadAny(uri, context.streamImageLoader) {
+        val disposable = target.loadAny(uri, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
@@ -103,6 +109,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             fetcher(VideoFrameUriFetcher(context))
             applyTransformation(transformation)
         }
+
+        return CoilDisposable(disposable)
     }
 
     private fun ImageRequest.Builder.applyTransformation(

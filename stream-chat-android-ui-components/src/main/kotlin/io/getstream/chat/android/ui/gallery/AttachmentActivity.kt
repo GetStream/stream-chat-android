@@ -9,6 +9,8 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.disposable.DisposableList
+import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -23,6 +25,7 @@ public class AttachmentActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiActivityAttachmentBinding
 
     private val logger = ChatLogger.get("AttachmentActivity")
+    private val disposableList = DisposableList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +100,7 @@ public class AttachmentActivity : AppCompatActivity() {
         binding.ivImage.load(
             data = url,
             placeholderResId = R.drawable.stream_ui_placeholder,
-        )
+        ).addToDisposableList(disposableList)
     }
 
     private inner class AppWebViewClients : WebViewClient() {

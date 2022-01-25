@@ -2,6 +2,8 @@ package io.getstream.chat.android.ui.message.input.attachment.selected.internal
 
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import com.getstream.sdk.chat.disposable.DisposableList
+import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -29,6 +31,7 @@ internal class SelectedFileAttachmentAdapter(
         private val attachmentMaxFileSize: Long,
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
         lateinit var attachment: AttachmentMetaData
+        private val disposableList = DisposableList()
 
         init {
             binding.tvClose.setOnClickListener { onAttachmentCancelled(attachment) }
@@ -38,7 +41,7 @@ internal class SelectedFileAttachmentAdapter(
             this.attachment = item
 
             binding.apply {
-                ivFileThumb.loadAttachmentThumb(attachment)
+                ivFileThumb.loadAttachmentThumb(attachment).addToDisposableList(disposableList)
                 tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 if (item.size > attachmentMaxFileSize) {
                     tvFileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
@@ -48,6 +51,12 @@ internal class SelectedFileAttachmentAdapter(
                     tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
                 }
             }
+        }
+
+        override fun unbind() {
+            super.unbind()
+
+            disposableList.clear()
         }
     }
 }

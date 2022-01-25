@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.disposable.DisposableList
+import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -33,6 +35,11 @@ internal class MediaAttachmentAdapter(
     }
 
     override fun getItemCount(): Int = attachments.size
+
+    override fun onViewRecycled(holder: MediaAttachmentViewHolder) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
 
     fun setAttachments(attachments: List<AttachmentMetaData>) {
         this.attachments.clear()
@@ -64,6 +71,7 @@ internal class MediaAttachmentAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         lateinit var attachment: AttachmentMetaData
+        private val disposableList = DisposableList()
 
         init {
             binding.root.setOnClickListener { onAttachmentSelected(attachment) }
@@ -78,12 +86,16 @@ internal class MediaAttachmentAdapter(
             bindAttachmentType(attachment)
         }
 
+        fun unbind() {
+            disposableList.clear()
+        }
+
         private fun bindMediaImage(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
                 binding.mediaThumbnailImageView.loadVideoThumbnail(
                     uri = attachment.uri,
                     placeholderResId = R.drawable.stream_ui_placeholder,
-                )
+                ).addToDisposableList(disposableList)
                 val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_white_smoke)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)
             } else {

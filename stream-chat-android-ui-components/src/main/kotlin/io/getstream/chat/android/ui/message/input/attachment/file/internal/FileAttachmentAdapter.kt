@@ -3,6 +3,8 @@ package io.getstream.chat.android.ui.message.input.attachment.file.internal
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.disposable.DisposableList
+import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -58,6 +60,11 @@ internal class FileAttachmentAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: FileAttachmentViewHolder) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
+
     class FileAttachmentViewHolder(
         private val binding: StreamUiItemAttachmentFileBinding,
         private val onAttachmentClick: (AttachmentMetaData) -> Unit,
@@ -65,6 +72,7 @@ internal class FileAttachmentAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         lateinit var attachment: AttachmentMetaData
+        private val disposableList = DisposableList()
 
         init {
             binding.run {
@@ -83,7 +91,7 @@ internal class FileAttachmentAdapter(
             this.attachment = attachment
 
             binding.apply {
-                fileTypeImageView.loadAttachmentThumb(attachment)
+                fileTypeImageView.loadAttachmentThumb(attachment).addToDisposableList(disposableList)
                 fileNameTextView.text = attachment.title
                 fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
 
@@ -99,6 +107,10 @@ internal class FileAttachmentAdapter(
             } else {
                 style.fileCheckboxDeselectedDrawable
             }
+        }
+
+        fun unbind() {
+            disposableList.clear()
         }
     }
 }
