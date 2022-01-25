@@ -351,9 +351,9 @@ internal class ChannelLogic(
     }
 
     /**
-     * Remove a local message from the current list
+     * Remove a local message from the current list.
      *
-     * @param message [Message]
+     * @param message The [Message] to remove.
      */
     internal fun removeLocalMessage(message: Message) {
         mutableState._messages.value = mutableState._messages.value - message.id

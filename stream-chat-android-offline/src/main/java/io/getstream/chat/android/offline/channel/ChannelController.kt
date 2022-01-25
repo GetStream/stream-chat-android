@@ -460,7 +460,8 @@ public class ChannelController internal constructor(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
-        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
+
+        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
 
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
@@ -621,7 +622,7 @@ public class ChannelController internal constructor(
     }
 
     internal fun removeLocalMessage(message: Message) {
-        mutableState._messages.value = mutableState._messages.value - message.id
+        channelLogic.removeLocalMessage(message)
     }
 
     public fun clean() {
