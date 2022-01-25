@@ -43,6 +43,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added method to consult the settings of the app. Use `ChatClient.instance().appSettings()` to request the settings of your app. [#2960](https://github.com/GetStream/stream-chat-android/pull/2960)
 - Added `ChatClient.shuffleGiphy` extension function and removing ShuffleGiphy use case. [#2962](https://github.com/GetStream/stream-chat-android/pull/2962)
 - Added `ChatClient.sendGiphy` extension function and removing SendGiphy use case. [#2963](https://github.com/GetStream/stream-chat-android/pull/2963)
+- Added `Channel::ownCapabilities` and `ChannelCapabilities` object.
+  Channel capabilities provide you information on which features are available for the current user. [#2971](https://github.com/GetStream/stream-chat-android/pull/2971)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.leaveChannel`. Use ChatClient.removeMembers instead. [#2926](https://github.com/GetStream/stream-chat-android/pull/2926)
