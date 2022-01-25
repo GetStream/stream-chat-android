@@ -531,7 +531,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().showChannel(channelType, channelId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun showChannel(cid: String): Call<Unit>
 
