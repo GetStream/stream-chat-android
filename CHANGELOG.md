@@ -41,6 +41,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added the `systemMessage` parameter to `ChatClient::truncateChannel` and `ChannelClient:truncate` methods that represents a system message that will be displayed after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
 - Added the `message` parameter to the `ChannelTruncatedEvent` that represents a system message that will be displayed after the channel was truncated. [#2949](https://github.com/GetStream/stream-chat-android/pull/2949)
 - Added method to consult the settings of the app. Use `ChatClient.instance().appSettings()` to request the settings of your app. [#2960](https://github.com/GetStream/stream-chat-android/pull/2960)
+- Added `ChatClient.shuffleGiphy` extension function and removing ShuffleGiphy use case. [#2962](https://github.com/GetStream/stream-chat-android/pull/2962)
+- Added `ChatClient.sendGiphy` extension function and removing SendGiphy use case. [#2963](https://github.com/GetStream/stream-chat-android/pull/2963)
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.leaveChannel`. Use ChatClient.removeMembers instead. [#2926](https://github.com/GetStream/stream-chat-android/pull/2926)
@@ -95,6 +97,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 - `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Improve Korean 🇰🇷 translations. [#2953](https://github.com/GetStream/stream-chat-android/pull/2953)
+- Improved `MessageComposer` UX by disabling commands when attachments or text are present. [#2961](https://github.com/GetStream/stream-chat-android/pull/2961)
+- Improved `MessageComposer` UX by disabling attachment integration button when popups with suggestions are present. [#2961](https://github.com/GetStream/stream-chat-android/pull/2961)
 
 ### ✅ Added
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
