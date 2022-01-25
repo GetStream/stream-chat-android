@@ -59,6 +59,7 @@ fun CustomMessageComposer(
     )
 }
 ```
+For simplicity, the `integration` section to the left of the message input has only one button that is used to show the date picker dialog. 
 
 Next, you'll need to create a custom messages screen that makes use of the custom message composer that you've created above:
 
@@ -124,7 +125,7 @@ Now you can send a custom attachment of type `date` to the chat. The resulting U
 
 ## Rendering Date Attachments
 
-Let's see how to create an [AttachmentFactory](../02-general-customization/02-attachment-factory.mdx) that is capable of handling `date` attachments:
+Let's see how to create an [AttachmentFactory](../02-general-customization/02-attachment-factory.mdx) that is capable of handling date attachments:
 
 ```kotlin
 @ExperimentalStreamChatApi
