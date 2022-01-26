@@ -95,6 +95,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed crashes caused by deleting channels [#2942](https://github.com/GetStream/stream-chat-android/pull/2942)
+- Fixed the way our attachments work and are represented in Compose to support more attachment types. [#2955](https://github.com/GetStream/stream-chat-android/pull/2955)
 
 ### ⬆️ Improved
 - `ReactionOptions` now displays the option to show more reactions if there are more than 5 available [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
