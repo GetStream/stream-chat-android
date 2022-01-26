@@ -91,7 +91,7 @@ public class ImagePreviewViewModel(
                 it.assetUrl == imageUrl || it.imageUrl == imageUrl
             }
 
-            chatDomain.editMessage(message).enqueue()
+            chatClient.updateMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result.isSuccess) {

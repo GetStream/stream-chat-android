@@ -205,8 +205,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun sendGiphy(message: Message): Call<Message> = chatDomainStateFlow.sendGiphy(message)
 
-    override fun editMessage(message: Message): Call<Message> = chatDomainStateFlow.editMessage(message)
-
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         chatDomainStateFlow.sendReaction(cid, reaction, enforceUnique)
 
