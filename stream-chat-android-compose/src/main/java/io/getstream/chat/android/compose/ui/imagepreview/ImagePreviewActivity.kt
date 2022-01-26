@@ -94,6 +94,9 @@ import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
 
+/**
+ * Shows an image preview, where we can page through image items, zoom in and perform various actions.
+ */
 @OptIn(ExperimentalPagerApi::class)
 public class ImagePreviewActivity : AppCompatActivity() {
 
@@ -113,6 +116,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
      */
     private val imagePreviewViewModel by viewModels<ImagePreviewViewModel>(factoryProducer = { factory })
 
+    /**
+     * Sets up the data required to show the preview of images within the given message.
+     *
+     * Immediately finishes in case the data is invalid.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
@@ -782,10 +790,18 @@ public class ImagePreviewActivity : AppCompatActivity() {
         private const val COLUMN_COUNT = 3
 
         /**
-         * Keys required for the input and output data.
+         * Represents the key for the ID of the message with the attachments we're browsing.
          */
         private const val KEY_MESSAGE_ID: String = "messageId"
+
+        /**
+         * Represents the key for the starting attachment position based on the clicked attachment.
+         */
         private const val KEY_ATTACHMENT_POSITION: String = "attachmentPosition"
+
+        /**
+         * Represents the key for the result of the preview, like scrolling to the message.
+         */
         public const val KEY_IMAGE_PREVIEW_RESULT: String = "imagePreviewResult"
 
         /**
