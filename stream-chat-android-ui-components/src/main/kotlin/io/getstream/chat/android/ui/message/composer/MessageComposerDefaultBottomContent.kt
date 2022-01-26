@@ -38,7 +38,6 @@ public class MessageComposerDefaultBottomContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultBottomContentBinding.inflate(streamThemeInflater, this)
-        // binding.root.isVisible = false
         binding.sendAlsoToChannel.setOnCheckedChangeListener { _, _ -> onSendAlsoToChannelSelected(binding.sendAlsoToChannel.isChecked) }
     }
 

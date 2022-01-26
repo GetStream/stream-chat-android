@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
+        android:buttonTint="@color/stream_ui_accent_blue"
         android:text="@string/stream_ui_message_input_send_to_channel"
         android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_medium"
