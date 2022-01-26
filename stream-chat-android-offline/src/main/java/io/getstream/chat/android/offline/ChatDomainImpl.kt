@@ -249,7 +249,7 @@ internal class ChatDomainImpl internal constructor(
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     @VisibleForTesting
-    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this)
+    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this, client)
     private var logger = ChatLogger.get("Domain")
 
     private val cleanTask = object : Runnable {
