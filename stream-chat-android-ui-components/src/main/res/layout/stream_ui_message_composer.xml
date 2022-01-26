@@ -4,6 +4,7 @@
     >
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/mainContentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -13,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:layout_constraintRight_toRightOf="@+id/centerContent"
+            app:layout_constraintEnd_toEndOf="@+id/centerContent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -24,8 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            app:layout_constraintLeft_toRightOf="@+id/leadingContent"
-            app:layout_constraintRight_toLeftOf="@+id/trailingContent"
+            app:layout_constraintEnd_toStartOf="@+id/trailingContent"
+            app:layout_constraintStart_toEndOf="@+id/leadingContent"
             app:layout_constraintTop_toTopOf="parent"
             />
 
@@ -35,10 +36,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/centerContent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/centerContent"
             app:layout_constraintTop_toTopOf="parent"
             />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <FrameLayout
+        android:id="@+id/bottomContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainContentContainer"
+        />
+
 </merge>

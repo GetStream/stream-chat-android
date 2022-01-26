@@ -5,14 +5,14 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerChild
 
 /**
  * Default implementation of command suggestions view. Displayed in a popup above [MessageComposerView] when there are
- * command suggestions available in the current [MessageInputState].
+ * command suggestions available in the current [MessageComposerState].
  */
 public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChild {
 
@@ -55,9 +55,9 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
     /**
      * Propagates list of currently available command suggestions to adapter.
      *
-     * @param state Current [MessageInputState] instance. Provides available command suggestions data.
+     * @param state Current [MessageComposerState] instance. Provides available command suggestions data.
      */
-    override fun renderState(state: MessageInputState) {
+    override fun renderState(state: MessageComposerState) {
         adapter.setItems(state.commandSuggestions)
     }
 }

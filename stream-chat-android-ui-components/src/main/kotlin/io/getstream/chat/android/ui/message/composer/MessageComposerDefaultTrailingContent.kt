@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 
@@ -45,14 +45,14 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     /**
      * Re-rendering the UI according to the new state.
      */
-    override fun renderState(state: MessageInputState) {
+    override fun renderState(state: MessageComposerState) {
         binding.apply {
-            val sendButtonVisible = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.coolDownTimer == 0
+            val sendButtonVisible = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.coolDownTime == 0
             sendMessageButtonDisabled.isVisible = !sendButtonVisible
             sendMessageButtonEnabled.isVisible = sendButtonVisible
-            val coolDownTimerVisible = state.coolDownTimer > 0
+            val coolDownTimerVisible = state.coolDownTime > 0
             coolDownBadge.isVisible = coolDownTimerVisible
-            if (coolDownTimerVisible) coolDownBadge.text = state.coolDownTimer.toString()
+            if (coolDownTimerVisible) coolDownBadge.text = state.coolDownTime.toString()
         }
     }
 }
