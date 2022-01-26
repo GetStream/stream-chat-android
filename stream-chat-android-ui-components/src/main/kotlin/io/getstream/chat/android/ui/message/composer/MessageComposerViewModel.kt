@@ -90,7 +90,6 @@ public class MessageComposerViewModel(
     public fun setAlsoSendToChannel(alsoSendToChannel: Boolean): Unit =
         messageComposerController.setAlsoSendToChannel(alsoSendToChannel)
 
-
     /**
      * Called when the message mode changes and the internal state needs to be updated.
      *
@@ -186,7 +185,6 @@ public class MessageComposerViewModel(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility(): Unit = messageComposerController.toggleCommandsVisibility()
-
 
     /**
      * Disposes the inner [MessageComposerController].
