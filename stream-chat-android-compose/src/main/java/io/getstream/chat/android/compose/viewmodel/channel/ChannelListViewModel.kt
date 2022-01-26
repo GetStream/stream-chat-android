@@ -8,18 +8,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.Flow
@@ -39,12 +44,18 @@ import kotlinx.coroutines.launch
  * @param initialSort The initial sort used for [Channel]s.
  * @param initialFilters The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
+ * @param channelLimit How many channels we fetch per page.
+ * @param memberLimit How many members are fetched for each channel item when loading channels.
+ * @param messageLimit How many messages are fetched for each channel item when loading channels.
  */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
     initialSort: QuerySort<Channel>,
     private val initialFilters: FilterObject,
+    private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+    private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
 ) : ViewModel() {
 
     /**
@@ -111,25 +122,69 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Current query channels state that contains filter, sort and other states related to channels query.
+     */
+    private var queryChannelsState: QueryChannelsState? = null
+
+    /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
         viewModelScope.launch {
-            searchQuery.combine(queryConfig) { query, config -> query to config }
-                .collectLatest { (query, config) ->
-                    val result = chatDomain.queryChannels(
-                        filter = createQueryChannelsFilter(config.filters, query),
-                        sort = config.querySort
-                    ).await()
-
-                    if (result.isSuccess) {
-                        observeChannels(controller = result.data(), searchQuery = query)
-                    } else {
-                        result.error().cause?.printStackTrace()
-                        channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
-                    }
-                }
+            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                initWithOfflinePlugin()
+            } else {
+                initWithChatDomain()
+            }
         }
+    }
+
+    /**
+     * Initializes this ViewModel with ChatDomain implementation. It makes the initial query to request channels
+     * and starts to observe state changes.
+     *
+     * Note: This method can be removed once OfflinePlugin is completed and released.
+     */
+    private suspend fun initWithChatDomain() {
+        searchQuery.combine(queryConfig) { query, config -> query to config }
+            .collectLatest { (query, config) ->
+                val result = chatDomain.queryChannels(
+                    filter = createQueryChannelsFilter(config.filters, query),
+                    sort = config.querySort,
+                    messageLimit = messageLimit,
+                    limit = channelLimit,
+                    memberLimit = memberLimit
+                ).await()
+
+                if (result.isSuccess) {
+                    observeChannels(controller = result.data(), searchQuery = query)
+                } else {
+                    result.error().cause?.printStackTrace()
+                    channelsState = channelsState.copy(isLoading = false, channelItems = emptyList())
+                }
+            }
+    }
+
+    /**
+     * Initializes this ViewModel with OfflinePlugin implementation. It makes the initial query to request channels
+     * and starts to observe state changes.
+     */
+    private suspend fun initWithOfflinePlugin() {
+        searchQuery.combine(queryConfig) { query, config -> query to config }
+            .collectLatest { (query, config) ->
+                val queryChannelsRequest = QueryChannelsRequest(
+                    filter = createQueryChannelsFilter(config.filters, query),
+                    querySort = config.querySort,
+                    limit = channelLimit,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                )
+                queryChannelsState =
+                    chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+                queryChannelsState?.let {
+                    observeChannels(it, searchQuery = query)
+                }
+            }
     }
 
     /**
@@ -141,6 +196,7 @@ public class ChannelListViewModel(
      *
      * @param filter The filter that was passed by the user.
      * @param searchQuery The search query used to filter the channels.
+     *
      * @return The filter that will be used to query channels.
      */
     private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
@@ -164,6 +220,9 @@ public class ChannelListViewModel(
      * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
+     *
+     * @param controller The controller used to query channels and their states.
+     * @param searchQuery The search query string used to search channels.
      */
     private suspend fun observeChannels(controller: QueryChannelsController, searchQuery: String) {
         chatDomain.channelMutes.combine(controller.channelsState, ::Pair)
@@ -188,6 +247,43 @@ public class ChannelListViewModel(
                             channelItems = createChannelItems(state.channels, channelMutes),
                             isLoadingMore = false,
                             endOfChannels = controller.endOfChannels.value,
+                            searchQuery = searchQuery
+                        )
+                    }
+                }
+            }.collectLatest { newState -> channelsState = newState }
+    }
+
+    /**
+     * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
+     *
+     * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [queryChannelsState].
+     * @param queryChannelsState The state that contains information about query channels.
+     * @param searchQuery The search query string used to search channels.
+     */
+    private suspend fun observeChannels(queryChannelsState: QueryChannelsState, searchQuery: String) {
+        chatDomain.channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
+            .map { (channelMutes, state) ->
+                when (state) {
+                    ChannelsStateData.NoQueryActive,
+                    ChannelsStateData.Loading,
+                    -> channelsState.copy(
+                        isLoading = true,
+                        searchQuery = searchQuery
+                    )
+                    ChannelsStateData.OfflineNoResults -> {
+                        channelsState.copy(
+                            isLoading = false,
+                            channelItems = emptyList(),
+                            searchQuery = searchQuery
+                        )
+                    }
+                    is ChannelsStateData.Result -> {
+                        channelsState.copy(
+                            isLoading = false,
+                            channelItems = createChannelItems(state.channels, channelMutes),
+                            isLoadingMore = false,
+                            endOfChannels = queryChannelsState.endOfChannels.value,
                             searchQuery = searchQuery
                         )
                     }
@@ -250,7 +346,19 @@ public class ChannelListViewModel(
         }
 
         channelsState = channelsState.copy(isLoadingMore = true)
-        chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
+        val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val currentQuery = queryChannelsState?.nextPageRequest?.value
+            currentQuery?.copy(
+                filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
+                querySort = currentConfig.querySort
+            )?.let {
+                chatClient.queryChannels(it)
+            }
+        } else {
+            chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort)
+        }
+
+        call?.enqueue()
     }
 
     /**
@@ -304,7 +412,7 @@ public class ChannelListViewModel(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.deleteChannel(channel.id).enqueue()
+        chatDomain.deleteChannel(channel.cid).enqueue()
     }
 
     /**
@@ -316,7 +424,9 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        chatClient.getCurrentUser()?.let { user ->
+            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+        }
     }
 
     /**
@@ -337,5 +447,22 @@ public class ChannelListViewModel(
     private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
         return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
+    }
+
+    internal companion object {
+        /**
+         * Default value of number of channels to return when querying channels.
+         */
+        internal const val DEFAULT_CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of the number of messages to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of the number of members to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }

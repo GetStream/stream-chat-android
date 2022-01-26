@@ -62,15 +62,6 @@ public sealed interface ChatDomain {
     public val connectionState: StateFlow<ConnectionState>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online, connecting or offline.
-     */
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    public val online: StateFlow<Boolean>
-
-    /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
@@ -137,7 +128,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
@@ -173,6 +164,7 @@ public sealed interface ChatDomain {
      * @param sort How to sort the channels (default is last_message_at).
      * @param limit The number of channels to retrieve.
      * @param messageLimit How many messages to retrieve per channel.
+     * @param memberLimit The number of members per channel.
      *
      * @return Executable async [Call] responsible for obtaining [QueryChannelsController].
      *
@@ -187,6 +179,7 @@ public sealed interface ChatDomain {
         sort: QuerySort<Channel>,
         limit: Int = 30,
         messageLimit: Int = 1,
+        memberLimit: Int = 30,
     ): Call<QueryChannelsController>
 
     /**
@@ -217,7 +210,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
@@ -257,6 +250,7 @@ public sealed interface ChatDomain {
      * @param sort The sort for the channels, by default will sort on last_message_at.
      * @param limit The number of channels to retrieve.
      * @param messageLimit How many messages to fetch per channel.
+     * @param memberLimit The number of members per channel.
      *
      * @return Executable async [Call] responsible for loading more channels.
      *
@@ -270,6 +264,7 @@ public sealed interface ChatDomain {
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
+        memberLimit: Int,
     ): Call<List<Channel>>
 
     /**
@@ -328,6 +323,13 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
+    @Deprecated(
+        message = "createChannel is deprecated. Use ChatClient::createChannel extension function  instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().createChannel(channel)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+    )
     @CheckResult
     public fun createChannel(channel: Channel): Call<Channel>
 
@@ -355,6 +357,14 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
+    @Deprecated(
+        message = "cancelMessage is deprecated. Use extension function ChatClient::cancelMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().cancelMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
@@ -457,7 +467,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().keystroke(cid, parentId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
@@ -477,7 +487,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().stopTyping(cid, parentId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
@@ -527,7 +537,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().showChannel(channelType, channelId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun showChannel(cid: String): Call<Unit>
 
@@ -539,6 +549,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] leaving a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "leaveChannel is deprecated. Use function ChatClient::removeMembers instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().removeMembers(channel.type, channel.id, listOf(userId))",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun leaveChannel(cid: String): Call<Unit>
 
     /**
@@ -566,7 +584,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().setMessageForReply(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
@@ -584,7 +602,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().downloadAttachment(attachment)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 

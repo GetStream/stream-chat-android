@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -63,26 +61,22 @@ public fun ChannelItem(
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
-        DefaultChannelItemLeadingContent(channelItem = it, currentUser = currentUser)
+        DefaultChannelItemLeadingContent(
+            channelItem = it,
+            currentUser = currentUser
+        )
     },
     centerContent: @Composable RowScope.(ChannelItemState) -> Unit = {
         DefaultChannelItemCenterContent(
             channel = it.channel,
             isMuted = it.isMuted,
-            currentUser = currentUser,
-            modifier = Modifier
-                .weight(1f)
-                .wrapContentHeight()
+            currentUser = currentUser
         )
     },
     trailingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
         DefaultChannelItemTrailingContent(
             channel = it.channel,
             currentUser = currentUser,
-            modifier = Modifier
-                .padding(start = ChatTheme.dimens.channelItemHorizontalPadding)
-                .wrapContentHeight()
-                .align(Alignment.Bottom)
         )
     },
 ) {
@@ -92,7 +86,6 @@ public fun ChannelItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = ChatTheme.colors.appBackground)
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
@@ -101,12 +94,7 @@ public fun ChannelItem(
             ),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = ChatTheme.dimens.channelItemVerticalPadding,
-                    horizontal = ChatTheme.dimens.channelItemHorizontalPadding
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             leadingContent(channelItem)
@@ -119,7 +107,7 @@ public fun ChannelItem(
 }
 
 /**
- * Represents the default leading content of [ChannelItem].
+ * Represents the default leading content of [ChannelItem], that shows the channel avatar.
  *
  * @param channelItem The channel to show the avatar of.
  * @param currentUser The currently logged in user.
@@ -131,7 +119,12 @@ internal fun DefaultChannelItemLeadingContent(
 ) {
     ChannelAvatar(
         modifier = Modifier
-            .padding(end = ChatTheme.dimens.channelItemHorizontalPadding)
+            .padding(
+                start = ChatTheme.dimens.channelItemHorizontalPadding,
+                end = 4.dp,
+                top = ChatTheme.dimens.channelItemVerticalPadding,
+                bottom = ChatTheme.dimens.channelItemVerticalPadding
+            )
             .size(ChatTheme.dimens.channelAvatarSize),
         channel = channelItem.channel,
         currentUser = currentUser
@@ -139,23 +132,24 @@ internal fun DefaultChannelItemLeadingContent(
 }
 
 /**
- * Represents the center portion of the channel item, that shows the channel display name and the last message text
- * preview.
+ * Represents the center portion of [ChannelItem], that shows the channel display name
+ * and the last message text preview.
  *
  * @param channel The channel to show the info for.
  * @param isMuted If the channel is muted for the current user.
  * @param currentUser The currently logged in user, used for data handling.
- * @param modifier Modifier for styling.
  */
 @Composable
-internal fun DefaultChannelItemCenterContent(
+internal fun RowScope.DefaultChannelItemCenterContent(
     channel: Channel,
     isMuted: Boolean,
     currentUser: User?,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = Modifier
+            .padding(start = 4.dp, end = 4.dp)
+            .weight(1f)
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.Center
     ) {
         val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
@@ -204,24 +198,31 @@ internal fun DefaultChannelItemCenterContent(
 }
 
 /**
- * Represents the information about the last message for the channel item, such as its read state and how many unread
- * messages the user has.
+ * Represents the default trailing content for the channel item. By default it shows
+ * the the information about the last message for the channel item, such as its read state,
+ * timestamp and how many unread messages the user has.
  *
  * @param channel The channel to show the info for.
  * @param currentUser The currently logged in user, used for data handling.
- * @param modifier Modifier for styling.
  */
 @Composable
-internal fun DefaultChannelItemTrailingContent(
+internal fun RowScope.DefaultChannelItemTrailingContent(
     channel: Channel,
     currentUser: User?,
-    modifier: Modifier = Modifier,
 ) {
     val lastMessage = channel.getLastMessage(currentUser)
 
     if (lastMessage != null) {
         Column(
-            modifier = modifier,
+            modifier = Modifier
+                .padding(
+                    start = 4.dp,
+                    end = ChatTheme.dimens.channelItemHorizontalPadding,
+                    top = ChatTheme.dimens.channelItemVerticalPadding,
+                    bottom = ChatTheme.dimens.channelItemVerticalPadding
+                )
+                .wrapContentHeight()
+                .align(Alignment.Bottom),
             horizontalAlignment = Alignment.End
         ) {
             val unreadCount = channel.unreadCount
@@ -239,7 +240,7 @@ internal fun DefaultChannelItemTrailingContent(
                     lastMessage = lastMessage,
                     currentUser = currentUser,
                     modifier = Modifier
-                        .padding(end = ChatTheme.dimens.channelItemHorizontalPadding)
+                        .padding(end = 8.dp)
                         .size(16.dp)
                 )
 
@@ -250,82 +251,71 @@ internal fun DefaultChannelItemTrailingContent(
 }
 
 /**
- * Preview of [DefaultChannelItemCenterContent] component for one-to-one conversation.
+ * Preview of the [ChannelItem] component for a channel with unread messages.
  *
- * Should show a user name and the last message in the channel.
+ * Should show unread count badge, delivery indicator and timestamp.
  */
-@Preview(showBackground = true, name = "ChannelDetails Preview (One-to-one conversation)")
+@Preview(showBackground = true, name = "ChannelItem Preview (Channel with unread)")
 @Composable
-private fun DefaultChannelCenterContentOneToOnePreview() {
-    DefaultChannelDetailsPreview(
+private fun ChannelItemForChannelWithUnreadMessagesPreview() {
+    ChannelItemPreview(
         channel = PreviewChannelData.channelWithMessages,
+        currentUser = PreviewUserData.user1
+    )
+}
+
+/**
+ * Preview of [ChannelItem] for a muted channel.
+ *
+ * Should show a muted icon next to the channel name.
+ */
+@Preview(showBackground = true, name = "ChannelItem Preview (Muted channel)")
+@Composable
+private fun ChannelItemForMutedChannelPreview() {
+    ChannelItemPreview(
+        channel = PreviewChannelData.channelWithMessages,
+        currentUser = PreviewUserData.user1,
+        isMuted = true
+    )
+}
+
+/**
+ * Preview of [ChannelItem] for a channel without messages.
+ *
+ * Should show only channel name that is centered vertically.
+ */
+@Preview(showBackground = true, name = "ChannelItem Preview (Without messages)")
+@Composable
+private fun ChannelItemForChannelWithoutMessagesPreview() {
+    ChannelItemPreview(
+        channel = PreviewChannelData.channelWithImage,
         isMuted = false,
         currentUser = PreviewUserData.user1
     )
 }
 
 /**
- * Preview of [DefaultChannelItemCenterContent] for muted channel.
- *
- * Should show a muted icon next to the channel name.
- */
-@Preview(showBackground = true, name = "ChannelDetails Preview (Muted channel)")
-@Composable
-private fun DefaultChannelCenterContentMutedPreview() {
-    DefaultChannelDetailsPreview(
-        channel = PreviewChannelData.channelWithMessages,
-        isMuted = true
-    )
-}
-
-/**
- * Preview of [DefaultChannelItemCenterContent] for a channel without messages.
- *
- * Should show only channel name that is centered vertically.
- */
-@Preview(showBackground = true, name = "ChannelDetails Preview (Without message)")
-@Composable
-private fun DefaultChannelCenterContentWithMessagePreview() {
-    DefaultChannelDetailsPreview(channel = PreviewChannelData.channelWithImage)
-}
-
-/**
- * Shows [DefaultChannelItemCenterContent] preview for the provided parameters.
+ * Shows [ChannelItem] preview for the provided parameters.
  *
  * @param channel The channel used to show the preview.
  * @param isMuted If the channel is muted.
  * @param currentUser The currently logged in user.
  */
 @Composable
-private fun DefaultChannelDetailsPreview(
+private fun ChannelItemPreview(
     channel: Channel,
     isMuted: Boolean = false,
     currentUser: User? = null,
 ) {
     ChatTheme {
-        DefaultChannelItemCenterContent(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp),
-            channel = channel,
-            isMuted = isMuted,
-            currentUser = currentUser
-        )
-    }
-}
-
-/**
- * Preview of [DefaultChannelItemTrailingContent].
- *
- * Should show unread count badge, delivery indicator and timestamp.
- */
-@Preview(showBackground = true, name = "ChannelLastMessageInfo Preview")
-@Composable
-private fun DefaultChannelTrailingContentPreview() {
-    ChatTheme {
-        DefaultChannelItemTrailingContent(
-            channel = PreviewChannelData.channelWithMessages,
-            currentUser = PreviewUserData.user1,
+        ChannelItem(
+            channelItem = ChannelItemState(
+                channel = channel,
+                isMuted = isMuted
+            ),
+            currentUser = currentUser,
+            onChannelClick = {},
+            onChannelLongClick = {},
         )
     }
 }

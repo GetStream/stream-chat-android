@@ -74,13 +74,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
      */
     override val connectionState: LiveData<ConnectionState> = chatDomainStateFlow.connectionState.asLiveData()
 
-    @Deprecated(
-        message = "Use connectionState instead",
-        level = DeprecationLevel.ERROR
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override val online: LiveData<Boolean> = chatDomainStateFlow.online.asLiveData()
-
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount.
@@ -138,6 +131,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
+    @Suppress("DEPRECATION_ERROR")
     override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
         chatDomainStateFlow.replayEventsForActiveChannels(cid)
 
@@ -158,6 +152,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getThread(cid: String, parentId: String): Call<ThreadController> =
         chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
         chatDomainStateFlow.loadOlderMessages(cid, messageLimit)
 
@@ -176,18 +171,26 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort, limit, messageLimit)
+        memberLimit: Int,
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(
+        filter = filter,
+        sort = sort,
+        limit = limit,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+    )
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort, messageLimit)
+    ): Call<List<Channel>> =
+        chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort, messageLimit = messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort)
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort)
 
     override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
         chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)
@@ -216,9 +219,11 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         chatDomainStateFlow.deleteReaction(cid, reaction)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
         chatDomainStateFlow.keystroke(cid, parentId)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
         chatDomainStateFlow.stopTyping(cid, parentId)
 
@@ -229,15 +234,18 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> =
         chatDomainStateFlow.hideChannel(cid, keepHistory)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun showChannel(cid: String): Call<Unit> = chatDomainStateFlow.showChannel(cid)
 
     override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlow.leaveChannel(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
         chatDomainStateFlow.setMessageForReply(cid, message)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun downloadAttachment(attachment: Attachment): Call<Unit> =
         chatDomainStateFlow.downloadAttachment(attachment)
 

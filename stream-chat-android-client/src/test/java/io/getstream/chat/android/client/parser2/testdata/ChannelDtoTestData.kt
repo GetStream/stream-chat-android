@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -98,7 +99,9 @@ internal object ChannelDtoTestData {
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
-            "shadow_banned": false
+            "shadow_banned": false,
+            "banned": false,
+            "channel_role": "member"
            }
           ],
           "watchers": [${UserDtoTestData.downstreamJson}],
@@ -114,7 +117,8 @@ internal object ChannelDtoTestData {
           "team": "team1",
           "cooldown": 1,
           "pinned_messages": [${MessageDtoTestData.downstreamJson}],
-          "draft": true
+          "draft": true,
+          "own_capabilities": ["connect-events", "pin-message"]
         }
         """.withoutWhitespace()
     val downstreamChannel = DownstreamChannelDto(
@@ -139,6 +143,8 @@ internal object ChannelDtoTestData {
                 invite_accepted_at = Date(1591787071588),
                 invite_rejected_at = null,
                 shadow_banned = false,
+                banned = false,
+                channel_role = "member",
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -154,6 +160,7 @@ internal object ChannelDtoTestData {
         team = "team1",
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
+        own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
         extraData = mapOf("draft" to true),
     )
 
@@ -212,7 +219,9 @@ internal object ChannelDtoTestData {
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
-            "shadow_banned": false
+            "shadow_banned": false,
+            "banned": false,
+            "channel_role": "member"
            }
           ],
           "watchers": [${UserDtoTestData.upstreamJson}],
@@ -253,6 +262,8 @@ internal object ChannelDtoTestData {
                 invite_accepted_at = Date(1591787071588),
                 invite_rejected_at = null,
                 shadow_banned = false,
+                banned = false,
+                channel_role = "member",
             ),
         ),
         watchers = listOf(UserDtoTestData.upstreamUser),

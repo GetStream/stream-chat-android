@@ -185,6 +185,7 @@ private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent {
         channelType = channel_type,
         channelId = channel_id,
         user = user?.toDomain(),
+        message = message?.toDomain(),
         channel = channel.toDomain(),
     )
 }

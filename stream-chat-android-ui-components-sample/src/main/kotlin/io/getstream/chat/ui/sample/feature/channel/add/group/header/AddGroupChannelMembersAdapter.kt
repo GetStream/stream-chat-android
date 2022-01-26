@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.AddGroupChannelMemberItemBinding
 import io.getstream.chat.ui.sample.feature.channel.add.header.MemberClickListener
 
@@ -26,7 +27,7 @@ class AddGroupChannelMembersAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         return AddGroupChannelMemberItemBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
             .let(::MemberViewHolder)
     }
 

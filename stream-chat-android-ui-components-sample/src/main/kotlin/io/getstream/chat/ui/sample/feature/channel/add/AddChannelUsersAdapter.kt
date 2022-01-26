@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelUserItemBinding
 import io.getstream.chat.ui.sample.feature.channel.add.AddChannelUsersAdapter.UserClickListener
@@ -29,11 +30,11 @@ class AddChannelUsersAdapter : ListAdapter<UserListItem, BaseViewHolder<*>>(
         return when (viewType) {
             TYPE_SEPARATOR ->
                 AddChannelSeparatorItemBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let(::SeparatorViewHolder)
             TYPE_USER_ITEM ->
                 AddChannelUserItemBinding
-                    .inflate(LayoutInflater.from(parent.context), parent, false)
+                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
                     .let { UserItemViewHolder(it, userClickListener) }
             else -> throw IllegalArgumentException("Unhandled add channel user list view type ($viewType)")
         }

@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSepara
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -32,6 +33,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
@@ -267,7 +269,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onEndRegionReached()
             }
             is Event.LastMessageRead -> {
-                domain.markRead(cid).enqueue(
+                val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                    cid.cidToTypeAndId().let { (channelType, channelId) ->
+                        client.markRead(channelType, channelId)
+                    }
+                } else {
+                    domain.markRead(cid)
+                }
+                call.enqueue(
                     onError = { chatError ->
                         logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
                     }
@@ -378,7 +387,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     ?.message
 
                 if (message != null) {
-                    _targetMessage.value = message
+                    _targetMessage.value = message!!
                 } else {
                     domain.loadMessageById(
                         cid,
@@ -484,7 +493,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.CANCEL -> {
-                domain.cancelMessage(event.message).enqueue(
+                client.cancelMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
@@ -504,13 +513,35 @@ public class MessageListViewModel @JvmOverloads constructor(
                         messageListData?.loadingMoreChanged(false)
                     }
                 }
-                is Mode.Thread -> {
-                    threadListData?.loadingMoreChanged(true)
-                    domain.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT)
-                        .enqueue {
-                            threadListData?.loadingMoreChanged(false)
-                        }
+                is Mode.Thread -> threadLoadMore(this)
+            }
+        }
+    }
+
+    /**
+     * Load older messages for the specified thread [Mode.Thread.parentMessage].
+     *
+     * @param threadMode Current thread mode.
+     */
+    private fun threadLoadMore(threadMode: Mode.Thread) {
+        threadListData?.loadingMoreChanged(true)
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
+            domain.threadLoadMore(cid, threadMode.parentMessage.id, MESSAGES_LIMIT)
+                .enqueue {
+                    threadListData?.loadingMoreChanged(false)
                 }
+        } else {
+            if (threadMode.threadState != null) {
+                client.getRepliesMore(
+                    messageId = threadMode.parentMessage.id,
+                    firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
+                    limit = MESSAGES_LIMIT,
+                ).enqueue {
+                    threadListData?.loadingMoreChanged(false)
+                }
+            } else {
+                threadListData?.loadingMoreChanged(false)
+                logger.logW("Thread state must be not null for offline plugin thread load more!")
             }
         }
     }
@@ -549,7 +580,7 @@ public class MessageListViewModel @JvmOverloads constructor(
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val state = client.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
-        currentMode = Mode.Thread(parentMessage)
+        currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }
 
@@ -636,7 +667,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     public sealed class Mode {
-        public data class Thread(val parentMessage: Message) : Mode()
+        public data class Thread(val parentMessage: Message, val threadState: ThreadState? = null) : Mode()
         public object Normal : Mode()
     }
 

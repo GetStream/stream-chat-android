@@ -36,8 +36,8 @@ public fun ChannelMembers(
         items(members) { member ->
             ChannelMembersItem(
                 modifier = Modifier
-                    .width(ChatTheme.dimens.channelInfoUserItemWidth)
-                    .padding(horizontal = ChatTheme.dimens.channelInfoUserItemHorizontalPadding),
+                    .width(ChatTheme.dimens.selectedChannelMenuUserItemWidth)
+                    .padding(horizontal = ChatTheme.dimens.selectedChannelMenuUserItemHorizontalPadding),
                 member = member,
             )
         }

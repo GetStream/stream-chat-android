@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -50,6 +51,7 @@ import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -302,6 +304,13 @@ public class ChatClient internal constructor(
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()
     }
+
+    /**
+     * Get the current settings of the app. Check [AppSettings].
+     *
+     * @return [AppSettings] the settings of the app.
+     */
+    public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
@@ -774,6 +783,38 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Returns a list of messages pinned in the channel.
+     * You can sort the list by specifying [sort] parameter.
+     * Keep in mind that for now we only support sorting by [Message.pinnedAt].
+     * The list can be paginated in a few different ways using [limit] and [pagination].
+     * @see [PinnedMessagesPagination]
+     *
+     * @param channelType The channel type. (e.g. messaging, livestream)
+     * @param channelId The id of the channel we're querying.
+     * @param limit Max limit of messages to be fetched.
+     * @param sort Parameter by which we sort the messages.
+     * @param pagination Provides different options for pagination.
+     *
+     * @return Executable async [Call] responsible for getting pinned messages.
+     */
+    @CheckResult
+    public fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        return api.getPinnedMessages(
+            channelType = channelType,
+            channelId = channelId,
+            limit = limit,
+            sort = sort,
+            pagination = pagination,
+        )
+    }
+
     @CheckResult
     public fun getFileAttachments(
         channelType: String,
@@ -1032,6 +1073,7 @@ public class ChatClient internal constructor(
             .doOnResult(scope) { result ->
                 plugins.forEach { it.onQueryChannelsResult(result, request) }
             }
+            .precondition { onQueryChannelsPrecondition(request) }
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
@@ -1066,13 +1108,22 @@ public class ChatClient internal constructor(
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
+     * @param systemMessage The system message that will be shown in the channel.
      *
      * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
-    public fun truncateChannel(channelType: String, channelId: String): Call<Channel> {
-        return api.truncateChannel(channelType, channelId)
+    public fun truncateChannel(
+        channelType: String,
+        channelId: String,
+        systemMessage: Message? = null,
+    ): Call<Channel> {
+        return api.truncateChannel(
+            channelType = channelType,
+            channelId = channelId,
+            systemMessage = systemMessage
+        )
     }
 
     @CheckResult
@@ -1211,8 +1262,27 @@ public class ChatClient internal constructor(
         return api.markAllRead()
     }
 
+    /**
+     * Marks the specified channel as read.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
+        return api.markRead(channelType, channelId)
+            .precondition { onChannelMarkReadPrecondition(channelType, channelId) }
+    }
+
+    /**
+     * Marks the specified channel as read without running a precondition.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     */
+    @InternalStreamChatApi
+    @CheckResult
+    public fun markReadInternal(channelType: String, channelId: String): Call<Unit> {
         return api.markRead(channelType, channelId)
     }
 
@@ -1271,6 +1341,13 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Method to remove members of a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param members The list of the members to be removed.
+     */
     @CheckResult
     public fun removeMembers(
         channelType: String,

@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
@@ -57,15 +56,6 @@ public class QueryChannelsController internal constructor(
     public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
     public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
     public val channels: StateFlow<List<Channel>> = mutableState.channels
-
-    @Deprecated(
-        message = "Use ChatDomain.channelMutes instead",
-        replaceWith = ReplaceWith("ChatDomain.instance().channelMutes"),
-        level = DeprecationLevel.ERROR,
-    )
-    public val mutedChannelIds: StateFlow<List<String>> =
-        domainImpl.channelMutes.map { channelMutes -> channelMutes.map { channelMute -> channelMute.channel.id } }
-            .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     public val channelsState: StateFlow<ChannelsState> = mutableState.channelsStateData.map { state ->
         when (state) {
@@ -196,15 +186,6 @@ public class QueryChannelsController internal constructor(
             .intersect(cIds)
             .map { it to domainImpl.channel(it).toChannel() }
             .toMap()
-    }
-
-    internal suspend fun loadMore(
-        channelLimit: Int = CHANNEL_LIMIT,
-        messageLimit: Int = MESSAGE_LIMIT,
-    ): Result<List<Channel>> {
-        val oldChannels = mutableState._channels.value.values
-        val pagination = loadMoreRequest(channelLimit, messageLimit)
-        return runQuery(pagination).map { it - oldChannels }
     }
 
     private suspend fun addChannel(channel: Channel) = queryChannelsLogic.addChannel(channel)

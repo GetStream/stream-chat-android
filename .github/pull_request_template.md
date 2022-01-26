@@ -1,16 +1,14 @@
-_Jira issue link, if applicable_
-
 ### 🎯 Goal
 
 _Describe why we are making this change_
 
 ### 🛠 Implementation details
 
-_Provide a description of the implementation_
+_Describe the implementation_
 
 ### 🎨 UI Changes
 
-_ Add relevant screenshots_
+_Add relevant screenshots_
 
 | Before | After |
 | --- | --- |
@@ -25,8 +23,9 @@ _Explain how this change can be tested (or why it can't be tested)_
 #### General
 - [ ] I have signed the [Stream CLA](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) (required)
 - [ ] Assigned a person / code owner group (required)
-- [ ] Thread with the PR link started in a respective Slack channel (#android-team or #compose-chat-sdk-team) (required)
+- [ ] Thread with the PR link started in a respective Slack channel (#android-chat-core or #android-chat-ui) (required)
 - [ ] PR targets the `develop` branch
+- [ ] PR is linked to the GitHub issue it resolves
 
 #### Code & documentation
 - [ ] Changelog is updated with client-facing changes

@@ -17,6 +17,7 @@ import androidx.lifecycle.LiveData
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -52,7 +53,6 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -707,6 +707,8 @@ class Android {
         fun loadMoreMessages() {
             val chatDomain = ChatDomain.instance()
 
+            // TODO: Review docs (https://github.com/GetStream/stream-chat-android/issues/2976)
+            @Suppress("DEPRECATION_ERROR")
             chatDomain.loadOlderMessages("messaging:123", 10)
                 .enqueue { result ->
                     if (result.isSuccess) {
@@ -943,12 +945,12 @@ class Android {
 
     class MarkdownCustomization {
         fun customizeMarkdown() {
-            val markdown = ChatMarkdown { textView, text ->
+            val markdown = ChatMessageTextTransformer { textView, messageItem ->
                 // parse markdown the the new text and apply it.
-                textView.text = applyMarkdown(text)
+                textView.text = applyMarkdown(messageItem.message.text)
             }
 
-            ChatUI.markdown = markdown
+            ChatUI.messageTextTransformer = markdown
         }
 
         private fun applyMarkdown(text: String): String = text

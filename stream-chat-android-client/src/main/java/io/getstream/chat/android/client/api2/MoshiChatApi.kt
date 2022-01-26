@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api2
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -31,6 +32,7 @@ import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -38,10 +40,12 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
+import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.response.AppSettingsAPIResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -53,6 +57,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
@@ -83,6 +88,7 @@ internal class MoshiChatApi(
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
+    private val configApi: ConfigApi,
     private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
@@ -106,6 +112,10 @@ internal class MoshiChatApi(
     override fun setConnection(userId: String, connectionId: String) {
         this.userId = userId
         this.connectionId = connectionId
+    }
+
+    override fun appSettings(): Call<AppSettings> {
+        return configApi.getAppSettings().map(AppSettingsAPIResponse::toDomain)
     }
 
     override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {
@@ -479,6 +489,24 @@ internal class MoshiChatApi(
         ).toUnitCall()
     }
 
+    override fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        return channelApi.getPinnedMessages(
+            channelType = channelType,
+            channelId = channelId,
+            payload = PinnedMessagesRequest.create(
+                limit = limit,
+                sort = sort,
+                pagination = pagination,
+            ),
+        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+    }
+
     override fun updateChannel(
         channelType: String,
         channelId: String,
@@ -535,11 +563,13 @@ internal class MoshiChatApi(
     override fun truncateChannel(
         channelType: String,
         channelId: String,
+        systemMessage: Message?,
     ): Call<Channel> {
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
+            body = TruncateChannelRequest(message = systemMessage?.toDto())
         ).map(this::flattenChannel)
     }
 

@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.utils.isRtlLayout
 
 /**
  * A component that shows the profile image of the [User] and [Channel] with the online indicator and border.
@@ -111,23 +112,41 @@ public class AvatarView : AppCompatImageView {
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
     }
 
+    /**
+     * Draws an yellow circle in one of the corners of the AvatarView to show that the user is online. The position of the
+     * circle is set accordingly with the configuration of [AvatarStyle] and the RTL support of the SDK.
+     *
+     * @param canvas [Canvas].
+     * @param isOnline If the user is online of not.
+     * @param avatarStyle [AvatarStyle] The style is used to set the position of the cicle.
+     */
     private fun drawOnlineStatus(canvas: Canvas, isOnline: Boolean, avatarStyle: AvatarStyle) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
+            val isRtl = context.isRtlLayout
+
             val cx: Float = when (avatarStyle.onlineIndicatorPosition) {
-                OnlineIndicatorPosition.TOP_LEFT,
-                OnlineIndicatorPosition.BOTTOM_LEFT,
-                -> width / 8f
-                OnlineIndicatorPosition.TOP_RIGHT,
-                OnlineIndicatorPosition.BOTTOM_RIGHT,
-                -> width - (width / 8f)
+                OnlineIndicatorPosition.TOP_START,
+                OnlineIndicatorPosition.BOTTOM_START,
+                -> if (isRtl) {
+                    width - (width / 8f)
+                } else {
+                    width / 8f
+                }
+                OnlineIndicatorPosition.TOP_END,
+                OnlineIndicatorPosition.BOTTOM_END,
+                -> if (isRtl) {
+                    width / 8f
+                } else {
+                    width - (width / 8f)
+                }
             }
 
             val cy: Float = when (avatarStyle.onlineIndicatorPosition) {
-                OnlineIndicatorPosition.TOP_LEFT,
-                OnlineIndicatorPosition.TOP_RIGHT,
+                OnlineIndicatorPosition.TOP_START,
+                OnlineIndicatorPosition.TOP_END,
                 -> height / 8f
-                OnlineIndicatorPosition.BOTTOM_LEFT,
-                OnlineIndicatorPosition.BOTTOM_RIGHT,
+                OnlineIndicatorPosition.BOTTOM_START,
+                OnlineIndicatorPosition.BOTTOM_END,
                 -> height - height / 8f
             }
             canvas.drawCircle(cx, cy, width / 8f, onlineIndicatorOutlinePaint)
@@ -171,10 +190,10 @@ public class AvatarView : AppCompatImageView {
      * Used to set the position of the indicator on the avatar.
      */
     public enum class OnlineIndicatorPosition {
-        TOP_LEFT,
-        TOP_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_RIGHT
+        TOP_START,
+        TOP_END,
+        BOTTOM_START,
+        BOTTOM_END
     }
 
     /**

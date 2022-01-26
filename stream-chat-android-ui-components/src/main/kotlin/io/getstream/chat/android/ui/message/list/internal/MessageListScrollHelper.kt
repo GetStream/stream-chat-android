@@ -1,11 +1,13 @@
 package io.getstream.chat.android.ui.message.list.internal
 
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
@@ -42,6 +44,19 @@ internal class MessageListScrollHelper(
         }
         recyclerView.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
+
+                /**
+                 * Checks if we currently have a popup shown over the list.
+                 *
+                 * @param recyclerView The list that we're observing.
+                 * @param newState The scroll state of the list.
+                 */
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    stopScrollIfPopupShown(recyclerView)
+                }
+
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (!scrollToBottomButtonEnabled || currentList.isEmpty()) return
 
@@ -74,6 +89,20 @@ internal class MessageListScrollHelper(
                 }
             }
         )
+    }
+
+    /**
+     * Checks if we have any popups shown over the list and stops scrolling in case we do.
+     *
+     * @param recyclerView The list that's being observed for long taps and scrolling.
+     */
+    private fun stopScrollIfPopupShown(recyclerView: RecyclerView) {
+        val fragmentManager = recyclerView.context.getFragmentManager() ?: return
+        val hasDialogsShown = fragmentManager.fragments.any { it is DialogFragment }
+
+        if (hasDialogsShown) {
+            recyclerView.stopScroll()
+        }
     }
 
     internal fun scrollToMessage(message: Message) {

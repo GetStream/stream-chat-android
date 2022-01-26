@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -10,6 +11,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
@@ -29,6 +31,8 @@ import java.util.Date
 internal interface ChatApi {
 
     fun setConnection(userId: String, connectionId: String)
+
+    fun appSettings(): Call<AppSettings>
 
     @CheckResult
     fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
@@ -151,6 +155,15 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
+    fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>>
+
+    @CheckResult
     fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>>
 
     @CheckResult
@@ -219,6 +232,7 @@ internal interface ChatApi {
     fun truncateChannel(
         channelType: String,
         channelId: String,
+        systemMessage: Message?,
     ): Call<Channel>
 
     @CheckResult

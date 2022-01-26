@@ -1,18 +1,24 @@
 package io.getstream.chat.android.compose.ui.channels
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +39,7 @@ import io.getstream.chat.android.compose.state.channel.list.MuteChannel
 import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channels.info.ChannelInfo
+import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
@@ -52,11 +58,15 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
  * @param isShowingSearch If we show the search input or hide it.
+ * @param channelLimit The limit of channels queried per page.
+ * @param memberLimit The limit of members requested per channel.
+ * @param messageLimit The limit of messages requested per channel item.
  * @param onHeaderClickAction Handler for the default header action.
  * @param onItemClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 public fun ChannelsScreen(
     filters: FilterObject = Filters.and(
@@ -67,6 +77,9 @@ public fun ChannelsScreen(
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = false,
+    channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+    memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     onHeaderClickAction: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
@@ -75,14 +88,17 @@ public fun ChannelsScreen(
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
         factory = ChannelViewModelFactory(
-            ChatClient.instance(),
-            ChatDomain.instance(),
-            querySort,
-            filters
+            chatClient = ChatClient.instance(),
+            chatDomain = ChatDomain.instance(),
+            querySort = querySort,
+            filters = filters,
+            channelLimit = channelLimit,
+            memberLimit = memberLimit,
+            messageLimit = messageLimit
         )
     )
 
-    val selectedChannel by remember { listViewModel.selectedChannel }
+    val selectedChannel by listViewModel.selectedChannel
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
@@ -111,11 +127,14 @@ public fun ChannelsScreen(
             }
 
         ) {
-            Column(Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = ChatTheme.colors.appBackground)
+            ) {
                 if (isShowingSearch) {
                     SearchInput(
                         modifier = Modifier
-                            .background(color = ChatTheme.colors.appBackground)
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth(),
                         query = searchQuery,
@@ -138,13 +157,25 @@ public fun ChannelsScreen(
             }
         }
 
-        val selectedChannel = selectedChannel
-        if (selectedChannel != null) {
-            ChannelInfo(
+        val selectedChannel = selectedChannel ?: Channel()
+        AnimatedVisibility(
+            visible = selectedChannel.cid.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
+            SelectedChannelMenu(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter),
+                    .align(Alignment.BottomCenter)
+                    .animateEnterExit(
+                        enter = slideInVertically(
+                            initialOffsetY = { height -> height },
+                            animationSpec = tween()
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { height -> height },
+                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
+                        )
+                    ),
                 selectedChannel = selectedChannel,
                 currentUser = user,
                 isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
@@ -155,7 +186,8 @@ public fun ChannelsScreen(
                         is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
                         else -> listViewModel.performChannelAction(action)
                     }
-                }
+                },
+                onDismiss = { listViewModel.dismissChannelAction() }
             )
         }
 
@@ -165,10 +197,10 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_channel_info_leave_group_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title
                 ),
                 message = stringResource(
-                    id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
@@ -178,10 +210,10 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_title
                 ),
                 message = stringResource(
-                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },

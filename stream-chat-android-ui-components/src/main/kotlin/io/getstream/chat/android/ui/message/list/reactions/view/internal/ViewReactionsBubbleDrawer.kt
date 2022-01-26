@@ -1,11 +1,16 @@
 package io.getstream.chat.android.ui.message.list.reactions.view.internal
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.utils.isRtlLayout
 
+/**
+ * Draw the bubble of view reactions.
+ */
 internal class ViewReactionsBubbleDrawer(
     private val viewReactionsViewStyle: ViewReactionsViewStyle,
 ) {
@@ -39,7 +44,18 @@ internal class ViewReactionsBubbleDrawer(
     private var isMyMessage: Boolean = false
     private var isSingleReaction: Boolean = false
 
+    /**
+     * Draws the bubble of reactions choosing the correct direction.
+     *
+     * @param context [Context].
+     * @param canvas [Canvas].
+     * @param bubbleWidth The width of the bubble. This should be at least bigger than all the columns of reactions.
+     * @param isMyMessage Whether this is the message of the current user or not.
+     * @param isSingleReaction Whether there's only a single reaction of there are multiple reactions.
+     * @param inverseBubbleStyle Used to invert the side of the bubble.
+     */
     fun drawReactionsBubble(
+        context: Context,
         canvas: Canvas,
         bubbleWidth: Int,
         isMyMessage: Boolean,
@@ -50,10 +66,12 @@ internal class ViewReactionsBubbleDrawer(
         this.bubbleWidth = bubbleWidth
         this.isSingleReaction = isSingleReaction
 
+        val isRtl = context.isRtlLayout
+
         val path = Path().apply {
             op(createBubbleRoundRectPath(), Path.Op.UNION)
-            op(createLargeTailBubblePath(), Path.Op.UNION)
-            op(createSmallTailBubblePath(), Path.Op.UNION)
+            op(createLargeTailBubblePath(isRtl), Path.Op.UNION)
+            op(createSmallTailBubblePath(isRtl), Path.Op.UNION)
         }
 
         val outlineStyle = if (inverseBubbleStyle) !isMyMessage else isMyMessage
@@ -100,10 +118,15 @@ internal class ViewReactionsBubbleDrawer(
         }
     }
 
-    private fun createLargeTailBubblePath(): Path {
+    /**
+     * Draws the path of large tail bubble.
+     *
+     * @param isRtl If the bubble should be drawn with inverted direction.
+     */
+    private fun createLargeTailBubblePath(isRtl: Boolean): Path {
         return Path().apply {
             addCircle(
-                calculateBubbleCenterX(viewReactionsViewStyle.largeTailBubbleOffset.toFloat()),
+                positionBubble(isRtl, viewReactionsViewStyle.largeTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.largeTailBubbleCy.toFloat(),
                 viewReactionsViewStyle.largeTailBubbleRadius.toFloat(),
                 Path.Direction.CW
@@ -111,10 +134,15 @@ internal class ViewReactionsBubbleDrawer(
         }
     }
 
-    private fun createSmallTailBubblePath(): Path {
+    /**
+     * Draws the path of small tail bubble.
+     *
+     * @param isRtl If the bubble should be drawn with inverted direction.
+     */
+    private fun createSmallTailBubblePath(isRtl: Boolean): Path {
         return Path().apply {
             addCircle(
-                calculateBubbleCenterX(viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
+                positionBubble(isRtl, viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.smallTailBubbleCy.toFloat(),
                 viewReactionsViewStyle.smallTailBubbleRadius.toFloat() - getStrokeOffset(),
                 Path.Direction.CW
@@ -134,6 +162,22 @@ internal class ViewReactionsBubbleDrawer(
                 bubbleWidth / 2 - bubbleOffset
             } else {
                 MULTIPLE_REACTIONS_BASELINE_OFFSET - bubbleOffset
+            }
+        }
+    }
+
+    /**
+     * Applies an offset in the bubble, respecting RTL support.
+     *
+     * @param isRtl If the bubble should be drawn with inverted direction.
+     * @param bubbleOffset The offset to apply.
+     */
+    private fun positionBubble(isRtl: Boolean, bubbleOffset: Float): Float {
+        return calculateBubbleCenterX(bubbleOffset).let { offset ->
+            if (isRtl) {
+                bubbleWidth.toFloat() - offset
+            } else {
+                offset
             }
         }
     }

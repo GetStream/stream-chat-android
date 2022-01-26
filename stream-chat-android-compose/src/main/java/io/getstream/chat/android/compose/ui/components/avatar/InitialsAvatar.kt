@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.initialsGradient
 
@@ -23,6 +24,7 @@ import io.getstream.chat.android.compose.ui.util.initialsGradient
  * @param initials The initials to show.
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
+ * @param textStyle The [TextStyle] that will be used for the initials.
  * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
@@ -30,6 +32,7 @@ public fun InitialsAvatar(
     initials: String,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
+    textStyle: TextStyle = ChatTheme.typography.title3Bold,
     onClick: (() -> Unit)? = null,
 ) {
     val clickableModifier: Modifier = if (onClick != null) {
@@ -52,7 +55,7 @@ public fun InitialsAvatar(
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = initials,
-            style = ChatTheme.typography.title3Bold,
+            style = textStyle,
             color = Color.White
         )
     }

@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -359,12 +360,15 @@ public class ChannelClient internal constructor(
     /**
      * Removes all of the messages of the channel but doesn't affect the channel data or members.
      *
+     * @param systemMessage The system message object that will be shown in the channel.
+     *
      * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
-    public fun truncate(): Call<Channel> {
-        return client.truncateChannel(channelType, channelId)
+    @JvmOverloads
+    public fun truncate(systemMessage: Message? = null): Call<Channel> {
+        return client.truncateChannel(channelType, channelId, systemMessage)
     }
 
     /**
@@ -692,6 +696,34 @@ public class ChannelClient internal constructor(
             offset = offset,
             limit = limit,
             types = types,
+        )
+    }
+
+    /**
+     * Returns a list of messages pinned in the channel.
+     * You can sort the list by specifying [sort] parameter.
+     * Keep in mind that for now we only support sorting by [Message.pinnedAt].
+     * The list can be paginated in a few different ways using [limit] and [pagination].
+     * @see [PinnedMessagesPagination]
+     *
+     * @param limit Max limit of messages to be fetched.
+     * @param sort Parameter by which we sort the messages.
+     * @param pagination Provides different options for pagination.
+     *
+     * @return Executable async [Call] responsible for getting pinned messages.
+     */
+    @CheckResult
+    public fun getPinnedMessages(
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        return client.getPinnedMessages(
+            channelType = channelType,
+            channelId = channelId,
+            limit = limit,
+            sort = sort,
+            pagination = pagination,
         )
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_mention">\@%1$s</string>
+    <string name="stream_ui_mention" translatable="false">\@%1$s</string>
     <string name="stream_ui_yesterday">Yesterday</string>
 
     <!-- User Status (Used in Channel Actions Dialog and Message List Header) -->
