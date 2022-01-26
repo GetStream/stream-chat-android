@@ -189,8 +189,7 @@ public class MessageComposerViewModel(
     /**
      * Toggles the visibility of the command suggestion list popup.
      */
-    public fun toggleCommandsVisibility(): Unit =
-        messageComposerController.toggleCommandsVisibility()
+    public fun toggleCommandsVisibility(): Unit = messageComposerController.toggleCommandsVisibility()
 
     /**
      * Disposes the inner [MessageComposerController].

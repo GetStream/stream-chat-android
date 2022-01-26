@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.message.composer
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 
@@ -48,6 +48,6 @@ public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposer
     /**
      * Re-rendering the UI according to the new state.
      */
-    override fun renderState(state: MessageInputState) {
+    override fun renderState(state: MessageComposerState) {
     }
 }

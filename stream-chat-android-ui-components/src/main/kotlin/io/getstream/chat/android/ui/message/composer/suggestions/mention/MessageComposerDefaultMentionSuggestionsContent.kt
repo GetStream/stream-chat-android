@@ -5,14 +5,14 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerChild
 
 /**
  * Default implementation of mention suggestions view. Displayed in a popup above [MessageComposerView] when there are
- * mention suggestions available in the current [MessageInputState].
+ * mention suggestions available in the current [MessageComposerState].
  */
 internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerChild {
 
@@ -56,9 +56,9 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
     /**
      * Propagates list of currently available mention suggestions to adapter.
      *
-     * @param state Current [MessageInputState] instance. Provides available mention suggestions data.
+     * @param state Current [MessageComposerState] instance. Provides available mention suggestions data.
      */
-    override fun renderState(state: MessageInputState) {
+    override fun renderState(state: MessageComposerState) {
         adapter.setItems(state.mentionSuggestions)
     }
 }

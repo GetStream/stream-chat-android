@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
@@ -96,7 +96,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
     /**
      * Re-rendering the UI according to the new state.
      */
-    override fun renderState(state: MessageInputState) {
+    override fun renderState(state: MessageComposerState) {
         val isClearInputButtonVisible = state.inputValue.isNotEmpty()
         binding.clearCommandButton.isVisible = isClearInputButtonVisible
 

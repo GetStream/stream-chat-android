@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.MessageInputState
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -165,7 +165,7 @@ public class MessageComposerView : ConstraintLayout {
                     }
                 }
                 onCommandsButtonClicked = {
-                    renderCommandsSuggestions(MessageInputState(commandSuggestions = availableCommands))
+                    renderCommandsSuggestions(MessageComposerState(commandSuggestions = availableCommands))
                 }
             }
             removeAllViews()
@@ -201,9 +201,9 @@ public class MessageComposerView : ConstraintLayout {
      * Note that when you override the default contents using [setLeadingContent], [setCenterContent], or
      * [setTrailingContent] calling this function will make no effect.
      *
-     * @param state [MessageInputState] instance representing current UI state.
+     * @param state [MessageComposerState] instance representing current UI state.
      */
-    public fun renderState(state: MessageInputState) {
+    public fun renderState(state: MessageComposerState) {
         (binding.trailingContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
@@ -212,11 +212,11 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Re-renders suggestions popup window for the given [MessageInputState] instance.
+     * Re-renders suggestions popup window for the given [MessageComposerState] instance.
      *
-     * @param state [MessageInputState] for which the suggestions popup is updated.
+     * @param state [MessageComposerState] for which the suggestions popup is updated.
      */
-    private fun updateSuggestionsPopup(state: MessageInputState) {
+    private fun updateSuggestionsPopup(state: MessageComposerState) {
         when {
             state.mentionSuggestions.isNotEmpty() -> renderMentionSuggestions(state)
             state.commandSuggestions.isNotEmpty() -> renderCommandsSuggestions(state)
@@ -227,9 +227,9 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Displays list of command suggestions, or updates it according to the [MessageInputState.commandSuggestions] list.
      *
-     * @param state Current instance of [MessageInputState].
+     * @param state Current instance of [MessageComposerState].
      */
-    private fun renderCommandsSuggestions(state: MessageInputState) {
+    private fun renderCommandsSuggestions(state: MessageComposerState) {
         (commandSuggestionsContent as? MessageComposerChild)?.renderState(state)
         val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(commandSuggestionsContent)
         popupWindow.apply {
@@ -251,9 +251,9 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Displays list of mention suggestions, or updates it according to the [MessageInputState.mentionSuggestions] list.
      *
-     * @param state Current instance of [MessageInputState].
+     * @param state Current instance of [MessageComposerState].
      */
-    private fun renderMentionSuggestions(state: MessageInputState) {
+    private fun renderMentionSuggestions(state: MessageComposerState) {
         (mentionSuggestionsContent as? MessageComposerChild)?.renderState(state)
         val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(mentionSuggestionsContent)
         popupWindow.apply {
@@ -387,5 +387,5 @@ public class MessageComposerView : ConstraintLayout {
  * The [renderState] hook function is invoked when the state changes. You should update the UI of the view inside this function implementation.
  */
 public interface MessageComposerChild {
-    public fun renderState(state: MessageInputState)
+    public fun renderState(state: MessageComposerState)
 }

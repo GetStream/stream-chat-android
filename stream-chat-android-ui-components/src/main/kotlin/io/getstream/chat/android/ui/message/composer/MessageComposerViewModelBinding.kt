@@ -52,7 +52,7 @@ public fun MessageComposerViewModel.bindView(
     view.onCommandSuggestionSelected = onCommandSuggestionSelected
 
     lifecycleOwner.lifecycleScope.launch {
-        messageInputState.collect {
+        messageComposerState.collect {
             view.renderState(it)
         }
     }
