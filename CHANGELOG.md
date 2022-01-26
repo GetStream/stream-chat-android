@@ -10,6 +10,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fixed memory leaks related to image loading. [#2979](https://github.com/GetStream/stream-chat-android/pull/2979)
 
 ### ⬆️ Improved
 
