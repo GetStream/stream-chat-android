@@ -49,7 +49,7 @@ internal class MessageInputViewModelTest {
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
         whenever(channelController.toChannel()) doReturn channel
-        whenever(chatDomain.editMessage(any())) doReturn mock()
+        // whenever(chatDomain.editMessage(any())) doReturn mock()
         whenever(chatDomain.keystroke(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.stopTyping(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.user) doReturn MutableLiveData(randomUser())

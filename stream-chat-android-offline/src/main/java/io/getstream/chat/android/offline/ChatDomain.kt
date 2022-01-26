@@ -396,19 +396,6 @@ public sealed interface ChatDomain {
     public fun sendGiphy(message: Message): Call<Message>
 
     /**
-     * Edits the specified message. Local storage is updated immediately.
-     * The API request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to edit.
-     *
-     * @return Executable async [Call] responsible for editing a message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun editMessage(message: Message): Call<Message>
-
-    /**
      * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
      *
      * @param message The message to mark as deleted.
