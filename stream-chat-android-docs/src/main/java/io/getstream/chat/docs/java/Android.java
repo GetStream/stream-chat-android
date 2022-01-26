@@ -624,6 +624,7 @@ public class Android {
         public void loadMoreMessages() {
             ChatDomain chatDomain = ChatDomain.instance();
 
+            // TODO: Review docs (https://github.com/GetStream/stream-chat-android/issues/2976)
             chatDomain.loadOlderMessages("messaging:123", 10)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
