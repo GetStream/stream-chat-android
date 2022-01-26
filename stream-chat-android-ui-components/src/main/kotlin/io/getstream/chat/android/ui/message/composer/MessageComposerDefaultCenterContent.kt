@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.google.android.material.internal.TextWatcherAdapter
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.composer.MessageComposerState
@@ -25,6 +24,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBin
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
+import androidx.core.widget.doAfterTextChanged
 
 /**
  * Default center content of [MessageComposerView].
@@ -81,11 +81,9 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
-        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
-            override fun afterTextChanged(s: Editable) {
-                onTextChanged(s.toString())
-            }
-        })
+        binding.messageEditText.doAfterTextChanged { editable: Editable? ->
+            onTextChanged(editable?.toString() ?: "")
+        }
         binding.clearCommandButton.setOnClickListener {
             onClearButtonClicked()
         }
@@ -97,9 +95,6 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageComposerState) {
-        val isClearInputButtonVisible = state.inputValue.isNotEmpty()
-        binding.clearCommandButton.isVisible = isClearInputButtonVisible
-
         binding.messageEditText.apply {
             val currentValue = text.toString()
             val newValue = state.inputValue

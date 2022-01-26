@@ -44,6 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:visibility="gone"
             app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@id/messageEditText"
@@ -52,7 +53,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selectedAttachmentsContainer"
             app:streamUiEllipsize="true"
-            android:visibility="gone"
             />
 
         <TextView
@@ -81,6 +81,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:hint="@string/stream_ui_message_input_hint"
             android:inputType="textCapSentences|textMultiLine"
             android:maxLines="7"
             android:paddingStart="@dimen/stream_ui_spacing_medium"
@@ -111,4 +112,5 @@
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </merge>
