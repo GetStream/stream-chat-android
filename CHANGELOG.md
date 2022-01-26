@@ -78,6 +78,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Removed unnecessary experimental flags, opted in into APIs we're using from Compose. [#2983](https://github.com/GetStream/stream-chat-android/pull/2983)
 
 ### ✅ Added
 
