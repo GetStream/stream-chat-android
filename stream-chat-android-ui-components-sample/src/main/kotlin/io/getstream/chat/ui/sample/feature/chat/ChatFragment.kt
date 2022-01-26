@@ -9,14 +9,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.ui.sample.MultimediaAttachmentDestination
+import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
@@ -26,6 +34,8 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import io.getstream.chat.ui.sample.util.extensions.isCurrentUser
+import io.getstream.chat.ui.sample.util.extensions.isMedia
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import java.util.Calendar
 
@@ -40,6 +50,30 @@ class ChatFragment : Fragment() {
     private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
 
+    private val attachmentGalleryDestination by lazy {
+        AttachmentGalleryDestination(
+            context = requireContext(),
+            attachmentReplyOptionHandler = { result ->
+                messageListViewModel.onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))
+            },
+            attachmentShowInChatOptionHandler = { result ->
+                messageListViewModel.onEvent(MessageListViewModel.Event.ShowMessage(result.messageId))
+            },
+            attachmentDownloadOptionHandler = { attachment ->
+                messageListViewModel.onEvent(MessageListViewModel.Event.DownloadAttachment(
+                    attachment.toAttachment()))
+            },
+            attachmentDeleteOptionClickHandler = { result ->
+                messageListViewModel.onEvent(
+                    MessageListViewModel.Event.RemoveAttachment(
+                        result.messageId,
+                        result.toAttachment()
+                    )
+                )
+            }
+        )
+    }
+
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
@@ -49,17 +83,52 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
+        activity?.activityResultRegistry?.let { registry ->
+            attachmentGalleryDestination.register(registry)
+        }
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        attachmentGalleryDestination.unregister()
         _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         binding.messageListView.setDeletedMessageListItemPredicate(DeletedMessageListItemPredicate.VisibleToAuthorOnly)
+        binding.messageListView.setAttachmentClickListener { message, attachment ->
+            val hasInvalidAttachments = message.attachments.any { it.uploadState != null }
+            if (!hasInvalidAttachments) {
+                val destination = when {
+                    message.attachments.all(Attachment::isMedia) -> {
+                        val filteredAttachments = message.attachments
+                            .filter { it.type == "image" && !it.imagePreviewUrl.isNullOrEmpty() }
+                        val attachmentGalleryItems = filteredAttachments.map {
+                            AttachmentGalleryItem(
+                                attachment = it,
+                                user = message.user,
+                                createdAt = message.getCreatedAtOrThrow(),
+                                messageId = message.id,
+                                cid = message.cid,
+                                isMine = message.user.isCurrentUser()
+                            )
+                        }
+                        val attachmentIndex = filteredAttachments.indexOf(attachment)
+
+                        attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                        attachmentGalleryDestination
+                    }
+                    MultimediaAttachmentDestination.containsPlayableContent(attachment) -> MultimediaAttachmentDestination(
+                        message,
+                        attachment,
+                        requireContext())
+                    else -> AttachmentDestination(message, attachment, requireContext())
+                }
+                ChatUI.navigator.navigate(destination)
+            }
+        }
         initChatViewModel()
         initMessagesViewModel()
         initMessageInputViewModel()
