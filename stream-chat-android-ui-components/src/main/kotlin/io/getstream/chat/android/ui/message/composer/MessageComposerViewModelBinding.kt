@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
  * @param onRemoveAttachment Callback invoked when user attempts to remove the attachment.
  * @param onMentionSuggestionSelected Callback invoked when selects one of the mention suggestions.
  * @param onCommandSuggestionSelected Callback invoked when selects one of the command suggestions.
+ * @param onSendAlsoToChannelChanged Callback invoked when user selects one of the command suggestions.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
@@ -33,6 +34,7 @@ public fun MessageComposerViewModel.bindView(
     onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     onMentionSuggestionSelected: (User) -> Unit = { selectMention(it) },
     onCommandSuggestionSelected: (Command) -> Unit = { selectCommand(it) },
+    onSendAlsoToChannelChanged: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
 ) {
     view.onSendMessageClicked = {
         val message = buildNewMessage()
@@ -50,6 +52,8 @@ public fun MessageComposerViewModel.bindView(
     view.onMentionSuggestionSelected = onMentionSuggestionSelected
 
     view.onCommandSuggestionSelected = onCommandSuggestionSelected
+
+    view.onSendAlsoToChannelChanged = onSendAlsoToChannelChanged
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect {

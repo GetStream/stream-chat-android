@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.bindView
@@ -119,6 +120,18 @@ class ChatFragment : Fragment() {
     private fun initMessageInputViewModel() {
         messageComposerViewModel.apply {
             bindView(binding.messageComposerView, viewLifecycleOwner)
+            messageListViewModel.mode.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        headerViewModel.setActiveThread(it.parentMessage)
+                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
+                    }
+                    is MessageListViewModel.Mode.Normal -> {
+                        headerViewModel.resetThread()
+                        messageComposerViewModel.leaveThread()
+                    }
+                }
+            }
         }
     }
 
