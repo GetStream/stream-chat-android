@@ -13,24 +13,15 @@
           android:endY="40"
           android:endX="0"
           android:type="linear">
-        <item android:offset="0" android:color="#FFFFFFFF"/>
-        <item android:offset="1" android:color="#FFDBDBDB"/>
+        <item android:offset="0" android:color="#FFA94AB8"/>
+        <item android:offset="1" android:color="#FF9D27B0"/>
       </gradient>
     </aapt:attr>
   </path>
   <path
       android:pathData="M34,11L26,11C24.3431,11 23,9.6568 23,8V0L34,11Z"
-      android:fillColor="#DBDBDB"/>
+      android:fillColor="#7A1589"/>
   <path
-      android:pathData="M8,13H23V15H8V13Z"
-      android:fillColor="#CFCFCF"
-      android:fillType="evenOdd"/>
-  <path
-      android:pathData="M8,17H18V19H8V17Z"
-      android:fillColor="#CFCFCF"
-      android:fillType="evenOdd"/>
-  <path
-      android:pathData="M8,21H23V23H8V21Z"
-      android:fillColor="#CFCFCF"
-      android:fillType="evenOdd"/>
+      android:pathData="M9,17H25V24H9V17ZM27,14C27,12.8954 26.1046,12 25,12H22L24,15H21L19,12H17L19,15H16L14,12H12L14,15H11L9,12C7.9,12 7.01,12.9 7.01,14L7,24C7,25.1 7.9,26 9,26H25C26.1,26 27,25.1 27,24V14Z"
+      android:fillColor="#F3A8FF"/>
 </vector>
