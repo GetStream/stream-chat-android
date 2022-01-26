@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.common.state.MessageAction
@@ -25,7 +22,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Shows the options "header" for the message input component. This is based on the currently active
- * message action - [Reply] or [Edit].
+ * message action - [io.getstream.chat.android.common.state.Reply] or [io.getstream.chat.android.common.state.Edit].
  *
  * @param modifier Modifier for styling.
  * @param activeAction Currently active [MessageAction].
@@ -37,7 +34,8 @@ public fun MessageInputOptions(
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val optionImage = if (activeAction is Reply) Icons.Default.Reply else Icons.Default.Edit
+    val optionImage =
+        painterResource(id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit)
     val title = stringResource(
         id = if (activeAction is Reply) R.string.stream_compose_reply_to_message else R.string.stream_compose_edit_message
     )
@@ -48,7 +46,7 @@ public fun MessageInputOptions(
     ) {
         Icon(
             modifier = Modifier.padding(4.dp),
-            imageVector = optionImage,
+            painter = optionImage,
             contentDescription = null,
             tint = ChatTheme.colors.textLowEmphasis,
         )
@@ -67,7 +65,7 @@ public fun MessageInputOptions(
                     indication = rememberRipple(bounded = false),
                     interactionSource = remember { MutableInteractionSource() }
                 ),
-            imageVector = Icons.Default.Cancel,
+            painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textLowEmphasis,
         )

@@ -24,10 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
@@ -525,7 +528,13 @@ internal fun DefaultMessageComposerTrailingContent(
         IconButton(
             enabled = isInputValid,
             content = {
+                val layoutDirection = LocalLayoutDirection.current
+
                 Icon(
+                    modifier = Modifier.scale(
+                        scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
+                        scaleY = 1f
+                    ),
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
                     contentDescription = stringResource(id = R.string.stream_compose_send_message),
                     tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis

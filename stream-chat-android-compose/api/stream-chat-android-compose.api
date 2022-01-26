@@ -611,7 +611,7 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 }
 
 public final class io/getstream/chat/android/compose/ui/components/BackButtonKt {
-	public static final fun BackButton (Landroidx/compose/ui/graphics/vector/ImageVector;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun BackButton (Landroidx/compose/ui/graphics/painter/Painter;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/CancelIconKt {

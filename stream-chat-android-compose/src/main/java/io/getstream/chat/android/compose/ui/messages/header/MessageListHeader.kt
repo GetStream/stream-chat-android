@@ -14,19 +14,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
@@ -126,10 +128,17 @@ public fun MessageListHeader(
  */
 @Composable
 internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
+    val layoutDirection = LocalLayoutDirection.current
+
     BackButton(
         modifier = Modifier
-            .size(36.dp),
-        imageVector = Icons.Default.ArrowBack,
+            .padding(8.dp)
+            .size(16.dp)
+            .scale(
+                scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
+                scaleY = 1f
+            ),
+        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
         onBackPressed = onBackPressed,
     )
 }
