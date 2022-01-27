@@ -498,6 +498,17 @@
         <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
     </style>
 
+    <style name="StreamUi.MessageList.GiphyMediaAttachment" parent="StreamUi">
+        <item name="streamUiGiphyMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
+        <item name="streamUiGiphyMediaAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
+        <item name="streamUiGiphyMediaAttachmentImageBackgroundColor">@color/stream_ui_literal_transparent</item>
+        <item name="streamUiGiphyMediaAttachmentConstantSize">true</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyMaxHeight">250dp</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyType">original</item>
+        <item name="streamUiGiphyMediaAttachmentScaleType">centerCrop</item>
+    </style>
+
     <style name="StreamUi.MessageList.FileAttachment" parent="StreamUi">
         <item name="streamUiFileAttachmentProgressBarDrawable">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
         <item name="streamUiFileAttachmentBackgroundColor">@color/stream_ui_white</item>

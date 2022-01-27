@@ -6,9 +6,11 @@ import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadAndResize
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -16,22 +18,22 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiGiphyMediaAttachmentViewBinding
-import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+import io.getstream.chat.android.ui.message.list.adapter.view.GiphyMediaAttachmentViewStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 // TODO - document everything
-internal class GiphyMediaAttachmentView : ConstraintLayout {
+public class GiphyMediaAttachmentView : ConstraintLayout {
 
     internal val binding: StreamUiGiphyMediaAttachmentViewBinding =
         StreamUiGiphyMediaAttachmentViewBinding.inflate(streamThemeInflater, this, true)
-    private lateinit var style: MediaAttachmentViewStyle
+    private lateinit var style: GiphyMediaAttachmentViewStyle
 
-    constructor(context: Context) : this(context, null, 0)
+    public constructor(context: Context) : this(context, null, 0)
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
@@ -40,18 +42,54 @@ internal class GiphyMediaAttachmentView : ConstraintLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
-        style = MediaAttachmentViewStyle(context, attrs)
+        style = GiphyMediaAttachmentViewStyle(context, attrs)
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.giphyLabel.setImageDrawable(style.giphyIcon)
+        binding.imageView.scaleType = style.scaleType
     }
 
-    fun showGiphy(attachment: Attachment) {
-        val url = attachment.giphyUrl(GiphyInfoType.FIXED_HEIGHT) ?: attachment.let {
+    public fun showGiphy(attachment: Attachment) {
+        val url = attachment.giphyUrl(style.giphyType) ?: attachment.let {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
+        if (style.giphyConstantSizeEnabled) {
+            showConstantSizeGiphy(url)
+        } else {
+            showResizeableGiphy(url)
+        }
+    }
+
+    private fun showConstantSizeGiphy(url: String) {
+        binding.mediaAttachmentContent.updateLayoutParams {
+            this.height = style.giphyHeight
+            this.width = style.giphyHeight
+        }
+
         binding.loadImage.updateLayoutParams {
-            this.height = GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
+            this.height = style.giphyHeight
+            this.width = style.giphyHeight
+        }
+
+        CoroutineScope(DispatcherProvider.Main).launch {
+            binding.imageView.setImageDrawable(style.placeholderIcon)
+
+            binding.imageView.load(
+                data = url,
+                placeholderDrawable = style.placeholderIcon,
+                onStart = { binding.loadImage.isVisible = true },
+                onComplete = { binding.loadImage.isVisible = false }
+            )
+        }
+    }
+
+    private fun showResizeableGiphy(url: String) {
+        binding.mediaAttachmentContent.updateLayoutParams {
+            this.height = style.giphyHeight
+        }
+
+        binding.loadImage.updateLayoutParams {
+            this.height = style.giphyHeight
         }
 
         binding.giphyLabel.isVisible = true
@@ -62,7 +100,7 @@ internal class GiphyMediaAttachmentView : ConstraintLayout {
             binding.imageView.loadAndResize(
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
-                maxHeight = GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx(),
+                maxHeight = style.giphyHeight,
                 container = this@GiphyMediaAttachmentView,
                 onStart = { binding.loadImage.isVisible = true },
                 onComplete = { binding.loadImage.isVisible = false }
@@ -70,7 +108,7 @@ internal class GiphyMediaAttachmentView : ConstraintLayout {
         }
     }
 
-    fun setImageShapeByCorners(
+    public fun setImageShapeByCorners(
         topLeft: Float,
         topRight: Float,
         bottomRight: Float,
@@ -87,9 +125,12 @@ internal class GiphyMediaAttachmentView : ConstraintLayout {
 
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
+        binding.imageView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(style.imageBackgroundColor)
+        }
     }
 
-    companion object {
+    public companion object {
         private const val GIPHY_INFO_DEFAULT_WIDTH_DP = 200
         private const val GIPHY_INFO_DEFAULT_HEIGHT_DP = 200
 
@@ -106,7 +147,7 @@ internal class GiphyMediaAttachmentView : ConstraintLayout {
             }
         }
 
-        private enum class GiphyInfoType(val value: String) {
+        public enum class GiphyInfoType(public val value: String) {
             ORIGINAL("original"),
             FIXED_HEIGHT("fixed_height"),
             FIXED_HEIGHT_DOWNSAMPLED("fixed_height_downsampled")
