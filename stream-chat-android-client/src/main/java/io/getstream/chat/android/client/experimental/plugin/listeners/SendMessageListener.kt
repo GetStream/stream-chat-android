@@ -10,12 +10,12 @@ public interface SendMessageListener {
         channelType: String,
         channelId: String,
         message: Message,
-    ) { }
+    )
 
     public fun onMessageSendResult(
         result: Result<Message>,
         channelType: String,
         channelId: String,
         message: Message,
-    ) { }
+    )
 }
