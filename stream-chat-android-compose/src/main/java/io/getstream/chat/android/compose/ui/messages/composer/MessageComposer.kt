@@ -255,7 +255,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
 
     MessageInputValidationError(validationErrors)
 
@@ -292,7 +292,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty()) {
+        if (commandSuggestions.isNotEmpty() && attachments.isEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }
@@ -408,8 +408,13 @@ internal fun DefaultComposerIntegrations(
     onCommandsClick: () -> Unit,
 ) {
     val hasTextInput = messageInputState.inputValue.isNotEmpty()
+    val hasAttachments = messageInputState.attachments.isNotEmpty()
     val hasCommandInput = messageInputState.inputValue.startsWith("/")
     val hasCommandSuggestions = messageInputState.commandSuggestions.isNotEmpty()
+    val hasMentionSuggestions = messageInputState.mentionSuggestions.isNotEmpty()
+
+    val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
+    val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
     Row(
         modifier = Modifier
@@ -418,7 +423,7 @@ internal fun DefaultComposerIntegrations(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            enabled = !hasCommandInput,
+            enabled = isAttachmentsButtonEnabled,
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
@@ -426,15 +431,15 @@ internal fun DefaultComposerIntegrations(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
                     contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = if (hasCommandInput) ChatTheme.colors.disabled else ChatTheme.colors.textLowEmphasis,
+                    tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
                 )
             },
             onClick = onAttachmentsClick
         )
 
-        val commandsButtonTint = if (hasCommandSuggestions && !hasTextInput) {
+        val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
             ChatTheme.colors.primaryAccent
-        } else if (!hasTextInput) {
+        } else if (isCommandsButtonEnabled) {
             ChatTheme.colors.textLowEmphasis
         } else {
             ChatTheme.colors.disabled
@@ -444,7 +449,7 @@ internal fun DefaultComposerIntegrations(
             modifier = Modifier
                 .size(32.dp)
                 .padding(4.dp),
-            enabled = !hasTextInput,
+            enabled = isCommandsButtonEnabled,
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
