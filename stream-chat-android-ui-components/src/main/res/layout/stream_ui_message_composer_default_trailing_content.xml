@@ -7,40 +7,29 @@
     <FrameLayout
         android:id="@+id/sendButtonContainer"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+        android:paddingVertical="12dp"
         >
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/sendMessageButtonDisabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+        <ImageView
+            android:id="@+id/sendMessageButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="bottom"
+            android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/stream_ui_spacing_tiny"
-            android:src="@drawable/stream_ui_ic_filled_right_arrow"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/sendMessageButtonEnabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="@dimen/stream_ui_spacing_tiny"
-            android:src="@drawable/stream_ui_ic_filled_up_arrow"
+            android:src="@drawable/stream_ui_ic_send_message"
+            app:tint="@color/stream_ui_enabled_send_button_color_selector"
             />
 
         <TextView
             android:id="@+id/coolDownBadge"
             style="@style/StreamUiCooldownBadgeStyle"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="@dimen/stream_ui_spacing_tiny"
+            android:layout_gravity="bottom"
+            android:layout_margin="@dimen/stream_ui_spacing_tiny"
             android:clickable="true"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/lastMessageTimeLabel"
-            app:layout_constraintEnd_toEndOf="parent"
             tools:text="99"
             />
 

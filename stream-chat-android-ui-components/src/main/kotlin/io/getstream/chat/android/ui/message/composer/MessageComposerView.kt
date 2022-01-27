@@ -144,7 +144,7 @@ public class MessageComposerView : ConstraintLayout {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
             val defaultLeadingContent = MessageComposerDefaultLeadingContent(context).apply {
-                onAttachmentsButtonClicked = {
+                onAttachmentsButtonClick = {
                     context.getFragmentManager()?.let {
                         AttachmentSelectionDialogFragment.newInstance(MessageInputViewStyle.createDefault(context))
                             .apply {
@@ -169,7 +169,7 @@ public class MessageComposerView : ConstraintLayout {
                             }
                     }
                 }
-                onCommandsButtonClicked = {
+                onCommandsButtonClick = {
                     renderCommandsSuggestions(MessageComposerState(commandSuggestions = availableCommands))
                 }
             }
@@ -179,7 +179,7 @@ public class MessageComposerView : ConstraintLayout {
         binding.centerContent.apply {
             val defaultCenterContent = MessageComposerDefaultCenterContent(context).apply {
                 onTextChanged = { onInputChanged(it) }
-                onClearButtonClicked = { onMessageDismissed() }
+                onClearButtonClick = { onMessageDismissed() }
                 onAttachmentRemoved = { onAttachmentRemovedHandler(it) }
             }
             removeAllViews()
@@ -187,17 +187,17 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.trailingContent.apply {
             val defaultTrailingContent = MessageComposerDefaultTrailingContent(context).apply {
-                this.onSendButtonClicked = { onSendMessageClicked() }
+                this.onSendButtonClick = { onSendMessageClicked() }
             }
             removeAllViews()
             addView(defaultTrailingContent)
         }
-        binding.bottomContent.apply {
-            val defaultBottomContent = MessageComposerDefaultBottomContent(context).apply {
+        binding.footerContent.apply {
+            val defaultFooterContent = MessageComposerDefaultFooterContent(context).apply {
                 onSendAlsoToChannelSelected = { onSendAlsoToChannelChanged(it) }
             }
             removeAllViews()
-            addView(defaultBottomContent)
+            addView(defaultFooterContent)
         }
     }
 
@@ -205,7 +205,7 @@ public class MessageComposerView : ConstraintLayout {
      * Called by external controller. Responsible for refreshing UI of the default contents [MessageComposerView].
      * For example, when using [MessageComposerView] along with [MessageComposerViewModel] and connecting both with
      * [MessageComposerViewModel.bindView] function the [MessageComposerView.renderState] will be invoked automatically
-     * on each change of the [MessageComposerViewModel.messageInputState].
+     * on each change of the [MessageComposerViewModel.messageComposerState].
      *
      * In case you are not using [MessageComposerViewModel.bindView] mechanism, you can call this function on your own
      * to refresh the state of the [MessageComposerView].
@@ -219,7 +219,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.trailingContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
-        (binding.bottomContent.children.first() as? MessageComposerChild)?.renderState(state)
+        (binding.footerContent.children.first() as? MessageComposerChild)?.renderState(state)
 
         updateSuggestionsPopup(state)
     }
@@ -238,7 +238,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Displays list of command suggestions, or updates it according to the [MessageInputState.commandSuggestions] list.
+     * Displays list of command suggestions, or updates it according to the [MessageComposerState.commandSuggestions] list.
      *
      * @param state Current instance of [MessageComposerState].
      */
@@ -262,7 +262,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Displays list of mention suggestions, or updates it according to the [MessageInputState.mentionSuggestions] list.
+     * Displays list of mention suggestions, or updates it according to the [MessageComposerState.mentionSuggestions] list.
      *
      * @param state Current instance of [MessageComposerState].
      */
@@ -361,17 +361,17 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Sets custom bottom content view.
+     * Sets custom footer content view.
      *
      * @param view The [View] which replaces default bottom content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
      */
-    public fun <V> setBottomContent(
+    public fun <V> setFooterContent(
         view: V,
         layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
     ) where V : View, V : MessageComposerChild {
-        binding.bottomContent.removeAllViews()
-        binding.bottomContent.addView(view, layoutParams)
+        binding.footerContent.removeAllViews()
+        binding.footerContent.addView(view, layoutParams)
     }
 
     /**

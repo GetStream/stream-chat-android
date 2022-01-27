@@ -36,9 +36,11 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr) {
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -46,10 +48,8 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
      * Sets up initial layout state and initializes suggestions RecyclerView.
      */
     private fun init() {
-        binding.apply {
-            suggestionsCardView.isVisible = true
-            suggestionsRecyclerView.adapter = adapter
-        }
+        binding.suggestionsCardView.isVisible = true
+        binding.suggestionsRecyclerView.adapter = adapter
     }
 
     /**

@@ -14,8 +14,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 internal class CommandViewHolder(
     private val binding: StreamUiItemCommandBinding,
     private val onCommandSelected: (Command) -> Unit,
-) :
-    SimpleListAdapter.ViewHolder<Command>(binding.root) {
+) : SimpleListAdapter.ViewHolder<Command>(binding.root) {
 
     /**
      * Updates [itemView] elements for a given [Command] object.
@@ -23,14 +22,12 @@ internal class CommandViewHolder(
      * @param command Single command suggestion represented by [Command] class.
      */
     override fun bind(command: Command) {
-        binding.apply {
-            root.setOnClickListener { onCommandSelected(command) }
-            commandNameTextView.text = command.name.replaceFirstChar(Char::uppercase)
-            commandQueryTextView.text = itemView.context.getString(
-                R.string.stream_ui_message_input_command_template,
-                command.name,
-                command.args
-            )
-        }
+        binding.root.setOnClickListener { onCommandSelected(command) }
+        binding.commandNameTextView.text = command.name.replaceFirstChar(Char::uppercase)
+        binding.commandQueryTextView.text = itemView.context.getString(
+            R.string.stream_ui_message_input_command_template,
+            command.name,
+            command.args
+        )
     }
 }

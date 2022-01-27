@@ -9,26 +9,30 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 
 /**
- * Default trailing content of [MessageComposerView].
+ * Represents the default trailing content for the [MessageComposerView].
  */
 internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageComposerChild {
-    /**
-     * Callback invoked when send button is clicked.
-     */
-    var onSendButtonClicked: () -> Unit = {}
 
     /**
      * Handle to layout binding.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
+    private val binding: StreamUiMessageComposerDefaultTrailingContentBinding =
+        StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
+
+    /**
+     * Handler when the user clicks on the send message button.
+     */
+    var onSendButtonClick: () -> Unit = {}
 
     constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr) {
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -36,23 +40,30 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
-        binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
-        binding.sendMessageButtonEnabled.setOnClickListener {
-            onSendButtonClicked()
-        }
+        binding.sendMessageButton.setOnClickListener { onSendButtonClick() }
     }
 
     /**
      * Re-rendering the UI according to the new state.
      */
     override fun renderState(state: MessageComposerState) {
+        val hasTextInput = state.inputValue.isNotEmpty()
+        val hasAttachments = state.attachments.isNotEmpty()
+        val isInputValid = state.validationErrors.isEmpty()
+        val coolDownTime = state.coolDownTime
+
+        val isSendMessageButtonEnabled = (hasTextInput || hasAttachments) && isInputValid
+
         binding.apply {
-            val sendButtonVisible = (state.inputValue.isNotEmpty() || state.attachments.isNotEmpty()) && state.validationErrors.isEmpty() && state.coolDownTime == 0
-            sendMessageButtonDisabled.isVisible = !sendButtonVisible
-            sendMessageButtonEnabled.isVisible = sendButtonVisible
-            val coolDownTimerVisible = state.coolDownTime > 0
-            coolDownBadge.isVisible = coolDownTimerVisible
-            if (coolDownTimerVisible) coolDownBadge.text = state.coolDownTime.toString()
+            if (coolDownTime > 0) {
+                coolDownBadge.isVisible = true
+                coolDownBadge.text = coolDownTime.toString()
+                sendMessageButton.isVisible = false
+            } else {
+                coolDownBadge.isVisible = false
+                sendMessageButton.isVisible = true
+                sendMessageButton.isEnabled = isSendMessageButtonEnabled
+            }
         }
     }
 }

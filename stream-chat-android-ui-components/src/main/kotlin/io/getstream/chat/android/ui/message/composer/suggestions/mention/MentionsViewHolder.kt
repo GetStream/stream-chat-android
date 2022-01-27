@@ -12,8 +12,10 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
  * @param binding Handle to [StreamUiItemMentionBinding] instance.
  * @param onMentionSelected Callback invoked when mention suggestion item is clicked.
  */
-internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val onMentionSelected: (User) -> Unit) :
-    SimpleListAdapter.ViewHolder<User>(binding.root) {
+internal class MentionsViewHolder(
+    val binding: StreamUiItemMentionBinding,
+    val onMentionSelected: (User) -> Unit,
+) : SimpleListAdapter.ViewHolder<User>(binding.root) {
 
     /**
      * Updates [itemView] elements for a given [User] object.
@@ -21,15 +23,13 @@ internal class MentionsViewHolder(val binding: StreamUiItemMentionBinding, val o
      * @param user Single mention suggestion represented by [User] class.
      */
     override fun bind(user: User) {
-        binding.apply {
-            root.setOnClickListener { onMentionSelected(user) }
-            avatarView.setUserData(user)
-            usernameTextView.text = user.name
-            mentionNameTextView.text = itemView.context.getString(
-                R.string.stream_ui_mention,
-                user.name.lowercase()
-            )
-        }
+        binding.root.setOnClickListener { onMentionSelected(user) }
+        binding.avatarView.setUserData(user)
+        binding.usernameTextView.text = user.name
+        binding.mentionNameTextView.text = itemView.context.getString(
+            R.string.stream_ui_mention,
+            user.name.lowercase()
+        )
     }
 
     /**

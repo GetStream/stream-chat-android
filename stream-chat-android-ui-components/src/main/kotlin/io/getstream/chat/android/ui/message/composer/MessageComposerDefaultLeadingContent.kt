@@ -8,23 +8,25 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 
 /**
- * Default leading content of [MessageComposerView].
+ * Represents the default leading content for the [MessageComposerView].
  */
 public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
+
     /**
      * Handle to layout binding.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
+    private val binding: StreamUiMessageComposerDefaultLeadingContentBinding =
+        StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
 
     /**
-     * Callback invoked when attachments button is clicked.
+     * Handler when the user clicks on the attachments button.
      */
-    public var onAttachmentsButtonClicked: () -> Unit = {}
+    public var onAttachmentsButtonClick: () -> Unit = {}
 
     /**
-     * Callback invoked when commands button is clicked.
+     * Handler when the user clicks on the pick commands button.
      */
-    public var onCommandsButtonClicked: () -> Unit = {}
+    public var onCommandsButtonClick: () -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -40,14 +42,12 @@ public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposer
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
-        binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
-        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClicked() }
-        binding.commandsButton.setOnClickListener { onCommandsButtonClicked() }
+        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClick() }
+        binding.commandsButton.setOnClickListener { onCommandsButtonClick() }
     }
 
     /**
      * Re-rendering the UI according to the new state.
      */
-    override fun renderState(state: MessageComposerState) {
-    }
+    override fun renderState(state: MessageComposerState): Unit = Unit
 }

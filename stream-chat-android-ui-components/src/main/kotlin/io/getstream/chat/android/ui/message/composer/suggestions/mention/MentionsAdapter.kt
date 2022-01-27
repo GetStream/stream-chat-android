@@ -5,13 +5,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
-import io.getstream.chat.android.ui.message.composer.suggestions.mention.MentionsViewHolder
 
 /**
  * [RecyclerView.Adapter] responsible for displaying mention suggestions in the RecyclerView in [DefaultMentionSuggestionsContent].
  */
-internal class MentionsAdapter(private inline val onMentionSelected: (User) -> Unit) :
-    SimpleListAdapter<User, MentionsViewHolder>() {
+internal class MentionsAdapter(
+    private inline val onMentionSelected: (User) -> Unit,
+) : SimpleListAdapter<User, MentionsViewHolder>() {
 
     /**
      * Inflates layout and instantiates [MentionsViewHolder].
@@ -22,7 +22,8 @@ internal class MentionsAdapter(private inline val onMentionSelected: (User) -> U
      * @return [MentionsViewHolder] instance.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
-        val binding = StreamUiItemMentionBinding.inflate(parent.streamThemeInflater, parent, false)
-        return MentionsViewHolder(binding, onMentionSelected)
+        return StreamUiItemMentionBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let { MentionsViewHolder(it, onMentionSelected) }
     }
 }

@@ -10,13 +10,17 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultBottomContentBinding
 
 /**
- * Default bottom content of [MessageComposerView]. Used in thread mode for showing "send also to channel" checkbox.
+ * Represents the default footer content for the [MessageComposerView].
+ *
+ * Used in thread mode for showing "send also to channel" checkbox.
  */
-public class MessageComposerDefaultBottomContent : FrameLayout, MessageComposerChild {
+public class MessageComposerDefaultFooterContent : FrameLayout, MessageComposerChild {
+
     /**
      * Handle to layout binding.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultBottomContentBinding
+    private val binding: StreamUiMessageComposerDefaultBottomContentBinding =
+        StreamUiMessageComposerDefaultBottomContentBinding.inflate(streamThemeInflater, this)
 
     /**
      * Callback invoked when checkbox is clicked.
@@ -27,9 +31,11 @@ public class MessageComposerDefaultBottomContent : FrameLayout, MessageComposerC
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr) {
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -37,8 +43,9 @@ public class MessageComposerDefaultBottomContent : FrameLayout, MessageComposerC
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
-        binding = StreamUiMessageComposerDefaultBottomContentBinding.inflate(streamThemeInflater, this)
-        binding.sendAlsoToChannel.setOnCheckedChangeListener { _, _ -> onSendAlsoToChannelSelected(binding.sendAlsoToChannel.isChecked) }
+        binding.sendAlsoToChannel.setOnCheckedChangeListener { _, _ ->
+            onSendAlsoToChannelSelected(binding.sendAlsoToChannel.isChecked)
+        }
     }
 
     /**

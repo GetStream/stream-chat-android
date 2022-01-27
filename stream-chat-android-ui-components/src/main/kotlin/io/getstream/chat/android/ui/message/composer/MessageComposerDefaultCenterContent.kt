@@ -10,6 +10,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.extensions.uploadId
@@ -24,12 +25,18 @@ import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBin
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
-import androidx.core.widget.doAfterTextChanged
 
 /**
  * Default center content of [MessageComposerView].
  */
 public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerChild {
+
+    /**
+     * Handle to layout binding.
+     */
+    private val binding: StreamUiMessageComposerDefaultCenterContentBinding =
+        StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
+
     /**
      * Callback invoked each time after text was changed.
      */
@@ -38,17 +45,12 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
     /**
      * Callback invoked when clear button was clicked.
      */
-    public var onClearButtonClicked: () -> Unit = {}
+    public var onClearButtonClick: () -> Unit = {}
 
     /**
      * Callback invoked when attachment is removed.
      */
     public var onAttachmentRemoved: (Attachment) -> Unit = {}
-
-    /**
-     * Handle to layout binding.
-     */
-    private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
 
     /**
      * Default attachment preview factories.
@@ -80,12 +82,11 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
-        binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
             onTextChanged(editable?.toString() ?: "")
         }
         binding.clearCommandButton.setOnClickListener {
-            onClearButtonClicked()
+            onClearButtonClick()
         }
         attachmentsAdapter.viewFactories = this.attachmentPreviewFactories
         binding.attachmentsRecyclerView.adapter = attachmentsAdapter

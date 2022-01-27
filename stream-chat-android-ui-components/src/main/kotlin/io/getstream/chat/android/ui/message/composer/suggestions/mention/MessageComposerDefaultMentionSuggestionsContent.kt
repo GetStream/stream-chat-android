@@ -36,9 +36,11 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr) {
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -46,11 +48,9 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
      * Set up initial layout state.
      */
     private fun init() {
-        binding.apply {
-            suggestionsCardView.isVisible = true
-            commandsTitleTextView.isVisible = false
-            suggestionsRecyclerView.adapter = adapter
-        }
+        binding.suggestionsCardView.isVisible = true
+        binding.commandsTitleTextView.isVisible = false
+        binding.suggestionsRecyclerView.adapter = adapter
     }
 
     /**

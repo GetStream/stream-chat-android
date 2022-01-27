@@ -9,8 +9,9 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 /**
  * [RecyclerView.Adapter] responsible for displaying command suggestions in the RecyclerView in [DefaultCommandSuggestionsContent].
  */
-internal class CommandsAdapter(private inline val onCommandSelected: (Command) -> Unit) :
-    SimpleListAdapter<Command, CommandViewHolder>() {
+internal class CommandsAdapter(
+    private inline val onCommandSelected: (Command) -> Unit,
+) : SimpleListAdapter<Command, CommandViewHolder>() {
 
     /**
      * Inflates layout and instantiates [CommandViewHolder].
@@ -21,7 +22,8 @@ internal class CommandsAdapter(private inline val onCommandSelected: (Command) -
      * @return [CommandViewHolder] instance.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
-        val binding = StreamUiItemCommandBinding.inflate(parent.streamThemeInflater, parent, false)
-        return CommandViewHolder(binding) { onCommandSelected(it) }
+        return StreamUiItemCommandBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let { CommandViewHolder(it, onCommandSelected) }
     }
 }
