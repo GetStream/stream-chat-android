@@ -58,4 +58,4 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
 }
 
 @OptIn(ExperimentalStreamChatApi::class)
-private interface ChannelMarkReadListenerPlugin: Plugin, ChannelMarkReadListener
+private interface ChannelMarkReadListenerPlugin : Plugin, ChannelMarkReadListener
