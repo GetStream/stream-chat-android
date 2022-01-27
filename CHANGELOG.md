@@ -1,5 +1,8 @@
-## 🚨 Old UI Module Deprecation
-`stream-chat-android` module will be deprecated by the end of December 2021. The module will continue working, but we won't be releasing new versions.
+<!-- UNRELEASED START -->
+# UNRELEASED CHANGELOG
+## 🚨 Old UI Module removed
+`stream-chat-android` is deprecated and won't be maintained anymore. The module will continue working, but we won't be releasing new versions.
+The source code has been moved to this [archived repository](https://github.com/GetStream/stream-chat-android-old-ui)
 Consider migrating to `stream-chat-android-ui-components` or `stream-chat-android-compose`. Here you can find a set of useful resources for migration:
 - [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
 - [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/)
@@ -7,19 +10,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
 - [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
 
-# UNRELEASED CHANGELOG
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android
 ### 🐞 Fixed
 
 ### ⬆️ Improved
@@ -121,8 +112,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⚠️ Changed
 
 ### ❌ Removed
+<!-- UNRELEASED END -->
 
-<!-- UNRELEASED START -->
 # January 25th, 2022 - 4.27.0
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -175,7 +166,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added ways to customize the channel, message and member query limit when building a ChannelListViewModel [#2948](https://github.com/GetStream/stream-chat-android/pull/2948)
-<!-- UNRELEASED END -->
 
 
 # January 12th, 2022 - 4.26.0
