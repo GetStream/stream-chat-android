@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -95,8 +93,6 @@ class ChannelActivity : AppCompatActivity() {
      * An example of a screen UI that's much more simple than the ChannelsScreen component, that features a custom
      * ChannelList item.
      */
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     @Composable
     private fun MyCustomUiSimplified() {
         val user by ChatDomain.instance().user.collectAsState()
@@ -158,8 +154,6 @@ class ChannelActivity : AppCompatActivity() {
      * two elements. This makes it easier as it's all presented in the same layer, rather than being
      * wrapped in drawers or more components.
      */
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     @Composable
     private fun MyCustomUi() {
         var query by remember { mutableStateOf("") }
