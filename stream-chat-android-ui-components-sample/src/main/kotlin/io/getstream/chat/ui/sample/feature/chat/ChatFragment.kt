@@ -15,7 +15,9 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.bindView
@@ -131,6 +133,12 @@ class ChatFragment : Fragment() {
                         messageComposerViewModel.leaveThread()
                     }
                 }
+            }
+            binding.messageListView.setMessageReplyHandler { cid, message ->
+                messageComposerViewModel.performMessageAction(Reply(message))
+            }
+            binding.messageListView.setMessageEditHandler { message ->
+                messageComposerViewModel.performMessageAction(Edit(message))
             }
         }
     }

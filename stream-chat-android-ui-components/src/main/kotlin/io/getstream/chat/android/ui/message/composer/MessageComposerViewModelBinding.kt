@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
  * @param mentionSelectionListener Callback invoked when selects one of the mention suggestions.
  * @param commandSelectionListener Callback invoked when selects one of the command suggestions.
  * @param alsoSendToChannelSelectionListener Callback invoked when user selects one of the command suggestions.
+ * @param dismissActionClickListener Callback invoked when user cancels the current action.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
@@ -35,6 +36,7 @@ public fun MessageComposerViewModel.bindView(
     mentionSelectionListener: (User) -> Unit = { selectMention(it) },
     commandSelectionListener: (Command) -> Unit = { selectCommand(it) },
     alsoSendToChannelSelectionListener: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
+    dismissActionClickListener: () -> Unit = { dismissMessageActions() },
 ) {
     view.sendMessageClickListener = {
         val message = buildNewMessage()
@@ -54,6 +56,8 @@ public fun MessageComposerViewModel.bindView(
     view.commandSelectionListener = commandSelectionListener
 
     view.alsoSendToChannelSelectionListener = alsoSendToChannelSelectionListener
+
+    view.dismissActionClickListener = dismissActionClickListener
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect {

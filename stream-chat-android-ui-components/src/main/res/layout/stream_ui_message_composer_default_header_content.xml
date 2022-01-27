@@ -1,2 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge></merge>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <FrameLayout
+        android:id="@+id/inputModeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
+        android:visibility="gone"
+        tools:visibility="visible"
+        >
+
+        <TextView
+            android:id="@+id/actionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stream_ui_message_input_reply"
+            android:layout_gravity="center"
+            android:textAppearance="@style/StreamUiTextAppearance.Headline"
+            />
+
+        <ImageView
+            android:id="@+id/dismissButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/stream_ui_ic_dismiss"
+            android:layout_gravity="end|center_vertical"
+            app:tint ="@color/stream_ui_grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            />
+
+    </FrameLayout>
+
+</merge>

@@ -1087,7 +1087,9 @@ public final class io/getstream/chat/android/ui/message/composer/DefaultMessageC
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getDismissActionClickListener ()Lkotlin/jvm/functions/Function0;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setDismissActionClickListener (Lkotlin/jvm/functions/Function0;)V
 }
 
 public final class io/getstream/chat/android/ui/message/composer/DefaultMessageComposerLeadingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerChild {
@@ -1155,6 +1157,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun getAvailableCommands ()Ljava/util/List;
 	public final fun getClearButtonClickListener ()Lkotlin/jvm/functions/Function0;
 	public final fun getCommandSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getDismissActionClickListener ()Lkotlin/jvm/functions/Function0;
 	public final fun getMentionSelectionListener ()Lkotlin/jvm/functions/Function1;
 	public final fun getSendMessageClickListener ()Lkotlin/jvm/functions/Function0;
 	public final fun getTextInputChangeListener ()Lkotlin/jvm/functions/Function1;
@@ -1168,6 +1171,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun setClearButtonClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setCommandSelectionListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setCommandSuggestionsContent (Landroid/view/View;)V
+	public final fun setDismissActionClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setFooterContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setFooterContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setHeaderContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
@@ -1210,8 +1214,8 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 }
 
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerViewModelBindingKt {
-	public static final fun bindView (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun bindView$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun bindView (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun bindView$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/message/composer/suggestions/command/DefaultMessageComposerCommandSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerChild {

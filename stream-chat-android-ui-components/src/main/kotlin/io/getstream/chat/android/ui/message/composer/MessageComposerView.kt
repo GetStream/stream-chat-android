@@ -123,6 +123,11 @@ public class MessageComposerView : ConstraintLayout {
     public var alsoSendToChannelSelectionListener: (Boolean) -> Unit = {}
 
     /**
+     * Callback invoked when cancel button is clicked.
+     */
+    public var dismissActionClickListener: () -> Unit = {}
+
+    /**
      * List of all the available commands. This value is used to display command suggestions popup when the "commands" button is clicked.
      */
     public var availableCommands: List<Command> = emptyList()
@@ -196,14 +201,14 @@ public class MessageComposerView : ConstraintLayout {
         }
         binding.footerContent.apply {
             val defaultFooterContent = DefaultMessageComposerFooterContent(context).also {
-                alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
+                it.alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
             }
             removeAllViews()
             addView(defaultFooterContent)
         }
         binding.headerContent.apply {
             val defaultHeaderContent = DefaultMessageComposerHeaderContent(context).also {
-                alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
+                it.dismissActionClickListener = { dismissActionClickListener() }
             }
             removeAllViews()
             addView(defaultHeaderContent)
@@ -229,6 +234,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.centerContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerChild)?.renderState(state)
         (binding.footerContent.children.first() as? MessageComposerChild)?.renderState(state)
+        (binding.headerContent.children.first() as? MessageComposerChild)?.renderState(state)
 
         updateSuggestionsPopup(state)
     }
