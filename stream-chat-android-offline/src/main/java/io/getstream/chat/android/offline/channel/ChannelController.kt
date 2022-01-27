@@ -563,8 +563,8 @@ public class ChannelController internal constructor(
         val online = domainImpl.isOnline()
         val messageToBeEdited = message.copy()
 
-        messageToBeEdited.updatedLocallyAt = Date()
 
+        messageToBeEdited.updatedLocallyAt = Date()
         messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow

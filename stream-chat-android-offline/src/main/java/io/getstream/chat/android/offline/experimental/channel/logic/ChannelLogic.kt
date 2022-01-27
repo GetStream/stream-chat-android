@@ -224,6 +224,10 @@ internal class ChannelLogic(
         mutableState._messages.value = newMessages
     }
 
+    internal suspend fun insertMessage(messages: List<Message>) {
+        chatDomainImpl.repos.insertMessages(messages)
+    }
+
     private fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
     internal fun setWatcherCount(watcherCount: Int) {

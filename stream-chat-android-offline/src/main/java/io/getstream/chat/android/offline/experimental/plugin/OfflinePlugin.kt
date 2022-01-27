@@ -6,9 +6,11 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
@@ -18,6 +20,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import java.util.Date
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature.
@@ -58,6 +61,25 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     internal fun initState(chatDomainImpl: ChatDomainImpl, chatClient: ChatClient) {
         state = StateRegistry(chatDomainImpl, chatClient)
         logic = LogicRegistry(state)
+    }
+
+    override suspend fun onMessageEditRequest(message: Message) {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        val channelLogic = logic.channel(channelType, channelId)
+
+        val isOnline = ChatDomain.instance().isOnline()
+
+        val messageToEdit = message.copy(
+            updatedLocallyAt = Date(),
+            syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+        )
+
+        channelLogic.upsertMessages(listOf(messageToEdit))
+        channelLogic.insertMessage(listOf(messageToEdit))
+    }
+
+    override fun onMessageEditResult(result: Result<Message>) {
+        
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =

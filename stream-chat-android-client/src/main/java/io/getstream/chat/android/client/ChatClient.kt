@@ -956,6 +956,12 @@ public class ChatClient internal constructor(
         message: Message,
     ): Call<Message> {
         return api.updateMessage(message)
+            .doOnStart(scope) {
+                plugins.forEach { plugin -> plugin.onMessageEditRequest(message) }
+            }
+            .doOnResult(scope) { result ->
+                plugins.forEach { plugin -> plugin.onMessageEditResult(result) }
+            }
     }
 
     /**
