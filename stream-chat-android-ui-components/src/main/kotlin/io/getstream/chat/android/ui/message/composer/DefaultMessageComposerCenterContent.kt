@@ -16,7 +16,9 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ValidationError
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -29,7 +31,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCe
 /**
  * Default center content of [MessageComposerView].
  */
-public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerChild {
 
     /**
      * Handle to layout binding.
@@ -107,6 +109,19 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
         }
 
         attachmentsAdapter.setAttachments(state.attachments)
+
+        val action = state.action
+        if (action is Reply) {
+            val message = action.message
+            binding.messageReplyView.setMessage(
+                message,
+                ChatDomain.instance().user.value?.id == message.user.id,
+                null,
+            )
+            binding.messageReplyView.isVisible = true
+        } else {
+            binding.messageReplyView.isVisible = false
+        }
 
         binding.selectedAttachmentsContainer.isVisible = state.attachments.isNotEmpty()
         renderValidationErrors(state.validationErrors)

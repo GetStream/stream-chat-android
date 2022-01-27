@@ -184,7 +184,7 @@ public class MessageComposerView : ConstraintLayout {
             addView(defaultLeadingContent)
         }
         binding.centerContent.apply {
-            val defaultCenterContent = MessageComposerDefaultCenterContent(context).also {
+            val defaultCenterContent = DefaultMessageComposerCenterContent(context).also {
                 it.textInputChangeListener = { textInputChangeListener(it) }
                 it.clearButtonClickListener = { clearButtonClickListener() }
                 it.attachmentRemovalListener = { attachmentRemovalListener(it) }
