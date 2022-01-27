@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -232,7 +230,7 @@ class MessagesActivity : AppCompatActivity() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Keyboard,
+                                painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                                 contentDescription = null
                             )
 

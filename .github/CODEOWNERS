@@ -3,9 +3,7 @@
 
 ### Modules
 # Common
-stream-chat-android            @GetStream/android-developers
 stream-chat-android-docs       @GetStream/android-developers
-stream-chat-android-sample     @GetStream/android-developers
 
 # Core
 stream-chat-android-client                  @GetStream/android-developers-core

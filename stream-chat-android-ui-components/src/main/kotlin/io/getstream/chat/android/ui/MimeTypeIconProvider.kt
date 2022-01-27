@@ -5,14 +5,15 @@ import io.getstream.chat.android.ui.message.input.attachment.file.internal.FileA
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 
 /**
- * A class that provides icons for file attachments.
+ * Provides icons for file attachments.
  *
  * @see [FileAttachmentAdapter.FileAttachmentViewHolder]
  * @see [SelectedFileAttachmentAdapter.SelectedFileAttachmentViewHolder]
  */
 public fun interface MimeTypeIconProvider {
+
     /**
-     * Return icon drawable resource for the given MIME type.
+     * Returns a drawable resource for the given MIME type.
      *
      * @param mimeType The MIME type (i.e. application/pdf).
      * @return The drawable resource for the given MIME type.
@@ -20,6 +21,9 @@ public fun interface MimeTypeIconProvider {
     public fun getIconRes(mimeType: String?): Int
 }
 
+/**
+ * Provides icons for file attachments.
+ */
 public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
 
     private val mimeTypesToIconResMap: Map<String, Int> = mapOf(
@@ -45,17 +49,23 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         ModelType.attach_mime_video_quicktime to R.drawable.stream_ui_ic_file_mov,
         ModelType.attach_mime_mp4 to R.drawable.stream_ui_ic_file_mov,
         ModelType.attach_mime_video_mp4 to R.drawable.stream_ui_ic_file_mov,
-        ModelType.attach_mime_m4a to R.drawable.stream_ui_ic_file_mp3,
+        ModelType.attach_mime_m4a to R.drawable.stream_ui_ic_file_m4a,
         ModelType.attach_mime_mp3 to R.drawable.stream_ui_ic_file_mp3,
     )
 
+    /**
+     * Returns a drawable resource for the given MIME type.
+     *
+     * @param mimeType The MIME type (i.e. application/pdf).
+     * @return The drawable resource for the given MIME type.
+     */
     public override fun getIconRes(mimeType: String?): Int {
         if (mimeType == null) {
             return R.drawable.stream_ui_ic_file
         }
         return mimeTypesToIconResMap[mimeType] ?: when {
-            mimeType.contains("audio") -> R.drawable.stream_ui_ic_file_mp3
-            mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
+            mimeType.contains(ModelType.attach_audio) -> R.drawable.stream_ui_ic_file_audio_generic
+            mimeType.contains(ModelType.attach_video) -> R.drawable.stream_ui_ic_file_video_generic
             else -> R.drawable.stream_ui_ic_file
         }
     }
