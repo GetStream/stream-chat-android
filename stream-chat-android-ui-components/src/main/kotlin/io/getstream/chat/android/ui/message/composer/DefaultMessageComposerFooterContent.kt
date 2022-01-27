@@ -7,24 +7,24 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultBottomContentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultFooterContentBinding
 
 /**
  * Represents the default footer content for the [MessageComposerView].
  *
  * Used in thread mode for showing "send also to channel" checkbox.
  */
-public class MessageComposerDefaultFooterContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerChild {
 
     /**
      * Handle to layout binding.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultBottomContentBinding
+    private lateinit var binding: StreamUiMessageComposerDefaultFooterContentBinding
 
     /**
      * Callback invoked when checkbox is clicked.
      */
-    public var onSendAlsoToChannelSelected: (Boolean) -> Unit = {}
+    public var alsoSendToChannelSelectionListener: (Boolean) -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -42,9 +42,9 @@ public class MessageComposerDefaultFooterContent : FrameLayout, MessageComposerC
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
-        binding = StreamUiMessageComposerDefaultBottomContentBinding.inflate(streamThemeInflater, this)
+        binding = StreamUiMessageComposerDefaultFooterContentBinding.inflate(streamThemeInflater, this)
         binding.sendAlsoToChannel.setOnCheckedChangeListener { _, _ ->
-            onSendAlsoToChannelSelected(binding.sendAlsoToChannel.isChecked)
+            alsoSendToChannelSelectionListener(binding.sendAlsoToChannel.isChecked)
         }
     }
 

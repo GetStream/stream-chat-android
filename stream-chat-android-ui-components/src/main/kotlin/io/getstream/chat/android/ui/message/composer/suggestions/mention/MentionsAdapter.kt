@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
  * [RecyclerView.Adapter] responsible for displaying mention suggestions in the RecyclerView in [DefaultMentionSuggestionsContent].
  */
 internal class MentionsAdapter(
-    private inline val onMentionSelected: (User) -> Unit,
+    private inline val mentionSelectionListener: (User) -> Unit,
 ) : SimpleListAdapter<User, MentionsViewHolder>() {
 
     /**
@@ -24,6 +24,6 @@ internal class MentionsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
         return StreamUiItemMentionBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { MentionsViewHolder(it, onMentionSelected) }
+            .let { MentionsViewHolder(it, mentionSelectionListener) }
     }
 }

@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerChild
  * Default implementation of command suggestions view. Displayed in a popup above [MessageComposerView] when there are
  * command suggestions available in the current [MessageComposerState].
  */
-public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, MessageComposerChild {
 
     /**
      * Handle to layout binding.
@@ -24,12 +24,12 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
     /**
      * Callback invoked when commands suggestion is selected.
      */
-    public var onCommandSelected: (Command) -> Unit = {}
+    public var commandSelectionListener: (Command) -> Unit = {}
 
     /**
      * Adapter used to render command suggestions.
      */
-    private val adapter = CommandsAdapter { onCommandSelected(it) }
+    private val adapter = CommandsAdapter { commandSelectionListener(it) }
 
     public constructor(context: Context) : this(context, null)
 

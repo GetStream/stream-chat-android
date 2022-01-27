@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTr
 /**
  * Represents the default trailing content for the [MessageComposerView].
  */
-internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerChild {
 
     /**
      * Handle to layout binding.
@@ -21,13 +21,13 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     /**
      * Handler when the user clicks on the send message button.
      */
-    var onSendButtonClick: () -> Unit = {}
+    public var sendButtonClickListener: () -> Unit = {}
 
-    constructor(context: Context) : this(context, null)
+    public constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -40,7 +40,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
-        binding.sendMessageButton.setOnClickListener { onSendButtonClick() }
+        binding.sendMessageButton.setOnClickListener { sendButtonClickListener() }
     }
 
     /**

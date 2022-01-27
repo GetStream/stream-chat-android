@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLe
 /**
  * Represents the default leading content for the [MessageComposerView].
  */
-public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerChild {
 
     /**
      * Handle to layout binding.
@@ -20,12 +20,12 @@ public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposer
     /**
      * Handler when the user clicks on the attachments button.
      */
-    public var onAttachmentsButtonClick: () -> Unit = {}
+    public var attachmentsButtonClickListener: () -> Unit = {}
 
     /**
      * Handler when the user clicks on the pick commands button.
      */
-    public var onCommandsButtonClick: () -> Unit = {}
+    public var commandsButtonClickListener: () -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -42,12 +42,24 @@ public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposer
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
-        binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClick() }
-        binding.commandsButton.setOnClickListener { onCommandsButtonClick() }
+        binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener() }
+        binding.commandsButton.setOnClickListener { commandsButtonClickListener() }
     }
 
     /**
      * Re-rendering the UI according to the new state.
      */
-    override fun renderState(state: MessageComposerState): Unit = Unit
+    override fun renderState(state: MessageComposerState) {
+        val hasTextInput = state.inputValue.isNotEmpty()
+        val hasAttachments = state.attachments.isNotEmpty()
+        val hasCommandInput = state.inputValue.startsWith("/")
+        val hasCommandSuggestions = state.commandSuggestions.isNotEmpty()
+        val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
+
+        val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
+        val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
+
+        binding.attachmentsButton.isEnabled = isAttachmentsButtonEnabled
+        binding.commandsButton.isEnabled = isCommandsButtonEnabled
+    }
 }

@@ -9,11 +9,11 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
  * [RecyclerView.ViewHolder] used for rendering command. Used by [CommandsAdapter].
  *
  * @param binding Handle to [StreamUiItemCommandBinding] instance.
- * @param onCommandSelected Callback invoked when command suggestion item is clicked.
+ * @param commandSelectionListener Callback invoked when command suggestion item is clicked.
  */
 internal class CommandViewHolder(
     private val binding: StreamUiItemCommandBinding,
-    private val onCommandSelected: (Command) -> Unit,
+    private val commandSelectionListener: (Command) -> Unit,
 ) : SimpleListAdapter.ViewHolder<Command>(binding.root) {
 
     /**
@@ -22,7 +22,7 @@ internal class CommandViewHolder(
      * @param command Single command suggestion represented by [Command] class.
      */
     override fun bind(command: Command) {
-        binding.root.setOnClickListener { onCommandSelected(command) }
+        binding.root.setOnClickListener { commandSelectionListener(command) }
         binding.commandNameTextView.text = command.name.replaceFirstChar(Char::uppercase)
         binding.commandQueryTextView.text = itemView.context.getString(
             R.string.stream_ui_message_input_command_template,

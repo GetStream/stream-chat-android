@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerChild
  * Default implementation of mention suggestions view. Displayed in a popup above [MessageComposerView] when there are
  * mention suggestions available in the current [MessageComposerState].
  */
-internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, MessageComposerChild {
 
     /**
      * Handle to layout binding.
@@ -24,18 +24,18 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
     /**
      * Callback invoked when mention suggestion is selected.
      */
-    public var onMentionSelected: (User) -> Unit = {}
+    public var mentionSelectionListener: (User) -> Unit = {}
 
     /**
      * Adapter used to render mention suggestions.
      */
-    private val adapter = MentionsAdapter { onMentionSelected(it) }
+    private val adapter = MentionsAdapter { mentionSelectionListener(it) }
 
-    constructor(context: Context) : this(context, null)
+    public constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr

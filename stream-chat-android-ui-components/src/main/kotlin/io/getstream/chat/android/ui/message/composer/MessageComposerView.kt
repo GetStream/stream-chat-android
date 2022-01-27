@@ -20,8 +20,8 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
-import io.getstream.chat.android.ui.message.composer.suggestions.command.DefaultCommandSuggestionsContent
-import io.getstream.chat.android.ui.message.composer.suggestions.mention.DefaultMentionSuggestionsContent
+import io.getstream.chat.android.ui.message.composer.suggestions.command.DefaultMessageComposerCommandSuggestionsContent
+import io.getstream.chat.android.ui.message.composer.suggestions.mention.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
@@ -48,8 +48,8 @@ public class MessageComposerView : ConstraintLayout {
      * Default implementation of [mentionSuggestionsContent].
      */
     private val defaultMentionSuggestionsView: View by lazy {
-        DefaultMentionSuggestionsContent(context).apply {
-            onMentionSelected = { onMentionSuggestionSelected(it) }
+        DefaultMessageComposerMentionSuggestionsContent(context).also {
+            it.mentionSelectionListener = { mentionSelectionListener(it) }
         }
     }
 
@@ -67,8 +67,8 @@ public class MessageComposerView : ConstraintLayout {
      * Default implementation of [commandSuggestionsContent].
      */
     private val defaultCommandSuggestionsView: View by lazy {
-        DefaultCommandSuggestionsContent(context).apply {
-            onCommandSelected = { onCommandSuggestionSelected(it) }
+        DefaultMessageComposerCommandSuggestionsContent(context).also {
+            it.commandSelectionListener = { commandSelectionListener(it) }
         }
     }
 
@@ -85,42 +85,42 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Callback invoked when send button is clicked.
      */
-    public var onSendMessageClicked: () -> Unit = {}
+    public var sendMessageClickListener: () -> Unit = {}
 
     /**
      * Callback invoked when text input is modified.
      */
-    public var onInputChanged: (String) -> Unit = {}
+    public var textInputChangeListener: (String) -> Unit = {}
 
     /**
      * Callback invoked when clear button is clicked.
      */
-    public var onMessageDismissed: () -> Unit = {}
+    public var clearButtonClickListener: () -> Unit = {}
 
     /**
      * Callback invoked when attachments are selected.
      */
-    public var onAttachmentSelected: (List<Attachment>) -> Unit = {}
+    public var attachmentSelectionListener: (List<Attachment>) -> Unit = {}
 
     /**
      * Callback invoked when attachment is removed.
      */
-    public var onAttachmentRemovedHandler: (Attachment) -> Unit = {}
+    public var attachmentRemovalListener: (Attachment) -> Unit = {}
 
     /**
      * Callback invoked when one of mention suggestions is selected.
      */
-    public var onMentionSuggestionSelected: (User) -> Unit = {}
+    public var mentionSelectionListener: (User) -> Unit = {}
 
     /**
      * Callback invoked when one of command suggestions is selected.
      */
-    public var onCommandSuggestionSelected: (Command) -> Unit = {}
+    public var commandSelectionListener: (Command) -> Unit = {}
 
     /**
      * Callback invoked when "send also to channel" checkbox was clicked.
      */
-    public var onSendAlsoToChannelChanged: (Boolean) -> Unit = {}
+    public var alsoSendToChannelSelectionListener: (Boolean) -> Unit = {}
 
     /**
      * List of all the available commands. This value is used to display command suggestions popup when the "commands" button is clicked.
@@ -131,9 +131,11 @@ public class MessageComposerView : ConstraintLayout {
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr) {
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -143,8 +145,8 @@ public class MessageComposerView : ConstraintLayout {
     private fun init() {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         binding.leadingContent.apply {
-            val defaultLeadingContent = MessageComposerDefaultLeadingContent(context).apply {
-                onAttachmentsButtonClick = {
+            val defaultLeadingContent = DefaultMessageComposerLeadingContent(context).also {
+                it.attachmentsButtonClickListener = {
                     context.getFragmentManager()?.let {
                         AttachmentSelectionDialogFragment.newInstance(MessageInputViewStyle.createDefault(context))
                             .apply {
@@ -161,7 +163,7 @@ public class MessageComposerView : ConstraintLayout {
                                                 title = it.title,
                                             )
                                         }.also {
-                                            onAttachmentSelected(it)
+                                            attachmentSelectionListener(it)
                                         }
                                     }
                                 setAttachmentSelectionListener(listener)
@@ -169,7 +171,7 @@ public class MessageComposerView : ConstraintLayout {
                             }
                     }
                 }
-                onCommandsButtonClick = {
+                it.commandsButtonClickListener = {
                     renderCommandsSuggestions(MessageComposerState(commandSuggestions = availableCommands))
                 }
             }
@@ -177,27 +179,34 @@ public class MessageComposerView : ConstraintLayout {
             addView(defaultLeadingContent)
         }
         binding.centerContent.apply {
-            val defaultCenterContent = MessageComposerDefaultCenterContent(context).apply {
-                onTextChanged = { onInputChanged(it) }
-                onClearButtonClick = { onMessageDismissed() }
-                onAttachmentRemoved = { onAttachmentRemovedHandler(it) }
+            val defaultCenterContent = MessageComposerDefaultCenterContent(context).also {
+                it.textInputChangeListener = { textInputChangeListener(it) }
+                it.clearButtonClickListener = { clearButtonClickListener() }
+                it.attachmentRemovalListener = { attachmentRemovalListener(it) }
             }
             removeAllViews()
             addView(defaultCenterContent)
         }
         binding.trailingContent.apply {
-            val defaultTrailingContent = MessageComposerDefaultTrailingContent(context).apply {
-                this.onSendButtonClick = { onSendMessageClicked() }
+            val defaultTrailingContent = DefaultMessageComposerTrailingContent(context).also {
+                it.sendButtonClickListener = { sendMessageClickListener() }
             }
             removeAllViews()
             addView(defaultTrailingContent)
         }
         binding.footerContent.apply {
-            val defaultFooterContent = MessageComposerDefaultFooterContent(context).apply {
-                onSendAlsoToChannelSelected = { onSendAlsoToChannelChanged(it) }
+            val defaultFooterContent = DefaultMessageComposerFooterContent(context).also {
+                alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
             }
             removeAllViews()
             addView(defaultFooterContent)
+        }
+        binding.headerContent.apply {
+            val defaultHeaderContent = DefaultMessageComposerHeaderContent(context).also {
+                alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
+            }
+            removeAllViews()
+            addView(defaultHeaderContent)
         }
     }
 
@@ -363,7 +372,7 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Sets custom footer content view.
      *
-     * @param view The [View] which replaces default bottom content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
+     * @param view The [View] which replaces default footer content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
      * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
      */
     public fun <V> setFooterContent(
@@ -372,6 +381,20 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerChild {
         binding.footerContent.removeAllViews()
         binding.footerContent.addView(view, layoutParams)
+    }
+
+    /**
+     * Sets custom header content view.
+     *
+     * @param view The [View] which replaces default header content of [MessageComposerView]. It must implement [MessageComposerChild] interface.
+     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
+     */
+    public fun <V> setHeaderContent(
+        view: V,
+        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
+    ) where V : View, V : MessageComposerChild {
+        binding.headerContent.removeAllViews()
+        binding.headerContent.addView(view, layoutParams)
     }
 
     /**

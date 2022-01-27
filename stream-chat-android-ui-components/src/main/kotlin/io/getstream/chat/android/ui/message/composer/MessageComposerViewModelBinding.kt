@@ -15,45 +15,45 @@ import kotlinx.coroutines.launch
  *
  * @param view Instance of [MessageComposerView]
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
- * @param onSendMessage Callback invoked when send button is clicked. Default implementation calls view model to send the message.
- * @param onInputChanged Callback invoked after the text in message input has changed. Default implementation updates text input value in view model.
- * @param onDismissMessage Callback invoked when user dismisses the message. Default implementation clears input value in view model.
- * @param onAttachmentsSelected Callback invoked when user selects list of attachments in attachments picker.
- * @param onRemoveAttachment Callback invoked when user attempts to remove the attachment.
- * @param onMentionSuggestionSelected Callback invoked when selects one of the mention suggestions.
- * @param onCommandSuggestionSelected Callback invoked when selects one of the command suggestions.
- * @param onSendAlsoToChannelChanged Callback invoked when user selects one of the command suggestions.
+ * @param sendMessageClickListener Callback invoked when send button is clicked. Default implementation calls view model to send the message.
+ * @param textInputChangeListener Callback invoked after the text in message input has changed. Default implementation updates text input value in view model.
+ * @param clearButtonClickListener Callback invoked when user dismisses the message. Default implementation clears input value in view model.
+ * @param attachmentSelectionListener Callback invoked when user selects list of attachments in attachments picker.
+ * @param attachmentRemovalListener Callback invoked when user attempts to remove the attachment.
+ * @param mentionSelectionListener Callback invoked when selects one of the mention suggestions.
+ * @param commandSelectionListener Callback invoked when selects one of the command suggestions.
+ * @param alsoSendToChannelSelectionListener Callback invoked when user selects one of the command suggestions.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
-    onSendMessage: (Message) -> Unit = { sendMessage(it) },
-    onInputChanged: (String) -> Unit = { setMessageInput(it) },
-    onDismissMessage: () -> Unit = { setMessageInput("") },
-    onAttachmentsSelected: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
-    onRemoveAttachment: (Attachment) -> Unit = { removeSelectedAttachment(it) },
-    onMentionSuggestionSelected: (User) -> Unit = { selectMention(it) },
-    onCommandSuggestionSelected: (Command) -> Unit = { selectCommand(it) },
-    onSendAlsoToChannelChanged: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
+    sendMessageClickListener: (Message) -> Unit = { sendMessage(it) },
+    textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
+    clearButtonClickListener: () -> Unit = { setMessageInput("") },
+    attachmentSelectionListener: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
+    attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
+    mentionSelectionListener: (User) -> Unit = { selectMention(it) },
+    commandSelectionListener: (Command) -> Unit = { selectCommand(it) },
+    alsoSendToChannelSelectionListener: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
 ) {
-    view.onSendMessageClicked = {
+    view.sendMessageClickListener = {
         val message = buildNewMessage()
-        onSendMessage(message)
+        sendMessageClickListener(message)
     }
 
-    view.onInputChanged = onInputChanged
+    view.textInputChangeListener = textInputChangeListener
 
-    view.onMessageDismissed = onDismissMessage
+    view.clearButtonClickListener = clearButtonClickListener
 
-    view.onAttachmentSelected = onAttachmentsSelected
+    view.attachmentSelectionListener = attachmentSelectionListener
 
-    view.onAttachmentRemovedHandler = onRemoveAttachment
+    view.attachmentRemovalListener = attachmentRemovalListener
 
-    view.onMentionSuggestionSelected = onMentionSuggestionSelected
+    view.mentionSelectionListener = mentionSelectionListener
 
-    view.onCommandSuggestionSelected = onCommandSuggestionSelected
+    view.commandSelectionListener = commandSelectionListener
 
-    view.onSendAlsoToChannelChanged = onSendAlsoToChannelChanged
+    view.alsoSendToChannelSelectionListener = alsoSendToChannelSelectionListener
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect {
