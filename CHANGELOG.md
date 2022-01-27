@@ -72,6 +72,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added [`Custom Attachments guide`](https://getstream.io/chat/docs/sdk/android/composee/guides/adding-custom-attachments/). [#2967](https://github.com/GetStream/stream-chat-android/pull/2967)
 
 ### ⚠️ Changed
 
