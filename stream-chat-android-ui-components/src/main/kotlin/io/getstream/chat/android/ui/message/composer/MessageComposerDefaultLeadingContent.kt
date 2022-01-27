@@ -15,8 +15,7 @@ public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposer
     /**
      * Handle to layout binding.
      */
-    private val binding: StreamUiMessageComposerDefaultLeadingContentBinding =
-        StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
+    private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     /**
      * Handler when the user clicks on the attachments button.
@@ -42,6 +41,7 @@ public class MessageComposerDefaultLeadingContent : FrameLayout, MessageComposer
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
+        binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
         binding.attachmentsButton.setOnClickListener { onAttachmentsButtonClick() }
         binding.commandsButton.setOnClickListener { onCommandsButtonClick() }
     }

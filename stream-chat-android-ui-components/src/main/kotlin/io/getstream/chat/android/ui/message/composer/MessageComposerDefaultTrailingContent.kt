@@ -16,8 +16,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
     /**
      * Handle to layout binding.
      */
-    private val binding: StreamUiMessageComposerDefaultTrailingContentBinding =
-        StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
+    private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
 
     /**
      * Handler when the user clicks on the send message button.
@@ -40,6 +39,7 @@ internal class MessageComposerDefaultTrailingContent : FrameLayout, MessageCompo
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
+        binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
         binding.sendMessageButton.setOnClickListener { onSendButtonClick() }
     }
 

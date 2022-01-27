@@ -19,8 +19,7 @@ public class MessageComposerDefaultFooterContent : FrameLayout, MessageComposerC
     /**
      * Handle to layout binding.
      */
-    private val binding: StreamUiMessageComposerDefaultBottomContentBinding =
-        StreamUiMessageComposerDefaultBottomContentBinding.inflate(streamThemeInflater, this)
+    private lateinit var binding: StreamUiMessageComposerDefaultBottomContentBinding
 
     /**
      * Callback invoked when checkbox is clicked.
@@ -43,6 +42,7 @@ public class MessageComposerDefaultFooterContent : FrameLayout, MessageComposerC
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
+        binding = StreamUiMessageComposerDefaultBottomContentBinding.inflate(streamThemeInflater, this)
         binding.sendAlsoToChannel.setOnCheckedChangeListener { _, _ ->
             onSendAlsoToChannelSelected(binding.sendAlsoToChannel.isChecked)
         }

@@ -19,8 +19,7 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
     /**
      * Handle to layout binding.
      */
-    private val binding: StreamUiSuggestionListViewBinding =
-        StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
+    private lateinit var binding: StreamUiSuggestionListViewBinding
 
     /**
      * Callback invoked when mention suggestion is selected.
@@ -48,6 +47,7 @@ internal class DefaultMentionSuggestionsContent : FrameLayout, MessageComposerCh
      * Set up initial layout state.
      */
     private fun init() {
+        binding = StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
         binding.suggestionsCardView.isVisible = true
         binding.commandsTitleTextView.isVisible = false
         binding.suggestionsRecyclerView.adapter = adapter

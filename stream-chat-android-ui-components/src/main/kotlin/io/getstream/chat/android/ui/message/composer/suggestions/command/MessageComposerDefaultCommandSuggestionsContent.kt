@@ -19,8 +19,7 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
     /**
      * Handle to layout binding.
      */
-    private val binding: StreamUiSuggestionListViewBinding =
-        StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
+    private lateinit var binding: StreamUiSuggestionListViewBinding
 
     /**
      * Callback invoked when commands suggestion is selected.
@@ -48,6 +47,7 @@ public class DefaultCommandSuggestionsContent : FrameLayout, MessageComposerChil
      * Sets up initial layout state and initializes suggestions RecyclerView.
      */
     private fun init() {
+        binding = StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
         binding.suggestionsCardView.isVisible = true
         binding.suggestionsRecyclerView.adapter = adapter
     }

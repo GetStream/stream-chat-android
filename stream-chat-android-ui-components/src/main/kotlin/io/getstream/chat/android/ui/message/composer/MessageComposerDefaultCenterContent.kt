@@ -34,8 +34,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
     /**
      * Handle to layout binding.
      */
-    private val binding: StreamUiMessageComposerDefaultCenterContentBinding =
-        StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
+    private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
 
     /**
      * Callback invoked each time after text was changed.
@@ -82,6 +81,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Initial UI rendering and setting up callbacks.
      */
     private fun init() {
+        binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
             onTextChanged(editable?.toString() ?: "")
         }
