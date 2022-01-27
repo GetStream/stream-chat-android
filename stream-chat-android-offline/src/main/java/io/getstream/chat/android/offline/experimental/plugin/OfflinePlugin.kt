@@ -37,13 +37,11 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     internal lateinit var logic: LogicRegistry
         private set
 
-    public lateinit var globalState: GlobalState
-        private set
+    public val globalState: GlobalState = GlobalMutableState()
 
     override val name: String = MODULE_NAME
 
     override fun init(appContext: Context, chatClient: ChatClient) {
-        globalState = GlobalMutableState()
         ChatDomain.Builder(appContext, chatClient).apply {
             if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()

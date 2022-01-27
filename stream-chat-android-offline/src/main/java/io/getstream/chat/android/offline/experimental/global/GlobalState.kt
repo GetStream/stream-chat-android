@@ -5,19 +5,24 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Global state of the Chat domain.
+ * Global state of [OfflinePlugin].
  */
 public interface GlobalState {
 
-    /** The current user on the chatDomain object */
+    /**
+     * The current user in the OfflinePlugin state.
+     */
     public val user: StateFlow<User?>
 
-    /** if the client connection has been initialized */
+    /**
+     * If the client connection has been initialized.
+     */
     public val initialized: StateFlow<Boolean>
 
     /**
@@ -27,7 +32,7 @@ public interface GlobalState {
 
     /**
      * The total unread message count for the current user.
-     * Depending on your app you'll want to show this or the channelUnreadCount
+     * Depending on your app you'll want to show this or the channelUnreadCount.
      */
     public val totalUnreadCount: StateFlow<Int>
 
