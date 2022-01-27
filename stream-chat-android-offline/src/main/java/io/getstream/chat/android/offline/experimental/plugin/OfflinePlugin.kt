@@ -81,13 +81,13 @@ public class OfflinePlugin(
 
         val isOnline = ChatDomain.instance().isOnline()
 
-        val messageToEdit = message.copy(
+        val messagesToEdit = message.copy(
             updatedLocallyAt = Date(),
             syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-        )
+        ).let(::listOf)
 
-        channelLogic.upsertMessages(listOf(messageToEdit))
-        channelLogic.insertMessage(listOf(messageToEdit))
+        channelLogic.upsertMessages(messagesToEdit)
+        channelLogic.insertMessage(messagesToEdit)
     }
 
     override fun onMessageEditResult(result: Result<Message>) {
