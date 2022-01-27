@@ -15,9 +15,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.test.asCall
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be`
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalStreamChatApi::class)
@@ -89,7 +88,6 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             plugins.add(plugin)
         }
 
-        @OptIn(ExperimentalCoroutinesApi::class)
         fun givenChannelResponse(channelProvider: () -> Channel) = apply {
             whenever(api.queryChannel(any(), any(), any())) doAnswer {
                 CoroutineCall(coroutineRule.scope) {
@@ -103,5 +101,4 @@ internal class WhenQueryChannel : BaseChatClientTest() {
 }
 
 @OptIn(ExperimentalStreamChatApi::class)
-private interface QueryChannelListenerPlugin: Plugin, QueryChannelListener
-
+private interface QueryChannelListenerPlugin : Plugin, QueryChannelListener
