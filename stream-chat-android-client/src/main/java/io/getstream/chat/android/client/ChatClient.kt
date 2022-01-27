@@ -1260,6 +1260,8 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun markAllRead(): Call<Unit> {
         return api.markAllRead()
+            .doOnStart(scope) {
+            }
     }
 
     /**
