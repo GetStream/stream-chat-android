@@ -118,8 +118,6 @@ object Dependencies {
     const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.COMPOSE}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.COMPOSE}"
-    const val composeMaterialIconsCore = "androidx.compose.material:material-icons-core:${Versions.COMPOSE}"
-    const val composeMaterialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.COMPOSE}"
     const val composeAccompanistPermissions =
         "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeAccompanistPager = "com.google.accompanist:accompanist-pager:${Versions.COMPOSE_ACCOMPANIST}"
