@@ -2,13 +2,11 @@ package io.getstream.chat.android.offline.experimental.global
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -18,12 +16,6 @@ public interface GlobalState {
 
     /** The current user on the chatDomain object */
     public val user: StateFlow<User?>
-
-    /** if offline is enabled */
-    public var offlineEnabled: Boolean
-
-    /** if we want to track user presence */
-    public var userPresence: Boolean
 
     /** if the client connection has been initialized */
     public val initialized: StateFlow<Boolean>
@@ -70,11 +62,6 @@ public interface GlobalState {
     public val banned: StateFlow<Boolean>
 
     /**
-     * The retry policy for retrying failed requests.
-     */
-    public val retryPolicy: RetryPolicy
-
-    /**
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
     public val typingUpdates: StateFlow<TypingEvent>
@@ -85,6 +72,13 @@ public interface GlobalState {
      * @return True if the user is online otherwise False.
      */
     public fun isOnline(): Boolean
+
+    /**
+     * If the user is offline or not.
+     *
+     * @return True if the user is offline otherwise False.
+     */
+    public fun isOffline(): Boolean
 
     /**
      * If connection is in connecting state.
@@ -99,17 +93,4 @@ public interface GlobalState {
      * @return True if initialized otherwise False.
      */
     public fun isInitialized(): Boolean
-
-    /**
-     * Cleans the current state.
-     */
-    public fun clean()
-
-    /**
-     * Channel config for the given channel type.
-     *
-     * @param channelType Type of the channel.
-     * @return Channel config of the given type.
-     */
-    public fun getChannelConfig(channelType: String): Config
 }

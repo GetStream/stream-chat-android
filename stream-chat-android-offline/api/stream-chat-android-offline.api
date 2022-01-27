@@ -450,26 +450,20 @@ public final class io/getstream/chat/android/offline/experimental/extensions/Cha
 }
 
 public abstract interface class io/getstream/chat/android/offline/experimental/global/GlobalState {
-	public abstract fun clean ()V
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getOfflineEnabled ()Z
-	public abstract fun getRetryPolicy ()Lio/getstream/chat/android/offline/utils/RetryPolicy;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getUserPresence ()Z
 	public abstract fun isConnecting ()Z
 	public abstract fun isInitialized ()Z
+	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z
-	public abstract fun setOfflineEnabled (Z)V
-	public abstract fun setUserPresence (Z)V
 }
 
 public final class io/getstream/chat/android/offline/experimental/plugin/OfflinePlugin$Companion {

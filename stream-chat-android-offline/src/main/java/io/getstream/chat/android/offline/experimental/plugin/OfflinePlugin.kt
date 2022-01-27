@@ -14,6 +14,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
@@ -35,9 +37,13 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     internal lateinit var logic: LogicRegistry
         private set
 
+    public lateinit var globalState: GlobalState
+        private set
+
     override val name: String = MODULE_NAME
 
     override fun init(appContext: Context, chatClient: ChatClient) {
+        globalState = GlobalMutableState()
         ChatDomain.Builder(appContext, chatClient).apply {
             if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()

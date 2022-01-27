@@ -13,8 +13,6 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import kotlinx.coroutines.runBlocking
@@ -31,8 +29,6 @@ public class StateRegistry internal constructor(
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
-
-    private val globalState: GlobalState = GlobalMutableState(chatDomainImpl)
 
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
@@ -69,6 +65,5 @@ public class StateRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-        globalState.clean()
     }
 }

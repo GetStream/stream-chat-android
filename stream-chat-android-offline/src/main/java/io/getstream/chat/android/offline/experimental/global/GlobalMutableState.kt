@@ -1,60 +1,63 @@
+@file:Suppress("PropertyName")
+
 package io.getstream.chat.android.offline.experimental.global
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.RetryPolicy
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class GlobalMutableState(private val chatDomainImpl: ChatDomainImpl) : GlobalState {
+internal class GlobalMutableState : GlobalState {
 
-    override val user: StateFlow<User?> = chatDomainImpl.user
+    internal val _initialized = MutableStateFlow(false)
+    internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    internal val _totalUnreadCount = MutableStateFlow(0)
+    internal val _channelUnreadCount = MutableStateFlow(0)
+    internal val _errorEvent = MutableStateFlow(Event(ChatError()))
+    internal val _banned = MutableStateFlow(false)
 
-    override var offlineEnabled: Boolean
-        get() = chatDomainImpl.offlineEnabled
-        set(value) {
-            chatDomainImpl.offlineEnabled = value
-        }
+    internal val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
+    internal val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
+    internal val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))
 
-    override var userPresence: Boolean
-        get() = chatDomainImpl.userPresence
-        set(value) {
-            chatDomainImpl.userPresence = value
-        }
+    internal val _user = MutableStateFlow<User?>(null)
 
-    override val initialized: StateFlow<Boolean> = chatDomainImpl.initialized
+    override val user: StateFlow<User?> = _user
 
-    override val connectionState: StateFlow<ConnectionState> = chatDomainImpl.connectionState
+    override val initialized: StateFlow<Boolean> = _initialized
 
-    override val totalUnreadCount: StateFlow<Int> = chatDomainImpl.totalUnreadCount
+    override val connectionState: StateFlow<ConnectionState> = _connectionState
 
-    override val channelUnreadCount: StateFlow<Int> = chatDomainImpl.channelUnreadCount
+    override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
 
-    override val errorEvents: StateFlow<Event<ChatError>> = chatDomainImpl.errorEvents
+    override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount
 
-    override val muted: StateFlow<List<Mute>> = chatDomainImpl.muted
+    override val errorEvents: StateFlow<Event<ChatError>> = _errorEvent
 
-    override val channelMutes: StateFlow<List<ChannelMute>> = chatDomainImpl.channelMutes
+    override val muted: StateFlow<List<Mute>> = _mutedUsers
 
-    override val banned: StateFlow<Boolean> = chatDomainImpl.banned
+    override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes
 
-    override val retryPolicy: RetryPolicy = chatDomainImpl.retryPolicy
+    override val banned: StateFlow<Boolean> = _banned
 
-    override val typingUpdates: StateFlow<TypingEvent> = chatDomainImpl.typingUpdates
+    override val typingUpdates: StateFlow<TypingEvent> = _typingChannels
 
-    override fun isOnline(): Boolean = chatDomainImpl.isOnline()
+    override fun isOnline(): Boolean = _connectionState.value == ConnectionState.CONNECTED
 
-    override fun isConnecting(): Boolean = chatDomainImpl.isConnecting()
+    override fun isOffline(): Boolean = _connectionState.value == ConnectionState.OFFLINE
 
-    override fun isInitialized(): Boolean = chatDomainImpl.isInitialized()
+    override fun isConnecting(): Boolean = _connectionState.value == ConnectionState.CONNECTING
 
-    override fun clean() = chatDomainImpl.clean()
-
-    override fun getChannelConfig(channelType: String): Config = chatDomainImpl.getChannelConfig(channelType)
+    override fun isInitialized(): Boolean {
+        return _initialized.value
+    }
 }
+
+@ExperimentalStreamChatApi
+internal fun GlobalState.toMutableState(): GlobalMutableState = this as GlobalMutableState
