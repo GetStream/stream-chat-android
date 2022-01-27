@@ -1505,6 +1505,10 @@ public final class io/getstream/chat/android/compose/ui/util/DefaultReactionType
 	public final fun defaultReactionTypes ()Ljava/util/Map;
 }
 
+public final class io/getstream/chat/android/compose/ui/util/ImageUtilsKt {
+	public static final fun mirrorRtl (Landroidx/compose/ui/Modifier;Landroidx/compose/ui/unit/LayoutDirection;)Landroidx/compose/ui/Modifier;
+}
+
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider$Companion;
 	public abstract fun provideMessageAlignment (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;)Lio/getstream/chat/android/compose/state/messages/MessageAlignment;

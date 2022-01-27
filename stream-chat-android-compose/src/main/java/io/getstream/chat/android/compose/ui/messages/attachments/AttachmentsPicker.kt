@@ -32,14 +32,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -56,6 +54,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import java.io.File
 
@@ -361,10 +360,7 @@ private fun AttachmentPickerOptions(
                 Icon(
                     modifier = Modifier
                         .weight(1f)
-                        .scale(
-                            scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
-                            scaleY = 1f
-                        ),
+                        .mirrorRtl(layoutDirection = layoutDirection),
                     painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                     tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
