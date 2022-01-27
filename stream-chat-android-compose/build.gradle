@@ -67,8 +67,6 @@ dependencies {
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
-    implementation Dependencies.composeMaterialIconsCore
-    implementation Dependencies.composeMaterialIconsExtended
 
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
