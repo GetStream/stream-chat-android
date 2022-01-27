@@ -60,6 +60,8 @@ public class StateRegistry internal constructor(
         }
     }
 
+    internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
+
     /** Clear state of all state objects. */
     public fun clear() {
         queryChannels.clear()

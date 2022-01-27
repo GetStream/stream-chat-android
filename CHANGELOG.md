@@ -71,6 +71,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Fixed the way our attachments work and are represented in Compose to support more attachment types. [#2955](https://github.com/GetStream/stream-chat-android/pull/2955)
 
 ### ⬆️ Improved
+- Improved RTL support in Compose [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
+- Made the SDK smaller by removing Materials Icons dependency [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
+- Removed unnecessary experimental flags, opted in into APIs we're using from Compose. [#2983](https://github.com/GetStream/stream-chat-android/pull/2983)
 
 ### ✅ Added
 - Added [`Custom Attachments guide`](https://getstream.io/chat/docs/sdk/android/composee/guides/adding-custom-attachments/). [#2967](https://github.com/GetStream/stream-chat-android/pull/2967)
