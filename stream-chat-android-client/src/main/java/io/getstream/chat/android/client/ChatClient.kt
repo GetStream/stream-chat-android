@@ -951,10 +951,13 @@ public class ChatClient internal constructor(
             }
         }
 
+    /**
+     * Update the message locally and in the backend
+     *
+     * @param message [Message] The message to be updated
+     */
     @CheckResult
-    public fun updateMessage(
-        message: Message,
-    ): Call<Message> {
+    public fun updateMessage(message: Message): Call<Message> {
         return api.updateMessage(message)
             .doOnStart(scope) {
                 plugins.forEach { plugin -> plugin.onMessageEditRequest(message) }

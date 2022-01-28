@@ -63,6 +63,11 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         logic = LogicRegistry(state)
     }
 
+    /**
+     * Method called when an edition in a message starts happens
+     *
+     * @param message [Message]
+     */
     override suspend fun onMessageEditRequest(message: Message) {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
@@ -78,6 +83,11 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         channelLogic.storeMessageLocally(messagesToEdit)
     }
 
+    /**
+     * Method called when an edition in a message returns from the API
+     *
+     * @param result the result of the API call
+     */
     override fun onMessageEditResult(result: Result<Message>) {
         
     }
