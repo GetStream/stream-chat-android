@@ -561,10 +561,10 @@ public class ChannelController internal constructor(
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
-        val messageToBeEdited = message.copy()
-        
-        messageToBeEdited.updatedLocallyAt = Date()
-        messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        val messageToBeEdited = message.copy(
+            updatedLocallyAt = Date(),
+            syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        )
 
         // Update flow
         upsertMessage(messageToBeEdited)
