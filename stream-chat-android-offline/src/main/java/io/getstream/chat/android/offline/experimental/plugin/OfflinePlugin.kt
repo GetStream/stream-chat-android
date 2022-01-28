@@ -37,6 +37,7 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     internal lateinit var logic: LogicRegistry
         private set
 
+    // TODO: Move to StateRegistry when we remove ChatDomain.
     public val globalState: GlobalState = GlobalMutableState()
 
     override val name: String = MODULE_NAME
