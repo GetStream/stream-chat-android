@@ -5,7 +5,7 @@ internal interface TokenManager {
     fun loadSync(): String
     fun expireToken()
     fun hasTokenProvider(): Boolean
-    fun setTokenProvider(provider: TokenProvider)
+    fun setTokenProvider(provider: CacheableTokenProvider)
     fun getToken(): String
     fun hasToken(): Boolean
 }
