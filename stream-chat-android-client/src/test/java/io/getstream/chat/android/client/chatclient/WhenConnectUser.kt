@@ -76,7 +76,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
 
-        verify(tokenManager).setTokenProvider(tokenProviderMock)
+        verify(tokenManager).setTokenProvider(any())
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
 
-        verify(tokenManager).setTokenProvider(tokenProviderMock)
+        verify(tokenManager).setTokenProvider(any())
     }
 
     @Test
