@@ -34,7 +34,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param centerContent The content shown at the center of [ReactionsPicker].
  * By default displays all available reactions.
  */
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ReactionsPicker(
     message: Message,
@@ -73,13 +73,13 @@ public fun ReactionsPicker(
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
  * @param reactionTypes The available reactions.
  */
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DefaultReactionsPickerCenterContent(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
     cells: GridCells = GridCells.Fixed(5),
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
 ) {
     ExtendedReactionsOptions(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),

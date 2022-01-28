@@ -15,14 +15,14 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -33,6 +33,7 @@ import com.devbrackets.android.exomedia.ui.widget.controls.VideoControlsMobile
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 /**
  * An Activity that is capable of playing video/audio stream.
@@ -95,8 +96,11 @@ public class MediaPreviewActivity : AppCompatActivity() {
                         IconButton(
                             onClick = { finish() }
                         ) {
+                            val layoutDirection = LocalLayoutDirection.current
+
                             Icon(
-                                imageVector = Icons.Default.ArrowBack,
+                                modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
+                                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                                 contentDescription = null,
                                 tint = controlsColor,
                             )

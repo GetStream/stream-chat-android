@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -116,7 +117,8 @@ internal object ChannelDtoTestData {
           "team": "team1",
           "cooldown": 1,
           "pinned_messages": [${MessageDtoTestData.downstreamJson}],
-          "draft": true
+          "draft": true,
+          "own_capabilities": ["connect-events", "pin-message"]
         }
         """.withoutWhitespace()
     val downstreamChannel = DownstreamChannelDto(
@@ -158,6 +160,7 @@ internal object ChannelDtoTestData {
         team = "team1",
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
+        own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
         extraData = mapOf("draft" to true),
     )
 

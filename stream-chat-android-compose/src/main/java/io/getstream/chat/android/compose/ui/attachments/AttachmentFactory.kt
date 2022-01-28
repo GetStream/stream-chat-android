@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.util.previewText
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Holds the information required to build an attachment message.
@@ -16,10 +15,8 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * @param content Composable function that allows users to define the content the [AttachmentFactory] will build using any given
  * [AttachmentState], when the message is displayed in the message list.
  * @param textFormatter The formatter used to get a string representation for the given attachment.
- *
- * TODO: Migrate back to abstract [AttachmentFactory] and concrete implementations once https://issuetracker.google.com/issues/197727783 is fixed.
  */
-public open class AttachmentFactory @ExperimentalStreamChatApi constructor(
+public open class AttachmentFactory constructor(
     public val canHandle: (attachments: List<Attachment>) -> Boolean,
     public val previewContent: (
         @Composable (
