@@ -71,8 +71,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
-@ExperimentalFoundationApi
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 public fun MessagesScreen(
     channelId: String,

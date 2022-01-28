@@ -42,6 +42,8 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.global.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
@@ -101,11 +103,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -184,59 +183,48 @@ internal class ChatDomainImpl internal constructor(
     val defaultConfig: Config = Config(connectEventsEnabled = true, muteEnabled = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
 
-    private val _initialized = MutableStateFlow(false)
-    private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
-    private val _totalUnreadCount = MutableStateFlow(0)
-    private val _channelUnreadCount = MutableStateFlow(0)
-    private val _errorEvent = MutableStateFlow<Event<ChatError>?>(null)
-    private val _banned = MutableStateFlow(false)
+    private val globalState: GlobalMutableState = offlinePlugin.globalState.toMutableState()
 
-    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
-    private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
-    private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
-
-    private val _user = MutableStateFlow<User?>(null)
-    override val user: StateFlow<User?> = _user
+    override val user: StateFlow<User?> by globalState::user
 
     /** if the client connection has been initialized */
-    override val initialized: StateFlow<Boolean> = _initialized
+    override val initialized: StateFlow<Boolean> = globalState.initialized
 
     /**
      * StateFlow<Boolean> that indicates if we are currently online
      */
-    override val connectionState: StateFlow<ConnectionState> = _connectionState
+    override val connectionState: StateFlow<ConnectionState> = globalState.connectionState
 
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
-    override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
+    override val totalUnreadCount: StateFlow<Int> = globalState.totalUnreadCount
 
     /**
      * the number of unread channels for the current user
      */
-    override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount
+    override val channelUnreadCount: StateFlow<Int> = globalState.channelUnreadCount
 
     /**
      * list of users that you've muted
      */
-    override val muted: StateFlow<List<Mute>> = _mutedUsers
+    override val muted: StateFlow<List<Mute>> = globalState.muted
 
     /**
      * List of channels you've muted
      */
-    override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes
+    override val channelMutes: StateFlow<List<ChannelMute>> = globalState.channelMutes
 
     /**
      * if the current user is banned or not
      */
-    override val banned: StateFlow<Boolean> = _banned
+    override val banned: StateFlow<Boolean> = globalState.banned
 
     /**
      * The error event state flow object is triggered when errors in the underlying components occur.
      */
-    override val errorEvents: StateFlow<Event<ChatError>> =
-        _errorEvent.filterNotNull().stateIn(scope, SharingStarted.Eagerly, Event(ChatError()))
+    override val errorEvents: StateFlow<Event<ChatError>> = globalState.errorEvents
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -244,12 +232,12 @@ internal class ChatDomainImpl internal constructor(
     /** stores the mapping from cid to ChannelController */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
 
-    override val typingUpdates: StateFlow<TypingEvent> = _typingChannels
+    override val typingUpdates: StateFlow<TypingEvent> = globalState.typingUpdates
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     @VisibleForTesting
-    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this)
+    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this, client)
     private var logger = ChatLogger.get("Domain")
 
     private val cleanTask = object : Runnable {
@@ -268,15 +256,15 @@ internal class ChatDomainImpl internal constructor(
         private set
 
     private fun clearUnreadCountState() {
-        _totalUnreadCount.value = 0
-        _channelUnreadCount.value = 0
+        globalState._totalUnreadCount.value = 0
+        globalState._channelUnreadCount.value = 0
     }
 
     private fun clearConnectionState() {
-        _initialized.value = false
-        _connectionState.value = ConnectionState.OFFLINE
-        _banned.value = false
-        _mutedUsers.value = emptyList()
+        globalState._initialized.value = false
+        globalState._connectionState.value = ConnectionState.OFFLINE
+        globalState._banned.value = false
+        globalState._mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
         latestUsers = MutableStateFlow(emptyMap())
@@ -286,7 +274,7 @@ internal class ChatDomainImpl internal constructor(
         clearConnectionState()
         clearUnreadCountState()
 
-        _user.value = user
+        globalState._user.value = user
 
         repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -351,12 +339,12 @@ internal class ChatDomainImpl internal constructor(
 
     internal suspend fun updateCurrentUser(me: User) {
         if (me.id != user.value?.id) {
-            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${user.value?.id}. create a new chatdomain when connecting a different user.")
+            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${user.value?.id}. create a new ChatDomain when connecting a different user.")
         }
-        _user.value = me
+        globalState._user.value = me
         repos.insertCurrentUser(me)
-        _mutedUsers.value = me.mutes
-        _channelMutes.value = me.channelMutes
+        globalState._mutedUsers.value = me.mutes
+        globalState._channelMutes.value = me.channelMutes
         setTotalUnreadCount(me.totalUnreadCount)
         setChannelUnreadCount(me.unreadChannels)
         setBanned(me.banned)
@@ -409,7 +397,7 @@ internal class ChatDomainImpl internal constructor(
     suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
 
     fun addError(error: ChatError) {
-        _errorEvent.value = Event(error)
+        globalState._errorEvent.value = Event(error)
     }
 
     fun isActiveChannel(cid: String): Boolean {
@@ -426,15 +414,15 @@ internal class ChatDomainImpl internal constructor(
     }
 
     fun setChannelUnreadCount(newCount: Int) {
-        _channelUnreadCount.value = newCount
+        globalState._channelUnreadCount.value = newCount
     }
 
     fun setBanned(newBanned: Boolean) {
-        _banned.value = newBanned
+        globalState._banned.value = newBanned
     }
 
     fun setTotalUnreadCount(newCount: Int) {
-        _totalUnreadCount.value = newCount
+        globalState._totalUnreadCount.value = newCount
     }
 
     /**
@@ -497,34 +485,32 @@ internal class ChatDomainImpl internal constructor(
     }
 
     private fun addTypingChannel(channelController: ChannelController) {
-        scope.launch { _typingChannels.emitAll(channelController.typing) }
+        scope.launch { globalState._typingChannels.emitAll(channelController.typing) }
     }
 
     internal fun setOffline() {
-        _connectionState.value = ConnectionState.OFFLINE
+        globalState._connectionState.value = ConnectionState.OFFLINE
     }
 
     internal fun setOnline() {
-        _connectionState.value = ConnectionState.CONNECTED
+        globalState._connectionState.value = ConnectionState.CONNECTED
     }
 
     internal fun setConnecting() {
-        _connectionState.value = ConnectionState.CONNECTING
+        globalState._connectionState.value = ConnectionState.CONNECTING
     }
 
     internal fun setInitialized() {
-        _initialized.value = true
+        globalState._initialized.value = true
     }
 
-    override fun isOnline(): Boolean = _connectionState.value == ConnectionState.CONNECTED
+    override fun isOnline(): Boolean = globalState.isOnline()
 
-    override fun isOffline(): Boolean = _connectionState.value == ConnectionState.OFFLINE
+    override fun isOffline(): Boolean = globalState.isOffline()
 
-    override fun isConnecting(): Boolean = _connectionState.value == ConnectionState.CONNECTING
+    override fun isConnecting(): Boolean = globalState.isConnecting()
 
-    override fun isInitialized(): Boolean {
-        return _initialized.value
-    }
+    override fun isInitialized(): Boolean = globalState.isInitialized()
 
     override fun getActiveQueries(): List<QueryChannelsController> {
         return activeQueryMapImpl.values.toList()

@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.0.4"
+    internal const val ANDROID_GRADLE_PLUGIN = "7.1.0"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.7.1.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.4.0"
@@ -118,8 +118,6 @@ object Dependencies {
     const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.COMPOSE}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.COMPOSE}"
-    const val composeMaterialIconsCore = "androidx.compose.material:material-icons-core:${Versions.COMPOSE}"
-    const val composeMaterialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.COMPOSE}"
     const val composeAccompanistPermissions =
         "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeAccompanistPager = "com.google.accompanist:accompanist-pager:${Versions.COMPOSE_ACCOMPANIST}"

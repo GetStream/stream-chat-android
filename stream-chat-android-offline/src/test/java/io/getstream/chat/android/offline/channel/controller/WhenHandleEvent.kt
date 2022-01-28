@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
@@ -69,7 +68,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
-    private lateinit var channelController: ChannelController
+    private lateinit var channelLogic: ChannelLogic
+    private lateinit var channelMutableState: ChannelMutableState
 
     @OptIn(ExperimentalStreamChatApi::class)
     @BeforeEach
@@ -78,18 +78,17 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             invocation.arguments[0] as List<Message>
         }
 
-        val mutableState = ChannelMutableState(
+        channelMutableState = ChannelMutableState(
             "type1", channelId, testCoroutines.scope, userFlow,
             MutableStateFlow(
                 mapOf(currentUser.id to currentUser)
             )
         )
 
-        channelController = ChannelController(
-            mutableState,
-            ChannelLogic(mutableState, chatDomain, attachmentUrlValidator),
-            client = chatClient,
-            domainImpl = chatDomain,
+        channelLogic = ChannelLogic(
+            channelMutableState,
+            chatDomain,
+            attachmentUrlValidator
         )
     }
 
@@ -109,9 +108,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
-        channelController.handleEvent(userStartWatchingEvent)
+        channelLogic.handleEvent(userStartWatchingEvent)
 
-        channelController.toChannel().lastMessageAt shouldBeEqualTo newDate
+        channelMutableState.toChannel().lastMessageAt shouldBeEqualTo newDate
     }
 
     // New message event
@@ -127,14 +126,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val newMessageEvent = randomNewMessageEvent(user = user, message = message)
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        channelController.handleEvent(newMessageEvent)
+        channelLogic.handleEvent(newMessageEvent)
 
         // Message is propagated
-        channelController.messages.value shouldBeEqualTo listOf(message)
+        channelMutableState.messages.value shouldBeEqualTo listOf(message)
         // Unread count should not be propagated, because it is a message form the same user
-        channelController.unreadCount.value shouldBeEqualTo 0
+        channelMutableState.unreadCount.value shouldBeEqualTo 0
         // Last message is updated
-        channelController.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
+        channelMutableState.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
     }
 
     @Test
@@ -149,16 +148,16 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         val newMessageEvent = randomNewMessageEvent(message = message)
 
-        channelController.handleEvent(newMessageEvent)
+        channelLogic.handleEvent(newMessageEvent)
 
         // Message is propagated
-        channelController.messages.value shouldBeEqualTo listOf(message)
+        channelMutableState.messages.value shouldBeEqualTo listOf(message)
 
         // Unread count should be propagated, because it is a message form another user
-        channelController.unreadCount.value shouldBeEqualTo 1
+        channelMutableState.unreadCount.value shouldBeEqualTo 1
 
         // Last message is updated
-        channelController.toChannel().lastMessageAt shouldBeEqualTo createdAt
+        channelMutableState.toChannel().lastMessageAt shouldBeEqualTo createdAt
     }
 
     // Message update
@@ -174,9 +173,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
 
-        channelController.handleEvent(messageUpdateEvent)
+        channelLogic.handleEvent(messageUpdateEvent)
 
-        channelController.messages.value.first() shouldBeEqualTo message
+        channelMutableState.messages.value.first() shouldBeEqualTo message
     }
 
     @Test
@@ -208,13 +207,13 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             silent = false,
             showInChannel = true
         )
-        channelController.upsertMessage(recentMessage)
+        channelLogic.upsertMessages(listOf(recentMessage))
         val messageUpdateEvent = randomMessageUpdateEvent(message = oldMessage)
 
-        channelController.handleEvent(messageUpdateEvent)
+        channelLogic.handleEvent(messageUpdateEvent)
 
-        channelController.messages.value shouldBeEqualTo listOf(recentMessage)
-        channelController.messages.value shouldNotBeEqualTo listOf(oldMessage)
+        channelMutableState.messages.value shouldBeEqualTo listOf(recentMessage)
+        channelMutableState.messages.value shouldNotBeEqualTo listOf(oldMessage)
     }
 
     // Member added event
@@ -224,9 +223,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val member = randomMember(user = user)
         val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
 
-        channelController.handleEvent(memberAddedEvent)
+        channelLogic.handleEvent(memberAddedEvent)
 
-        channelController.members.value shouldBeEqualTo listOf(member)
+        channelMutableState.members.value shouldBeEqualTo listOf(member)
     }
 
     // Typing events
@@ -239,15 +238,15 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val typingStartEvent2 = randomTypingStartEvent(user = user2, channelId = channelId)
         val typingStopEvent = randomTypingStopEvent(user = user2, channelId = channelId)
 
-        channelController.run {
+        channelLogic.run {
             handleEvent(typingStartEvent1)
-            typing.value.users shouldBeEqualTo listOf(user1)
+            channelMutableState.typing.value.users shouldBeEqualTo listOf(user1)
 
             handleEvent(typingStartEvent2)
-            typing.value.users shouldBeEqualTo listOf(user1, user2)
+            channelMutableState.typing.value.users shouldBeEqualTo listOf(user1, user2)
 
             handleEvent(typingStopEvent)
-            typing.value.users shouldBeEqualTo listOf(user1)
+            channelMutableState.typing.value.users shouldBeEqualTo listOf(user1)
         }
     }
 
@@ -256,9 +255,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     fun `when read notification event arrives, it should be correctly propagated`() {
         val readEvent = randomNotificationMarkReadEvent(user = currentUser)
 
-        channelController.handleEvent(readEvent)
+        channelLogic.handleEvent(readEvent)
 
-        channelController.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
+        channelMutableState.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
     }
 
     // Read event notification
@@ -266,9 +265,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     fun `when read event arrives, it should be correctly propagated`() {
         val readEvent = randomMessageReadEvent(user = currentUser)
 
-        channelController.handleEvent(readEvent)
+        channelLogic.handleEvent(readEvent)
 
-        channelController.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
+        channelMutableState.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
     }
 
     // Reaction event
@@ -281,10 +280,10 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        channelController.handleEvent(reactionEvent)
+        channelLogic.handleEvent(reactionEvent)
 
         // Message is propagated
-        channelController.messages.value shouldBeEqualTo listOf(message)
+        channelMutableState.messages.value shouldBeEqualTo listOf(message)
     }
 
     // Channel deleted event
@@ -292,9 +291,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     fun `when channel is deleted, messages are deleted too`() {
         val deleteChannelEvent = randomChannelDeletedEvent()
 
-        channelController.handleEvent(deleteChannelEvent)
+        channelLogic.handleEvent(deleteChannelEvent)
 
-        channelController.messages.value.shouldBeEmpty()
+        channelMutableState.messages.value.shouldBeEmpty()
     }
 
     @Test
@@ -303,10 +302,10 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
         val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
 
-        channelController.handleEvent(updateChannelEvent)
-        channelController.handleEvent(deleteChannelEvent)
+        channelLogic.handleEvent(updateChannelEvent)
+        channelLogic.handleEvent(deleteChannelEvent)
 
-        val channelFlowValue = channelController.channelData.value
+        val channelFlowValue = channelMutableState.channelData.value
         channelFlowValue.channelId shouldBeEqualTo channel.id
         channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
     }

@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -73,6 +74,7 @@ public fun InputField(
         },
         textStyle = ChatTheme.typography.body.copy(
             color = ChatTheme.colors.textHighEmphasis,
+            textDirection = TextDirection.Content
         ),
         cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
