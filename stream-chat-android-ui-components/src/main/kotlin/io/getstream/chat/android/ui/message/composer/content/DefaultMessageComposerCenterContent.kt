@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
 import android.text.Editable
@@ -27,29 +27,31 @@ import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBin
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
+import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
- * Default center content of [MessageComposerView].
+ * Represents the default content shown at the center of [MessageComposerView].
  */
-public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerComponent {
 
     /**
-     * Handle to layout binding.
+     * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
 
     /**
-     * Callback invoked each time after text was changed.
+     * Text change listener invoked each time after text was changed.
      */
     public var textInputChangeListener: (String) -> Unit = {}
 
     /**
-     * Callback invoked when clear button was clicked.
+     * Click listener for the clear input button.
      */
-    public var clearButtonClickListener: () -> Unit = {}
+    public var clearInputButtonClickListener: () -> Unit = {}
 
     /**
-     * Callback invoked when attachment is removed.
+     * Click listener for the remove attachment button.
      */
     public var attachmentRemovalListener: (Attachment) -> Unit = {}
 
@@ -88,14 +90,16 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
             textInputChangeListener(editable?.toString() ?: "")
         }
         binding.clearCommandButton.setOnClickListener {
-            clearButtonClickListener()
+            clearInputButtonClickListener()
         }
         attachmentsAdapter.viewFactories = this.attachmentPreviewFactories
         binding.attachmentsRecyclerView.adapter = attachmentsAdapter
     }
 
     /**
-     * Re-rendering the UI according to the new state.
+     * Invoked when the state has changed and the UI needs to be updated accordingly.
+     *
+     * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
         binding.messageEditText.apply {
@@ -175,7 +179,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
  *
  * @property attachmentRemovalListener Callback invoked when specific [Attachment] gets removed by the user.
  */
-internal class MessageComposerAttachmentsAdapter(
+private class MessageComposerAttachmentsAdapter(
     private inline val attachmentRemovalListener: (Attachment) -> Unit,
 ) : RecyclerView.Adapter<MessageComposerAttachmentViewHolder>() {
     /**
@@ -186,12 +190,12 @@ internal class MessageComposerAttachmentsAdapter(
     /**
      * List of [MessageComposerAttachmentPreviewFactory] instances responsible for providing specific [View] for given [Attachment].
      */
-    internal var viewFactories: List<MessageComposerAttachmentPreviewFactory> = listOf()
+    var viewFactories: List<MessageComposerAttachmentPreviewFactory> = listOf()
 
     /**
      * Updates the list of currently displayed attachments. Re-renders all the attachments.
      */
-    internal fun setAttachments(attachments: List<Attachment>) {
+    fun setAttachments(attachments: List<Attachment>) {
         this.attachments.apply {
             clear()
             addAll(attachments)
@@ -202,13 +206,17 @@ internal class MessageComposerAttachmentsAdapter(
     /**
      * Removes all the attachments.
      */
-    internal fun clear() {
+    fun clear() {
         attachments.clear()
         notifyDataSetChanged()
     }
 
     /**
-     * Instantiates [MessageComposerAttachmentViewHolder].
+     * Creates and instantiates a new instance of [MessageComposerAttachmentViewHolder].
+     *
+     * @param parent The ViewGroup into which the new View will be added.
+     * @param viewType The view type of the new View.
+     * @return A new [CommandViewHolder] instance.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerAttachmentViewHolder {
         return MessageComposerAttachmentViewHolder(
@@ -233,7 +241,7 @@ internal class MessageComposerAttachmentsAdapter(
 /**
  * [RecyclerView.ViewHolder] implementation responsible for rendering previews of various [Attachment] types.
  */
-internal class MessageComposerAttachmentViewHolder(
+private class MessageComposerAttachmentViewHolder(
     private val binding: StreamUiMessageComposerAttachmentContainerBinding,
     private val attachmentViewFactories: List<MessageComposerAttachmentPreviewFactory>,
     private inline val onRemoveAttachment: (Attachment) -> Unit,
@@ -243,7 +251,7 @@ internal class MessageComposerAttachmentViewHolder(
      * Picks the first factory capable of rendering given attachment and use it to create the preview.
      * Pushes the [View] created by factory into the attachment container.
      */
-    internal fun bindData(attachment: Attachment) {
+    fun bindData(attachment: Attachment) {
         val attachmentContainer = binding.root
         val previewFactory = attachmentViewFactories.firstOrNull { it.canHandle(attachment) }
             ?: throw IllegalStateException("No MessageComposerAttachmentPreviewFactory instances found capable of handling attachment: $attachment")

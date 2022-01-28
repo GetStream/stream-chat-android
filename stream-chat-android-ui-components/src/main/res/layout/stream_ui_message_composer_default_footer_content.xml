@@ -2,14 +2,15 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/sendAlsoToChannel"
+        android:id="@+id/alsoSendToChannel"
+        style="@style/StreamUiTextAppearance.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:buttonTint="@color/stream_ui_accent_blue"
+        android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
+        android:buttonTint="@color/stream_ui_checkbox_color_selector"
         android:text="@string/stream_ui_message_input_send_to_channel"
+        android:textAppearance="@style/StreamUiTextAppearance.Body"
         android:textColor="@color/stream_ui_text_color_secondary"
-        android:textSize="@dimen/stream_ui_text_medium"
         />
 
 </merge>

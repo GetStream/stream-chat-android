@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,24 +6,26 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
+import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
- * Represents the default leading content for the [MessageComposerView].
+ * Represents the default content shown at the start of [MessageComposerView].
  */
-public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerComponent {
 
     /**
-     * Handle to layout binding.
+     * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     /**
-     * Handler when the user clicks on the attachments button.
+     * Click listener for the pick attachments button.
      */
     public var attachmentsButtonClickListener: () -> Unit = {}
 
     /**
-     * Handler when the user clicks on the pick commands button.
+     * Click listener for the pick commands button.
      */
     public var commandsButtonClickListener: () -> Unit = {}
 
@@ -47,7 +49,9 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
     }
 
     /**
-     * Re-rendering the UI according to the new state.
+     * Invoked when the state has changed and the UI needs to be updated accordingly.
+     *
+     * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
         val hasTextInput = state.inputValue.isNotEmpty()

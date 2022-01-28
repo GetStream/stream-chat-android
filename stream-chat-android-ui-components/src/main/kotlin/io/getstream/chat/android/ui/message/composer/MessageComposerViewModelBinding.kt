@@ -10,27 +10,27 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 /**
- * Function which connects [MessageComposerView] to [MessageComposerViewModel]. As a result the view renders the state
- * delivered by view model, and view model intercepts user's actions automatically.
+ * Function which connects [MessageComposerView] to [MessageComposerViewModel]. As a result the view
+ * renders the state delivered by view model, and view model intercepts user's actions automatically.
  *
- * @param view Instance of [MessageComposerView]
+ * @param view An instance of [MessageComposerView] to bind to the ViewModel.
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
- * @param sendMessageClickListener Callback invoked when send button is clicked. Default implementation calls view model to send the message.
- * @param textInputChangeListener Callback invoked after the text in message input has changed. Default implementation updates text input value in view model.
- * @param clearButtonClickListener Callback invoked when user dismisses the message. Default implementation clears input value in view model.
- * @param attachmentSelectionListener Callback invoked when user selects list of attachments in attachments picker.
- * @param attachmentRemovalListener Callback invoked when user attempts to remove the attachment.
- * @param mentionSelectionListener Callback invoked when selects one of the mention suggestions.
- * @param commandSelectionListener Callback invoked when selects one of the command suggestions.
- * @param alsoSendToChannelSelectionListener Callback invoked when user selects one of the command suggestions.
- * @param dismissActionClickListener Callback invoked when user cancels the current action.
+ * @param sendMessageButtonClickListener Click listener for the send message button.
+ * @param textInputChangeListener Text change listener invoked each time after text was changed.
+ * @param clearInputButtonClickListener Click listener for the clear input button.
+ * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
+ * @param attachmentRemovalListener Click listener for the remove attachment button.
+ * @param mentionSelectionListener Selection listener invoked when a mention suggestion item is selected.
+ * @param commandSelectionListener Selection listener invoked when a command suggestion item is selected.
+ * @param alsoSendToChannelSelectionListener Selection listener for the "also send to channel" checkbox.
+ * @param dismissActionClickListener Click listener for the dismiss action button.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
-    sendMessageClickListener: (Message) -> Unit = { sendMessage(it) },
+    sendMessageButtonClickListener: (Message) -> Unit = { sendMessage(it) },
     textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
-    clearButtonClickListener: () -> Unit = { setMessageInput("") },
+    clearInputButtonClickListener: () -> Unit = { setMessageInput("") },
     attachmentSelectionListener: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
     attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     mentionSelectionListener: (User) -> Unit = { selectMention(it) },
@@ -38,25 +38,14 @@ public fun MessageComposerViewModel.bindView(
     alsoSendToChannelSelectionListener: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
     dismissActionClickListener: () -> Unit = { dismissMessageActions() },
 ) {
-    view.sendMessageClickListener = {
-        val message = buildNewMessage()
-        sendMessageClickListener(message)
-    }
-
+    view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
-
-    view.clearButtonClickListener = clearButtonClickListener
-
+    view.clearInputButtonClickListener = clearInputButtonClickListener
     view.attachmentSelectionListener = attachmentSelectionListener
-
     view.attachmentRemovalListener = attachmentRemovalListener
-
     view.mentionSelectionListener = mentionSelectionListener
-
     view.commandSelectionListener = commandSelectionListener
-
     view.alsoSendToChannelSelectionListener = alsoSendToChannelSelectionListener
-
     view.dismissActionClickListener = dismissActionClickListener
 
     lifecycleOwner.lifecycleScope.launch {

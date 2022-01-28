@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,21 +7,23 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
+import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
- * Represents the default trailing content for the [MessageComposerView].
+ * Represents the default content shown at the end of [MessageComposerView].
  */
-public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerComponent {
 
     /**
-     * Handle to layout binding.
+     * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
 
     /**
-     * Handler when the user clicks on the send message button.
+     * Click listener for the send message button.
      */
-    public var sendButtonClickListener: () -> Unit = {}
+    public var sendMessageButtonClickListener: () -> Unit = {}
 
     public constructor(context: Context) : this(context, null)
 
@@ -40,11 +42,13 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
-        binding.sendMessageButton.setOnClickListener { sendButtonClickListener() }
+        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
     }
 
     /**
-     * Re-rendering the UI according to the new state.
+     * Invoked when the state has changed and the UI needs to be updated accordingly.
+     *
+     * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
         val hasTextInput = state.inputValue.isNotEmpty()

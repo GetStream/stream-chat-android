@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
 import android.util.AttributeSet
@@ -10,19 +10,21 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
+import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
- * Represents the default header content for the [MessageComposerView].
+ * Represents the default content shown at the top of [MessageComposerView].
  */
-public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerChild {
+public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerComponent {
 
     /**
-     * Handle to layout binding.
+     * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultHeaderContentBinding
 
     /**
-     * Handler when the user clicks on the dismiss action button.
+     * Click listener for the dismiss action button.
      */
     public var dismissActionClickListener: () -> Unit = {}
 
@@ -47,19 +49,23 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Re-rendering the UI according to the new state.
+     * Invoked when the state has changed and the UI needs to be updated accordingly.
+     *
+     * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
-        val activeAction = state.action
-
-        if (activeAction is Reply) {
-            binding.inputModeHeader.isVisible = true
-            binding.actionTitle.text = context.getString(R.string.stream_ui_message_input_reply)
-        } else if (activeAction is Edit) {
-            binding.inputModeHeader.isVisible = true
-            binding.actionTitle.text = context.getString(R.string.stream_ui_message_list_edit_message)
-        } else {
-            binding.inputModeHeader.isVisible = false
+        when (state.action) {
+            is Reply -> {
+                binding.inputModeHeader.isVisible = true
+                binding.actionTitle.text = context.getString(R.string.stream_ui_message_input_reply)
+            }
+            is Edit -> {
+                binding.inputModeHeader.isVisible = true
+                binding.actionTitle.text = context.getString(R.string.stream_ui_message_list_edit_message)
+            }
+            else -> {
+                binding.inputModeHeader.isVisible = false
+            }
         }
     }
 }
