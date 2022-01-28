@@ -3,53 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/mainContentContainer"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/headerContent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        >
-
-        <FrameLayout
-            android:id="@+id/leadingContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:layout_constraintEnd_toEndOf="@+id/centerContent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <FrameLayout
-            android:id="@+id/centerContent"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            app:layout_constraintEnd_toStartOf="@+id/trailingContent"
-            app:layout_constraintStart_toEndOf="@+id/leadingContent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <FrameLayout
-            android:id="@+id/trailingContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/centerContent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        app:layout_constraintBottom_toTopOf="@id/centerContent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <FrameLayout
-        android:id="@+id/bottomContent"
-        android:layout_width="match_parent"
+        android:id="@+id/leadingContent"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/centerContent"
+        app:layout_constraintEnd_toStartOf="@id/centerContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/centerContent"
+        />
+
+    <FrameLayout
+        android:id="@+id/centerContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/footerContent"
+        app:layout_constraintEnd_toStartOf="@id/trailingContent"
+        app:layout_constraintStart_toEndOf="@id/leadingContent"
+        app:layout_constraintTop_toBottomOf="@id/headerContent"
+        />
+
+    <FrameLayout
+        android:id="@+id/trailingContent"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/centerContent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/centerContent"
+        app:layout_constraintTop_toTopOf="@id/centerContent"
+        />
+
+    <FrameLayout
+        android:id="@+id/footerContent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainContentContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/centerContent"
         />
 
 </merge>

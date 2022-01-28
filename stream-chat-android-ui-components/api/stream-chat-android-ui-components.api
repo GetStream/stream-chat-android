@@ -1074,92 +1074,45 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Comp
 	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
-	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public abstract fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerChild {
+public abstract interface class io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
 	public abstract fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/MessageComposerDefaultBottomContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerChild {
+public final class io/getstream/chat/android/ui/message/composer/MessageComposerView : androidx/constraintlayout/widget/ConstraintLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getOnSendAlsoToChannelSelected ()Lkotlin/jvm/functions/Function1;
-	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
-	public final fun setOnSendAlsoToChannelSelected (Lkotlin/jvm/functions/Function1;)V
-}
-
-public final class io/getstream/chat/android/ui/message/composer/MessageComposerDefaultCenterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerChild {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun addAttachmentViewFactory ([Lio/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory;)V
-	public final fun getOnAttachmentRemoved ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnClearButtonClicked ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnTextChanged ()Lkotlin/jvm/functions/Function1;
-	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
-	public final fun setOnAttachmentRemoved (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnClearButtonClicked (Lkotlin/jvm/functions/Function0;)V
-	public final fun setOnTextChanged (Lkotlin/jvm/functions/Function1;)V
-}
-
-public final class io/getstream/chat/android/ui/message/composer/MessageComposerDefaultLeadingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerChild {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getOnAttachmentsButtonClicked ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnCommandsButtonClicked ()Lkotlin/jvm/functions/Function0;
-	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
-	public final fun setOnAttachmentsButtonClicked (Lkotlin/jvm/functions/Function0;)V
-	public final fun setOnCommandsButtonClicked (Lkotlin/jvm/functions/Function0;)V
-}
-
-public class io/getstream/chat/android/ui/message/composer/MessageComposerFileAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
-}
-
-public class io/getstream/chat/android/ui/message/composer/MessageComposerImageAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/MessageComposerAttachmentPreviewFactory {
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
-}
-
-public final class io/getstream/chat/android/ui/message/composer/MessageComposerView : androidx/constraintlayout/widget/ConstraintLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getAlsoSendToChannelSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getAttachmentRemovalListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getAttachmentSelectionListener ()Lkotlin/jvm/functions/Function1;
 	public final fun getAvailableCommands ()Ljava/util/List;
-	public final fun getOnAttachmentRemovedHandler ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnAttachmentSelected ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnCommandSuggestionSelected ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnInputChanged ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnMentionSuggestionSelected ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnMessageDismissed ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnSendAlsoToChannelChanged ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnSendMessageClicked ()Lkotlin/jvm/functions/Function0;
-	public final fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun getClearInputButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public final fun getCommandSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getDismissActionClickListener ()Lkotlin/jvm/functions/Function0;
+	public final fun getMentionSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getSendMessageButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public final fun getTextInputChangeListener ()Lkotlin/jvm/functions/Function1;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setAlsoSendToChannelSelectionListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun setAttachmentRemovalListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun setAttachmentSelectionListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setAvailableCommands (Ljava/util/List;)V
-	public final fun setBottomContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
-	public static synthetic fun setBottomContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setCenterContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setCenterContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setClearInputButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setCommandSelectionListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setCommandSuggestionsContent (Landroid/view/View;)V
+	public final fun setDismissActionClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setFooterContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
+	public static synthetic fun setFooterContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setHeaderContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
+	public static synthetic fun setHeaderContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setLeadingContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLeadingContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setMentionSelectionListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setMentionSuggestionsContent (Landroid/view/View;)V
-	public final fun setOnAttachmentRemovedHandler (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnAttachmentSelected (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnCommandSuggestionSelected (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnInputChanged (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnMentionSuggestionSelected (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnMessageDismissed (Lkotlin/jvm/functions/Function0;)V
-	public final fun setOnSendAlsoToChannelChanged (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnSendMessageClicked (Lkotlin/jvm/functions/Function0;)V
+	public final fun setSendMessageButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setTextInputChangeListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setTrailingContent (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setTrailingContent$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 }
@@ -1192,17 +1145,95 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 }
 
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerViewModelBindingKt {
-	public static final fun bindView (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun bindView$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun bindView (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun bindView$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewModel;Lio/getstream/chat/android/ui/message/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/suggestions/command/DefaultCommandSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerChild {
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCenterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getOnCommandSelected ()Lkotlin/jvm/functions/Function1;
+	public final fun addAttachmentViewFactory ([Lio/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory;)V
+	public final fun getAttachmentRemovalListener ()Lkotlin/jvm/functions/Function1;
+	public final fun getClearInputButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public final fun getTextInputChangeListener ()Lkotlin/jvm/functions/Function1;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
-	public final fun setOnCommandSelected (Lkotlin/jvm/functions/Function1;)V
+	public final fun setAttachmentRemovalListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun setClearInputButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setTextInputChangeListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCommandSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getCommandSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setCommandSelectionListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerFooterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getAlsoSendToChannelSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setAlsoSendToChannelSelectionListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerHeaderContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getDismissActionClickListener ()Lkotlin/jvm/functions/Function0;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setDismissActionClickListener (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerLeadingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getAttachmentsButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public final fun getCommandsButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setAttachmentsButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setCommandsButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerMentionSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getMentionSelectionListener ()Lkotlin/jvm/functions/Function1;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setMentionSelectionListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerTrailingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/MessageComposerComponent {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getSendMessageButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	public final fun setSendMessageButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public abstract fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
+}
+
+public class io/getstream/chat/android/ui/message/composer/content/MessageComposerFileAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
+}
+
+public class io/getstream/chat/android/ui/message/composer/content/MessageComposerImageAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView : androidx/constraintlayout/widget/ConstraintLayout {

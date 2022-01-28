@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
 import android.text.Editable
@@ -10,12 +10,15 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ValidationError
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -24,31 +27,33 @@ import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBin
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
-import androidx.core.widget.doAfterTextChanged
+import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
- * Default center content of [MessageComposerView].
+ * Represents the default content shown at the center of [MessageComposerView].
  */
-public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerChild {
-    /**
-     * Callback invoked each time after text was changed.
-     */
-    public var onTextChanged: (String) -> Unit = {}
+public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerComponent {
 
     /**
-     * Callback invoked when clear button was clicked.
-     */
-    public var onClearButtonClicked: () -> Unit = {}
-
-    /**
-     * Callback invoked when attachment is removed.
-     */
-    public var onAttachmentRemoved: (Attachment) -> Unit = {}
-
-    /**
-     * Handle to layout binding.
+     * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
+
+    /**
+     * Text change listener invoked each time after text was changed.
+     */
+    public var textInputChangeListener: (String) -> Unit = {}
+
+    /**
+     * Click listener for the clear input button.
+     */
+    public var clearInputButtonClickListener: () -> Unit = {}
+
+    /**
+     * Click listener for the remove attachment button.
+     */
+    public var attachmentRemovalListener: (Attachment) -> Unit = {}
 
     /**
      * Default attachment preview factories.
@@ -63,7 +68,7 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
      * Adapter used to render attachments previews list.
      */
     private val attachmentsAdapter: MessageComposerAttachmentsAdapter by lazy {
-        MessageComposerAttachmentsAdapter { onAttachmentRemoved(it) }
+        MessageComposerAttachmentsAdapter { attachmentRemovalListener(it) }
     }
 
     public constructor(context: Context) : this(context, null)
@@ -82,17 +87,19 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
     private fun init() {
         binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
-            onTextChanged(editable?.toString() ?: "")
+            textInputChangeListener(editable?.toString() ?: "")
         }
         binding.clearCommandButton.setOnClickListener {
-            onClearButtonClicked()
+            clearInputButtonClickListener()
         }
         attachmentsAdapter.viewFactories = this.attachmentPreviewFactories
         binding.attachmentsRecyclerView.adapter = attachmentsAdapter
     }
 
     /**
-     * Re-rendering the UI according to the new state.
+     * Invoked when the state has changed and the UI needs to be updated accordingly.
+     *
+     * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
         binding.messageEditText.apply {
@@ -106,6 +113,19 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
         }
 
         attachmentsAdapter.setAttachments(state.attachments)
+
+        val action = state.action
+        if (action is Reply) {
+            val message = action.message
+            binding.messageReplyView.setMessage(
+                message,
+                ChatDomain.instance().user.value?.id == message.user.id,
+                null,
+            )
+            binding.messageReplyView.isVisible = true
+        } else {
+            binding.messageReplyView.isVisible = false
+        }
 
         binding.selectedAttachmentsContainer.isVisible = state.attachments.isNotEmpty()
         renderValidationErrors(state.validationErrors)
@@ -157,10 +177,10 @@ public class MessageComposerDefaultCenterContent : FrameLayout, MessageComposerC
 /**
  * [RecyclerView.Adapter] rendering attachments previews.
  *
- * @property onRemoveAttachment Callback invoked when specific [Attachment] gets removed by the user.
+ * @property attachmentRemovalListener Callback invoked when specific [Attachment] gets removed by the user.
  */
-internal class MessageComposerAttachmentsAdapter(
-    private inline val onRemoveAttachment: (Attachment) -> Unit,
+private class MessageComposerAttachmentsAdapter(
+    private inline val attachmentRemovalListener: (Attachment) -> Unit,
 ) : RecyclerView.Adapter<MessageComposerAttachmentViewHolder>() {
     /**
      * List of attachments to render.
@@ -170,12 +190,12 @@ internal class MessageComposerAttachmentsAdapter(
     /**
      * List of [MessageComposerAttachmentPreviewFactory] instances responsible for providing specific [View] for given [Attachment].
      */
-    internal var viewFactories: List<MessageComposerAttachmentPreviewFactory> = listOf()
+    var viewFactories: List<MessageComposerAttachmentPreviewFactory> = listOf()
 
     /**
      * Updates the list of currently displayed attachments. Re-renders all the attachments.
      */
-    internal fun setAttachments(attachments: List<Attachment>) {
+    fun setAttachments(attachments: List<Attachment>) {
         this.attachments.apply {
             clear()
             addAll(attachments)
@@ -186,19 +206,23 @@ internal class MessageComposerAttachmentsAdapter(
     /**
      * Removes all the attachments.
      */
-    internal fun clear() {
+    fun clear() {
         attachments.clear()
         notifyDataSetChanged()
     }
 
     /**
-     * Instantiates [MessageComposerAttachmentViewHolder].
+     * Creates and instantiates a new instance of [MessageComposerAttachmentViewHolder].
+     *
+     * @param parent The ViewGroup into which the new View will be added.
+     * @param viewType The view type of the new View.
+     * @return A new [CommandViewHolder] instance.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerAttachmentViewHolder {
         return MessageComposerAttachmentViewHolder(
             StreamUiMessageComposerAttachmentContainerBinding.inflate(parent.streamThemeInflater, parent, false),
             viewFactories
-        ) { onRemoveAttachment(it) }
+        ) { attachmentRemovalListener(it) }
     }
 
     /**
@@ -217,7 +241,7 @@ internal class MessageComposerAttachmentsAdapter(
 /**
  * [RecyclerView.ViewHolder] implementation responsible for rendering previews of various [Attachment] types.
  */
-internal class MessageComposerAttachmentViewHolder(
+private class MessageComposerAttachmentViewHolder(
     private val binding: StreamUiMessageComposerAttachmentContainerBinding,
     private val attachmentViewFactories: List<MessageComposerAttachmentPreviewFactory>,
     private inline val onRemoveAttachment: (Attachment) -> Unit,
@@ -227,7 +251,7 @@ internal class MessageComposerAttachmentViewHolder(
      * Picks the first factory capable of rendering given attachment and use it to create the preview.
      * Pushes the [View] created by factory into the attachment container.
      */
-    internal fun bindData(attachment: Attachment) {
+    fun bindData(attachment: Attachment) {
         val attachmentContainer = binding.root
         val previewFactory = attachmentViewFactories.firstOrNull { it.canHandle(attachment) }
             ?: throw IllegalStateException("No MessageComposerAttachmentPreviewFactory instances found capable of handling attachment: $attachment")
@@ -253,7 +277,7 @@ public open class MessageComposerImageAttachmentPreviewFactory : MessageComposer
     public override fun createAttachmentPreview(
         parent: ViewGroup,
         attachment: Attachment,
-        onRemoveAttachment: (Attachment) -> Unit,
+        attachmentRemovalListener: (Attachment) -> Unit,
     ): View {
         val context = parent.context
         return StreamUiMediaAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
@@ -263,7 +287,7 @@ public open class MessageComposerImageAttachmentPreviewFactory : MessageComposer
                     .build()
                 mediaImage.shapeAppearanceModel = shapeAppearanceModel
                 mediaImage.loadAttachmentThumb(attachment)
-                removeButton.setOnClickListener { onRemoveAttachment(attachment) }
+                removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
             }.root
     }
 }
@@ -285,7 +309,7 @@ public open class MessageComposerFileAttachmentPreviewFactory : MessageComposerA
     public override fun createAttachmentPreview(
         parent: ViewGroup,
         attachment: Attachment,
-        onRemoveAttachment: (Attachment) -> Unit,
+        attachmentRemovalListener: (Attachment) -> Unit,
     ): View {
         val context = parent.context
         return StreamUiFileAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
@@ -294,7 +318,7 @@ public open class MessageComposerFileAttachmentPreviewFactory : MessageComposerA
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
                 fileTitle.text = attachment.title
                 fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
-                removeButton.setOnClickListener { onRemoveAttachment(attachment) }
+                removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
             }.root
     }
 }
@@ -319,6 +343,6 @@ public interface MessageComposerAttachmentPreviewFactory {
     public fun createAttachmentPreview(
         parent: ViewGroup,
         attachment: Attachment,
-        onAttachmentRemovedCallback: (Attachment) -> Unit,
+        attachmentRemovalListener: (Attachment) -> Unit,
     ): View
 }
