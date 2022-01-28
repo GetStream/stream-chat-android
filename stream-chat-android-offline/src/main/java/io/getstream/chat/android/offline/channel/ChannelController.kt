@@ -560,8 +560,7 @@ public class ChannelController internal constructor(
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
         val messageToBeEdited = message.copy()
-
-
+        
         messageToBeEdited.updatedLocallyAt = Date()
         messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
