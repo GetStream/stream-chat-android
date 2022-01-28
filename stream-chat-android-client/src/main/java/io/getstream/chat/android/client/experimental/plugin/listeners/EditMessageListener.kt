@@ -20,5 +20,5 @@ public interface EditMessageListener {
      *
      * @param result the result of the API call
      */
-    public fun onMessageEditResult(result: Result<Message>)
+    public suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>)
 }
