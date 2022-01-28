@@ -87,7 +87,7 @@ public class OfflinePlugin(
         ).let(::listOf)
 
         channelLogic.upsertMessages(messagesToEdit)
-        channelLogic.insertMessage(messagesToEdit)
+        channelLogic.storeMessageLocally(messagesToEdit)
     }
 
     override fun onMessageEditResult(result: Result<Message>) {

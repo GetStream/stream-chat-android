@@ -224,7 +224,7 @@ internal class ChannelLogic(
         mutableState._messages.value = newMessages
     }
 
-    internal suspend fun insertMessage(messages: List<Message>) {
+    internal suspend fun storeMessageLocally(messages: List<Message>) {
         chatDomainImpl.repos.insertMessages(messages)
     }
 
