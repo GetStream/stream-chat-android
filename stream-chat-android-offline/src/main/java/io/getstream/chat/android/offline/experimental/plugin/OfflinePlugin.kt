@@ -106,7 +106,7 @@ public class OfflinePlugin(
         if (result.isSuccess) {
             val message = result.data()
             val channelLogic = channelLogicForMessage(message)
-            val messages = message.copy(syncStatus = SyncStatus.COMPLETED ).let(::listOf)
+            val messages = message.copy(syncStatus = SyncStatus.COMPLETED).let(::listOf)
 
             updateAndSaveMessages(messages, channelLogic)
         } else {
