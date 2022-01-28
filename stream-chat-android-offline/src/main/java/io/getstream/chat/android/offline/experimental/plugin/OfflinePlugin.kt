@@ -89,7 +89,6 @@ public class OfflinePlugin(private val config: Config) : Plugin {
      * @param result the result of the API call
      */
     override fun onMessageEditResult(result: Result<Message>) {
-        
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =
