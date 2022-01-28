@@ -7,7 +7,7 @@
     <FrameLayout
         android:id="@+id/inputModeHeader"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="@dimen/stream_ui_message_composer_header_content_height"
         android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
         android:visibility="gone"
         tools:visibility="visible"

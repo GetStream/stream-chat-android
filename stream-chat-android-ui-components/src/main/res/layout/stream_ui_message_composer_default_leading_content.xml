@@ -7,7 +7,7 @@
         android:gravity="bottom"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
-        android:paddingVertical="12dp"
+        android:paddingVertical="@dimen/stream_ui_message_composer_leading_content_vertical_padding"
         >
 
         <ImageView
