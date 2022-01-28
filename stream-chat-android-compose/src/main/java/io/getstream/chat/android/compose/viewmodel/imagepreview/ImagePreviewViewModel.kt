@@ -93,7 +93,7 @@ public class ImagePreviewViewModel(
 
             chatDomain.editMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
-            chatDomain.deleteMessage(message).enqueue { result ->
+            chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result.isSuccess) {
                     message = result.data()
                 }

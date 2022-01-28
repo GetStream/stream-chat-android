@@ -289,7 +289,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                domain.deleteMessage(event.message, event.hard)
+                client.deleteMessage(event.message.id, event.hard)
                     .enqueue(
                         onError = { chatError ->
                             logger.logE("Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}")
