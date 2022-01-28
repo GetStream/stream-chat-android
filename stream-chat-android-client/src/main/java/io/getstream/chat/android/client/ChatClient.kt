@@ -991,7 +991,7 @@ public class ChatClient internal constructor(
                 plugins.forEach { plugin -> plugin.onMessageEditRequest(message) }
             }
             .doOnResult(scope) { result ->
-                plugins.forEach { plugin -> plugin.onMessageEditResult(result) }
+                plugins.forEach { plugin -> plugin.onMessageEditResult(message, result) }
             }
     }
 

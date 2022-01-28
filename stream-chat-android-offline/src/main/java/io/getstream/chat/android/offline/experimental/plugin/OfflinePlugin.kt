@@ -21,10 +21,12 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.extensions.isPermanent
 import java.util.Date
 
 /**
@@ -100,8 +102,26 @@ public class OfflinePlugin(
      *
      * @param result the result of the API call
      */
-    override fun onMessageEditResult(result: Result<Message>) {
+    override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
+        if (result.isSuccess) {
+            val message = result.data()
+            val channelLogic = channelLogicForMessage(message)
+            val messages = message.copy(syncStatus = SyncStatus.COMPLETED ).let(::listOf)
 
+            updateAndSaveMessages(messages, channelLogic)
+        } else {
+            val channelLogic = channelLogicForMessage(originalMessage)
+            val failedMessage = originalMessage.copy(
+                syncStatus = if (result.error().isPermanent()) {
+                    SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    SyncStatus.SYNC_NEEDED
+                },
+                updatedLocallyAt = Date(),
+            ).let(::listOf)
+
+            updateAndSaveMessages(failedMessage, channelLogic)
+        }
     }
 
     override suspend fun onMessageDeleteRequest(message: Message) {
@@ -110,6 +130,16 @@ public class OfflinePlugin(
 
     override suspend fun onMessageDeleteResult(originalMessage: Message, result: kotlin.Result<Message>) {
         TODO("Not yet implemented")
+    }
+
+    private suspend fun updateAndSaveMessages(messages: List<Message>, channelLogic: ChannelLogic) {
+        channelLogic.upsertMessages(messages)
+        channelLogic.storeMessageLocally(messages)
+    }
+
+    private fun channelLogicForMessage(message: Message): ChannelLogic {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        return logic.channel(channelType, channelId)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =
