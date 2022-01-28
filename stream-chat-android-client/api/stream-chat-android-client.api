@@ -1897,7 +1897,7 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/EditMessageListener {
 	public abstract fun onMessageEditRequest (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageEditResult (Lio/getstream/chat/android/client/utils/Result;)V
+	public abstract fun onMessageEditResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade : io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener, io/getstream/chat/android/client/experimental/plugin/listeners/EditMessageListener, io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener {
