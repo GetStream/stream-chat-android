@@ -15,7 +15,18 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView
 
 /**
- * Sets the style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView].
+ * Sets the style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView] by obtaining
+ * styled attributes.
+ *
+ * @param progressIcon Displayed while the Giphy is Loading.
+ * @param giphyIcon Displays the Giphy logo over the Giphy image.
+ * @param placeholderIcon Displayed while the Giphy is Loading.
+ * @param imageBackgroundColor Sets the background colour for the Giphy container.
+ * @param giphyConstantSizeEnabled If enabled sets a constant size on all Giphy containers.
+ * @param giphyMaxHeight Sets the maximum height a Giphy container is allowed to have.
+ * @param giphyType Sets the Giphy type which directly affects image quality.
+ * @param scaleType Sets the scaling type for loading the image.
+ * E.g. 'centerCrop', 'fitCenter', etc...
  */
 public class GiphyMediaAttachmentViewStyle(
     public val progressIcon: Drawable,
@@ -23,13 +34,16 @@ public class GiphyMediaAttachmentViewStyle(
     public val placeholderIcon: Drawable,
     @ColorInt public val imageBackgroundColor: Int,
     public val giphyConstantSizeEnabled: Boolean,
-    @DimenRes public val giphyHeight: Int,
+    @DimenRes public val giphyMaxHeight: Int,
     public val giphyType: GiphyMediaAttachmentView.Companion.GiphyInfoType,
-    public val scaleType: ImageView.ScaleType
+    public val scaleType: ImageView.ScaleType,
 ) {
     internal companion object {
         private const val DEFAULT_HEIGHT_DP = 200
 
+        /**
+         * Fetches styled attributes and returns them wrapped inside of [GiphyMediaAttachmentViewStyle].
+         */
         operator fun invoke(context: Context, attrs: AttributeSet?): GiphyMediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -62,10 +76,13 @@ public class GiphyMediaAttachmentViewStyle(
                     attributes.getBoolean(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentConstantSize,
                         false)
 
-                val giphyType = attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
-                    GiphyMediaAttachmentView.Companion.GiphyInfoType.FIXED_HEIGHT)
+                val giphyType =
+                    attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
+                        GiphyMediaAttachmentView.Companion.GiphyInfoType.FIXED_HEIGHT)
 
-                val scaleType = attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType, ImageView.ScaleType.CENTER_CROP)
+                val scaleType =
+                    attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType,
+                        ImageView.ScaleType.CENTER_CROP)
 
                 return GiphyMediaAttachmentViewStyle(
                     progressIcon = progressIcon,
@@ -73,7 +90,7 @@ public class GiphyMediaAttachmentViewStyle(
                     placeholderIcon = placeholderIcon,
                     imageBackgroundColor = imageBackgroundColor,
                     giphyConstantSizeEnabled = constantSizeEnabled,
-                    giphyHeight = giphyHeight,
+                    giphyMaxHeight = giphyHeight,
                     giphyType = giphyType,
                     scaleType = scaleType
                 )

@@ -2051,8 +2051,8 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle {
 	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZILio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView$Companion$GiphyInfoType;Landroid/widget/ImageView$ScaleType;)V
 	public final fun getGiphyConstantSizeEnabled ()Z
-	public final fun getGiphyHeight ()I
 	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getGiphyMaxHeight ()I
 	public final fun getGiphyType ()Lio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView$Companion$GiphyInfoType;
 	public final fun getImageBackgroundColor ()I
 	public final fun getPlaceholderIcon ()Landroid/graphics/drawable/Drawable;
@@ -2061,20 +2061,16 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyM
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ZI)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component4 ()I
 	public final fun component5 ()I
 	public final fun component6 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component7 ()Z
-	public final fun component8 ()I
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ZI)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ZIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getGiphyConstantSizeEnabled ()Z
-	public final fun getGiphyHeight ()I
 	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getImageBackgroundColor ()I
 	public final fun getMoreCountOverlayColor ()I

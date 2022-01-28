@@ -19,12 +19,28 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
-// TODO - document everything
+
+/**
+ * View used to display Media attachments such as images.
+ *
+ * Giphy images are handled by a separate View.
+ * @see GiphyMediaAttachmentView
+ */
 internal class MediaAttachmentView : ConstraintLayout {
+    /**
+     * Handles media attachment clicks.
+     */
     var attachmentClickListener: AttachmentClickListener? = null
+
+    /**
+     * Handles media attachment long clicks.
+     */
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
 
+    /**
+     * Binding for [io.getstream.chat.android.ui.R.layout.stream_ui_media_attachment_view].
+     */
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
             it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -36,6 +52,10 @@ internal class MediaAttachmentView : ConstraintLayout {
                 constrainViewToParentBySide(it.root, ConstraintSet.TOP)
             }
         }
+
+    /**
+     * Style applied to [MediaAttachmentView].
+     */
     private lateinit var style: MediaAttachmentViewStyle
 
     constructor(context: Context) : this(context, null, 0)
@@ -56,6 +76,10 @@ internal class MediaAttachmentView : ConstraintLayout {
         binding.moreCountLabel.setTextStyle(style.moreCountTextStyle)
     }
 
+    /**
+     * Displays the images in a message. Displays a count saying how many more
+     * images the message contains in case they don't all fit in the preview.
+     */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
         val showMore = {
@@ -75,10 +99,16 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
     }
 
+    /**
+     * Sets the visibility for the progress bar.
+     */
     private fun showLoading(isLoading: Boolean) {
         binding.loadImage.isVisible = isLoading
     }
 
+    /**
+     * Loads the images.
+     */
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
@@ -91,12 +121,19 @@ internal class MediaAttachmentView : ConstraintLayout {
         )
     }
 
+    /**
+     * Displays how many more images the message contains that are not
+     * able to fit inside the preview.
+     */
     private fun showMoreCount(andMoreCount: Int) {
         binding.moreCount.isVisible = true
         binding.moreCountLabel.text =
             context.getString(R.string.stream_ui_message_list_attachment_more_count, andMoreCount)
     }
 
+    /**
+     * Creates and sets the shape of the image/s container.
+     */
     fun setImageShapeByCorners(
         topLeft: Float,
         topRight: Float,
@@ -112,6 +149,11 @@ internal class MediaAttachmentView : ConstraintLayout {
             .let(this::setImageShape)
     }
 
+    /**
+     * Applies the shape to the image/s container. Also sets the container
+     * background color and the overlay color for the label that displays
+     * how many more images there are in a message.
+     */
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
@@ -123,6 +165,9 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     companion object {
+        /**
+         * When all images in a message are able to fit in the preview.
+         */
         private const val NO_MORE_COUNT = 0
     }
 }
