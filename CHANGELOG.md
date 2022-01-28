@@ -35,7 +35,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-
+- Small fix for edit message without internet [#2998](https://github.com/GetStream/stream-chat-android/pull/2998)
 ### ⬆️ Improved
 
 ### ✅ Added
