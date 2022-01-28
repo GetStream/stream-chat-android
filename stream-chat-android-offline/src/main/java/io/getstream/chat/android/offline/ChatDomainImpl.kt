@@ -183,7 +183,9 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     val defaultConfig: Config = Config(connectEventsEnabled = true, muteEnabled = true)
     internal var repos: RepositoryFacade
-        get() = _repos ?: createNoOpRepos()
+        get() = _repos ?: createNoOpRepos().also { repositoryFacade ->
+            _repos = repositoryFacade
+        }
         set(value) {
             _repos = value
         }
