@@ -327,10 +327,24 @@ internal class ChannelLogic(
             return
         }
         val newLastMessageAt =
-            newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOfOrNull(Date::getTime) ?: return
+            newMessages.mapNotNull { maxDate(it.createdAt, it.createdLocallyAt) }.maxOfOrNull(Date::getTime) ?: return
         mutableState.lastMessageAt.value = when (val currentLastMessageAt = mutableState.lastMessageAt.value) {
             null -> Date(newLastMessageAt)
             else -> max(currentLastMessageAt.time, newLastMessageAt).let(::Date)
+        }
+    }
+
+    private fun maxDate(firstDate: Date?, secondDate: Date?): Date? {
+        return when {
+            firstDate == null && secondDate == null -> null
+
+            firstDate != null && secondDate == null -> firstDate
+
+            firstDate == null && secondDate != null -> secondDate
+
+            firstDate != null && secondDate != null -> if (firstDate.after(secondDate)) firstDate else secondDate
+
+            else -> error("invalid state")
         }
     }
 
