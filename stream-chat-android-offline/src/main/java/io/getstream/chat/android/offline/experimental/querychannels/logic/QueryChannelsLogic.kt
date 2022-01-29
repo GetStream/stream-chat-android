@@ -5,17 +5,29 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.ChannelFilterRequest
+import io.getstream.chat.android.offline.querychannels.EventHandlingResult
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -157,10 +169,115 @@ internal class QueryChannelsLogic(
 
     internal suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
 
-    private suspend fun removeChannels(cids: List<String>) {
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cids
+    private suspend fun removeChannels(cidList: List<String>) {
+        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList
         chatDomainImpl.repos.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = mutableState._channels.value - cids
+        mutableState._channels.value = mutableState._channels.value - cidList
+    }
+
+    /**
+     * Handles events received from the socket.
+     *
+     * @see [handleEvent]
+     */
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
+        for (event in events) {
+            handleEvent(event)
+        }
+    }
+
+    /**
+     * Handles event received from the socket.
+     * Responsible for synchronizing [QueryChannelsMutableState].
+     */
+    internal suspend fun handleEvent(event: ChatEvent) {
+        // update the info for that channel from the channel repo
+        logger.logI("Received channel event $event")
+
+        val cachedChannel = if (event is CidEvent) {
+            chatDomainImpl.getCachedChannel(event.cid)
+        } else null
+
+        val handlingResult = mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)
+        when (handlingResult) {
+            is EventHandlingResult.Add -> addChannel(handlingResult.channel)
+            is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
+            is EventHandlingResult.Skip -> Unit
+        }
+
+        if (event is MarkAllReadEvent) {
+            refreshAllChannels()
+        }
+
+        if (event is CidEvent) {
+            // skip events that are typically not impacting the query channels overview
+            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
+                return
+            }
+            refreshChannel(event.cid)
+        }
+
+        if (event is UserPresenceChangedEvent) {
+            refreshMembersStateForUser(event.user)
+        }
+    }
+
+    /**
+     * Refreshes multiple channels in this query.
+     * Note that it retrieves the data from the current [ChannelState] object.
+     *
+     * @param cidList The channels to refresh.
+     */
+    // TODO: Make private after removing QueryChannelsController
+    internal fun refreshChannels(cidList: Collection<String>) {
+        mutableState._channels.value += mutableState.queryChannelsSpec.cids
+            .intersect(cidList)
+            .associateWith { cid ->
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                client.state.channel(channelType, channelId).toChannel()
+            }
+    }
+
+    /**
+     * Refreshes all channels returned in this query.
+     * Supports use cases like marking all channels as read.
+     */
+    // TODO: Make private after removing QueryChannelsController
+    internal fun refreshAllChannels() {
+        refreshChannels(mutableState.queryChannelsSpec.cids)
+    }
+
+    /**
+     * Refreshes a single channel.
+     * @see [refreshChannels]
+     *
+     * @param cid The channel's cid to update.
+     *
+     */
+    internal fun refreshChannel(cid: String) {
+        refreshChannels(listOf(cid))
+    }
+
+    /**
+     * Refreshes member state in all channels from this query.
+     *
+     * @param newUser The user to refresh.
+     */
+    // TODO: Make private after removing QueryChannelsController
+    internal fun refreshMembersStateForUser(newUser: User) {
+        val userId = newUser.id
+
+        val affectedChannels = mutableState._channels.value
+            .filter { (_, channel) -> channel.users().any { it.id == userId } }
+            .mapValues { (_, channel) ->
+                channel.copy(
+                    members = channel.members.map { member ->
+                        member.copy(user = member.user.takeUnless { it.id == userId } ?: newUser)
+                    }
+                )
+            }
+
+        mutableState._channels.value += affectedChannels
     }
 
     private companion object {

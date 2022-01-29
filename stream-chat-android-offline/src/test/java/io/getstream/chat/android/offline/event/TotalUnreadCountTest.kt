@@ -89,7 +89,7 @@ internal class TotalUnreadCountTest {
         currentUser: User = mock(),
     ) {
         private val repos: RepositoryFacade = mock()
-        private val eventHandlerImpl = EventHandlerImpl(chatDomainImpl)
+        private val eventHandlerImpl = EventHandlerImpl(chatDomainImpl, mock())
 
         init {
             whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
