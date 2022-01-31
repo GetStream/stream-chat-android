@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 
@@ -39,6 +40,13 @@ buildscript {
         classpath Dependencies.kotlinBinaryValidator
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
+    }
+}
+
+subprojects {
+    apply plugin: 'org.jlleitschuh.gradle.ktlint'
+    ktlint {
+        version = Versions.KTLINT_VERSION
     }
 }
 
