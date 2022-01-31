@@ -560,12 +560,21 @@ internal class ChatDomainImpl internal constructor(
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
                     eventHandler.handleEventsInternal(resultChatEvent.data())
-                    syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = now) }
+                    updateLastSyncDate(now)
                 }
             }
         } else {
             Result(emptyList())
         }
+    }
+
+    /**
+     * Updates [SyncState.lastSyncedAt] exposed via [syncStateFlow] with a given date.
+     *
+     * @param date The new last sync date.
+     */
+    private fun updateLastSyncDate(date: Date) {
+        syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = date) }
     }
 
     /**
@@ -652,6 +661,10 @@ internal class ChatDomainImpl internal constructor(
         val activeChannelCids = getActiveChannelCids()
         if (activeChannelCids.isNotEmpty()) {
             replayEventsForChannels(activeChannelCids)
+        } else {
+            // Last sync date is being updated after replaying events for active channels.
+            // We should also update it if we don't have active channels but sync was completed.
+            updateLastSyncDate(Date())
         }
     }
 
