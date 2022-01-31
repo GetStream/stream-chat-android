@@ -15,6 +15,7 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun downloadAttachment (Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Landroidx/lifecycle/LiveData;
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
@@ -226,6 +227,7 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun downloadAttachment (Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
