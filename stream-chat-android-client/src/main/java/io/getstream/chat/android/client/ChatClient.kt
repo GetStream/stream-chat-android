@@ -968,7 +968,7 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Updates the message in the API and calls the plugins that handle this request [OfflinePlugin] can be used here to
+     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here to
      * store the updated message locally.
      *
      * @param message [Message] The message to be updated.
