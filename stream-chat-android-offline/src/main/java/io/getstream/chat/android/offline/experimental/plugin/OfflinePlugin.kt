@@ -87,7 +87,7 @@ public class OfflinePlugin(
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
 
-        val isOnline = ChatDomain.instance().isOnline()
+        val isOnline = globalState.isOnline()
         val messagesToEdit = message.updateMessageOnlineState(isOnline).let(::listOf)
 
         updateAndSaveMessages(messagesToEdit, channelLogic)
