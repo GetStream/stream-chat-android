@@ -91,7 +91,7 @@ public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend
     DoOnResultCall(this, scope, function)
 
 @InternalStreamChatApi
-public fun <T: Any> Call<T>.withPrecondition(scope: CoroutineScope, precondition: suspend () -> Result<Unit>): Call<T> =
+public fun <T : Any> Call<T>.withPrecondition(scope: CoroutineScope, precondition: suspend () -> Result<Unit>): Call<T> =
     WithPreconditionCall(this, scope, precondition)
 
 @InternalStreamChatApi
