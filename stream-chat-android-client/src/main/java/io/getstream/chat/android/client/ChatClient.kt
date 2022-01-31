@@ -980,9 +980,9 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Update the message locally and in the backend
+     * Update the message locally and in the backend.
      *
-     * @param message [Message] The message to be updated
+     * @param message [Message] The message to be updated.
      */
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {

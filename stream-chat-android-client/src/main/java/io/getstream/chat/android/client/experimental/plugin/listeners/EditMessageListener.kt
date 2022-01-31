@@ -9,16 +9,16 @@ import io.getstream.chat.android.client.utils.Result
 public interface EditMessageListener {
 
     /**
-     * Method called when an edition in a message starts happens
+     * Method called when a message edit request happens.
      *
-     * @param message [Message]
+     * @param message [Message].
      */
     public suspend fun onMessageEditRequest(message: Message)
 
     /**
-     * Method called when an edition in a message returns from the API
+     * Method called when an edition request returns from the API.
      *
-     * @param result the result of the API call
+     * @param result the result of the API call.
      */
     public suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>)
 }

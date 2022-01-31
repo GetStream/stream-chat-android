@@ -79,29 +79,24 @@ public class OfflinePlugin(
     }
 
     /**
-     * Method called when an edition in a message starts happens
+     * Method called when a message edit request happens.
      *
-     * @param message [Message]
+     * @param message [Message].
      */
     override suspend fun onMessageEditRequest(message: Message) {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
 
         val isOnline = ChatDomain.instance().isOnline()
+        val messagesToEdit = message.updateMessageOnlineState(isOnline).let(::listOf)
 
-        val messagesToEdit = message.copy(
-            updatedLocallyAt = Date(),
-            syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-        ).let(::listOf)
-
-        channelLogic.upsertMessages(messagesToEdit)
-        channelLogic.storeMessageLocally(messagesToEdit)
+        updateAndSaveMessages(messagesToEdit, channelLogic)
     }
 
     /**
-     * Method called when an edition in a message returns from the API
+     * Method called when an edition in a message returns from the API.
      *
-     * @param result the result of the API call
+     * @param result the result of the API call.
      */
     override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
         if (result.isSuccess) {
@@ -112,21 +107,10 @@ public class OfflinePlugin(
             updateAndSaveMessages(messages, channelLogic)
         } else {
             val channelLogic = channelLogicForMessage(originalMessage)
-            val failedMessage = updateErrorMessage(originalMessage, result.error()).let(::listOf)
+            val failedMessage = originalMessage.updateErrorMessage(result.error()).let(::listOf)
 
             updateAndSaveMessages(failedMessage, channelLogic)
         }
-    }
-
-    private fun updateErrorMessage(message: Message, chatError: ChatError): Message {
-        return message.copy(
-            syncStatus = if (chatError.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-            updatedLocallyAt = Date(),
-        )
     }
 
     override suspend fun onMessageDeleteRequest(message: Message) {
@@ -135,16 +119,6 @@ public class OfflinePlugin(
 
     override suspend fun onMessageDeleteResult(originalMessage: Message, result: kotlin.Result<Message>) {
         TODO("Not yet implemented")
-    }
-
-    private suspend fun updateAndSaveMessages(messages: List<Message>, channelLogic: ChannelLogic) {
-        channelLogic.upsertMessages(messages)
-        channelLogic.storeMessageLocally(messages)
-    }
-
-    private fun channelLogicForMessage(message: Message): ChannelLogic {
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
-        return logic.channel(channelType, channelId)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =
@@ -196,6 +170,34 @@ public class OfflinePlugin(
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
+
+    private suspend fun updateAndSaveMessages(messages: List<Message>, channelLogic: ChannelLogic) {
+        channelLogic.upsertMessages(messages)
+        channelLogic.storeMessageLocally(messages)
+    }
+
+    private fun channelLogicForMessage(message: Message): ChannelLogic {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        return logic.channel(channelType, channelId)
+    }
+
+    private fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
+        return this.copy(
+            syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+            updatedLocallyAt = Date()
+        )
+    }
+
+    private fun Message.updateErrorMessage(chatError: ChatError): Message {
+        return this.copy(
+            syncStatus = if (chatError.isPermanent()) {
+                SyncStatus.FAILED_PERMANENTLY
+            } else {
+                SyncStatus.SYNC_NEEDED
+            },
+            updatedLocallyAt = Date(),
+        )
+    }
 
     internal fun clear() {
         logic.clear()
