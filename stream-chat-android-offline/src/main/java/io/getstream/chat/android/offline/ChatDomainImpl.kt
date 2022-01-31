@@ -582,6 +582,11 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
+    /**
+     * Updates [SyncState.lastSyncedAt] exposed via [syncStateFlow] with a given date.
+     *
+     * @param date The new last sync date.
+     */
     private fun updateLastSyncDate(date: Date) {
         syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = date) }
     }
