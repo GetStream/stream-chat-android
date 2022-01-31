@@ -1094,13 +1094,47 @@ public class ChatClient internal constructor(
         return api.showChannel(channelType, channelId)
     }
 
+    /**
+     * Hides the specified channel.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId Id of the channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     *
+     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
+     */
+    internal fun hideChannelInternal(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean = false,
+    ): Call<Unit> = api.hideChannel(channelType, channelId, clearHistory)
+
+    /**
+     * Hides the specified channel with side effects.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId Id of the channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     *
+     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
+     */
     @CheckResult
     public fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false,
     ): Call<Unit> {
-        return api.hideChannel(channelType, channelId, clearHistory)
+        return hideChannelInternal(channelType, channelId, clearHistory)
+            .doOnStart(scope) {
+                plugins.forEach { it.onHideChannelRequest(channelType, channelId, clearHistory) }
+            }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onHideChannelResult(result, channelType, channelId, clearHistory) }
+            }
     }
 
     /**

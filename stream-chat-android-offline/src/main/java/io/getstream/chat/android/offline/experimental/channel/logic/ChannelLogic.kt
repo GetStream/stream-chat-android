@@ -6,7 +6,9 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.extensions.toCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -28,6 +30,7 @@ import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.message.wasCreatedAfter
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import java.util.Date
@@ -38,7 +41,7 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener, ChannelMarkReadListener {
+) : QueryChannelListener, ChannelMarkReadListener, HideChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -98,6 +101,49 @@ internal class ChannelLogic(
                 }
                 chatDomainImpl.addError(error)
             }
+    }
+
+    override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) = setHidden(true)
+
+    /**
+     * Removes messages before the given date and optionally adds a system message
+     * that was coming with the event.
+     *
+     * @param date The date used for generating result.
+     * @param systemMessage The system message to display.
+     */
+    private fun removeMessagesBefore(
+        date: Date,
+        systemMessage: Message? = null,
+    ) {
+        val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
+
+        if (systemMessage == null) {
+            mutableState._messages.value = messages
+        } else {
+            mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
+            updateLastMessageAtByNewMessages(listOf(systemMessage))
+        }
+    }
+
+    override suspend fun onHideChannelResult(
+        result: Result<Unit>,
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ) {
+        if (result.isSuccess) {
+            val cid = Pair(channelType, channelId).toCid()
+            if (clearHistory) {
+                val now = Date()
+                mutableState.hideMessagesBefore = now
+                removeMessagesBefore(now)
+                chatDomainImpl.repos.deleteChannelMessagesBefore(cid, now)
+                chatDomainImpl.repos.setHiddenForChannel(cid, true, now)
+            } else {
+                chatDomainImpl.repos.setHiddenForChannel(cid, true)
+            }
+        }
     }
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
@@ -202,7 +248,13 @@ internal class ChannelLogic(
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id
 
-        if (currentUserId?.let { message.shouldIncrementUnreadCount(it, mutableState._read.value?.lastMessageSeenDate) } == true) {
+        if (currentUserId?.let {
+            message.shouldIncrementUnreadCount(
+                    it,
+                    mutableState._read.value?.lastMessageSeenDate
+                )
+        } == true
+        ) {
             val newUnreadCount = mutableState._unreadCount.value + 1
             mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read

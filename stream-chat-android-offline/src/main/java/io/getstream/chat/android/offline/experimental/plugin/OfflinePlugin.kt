@@ -105,6 +105,16 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
 
+    override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean): Unit =
+        logic.channel(channelType, channelId).onHideChannelRequest(channelType, channelId, clearHistory)
+
+    override suspend fun onHideChannelResult(
+        result: Result<Unit>,
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean
+    ): Unit = logic.channel(channelType, channelId).onHideChannelResult(result, channelType, channelId, clearHistory)
+
     internal fun clear() {
         logic.clear()
         state.clear()

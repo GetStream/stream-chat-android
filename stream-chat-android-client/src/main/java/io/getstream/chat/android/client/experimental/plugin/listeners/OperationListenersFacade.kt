@@ -9,4 +9,5 @@ public interface OperationListenersFacade :
     QueryChannelListener,
     SendMessageListener,
     ThreadQueryListener,
-    ChannelMarkReadListener
+    ChannelMarkReadListener,
+    HideChannelListener

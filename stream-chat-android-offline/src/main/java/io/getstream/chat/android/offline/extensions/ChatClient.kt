@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -302,4 +303,23 @@ internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
             Result(result.error())
         }
     }
+}
+
+/**
+ * Hides the channel with the specified id.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param keepHistory Boolean, if you want to keep the history of this channel or not.
+ *
+ * @return Executable async [Call] responsible for hiding a channel.
+ *
+ * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
+ */
+@CheckResult
+public fun ChatClient.hideChannel(cid: String, keepHistory: Boolean): Call<Unit> {
+    validateCid(cid)
+
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    val clearHistory = !keepHistory
+    return hideChannel(channelType, channelId, clearHistory)
 }
