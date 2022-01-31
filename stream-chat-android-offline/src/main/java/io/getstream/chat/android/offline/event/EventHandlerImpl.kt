@@ -389,11 +389,9 @@ internal class EventHandlerImpl(
             when (event) {
                 is NotificationChannelTruncatedEvent -> {
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
-                    domainImpl.repos.evictChannel(event.cid)
                 }
                 is ChannelTruncatedEvent -> {
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
-                    domainImpl.repos.evictChannel(event.cid)
                 }
                 is ChannelDeletedEvent -> {
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
