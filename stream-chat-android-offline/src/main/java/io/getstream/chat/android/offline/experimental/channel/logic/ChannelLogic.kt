@@ -225,9 +225,9 @@ internal class ChannelLogic(
     }
 
     /**
-     * Store the messages in the local cache
+     * Store the messages in the local cache.
      *
-     * @param messages The messages to be store. Check [Message]
+     * @param messages The messages to be stored. Check [Message].
      */
     internal suspend fun storeMessageLocally(messages: List<Message>) {
         chatDomainImpl.repos.insertMessages(messages)
