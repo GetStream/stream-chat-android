@@ -30,10 +30,10 @@ public interface QueryChannelsListener {
      *
      * @param request [QueryChannelsRequest] which is going to be used for the request.
      */
-    public suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {}
+    public suspend fun onQueryChannelsRequest(request: QueryChannelsRequest)
 
     /**
      * Runs this function on the [Result] of this [QueryChannelsRequest].
      */
-    public suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {}
+    public suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest)
 }
