@@ -247,6 +247,14 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     }
 
     /**
+     * Makes the necessary clean up before the view is detached from window.
+     */
+    override fun onDetachedFromWindow() {
+        suggestionsPopup?.dismiss()
+        super.onDetachedFromWindow()
+    }
+
+    /**
      * Re-renders suggestions popup window for the given [MessageComposerState] instance.
      *
      * @param state [MessageComposerState] for which the suggestions popup is updated.
