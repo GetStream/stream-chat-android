@@ -81,7 +81,8 @@ public class OfflinePlugin(
     }
 
     /**
-     * Method called when a message edit request happens.
+     * Method called when a message edit request happens. This method should be used to update messages locally and
+     * update the cache.
      *
      * @param message [Message].
      */
