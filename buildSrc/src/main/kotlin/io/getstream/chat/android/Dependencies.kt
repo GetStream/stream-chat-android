@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.0.4"
+    internal const val ANDROID_GRADLE_PLUGIN = "7.1.0"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.7.1.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.4.0"
@@ -55,11 +55,11 @@ object Versions {
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
     internal const val KFIXTURE = "0.2.0"
     internal const val KLUENT = "1.68"
-    public const val KOTLIN = "1.5.31"
+    internal const val KOTLIN = "1.5.31"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.8.0"
-    internal const val KTLINT_PLUGIN = "10.2.0"
+    internal const val KTLINT_PLUGIN = "10.2.1"
+    internal const val KTLINT_VERSION = "0.43.2"
     internal const val LEAK_CANARY = "2.4"
-    internal const val LOTTIE = "4.2.2"
     internal const val MATERIAL_COMPONENTS = "1.4.0"
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "2.2.0"
@@ -168,7 +168,6 @@ object Dependencies {
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN}"
     const val ktlintPlugin = "org.jlleitschuh.gradle:ktlint-gradle:${Versions.KTLINT_PLUGIN}"
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.LEAK_CANARY}"
-    const val lottie = "com.airbnb.android:lottie:${Versions.LOTTIE}"
     const val materialComponents = "com.google.android.material:material:${Versions.MATERIAL_COMPONENTS}"
     const val markwonCore = "io.noties.markwon:core:${Versions.MARKWON}"
     const val markwonLinkify = "io.noties.markwon:linkify:${Versions.MARKWON}"

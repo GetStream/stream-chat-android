@@ -10,7 +10,7 @@ internal class FakeTokenManager(val tkn: String) : TokenManager {
         // empty
     }
 
-    override fun setTokenProvider(provider: TokenProvider) {
+    override fun setTokenProvider(provider: CacheableTokenProvider) {
         // empty
     }
 
