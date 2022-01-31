@@ -31,6 +31,7 @@ import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import io.getstream.chat.android.offline.extensions.deleteChannel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -249,7 +250,7 @@ public class ChannelListViewModel(
     }
 
     public fun deleteChannel(channel: Channel) {
-        chatDomain.deleteChannel(channel.cid).enqueue(
+        chatClient.deleteChannel(channel.cid).enqueue(
             onError = { chatError ->
                 logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))

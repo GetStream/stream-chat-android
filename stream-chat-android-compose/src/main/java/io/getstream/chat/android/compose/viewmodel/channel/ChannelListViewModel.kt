@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
+import io.getstream.chat.android.offline.extensions.deleteChannel
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.Flow
@@ -412,7 +413,7 @@ public class ChannelListViewModel(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.deleteChannel(channel.cid).enqueue()
+        chatClient.deleteChannel(channel.cid).enqueue()
     }
 
     /**

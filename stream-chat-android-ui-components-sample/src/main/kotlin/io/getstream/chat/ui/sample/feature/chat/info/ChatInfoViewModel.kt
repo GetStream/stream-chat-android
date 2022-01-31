@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.deleteChannel
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
@@ -21,7 +22,7 @@ class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    chatClient: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     private lateinit var channelClient: ChannelClient
@@ -134,7 +135,7 @@ class ChatInfoViewModel(
     private fun deleteChannel() {
         val cid = requireNotNull(cid)
         viewModelScope.launch {
-            val result = chatDomain.deleteChannel(cid).await()
+            val result = chatClient.deleteChannel(cid).await()
             if (result.isSuccess) {
                 _channelDeletedState.value = true
             } else {

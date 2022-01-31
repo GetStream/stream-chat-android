@@ -47,6 +47,7 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
+import io.getstream.chat.android.offline.extensions.deleteChannel
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
@@ -72,7 +73,6 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
@@ -1015,7 +1015,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun leaveChannel(cid: String): Call<Unit> = LeaveChannel(this).invoke(cid)
 
-    override fun deleteChannel(cid: String): Call<Unit> = DeleteChannel(this).invoke(cid)
+    override fun deleteChannel(cid: String): Call<Unit> = client.deleteChannel(cid)
 
     override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
         client.setMessageForReply(cid, message)

@@ -38,10 +38,13 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::deleteChannel`.
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain::deleteChannel` in favour of `ChatClient::deleteChannel`.
 
 ### ❌ Removed
+- `DeleteChannel` usecase is now removed.
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed

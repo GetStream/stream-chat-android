@@ -478,6 +478,7 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun cancelMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun createChannel (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;
+	public static final fun deleteChannel (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun keystroke (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
