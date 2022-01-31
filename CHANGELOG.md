@@ -119,6 +119,12 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ❌ Removed
 
 <!-- UNRELEASED START -->
+# January 31th, 2022 - 4.27.1
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed clearing cache after receiving channel truncated event. [#3001](https://github.com/GetStream/stream-chat-android/pull/3001)
+<!-- UNRELEASED END -->
+
 # January 25th, 2022 - 4.27.0
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -171,7 +177,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added ways to customize the channel, message and member query limit when building a ChannelListViewModel [#2948](https://github.com/GetStream/stream-chat-android/pull/2948)
-<!-- UNRELEASED END -->
 
 
 # January 12th, 2022 - 4.26.0
