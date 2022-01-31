@@ -257,7 +257,7 @@ internal class ChannelLogic(
 
     /**
      * Updates [ChannelMutableState._messages] with new messages.
-     * The message will by only updated if it's creation/update date is newer than the one stored in the StateFlow.
+     * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.
      */
