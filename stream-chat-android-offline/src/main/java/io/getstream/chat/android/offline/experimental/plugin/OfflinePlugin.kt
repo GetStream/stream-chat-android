@@ -107,7 +107,7 @@ public class OfflinePlugin(
             updateAndSaveMessages(messages, channelLogic)
         } else {
             val channelLogic = channelLogicForMessage(originalMessage)
-            val failedMessage = originalMessage.updateErrorMessage(result.error()).let(::listOf)
+            val failedMessage = originalMessage.updateFailedMessage(result.error()).let(::listOf)
 
             updateAndSaveMessages(failedMessage, channelLogic)
         }
@@ -163,16 +163,32 @@ public class OfflinePlugin(
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
 
+    /**
+     * Updates the messages locally and saves it at database.
+     *
+     * @param messages The list of messages to be updated in the SDK and to be saved in database.
+     * @param channelLogic [ChannelLogic].
+     */
     private suspend fun updateAndSaveMessages(messages: List<Message>, channelLogic: ChannelLogic) {
         channelLogic.upsertMessages(messages)
         channelLogic.storeMessageLocally(messages)
     }
 
+    /**
+     * Gets the channel logic for the channel of a message.
+     *
+     * @param message [Message].
+     */
     private fun channelLogicForMessage(message: Message): ChannelLogic {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         return logic.channel(channelType, channelId)
     }
 
+    /**
+     * Update the online state of a message.
+     *
+     * @param isOnline.
+     */
     private fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
         return this.copy(
             syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
@@ -180,7 +196,12 @@ public class OfflinePlugin(
         )
     }
 
-    private fun Message.updateErrorMessage(chatError: ChatError): Message {
+    /**
+     * Updates a message that whose request (Edition/Delete/Reaction update...) has failed.
+     *
+     * @param chatError [ChatError].
+     */
+    private fun Message.updateFailedMessage(chatError: ChatError): Message {
         return this.copy(
             syncStatus = if (chatError.isPermanent()) {
                 SyncStatus.FAILED_PERMANENTLY
