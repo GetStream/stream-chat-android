@@ -76,6 +76,7 @@ import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagi
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteReaction
+import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
@@ -998,6 +999,16 @@ internal class ChatDomainImpl internal constructor(
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     override fun sendGiphy(message: Message): Call<Message> = client.sendGiphy(message)
+
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         SendReaction(this).invoke(cid, reaction, enforceUnique)
