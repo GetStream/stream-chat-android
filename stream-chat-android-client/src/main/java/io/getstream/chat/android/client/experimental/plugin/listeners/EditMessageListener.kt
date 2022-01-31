@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 
 /**
- * Listener for editions in messages
+ * Listener for editions in messages.
  */
 public interface EditMessageListener {
 
