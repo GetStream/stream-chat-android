@@ -75,7 +75,6 @@ import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.DeleteChannel
-import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
