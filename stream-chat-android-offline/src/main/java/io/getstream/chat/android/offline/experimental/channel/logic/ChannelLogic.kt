@@ -256,7 +256,7 @@ internal class ChannelLogic(
     }
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState.messageList.value.associateBy(Message::id)
+        val currentMessages = mutableState._messages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
