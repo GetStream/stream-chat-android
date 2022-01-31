@@ -6,7 +6,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'de.mannodermaus.android-junit5'
-apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -66,7 +65,6 @@ dependencies {
     implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.androidxViewPager2
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.lottie
     implementation Dependencies.photoview
     implementation Dependencies.coil
     implementation Dependencies.coilGif
