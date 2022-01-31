@@ -82,6 +82,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -266,7 +267,8 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
-        if (tokenUtils.getUserId(tokenProvider.loadToken()) != user.id) {
+        val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
+        if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
             listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))
             return
@@ -275,14 +277,14 @@ public class ChatClient internal constructor(
         when {
             userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
                 userStateService.onUserUpdated(user)
-                tokenManager.setTokenProvider(tokenProvider)
+                tokenManager.setTokenProvider(cacheableTokenProvider)
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
                 notifySetUser(user)
             }
             userState is UserState.NotSet -> {
-                initializeClientWithUser(user, tokenProvider)
+                initializeClientWithUser(user, cacheableTokenProvider)
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
@@ -300,7 +302,7 @@ public class ChatClient internal constructor(
 
     private fun initializeClientWithUser(
         user: User,
-        tokenProvider: TokenProvider,
+        tokenProvider: CacheableTokenProvider,
     ) {
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
@@ -350,7 +352,7 @@ public class ChatClient internal constructor(
         userCredentialStorage.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId).apply { name = config.userName },
-                tokenProvider = ConstantTokenProvider(config.userToken),
+                tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
             )
         }
     }

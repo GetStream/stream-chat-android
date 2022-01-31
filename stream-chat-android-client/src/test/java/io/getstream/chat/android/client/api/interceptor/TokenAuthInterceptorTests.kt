@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.FakeResponse.Body
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -74,7 +75,7 @@ internal class TokenAuthInterceptorTests {
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        tm.setTokenProvider(FakeTokenProvider("token-a", "token-b"))
+        tm.setTokenProvider(CacheableTokenProvider(FakeTokenProvider("token-a", "token-b")))
 
         val chain = FakeChain(
             FakeResponse(444, Body("""{ "code": 40 }""")),
