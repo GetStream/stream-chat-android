@@ -508,14 +508,6 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for marking all messages as read.
      */
     @CheckResult
-    @Deprecated(
-        message = "markAllRead is deprecated. Use extension function ChatClient::stopTyping instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().stopTyping(cid, parentId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
     public fun markAllRead(): Call<Boolean>
 
     /**

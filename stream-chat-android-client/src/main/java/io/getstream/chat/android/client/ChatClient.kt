@@ -1261,6 +1261,7 @@ public class ChatClient internal constructor(
     public fun markAllRead(): Call<Unit> {
         return api.markAllRead()
             .doOnStart(scope) {
+                plugins.forEach { it.onMarkAllReadRequest() }
             }
     }
 

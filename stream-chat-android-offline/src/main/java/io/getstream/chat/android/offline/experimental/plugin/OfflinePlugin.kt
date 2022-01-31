@@ -18,6 +18,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import kotlinx.coroutines.awaitAll
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature.
@@ -109,6 +110,12 @@ public class OfflinePlugin(private val config: Config) : Plugin {
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
+
+    override suspend fun onMarkAllReadRequest() {
+        logic.getActiveChannelsLogic().map { channel ->
+            channel.markReadAsync()
+        }.awaitAll()
+    }
 
     internal fun clear() {
         logic.clear()
