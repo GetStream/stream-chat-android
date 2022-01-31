@@ -187,7 +187,7 @@ public class OfflinePlugin(
     /**
      * Update the online state of a message.
      *
-     * @param isOnline.
+     * @param isOnline [Boolean].
      */
     private fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
         return this.copy(
