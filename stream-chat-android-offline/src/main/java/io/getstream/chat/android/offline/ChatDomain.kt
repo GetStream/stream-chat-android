@@ -396,6 +396,27 @@ public sealed interface ChatDomain {
     public fun sendGiphy(message: Message): Call<Message>
 
     /**
+     * Edits the specified message. Local storage is updated immediately.
+     * The API request is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param message The message to edit.
+     *
+     * @return Executable async [Call] responsible for editing a message.
+     *
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
+     */
+    @CheckResult
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    public fun editMessage(message: Message): Call<Message>
+
+    /**
      * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
      *
      * @param message The message to mark as deleted.
