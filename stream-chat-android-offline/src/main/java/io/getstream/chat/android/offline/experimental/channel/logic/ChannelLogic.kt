@@ -311,8 +311,14 @@ internal class ChannelLogic(
 
     private fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
 
+    /**
+     * Updates [ChannelMutableState._messages] with new messages.
+     * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
+     *
+     * @param messages The list of messages to update.
+     */
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState.messageList.value.associateBy(Message::id)
+        val currentMessages = mutableState._messages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
