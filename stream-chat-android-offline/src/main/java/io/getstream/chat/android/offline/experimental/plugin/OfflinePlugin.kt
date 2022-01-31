@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
@@ -37,7 +38,8 @@ public class OfflinePlugin(
     QueryChannelsListener,
     QueryChannelListener,
     ThreadQueryListener,
-    ChannelMarkReadListener {
+    ChannelMarkReadListener,
+    DeleteMessageListener {
 
     internal constructor() : this(Config())
 
@@ -68,6 +70,14 @@ public class OfflinePlugin(
     internal fun initState(chatDomainImpl: ChatDomainImpl, chatClient: ChatClient) {
         state = StateRegistry(chatDomainImpl, chatClient)
         logic = LogicRegistry(state)
+    }
+
+    override suspend fun onMessageDeleteRequest(message: Message) {
+
+    }
+
+    override suspend fun onMessageDeleteResult(originalMessage: Message, result: kotlin.Result<Message>) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =
