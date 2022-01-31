@@ -1,11 +1,9 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
-import android.content.res.Resources
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -89,10 +87,20 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     public var dismissActionClickListener: () -> Unit = {}
 
     /**
+     * Click listener for the pick commands button.
+     */
+    public var commandsButtonClickListener: () -> Unit = {}
+
+    /**
+     * Click listener invoked when suggestion popup is dismissed,
+     */
+    public var dismissSuggestionsListener: () -> Unit = {}
+
+    /**
      * Handle to [PopupWindow] which is currently displayed.
      * It is shown above [MessageComposerView] to display hints/suggestions, e.g. suggested mentions, available commands.
      */
-    private var suggestionsPopup: PopupWindow? = null
+    private var suggestionsPopup: MessageComposerSuggestionsPopup? = null
 
     /**
      * Default implementation of [mentionSuggestionsContent].
@@ -132,10 +140,6 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      */
 
     private val commandSuggestionsContent: View = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
-    /**
-     * List of all the available commands. This value is used to display command suggestions popup when the "commands" button is clicked.
-     */
-    public var availableCommands: List<Command> = emptyList()
 
     public constructor(context: Context) : this(context, null)
 
@@ -181,9 +185,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
                             }
                     }
                 }
-                it.commandsButtonClickListener = {
-                    renderCommandsSuggestions(MessageComposerState(commandSuggestions = availableCommands))
-                }
+                it.commandsButtonClickListener = { commandsButtonClickListener() }
             }
             removeAllViews()
             addView(defaultLeadingContent)
@@ -264,21 +266,15 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      */
     private fun renderCommandsSuggestions(state: MessageComposerState) {
         (commandSuggestionsContent as? MessageComposerComponent)?.renderState(state)
-        val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(commandSuggestionsContent)
-        popupWindow.apply {
-            val offset = computeSuggestionsPopupVerticalOffset(commandSuggestionsContent)
-            if (isShowing) {
-                update(
-                    this@MessageComposerView,
-                    0,
-                    offset,
-                    -1,
-                    -1,
-                )
-            } else {
-                showAsDropDown(this@MessageComposerView, 0, offset)
-            }
+
+        val suggestionsPopup = suggestionsPopup ?: MessageComposerSuggestionsPopup(commandSuggestionsContent, this) {
+            suggestionsPopup = null
+            dismissSuggestionsListener()
+        }.apply {
+            this@MessageComposerView.suggestionsPopup = this
         }
+
+        suggestionsPopup.showOrUpdate()
     }
 
     /**
@@ -288,54 +284,14 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      */
     private fun renderMentionSuggestions(state: MessageComposerState) {
         (mentionSuggestionsContent as? MessageComposerComponent)?.renderState(state)
-        val popupWindow = suggestionsPopup ?: createSuggestionPopupWindow(mentionSuggestionsContent)
-        popupWindow.apply {
-            val offset = computeSuggestionsPopupVerticalOffset(mentionSuggestionsContent)
-            if (isShowing) {
-                update(
-                    this@MessageComposerView,
-                    0,
-                    offset,
-                    -1,
-                    -1,
-                )
-            } else {
-                showAsDropDown(this@MessageComposerView, 0, offset)
-            }
-        }
-    }
 
-    /**
-     * Computes vertical offset of suggestions [PopupWindow] for the provided suggestions content [View].
-     *
-     * @param suggestionsContent Current suggestions content. Either [mentionSuggestionsContent] or [commandSuggestionsContent].
-     *
-     * @return Px value of the vertical offset of suggestions popup for the given [suggestionsContent] param.
-     */
-    private fun computeSuggestionsPopupVerticalOffset(suggestionsContent: View): Int {
-        suggestionsContent.measure(
-            MeasureSpec.makeMeasureSpec(Resources.getSystem().displayMetrics.widthPixels,
-                MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-        )
-        return -(suggestionsContent.measuredHeight + this@MessageComposerView.height)
-    }
-
-    /**
-     * Creates new [PopupWindow] dedicated to displaying suggestions (e.g. available mention, command suggestions).
-     */
-    private fun createSuggestionPopupWindow(content: View): PopupWindow {
-        val onDismissListener = PopupWindow.OnDismissListener { suggestionsPopup = null }
-        return PopupWindow(
-            content,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            suggestionsPopup = this
-            isOutsideTouchable = true
-            setOnDismissListener(onDismissListener)
-            inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
+        val suggestionsPopup = suggestionsPopup ?: MessageComposerSuggestionsPopup(mentionSuggestionsContent, this) {
+            suggestionsPopup = null
+            dismissSuggestionsListener()
+        }.apply {
+            this@MessageComposerView.suggestionsPopup = this
         }
+        suggestionsPopup.showOrUpdate()
     }
 
     /**
