@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
@@ -45,6 +46,7 @@ public class OfflinePlugin(
     QueryChannelListener,
     ThreadQueryListener,
     ChannelMarkReadListener,
+    EditMessageListener,
     DeleteMessageListener {
 
     internal constructor() : this(Config())
