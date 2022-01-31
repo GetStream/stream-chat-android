@@ -181,7 +181,22 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     val defaultConfig: Config = Config(connectEventsEnabled = true, muteEnabled = true)
-    internal var repos: RepositoryFacade = createNoOpRepos()
+
+    /*
+     * It is necessary to initialize `RepositoryFacade` lazily to give time to the real RepositoryFacade to be set
+     * instead of using `createNoOpRepos()`, otherwise the SDK will create a in memory Room's database which will be later
+     * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is
+     * not closed by room.
+     */
+    internal var repos: RepositoryFacade
+        get() = _repos ?: createNoOpRepos().also { repositoryFacade ->
+            _repos = repositoryFacade
+        }
+        set(value) {
+            _repos = value
+        }
+
+    private var _repos: RepositoryFacade? = null
 
     private val globalState: GlobalMutableState = offlinePlugin.globalState.toMutableState()
 
