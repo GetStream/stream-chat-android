@@ -5,6 +5,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
@@ -99,17 +100,21 @@ public class OfflinePlugin(private val config: Config) : Plugin {
             updateAndSaveMessages(messages, channelLogic)
         } else {
             val channelLogic = channelLogicForMessage(originalMessage)
-            val failedMessage = originalMessage.copy(
-                syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                },
-                updatedLocallyAt = Date(),
-            ).let(::listOf)
+            val failedMessage = updateErrorMessage(originalMessage, result.error()).let(::listOf)
 
             updateAndSaveMessages(failedMessage, channelLogic)
         }
+    }
+
+    private fun updateErrorMessage(message: Message, chatError: ChatError): Message {
+        return message.copy(
+            syncStatus = if (chatError.isPermanent()) {
+                SyncStatus.FAILED_PERMANENTLY
+            } else {
+                SyncStatus.SYNC_NEEDED
+            },
+            updatedLocallyAt = Date(),
+        )
     }
 
     private suspend fun updateAndSaveMessages(messages: List<Message>, channelLogic: ChannelLogic) {
