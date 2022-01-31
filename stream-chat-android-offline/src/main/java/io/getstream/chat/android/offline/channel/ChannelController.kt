@@ -558,6 +558,24 @@ public class ChannelController internal constructor(
 
     internal fun updateDataFromChannel(c: Channel) = channelLogic.updateDataFromChannel(c)
 
+    /**
+     * Edits the specified message. Local storage is updated immediately.
+     * The API request is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param message The message to edit.
+     *
+     * @return Executable async [Call] responsible for editing a message.
+     *
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     */
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
