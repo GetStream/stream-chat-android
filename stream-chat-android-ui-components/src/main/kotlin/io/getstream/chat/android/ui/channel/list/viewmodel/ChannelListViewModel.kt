@@ -259,8 +259,12 @@ public class ChannelListViewModel(
     }
 
     public fun hideChannel(channel: Channel) {
-        val (channelType, channelId) = channel.cid.cidToTypeAndId()
-        chatClient.hideChannel(channelType, channelId, false).enqueue(
+        val keepHistory = true
+        val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val (channelType, channelId) = channel.cid.cidToTypeAndId()
+            chatClient.hideChannel(channelType, channelId, !keepHistory)
+        } else chatDomain.hideChannel(channel.cid, keepHistory)
+        call.enqueue(
             onError = { chatError ->
                 logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
