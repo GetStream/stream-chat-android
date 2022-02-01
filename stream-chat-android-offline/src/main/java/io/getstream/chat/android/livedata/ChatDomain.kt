@@ -562,9 +562,9 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     @Deprecated(
-        message = "deleteChannel is deprecated. Use function ChatClient::deleteChannel instead",
+        message = "deleteChannel is deprecated. Use function ChannelClient::delete instead",
         replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().deleteChannel(cid)",
+            expression = "ChatClient.instance().channel(cid).delete().toUnitCall()",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
         level = DeprecationLevel.WARNING
