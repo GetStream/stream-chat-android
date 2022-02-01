@@ -60,11 +60,6 @@ public class MessageComposerViewModel(
     public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
 
     /**
-     * Represents the list of available commands in the channel.
-     */
-    public val availableCommands: Flow<List<Command>> = messageComposerController.commands
-
-    /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
      * reply or a regular message.
      */
@@ -185,6 +180,11 @@ public class MessageComposerViewModel(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility(): Unit = messageComposerController.toggleCommandsVisibility()
+
+    /**
+     * Dismisses the suggestions popup above the message composer.
+     */
+    public fun dismissSuggestionsPopup(): Unit = messageComposerController.dismissSuggestionsPopup()
 
     /**
      * Disposes the inner [MessageComposerController].

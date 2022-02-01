@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import coil.clear
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.R
@@ -110,16 +110,14 @@ private class MentionsViewHolder(
      */
     override fun bind(item: User) {
         binding.root.setOnClickListener { mentionSelectionListener(item) }
-        binding.avatarView.setUserData(item)
+        // Workaround for race condition caused by Coil trying to load stale avatar on layout.
+        binding.avatarView.doOnLayout {
+            binding.avatarView.setUserData(item)
+        }
         binding.usernameTextView.text = item.name
         binding.mentionNameTextView.text = context.getString(
             R.string.stream_ui_mention,
             item.name.lowercase()
         )
     }
-
-    /**
-     * Cancels potential ongoing image loading request, to avoid image loading issues.
-     */
-    override fun unbind() = binding.avatarView.clear()
 }

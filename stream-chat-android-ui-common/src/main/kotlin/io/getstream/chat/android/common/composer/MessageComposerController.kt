@@ -106,7 +106,7 @@ public class MessageComposerController(
     /**
      * Represents the list of available commands in the channel.
      */
-    public val commands: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
+    private var commands: List<Command> = emptyList()
 
     /**
      * Represents the maximum allowed message length in the message input.
@@ -185,7 +185,7 @@ public class MessageComposerController(
 
                 channelController.channelConfig.onEach {
                     maxMessageLength = it.maxMessageLength
-                    commands.value = it.commands
+                    commands = it.commands
                 }.launchIn(scope)
 
                 channelController.members.onEach { members ->
@@ -519,7 +519,15 @@ public class MessageComposerController(
     public fun toggleCommandsVisibility() {
         val isHidden = commandSuggestions.value.isEmpty()
 
-        commandSuggestions.value = if (isHidden) commands.value else emptyList()
+        commandSuggestions.value = if (isHidden) commands else emptyList()
+    }
+
+    /**
+     * Dismisses the suggestions popup above the message composer.
+     */
+    public fun dismissSuggestionsPopup() {
+        mentionSuggestions.value = emptyList()
+        commandSuggestions.value = emptyList()
     }
 
     /**
@@ -543,7 +551,7 @@ public class MessageComposerController(
 
         commandSuggestions.value = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
-            commands.value.filter { it.name.startsWith(commandPattern) }
+            commands.filter { it.name.startsWith(commandPattern) }
         } else {
             emptyList()
         }

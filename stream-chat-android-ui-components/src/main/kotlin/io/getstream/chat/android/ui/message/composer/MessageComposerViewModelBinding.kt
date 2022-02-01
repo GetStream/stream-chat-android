@@ -24,6 +24,8 @@ import kotlinx.coroutines.launch
  * @param commandSelectionListener Selection listener invoked when a command suggestion item is selected.
  * @param alsoSendToChannelSelectionListener Selection listener for the "also send to channel" checkbox.
  * @param dismissActionClickListener Click listener for the dismiss action button.
+ * @param commandsButtonClickListener Click listener for the pick commands button.
+ * @param dismissSuggestionsListener Click listener invoked when suggestion popup is dismissed.
  */
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
@@ -37,6 +39,8 @@ public fun MessageComposerViewModel.bindView(
     commandSelectionListener: (Command) -> Unit = { selectCommand(it) },
     alsoSendToChannelSelectionListener: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
     dismissActionClickListener: () -> Unit = { dismissMessageActions() },
+    commandsButtonClickListener: () -> Unit = { toggleCommandsVisibility() },
+    dismissSuggestionsListener: () -> Unit = { dismissSuggestionsPopup() },
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -47,16 +51,12 @@ public fun MessageComposerViewModel.bindView(
     view.commandSelectionListener = commandSelectionListener
     view.alsoSendToChannelSelectionListener = alsoSendToChannelSelectionListener
     view.dismissActionClickListener = dismissActionClickListener
+    view.commandsButtonClickListener = commandsButtonClickListener
+    view.dismissSuggestionsListener = dismissSuggestionsListener
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect {
             view.renderState(it)
-        }
-    }
-
-    lifecycleOwner.lifecycleScope.launch {
-        availableCommands.collect {
-            view.availableCommands = it
         }
     }
 }

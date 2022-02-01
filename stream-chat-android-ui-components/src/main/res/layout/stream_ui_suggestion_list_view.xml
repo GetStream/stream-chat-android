@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/stream_ui_spacing_small"
+        android:descendantFocusability="blocksDescendants"
         android:visibility="gone"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
