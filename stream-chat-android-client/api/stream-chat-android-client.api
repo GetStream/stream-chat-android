@@ -1881,7 +1881,7 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteMessageListener {
 	public abstract fun onMessageDeleteRequest (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageDeleteResult (Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageDeleteResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/EditMessageListener {
