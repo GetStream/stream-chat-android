@@ -915,10 +915,14 @@ internal class ChatDomainImpl internal constructor(
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
     ): Call<Message> {
-        validateCid(cid)
-        val channelController = channel(cid)
         return CoroutineCall(scope) {
-            channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
+            try {
+                validateCid(cid)
+                val channelController = channel(cid)
+                channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
+            } catch (e: IllegalArgumentException) {
+                Result(ChatError(e.message))
+            }
         }
     }
 
