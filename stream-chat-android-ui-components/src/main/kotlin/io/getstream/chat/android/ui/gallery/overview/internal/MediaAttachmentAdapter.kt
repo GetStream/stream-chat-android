@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.R
@@ -49,7 +48,7 @@ internal class MediaAttachmentAdapter(
             binding.mediaImageView.load(
                 data = attachmentGalleryItem.attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_placeholder,
-            ).addToDisposableList(disposableList)
+            ).also(disposableList::add)
 
             val user = attachmentGalleryItem.user
             if (showUserAvatars) {

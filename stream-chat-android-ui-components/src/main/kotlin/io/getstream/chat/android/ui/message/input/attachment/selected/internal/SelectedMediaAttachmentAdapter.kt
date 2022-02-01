@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.input.attachment.selected.internal
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -64,7 +63,7 @@ internal class SelectedMediaAttachmentAdapter(
                 binding.ivMedia.loadVideoThumbnail(
                     uri = attachment.uri,
                     placeholderResId = R.drawable.stream_ui_placeholder,
-                ).addToDisposableList(disposableList)
+                ).also(disposableList::add)
             } else {
                 binding.ivMedia.load(data = attachment.uri)
             }

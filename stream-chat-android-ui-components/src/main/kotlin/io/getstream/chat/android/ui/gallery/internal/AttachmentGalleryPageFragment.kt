@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
@@ -32,7 +31,7 @@ internal class AttachmentGalleryPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding.photoView) {
-            load(data = imageUrl).addToDisposableList(disposableList)
+            load(data = imageUrl).also(disposableList::add)
             setOnClickListener {
                 imageClickListener()
             }

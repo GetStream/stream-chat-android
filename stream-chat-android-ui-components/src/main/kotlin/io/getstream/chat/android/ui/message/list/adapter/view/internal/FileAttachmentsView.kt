@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.google.android.material.shape.CornerFamily
@@ -223,7 +222,7 @@ private class FileAttachmentViewHolder(
             fileTitle.setTextStyle(style.titleTextStyle)
             fileSize.setTextStyle(style.fileSizeTextStyle)
 
-            fileTypeIcon.loadAttachmentThumb(item).addToDisposableList(disposableList)
+            fileTypeIcon.loadAttachmentThumb(item).also(disposableList::add)
             fileTitle.text = item.getDisplayableName()
 
             if (item.uploadState is Attachment.UploadState.Idle

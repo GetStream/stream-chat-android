@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -91,7 +90,7 @@ internal class FileAttachmentAdapter(
             this.attachment = attachment
 
             binding.apply {
-                fileTypeImageView.loadAttachmentThumb(attachment).addToDisposableList(disposableList)
+                fileTypeImageView.loadAttachmentThumb(attachment).also(disposableList::add)
                 fileNameTextView.text = attachment.title
                 fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
 

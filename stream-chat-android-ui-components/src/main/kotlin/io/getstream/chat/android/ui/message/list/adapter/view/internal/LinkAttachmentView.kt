@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -74,7 +73,7 @@ internal class LinkAttachmentView : FrameLayout {
                 onStart = { binding.progressBar.isVisible = true },
                 onComplete = { binding.progressBar.isVisible = false },
                 transformation = RoundedCorners(LINK_PREVIEW_CORNER_RADIUS),
-            ).addToDisposableList(disposableList)
+            ).also(disposableList::add)
         } else {
             binding.linkPreviewImageView.isVisible = false
             binding.progressBar.isVisible = false

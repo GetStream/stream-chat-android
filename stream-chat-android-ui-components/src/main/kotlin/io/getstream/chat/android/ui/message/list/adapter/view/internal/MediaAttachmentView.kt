@@ -7,7 +7,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -113,7 +112,7 @@ internal class MediaAttachmentView : ConstraintLayout {
                 showLoading(false)
                 onCompleteCallback()
             }
-        ).addToDisposableList(disposableList)
+        ).also(disposableList::add)
     }
 
     private fun showMoreCount(andMoreCount: Int) {

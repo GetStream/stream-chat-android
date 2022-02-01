@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -95,7 +94,7 @@ internal class MediaAttachmentAdapter(
                 binding.mediaThumbnailImageView.loadVideoThumbnail(
                     uri = attachment.uri,
                     placeholderResId = R.drawable.stream_ui_placeholder,
-                ).addToDisposableList(disposableList)
+                ).also(disposableList::add)
                 val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_white_smoke)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)
             } else {

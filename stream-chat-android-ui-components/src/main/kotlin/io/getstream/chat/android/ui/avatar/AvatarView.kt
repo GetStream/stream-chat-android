@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
@@ -64,7 +63,7 @@ public class AvatarView : AppCompatImageView {
             load(
                 data = Avatar.ChannelAvatar(channel, avatarStyle),
                 transformation = avatarShape(avatarStyle),
-            ).addToDisposableList(disposableList)
+            ).also(disposableList::add)
 
             isOnline = false
         }
@@ -80,7 +79,7 @@ public class AvatarView : AppCompatImageView {
         load(
             data = Avatar.UserAvatar(user, avatarStyle),
             transformation = avatarShape(avatarStyle),
-        ).addToDisposableList(disposableList)
+        ).also(disposableList::add)
 
         isOnline = user.online
     }

@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.input.attachment.selected.internal
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.disposable.DisposableList
-import com.getstream.sdk.chat.disposable.addToDisposableList
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -41,7 +40,7 @@ internal class SelectedFileAttachmentAdapter(
             this.attachment = item
 
             binding.apply {
-                ivFileThumb.loadAttachmentThumb(attachment).addToDisposableList(disposableList)
+                ivFileThumb.loadAttachmentThumb(attachment).also(disposableList::add)
                 tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 if (item.size > attachmentMaxFileSize) {
                     tvFileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
