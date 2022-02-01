@@ -39,9 +39,9 @@ class ChatApp : Application() {
 
     @OptIn(ExperimentalStreamChatApi::class)
     private fun setupStreamSdk() {
-        val offlinePlugin = OfflinePlugin(Config(userPresence = true, persistenceEnabled = true))
+        val offlinePlugin = OfflinePlugin(Config(userPresence = false, persistenceEnabled = false))
 
-        ChatClient.Builder("qx5us2v6xvmh", applicationContext)
+        ChatClient.Builder("cpv4bsuedrft", applicationContext)
             .logLevel(ChatLogLevel.ALL)
             .notifications(createNotificationConfig(), createNotificationHandler())
             .withPlugin(offlinePlugin)
@@ -51,13 +51,12 @@ class ChatApp : Application() {
     private fun connectUser() {
         ChatClient.instance().connectUser(
             user = User(
-                id = "filip",
+                id = "marintolic",
                 extraData = mutableMapOf(
-                    "name" to "Filip Babić",
-                    "image" to "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128",
+                    "name" to "Marin Tolic",
                 ),
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU"
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFyaW50b2xpYyJ9.PcvGyED4_8jlC3fIzUiFU5sPNYydV35oyv_SOhnGP-8"
         ).enqueue()
     }
 

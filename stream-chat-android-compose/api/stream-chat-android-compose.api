@@ -623,10 +623,12 @@ public final class io/getstream/chat/android/compose/ui/components/ComposableSin
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/ComposableSingletons$SimpleDialogKt {
@@ -1658,6 +1660,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public static fun getConnectionState$delegate (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;)Ljava/lang/Object;
 	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/compose/state/messages/MessagesState;
 	public final fun getMessageActions ()Ljava/util/Set;
 	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;
