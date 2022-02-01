@@ -155,14 +155,26 @@ internal class ChannelLogic(
         cid: String,
         messageId: String,
         olderMessagesOffset: Int,
-        newerMessagesOffset: Int
+        newerMessagesOffset: Int,
     ) {
-        val message = if (result.isSuccess) result.data() else chatDomainImpl.repos.selectMessage(messageId)
-        message?.let {
-            upsertMessages(listOf(message))
-            loadOlderMessages(messageId, newerMessagesOffset)
-            loadNewerMessages(messageId, olderMessagesOffset)
+        if (result.isSuccess) {
+            result.data().let { message ->
+                upsertMessages(listOf(message))
+                loadOlderMessages(messageId, newerMessagesOffset)
+                loadNewerMessages(messageId, olderMessagesOffset)
+            }
         }
+    }
+
+    override suspend fun onGetMessageError(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Result<Message> {
+        return chatDomainImpl.repos.selectMessage(messageId)?.let { message ->
+            Result(message)
+        } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
     }
 
     /** Loads a list of messages after the newest message in the current list. */
@@ -183,9 +195,11 @@ internal class ChannelLogic(
 
         val offlineChannel = runChannelQueryOffline(request)
 
-        val onlineResult = ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request).await().also { result ->
-            onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
-        }
+        val onlineResult =
+            ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
+                .await().also { result ->
+                    onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
+                }
 
         return when {
             onlineResult.isSuccess -> onlineResult
@@ -298,7 +312,13 @@ internal class ChannelLogic(
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id
 
-        if (currentUserId?.let { message.shouldIncrementUnreadCount(it, mutableState._read.value?.lastMessageSeenDate) } == true) {
+        if (currentUserId?.let {
+            message.shouldIncrementUnreadCount(
+                    it,
+                    mutableState._read.value?.lastMessageSeenDate
+                )
+        } == true
+        ) {
             val newUnreadCount = mutableState._unreadCount.value + 1
             mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read

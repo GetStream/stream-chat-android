@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.doOnResult
+import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.models.Attachment
@@ -327,7 +328,18 @@ public fun ChatClient.loadMessageById(
 ): Call<Message> {
     val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
     return this.getMessage(messageId)
-        .doOnResult((ChatDomain.instance as ChatDomainImpl).scope) { result ->
-            relevantPlugins.forEach { it.onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset) }
+        .onErrorReturn(domainImpl().scope) {
+            relevantPlugins.first().onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+        }
+        .doOnResult(domainImpl().scope) { result ->
+            relevantPlugins.forEach {
+                it.onGetMessageResult(
+                    result,
+                    cid,
+                    messageId,
+                    olderMessagesOffset,
+                    newerMessagesOffset
+                )
+            }
         }
 }

@@ -134,6 +134,16 @@ public class OfflinePlugin(
             .onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset)
     }
 
+    override suspend fun onGetMessageError(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int
+    ): Result<Message> = cid.cidToTypeAndId().let { (channelType, channelId) ->
+        logic.channel(channelType, channelId)
+            .onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    }
+
     internal fun clear() {
         logic.clear()
         state.clear()
