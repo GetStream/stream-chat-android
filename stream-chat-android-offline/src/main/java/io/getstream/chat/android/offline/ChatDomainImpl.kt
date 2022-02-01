@@ -75,6 +75,7 @@ import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.DeleteChannel
+import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
@@ -1009,6 +1010,27 @@ internal class ChatDomainImpl internal constructor(
         level = DeprecationLevel.WARNING
     )
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
+
+    @Deprecated(
+        message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().deleteMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
+        DeleteMessage(this).invoke(message, hard)
+
+    @Deprecated(
+        message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().deleteMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         SendReaction(this).invoke(cid, reaction, enforceUnique)

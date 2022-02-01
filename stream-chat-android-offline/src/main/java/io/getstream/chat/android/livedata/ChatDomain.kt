@@ -426,6 +426,37 @@ public sealed interface ChatDomain {
     public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
+     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param message The message to mark as deleted.
+     *
+     * @return Executable async [Call] responsible for deleting a message.
+     * @param hard Use to hard delete the message (delete in backend). CAN'T BE UNDONE.
+     *
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     */
+    @CheckResult
+    @Deprecated(
+        message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().deleteMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    public fun deleteMessage(message: Message, hard: Boolean = false): Call<Message>
+
+    @Deprecated(
+        message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().deleteMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    public fun deleteMessage(message: Message): Call<Message>
+
+    /**
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain.
      *
      * @param cid The full channel id, ie messaging:123.
