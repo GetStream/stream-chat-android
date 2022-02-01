@@ -43,6 +43,11 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -77,6 +82,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -261,7 +267,8 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
-        if (tokenUtils.getUserId(tokenProvider.loadToken()) != user.id) {
+        val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
+        if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
             listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))
             return
@@ -270,14 +277,14 @@ public class ChatClient internal constructor(
         when {
             userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
                 userStateService.onUserUpdated(user)
-                tokenManager.setTokenProvider(tokenProvider)
+                tokenManager.setTokenProvider(cacheableTokenProvider)
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
                 notifySetUser(user)
             }
             userState is UserState.NotSet -> {
-                initializeClientWithUser(user, tokenProvider)
+                initializeClientWithUser(user, cacheableTokenProvider)
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
@@ -295,7 +302,7 @@ public class ChatClient internal constructor(
 
     private fun initializeClientWithUser(
         user: User,
-        tokenProvider: TokenProvider,
+        tokenProvider: CacheableTokenProvider,
     ) {
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
@@ -345,7 +352,7 @@ public class ChatClient internal constructor(
         userCredentialStorage.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId).apply { name = config.userName },
-                tokenProvider = ConstantTokenProvider(config.userToken),
+                tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
             )
         }
     }
@@ -888,25 +895,34 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
 
     @CheckResult
-    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> =
-        api.getReplies(messageId, limit)
-            .doOnStart(scope) { plugins.forEach { it.onGetRepliesRequest(messageId, limit) } }
-            .doOnResult(scope) { result ->
-                plugins.forEach { it.onGetRepliesResult(result, messageId, limit) }
+    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
+
+        return api.getReplies(messageId, limit)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin -> plugin.onGetRepliesRequest(messageId, limit) }
             }
-            .precondition { onGetRepliesPrecondition(messageId, limit) }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin -> plugin.onGetRepliesResult(result, messageId, limit) }
+            }
+            .precondition(relevantPlugins) { onGetRepliesPrecondition(messageId, limit) }
+    }
 
     @CheckResult
     public fun getRepliesMore(
         messageId: String,
         firstId: String,
         limit: Int,
-    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
-        .doOnStart(scope) { plugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
-        .doOnResult(scope) { result ->
-            plugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
-        }
-        .precondition { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+    ): Call<List<Message>> {
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
+
+        return api.getRepliesMore(messageId, firstId, limit)
+            .doOnStart(scope) { relevantPlugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
+            }
+            .precondition(relevantPlugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+    }
 
     @CheckResult
     public fun sendAction(request: SendActionRequest): Call<Message> {
@@ -938,18 +954,17 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> = api.sendMessage(channelType, channelId, message)
-        .doOnStart(scope) { plugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
-        .doOnResult(scope) { result ->
-            plugins.forEach {
-                it.onMessageSendResult(
-                    result,
-                    channelType,
-                    channelId,
-                    message
-                )
+    ): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
+
+        return api.sendMessage(channelType, channelId, message)
+            .doOnStart(scope) { relevantPlugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach {
+                    it.onMessageSendResult(result, channelType, channelId, message)
+                }
             }
-        }
+    }
 
     @CheckResult
     public fun updateMessage(
@@ -1054,26 +1069,32 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> =
-        api.queryChannel(channelType, channelId, request)
+    ): Call<Channel> {
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
+
+        return api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
-                plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+                relevantPlugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
             }
             .doOnResult(scope) { result ->
-                plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+                relevantPlugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
             }
-            .precondition { onQueryChannelPrecondition(channelType, channelId, request) }
+            .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
+    }
 
     @CheckResult
-    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.queryChannels(request)
+    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+
+        return queryChannelsPostponeHelper.queryChannels(request)
             .doOnStart(scope) {
-                plugins.forEach { it.onQueryChannelsRequest(request) }
+                relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
             }
             .doOnResult(scope) { result ->
-                plugins.forEach { it.onQueryChannelsResult(result, request) }
+                relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
             }
-            .precondition { onQueryChannelsPrecondition(request) }
+            .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+    }
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
@@ -1270,8 +1291,10 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
+        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>()
+
         return api.markRead(channelType, channelId)
-            .precondition { onChannelMarkReadPrecondition(channelType, channelId) }
+            .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
     }
 
     /**
@@ -1679,9 +1702,12 @@ public class ChatClient internal constructor(
     }
 
     @ExperimentalStreamChatApi
-    internal fun <T : Any> Call<T>.precondition(preconditionCheck: suspend Plugin.() -> Result<Unit>): Call<T> =
+    internal fun <R, T : Any> Call<T>.precondition(
+        pluginsList: List<R>,
+        preconditionCheck: suspend R.() -> Result<Unit>,
+    ): Call<T> =
         withPrecondition(scope) {
-            plugins.fold(Result.success(Unit)) { result, plugin ->
+            pluginsList.fold(Result.success(Unit)) { result, plugin ->
                 if (result.isError) {
                     result
                 } else {
