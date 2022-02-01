@@ -6,6 +6,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -27,7 +31,13 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-public class OfflinePlugin(private val config: Config) : Plugin {
+public class OfflinePlugin(
+    private val config: Config,
+) : Plugin,
+    QueryChannelsListener,
+    QueryChannelListener,
+    ThreadQueryListener,
+    ChannelMarkReadListener {
 
     internal constructor() : this(Config())
 
