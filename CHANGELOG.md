@@ -18,6 +18,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
+- Update Android Gradle Plugin version to 7.1.0 and Gradle version to 7.3.3. [#2989](https://github.com/GetStream/stream-chat-android/pull/2989)
 
 ### ❌ Removed
 
@@ -25,6 +26,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Internal implementation only asks to the provided `TokenProvider` a new token when it is really needed. [#2995](https://github.com/GetStream/stream-chat-android/pull/2995)
 
 ### ✅ Added
 
@@ -34,6 +36,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed memory leak related to database initialization.[#2974](https://github.com/GetStream/stream-chat-android/pull/2974)
 
 ### ⬆️ Improved
 
@@ -61,6 +64,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Replaced Lottie typing indicator with a custom view. [#3004](https://github.com/GetStream/stream-chat-android/pull/3004)
 
 ### ✅ Added
 
@@ -117,6 +121,13 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 <!-- UNRELEASED END -->
+
+
+# January 31th, 2022 - 4.27.1
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed clearing cache after receiving channel truncated event. [#3001](https://github.com/GetStream/stream-chat-android/pull/3001)
+
 
 # January 25th, 2022 - 4.27.0
 ## stream-chat-android-client

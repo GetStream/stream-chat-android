@@ -5,52 +5,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChannelDeletedEvent
-import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
-import io.getstream.chat.android.client.events.ChannelUserBannedEvent
-import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
-import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.events.GlobalUserBannedEvent
-import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
-import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.events.MarkAllReadEvent
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.events.MemberUpdatedEvent
-import io.getstream.chat.android.client.events.MessageDeletedEvent
-import io.getstream.chat.android.client.events.MessageReadEvent
-import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
-import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
-import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
-import io.getstream.chat.android.client.events.NotificationInvitedEvent
-import io.getstream.chat.android.client.events.NotificationMarkReadEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
-import io.getstream.chat.android.client.events.ReactionDeletedEvent
-import io.getstream.chat.android.client.events.ReactionNewEvent
-import io.getstream.chat.android.client.events.ReactionUpdateEvent
-import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserPresenceChangedEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -81,8 +36,6 @@ import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.isEphemeral
-import io.getstream.chat.android.offline.message.wasCreatedAfter
-import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -224,9 +177,7 @@ public class ChannelController internal constructor(
             return false
         }
 
-        return messages
-            .last()
-            .let { it.createdAt ?: it.createdLocallyAt }
+        return messages.last().createdAt
             .let { lastMessageDate ->
                 val shouldUpdate =
                     lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
@@ -247,27 +198,6 @@ public class ChannelController internal constructor(
             }
     }
 
-    /**
-     * Removes messages before the given date and optionally adds a system message
-     * that was coming with the event.
-     *
-     * @param date The date used for generating result.
-     * @param systemMessage The system message to display.
-     */
-    private fun removeMessagesBefore(
-        date: Date,
-        systemMessage: Message? = null,
-    ) {
-        val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
-
-        if (systemMessage == null) {
-            mutableState._messages.value = messages
-        } else {
-            mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
-            channelLogic.updateLastMessageAtByNewMessages(listOf(systemMessage))
-        }
-    }
-
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
         channelLogic.setHidden(true)
         val result = channelClient.hide(clearHistory).await()
@@ -275,7 +205,7 @@ public class ChannelController internal constructor(
             if (clearHistory) {
                 val now = Date()
                 mutableState.hideMessagesBefore = now
-                removeMessagesBefore(now)
+                channelLogic.removeMessagesBefore(now)
                 domainImpl.repos.deleteChannelMessagesBefore(cid, now)
                 domainImpl.repos.setHiddenForChannel(cid, true, now)
             } else {
@@ -580,18 +510,7 @@ public class ChannelController internal constructor(
         channelLogic.upsertMessages(listOf(message))
     }
 
-    public fun getMessage(messageId: String): Message? {
-        val copy = mutableState.messageList.value
-        var message = copy.firstOrNull { it.id == messageId }
-
-        if (mutableState.hideMessagesBefore != null) {
-            if (message != null && message.wasCreatedBeforeOrAt(mutableState.hideMessagesBefore)) {
-                message = null
-            }
-        }
-
-        return message
-    }
+    public fun getMessage(messageId: String): Message? = channelLogic.getMessage(messageId)
 
     internal fun removeLocalMessage(message: Message) {
         channelLogic.removeLocalMessage(message)
@@ -623,236 +542,13 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal fun setTyping(userId: String, event: ChatEvent?) {
-        val copy = mutableState._typing.value.toMutableMap()
-        if (event == null) {
-            copy.remove(userId)
-        } else {
-            copy[userId] = event
-        }
-        domainImpl.user.value?.id.let(copy::remove)
-        mutableState._typing.value = copy.toMap()
-    }
+    internal fun setTyping(userId: String, event: ChatEvent?) = channelLogic.setTyping(userId, event)
 
-    internal suspend fun handleEvents(events: List<ChatEvent>) {
-        for (event in events) {
-            handleEvent(event)
-        }
-    }
+    internal fun handleEvents(events: List<ChatEvent>) = channelLogic.handleEvents(events)
 
-    internal fun handleEvent(event: ChatEvent) {
-        when (event) {
-            is NewMessageEvent -> {
-                upsertEventMessage(event.message)
-                channelLogic.incrementUnreadCountIfNecessary(event.message)
-                channelLogic.setHidden(false)
-            }
-            is MessageUpdatedEvent -> {
-                event.message.apply {
-                    replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
-                }.let(::upsertEventMessage)
+    internal fun handleEvent(event: ChatEvent) = channelLogic.handleEvent(event)
 
-                channelLogic.setHidden(false)
-            }
-            is MessageDeletedEvent -> {
-                if (event.hardDelete) {
-                    removeLocalMessage(event.message)
-                } else {
-                    upsertEventMessage(event.message)
-                }
-                channelLogic.setHidden(false)
-            }
-            is NotificationMessageNewEvent -> {
-                upsertEventMessage(event.message)
-                channelLogic.incrementUnreadCountIfNecessary(event.message)
-                channelLogic.setHidden(false)
-            }
-            is ReactionNewEvent -> {
-                upsertMessage(event.message)
-            }
-            is ReactionUpdateEvent -> {
-                upsertMessage(event.message)
-            }
-            is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
-            }
-            is MemberRemovedEvent -> {
-                deleteMember(event.user.id)
-            }
-            is MemberAddedEvent -> {
-                upsertMember(event.member)
-            }
-            is MemberUpdatedEvent -> {
-                upsertMember(event.member)
-            }
-            is NotificationAddedToChannelEvent -> {
-                upsertMembers(event.channel.members)
-            }
-            is UserPresenceChangedEvent -> {
-                upsertUserPresence(event.user)
-            }
-            is UserUpdatedEvent -> {
-                upsertUser(event.user)
-            }
-            is UserStartWatchingEvent -> {
-                upsertWatcher(event.user)
-                channelLogic.setWatcherCount(event.watcherCount)
-            }
-            is UserStopWatchingEvent -> {
-                deleteWatcher(event.user)
-                channelLogic.setWatcherCount(event.watcherCount)
-            }
-            is ChannelUpdatedEvent -> {
-                channelLogic.updateChannelData(event.channel)
-            }
-            is ChannelUpdatedByUserEvent -> {
-                channelLogic.updateChannelData(event.channel)
-            }
-            is ChannelHiddenEvent -> {
-                channelLogic.setHidden(true)
-            }
-            is ChannelVisibleEvent -> {
-                channelLogic.setHidden(false)
-            }
-            is ChannelDeletedEvent -> {
-                removeMessagesBefore(event.createdAt)
-                mutableState._channelData.value = mutableState.channelData.value.copy(deletedAt = event.createdAt)
-            }
-            is ChannelTruncatedEvent -> {
-                removeMessagesBefore(event.createdAt, event.message)
-            }
-            is NotificationChannelTruncatedEvent -> {
-                removeMessagesBefore(event.createdAt)
-            }
-            is TypingStopEvent -> {
-                setTyping(event.user.id, null)
-            }
-            is TypingStartEvent -> {
-                setTyping(event.user.id, event)
-            }
-            is MessageReadEvent -> {
-                updateRead(ChannelUserRead(event.user, event.createdAt))
-            }
-            is NotificationMarkReadEvent -> {
-                updateRead(ChannelUserRead(event.user, event.createdAt))
-            }
-            is MarkAllReadEvent -> {
-                updateRead(ChannelUserRead(event.user, event.createdAt))
-            }
-            is NotificationInviteAcceptedEvent -> {
-                upsertMember(event.member)
-                channelLogic.updateChannelData(event.channel)
-            }
-            is NotificationInviteRejectedEvent -> {
-                upsertMember(event.member)
-                channelLogic.updateChannelData(event.channel)
-            }
-            is NotificationChannelMutesUpdatedEvent -> {
-                mutableState._muted.value = event.me.channelMutes.any { mute ->
-                    mute.channel.cid == cid
-                }
-            }
-            is ChannelUserBannedEvent,
-            is ChannelUserUnbannedEvent,
-            is NotificationChannelDeletedEvent,
-            is NotificationInvitedEvent,
-            is NotificationRemovedFromChannelEvent,
-            is ConnectedEvent,
-            is ConnectingEvent,
-            is DisconnectedEvent,
-            is ErrorEvent,
-            is GlobalUserBannedEvent,
-            is GlobalUserUnbannedEvent,
-            is HealthEvent,
-            is NotificationMutesUpdatedEvent,
-            is UnknownEvent,
-            is UserDeletedEvent,
-            -> Unit // Ignore these events
-        }
-    }
-
-    private fun upsertUserPresence(user: User) {
-        val userId = user.id
-        // members and watchers have users
-        val members = mutableState.members.value
-        val watchers = mutableState.watchers.value
-        val member = members.firstOrNull { it.getUserId() == userId }?.copy()
-        val watcher = watchers.firstOrNull { it.id == userId }
-        if (member != null) {
-            member.user = user
-            upsertMember(member)
-        }
-        if (watcher != null) {
-            upsertWatcher(user)
-        }
-    }
-
-    private fun upsertUser(user: User) {
-        upsertUserPresence(user)
-        // channels have users
-        val userId = user.id
-        val channelData = mutableState._channelData.value
-        if (channelData != null) {
-            if (channelData.createdBy.id == userId) {
-                channelData.createdBy = user
-            }
-        }
-
-        // updating messages is harder
-        // user updates don't happen frequently, it's probably ok for this update to be sluggish
-        // if it turns out to be slow we can do a simple reverse index from user -> message
-        val messages = mutableState.messageList.value
-        val changedMessages = mutableListOf<Message>()
-        for (message in messages) {
-            var changed = false
-            if (message.user.id == userId) {
-                message.user = user
-                changed = true
-            }
-            for (reaction in message.ownReactions) {
-                if (reaction.user!!.id == userId) {
-                    reaction.user = user
-                    changed = true
-                }
-            }
-            for (reaction in message.latestReactions) {
-                if (reaction.user!!.id == userId) {
-                    reaction.user = user
-                    changed = true
-                }
-            }
-            if (changed) changedMessages.add(message)
-        }
-        if (changedMessages.isNotEmpty()) {
-            channelLogic.upsertMessages(changedMessages)
-        }
-    }
-
-    private fun deleteWatcher(user: User) {
-        mutableState._watchers.value = mutableState._watchers.value - user.id
-    }
-
-    private fun upsertWatcher(user: User) {
-        mutableState._watchers.value = mutableState._watchers.value + mapOf(user.id to user)
-    }
-
-    private fun deleteMember(userId: String) {
-        mutableState._members.value = mutableState._members.value - userId
-    }
-
-    private fun upsertMembers(members: List<Member>) {
-        mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
-    }
-
-    private fun upsertMember(member: Member) {
-        upsertMembers(listOf(member))
-    }
-
-    private fun updateRead(
-        read: ChannelUserRead,
-    ) {
-        channelLogic.updateReads(listOf(read))
-    }
+    private fun updateRead(read: ChannelUserRead) = channelLogic.updateReads(listOf(read))
 
     internal fun updateDataFromChannel(c: Channel) = channelLogic.updateDataFromChannel(c)
 

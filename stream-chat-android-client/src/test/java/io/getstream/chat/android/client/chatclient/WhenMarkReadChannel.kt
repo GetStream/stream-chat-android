@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.test.asCall
@@ -18,7 +19,7 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
 
     @Test
     fun `Given offline plugin with failing precondition Should not make API call and return error result`() {
-        val plugin = mock<Plugin> {
+        val plugin = mock<ChannelMarkReadListenerPlugin> {
             onBlocking { it.onChannelMarkReadPrecondition(any(), any()) } doReturn Result.error(ChatError())
         }
         val sut = Fixture().givenPlugin(plugin).get()
@@ -31,7 +32,7 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
 
     @Test
     fun `Given offline plugin with success precondition Should invoke API call`() {
-        val plugin = mock<Plugin> {
+        val plugin = mock<ChannelMarkReadListenerPlugin> {
             onBlocking { it.onChannelMarkReadPrecondition(any(), any()) } doReturn Result.success(Unit)
         }
         val sut = Fixture().givenPlugin(plugin).get()
@@ -55,3 +56,6 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
         fun get(): ChatClient = chatClient
     }
 }
+
+@OptIn(ExperimentalStreamChatApi::class)
+private interface ChannelMarkReadListenerPlugin : Plugin, ChannelMarkReadListener
