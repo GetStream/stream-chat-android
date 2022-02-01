@@ -21,5 +21,5 @@ public interface DeleteMessageListener {
      *
      * @param result the result of the API call.
      */
-    public suspend fun onMessageDeleteResult(result: Result<Message>)
+    public suspend fun onMessageDeleteResult(originalMessage: Message, result: Result<Message>)
 }

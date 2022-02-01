@@ -948,7 +948,7 @@ public class ChatClient internal constructor(
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
-                    listener.onMessageDeleteResult(result)
+                    listener.onMessageDeleteResult(message, result)
                 }
             }
     }
