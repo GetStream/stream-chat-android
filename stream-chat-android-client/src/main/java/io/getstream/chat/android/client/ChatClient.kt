@@ -934,12 +934,16 @@ public class ChatClient internal constructor(
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
+        return api.deleteMessage(messageId, hard)
+    }
+
+    public fun deleteMessageAndUpdateLocalData(message: Message, hard: Boolean = false): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
 
-        return api.deleteMessage(messageId, hard)
+        return this.deleteMessage(message.id, hard)
             .doOnStart(scope) {
                 relevantPlugins.forEach { listener ->
-                    listener.onMessageDeleteRequest(messageId)
+                    listener.onMessageDeleteRequest(message)
                 }
             }
             .doOnResult(scope) { result ->

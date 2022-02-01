@@ -93,7 +93,7 @@ public class ImagePreviewViewModel(
 
             chatClient.updateMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
-            chatClient.deleteMessage(message.id).enqueue { result ->
+            chatClient.deleteMessageAndUpdateLocalData(message).enqueue { result ->
                 if (result.isSuccess) {
                     message = result.data()
                 }
