@@ -24,6 +24,7 @@ import io.getstream.chat.android.offline.request.isRequestingMoreThanLastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import java.util.Date
 
 internal class RepositoryFacade constructor(
     userRepository: UserRepository,
@@ -97,6 +98,14 @@ internal class RepositoryFacade constructor(
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
         insertUsers(messages.flatMap(Message::users))
         messageRepository.insertMessages(messages, cache)
+    }
+
+    /**
+     * Deletes channel messages before [hideMessagesBefore] and removes channel from the cache.
+     */
+    override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
+        evictChannel(cid)
+        messageRepository.deleteChannelMessagesBefore(cid, hideMessagesBefore)
     }
 
     override suspend fun insertReaction(reaction: Reaction) {
