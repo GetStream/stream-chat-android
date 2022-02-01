@@ -178,9 +178,7 @@ public class ChannelController internal constructor(
             return false
         }
 
-        return messages
-            .last()
-            .let { it.createdAt ?: it.createdLocallyAt }
+        return messages.last().createdAt
             .let { lastMessageDate ->
                 val shouldUpdate =
                     lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
