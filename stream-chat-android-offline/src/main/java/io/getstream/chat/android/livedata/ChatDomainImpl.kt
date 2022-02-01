@@ -226,7 +226,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
         chatDomainStateFlow.deleteMessage(message, hard)
 
-
     @Deprecated(
         message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
         replaceWith = ReplaceWith(

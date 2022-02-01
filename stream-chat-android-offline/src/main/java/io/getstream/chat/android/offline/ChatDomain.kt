@@ -447,7 +447,6 @@ public sealed interface ChatDomain {
     )
     public fun deleteMessage(message: Message): Call<Message>
 
-
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
      * API call to send the reaction is retried according to the retry policy specified on the chatDomain.
