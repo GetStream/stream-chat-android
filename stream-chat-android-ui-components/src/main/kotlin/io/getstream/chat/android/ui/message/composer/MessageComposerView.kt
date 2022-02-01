@@ -103,6 +103,16 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     private var suggestionsPopup: MessageComposerSuggestionsPopup? = null
 
     /**
+     * The current list of command suggestions.
+     */
+    private var commandSuggestions: List<Command>? = null
+
+    /**
+     * The current list of mention suggestions.
+     */
+    private var mentionSuggestions: List<User>? = null
+
+    /**
      * Default implementation of [mentionSuggestionsContent].
      */
     private val defaultMentionSuggestionsView: View by lazy {
@@ -265,6 +275,8 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             state.commandSuggestions.isNotEmpty() -> renderCommandsSuggestions(state)
             else -> suggestionsPopup?.dismiss()
         }
+        this.commandSuggestions = state.commandSuggestions
+        this.mentionSuggestions = state.mentionSuggestions
     }
 
     /**
@@ -273,6 +285,9 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * @param state Current instance of [MessageComposerState].
      */
     private fun renderCommandsSuggestions(state: MessageComposerState) {
+        // Do not do anything if the list hasn't changed
+        if (this.commandSuggestions == state.commandSuggestions) return
+
         (commandSuggestionsContent as? MessageComposerComponent)?.renderState(state)
 
         val suggestionsPopup = suggestionsPopup ?: MessageComposerSuggestionsPopup(commandSuggestionsContent, this) {
@@ -291,6 +306,9 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * @param state Current instance of [MessageComposerState].
      */
     private fun renderMentionSuggestions(state: MessageComposerState) {
+        // Do not do anything if the list hasn't changed
+        if (this.mentionSuggestions == state.mentionSuggestions) return
+
         (mentionSuggestionsContent as? MessageComposerComponent)?.renderState(state)
 
         val suggestionsPopup = suggestionsPopup ?: MessageComposerSuggestionsPopup(mentionSuggestionsContent, this) {
