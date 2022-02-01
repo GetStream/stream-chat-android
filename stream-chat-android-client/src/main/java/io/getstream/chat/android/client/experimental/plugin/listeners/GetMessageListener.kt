@@ -20,6 +20,5 @@ public interface GetMessageListener {
         messageId: String,
         olderMessagesOffset: Int = 0,
         newerMessagesOffset: Int = 0,
-    ) {
-    }
+    )
 }

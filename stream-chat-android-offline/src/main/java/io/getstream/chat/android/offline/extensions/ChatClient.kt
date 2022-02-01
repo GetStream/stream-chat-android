@@ -7,21 +7,36 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
+
+private const val KEY_MESSAGE_ACTION = "image_action"
+private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+private const val MESSAGE_ACTION_SEND = "send"
+
+/**
+ * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
+ */
+private fun domainImpl(): ChatDomainImpl {
+    return ChatDomain.instance as ChatDomainImpl
+}
 
 /**
  * Query members of a channel.
@@ -74,7 +89,7 @@ public fun ChatClient.searchUsersByName(
 public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
     validateCid(cid)
 
-    val domainImpl = ChatDomain.instance() as ChatDomainImpl
+    val domainImpl = domainImpl()
     return CoroutineCall(domainImpl.scope) {
         domainImpl.replayEvents(cid)
     }
@@ -92,7 +107,7 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.replyMessage(message)
@@ -109,7 +124,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  */
 @CheckResult
 public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
-    DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)
+    DownloadAttachment(domainImpl()).invoke(attachment)
 
 /**
  * Keystroke should be called whenever a user enters text into the message input.
@@ -124,7 +139,7 @@ public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
 public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.keystroke(parentId)
@@ -144,7 +159,7 @@ public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boo
 public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
     validateCid(cid)
 
-    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
     return CoroutineCall(chatDomain.scope) {
         channelController.stopTyping(parentId)
@@ -162,10 +177,133 @@ public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Bo
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     validateCid(cid)
 
-    val domainImpl = ChatDomain.instance as ChatDomainImpl
+    val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
     return CoroutineCall(domainImpl.scope) {
         channelController.loadOlderMessages(messageLimit)
+    }
+}
+
+/**
+ *  Cancels the message of "ephemeral" type. Removes the message from local storage.
+ * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+ *
+ * @param message The `ephemeral` message to cancel.
+ *
+ * @return Executable async [Call] responsible for canceling ephemeral message.
+ */
+public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
+    val cid = message.cid
+    validateCid(cid)
+
+    val domainImpl = domainImpl()
+    val channelController = domainImpl.channel(cid)
+    return CoroutineCall(domainImpl.scope) {
+        channelController.cancelEphemeralMessage(message)
+    }
+}
+
+/**
+ * Creates a new channel. Will retry according to the retry policy if it fails.
+ *
+ * @param channel The channel object.
+ *
+ * @return Executable async [Call] responsible for creating a channel.
+ *
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
+@CheckResult
+public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
+    val domainImpl = domainImpl()
+    return CoroutineCall(domainImpl.scope) {
+        CreateChannelService(
+            client = this@createChannel,
+            repositoryFacade = domainImpl.repos,
+            getChannelController = domainImpl::channel,
+            callRetryService = domainImpl.callRetryService(),
+            activeQueries = domainImpl.getActiveQueries(),
+        ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
+    }
+}
+
+/**
+ * Checks if channel needs to be marked read.
+ *
+ * @param cid The full channel id i.e. "messaging:123".
+ *
+ * @return True if channel is needed to be marked otherwise false.
+ */
+internal fun ChatClient.needsMarkRead(cid: String): Boolean {
+    validateCid(cid)
+    val channelController = domainImpl().channel(cid)
+
+    return channelController.markRead()
+}
+
+/**
+ * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
+ * Returns new "ephemeral" message with new giphy url.
+ * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+ *
+ * @param message The message to send.
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
+internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
+    val domainImpl = domainImpl()
+
+    return CoroutineCall(domainImpl.scope) {
+        val cid = message.cid
+        val channelController = domainImpl.channel(cid)
+        val channelClient = channel(channelController.channelType, channelController.channelId)
+
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
+        }
+
+        validateCid(cid)
+
+        domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }.also { resultMessage ->
+            if (resultMessage.isSuccess) {
+                channelController.removeLocalMessage(resultMessage.data())
+            }
+        }
+    }
+}
+
+/**
+ * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
+ * Returns new "ephemeral" message with new giphy url.
+ * API call to remove the message is retried according to the retry policy specified on the chatDomain
+ *
+ * @param message The message to send.
+ * @see io.getstream.chat.android.offline.utils.RetryPolicy
+ */
+internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
+    val domainImpl = domainImpl()
+    return CoroutineCall(domainImpl.scope) {
+        val cid = message.cid
+        val channelController = domainImpl.channel(cid)
+        val channelClient = channel(channelController.channelType, channelController.channelId)
+
+        validateCid(cid)
+
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
+        }
+
+        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
+
+        if (result.isSuccess) {
+            val processedMessage: Message = result.data()
+            processedMessage.apply {
+                syncStatus = SyncStatus.COMPLETED
+                domainImpl.repos.insertMessage(this)
+            }
+            channelController.upsertMessage(processedMessage)
+            Result(processedMessage)
+        } else {
+            Result(result.error())
+        }
     }
 }
 
@@ -187,8 +325,9 @@ public fun ChatClient.loadMessageById(
     olderMessagesOffset: Int,
     newerMessagesOffset: Int,
 ): Call<Message> {
+    val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
     return this.getMessage(messageId)
         .doOnResult((ChatDomain.instance as ChatDomainImpl).scope) { result ->
-            plugins.forEach { it.onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset) }
+            relevantPlugins.forEach { it.onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset) }
         }
 }

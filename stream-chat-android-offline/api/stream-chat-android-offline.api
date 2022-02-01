@@ -449,6 +449,23 @@ public abstract interface class io/getstream/chat/android/offline/experimental/c
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
 }
 
+public abstract interface class io/getstream/chat/android/offline/experimental/global/GlobalState {
+	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun isConnecting ()Z
+	public abstract fun isInitialized ()Z
+	public abstract fun isOffline ()Z
+	public abstract fun isOnline ()Z
+}
+
 public final class io/getstream/chat/android/offline/experimental/plugin/OfflinePlugin$Companion {
 }
 
@@ -476,6 +493,8 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 }
 
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
+	public static final fun cancelMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public static final fun createChannel (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun keystroke (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;

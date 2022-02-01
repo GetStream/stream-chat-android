@@ -14,13 +14,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
-        android:layout_marginRight="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:gravity="start"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textColor="@color/stream_ui_text_color_primary"
         android:visibility="gone"
+        android:textDirection="locale"
         app:drawableTint="@color/stream_ui_grey"
-        tools:ignore="RtlHardcoded"
         tools:text="Visible only for you"
         />
 
@@ -45,6 +45,7 @@
         android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
+        android:textDirection="locale"
         tools:text="16:25"
         />
 

@@ -1,5 +1,6 @@
 package io.getstream.chat.ui.sample.feature.channel.list
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -35,12 +36,12 @@ class CustomChatEventHandler(private val channels: StateFlow<List<Channel>>) : B
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, event.channel)
+    ): EventHandlingResult = handleChannelUpdate(event.channel)
 
     override fun handleChannelUpdatedEvent(
         event: ChannelUpdatedEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, event.channel)
+    ): EventHandlingResult = handleChannelUpdate(event.channel)
 
     override fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
@@ -58,11 +59,26 @@ class CustomChatEventHandler(private val channels: StateFlow<List<Channel>>) : B
         filter: FilterObject,
     ): EventHandlingResult = removeIfChannelIsPresent(channels, event.channel)
 
-    private fun addIfChannelIsAbsentAndNotDraft(channels: StateFlow<List<Channel>>, channel: Channel?): EventHandlingResult {
+    private fun addIfChannelIsAbsentAndNotDraft(
+        channels: StateFlow<List<Channel>>,
+        channel: Channel?,
+    ): EventHandlingResult {
         return if (channel == null || channel.isDraft || channels.value.any { it.cid == channel.cid }) {
             EventHandlingResult.Skip
         } else {
             EventHandlingResult.Add(channel)
+        }
+    }
+
+    private fun handleChannelUpdate(channel: Channel): EventHandlingResult {
+        val hasMember = channel.members.any { member ->
+            ChatClient.instance().getCurrentUser()?.id == member.getUserId()
+        }
+
+        return if (hasMember) {
+            addIfChannelIsAbsentAndNotDraft(channels, channel)
+        } else {
+            removeIfChannelIsPresent(channels, channel)
         }
     }
 

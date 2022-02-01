@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
@@ -321,7 +321,7 @@ internal class MessageOptionsView : FrameLayout {
     }
 
     private fun TextView.configureListItem(textStyle: TextStyle, icon: Int) {
-        setLeftDrawable(icon)
+        setStartDrawable(icon)
         textStyle.apply(this)
     }
 }

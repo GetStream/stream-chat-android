@@ -19,6 +19,7 @@
 
         <TextView
             android:id="@+id/reply"
+            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_reply"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left_grey"
@@ -26,6 +27,7 @@
 
         <TextView
             android:id="@+id/showInChat"
+            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_show_in_chat"
             tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
@@ -33,6 +35,7 @@
 
         <TextView
             android:id="@+id/saveImage"
+            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_save_image"
             tools:drawableStart="@drawable/stream_ui_ic_download"
@@ -40,6 +43,7 @@
 
         <TextView
             android:id="@+id/delete"
+            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_delete"
             tools:drawableStart="@drawable/stream_ui_ic_delete"

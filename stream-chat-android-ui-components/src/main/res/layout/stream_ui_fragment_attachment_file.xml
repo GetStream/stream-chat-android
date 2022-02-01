@@ -16,6 +16,7 @@
         android:paddingBottom="8dp"
         android:text="@string/stream_ui_message_input_recent_files"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+        android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@id/recentFilesRecyclerView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

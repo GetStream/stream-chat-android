@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,12 +20,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,14 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
@@ -87,9 +84,6 @@ class MessagesActivity : AppCompatActivity() {
         }
     }
 
-    @ExperimentalPermissionsApi
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
@@ -150,46 +144,69 @@ class MessagesActivity : AppCompatActivity() {
 
             if (selectedMessageState != null) {
                 val selectedMessage = selectedMessageState.message
-                if (selectedMessageState is SelectedMessageOptionsState) {
-                    SelectedMessageMenu(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 20.dp)
-                            .wrapContentSize(),
-                        shape = ChatTheme.shapes.attachment,
-                        messageOptions = defaultMessageOptionsState(
-                            selectedMessage = selectedMessage,
+                when (selectedMessageState) {
+                    is SelectedMessageOptionsState -> {
+                        SelectedMessageMenu(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            messageOptions = defaultMessageOptionsState(
+                                selectedMessage = selectedMessage,
+                                currentUser = user,
+                                isInThread = listViewModel.isInThread
+                            ),
+                            message = selectedMessage,
+                            onMessageAction = { action ->
+                                composerViewModel.performMessageAction(action)
+                                listViewModel.performMessageAction(action)
+                            },
+                            onShowMoreReactionsSelected = {
+                                listViewModel.selectExtendedReactions(selectedMessage)
+                            },
+                            onDismiss = { listViewModel.removeOverlay() }
+                        )
+                    }
+                    is SelectedMessageReactionsState -> {
+                        SelectedReactionsMenu(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            message = selectedMessage,
                             currentUser = user,
-                            isInThread = listViewModel.isInThread
-                        ),
-                        message = selectedMessage,
-                        onMessageAction = { action ->
-                            composerViewModel.performMessageAction(action)
-                            listViewModel.performMessageAction(action)
-                        },
-                        onDismiss = { listViewModel.removeOverlay() }
-                    )
-                } else if (selectedMessageState is SelectedMessageReactionsState) {
-                    SelectedReactionsMenu(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 20.dp)
-                            .wrapContentSize(),
-                        shape = ChatTheme.shapes.attachment,
-                        message = selectedMessage,
-                        currentUser = user,
-                        onMessageAction = { action ->
-                            composerViewModel.performMessageAction(action)
-                            listViewModel.performMessageAction(action)
-                        },
-                        onDismiss = { listViewModel.removeOverlay() }
-                    )
+                            onMessageAction = { action ->
+                                composerViewModel.performMessageAction(action)
+                                listViewModel.performMessageAction(action)
+                            },
+                            onShowMoreReactionsSelected = {
+                                listViewModel.selectExtendedReactions(selectedMessage)
+                            },
+                            onDismiss = { listViewModel.removeOverlay() }
+                        )
+                    }
+                    is SelectedMessageReactionsPickerState -> {
+                        ReactionsPicker(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            message = selectedMessage,
+                            onMessageAction = { action ->
+                                composerViewModel.performMessageAction(action)
+                                listViewModel.performMessageAction(action)
+                            },
+                            onDismiss = { listViewModel.removeOverlay() }
+                        )
+                    }
                 }
             }
         }
     }
 
-    @ExperimentalFoundationApi
     @Composable
     fun MyCustomComposer() {
         MessageComposer(
@@ -213,7 +230,7 @@ class MessagesActivity : AppCompatActivity() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Keyboard,
+                                painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                                 contentDescription = null
                             )
 

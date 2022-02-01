@@ -15,44 +15,53 @@ import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
 /**
- * Default drawer of background of message items
+ * Default drawer of background of message items.
  */
-public open class MessageBackgroundFactoryImpl(private val style: MessageListItemStyle): MessageBackgroundFactory {
+public open class MessageBackgroundFactoryImpl(private val style: MessageListItemStyle) : MessageBackgroundFactory {
 
+    /**
+     * Draws the background of plain text messages
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     override fun plainTextMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return defaultBackground(context, data)
     }
 
+    /**
+     * Draws the background of deleted messages,
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     override fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return ShapeAppearanceModel.builder()
-            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
-            .apply {
-                when {
-                    data.isBottomPosition() && data.isMine -> setBottomRightCornerSize(0f)
-                    data.isBottomPosition() && data.isTheirs -> setBottomLeftCornerSize(0f)
-                }
-            }
-            .build()
+        return shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
             .let(::MaterialShapeDrawable)
             .apply {
                 setTint(style.messageDeletedBackground)
             }
     }
 
+    /**
+     * Draws the background of text and attachment messages,
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     override fun textAndAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return defaultBackground(context, data)
     }
 
+    /**
+     * Draws the default background of messages,
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
     private fun defaultBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        val radius = DEFAULT_CORNER_RADIUS
-        val bottomRightCorner = if (data.isMine && data.isBottomPosition()) 0f else radius
-        val bottomLeftCorner = if (data.isMine.not() && data.isBottomPosition()) 0f else radius
-
-        val shapeAppearanceModel = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(radius)
-            .setBottomLeftCornerSize(bottomLeftCorner)
-            .setBottomRightCornerSize(bottomRightCorner)
-            .build()
+        val shapeAppearanceModel =
+            shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
 
         return MaterialShapeDrawable(shapeAppearanceModel).apply {
             val hasLink = data.message.attachments.any(Attachment::hasLink)
@@ -91,11 +100,17 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         }
     }
 
+    /**
+     * Draws the drawable to the used as background for Giphys.
+     */
     override fun giphyAppearanceModel(context: Context): Drawable {
-        return ShapeAppearanceModel.builder()
-            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
-            .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
-            .build()
+        return shapeAppearanceModel(
+            context,
+            DEFAULT_CORNER_RADIUS,
+            SMALL_CARD_VIEW_CORNER_RADIUS,
+            isMine = true,
+            isBottomPosition = true
+        )
             .let(::MaterialShapeDrawable)
             .apply {
                 setTint(ContextCompat.getColor(context, MESSAGE_OTHER_USER_BACKGROUND))
@@ -108,5 +123,15 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
 
         internal val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
+    }
+
+    private fun shapeAppearanceModel(
+        context: Context,
+        radius: Float,
+        bottomEndCorner: Float,
+        isMine: Boolean,
+        isBottomPosition: Boolean,
+    ): ShapeAppearanceModel {
+        return ShapeAppearanceModelFactory.create(context, radius, bottomEndCorner, isMine, isBottomPosition)
     }
 }

@@ -28,6 +28,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     private fun init() {
         val type = intent.getStringExtra(TYPE_KEY)
+        val fileType = intent.getStringExtra(FILE_TYPE_KEY)
         val url = intent.getStringExtra(URL_KEY)
         binding.apply {
             headerLeftActionButton.setOnClickListener {
@@ -38,7 +39,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             }
         }
 
-        if (type.isNullOrEmpty() || url.isNullOrEmpty()) {
+        if ((type.isNullOrEmpty() && fileType.isNullOrEmpty()) || url.isNullOrEmpty()) {
             logger.logE("This file can't be displayed. The TYPE or the URL are null")
             Toast.makeText(
                 this,
@@ -48,7 +49,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             return
         }
 
-        binding.ivAudio.isVisible = "audio" in type
+        binding.ivAudio.isVisible = type?.contains("audio") == true || fileType?.contains("audio") == true
 
         playVideo(url)
     }
@@ -70,9 +71,15 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     public companion object {
         /**
-         * Key representing attachment's type put into the intent
+         * Key representing attachment's mime type put into the intent
          */
         public const val TYPE_KEY: String = "type"
+
+        /**
+         * Key representing attachment's type put into the intent
+         */
+        public const val FILE_TYPE_KEY: String = "file_type"
+
         /**
          * Key representing attachment's url put into the intent
          */

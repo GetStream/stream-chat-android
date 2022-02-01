@@ -10,11 +10,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Scaffold
@@ -37,9 +39,11 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
@@ -67,17 +71,26 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 public fun MessagesScreen(
     channelId: String,
-    messageLimit: Int = 30,
+    messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
+    showDateSeparators: Boolean = true,
+    showSystemMessages: Boolean = true,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
-    val factory = buildViewModelFactory(LocalContext.current, channelId, enforceUniqueReactions, messageLimit)
+    val factory = buildViewModelFactory(
+        context = LocalContext.current,
+        channelId = channelId,
+        enforceUniqueReactions = enforceUniqueReactions,
+        messageLimit = messageLimit,
+        showSystemMessages = showSystemMessages,
+        showDateSeparators = showDateSeparators
+    )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = factory)
@@ -204,6 +217,9 @@ public fun MessagesScreen(
                     composerViewModel.performMessageAction(action)
                     listViewModel.performMessageAction(action)
                 },
+                onShowMoreReactionsSelected = {
+                    listViewModel.selectExtendedReactions(selectedMessage)
+                },
                 onDismiss = { listViewModel.removeOverlay() }
             )
         }
@@ -227,6 +243,38 @@ public fun MessagesScreen(
                         )
                     ),
                 currentUser = user,
+                message = selectedMessage,
+                onMessageAction = { action ->
+                    composerViewModel.performMessageAction(action)
+                    listViewModel.performMessageAction(action)
+                },
+                onShowMoreReactionsSelected = {
+                    listViewModel.selectExtendedReactions(selectedMessage)
+                },
+                onDismiss = { listViewModel.removeOverlay() }
+            )
+        }
+
+        AnimatedVisibility(
+            visible = selectedMessageState is SelectedMessageReactionsPickerState && selectedMessage.id.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
+            ReactionsPicker(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .heightIn(max = 400.dp)
+                    .wrapContentHeight()
+                    .animateEnterExit(
+                        enter = slideInVertically(
+                            initialOffsetY = { height -> height },
+                            animationSpec = tween()
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { height -> height },
+                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
+                        )
+                    ),
                 message = selectedMessage,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)
@@ -306,11 +354,15 @@ private fun buildViewModelFactory(
     channelId: String,
     enforceUniqueReactions: Boolean,
     messageLimit: Int,
+    showDateSeparators: Boolean,
+    showSystemMessages: Boolean,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
         channelId = channelId,
         enforceUniqueReactions = enforceUniqueReactions,
-        messageLimit = messageLimit
+        messageLimit = messageLimit,
+        showDateSeparators = showDateSeparators,
+        showSystemMessages = showSystemMessages
     )
 }

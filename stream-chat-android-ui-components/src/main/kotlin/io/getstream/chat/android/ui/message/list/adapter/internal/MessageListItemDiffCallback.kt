@@ -10,23 +10,27 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
         return oldItem.getStableId() == newItem.getStableId()
     }
 
-    override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean =
-        when (oldItem) {
+    override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
+        return when (oldItem) {
             is MessageListItem.MessageItem -> {
                 newItem as MessageListItem.MessageItem
-                oldItem.message.text == newItem.message.text &&
-                    oldItem.message.reactionScores == newItem.message.reactionScores &&
-                    oldItem.message.reactionCounts == newItem.message.reactionCounts &&
-                    oldItem.message.attachments == newItem.message.attachments &&
-                    oldItem.message.replyCount == newItem.message.replyCount &&
-                    oldItem.message.syncStatus == newItem.message.syncStatus &&
-                    oldItem.message.deletedAt == newItem.message.deletedAt &&
+                val oldMessage = oldItem.message
+                val newMessage = newItem.message
+
+                oldMessage.text == newItem.message.text &&
+                    oldMessage.reactionScores == newMessage.reactionScores &&
+                    oldMessage.reactionCounts == newMessage.reactionCounts &&
+                    oldMessage.attachments == newMessage.attachments &&
+                    oldMessage.replyCount == newMessage.replyCount &&
+                    oldMessage.syncStatus == newMessage.syncStatus &&
+                    oldMessage.deletedAt == newMessage.deletedAt &&
                     oldItem.positions == newItem.positions &&
                     oldItem.isMessageRead == newItem.isMessageRead &&
                     oldItem.isThreadMode == newItem.isThreadMode &&
-                    oldItem.message.extraData == newItem.message.extraData &&
-                    oldItem.message.pinned == newItem.message.pinned &&
-                    oldItem.message.user == newItem.message.user
+                    oldMessage.extraData == newMessage.extraData &&
+                    oldMessage.pinned == newMessage.pinned &&
+                    oldMessage.user == newMessage.user &&
+                    oldMessage.mentionedUsers == newMessage.mentionedUsers
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
@@ -36,20 +40,25 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             )
             is MessageListItem.ThreadPlaceholderItem -> true
         }
+    }
 
     override fun getChangePayload(oldItem: MessageListItem, newItem: MessageListItem): Any? {
         return if (oldItem is MessageListItem.MessageItem) {
             newItem as MessageListItem.MessageItem
+            val oldMessage = oldItem.message
+            val newMessage = newItem.message
+
             MessageListItemPayloadDiff(
-                text = oldItem.message.text != newItem.message.text,
-                reactions = (oldItem.message.reactionCounts != newItem.message.reactionCounts) || (oldItem.message.reactionScores != newItem.message.reactionScores),
-                attachments = oldItem.message.attachments != newItem.message.attachments,
-                replies = oldItem.message.replyCount != newItem.message.replyCount,
-                syncStatus = oldItem.message.syncStatus != newItem.message.syncStatus,
-                deleted = oldItem.message.deletedAt != newItem.message.deletedAt,
+                text = oldMessage.text != newMessage.text,
+                reactions = (oldMessage.reactionCounts != newMessage.reactionCounts) || (oldMessage.reactionScores != newMessage.reactionScores),
+                attachments = oldMessage.attachments != newMessage.attachments,
+                replies = oldMessage.replyCount != newMessage.replyCount,
+                syncStatus = oldMessage.syncStatus != newMessage.syncStatus,
+                deleted = oldMessage.deletedAt != newMessage.deletedAt,
                 positions = oldItem.positions != newItem.positions,
-                pinned = oldItem.message.pinned != newItem.message.pinned,
-                user = oldItem.message.user != newItem.message.user,
+                pinned = oldMessage.pinned != newMessage.pinned,
+                user = oldMessage.user != newMessage.user,
+                mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers
             )
         } else {
             null

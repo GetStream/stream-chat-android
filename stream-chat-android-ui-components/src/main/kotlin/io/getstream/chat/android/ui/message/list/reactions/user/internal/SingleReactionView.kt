@@ -43,6 +43,7 @@ internal class SingleReactionView : FrameLayout {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         bubbleDrawer.drawReactionsBubble(
+            context,
             canvas,
             width,
             isMyMessage = isMyMessage,

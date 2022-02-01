@@ -62,7 +62,7 @@ internal class MarkReadTest {
         whenever(channelController.channelType) doReturn channelType
         whenever(channelController.channelId) doReturn channelId
         val markReadCall = TestCall(Result(Unit))
-        whenever(client.markRead(any(), any())) doReturn markReadCall
+        whenever(client.markReadInternal(any(), any())) doReturn markReadCall
     }
 
     @Test
@@ -98,7 +98,7 @@ internal class MarkReadTest {
             sut.invoke(cid).execute()
 
             verify(channelController).markRead()
-            verify(client).markRead(channelType, channelId)
+            verify(client).markReadInternal(channelType, channelId)
         }
 
     @Test

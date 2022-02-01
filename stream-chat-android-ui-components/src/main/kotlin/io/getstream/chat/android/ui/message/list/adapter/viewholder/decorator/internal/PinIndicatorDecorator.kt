@@ -8,7 +8,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getPinnedText
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithSize
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawableWithSize
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
@@ -54,7 +54,7 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
             pinIndicatorTextView.isVisible = true
             pinIndicatorTextView.text = data.message.getPinnedText(root.context)
             pinIndicatorTextView.setTextStyle(style.pinnedMessageIndicatorTextStyle)
-            pinIndicatorTextView.setLeftDrawableWithSize(
+            pinIndicatorTextView.setStartDrawableWithSize(
                 style.pinnedMessageIndicatorIcon,
                 R.dimen.stream_ui_message_pin_indicator_icon_size
             )
