@@ -51,8 +51,17 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
 
     private fun init(attrs: AttributeSet?) {
         style = GiphyMediaAttachmentViewStyle(context, attrs)
+
+        if (style.giphyConstantSizeEnabled) {
+            binding.loadImage.updateLayoutParams {
+                this.height = style.giphyMaxHeight
+                this.width = style.giphyMaxHeight
+            }
+        }
+
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.giphyLabel.setImageDrawable(style.giphyIcon)
+
         binding.imageView.scaleType = style.scaleType
         binding.imageView.setBackgroundColor(style.imageBackgroundColor)
     }
@@ -74,25 +83,16 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Displays the Giphy image inside of a constant size container.
+     * Displays the Giphy image inside of a constant size container. We call [loadAndResize] here because we need to
+     * resize the container's width based on the constant height.
      */
     private fun showConstantSizeGiphy(url: String) {
-        binding.mediaAttachmentContent.updateLayoutParams {
-            this.height = style.giphyMaxHeight
-            this.width = style.giphyMaxHeight
-        }
-
-        binding.loadImage.updateLayoutParams {
-            this.height = style.giphyMaxHeight
-            this.width = style.giphyMaxHeight
-        }
-
         CoroutineScope(DispatcherProvider.Main).launch {
-            binding.imageView.setImageDrawable(style.placeholderIcon)
-
-            binding.imageView.load(
+            binding.imageView.loadAndResize(
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
+                container = this@GiphyMediaAttachmentView,
+                maxHeight = style.giphyMaxHeight,
                 onStart = { binding.loadImage.isVisible = true },
                 onComplete = { binding.loadImage.isVisible = false }
             )
@@ -100,29 +100,18 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Displays the Giphy image inside of a resizeable container.
+     * Displays the Giphy image inside of a resizeable container. We call [load] here as the container can be freely
+     * resized based on the image size.
      */
     private fun showResizeableGiphy(url: String) {
-        binding.mediaAttachmentContent.updateLayoutParams {
-            this.height = style.giphyMaxHeight
-        }
-
-        binding.loadImage.updateLayoutParams {
-            this.height = style.giphyMaxHeight
-        }
-
         binding.giphyLabel.isVisible = true
 
         CoroutineScope(DispatcherProvider.Main).launch {
-            binding.imageView.setImageDrawable(style.placeholderIcon)
-
-            binding.imageView.loadAndResize(
+            binding.imageView.load(
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
-                maxHeight = style.giphyMaxHeight,
-                container = this@GiphyMediaAttachmentView,
                 onStart = { binding.loadImage.isVisible = true },
-                onComplete = { binding.loadImage.isVisible = false }
+                onComplete = { binding.loadImage.isVisible = false },
             )
         }
     }

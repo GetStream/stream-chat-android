@@ -13,8 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -23,10 +24,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/imageView"
-        app:layout_constraintLeft_toLeftOf="@id/imageView"
-        app:layout_constraintRight_toRightOf="@id/imageView"
-        app:layout_constraintTop_toTopOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible"
         >
 
@@ -49,5 +50,5 @@
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="ContentDescription"
-        tools:visibility="visible"/>
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -505,8 +505,8 @@
         <item name="streamUiGiphyMediaAttachmentImageBackgroundColor">@color/stream_ui_literal_transparent</item>
         <item name="streamUiGiphyMediaAttachmentConstantSize">false</item>
         <item name="streamUiGiphyMediaAttachmentGiphyMaxHeight">200dp</item>
-        <item name="streamUiGiphyMediaAttachmentGiphyType">fixedHeight</item>
-        <item name="streamUiGiphyMediaAttachmentScaleType">fitCenter</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyType">original</item>
+        <item name="streamUiGiphyMediaAttachmentScaleType">centerCrop</item>
     </style>
 
     <style name="StreamUi.MessageList.FileAttachment" parent="StreamUi">
