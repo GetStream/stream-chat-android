@@ -35,11 +35,11 @@ internal class MessageComposerSuggestionsPopup(
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         )
 
-        val popupWindowOffset = -(suggestionView.measuredHeight + anchorView.height)
+        val popupWindowOffset = suggestionView.measuredHeight + anchorView.height
         if (isShowing) {
-            update(anchorView, 0, popupWindowOffset, -1, -1)
+            update(anchorView, 0, -popupWindowOffset, -1, -1)
         } else {
-            showAsDropDown(anchorView, 0, popupWindowOffset)
+            showAsDropDown(anchorView, 0, -popupWindowOffset)
         }
     }
 }
