@@ -26,7 +26,6 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
-import io.getstream.chat.android.offline.extensions.deleteChannel
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -249,8 +248,13 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Deletes a channel.
+     *
+     * @param channel Channel to be deleted.
+     */
     public fun deleteChannel(channel: Channel) {
-        chatClient.deleteChannel(channel.cid).enqueue(
+        chatClient.channel(channel.cid).delete().enqueue(
             onError = { chatError ->
                 logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
