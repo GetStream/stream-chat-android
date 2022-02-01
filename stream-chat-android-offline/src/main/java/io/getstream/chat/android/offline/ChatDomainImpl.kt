@@ -950,7 +950,13 @@ internal class ChatDomainImpl internal constructor(
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> = client.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    ): Call<Message> {
+        validateCid(cid)
+        val channelController = channel(cid)
+        return CoroutineCall(scope) {
+            channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
+        }
+    }
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
