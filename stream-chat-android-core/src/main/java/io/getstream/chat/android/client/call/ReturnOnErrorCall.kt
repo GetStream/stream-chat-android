@@ -6,6 +6,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * A wrapper around [Call] that allows to swallow the error and emit another data from a function.
+ */
 internal class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
     private val scope: CoroutineScope,
