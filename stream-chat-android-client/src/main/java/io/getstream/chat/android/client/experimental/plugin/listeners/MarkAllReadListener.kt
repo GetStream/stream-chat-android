@@ -10,6 +10,5 @@ public interface MarkAllReadListener {
     /**
      * Register this side effect to run just before actual [ChatClient.markAllRead] request is launched.
      */
-    public suspend fun onMarkAllReadRequest() {
-    }
+    public suspend fun onMarkAllReadRequest()
 }
