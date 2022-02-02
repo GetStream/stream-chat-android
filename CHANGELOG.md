@@ -68,6 +68,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
+- Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- Created a GiphyMediaAttachmentView and its respective style to customize giphies. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- You can now use `original` sized giphies that apply resizing based on the GIF size. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- Use `fixed_height` or `fixed_height_downsampled` giphies to use a fixed height that keeps the aspect ratio and takes up less memory. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
 
 ### ❌ Removed
 
@@ -432,8 +436,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 - Removed ripple effect for attachements in message options.
 ### ⬆️ Improved
-- Giphys are now auto sizable, there's no need to set a predefined size for then as they will follow the size of the sent giphy, respecting the limits of the message size. You can also choose to stay with constant size by setting `streamUiMediaAttachmentConstantSize` to true and setting the desired height with `streamUiMediaAttachmentGiphyHeight`
-- streamUiMediaAttachmentGiphyHeight removed as it is no longer necessary.
 - More customization for AvatarView. Now it is possible to choose between Square and Circle. Use new fields in AvatarStyle to customize AvatarView the way you prefer. 
 ### ✅ Added
 - Added setter `MessageListView.setMessageBackgroundFactory` to set a factory to provide a background for messages. 
