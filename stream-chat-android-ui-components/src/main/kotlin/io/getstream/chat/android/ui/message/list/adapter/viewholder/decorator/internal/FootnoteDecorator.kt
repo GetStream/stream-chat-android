@@ -150,9 +150,9 @@ internal class FootnoteDecorator(
                 style.textStyleUserName.apply(textView)
             }
 
-            data.isBottomPosition()
-                && data.message.isDeleted()
-                && deletedMessageListItemPredicate == VisibleToAuthorOnly -> {
+            data.isBottomPosition() &&
+                data.message.isDeleted() &&
+                deletedMessageListItemPredicate == VisibleToAuthorOnly -> {
                 showOnlyVisibleToYou(textView, style)
             }
 

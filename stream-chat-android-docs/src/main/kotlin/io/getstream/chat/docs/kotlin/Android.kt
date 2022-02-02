@@ -17,7 +17,6 @@ import androidx.lifecycle.LiveData
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -78,6 +77,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.docs.databinding.CustomAttachmentItemBinding
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
@@ -331,9 +331,11 @@ class Android {
 
         class MyCustomViewHolder(
             parentView: ViewGroup,
-            private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(LayoutInflater.from(parentView.context),
+            private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(
+                LayoutInflater.from(parentView.context),
                 parentView,
-                false),
+                false
+            ),
         ) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
             override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
                 binding.textView.text = attachment.title

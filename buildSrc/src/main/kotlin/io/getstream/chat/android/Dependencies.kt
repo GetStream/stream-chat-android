@@ -75,6 +75,7 @@ object Versions {
     internal const val ROOM = "2.4.0"
     internal const val SHIMMER = "0.5.0"
     internal const val SHOT = "5.12.1"
+    internal const val SPOTLESS = "6.2.0"
     internal const val STFALCON_IMAGE_VIEWER = "d11578fe3f"
     internal const val TEST_PARAMETER_INJECTOR = "1.4"
     internal const val THREETENBP = "1.5.2"
@@ -198,6 +199,7 @@ object Dependencies {
     const val roomTesting = "androidx.room:room-testing:${Versions.ROOM}"
     const val shimmer = "com.facebook.shimmer:shimmer:${Versions.SHIMMER}"
     const val shot = "com.karumi:shot:${Versions.SHOT}"
+    const val spotlessGradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:${Versions.SPOTLESS}"
     const val stfalconImageViewer = "com.github.stfalcon-studio:StfalconImageViewer:${Versions.STFALCON_IMAGE_VIEWER}"
     const val testParameterInjector =
         "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"

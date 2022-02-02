@@ -386,12 +386,14 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS,
+            return newInstance(
+                OptionsMode.REACTION_OPTIONS,
                 message,
                 configuration,
                 style,
                 messageViewHolderFactory,
-                messageBackgroundFactory)
+                messageBackgroundFactory
+            )
         }
 
         fun newMessageOptionsInstance(
@@ -401,12 +403,14 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS,
+            return newInstance(
+                OptionsMode.MESSAGE_OPTIONS,
                 message,
                 configuration,
                 style,
                 messageViewHolderFactory,
-                messageBackgroundFactory)
+                messageBackgroundFactory
+            )
         }
 
         private fun newInstance(
