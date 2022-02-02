@@ -33,6 +33,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun deleteMessageAndUpdateLocalData (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun deleteMessageAndUpdateLocalData$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -1875,6 +1877,11 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener$DefaultImpls {
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteMessageListener {
+	public abstract fun onMessageDeleteRequest (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageDeleteResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/EditMessageListener {
