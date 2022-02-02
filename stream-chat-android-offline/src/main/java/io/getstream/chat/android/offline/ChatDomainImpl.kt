@@ -1005,6 +1005,14 @@ internal class ChatDomainImpl internal constructor(
      */
     override fun sendGiphy(message: Message): Call<Message> = client.sendGiphy(message)
 
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
     override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
