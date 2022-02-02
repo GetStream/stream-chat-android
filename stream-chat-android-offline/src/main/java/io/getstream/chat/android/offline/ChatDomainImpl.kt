@@ -262,7 +262,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    internal var initJob: Deferred<SyncState?>? = null
+    internal var initJob: Deferred<*>? = null
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
@@ -315,6 +315,10 @@ internal class ChatDomainImpl internal constructor(
                 ?.let { eventHandler.handleEvent(it) }
 
             syncState.also { syncStateFlow.value = it }
+
+            // Sync cached channels
+            val cachedChannelsCids = repos.selectAllCids()
+            replayEventsForChannels(cachedChannelsCids)
         }
 
         if (client.isSocketConnected()) {
@@ -1001,6 +1005,14 @@ internal class ChatDomainImpl internal constructor(
      */
     override fun sendGiphy(message: Message): Call<Message> = client.sendGiphy(message)
 
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
     override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =

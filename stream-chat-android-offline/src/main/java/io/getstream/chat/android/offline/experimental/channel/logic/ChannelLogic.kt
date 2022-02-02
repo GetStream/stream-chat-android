@@ -224,6 +224,15 @@ internal class ChannelLogic(
         mutableState._messages.value = newMessages
     }
 
+    /**
+     * Store the messages in the local cache.
+     *
+     * @param messages The messages to be stored. Check [Message].
+     */
+    internal suspend fun storeMessageLocally(messages: List<Message>) {
+        chatDomainImpl.repos.insertMessages(messages)
+    }
+
     private fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
     internal fun setWatcherCount(watcherCount: Int) {
