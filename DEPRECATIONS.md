@@ -5,6 +5,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
 | `ChatDomain.editMessage` | 2022.01.31<br/>4.27.0 | 2022.02.28 ⌛ | 2022.03.21 ⌛ | Use `ChatClient.updateMessage` instead. |
+| `ChatDomain#deleteChannel` | 2022.02.08<br/>4.27.0 | 2022.03.08 ⌛ | 2022.04.08 ⌛ | Use `ChatClient.deleteChannel` instead. |
 | `ChatDomain#leaveChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient.removeMembers` instead. |
 | `ChatDomain#createChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use extension function `ChatClient.createChannel` instead |
 | `ChatDomain#cancelMessage` | 2021.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient#cancelMessage` instead |
