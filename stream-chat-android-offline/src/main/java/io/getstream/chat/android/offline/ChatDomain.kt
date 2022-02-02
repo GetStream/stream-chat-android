@@ -427,8 +427,24 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
+    @Deprecated(
+        message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().deleteMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun deleteMessage(message: Message, hard: Boolean = false): Call<Message>
 
+    @Deprecated(
+        message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().deleteMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun deleteMessage(message: Message): Call<Message>
 
     /**

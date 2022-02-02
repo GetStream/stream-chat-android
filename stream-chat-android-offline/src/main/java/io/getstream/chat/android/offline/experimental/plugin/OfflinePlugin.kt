@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
@@ -45,7 +46,8 @@ public class OfflinePlugin(
     QueryChannelListener,
     ThreadQueryListener,
     ChannelMarkReadListener,
-    EditMessageListener {
+    EditMessageListener,
+    DeleteMessageListener {
 
     internal constructor() : this(Config())
 
@@ -76,6 +78,30 @@ public class OfflinePlugin(
     internal fun initState(chatDomainImpl: ChatDomainImpl, chatClient: ChatClient) {
         state = StateRegistry(chatDomainImpl, chatClient)
         logic = LogicRegistry(state)
+    }
+
+    override suspend fun onMessageDeleteRequest(message: Message) {
+        val isOnline = globalState.isOnline()
+        val channelLogic = channelLogicForMessage(message)
+
+        val messagesToBeDeleted = message.copy(
+            deletedAt = Date(),
+            syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        ).let(::listOf)
+
+        updateAndSaveMessages(messagesToBeDeleted, channelLogic)
+    }
+
+    override suspend fun onMessageDeleteResult(originalMessage: Message, result: Result<Message>) {
+        if (result.isSuccess) {
+            val deletedMessage = result.data()
+            deletedMessage.syncStatus = SyncStatus.COMPLETED
+
+            updateAndSaveMessages(deletedMessage.let(::listOf), channelLogicForMessage(deletedMessage))
+        } else {
+            val failureMessage = originalMessage.updateFailedMessage(result.error())
+            updateAndSaveMessages(failureMessage.let(::listOf), channelLogicForMessage(failureMessage))
+        }
     }
 
     /**

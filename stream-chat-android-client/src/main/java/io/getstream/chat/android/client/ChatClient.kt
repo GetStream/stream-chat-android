@@ -936,6 +936,22 @@ public class ChatClient internal constructor(
         return api.deleteMessage(messageId, hard)
     }
 
+    public fun deleteMessageAndUpdateLocalData(message: Message, hard: Boolean = false): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
+
+        return this.deleteMessage(message.id, hard)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { listener ->
+                    listener.onMessageDeleteRequest(message)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    listener.onMessageDeleteResult(message, result)
+                }
+            }
+    }
+
     @CheckResult
     public fun getMessage(messageId: String): Call<Message> {
         return api.getMessage(messageId)

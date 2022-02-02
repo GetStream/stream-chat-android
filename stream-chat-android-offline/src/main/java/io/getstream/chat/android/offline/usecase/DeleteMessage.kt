@@ -7,6 +7,14 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.utils.validateCid
 
+@Deprecated(
+    message = "DeleteMessage is deprecated. Use function ChatClient::deleteMessage instead",
+    replaceWith = ReplaceWith(
+        expression = "ChatClient.instance().deleteMessage(message)",
+        imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+    ),
+    level = DeprecationLevel.WARNING
+)
 internal class DeleteMessage(private val domainImpl: ChatDomainImpl) {
     /**
      * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
