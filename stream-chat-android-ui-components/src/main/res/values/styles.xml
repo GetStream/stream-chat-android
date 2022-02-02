@@ -81,8 +81,8 @@
         <item name="android:minWidth">16dp</item>
         <item name="android:minHeight">16dp</item>
         <item name="android:singleLine">true</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">10sp</item>
         <item name="android:textStyle">bold</item>
@@ -97,8 +97,8 @@
         <item name="android:minWidth">24dp</item>
         <item name="android:minHeight">24dp</item>
         <item name="android:singleLine">true</item>
-        <item name="android:paddingLeft">6dp</item>
-        <item name="android:paddingRight">6dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
@@ -126,6 +126,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.Footnote">
@@ -135,6 +136,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_secondary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.FootnoteBold">
@@ -144,6 +146,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.Caption1Bold">
@@ -153,6 +156,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.Body">
@@ -162,6 +166,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.BodyBold">
@@ -171,6 +176,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.Headline">
@@ -180,6 +186,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.HeadlineBold">
@@ -189,6 +196,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.Title">
@@ -198,10 +206,12 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="StreamUiTextAppearance.MediaActivityHeaderTitle" parent="StreamUiTextAppearance.BodyBold">
         <item name="android:textColor">@color/stream_ui_literal_white</item>
+        <item name="android:textDirection">locale</item>
     </style>
     
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">

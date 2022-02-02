@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 
@@ -39,6 +40,13 @@ buildscript {
         classpath Dependencies.kotlinBinaryValidator
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
+    }
+}
+
+subprojects {
+    apply plugin: 'org.jlleitschuh.gradle.ktlint'
+    ktlint {
+        version = Versions.KTLINT_VERSION
     }
 }
 
@@ -88,7 +96,6 @@ apiValidation {
 
     ignoredProjects += [
             'stream-chat-android-docs',
-            'stream-chat-android-sample',
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-test',
             'stream-chat-android-compose-sample',

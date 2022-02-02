@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
@@ -61,7 +61,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
 
         binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
         binding.commandsTitleTextView.setTextStyle(style.commandsTitleTextStyle)
-        binding.commandsTitleTextView.setLeftDrawable(style.lightningIcon)
+        binding.commandsTitleTextView.setStartDrawable(style.lightningIcon)
         viewHolderFactory.style = style
     }
 

@@ -23,7 +23,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithSize
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawableWithSize
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -170,6 +170,10 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageEditText.isVerticalFadingEdgeEnabled = enabled
     }
 
+    /**
+     * Sets the max file size of an attachment. Be aware that this doesn't change the limit of the accepted size of attachments
+     * in Stream's backend.
+     */
     fun setAttachmentMaxFileMb(size: Int) {
         attachmentMaxFileSize = size * AttachmentConstants.MB_IN_BYTES
 
@@ -177,6 +181,9 @@ internal class MessageInputFieldView : FrameLayout {
         selectedMediaAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
     }
 
+    /**
+     * Sets the typeface for [EditText] of MessageInputFieldView.
+     */
     fun setTextInputTypefaceStyle(typeface: Int) {
         val originalTypeface = binding.messageEditText.typeface
 
@@ -187,8 +194,11 @@ internal class MessageInputFieldView : FrameLayout {
         binding.clearCommandButton.setImageDrawable(drawable)
     }
 
+    /**
+     * Set the badge icon for the command.
+     */
     fun setCommandInputBadgeIcon(drawable: Drawable) {
-        binding.commandBadge.setLeftDrawableWithSize(drawable, R.dimen.stream_ui_message_input_command_icon_size)
+        binding.commandBadge.setStartDrawableWithSize(drawable, R.dimen.stream_ui_message_input_command_icon_size)
     }
 
     fun setCommandInputBadgeBackgroundDrawable(drawable: Drawable) {
@@ -199,6 +209,9 @@ internal class MessageInputFieldView : FrameLayout {
         binding.commandBadge.setTextStyle(testStyle)
     }
 
+    /**
+     * Changes mode to command.
+     */
     fun autoCompleteCommand(command: Command) {
         val newMode = Mode.CommandMode(command)
 
@@ -212,6 +225,9 @@ internal class MessageInputFieldView : FrameLayout {
         messageText = "${messageText.substringBeforeLast("@")}@${user.name} "
     }
 
+    /**
+     * Get all the attached files with mime-type.
+     */
     fun getAttachedFiles(): List<Pair<File, String?>> {
         return selectedAttachments.map { metaData ->
             storageHelper.getCachedFileFromUri(context, metaData) to metaData.mimeType
@@ -302,6 +318,11 @@ internal class MessageInputFieldView : FrameLayout {
         contentChangeListener?.onModeChanged(currentMode)
     }
 
+    /**
+     * Switches to reply message mode.
+     *
+     * @param currentMode [Mode.ReplyMessageMode].
+     */
     private fun switchToReplyMessageMode(currentMode: Mode.ReplyMessageMode) {
         switchToMessageMode()
         binding.messageReplyView.setMessage(
@@ -312,6 +333,11 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageReplyView.isVisible = true
     }
 
+    /**
+     * Switches to file attachment mode.
+     *
+     * @param currentMode [Mode.FileAttachmentMode].
+     */
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
         binding.messageEditText.hint = attachmentModeHint
         selectedAttachments = mode.attachments.toList()
@@ -356,6 +382,11 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageReplyView.isVisible = false
     }
 
+    /**
+     * Switch to edit mode.
+     *
+     * @param mode [Mode.EditMessageMode].
+     */
     private fun switchToEditMode(mode: Mode.EditMessageMode) {
         binding.messageEditText.hint = normalModeHint
 
@@ -392,6 +423,9 @@ internal class MessageInputFieldView : FrameLayout {
         contentChangeListener?.onMessageTextChanged(messageText)
     }
 
+    /**
+     * Notify that the attachments have changed.
+     */
     private fun selectedAttachmentsChanged() {
         notifyBigAttachments()
         notifySelectedAttachmentsCountChanged()

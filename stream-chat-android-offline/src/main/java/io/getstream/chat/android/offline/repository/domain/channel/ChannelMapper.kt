@@ -43,6 +43,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         watcherIds = watchers.map(User::id),
         watcherCount = watcherCount,
         team = team,
+        ownCapabilities = ownCapabilities,
     )
 }
 
@@ -71,4 +72,5 @@ internal suspend fun ChannelEntity.toModel(
     watchers = watcherIds.map { getUser(it) },
     watcherCount = watcherCount,
     team = team,
+    ownCapabilities = ownCapabilities,
 )

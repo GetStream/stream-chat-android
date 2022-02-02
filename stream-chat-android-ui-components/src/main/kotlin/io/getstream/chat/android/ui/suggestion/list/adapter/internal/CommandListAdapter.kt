@@ -13,7 +13,10 @@ internal class CommandListAdapter(
 ) : SimpleListAdapter<SuggestionListItem.CommandItem, CommandListAdapter.CommandViewHolderWrapper>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolderWrapper {
-        return CommandViewHolderWrapper(factoryProvider().createCommandViewHolder(parent), commandClickListener)
+        return CommandViewHolderWrapper(
+            factoryProvider().createCommandViewHolder(parent),
+            commandClickListener
+        )
     }
 
     class CommandViewHolderWrapper(

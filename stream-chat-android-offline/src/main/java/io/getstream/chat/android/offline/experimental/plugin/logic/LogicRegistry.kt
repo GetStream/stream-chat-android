@@ -37,7 +37,11 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
 
     fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsLogic(stateRegistry.queryChannels(filter, sort).toMutableState(), chatDomain, chatDomain.client)
+            QueryChannelsLogic(
+                stateRegistry.queryChannels(filter, sort).toMutableState(),
+                chatDomain,
+                chatDomain.client,
+            )
         }
     }
 
@@ -63,6 +67,34 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         }
     }
 
+    /**
+     * Returns a list of [QueryChannelsLogic] for all, active query channel requests.
+     *
+     * @return List of [QueryChannelsLogic].
+     */
+    fun getActiveQueryChannelsLogic(): List<QueryChannelsLogic> = queryChannels.values.toList()
+
+    /**
+     * Checks if the channel is active by checking if [ChannelLogic] exists.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     *
+     * @return True if the channel is active.
+     */
+    fun isActiveChannel(channelType: String, channelId: String): Boolean =
+        channels.containsKey(channelType to channelId)
+
+    /**
+     * Returns a list of [ChannelLogic] for all, active channel requests.
+     *
+     * @return List of [ChannelLogic].
+     */
+    fun getActiveChannelsLogic(): List<ChannelLogic> = channels.values.toList()
+
+    /**
+     * Clears all stored logic objects.
+     */
     fun clear() {
         queryChannels.clear()
         channels.clear()

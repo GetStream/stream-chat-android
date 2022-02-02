@@ -210,7 +210,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
@@ -323,6 +323,13 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
+    @Deprecated(
+        message = "createChannel is deprecated. Use ChatClient::createChannel extension function  instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().createChannel(channel)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+    )
     @CheckResult
     public fun createChannel(channel: Channel): Call<Channel>
 
@@ -350,6 +357,14 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
+    @Deprecated(
+        message = "cancelMessage is deprecated. Use extension function ChatClient::cancelMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().cancelMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
@@ -522,7 +537,7 @@ public sealed interface ChatDomain {
             expression = "ChatClient.instance().showChannel(channelType, channelId)",
             imports = arrayOf("io.getstream.chat.android.client.ChatClient")
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun showChannel(cid: String): Call<Unit>
 
@@ -534,6 +549,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] leaving a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "leaveChannel is deprecated. Use function ChatClient::removeMembers instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().removeMembers(channel.type, channel.id, listOf(userId))",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun leaveChannel(cid: String): Call<Unit>
 
     /**
@@ -544,6 +567,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] deleting a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "deleteChannel is deprecated. Use function ChannelClient::delete instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().channel(cid).delete().toUnitCall()",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun deleteChannel(cid: String): Call<Unit>
 
     /**

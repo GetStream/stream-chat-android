@@ -17,7 +17,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
-import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.toQueryChannelsRequest
@@ -49,8 +48,6 @@ public class QueryChannelsController internal constructor(
     public var chatEventHandler: ChatEventHandler? by mutableState::chatEventHandler
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
-
-    private val _channels = mutableState._channels
 
     public val loading: StateFlow<Boolean> = mutableState.loading
     public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
@@ -96,11 +93,7 @@ public class QueryChannelsController internal constructor(
         }
     }
 
-    internal suspend fun handleEvents(events: List<ChatEvent>) {
-        for (event in events) {
-            handleEvent(event)
-        }
-    }
+    internal suspend fun handleEvents(events: List<ChatEvent>) = queryChannelsLogic.handleEvents(events)
 
     /** Handles updates by WS events. Keeps synchronized data of [QueryChannelsMutableState]. */
     internal suspend fun handleEvent(event: ChatEvent) {
@@ -139,9 +132,7 @@ public class QueryChannelsController internal constructor(
      * Refreshes all channels returned in this query.
      * Supports use cases like marking all channels as read.
      */
-    private fun refreshAllChannels() {
-        refreshChannels(queryChannelsSpec.cids)
-    }
+    private fun refreshAllChannels() = queryChannelsLogic.refreshAllChannels()
 
     /**
      * refreshes a single channel
@@ -154,25 +145,9 @@ public class QueryChannelsController internal constructor(
      *
      * @see addToQueryResult
      */
-    public fun refreshChannel(cId: String) {
-        refreshChannels(listOf(cId))
-    }
+    public fun refreshChannel(cId: String): Unit = queryChannelsLogic.refreshChannel(cId)
 
-    private fun refreshMembersStateForUser(newUser: User) {
-        val userId = newUser.id
-
-        val affectedChannels = _channels.value
-            .filter { (_, channel) -> channel.users().any { it.id == userId } }
-            .mapValues { (_, channel) ->
-                channel.copy(
-                    members = channel.members.map { member ->
-                        member.copy(user = member.user.takeUnless { it.id == userId } ?: newUser)
-                    }
-                )
-            }
-
-        _channels.value += affectedChannels
-    }
+    private fun refreshMembersStateForUser(newUser: User) = queryChannelsLogic.refreshMembersStateForUser(newUser)
 
     /**
      * Refreshes multiple channels on this query
@@ -181,12 +156,7 @@ public class QueryChannelsController internal constructor(
      * @param cIds The channels to refresh.
      * @see ChannelController
      */
-    internal fun refreshChannels(cIds: Collection<String>) {
-        mutableState._channels.value += queryChannelsSpec.cids
-            .intersect(cIds)
-            .map { it to domainImpl.channel(it).toChannel() }
-            .toMap()
-    }
+    internal fun refreshChannels(cIds: Collection<String>) = queryChannelsLogic.refreshChannels(cIds)
 
     private suspend fun addChannel(channel: Channel) = queryChannelsLogic.addChannel(channel)
 

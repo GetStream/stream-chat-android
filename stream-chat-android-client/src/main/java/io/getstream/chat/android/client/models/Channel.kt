@@ -39,6 +39,14 @@ public data class Channel(
     val cooldown: Int = 0,
 
     var pinnedMessages: List<Message> = mutableListOf(),
+
+    /**
+     * Channel's capabilities available for the current user.
+     * Note that the field is not provided in the events.
+     *
+     * @see [io.getstream.chat.android.client.models.ChannelCapabilities]
+     */
+    var ownCapabilities: Set<String> = setOf(),
 ) : CustomObject {
 
     var name: String

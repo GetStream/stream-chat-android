@@ -361,9 +361,21 @@ public class MessageListView : ConstraintLayout {
             _attachmentDeleteOptionHandler,
         )
 
+    /**
+     * Handles attachment clicks which by default open the attachment preview.
+     *
+     * Can be customized by [setAttachmentClickListener].
+     *
+     * In case the attachments are being uploaded, they cannot be opened for preview until all of the attachments within
+     * a message are uploaded.
+     */
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            // TODO - this would probably be better in the AttachmentDestination thing but it also makes sense to be here
+            val hasInvalidAttachments = message.attachments.any { it.uploadState != null }
+            if (hasInvalidAttachments) {
+                return@AttachmentClickListener
+            }
+
             if (attachment.type == ModelType.attach_giphy) {
                 val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
 
@@ -662,7 +674,8 @@ public class MessageListView : ConstraintLayout {
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
-            messageBackgroundFactory
+            messageBackgroundFactory,
+            deletedMessageListItemPredicate
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

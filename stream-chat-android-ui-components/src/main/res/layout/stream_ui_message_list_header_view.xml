@@ -15,9 +15,8 @@
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlHardcoded"
         >
 
         <ImageView
@@ -29,7 +28,7 @@
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_arrow_left"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
 
@@ -39,6 +38,7 @@
             android:layout_marginStart="22dp"
             android:layout_marginBottom="20dp"
             android:visibility="gone"
+            android:textDirection="locale"
             app:layout_constraintBottom_toBottomOf="@+id/backButton"
             app:layout_constraintStart_toStartOf="@+id/backButton"
             tools:text="2"
@@ -58,6 +58,7 @@
         android:lineSpacingExtra="5sp"
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+        android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@+id/subtitleContainer"
         app:layout_constraintEnd_toStartOf="@+id/avatarView"
         app:layout_constraintStart_toEndOf="@+id/backButtonContainer"
@@ -93,8 +94,8 @@
                 android:id="@+id/connectingProgressBar"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 />
 
             <TextView
@@ -103,6 +104,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_disconnected"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+                android:textDirection="locale"
                 />
 
         </LinearLayout>
@@ -123,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_offline"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+                android:textDirection="locale"
                 />
 
             <TextView
@@ -135,6 +138,7 @@
                 android:text="@string/stream_ui_message_list_header_retry"
                 android:textColor="@color/stream_ui_accent_blue"
                 android:visibility="gone"
+                android:textDirection="locale"
                 />
         </LinearLayout>
 
@@ -154,6 +158,7 @@
             android:layout_gravity="center"
             android:textAppearance="@style/StreamUiTextAppearance.Footnote"
             tools:text="Online for 10 mins"
+            android:textDirection="locale"
             />
 
     </FrameLayout>

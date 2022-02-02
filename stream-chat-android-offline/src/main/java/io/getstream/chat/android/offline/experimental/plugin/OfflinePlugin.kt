@@ -6,6 +6,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -14,12 +18,26 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
+/**
+ * Implementation of [Plugin] that brings support for the offline feature.
+ * The entry point of all offline state ([OfflinePlugin.state]) and behavior ([OfflinePlugin.logic]).
+ *
+ * @param config Configuration options for this plugin.
+ */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-public class OfflinePlugin(private val config: Config) : Plugin {
+public class OfflinePlugin(
+    private val config: Config,
+) : Plugin,
+    QueryChannelsListener,
+    QueryChannelListener,
+    ThreadQueryListener,
+    ChannelMarkReadListener {
 
     internal constructor() : this(Config())
 
@@ -28,6 +46,9 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         private set
     internal lateinit var logic: LogicRegistry
         private set
+
+    // TODO: Move to StateRegistry when we remove ChatDomain.
+    public val globalState: GlobalState = GlobalMutableState()
 
     override val name: String = MODULE_NAME
 
@@ -95,6 +116,9 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         firstId: String,
         limit: Int,
     ): Unit = logic.thread(messageId).onGetRepliesMoreResult(result, messageId, firstId, limit)
+
+    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
+        logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
 
     internal fun clear() {
         logic.clear()

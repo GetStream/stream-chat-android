@@ -43,8 +43,13 @@ internal class EventBatchUpdate private constructor(
             channel.updateLastMessage(message)
 
             val currentUserId = domainImpl.user.value?.id
-            if (isNewMessage && currentUserId != null && message.shouldIncrementUnreadCount(currentUserId)) {
-                channel.incrementUnreadCount(currentUserId)
+
+            if (isNewMessage && currentUserId != null) {
+                val lastReadDate = channel.read.firstOrNull { it.user.id == currentUserId }?.lastMessageSeenDate
+
+                if (message.shouldIncrementUnreadCount(currentUserId, lastReadDate)) {
+                    channel.incrementUnreadCount(currentUserId, message.createdAt)
+                }
             }
         }
     }
@@ -81,12 +86,28 @@ internal class EventBatchUpdate private constructor(
         // actually insert the data
         domainImpl.user.value?.id?.let { userMap -= it }
 
+        enrichChannelsWithCapabilities()
+
         domainImpl.repos.storeStateForChannels(
             users = userMap.values.toList(),
             channels = channelMap.values.updateUsers(userMap),
             messages = messageMap.values.toList().updateUsers(userMap),
             cacheForMessages = true
         )
+    }
+
+    /**
+     * Enriches channels with capabilities if needed.
+     * Channels from events don't contain ownCapabilities field therefore,
+     * they need to be enriched based on capabilities stored in the cache.
+     */
+    private suspend fun enrichChannelsWithCapabilities() {
+        val channelsWithoutCapabilities = channelMap.values
+            .filter { channel -> channel.ownCapabilities.isEmpty() }
+            .map { channel -> channel.cid }
+        val cachedChannels = domainImpl.repos.selectChannels(channelsWithoutCapabilities)
+
+        channelMap.putAll(cachedChannels.associateBy(Channel::cid))
     }
 
     internal class Builder {

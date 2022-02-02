@@ -32,7 +32,7 @@ public interface QueryChannelListener {
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) { }
+    )
 
     /**
      * Runs this function on the result of the request.
@@ -42,6 +42,5 @@ public interface QueryChannelListener {
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) {
-    }
+    )
 }

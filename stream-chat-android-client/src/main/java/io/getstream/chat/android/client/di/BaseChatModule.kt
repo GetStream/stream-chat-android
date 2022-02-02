@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.api2.ChannelApi
+import io.getstream.chat.android.client.api2.ConfigApi
 import io.getstream.chat.android.client.api2.DeviceApi
 import io.getstream.chat.android.client.api2.GeneralApi
 import io.getstream.chat.android.client.api2.GuestApi
@@ -208,6 +209,7 @@ internal open class BaseChatModule(
             buildRetrofitApi<DeviceApi>(),
             buildRetrofitApi<ModerationApi>(),
             buildRetrofitApi<GeneralApi>(),
+            buildRetrofitApi<ConfigApi>(),
             networkScope,
         )
     }

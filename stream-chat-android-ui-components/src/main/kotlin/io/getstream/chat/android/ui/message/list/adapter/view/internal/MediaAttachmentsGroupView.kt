@@ -18,14 +18,13 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.hasText
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
-import io.getstream.chat.android.ui.common.extensions.isReply
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
+import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -202,20 +201,19 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         }
     }
 
+    /**
+     * Configured the background of the View.
+     *
+     * @param data [MessageListItem.MessageItem].
+     */
     fun setupBackground(data: MessageListItem.MessageItem) {
-        val topLeftCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-        val topRightCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-        val bottomRightCorner =
-            if (data.message.hasText() || (data.isMine && data.isBottomPosition())) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-        val bottomLeftCorner =
-            if (data.message.hasText() || (data.isTheirs && data.isBottomPosition())) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
-
-        background = ShapeAppearanceModel.builder()
-            .setTopLeftCornerSize(topLeftCorner)
-            .setTopRightCornerSize(topRightCorner)
-            .setBottomRightCornerSize(bottomRightCorner)
-            .setBottomLeftCornerSize(bottomLeftCorner)
-            .build()
+        background = ShapeAppearanceModelFactory.create(
+            context,
+            BackgroundDecorator.DEFAULT_CORNER_RADIUS,
+            0F,
+            data.isMine,
+            data.isBottomPosition()
+        )
             .let(::MaterialShapeDrawable)
             .apply { setTint(ContextCompat.getColor(context, R.color.stream_ui_literal_transparent)) }
     }
