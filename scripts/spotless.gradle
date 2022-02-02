@@ -8,4 +8,11 @@ spotless {
         trimTrailingWhitespace()
         endWithNewline()
     }
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
