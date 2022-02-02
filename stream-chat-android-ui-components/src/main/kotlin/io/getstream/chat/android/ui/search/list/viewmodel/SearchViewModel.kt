@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
@@ -16,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import io.getstream.chat.android.client.utils.Result
 
 /**
  * ViewModel responsible for searching for messages that match a particular search query.

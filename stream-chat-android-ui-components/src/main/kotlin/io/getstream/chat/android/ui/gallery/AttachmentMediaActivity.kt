@@ -1,13 +1,13 @@
 package io.getstream.chat.android.ui.gallery
 
-import android.os.Bundle
-import io.getstream.chat.android.ui.R
 import android.net.Uri
+import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.devbrackets.android.exomedia.listener.OnPreparedListener
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 

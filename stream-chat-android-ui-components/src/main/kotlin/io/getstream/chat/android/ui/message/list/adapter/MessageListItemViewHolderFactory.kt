@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
@@ -30,6 +29,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 public open class MessageListItemViewHolderFactory {
     internal lateinit var decoratorProvider: DecoratorProvider
@@ -173,10 +173,12 @@ public open class MessageListItemViewHolderFactory {
     protected fun createGiphyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return GiphyViewHolder(parentView,
+        return GiphyViewHolder(
+            parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            giphyViewHolderStyle)
+            giphyViewHolderStyle
+        )
     }
 
     protected fun createSystemMessageItemViewHolder(
