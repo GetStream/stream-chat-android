@@ -44,8 +44,8 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
