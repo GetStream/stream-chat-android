@@ -80,6 +80,12 @@ public class OfflinePlugin(
         logic = LogicRegistry(state)
     }
 
+    /**
+     * Method called when a request for message edition happens. Use it to update database, update messages in the SDK,
+     * update the UI when a message occurs...
+     *
+     * @param message [Message].
+     */
     override suspend fun onMessageDeleteRequest(message: Message) {
         val isOnline = globalState.isOnline()
         val channelLogic = channelLogicForMessage(message)
@@ -92,6 +98,12 @@ public class OfflinePlugin(
         updateAndSaveMessages(messagesToBeDeleted, channelLogic)
     }
 
+    /**
+     * Method called when a request for message edition return. Use it to update database, update messages or to present
+     * an error to the user.
+     *
+     * @param result the result of the API call.
+     */
     override suspend fun onMessageDeleteResult(originalMessage: Message, result: Result<Message>) {
         if (result.isSuccess) {
             val deletedMessage = result.data()

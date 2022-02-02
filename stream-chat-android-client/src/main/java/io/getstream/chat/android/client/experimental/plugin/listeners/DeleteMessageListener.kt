@@ -3,6 +3,9 @@ package io.getstream.chat.android.client.experimental.plugin.listeners
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 
+/**
+ * Listener for requests of message deletion and for message deletion results.
+ */
 public interface DeleteMessageListener {
 
     /**
