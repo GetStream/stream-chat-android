@@ -46,6 +46,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain::deleteChannel` in favour of `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
+- Deprecated `ChatDomain.deleteMessage`, in favour of `ChatClient.deleteMessageAndUpdateLocalData` [3011](https://github.com/GetStream/stream-chat-android/pull/3011). 
 
 ### ❌ Removed
 
