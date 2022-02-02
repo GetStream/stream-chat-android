@@ -122,6 +122,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 <!-- UNRELEASED END -->
 
 
+# February 2nd, 2022 - 4.27.2
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed refreshing cached channels after setting the user. [#3010](https://github.com/GetStream/stream-chat-android/pull/3010)
+
 # January 31th, 2022 - 4.27.1
 ## stream-chat-android-offline
 ### 🐞 Fixed
