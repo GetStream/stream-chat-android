@@ -5,10 +5,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import androidx.annotation.DimenRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -16,16 +14,15 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
- * Style for [MediaAttachmentView].
+ * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView].
  * Use this class together with [TransformStyle.mediaAttachmentStyleTransformer] to change styles programmatically.
  *
  * @param progressIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
  * @param giphyIcon Giphy icon. Default value is [R.drawable.stream_ui_giphy_label].
+ * @param placeholderIcon Displayed while the Giphy is Loading.
  * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
- * @param giphyConstantSizeEnabled Boolean to choose if giphy has constant size or auto sizes accordingly with the images size.
- * @param giphyHeight If giphyConstantSize is true, it is possible to choose its height with this field. Width is the max width of messages.
  */
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
@@ -34,13 +31,11 @@ public data class MediaAttachmentViewStyle(
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
-    public val giphyConstantSizeEnabled: Boolean,
-    @DimenRes public val giphyHeight: Int,
 ) {
     internal companion object {
-        private const val DEFAULT_HEIGHT_DP = 200
-
-        // TODO - Split into GiphyMediaAttachmentView and MediaAttachmentView styles
+        /**
+         * Fetches styled attributes and returns them wrapped inside of [MediaAttachmentViewStyle].
+         */
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -87,14 +82,6 @@ public data class MediaAttachmentViewStyle(
                     a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
-                val giphyHeight =
-                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
-                        DEFAULT_HEIGHT_DP.dpToPx())
-
-                val constantSizeEnabled =
-                    a.getBoolean(R.styleable.MediaAttachmentView_streamUiMediaAttachmentConstantSize,
-                        false)
-
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     giphyIcon = giphyIcon,
@@ -102,8 +89,6 @@ public data class MediaAttachmentViewStyle(
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
-                    giphyHeight = giphyHeight,
-                    giphyConstantSizeEnabled = constantSizeEnabled,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

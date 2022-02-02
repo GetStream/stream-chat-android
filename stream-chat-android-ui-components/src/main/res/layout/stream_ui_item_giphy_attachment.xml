@@ -68,7 +68,7 @@
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView
             android:id="@+id/mediaAttachmentView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             />
 
         <TextView
