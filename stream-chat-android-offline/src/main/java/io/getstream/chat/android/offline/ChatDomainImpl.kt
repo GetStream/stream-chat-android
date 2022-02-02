@@ -259,7 +259,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    internal var initJob: Deferred<SyncState?>? = null
+    internal var initJob: Deferred<*>? = null
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
@@ -312,6 +312,10 @@ internal class ChatDomainImpl internal constructor(
                 ?.let { eventHandler.handleEvent(it) }
 
             syncState.also { syncStateFlow.value = it }
+
+            // Sync cached channels
+            val cachedChannelsCids = repos.selectAllCids()
+            replayEventsForChannels(cachedChannelsCids)
         }
 
         if (client.isSocketConnected()) {
