@@ -1,10 +1,8 @@
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.Versions
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 
 apply plugin: "com.github.ben-manes.versions"
-apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
@@ -32,7 +30,6 @@ buildscript {
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin
         classpath Dependencies.firebaseCrashlyticsPlugin
-        classpath Dependencies.ktlintPlugin
         classpath Dependencies.gradleVersionsPlugin
         classpath Dependencies.navigationSafeArgsGradlePlugin
         classpath Dependencies.gradleNexusPublishPlugin
@@ -46,10 +43,6 @@ buildscript {
 
 subprojects {
     apply from: "${rootDir}/scripts/spotless.gradle"
-    apply plugin: 'org.jlleitschuh.gradle.ktlint'
-    ktlint {
-        version = Versions.KTLINT_VERSION
-    }
 }
 
 allprojects {
