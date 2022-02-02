@@ -52,7 +52,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     private fun init(attrs: AttributeSet?) {
         style = GiphyMediaAttachmentViewStyle(context, attrs)
 
-        if (style.giphyConstantSizeEnabled) {
+        if (style.isConstantSizeEnabled()) {
             binding.loadImage.updateLayoutParams {
                 this.height = style.giphyMaxHeight
                 this.width = style.giphyMaxHeight
@@ -67,15 +67,16 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Displays a Giphy inside its container. Depending on [GiphyMediaAttachmentViewStyle.giphyConstantSizeEnabled]
-     * it displays the Giphy either inside of a constant size or a resizeable container.
+     * Displays a Giphy inside its container. Depending on [GiphyMediaAttachmentViewStyle.isConstantSizeEnabled]
+     * it displays the Giphy either inside of a constant height that resizes its width to keep aspect ratio or a
+     * resizeable container that is resized according to the GIF.
      */
     public fun showGiphy(attachment: Attachment) {
         val url = attachment.giphyUrl(style.giphyType) ?: attachment.let {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
-        if (style.giphyConstantSizeEnabled) {
+        if (style.isConstantSizeEnabled()) {
             showConstantSizeGiphy(url)
         } else {
             showResizeableGiphy(url)
@@ -83,7 +84,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Displays the Giphy image inside of a constant size container. We call [loadAndResize] here because we need to
+     * Displays the Giphy image inside of a constant height container. We call [loadAndResize] here because we need to
      * resize the container's width based on the constant height.
      */
     private fun showConstantSizeGiphy(url: String) {

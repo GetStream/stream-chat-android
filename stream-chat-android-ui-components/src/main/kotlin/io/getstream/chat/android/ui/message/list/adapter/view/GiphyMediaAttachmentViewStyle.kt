@@ -22,18 +22,15 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMedi
  * @param giphyIcon Displays the Giphy logo over the Giphy image.
  * @param placeholderIcon Displayed while the Giphy is Loading.
  * @param imageBackgroundColor Sets the background colour for the Giphy container.
- * @param giphyConstantSizeEnabled If enabled sets a constant size on all Giphy containers.
  * @param giphyMaxHeight Sets the maximum height a Giphy container is allowed to have.
- * @param giphyType Sets the Giphy type which directly affects image quality.
- * @param scaleType Sets the scaling type for loading the image.
- * E.g. 'centerCrop', 'fitCenter', etc...
+ * @param giphyType Sets the Giphy type which directly affects image quality and if the container is resized or not.
+ * @param scaleType Sets the scaling type for loading the image. E.g. 'centerCrop', 'fitCenter', etc...
  */
 public class GiphyMediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val giphyIcon: Drawable,
     public val placeholderIcon: Drawable,
     @ColorInt public val imageBackgroundColor: Int,
-    public val giphyConstantSizeEnabled: Boolean,
     @DimenRes public val giphyMaxHeight: Int,
     public val giphyType: GiphyMediaAttachmentView.Companion.GiphyInfoType,
     public val scaleType: ImageView.ScaleType,
@@ -72,10 +69,6 @@ public class GiphyMediaAttachmentViewStyle(
                     attributes.getDimensionPixelSize(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyMaxHeight,
                         DEFAULT_HEIGHT_DP.dpToPx())
 
-                val constantSizeEnabled =
-                    attributes.getBoolean(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentConstantSize,
-                        false)
-
                 val giphyType =
                     attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
                         GiphyMediaAttachmentView.Companion.GiphyInfoType.FIXED_HEIGHT)
@@ -89,7 +82,6 @@ public class GiphyMediaAttachmentViewStyle(
                     giphyIcon = giphyIcon,
                     placeholderIcon = placeholderIcon,
                     imageBackgroundColor = imageBackgroundColor,
-                    giphyConstantSizeEnabled = constantSizeEnabled,
                     giphyMaxHeight = giphyHeight,
                     giphyType = giphyType,
                     scaleType = scaleType
@@ -97,4 +89,11 @@ public class GiphyMediaAttachmentViewStyle(
             }
         }
     }
+
+    /**
+     * Returns if the giphy should use a fixed constant size (height) or if it should be loaded and resized based on the
+     * GIF.
+     */
+    public fun isConstantSizeEnabled(): Boolean =
+        this.giphyType == GiphyMediaAttachmentView.Companion.GiphyInfoType.FIXED_HEIGHT || this.giphyType == GiphyMediaAttachmentView.Companion.GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED
 }

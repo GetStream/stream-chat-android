@@ -2054,8 +2054,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZILio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView$Companion$GiphyInfoType;Landroid/widget/ImageView$ScaleType;)V
-	public final fun getGiphyConstantSizeEnabled ()Z
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView$Companion$GiphyInfoType;Landroid/widget/ImageView$ScaleType;)V
 	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getGiphyMaxHeight ()I
 	public final fun getGiphyType ()Lio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView$Companion$GiphyInfoType;
@@ -2063,6 +2062,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyM
 	public final fun getPlaceholderIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getScaleType ()Landroid/widget/ImageView$ScaleType;
+	public final fun isConstantSizeEnabled ()Z
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
