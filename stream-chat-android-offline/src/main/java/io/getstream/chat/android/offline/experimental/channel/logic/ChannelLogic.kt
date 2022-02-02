@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
-import io.getstream.chat.android.client.extensions.toCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -80,6 +79,7 @@ import io.getstream.chat.android.offline.message.wasCreatedAfter
 import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.offline.utils.toCid
 import java.util.Date
 import kotlin.math.max
 

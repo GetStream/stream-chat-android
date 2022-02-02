@@ -38,13 +38,3 @@ public fun String.cidToTypeAndId(): Pair<String, String> {
     check(':' in this) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
     return checkNotNull(split(":").takeIf { it.size >= 2 }?.let { it.first() to it.last() })
 }
-
-/**
- * Converts a pair of channelType and channelId into cid.
- *
- * @return String CID of the given channel type and id.
- */
-@Throws(IllegalStateException::class)
-public fun Pair<String, String>.toCid(): String {
-    return checkNotNull("$first:$second")
-}
