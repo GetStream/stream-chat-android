@@ -249,8 +249,13 @@ public class ChannelListViewModel(
         }
     }
 
+    /**
+     * Deletes a channel.
+     *
+     * @param channel Channel to be deleted.
+     */
     public fun deleteChannel(channel: Channel) {
-        chatDomain.deleteChannel(channel.cid).enqueue(
+        chatClient.channel(channel.cid).delete().enqueue(
             onError = { chatError ->
                 logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
