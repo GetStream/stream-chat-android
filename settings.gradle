@@ -58,3 +58,4 @@ gradleEnterprise {
 		termsOfServiceAgree = "yes"
 	}
 }
+include ':uitests'
