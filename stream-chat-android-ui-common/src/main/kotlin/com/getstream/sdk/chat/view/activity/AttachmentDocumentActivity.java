@@ -67,7 +67,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     }
 
     /**
-     * Encodes the give URL in a format that can be opened in the browser.
+     * Encodes the given URL in a format that can be opened in the browser.
      *
      * @param url The URL of the file to load
      * @return String representation of the encoded URL.

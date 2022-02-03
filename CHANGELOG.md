@@ -58,6 +58,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
 
 ### ⬆️ Improved
 - Replaced Lottie typing indicator with a custom view. [#3004](https://github.com/GetStream/stream-chat-android/pull/3004)
@@ -71,6 +72,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the way our attachments work and are represented in Compose to support more attachment types. [#2955](https://github.com/GetStream/stream-chat-android/pull/2955)
+- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
 
 ### ⬆️ Improved
 - Improved RTL support in Compose [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
