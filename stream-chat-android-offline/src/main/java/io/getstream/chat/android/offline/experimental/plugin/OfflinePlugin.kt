@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.experimental.plugin
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -264,7 +263,7 @@ public class OfflinePlugin(
         )
     }
 
-    private fun requireRepos() : RepositoryFacade{
+    private fun requireRepos(): RepositoryFacade {
         return repos ?: throw IllegalStateException("RepositoryFace was set too late in OfflinePlugin")
     }
 
