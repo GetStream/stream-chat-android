@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
@@ -14,6 +15,10 @@ internal interface ChannelDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMany(channelEntities: List<ChannelEntity>)
+
+    @Transaction
+    @Query("SELECT cid FROM stream_chat_channel_state")
+    suspend fun selectAllCids(): List<String>
 
     @Query(
         "SELECT * FROM stream_chat_channel_state " +
