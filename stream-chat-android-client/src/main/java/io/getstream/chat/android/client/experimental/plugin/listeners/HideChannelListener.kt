@@ -20,8 +20,7 @@ public interface HideChannelListener {
         channelType: String,
         channelId: String,
         clearHistory: Boolean
-    ) {
-    }
+    )
 
     /**
      * Runs this function on the result of the request.
@@ -36,6 +35,5 @@ public interface HideChannelListener {
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ) {
-    }
+    )
 }

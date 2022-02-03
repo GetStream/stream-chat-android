@@ -1882,11 +1882,6 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun onHideChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/client/experimental/plugin/listeners/HideChannelListener$DefaultImpls {
-	public static fun onHideChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/HideChannelListener;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onHideChannelResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/HideChannelListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener {
 	public abstract fun onQueryChannelPrecondition (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
