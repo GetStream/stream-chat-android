@@ -26,7 +26,7 @@ class SearchViewTest : ScreenshotTest {
         compareScreenshot(fragmentScenario.waitForFragment())
     }
 
-    @Test
+    // @Test
     fun eraseContentShouldWork() {
         launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
 
