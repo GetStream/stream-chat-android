@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Streamchatcompose"
         >
         <activity
-            android:name="io.getstream.chat.android.compose.sample.ChannelActivity"
+            android:name=".ui.StartupActivity"
             android:exported="true"
             >
             <intent-filter>
@@ -24,12 +24,27 @@
         </activity>
 
         <activity
-            android:name="io.getstream.chat.android.compose.sample.MessagesActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".ui.login.UserLoginActivity"
             android:exported="false"
             />
 
-        <activity android:name=".PushHandlerActivity" />
+        <activity
+            android:name=".ui.login.CustomLoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity
+            android:name=".ui.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".ui.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+
     </application>
 
 </manifest>

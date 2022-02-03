@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.sample
+package io.getstream.chat.android.compose.sample.ui
 
 import android.content.Context
 import android.content.Intent
@@ -34,6 +34,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
@@ -271,7 +273,7 @@ class MessagesActivity : AppCompatActivity() {
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
 
-        fun getIntent(context: Context, channelId: String): Intent {
+        fun createIntent(context: Context, channelId: String): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
             }
