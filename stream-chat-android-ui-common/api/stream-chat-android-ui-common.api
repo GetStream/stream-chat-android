@@ -101,12 +101,6 @@ public abstract interface class com/getstream/sdk/chat/disposable/Disposable {
 	public abstract fun isDisposed ()Z
 }
 
-public final class com/getstream/sdk/chat/disposable/DisposableList {
-	public fun <init> ()V
-	public final fun add (Lcom/getstream/sdk/chat/disposable/Disposable;)V
-	public final fun clear ()V
-}
-
 public final class com/getstream/sdk/chat/enums/GiphyAction : java/lang/Enum {
 	public static final field CANCEL Lcom/getstream/sdk/chat/enums/GiphyAction;
 	public static final field SEND Lcom/getstream/sdk/chat/enums/GiphyAction;
