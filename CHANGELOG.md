@@ -26,6 +26,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Internal implementation only asks to the provided `TokenProvider` a new token when it is really needed. [#2995](https://github.com/GetStream/stream-chat-android/pull/2995)
 
 ### ✅ Added
 
@@ -40,8 +41,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain::deleteChannel` in favour of `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
 
 ### ❌ Removed
 
@@ -120,6 +123,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ❌ Removed
 <!-- UNRELEASED END -->
 
+
+# February 2nd, 2022 - 4.27.2
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed refreshing cached channels after setting the user. [#3010](https://github.com/GetStream/stream-chat-android/pull/3010)
 
 # January 31th, 2022 - 4.27.1
 ## stream-chat-android-offline

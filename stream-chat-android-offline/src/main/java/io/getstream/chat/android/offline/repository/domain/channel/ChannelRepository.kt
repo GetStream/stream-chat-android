@@ -17,6 +17,13 @@ internal interface ChannelRepository {
     suspend fun selectChannelWithoutMessages(cid: String): Channel?
 
     /**
+     * Selects all channels' cids.
+     *
+     * @return A list of channels' cids stored in the repository.
+     */
+    suspend fun selectAllCids(): List<String>
+
+    /**
      * Select channels by full channel IDs [Channel.cid]
      *
      * @param channelCIDs A list of [Channel.cid] as query specification.
@@ -66,6 +73,8 @@ internal class ChannelRepositoryImpl(
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return selectChannels(listOf(cid)).getOrNull(0)
     }
+
+    override suspend fun selectAllCids(): List<String> = channelDao.selectAllCids()
 
     override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> {
         if (channelCIDs.isEmpty()) {

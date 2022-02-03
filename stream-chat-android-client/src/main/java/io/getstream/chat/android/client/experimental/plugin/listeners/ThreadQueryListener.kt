@@ -15,10 +15,10 @@ public interface ThreadQueryListener {
     public fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> = Result.success(Unit)
 
     /** Runs side effect before the request is launched. */
-    public fun onGetRepliesRequest(messageId: String, limit: Int) {}
+    public fun onGetRepliesRequest(messageId: String, limit: Int)
 
     /** Runs this function on the result of the [ChatClient.getReplies] request. */
-    public fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) {}
+    public fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int)
 
     /**
      * Runs precondition check for [ChatClient.getRepliesMore]. If it returns [Result.isSuccess] then the request is run
@@ -35,7 +35,7 @@ public interface ThreadQueryListener {
         messageId: String,
         firstId: String,
         limit: Int,
-    ) {}
+    )
 
     /** Runs this function on the result of the [ChatClient.getRepliesMore] request. */
     public fun onGetRepliesMoreResult(
@@ -43,5 +43,5 @@ public interface ThreadQueryListener {
         messageId: String,
         firstId: String,
         limit: Int,
-    ) {}
+    )
 }

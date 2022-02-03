@@ -21,9 +21,9 @@ internal class TokenManagerImpl : TokenManager {
         }
     }
 
-    override fun setTokenProvider(provider: TokenProvider) {
-        this.token = EMPTY_TOKEN
+    override fun setTokenProvider(provider: CacheableTokenProvider) {
         this.provider = provider
+        this.token = provider.getCachedToken()
     }
 
     override fun hasTokenProvider(): Boolean {

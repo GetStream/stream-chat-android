@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -23,7 +24,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
 
     @Test
     fun `Given offline plugin with failing precondition Should not make API call and return error result`() {
-        val plugin = mock<Plugin> {
+        val plugin = mock<QueryChannelListenerPlugin> {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.error(ChatError())
         }
         var isNetworkApiCalled = false
@@ -37,7 +38,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
 
     @Test
     fun `Given offline plugin with success precondition Should make API call and return it's result`() {
-        val plugin = mock<Plugin> {
+        val plugin = mock<QueryChannelListenerPlugin> {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.success(Unit)
         }
         var isNetworkApiCalled = false
@@ -52,7 +53,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     @Test
     fun `Given offline plugin with success precondition Should invoke methods in right order`() {
         val list = mutableListOf<Int>()
-        val plugin = mock<Plugin> {
+        val plugin = mock<QueryChannelListenerPlugin> {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doAnswer {
                 list.add(1)
                 Result.success(Unit)
@@ -69,7 +70,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse {
             println("Executing request")
             list.add(3)
-            mock<Channel>()
+            mock()
         }.get()
 
         sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
@@ -98,3 +99,6 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         fun get(): ChatClient = chatClient
     }
 }
+
+@OptIn(ExperimentalStreamChatApi::class)
+private interface QueryChannelListenerPlugin : Plugin, QueryChannelListener
