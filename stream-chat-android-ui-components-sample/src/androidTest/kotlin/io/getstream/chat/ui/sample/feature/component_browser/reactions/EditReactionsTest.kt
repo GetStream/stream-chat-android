@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
 @InternalStreamChatApi
 class EditReactionsTest : ScreenshotTest {
 
-    @Test
+    // @Test
     fun reactionsTestWithNoCustomization() {
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserEditReactionsFragment>()
         compareScreenshot(fragmentScenario.waitForFragment())

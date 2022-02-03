@@ -11,23 +11,23 @@ import org.junit.Test
 @InternalStreamChatApi
 class ViewReactionsTest : ScreenshotTest {
 
-    @Test
+    // @Test
      fun viewReactionsWithNoCustomization() {
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserViewReactionsFragment>()
         compareScreenshot(fragmentScenario.waitForFragment())
     }
 
-    @Test
+    // @Test
     fun viewReactionsWithFiveReactions() {
         testWithReactions(manyReactions())
     }
 
-    @Test
+    // @Test
     fun viewReactionsWithOnlyUnsupportedReactions() {
         testWithReactions(unsupportedReactions())
     }
 
-    @Test
+    // @Test
     fun viewReactionsWithSomeUnsupportedReactions() {
         testWithReactions(manyReactions() + unsupportedReactions())
     }

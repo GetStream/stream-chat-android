@@ -57,7 +57,7 @@ android {
         debug {
             versionNameSuffix "-DEBUG"
             applicationIdSuffix ".debug"
-            testCoverageEnabled true
+            testCoverageEnabled false
             debuggable true
             minifyEnabled false
             shrinkResources false
