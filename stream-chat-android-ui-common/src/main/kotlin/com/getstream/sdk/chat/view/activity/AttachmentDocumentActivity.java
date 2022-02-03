@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import io.getstream.chat.android.client.ChatClient;
@@ -65,9 +66,15 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         webView.setWebViewClient(new AppWebViewClients());
     }
 
+    /**
+     * Encodes the give URL in a format that can be opened in the browser.
+     *
+     * @param url The URL of the file to load
+     * @return String representation of the encoded URL.
+     */
     private String encodeUrl(String url) {
         try {
-            return URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
+            return URLEncoder.encode(url, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -75,7 +82,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     }
 
     /**
-     * Load document as url
+     * Load document as url.
      *
      * @param url Document url.
      */
