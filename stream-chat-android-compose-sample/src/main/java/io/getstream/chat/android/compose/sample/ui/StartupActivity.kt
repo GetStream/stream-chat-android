@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
 import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 
 /**
@@ -24,7 +25,7 @@ class StartupActivity : AppCompatActivity() {
         val userCredentials = ChatApp.credentialsRepository.loadUserCredentials()
         if (userCredentials != null) {
             // Ensure that the user is connected
-            ChatApp.chatManager.connectUser(userCredentials)
+            ChatHelper.connectUser(userCredentials)
 
             if (intent.hasExtra(KEY_CHANNEL_ID)) {
                 // Navigating from push, route to the messages screen

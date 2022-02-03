@@ -20,10 +20,13 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
  * next time the app is launched.
  */
 @OptIn(InternalStreamChatApi::class)
-class ChatManager(private val context: Context) {
+object ChatHelper {
 
+    /**
+     * Initializes the SDK with the given API key.
+     */
     @OptIn(ExperimentalStreamChatApi::class)
-    fun initializeSdk(apiKey: String) {
+    fun initializeSdk(context: Context, apiKey: String) {
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
         )
@@ -48,6 +51,9 @@ class ChatManager(private val context: Context) {
             .build()
     }
 
+    /**
+     * Initializes [ChatClient] with the given user and saves it to the persistent storage.
+     */
     fun connectUser(
         userCredentials: UserCredentials,
         onSuccess: () -> Unit = {},
@@ -65,6 +71,9 @@ class ChatManager(private val context: Context) {
             }
     }
 
+    /**
+     * Logs out the user and removes their credentials from the persistent storage.
+     */
     fun disconnectUser() {
         ChatApp.credentialsRepository.clearCredentials()
 

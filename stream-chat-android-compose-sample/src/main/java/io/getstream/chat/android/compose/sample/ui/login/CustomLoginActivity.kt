@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
@@ -58,9 +58,9 @@ class CustomLoginActivity : AppCompatActivity() {
                 CustomLoginScreen(
                     onBackButtonClick = ::finish,
                     onLoginButtonClick = { userCredentials ->
-                        ChatApp.chatManager.initializeSdk(userCredentials.apiKey)
+                        ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
 
-                        ChatApp.chatManager.connectUser(
+                        ChatHelper.connectUser(
                             userCredentials = userCredentials,
                             onSuccess = ::openChannels,
                             onError = ::showError

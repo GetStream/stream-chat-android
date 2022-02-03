@@ -10,12 +10,11 @@ class ChatApp : Application() {
     override fun onCreate() {
         super.onCreate()
         // Done for simplicity, use a DI framework instead
-        chatManager = ChatManager(this)
         credentialsRepository = UserCredentialsRepository(this)
         dateFormatter = DateFormatter.from(this)
 
         // Initialize Stream SDK
-        chatManager.initializeSdk(getApiKey())
+        ChatHelper.initializeSdk(this, getApiKey())
     }
 
     private fun getApiKey(): String {
@@ -23,9 +22,6 @@ class ChatApp : Application() {
     }
 
     companion object {
-        lateinit var chatManager: ChatManager
-            private set
-
         lateinit var credentialsRepository: UserCredentialsRepository
             private set
 

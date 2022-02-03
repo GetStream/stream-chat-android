@@ -26,11 +26,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentials
@@ -64,9 +60,9 @@ class UserLoginActivity : AppCompatActivity() {
                         if (ChatClient.instance().config.apiKey != userCredentials.apiKey) {
                             // If the user attempted to login with custom credentials on the custom
                             // login screen then we need to reinitialize the SDK with our API key.
-                            ChatApp.chatManager.initializeSdk(PredefinedUserCredentials.API_KEY)
+                            ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
                         }
-                        ChatApp.chatManager.connectUser(userCredentials)
+                        ChatHelper.connectUser(userCredentials)
 
                         openChannels()
                     },
@@ -81,12 +77,6 @@ class UserLoginActivity : AppCompatActivity() {
         onUserItemClick: (UserCredentials) -> Unit,
         onCustomLoginClick: () -> Unit,
     ) {
-        var availableUserCredentials: List<UserCredentials> by remember { mutableStateOf(emptyList()) }
-
-        LaunchedEffect(true) {
-            availableUserCredentials = ChatApp.credentialsRepository.loadAvailableUserCredentials()
-        }
-
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -126,7 +116,7 @@ class UserLoginActivity : AppCompatActivity() {
                     .fillMaxWidth()
                     .weight(1f),
             ) {
-                items(items = availableUserCredentials) { userCredentials ->
+                items(items = PredefinedUserCredentials.availableUsers) { userCredentials ->
                     UserLoginItem(
                         userCredentials = userCredentials,
                         onItemClick = onUserItemClick

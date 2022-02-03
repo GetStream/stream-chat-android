@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
@@ -83,7 +84,8 @@ class ChannelsActivity : AppCompatActivity() {
                     onItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
-                        ChatApp.chatManager.disconnectUser()
+                        ChatHelper.disconnectUser()
+
                         openUserLogin()
                     }
                 )

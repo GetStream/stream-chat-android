@@ -15,13 +15,6 @@ class UserCredentialsRepository(context: Context) {
     }
 
     /**
-     * Returns a list of hardcoded users with their tokens.
-     */
-    fun loadAvailableUserCredentials(): List<UserCredentials> {
-        return PredefinedUserCredentials.availableUsers
-    }
-
-    /**
      * Loads credentials for the logged-in user from persistent storage.
      */
     fun loadUserCredentials(): UserCredentials? {
