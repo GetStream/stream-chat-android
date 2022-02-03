@@ -6,7 +6,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.huawei.agconnect'
-apply plugin: 'shot'
+//apply plugin: 'shot'
 
 apply from: "${rootDir}/scripts/android.gradle"
 
@@ -118,9 +118,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-shot {
-    applicationId = "io.getstream.chat.ui.sample"
-}
+//shot {
+//    applicationId = "io.getstream.chat.ui.sample"
+//}
 
 repositories {
     // huawei maven

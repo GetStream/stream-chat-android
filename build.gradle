@@ -39,7 +39,7 @@ buildscript {
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
         classpath Dependencies.huaweiPlugin
-        classpath Dependencies.shot
+//        classpath Dependencies.shot
     }
 }
 
