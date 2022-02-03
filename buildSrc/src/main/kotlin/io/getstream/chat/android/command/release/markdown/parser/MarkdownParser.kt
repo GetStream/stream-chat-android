@@ -3,6 +3,8 @@ package io.getstream.chat.android.command.release.markdown.parser
 import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
 import io.getstream.chat.android.command.release.model.Section
+import io.getstream.chat.android.command.utils.UNRELEASED_END
+import io.getstream.chat.android.command.utils.UNRELEASED_START
 import java.io.File
 
 fun parseChangelogFile(file: File): Document {
@@ -49,8 +51,8 @@ fun isStartOfProject(line: String) = line.startsWith("##") && !line.startsWith("
 fun isStartOfSection(line: String) = line.startsWith("###")
 
 private fun List<String>.filterListSection(
-    start: String = "<!-- UNRELEASED START -->",
-    end: String = "<!-- UNRELEASED END -->"
+    start: String = UNRELEASED_START,
+    end: String = UNRELEASED_END
 ): List<String> {
     var shouldAdd = false
 
