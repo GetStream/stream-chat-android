@@ -6,6 +6,12 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 
+/**
+ * Generator responsible for providing information needed to register Xiaomi push notifications provider.
+ *
+ * @property appId The App ID for the app registered on Xiaomi Developer Console.
+ * @property appKey The App Key for the app registered on Xiaomi Developer Console.
+ */
 public class XiaomiPushDeviceGenerator(context: Context, private val appId: String, private val appKey: String) :
     PushDeviceGenerator {
     private val appContext = context.applicationContext
