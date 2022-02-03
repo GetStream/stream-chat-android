@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.experimental.plugin
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -119,7 +120,10 @@ public class OfflinePlugin(
             updateAndSaveMessages(deletedMessage.let(::listOf), channelLogicForMessage(deletedMessage))
         } else {
             requireRepos().selectMessage(originalMessageId)?.let { originalMessage ->
-                val failureMessage = originalMessage.updateFailedMessage(result.error())
+                val failureMessage = originalMessage.copy(
+                    syncStatus = SyncStatus.SYNC_NEEDED,
+                    updatedLocallyAt = Date(),
+                )
                 updateAndSaveMessages(failureMessage.let(::listOf), channelLogicForMessage(failureMessage))
             }
         }
