@@ -31,9 +31,7 @@ object AppConfig {
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ"
         ),
         SampleUser(
-
             apiKey = apiKey,
-
             id = "dmitrii",
             name = "Dmitrii Bychkov",
             image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128",
