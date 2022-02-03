@@ -29,6 +29,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import java.util.Date
 
 /**
@@ -56,6 +57,7 @@ public class OfflinePlugin(
         private set
     internal lateinit var logic: LogicRegistry
         private set
+    internal var repos: RepositoryFacade? = null
 
     // TODO: Move to StateRegistry when we remove ChatDomain.
     public val globalState: GlobalState = GlobalMutableState()
@@ -71,7 +73,10 @@ public class OfflinePlugin(
             retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
-        initState(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl, chatClient)
+        val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl
+        repos = chatDomainImpl.repos
+
+        initState(chatDomainImpl, chatClient)
     }
 
     @VisibleForTesting
@@ -86,16 +91,18 @@ public class OfflinePlugin(
      *
      * @param message [Message].
      */
-    override suspend fun onMessageDeleteRequest(message: Message) {
-        val isOnline = globalState.isOnline()
-        val channelLogic = channelLogicForMessage(message)
+    override suspend fun onMessageDeleteRequest(messageId: String) {
+        requireRepos().selectMessage(messageId)?.let { message ->
+            val isOnline = globalState.isOnline()
+            val channelLogic = channelLogicForMessage(message)
 
-        val messagesToBeDeleted = message.copy(
-            deletedAt = Date(),
-            syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
-        ).let(::listOf)
+            val messagesToBeDeleted = message.copy(
+                deletedAt = Date(),
+                syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+            ).let(::listOf)
 
-        updateAndSaveMessages(messagesToBeDeleted, channelLogic)
+            updateAndSaveMessages(messagesToBeDeleted, channelLogic)
+        }
     }
 
     /**
@@ -104,15 +111,17 @@ public class OfflinePlugin(
      *
      * @param result the result of the API call.
      */
-    override suspend fun onMessageDeleteResult(originalMessage: Message, result: Result<Message>) {
+    override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
         if (result.isSuccess) {
             val deletedMessage = result.data()
             deletedMessage.syncStatus = SyncStatus.COMPLETED
 
             updateAndSaveMessages(deletedMessage.let(::listOf), channelLogicForMessage(deletedMessage))
         } else {
-            val failureMessage = originalMessage.updateFailedMessage(result.error())
-            updateAndSaveMessages(failureMessage.let(::listOf), channelLogicForMessage(failureMessage))
+            requireRepos().selectMessage(originalMessageId)?.let { originalMessage ->
+                val failureMessage = originalMessage.updateFailedMessage(result.error())
+                updateAndSaveMessages(failureMessage.let(::listOf), channelLogicForMessage(failureMessage))
+            }
         }
     }
 
@@ -249,6 +258,10 @@ public class OfflinePlugin(
             },
             updatedLocallyAt = Date(),
         )
+    }
+
+    private fun requireRepos() : RepositoryFacade{
+        return repos ?: throw IllegalStateException("RepositoryFace was set too late in OfflinePlugin")
     }
 
     internal fun clear() {

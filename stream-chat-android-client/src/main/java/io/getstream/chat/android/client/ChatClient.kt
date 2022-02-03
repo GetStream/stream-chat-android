@@ -191,8 +191,6 @@ public class ChatClient internal constructor(
             }
         }
         logger.logI("Initialised: " + getVersion())
-
-        plugins.forEach { it.init(appContext, this) }
     }
 
     //region Set user
@@ -284,6 +282,7 @@ public class ChatClient internal constructor(
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
                 notifySetUser(user)
+                plugins.forEach { it.init(appContext, this) }
             }
             userState is UserState.NotSet -> {
                 initializeClientWithUser(user, cacheableTokenProvider)
@@ -311,6 +310,7 @@ public class ChatClient internal constructor(
         notifySetUser(user)
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
+        plugins.forEach { it.init(appContext, this) }
         warmUp()
     }
 
@@ -385,6 +385,7 @@ public class ChatClient internal constructor(
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
                     notifySetUser(data.user)
+                    plugins.forEach { it.init(appContext, this@ChatClient) }
                     listener?.onSuccess(data)
                 }
 
@@ -934,21 +935,17 @@ public class ChatClient internal constructor(
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
-        return api.deleteMessage(messageId, hard)
-    }
-
-    public fun deleteMessageAndUpdateLocalData(message: Message, hard: Boolean = false): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
 
-        return this.deleteMessage(message.id, hard)
+        return api.deleteMessage(messageId, hard)
             .doOnStart(scope) {
                 relevantPlugins.forEach { listener ->
-                    listener.onMessageDeleteRequest(message)
+                    listener.onMessageDeleteRequest(messageId)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
-                    listener.onMessageDeleteResult(message, result)
+                    listener.onMessageDeleteResult(messageId, result)
                 }
             }
     }

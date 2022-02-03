@@ -14,7 +14,7 @@ public interface DeleteMessageListener {
      *
      * @param message [Message].
      */
-    public suspend fun onMessageDeleteRequest(message: Message)
+    public suspend fun onMessageDeleteRequest(messageId: String)
 
     /**
      * Method called when a request for message edition return. Use it to update database, update messages or to present
@@ -22,5 +22,5 @@ public interface DeleteMessageListener {
      *
      * @param result the result of the API call.
      */
-    public suspend fun onMessageDeleteResult(originalMessage: Message, result: Result<Message>)
+    public suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>)
 }
