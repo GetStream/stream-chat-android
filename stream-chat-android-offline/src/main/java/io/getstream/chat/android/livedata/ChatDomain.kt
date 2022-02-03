@@ -400,6 +400,14 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun editMessage(message: Message): Call<Message>
 
     /**
@@ -561,6 +569,14 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] deleting a channel.
      */
     @CheckResult
+    @Deprecated(
+        message = "deleteChannel is deprecated. Use function ChannelClient::delete instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().channel(cid).delete().toUnitCall()",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun deleteChannel(cid: String): Call<Unit>
 
     /**

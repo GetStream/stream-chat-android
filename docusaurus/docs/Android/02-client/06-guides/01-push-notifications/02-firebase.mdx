@@ -12,23 +12,23 @@ Go to the [Firebase Console](https://console.firebase.google.com/), and select t
 If you don't have a Firebase project yet, you'll have to create a new one.
 :::
 
-Click on the gear icon next to _Project Overview_ and navigate to _Project settings_:
+Click on the gear icon next to **Project Overview** and navigate to **Project settings**:
 
 ![Opening Firebase's Project settings](../../../assets/notifications_firebase_setup_step_1.jpeg)
 
-Navigate to the _Cloud Messaging_ tab. Under _Project Credentials_, locate the _Server key_ and copy it:
+Navigate to the **Cloud Messaging** tab. Under **Project Credentials**, locate the **Server key** and copy it:
 
 ![Locating your Firebase Cloud Messaging server key](../../../assets/notifications_firebase_setup_step_2.png)
 
-Open the [Stream Dashboard](https://dashboard.getstream.io/). Navigate to the Chat _Overview_ page for your app.
+Open the [Stream Dashboard](https://dashboard.getstream.io/). Navigate to the Chat **Overview** page for your app.
 
 ![Navigating to the Chat Overview page on the Stream Dashboard](../../../assets/notifications_firebase_setup_step_3.png)
 
-Scroll down and enable the _Firebase_ switch. Paste your server key, and click _Save_ to confirm your changes.
+Scroll down and enable the **Firebase** switch. Paste your server key, and click **Save** to confirm your changes.
 
 ![Setting up your Firebase key on the Stream Dashboard](../../../assets/notifications_firebase_setup_step_4.png)
 
-That's the server-side setup done. You can now receive Stream's push notifications on the client side.
+That's the server-side setup done. You can now receive push notifications from Stream Chat on the client side. To register devices and process these notifications, follow the steps below.
 
 ## Receiving Notifications in the Client
 
@@ -59,7 +59,7 @@ ChatClient.Builder("apiKey", context)
 Make sure that _ChatClient_ is always initialized before handling push notifications. We highly recommend initializing it in the `Application` class.
 :::
 
-That's all you have to do to integrate our Firebase push provider artifact!
+That's it! You can now receive push notifications from Stream via Firebase!
 
 ### Using a Custom Firebase Messaging Service
 
