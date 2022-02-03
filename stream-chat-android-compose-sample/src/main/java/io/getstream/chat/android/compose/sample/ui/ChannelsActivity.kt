@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.sample
+package io.getstream.chat.android.compose.sample.ui
 
 import android.content.Context
 import android.content.Intent
@@ -34,6 +34,9 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
@@ -46,7 +49,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
-class ChannelActivity : AppCompatActivity() {
+class ChannelsActivity : AppCompatActivity() {
 
     private val factory by lazy {
         ChannelViewModelFactory(
@@ -77,10 +80,12 @@ class ChannelActivity : AppCompatActivity() {
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
                     isShowingSearch = true,
-                    onItemClick = {
-                        startActivity(MessagesActivity.getIntent(this, it.cid))
-                    },
-                    onBackPressed = { finish() }
+                    onItemClick = ::openMessages,
+                    onBackPressed = ::finish,
+                    onHeaderAvatarClick = {
+                        ChatApp.chatManager.disconnectUser()
+                        openUserLogin()
+                    }
                 )
 
 //                MyCustomUiSimplified()
@@ -210,12 +215,18 @@ class ChannelActivity : AppCompatActivity() {
     }
 
     private fun openMessages(channel: Channel) {
-        startActivity(MessagesActivity.getIntent(this, channel.cid))
+        startActivity(MessagesActivity.createIntent(this, channel.cid))
+    }
+
+    private fun openUserLogin() {
+        finish()
+        startActivity(UserLoginActivity.createIntent(this))
+        overridePendingTransition(0, 0)
     }
 
     companion object {
-        fun getIntent(context: Context): Intent {
-            return Intent(context, ChannelActivity::class.java)
+        fun createIntent(context: Context): Intent {
+            return Intent(context, ChannelsActivity::class.java)
         }
     }
 }
