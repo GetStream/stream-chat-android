@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -58,7 +59,7 @@ public fun MessageList(
     },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
             onImagePreviewResult = onImagePreviewResult,
@@ -95,7 +96,7 @@ public fun MessageList(
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  */
 @Composable
-internal fun DefaultMessageContainer(
+internal fun LazyItemScope.DefaultMessageContainer(
     messageListItem: MessageListItemState,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onThreadClick: (Message) -> Unit,
@@ -175,7 +176,7 @@ public fun MessageList(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = {
         DefaultMessageContainer(
             messageListItem = it,
             onLongItemClick = onLongItemClick,

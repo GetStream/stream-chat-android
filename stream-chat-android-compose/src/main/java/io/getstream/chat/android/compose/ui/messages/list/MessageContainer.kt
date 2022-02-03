@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -41,7 +42,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param messageItemContent Composable that represents regular messages.
  */
 @Composable
-public fun MessageContainer(
+public fun LazyItemScope.MessageContainer(
     messageListItem: MessageListItemState,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
@@ -57,7 +58,7 @@ public fun MessageContainer(
     systemMessageContent: @Composable (SystemMessageState) -> Unit = {
         DefaultSystemMessageContent(systemMessageState = it)
     },
-    messageItemContent: @Composable (MessageItemState) -> Unit = {
+    messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = {
         DefaultMessageItem(
             messageItem = it,
             onLongItemClick = onLongItemClick,
@@ -172,7 +173,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
  * @param onImagePreviewResult Handler when the user receives an image preview result.
  */
 @Composable
-internal fun DefaultMessageItem(
+internal fun LazyItemScope.DefaultMessageItem(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},

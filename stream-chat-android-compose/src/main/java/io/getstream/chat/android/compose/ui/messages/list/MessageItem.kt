@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -92,10 +93,11 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun MessageItem(
+public fun LazyItemScope.MessageItem(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
+        .animateItemPlacement(),
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
@@ -162,7 +164,8 @@ public fun MessageItem(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = color),
+            .background(color = color)
+            .animateItemPlacement(),
         contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(

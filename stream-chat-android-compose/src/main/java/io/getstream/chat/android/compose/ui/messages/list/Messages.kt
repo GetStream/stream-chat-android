@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -49,7 +50,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable (MessageListItemState) -> Unit,
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState, parentMessageId) = messagesState
     val state = rememberLazyListState()
