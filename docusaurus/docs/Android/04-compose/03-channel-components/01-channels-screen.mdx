@@ -46,7 +46,8 @@ When it comes to action handlers exposed in the `ChannelsScreen` signature you h
 ```kotlin
 fun ChannelsScreen(
     ..., // Filters and UI customization
-    onHeaderClickAction: () -> Unit = {},
+    onHeaderActionClick: () -> Unit = {},
+    onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
     onBackPressed: () -> Unit = {},
@@ -55,7 +56,8 @@ fun ChannelsScreen(
 
 There are four main action handlers you can use with the `ChannelsScreen`:
 
-* `onHeaderClickAction`: Handler for the default header trailing icon click action.
+* `onHeaderActionClick`: Handler for the default header trailing icon click action.
+* `onHeaderAvatarClick`: Handler for the clicks on the user avatar in the header.  
 * `onItemClick`: Handler for a `Channel` being clicked.
 * `onViewChannelInfoAction`: Handler for the **View info** action selected in `SelectedChannelMenu`. 
 * `onBackPressed`: Handler for the system back button being clicked.
@@ -72,8 +74,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 onItemClick = {
                     // Open messages screen          
                 },
-                onHeaderClickAction = {
+                onHeaderActionClick = {
                     // Handle the header click action
+                },
+                onHeaderAvatarClick = {
+                    // Handle the header avatar clicks
                 },
                 onViewChannelInfoAction = {
                     // Show UI to view more channel info
