@@ -8,7 +8,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.disposable.DisposableList
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
@@ -33,7 +32,6 @@ internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
         StreamUiMessageReplyViewBinding.inflate(streamThemeInflater, this, true)
     private var ellipsize = false
-    private val disposableList = DisposableList()
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -49,11 +47,6 @@ internal class MessageReplyView : FrameLayout {
         defStyleAttr
     ) {
         init(context, attrs)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        disposableList.clear()
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
@@ -228,7 +221,7 @@ internal class MessageReplyView : FrameLayout {
                 thumbImageView.load(
                     data = url,
                     transformation = RoundedCorners(REPLY_IMAGE_CORNER_RADIUS),
-                ).also(disposableList::add)
+                )
             } else {
                 logoContainer.isVisible = false
             }

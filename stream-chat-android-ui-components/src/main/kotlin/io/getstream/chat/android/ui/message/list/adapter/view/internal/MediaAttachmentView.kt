@@ -6,7 +6,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.disposable.DisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -27,7 +26,6 @@ internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
-    private val disposableList = DisposableList()
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
@@ -52,11 +50,6 @@ internal class MediaAttachmentView : ConstraintLayout {
         defStyleAttr
     ) {
         init(attrs)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        disposableList.clear()
     }
 
     private fun init(attrs: AttributeSet?) {
@@ -112,7 +105,7 @@ internal class MediaAttachmentView : ConstraintLayout {
                 showLoading(false)
                 onCompleteCallback()
             }
-        ).also(disposableList::add)
+        )
     }
 
     private fun showMoreCount(andMoreCount: Int) {

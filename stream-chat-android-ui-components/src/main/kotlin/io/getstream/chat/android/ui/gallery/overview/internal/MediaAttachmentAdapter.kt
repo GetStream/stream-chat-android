@@ -5,7 +5,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.disposable.DisposableList
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.R
@@ -36,8 +35,6 @@ internal class MediaAttachmentAdapter(
         private val mediaAttachmentClickListener: MediaAttachmentClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private val disposableList = DisposableList()
-
         init {
             binding.mediaContainer.setOnClickListener {
                 mediaAttachmentClickListener.onMediaAttachmentClick(bindingAdapterPosition)
@@ -48,7 +45,7 @@ internal class MediaAttachmentAdapter(
             binding.mediaImageView.load(
                 data = attachmentGalleryItem.attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_placeholder,
-            ).also(disposableList::add)
+            )
 
             val user = attachmentGalleryItem.user
             if (showUserAvatars) {
@@ -58,15 +55,6 @@ internal class MediaAttachmentAdapter(
                 binding.avatarView.isVisible = false
             }
         }
-
-        fun unbind() {
-            disposableList.clear()
-        }
-    }
-
-    override fun onViewRecycled(holder: MediaAttachmentViewHolder) {
-        super.onViewRecycled(holder)
-        holder.unbind()
     }
 
     internal fun interface MediaAttachmentClickListener {

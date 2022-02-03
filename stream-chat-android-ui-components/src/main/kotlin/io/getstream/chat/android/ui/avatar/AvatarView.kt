@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import com.getstream.sdk.chat.disposable.DisposableList
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
@@ -31,7 +30,6 @@ public class AvatarView : AppCompatImageView {
     private lateinit var avatarStyle: AvatarStyle
     private var isOnline: Boolean = false
     private var avatarViewSize: Int = 0
-    private val disposableList = DisposableList()
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -63,7 +61,7 @@ public class AvatarView : AppCompatImageView {
             load(
                 data = Avatar.ChannelAvatar(channel, avatarStyle),
                 transformation = avatarShape(avatarStyle),
-            ).also(disposableList::add)
+            )
 
             isOnline = false
         }
@@ -79,7 +77,7 @@ public class AvatarView : AppCompatImageView {
         load(
             data = Avatar.UserAvatar(user, avatarStyle),
             transformation = avatarShape(avatarStyle),
-        ).also(disposableList::add)
+        )
 
         isOnline = user.online
     }
@@ -203,12 +201,6 @@ public class AvatarView : AppCompatImageView {
      */
     public enum class AvatarShape(public val value: Int) {
         CIRCLE(0), SQUARE(1)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-
-        disposableList.clear()
     }
 
     internal companion object {

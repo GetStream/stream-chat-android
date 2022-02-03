@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.disposable.DisposableList
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.google.android.material.shape.CornerFamily
@@ -146,7 +145,6 @@ private class FileAttachmentViewHolder(
     private var attachment: Attachment? = null
 
     private var scope: CoroutineScope? = null
-    private val disposableList = DisposableList()
 
     fun clearScope() {
         scope?.cancel()
@@ -222,7 +220,7 @@ private class FileAttachmentViewHolder(
             fileTitle.setTextStyle(style.titleTextStyle)
             fileSize.setTextStyle(style.fileSizeTextStyle)
 
-            fileTypeIcon.loadAttachmentThumb(item).also(disposableList::add)
+            fileTypeIcon.loadAttachmentThumb(item)
             fileTitle.text = item.getDisplayableName()
 
             if (item.uploadState is Attachment.UploadState.Idle
@@ -260,7 +258,6 @@ private class FileAttachmentViewHolder(
 
     override fun unbind() {
         clearScope()
-        disposableList.clear()
         super.unbind()
     }
 

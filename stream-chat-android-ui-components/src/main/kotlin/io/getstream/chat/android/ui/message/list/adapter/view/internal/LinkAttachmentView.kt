@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.disposable.DisposableList
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -22,7 +21,6 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 internal class LinkAttachmentView : FrameLayout {
     private val binding = StreamUiLinkAttachmentsViewBinding.inflate(streamThemeInflater, this, true)
     private var previewUrl: String? = null
-    private val disposableList = DisposableList()
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
@@ -31,11 +29,6 @@ internal class LinkAttachmentView : FrameLayout {
         attrs,
         defStyleAttr
     )
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        disposableList.clear()
-    }
 
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
         previewUrl = attachment.titleLink ?: attachment.ogUrl
@@ -73,7 +66,7 @@ internal class LinkAttachmentView : FrameLayout {
                 onStart = { binding.progressBar.isVisible = true },
                 onComplete = { binding.progressBar.isVisible = false },
                 transformation = RoundedCorners(LINK_PREVIEW_CORNER_RADIUS),
-            ).also(disposableList::add)
+            )
         } else {
             binding.linkPreviewImageView.isVisible = false
             binding.progressBar.isVisible = false
