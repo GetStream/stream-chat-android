@@ -264,7 +264,7 @@ public class OfflinePlugin(
     }
 
     private fun requireRepos(): RepositoryFacade {
-        return repos ?: throw IllegalStateException("RepositoryFace was set too late in OfflinePlugin")
+        return repos ?: throw IllegalStateException("RepositoryFacade was set too late in OfflinePlugin")
     }
 
     internal fun clear() {
