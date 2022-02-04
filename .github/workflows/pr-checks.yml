@@ -105,5 +105,5 @@ jobs:
         with:
           api-level: 28
           # emulator-options: -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          # disable-animations: true
+          disable-animations: true
           script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest
