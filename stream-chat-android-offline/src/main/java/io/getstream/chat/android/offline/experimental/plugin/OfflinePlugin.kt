@@ -225,6 +225,13 @@ public class OfflinePlugin(
         )
     }
 
+    override suspend fun onHideChannelPrecondition(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean
+    ): Result<Unit> =
+        logic.channel(channelType, channelId).onHideChannelPrecondition(channelType, channelId, clearHistory)
+
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean): Unit =
         logic.channel(channelType, channelId).onHideChannelRequest(channelType, channelId, clearHistory)
 

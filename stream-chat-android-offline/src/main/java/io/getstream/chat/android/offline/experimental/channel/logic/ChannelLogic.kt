@@ -80,6 +80,7 @@ import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.utils.toCid
+import java.lang.IllegalStateException
 import java.util.Date
 import kotlin.math.max
 
@@ -150,7 +151,24 @@ internal class ChannelLogic(
             }
     }
 
-    override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) = setHidden(true)
+    override suspend fun onHideChannelPrecondition(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ): Result<Unit> {
+        return try {
+            Pair(channelType, channelId).toCid()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            when (e) {
+                is IllegalArgumentException, is IllegalStateException -> Result.error(ChatError("CID is not valid"))
+                else -> throw e
+            }
+        }
+    }
+
+    override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) =
+        setHidden(true)
 
     override suspend fun onHideChannelResult(
         result: Result<Unit>,
@@ -169,6 +187,9 @@ internal class ChannelLogic(
             } else {
                 chatDomainImpl.repos.setHiddenForChannel(cid, true)
             }
+        } else {
+            // Hides the channel if request fails.
+            setHidden(false)
         }
     }
 

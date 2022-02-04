@@ -1172,6 +1172,7 @@ public class ChatClient internal constructor(
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { it.onHideChannelResult(result, channelType, channelId, clearHistory) }
             }
+            .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
     }
 
     /**
