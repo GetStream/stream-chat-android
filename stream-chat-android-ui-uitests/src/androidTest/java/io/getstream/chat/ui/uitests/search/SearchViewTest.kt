@@ -20,7 +20,7 @@ import org.junit.Test
 @InternalStreamChatApi
 class SearchViewTest : ScreenshotTest {
 
-    @Test
+    // @Test
     fun testWithNoCustomizations() {
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
         compareScreenshot(fragmentScenario.waitForFragment())
@@ -40,13 +40,13 @@ class SearchViewTest : ScreenshotTest {
         onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).check(matches(withText("")))
     }
 
-    @Test
+    // @Test
     fun testVeryLongSearch() {
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
 
         val text = "lalalala"
 
-        repeat(30) {
+        repeat(10) {
             onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).perform(typeText(text))
         }
 
