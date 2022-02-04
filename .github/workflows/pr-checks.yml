@@ -100,8 +100,8 @@ jobs:
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-test
-      - name: List available devices
-        run: avdmanager list device
+      # - name: List available devices
+      #   run: avdmanager list device
       - name: Snapshot tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
