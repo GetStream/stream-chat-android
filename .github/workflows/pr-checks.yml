@@ -105,4 +105,5 @@ jobs:
         with:
           api-level: 28
           disable-animations: true
+          profile: Nexus 4
           script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest && ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests
