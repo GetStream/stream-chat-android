@@ -106,18 +106,14 @@ public fun Messages(
 
         LaunchedEffect(key1 = messagesState) {
             if (focusedItemIndex != -1) {
-                coroutineScope.launch {
-                    currentListState.scrollToItem(focusedItemIndex)
-                }
+                currentListState.scrollToItem(focusedItemIndex)
             }
 
             when {
                 !currentListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
-                    coroutineScope.launch {
-                        currentListState.animateScrollToItem(0)
-                    }
+                    currentListState.animateScrollToItem(0)
                 }
-                !currentListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
+                !currentListState.isScrollInProgress && newMessageState == MyOwn -> {
                     if (firstVisibleItemIndex > 5) {
                         currentListState.scrollToItem(5)
                     }
