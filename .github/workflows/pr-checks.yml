@@ -88,7 +88,7 @@ jobs:
           path: ./**/build/reports/tests/testDebugUnitTest
   ui_test:
     name: UI tests
-    runs-on: ubuntu-18.04
+    runs-on: macos-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -104,6 +104,6 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 28
-          # emulator-options: -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-boot-anim
           disable-animations: true
           script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest
