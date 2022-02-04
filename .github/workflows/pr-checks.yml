@@ -106,5 +106,5 @@ jobs:
           api-level: 28
           emulator-options: -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          profile: Nexus 4
+          profile: Nexus 6
           script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest
