@@ -2840,6 +2840,7 @@ public final class io/getstream/chat/android/client/models/PushProvider : java/l
 	public static final field FIREBASE Lio/getstream/chat/android/client/models/PushProvider;
 	public static final field HUAWEI Lio/getstream/chat/android/client/models/PushProvider;
 	public static final field UNKNOWN Lio/getstream/chat/android/client/models/PushProvider;
+	public static final field XIAOMI Lio/getstream/chat/android/client/models/PushProvider;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/PushProvider;
 	public static fun values ()[Lio/getstream/chat/android/client/models/PushProvider;
 }

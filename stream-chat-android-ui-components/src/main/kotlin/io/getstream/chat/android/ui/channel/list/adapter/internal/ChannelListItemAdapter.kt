@@ -7,7 +7,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import okhttp3.internal.userAgent
 
 internal class ChannelListItemAdapter(
     private val viewHolderFactory: ChannelListItemViewHolderFactory,

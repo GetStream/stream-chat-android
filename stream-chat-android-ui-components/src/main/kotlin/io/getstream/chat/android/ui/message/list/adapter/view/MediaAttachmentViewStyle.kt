@@ -84,8 +84,10 @@ public data class MediaAttachmentViewStyle(
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
                 val giphyHeight =
-                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
-                        DEFAULT_GIPHY_HEIGHT.dpToPx())
+                    a.getDimensionPixelSize(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
+                        DEFAULT_GIPHY_HEIGHT.dpToPx()
+                    )
 
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,

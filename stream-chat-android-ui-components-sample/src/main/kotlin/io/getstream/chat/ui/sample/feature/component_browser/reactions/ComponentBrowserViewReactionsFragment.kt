@@ -28,7 +28,6 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
     ): View {
         _binding = FragmentComponentBrowserViewReactionsViewBinding.inflate(inflater, container, false)
 
-
         return binding.root
     }
 

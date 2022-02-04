@@ -16,6 +16,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Create new artifact to integrate Xiaomi Mi Push with Stream. You will need to add  `stream-chat-android-pushprovider-xiaomi` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi) for further details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
 
 ### ⚠️ Changed
 - Update Android Gradle Plugin version to 7.1.0 and Gradle version to 7.3.3. [#2989](https://github.com/GetStream/stream-chat-android/pull/2989)
@@ -84,6 +85,19 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ✅ Added
 - Added [`Custom Attachments guide`](https://getstream.io/chat/docs/sdk/android/composee/guides/adding-custom-attachments/). [#2967](https://github.com/GetStream/stream-chat-android/pull/2967)
+- Added `onHeaderAvatarClick` parameter to the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+
+### ⚠️ Changed
+- Renamed `onHeaderClickAction` parameter to `onHeaderActionClick` for the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
 
 ### ⚠️ Changed
 
@@ -111,18 +125,18 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 
-## stream-chat-android-markdown-transformer
+## stream-chat-android-pushprovider-xiaomi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a `XiaomiMessagingDelegate` class to simplify custom implementations of `PushMessageReceiver` that forward messages to the SDK. See [Using a Custom PushMessageReceiver](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi#using-a-custom-pushmessagereceiver) for more details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
 <!-- UNRELEASED END -->
-
 
 # February 2nd, 2022 - 4.27.2
 ## stream-chat-android-offline
@@ -133,7 +147,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed clearing cache after receiving channel truncated event. [#3001](https://github.com/GetStream/stream-chat-android/pull/3001)
-
 
 # January 25th, 2022 - 4.27.0
 ## stream-chat-android-client
@@ -187,7 +200,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `ExtendedReactionsOptions` and `ReactionsPicker` in order to improve reaction picking UX [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added documentation for [`ReactionsPicker`](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/) [#2918](https://github.com/GetStream/stream-chat-android/pull/2918)
 - Added ways to customize the channel, message and member query limit when building a ChannelListViewModel [#2948](https://github.com/GetStream/stream-chat-android/pull/2948)
-
 
 # January 12th, 2022 - 4.26.0
 ## Common changes for all artifacts
@@ -268,7 +280,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Updated [Custom Attachments documentation](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/) with minor sentence formatting changes [#2878](https://github.com/GetStream/stream-chat-android/pull/2878)
 - Updated [MessagesScreen documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) [#2866](https://github.com/GetStream/stream-chat-android/pull/2866)
 - Updated [MessageList documentation](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list/). [#2869](https://github.com/GetStream/stream-chat-android/pull/2869)
-
 
 # December 30th, 2021 - 4.25.1
 ## stream-chat-android-client
@@ -567,7 +578,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Renamed `ChannelOption.icon` property to `ChannelOption.iconPainter` and changed the property type from `ImageVector` to `Painter`.
 - Changed the type of the `ChannelListViewModel.selectedChannel` field to `MutableState<Channel?>`.
 
-
 # October 27th, 2021 - 4.21.0
 ## Common changes for all artifacts
 ### ⬆️ Improved
@@ -742,7 +752,6 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 - Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
 - Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
-
 
 # September 15th, 2021 - 4.19.0
 ## Common changes for all artifacts
