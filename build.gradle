@@ -38,11 +38,13 @@ buildscript {
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
         classpath Dependencies.spotlessGradlePlugin
+        classpath Dependencies.detektPlugin
     }
 }
 
 subprojects {
     apply from: "${rootDir}/scripts/spotless.gradle"
+    apply plugin: "io.gitlab.arturbosch.detekt"
 }
 
 allprojects {
