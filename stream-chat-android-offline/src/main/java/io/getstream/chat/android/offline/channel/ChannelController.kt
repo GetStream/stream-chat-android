@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -232,9 +231,6 @@ public class ChannelController internal constructor(
             Result(result?.error() ?: ChatError("Current user null"))
         }
     }
-
-    /** Delete the channel action. Fires an API request. */
-    internal suspend fun delete(): Result<Unit> = channelClient.delete().await().toUnitResult()
 
     internal suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
@@ -556,14 +552,31 @@ public class ChannelController internal constructor(
 
     internal fun updateDataFromChannel(c: Channel) = channelLogic.updateDataFromChannel(c)
 
+    /**
+     * Edits the specified message. Local storage is updated immediately.
+     * The API request is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param message The message to edit.
+     *
+     * @return Executable async [Call] responsible for editing a message.
+     *
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     */
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
-        val messageToBeEdited = message.copy()
-
-        messageToBeEdited.updatedLocallyAt = Date()
-
-        messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        val messageToBeEdited = message.copy(
+            updatedLocallyAt = Date(),
+            syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        )
 
         // Update flow
         upsertMessage(messageToBeEdited)

@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
@@ -967,11 +968,24 @@ public class ChatClient internal constructor(
             }
     }
 
+    /**
+     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here to
+     * store the updated message locally.
+     *
+     * @param message [Message] The message to be updated.
+     */
     @CheckResult
-    public fun updateMessage(
-        message: Message,
-    ): Call<Message> {
+    public fun updateMessage(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>()
+
         return api.updateMessage(message)
+            .doOnStart(scope) {
+                relevantPlugins
+                    .forEach { plugin -> plugin.onMessageEditRequest(message) }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin -> plugin.onMessageEditResult(message, result) }
+            }
     }
 
     /**

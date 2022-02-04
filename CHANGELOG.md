@@ -41,8 +41,10 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
 
 ### ⚠️ Changed
+- Deprecated `ChatDomain::deleteChannel` in favour of `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
 
 ### ❌ Removed
 
@@ -59,6 +61,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
 
 ### ⬆️ Improved
 - Replaced Lottie typing indicator with a custom view. [#3004](https://github.com/GetStream/stream-chat-android/pull/3004)
@@ -72,6 +75,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the way our attachments work and are represented in Compose to support more attachment types. [#2955](https://github.com/GetStream/stream-chat-android/pull/2955)
+- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
 
 ### ⬆️ Improved
 - Improved RTL support in Compose [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
@@ -119,6 +123,11 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ❌ Removed
 <!-- UNRELEASED END -->
 
+
+# February 2nd, 2022 - 4.27.2
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed refreshing cached channels after setting the user. [#3010](https://github.com/GetStream/stream-chat-android/pull/3010)
 
 # January 31th, 2022 - 4.27.1
 ## stream-chat-android-offline

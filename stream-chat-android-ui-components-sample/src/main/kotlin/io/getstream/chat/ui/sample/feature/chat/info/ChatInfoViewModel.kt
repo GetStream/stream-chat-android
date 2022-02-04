@@ -21,7 +21,7 @@ class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    chatClient: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     private lateinit var channelClient: ChannelClient
@@ -131,10 +131,13 @@ class ChatInfoViewModel(
         }
     }
 
+    /**
+     * Deletes the current channel.
+     */
     private fun deleteChannel() {
         val cid = requireNotNull(cid)
         viewModelScope.launch {
-            val result = chatDomain.deleteChannel(cid).await()
+            val result = chatClient.channel(cid).delete().await()
             if (result.isSuccess) {
                 _channelDeletedState.value = true
             } else {
