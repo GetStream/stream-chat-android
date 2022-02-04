@@ -32,15 +32,6 @@ The SDK supports both Kotlin and Java, but *we strongly recommend using Kotlin*.
 Stream is free for most side and hobby projects. To qualify, your project/company needs to have < 5 team members and < $10k in monthly revenue.
 For complete pricing details, visit our [Chat Pricing Page](https://getstream.io/chat/pricing/).
 
-## 🚨 Old UI Module Deprecation 🚨
-`stream-chat-android` module will be deprecated by the end of December 2021. The module will continue working, but we won't be releasing new versions.
-Consider migrating to `stream-chat-android-ui-components` or `stream-chat-android-compose`. Here you can find a set of useful resources for migration:
-- [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
-- [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/)
-- [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
-- [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
-- [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
-
 ## 🗺️ Overview and Documentation 📚
 
 This SDK consists of three main artifacts you can build on:

@@ -370,7 +370,7 @@ public class MessageComposerController(
      */
     public fun sendMessage(message: Message) {
         val sendMessageCall = if (isInEditMode) {
-            chatDomain.editMessage(message)
+            chatClient.updateMessage(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             chatDomain.sendMessage(message)

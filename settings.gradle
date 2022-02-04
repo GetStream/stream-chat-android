@@ -3,8 +3,6 @@ plugins {
 	id("com.gradle.enterprise") version "3.7"
 }
 include (
-		':stream-chat-android',
-		':stream-chat-android-sample',
 		':stream-chat-android-ui-common',
 		':stream-chat-android-ui-components',
 		':stream-chat-android-ui-components-sample',
@@ -15,9 +13,10 @@ include (
 		':stream-chat-android-docs',
 		':stream-chat-android-compose',
 		':stream-chat-android-compose-sample',
+		':stream-chat-android-markdown-transformer',
 		':stream-chat-android-pushprovider-firebase',
 		':stream-chat-android-pushprovider-huawei',
-		':stream-chat-android-markdown-transformer'
+		':stream-chat-android-pushprovider-xiaomi',
 )
 
 buildCache {

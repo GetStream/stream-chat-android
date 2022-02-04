@@ -61,7 +61,8 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param channelLimit The limit of channels queried per page.
  * @param memberLimit The limit of members requested per channel.
  * @param messageLimit The limit of messages requested per channel item.
- * @param onHeaderClickAction Handler for the default header action.
+ * @param onHeaderActionClick Handler for the default header action.
+ * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
  * @param onItemClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
@@ -80,7 +81,8 @@ public fun ChannelsScreen(
     channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
-    onHeaderClickAction: () -> Unit = {},
+    onHeaderActionClick: () -> Unit = {},
+    onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
     onBackPressed: () -> Unit = {},
@@ -118,7 +120,8 @@ public fun ChannelsScreen(
             topBar = {
                 if (isShowingHeader) {
                     ChannelListHeader(
-                        onHeaderActionClick = onHeaderClickAction,
+                        onHeaderActionClick = onHeaderActionClick,
+                        onAvatarClick = { onHeaderAvatarClick() },
                         currentUser = user,
                         title = title,
                         connectionState = connectionState

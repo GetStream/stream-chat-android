@@ -12,19 +12,19 @@ Go to the [Huawei Console](https://developer.huawei.com/consumer/cn/service/josp
 If you don't have a Huawei project yet, you'll have to create a new one.
 :::
 
-Click on _Project settings_ and navigate to the _General information_ tab. Under _App Information_, locate the _App ID_ and _App secret_, and copy them:
+Click on **Project settings** and navigate to the **General information** tab. Under **App Information**, locate the **App ID** and **App secret**, and copy them:
 
 ![Locating your Huawei credentials](../../../assets/notifications_huawei_setup_step_1.png)
 
-Open the [Stream Dashboard](https://dashboard.getstream.io/). Navigate to the Chat _Overview_ page for your app.
+Open the [Stream Dashboard](https://dashboard.getstream.io/). Navigate to the Chat **Overview** page for your app.
 
 ![Navigating to the Chat Overview page on the Stream Dashboard](../../../assets/notifications_huawei_setup_step_2.png)
 
-Scroll down and enable the _Huawei_ switch. Paste your _App ID_ and _App secret_, and click _Save_ to confirm your changes.
+Scroll down and enable the **Huawei** switch. Paste your **App ID** and **App secret**, and click **Save** to confirm your changes.
 
 ![Setting up your Huawei App ID and App Secret on the Stream Dashboard](../../../assets/notifications_huawei_setup_step_3.png)
 
-That's the server-side setup done. You can now receive Stream's push notifications on the client side.
+With that, you're done setting up on the dashboard. Next, you need to add the client-side integration.
 
 ## Receiving Notifications in the Client
 
@@ -44,7 +44,7 @@ dependencies {
 
 Then, add a `HuaweiPushDeviceGenerator` to your `NotificationConfig`, and pass that into `ChatClient.Builder` when initializing the SDK:
 
-```kotlin {2-7,10}
+```kotlin {3-6,10}
 val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(
         HuaweiPushDeviceGenerator(
@@ -59,10 +59,10 @@ ChatClient.Builder("apiKey", context)
 ```
 
 :::caution
-Make sure that _ChatClient_ is initialized before handling push notifications. We strongly recommend initializing it in the `Application` class.
+_ChatClient_ must be initialized before handling push notifications. We recommend setting it up in your `Application` class.
 :::
 
-That's it! You can now receive push notifications from Huawei Push Kit!
+That's all you have to do to integrate the Huawei push provider artifact!
 
 ### Using a Custom Huawei Messaging Service
 

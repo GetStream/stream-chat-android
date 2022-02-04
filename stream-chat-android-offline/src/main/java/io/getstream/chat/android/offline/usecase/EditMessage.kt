@@ -8,6 +8,14 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.populateMentions
 import io.getstream.chat.android.offline.utils.validateCid
 
+@Deprecated(
+    message = "EditMessage is deprecated. Use function ChatClient::updateMessage instead",
+    replaceWith = ReplaceWith(
+        expression = "ChatClient.instance().updateMessage(message)",
+        imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+    ),
+    level = DeprecationLevel.WARNING
+)
 internal class EditMessage(private val domainImpl: ChatDomainImpl) {
     /**
      * Edits the specified message. Local storage is updated immediately

@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.0.4"
+    internal const val ANDROID_GRADLE_PLUGIN = "7.1.0"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.7.1.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.4.0"
@@ -55,11 +55,9 @@ object Versions {
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
     internal const val KFIXTURE = "0.2.0"
     internal const val KLUENT = "1.68"
-    public const val KOTLIN = "1.5.31"
+    internal const val KOTLIN = "1.5.31"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.8.0"
-    internal const val KTLINT_PLUGIN = "10.2.0"
     internal const val LEAK_CANARY = "2.4"
-    internal const val LOTTIE = "4.2.2"
     internal const val MATERIAL_COMPONENTS = "1.4.0"
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "2.2.0"
@@ -75,6 +73,7 @@ object Versions {
     internal const val ROOM = "2.4.0"
     internal const val SHIMMER = "0.5.0"
     internal const val SHOT = "5.12.1"
+    internal const val SPOTLESS = "6.2.0"
     internal const val STFALCON_IMAGE_VIEWER = "d11578fe3f"
     internal const val TEST_PARAMETER_INJECTOR = "1.4"
     internal const val THREETENBP = "1.5.2"
@@ -118,8 +117,6 @@ object Dependencies {
     const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.COMPOSE}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.COMPOSE}"
-    const val composeMaterialIconsCore = "androidx.compose.material:material-icons-core:${Versions.COMPOSE}"
-    const val composeMaterialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.COMPOSE}"
     const val composeAccompanistPermissions =
         "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeAccompanistPager = "com.google.accompanist:accompanist-pager:${Versions.COMPOSE_ACCOMPANIST}"
@@ -168,9 +165,7 @@ object Dependencies {
         "org.jetbrains.kotlinx:binary-compatibility-validator:${Versions.KOTLIN_BINARY_VALIDATOR}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN}"
-    const val ktlintPlugin = "org.jlleitschuh.gradle:ktlint-gradle:${Versions.KTLINT_PLUGIN}"
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.LEAK_CANARY}"
-    const val lottie = "com.airbnb.android:lottie:${Versions.LOTTIE}"
     const val materialComponents = "com.google.android.material:material:${Versions.MATERIAL_COMPONENTS}"
     const val markwonCore = "io.noties.markwon:core:${Versions.MARKWON}"
     const val markwonLinkify = "io.noties.markwon:linkify:${Versions.MARKWON}"
@@ -201,6 +196,7 @@ object Dependencies {
     const val roomTesting = "androidx.room:room-testing:${Versions.ROOM}"
     const val shimmer = "com.facebook.shimmer:shimmer:${Versions.SHIMMER}"
     const val shot = "com.karumi:shot:${Versions.SHOT}"
+    const val spotlessGradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:${Versions.SPOTLESS}"
     const val stfalconImageViewer = "com.github.stfalcon-studio:StfalconImageViewer:${Versions.STFALCON_IMAGE_VIEWER}"
     const val testParameterInjector =
         "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"

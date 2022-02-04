@@ -44,5 +44,4 @@ internal object ShapeAppearanceModelFactory {
             }
             .build()
     }
-
 }
