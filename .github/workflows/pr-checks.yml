@@ -104,6 +104,5 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 28
-          emulator-options: -no-boot-anim
           disable-animations: true
-          script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest
+          script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest && ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests
