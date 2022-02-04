@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +59,7 @@ public fun Messages(
 
     val currentListState = if (parentMessageId != null) rememberLazyListState() else state
     val firstVisibleItemIndex = currentListState.firstVisibleItemIndex
+    val shouldShowScrollingOption = abs(firstVisibleItemIndex) >= 3
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -102,39 +104,40 @@ public fun Messages(
         }
         val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
-        if (focusedItemIndex != -1) {
-            coroutineScope.launch {
-                currentListState.scrollToItem(focusedItemIndex)
-            }
-        }
-
-        when {
-            !currentListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
+        LaunchedEffect(key1 = messagesState) {
+            if (focusedItemIndex != -1) {
                 coroutineScope.launch {
+                    currentListState.scrollToItem(focusedItemIndex)
+                }
+            }
+
+            when {
+                !currentListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
+                    coroutineScope.launch {
+                        currentListState.animateScrollToItem(0)
+                    }
+                }
+                !currentListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
+                    if (firstVisibleItemIndex > 5) {
+                        currentListState.scrollToItem(5)
+                    }
                     currentListState.animateScrollToItem(0)
                 }
             }
-            !currentListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
-                if (firstVisibleItemIndex > 5) {
-                    currentListState.scrollToItem(5)
-                }
-                currentListState.animateScrollToItem(0)
-            }
-
-            abs(firstVisibleItemIndex) >= 3 -> {
-                MessagesScrollingOption(
-                    unreadCount = messagesState.unreadCount,
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    onClick = {
-                        coroutineScope.launch {
-                            if (firstVisibleItemIndex > 5) {
-                                currentListState.scrollToItem(5)
-                            }
-                            currentListState.animateScrollToItem(0)
-                        }
-                    }
-                )
-            }
         }
+
+        if (shouldShowScrollingOption)
+            MessagesScrollingOption(
+                unreadCount = messagesState.unreadCount,
+                modifier = Modifier.align(Alignment.BottomEnd),
+                onClick = {
+                    coroutineScope.launch {
+                        if (firstVisibleItemIndex > 5) {
+                            currentListState.scrollToItem(5)
+                        }
+                        currentListState.animateScrollToItem(0)
+                    }
+                }
+            )
     }
 }
