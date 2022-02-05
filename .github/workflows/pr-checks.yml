@@ -111,4 +111,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: screenshots
-          path: ${{ github.workspace }}/build/reports/shot/debug/verification/index.html
+          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/build/reports/shot/debug/verification/index.html
