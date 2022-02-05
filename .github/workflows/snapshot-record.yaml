@@ -27,12 +27,9 @@ jobs:
           disable-animations: true
           profile: Nexus 4
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Precord
-      - name: Open PR
-        uses: peter-evans/create-pull-request@v3
-        with: 
-          commit-message: Snapshot record
-          title: Snapshot record
-          branch: develop
-          base: ${{ github.head_ref }}
-          body: auto generated snapshots
+      - name: Upload screnshots
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshots
+          path: ./stream-chat-android-ui-uitests/screenshots/
             
