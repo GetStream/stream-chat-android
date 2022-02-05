@@ -28,8 +28,9 @@ jobs:
           profile: Nexus 4
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Precord
       - name: Open PR
-        uses: peter-evans/create-pull-request@v3.10.0
-          commit-message: Snapshot record
-          branch: develop
-          body: |
-            auto generated snapshots
+        uses: peter-evans/create-pull-request@v3
+          with: 
+            commit-message: Snapshot record
+            branch: develop
+            body: |
+              auto generated snapshots
