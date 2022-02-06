@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /**
- * A wrapper around [Call] that allows to swallow the error and emit another data from a function.
+ * A wrapper around [Call] that swallows the error and emits new data from [onErrorReturn].
  */
 internal class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
@@ -25,8 +25,8 @@ internal class ReturnOnErrorCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        originalCall.enqueue { result ->
-            if (result.isSuccess) callback.onResult(result)
+        originalCall.enqueue { originalResult ->
+            if (originalResult.isSuccess) callback.onResult(originalResult)
             else job = scope.launch {
                 val result = onErrorReturn()
                 callback.onResult(result)

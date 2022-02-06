@@ -177,12 +177,26 @@ internal class ChannelLogic(
         } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
     }
 
-    /** Loads a list of messages after the newest message in the current list. */
+    /**
+     * Loads a list of messages after the newest message in the current list.
+     *
+     * @param messageId Id of message after which to fetch messages.
+     * @param limit Number of messages to fetch after this message.
+     *
+     * @return [Result] of [Channel] with fetched messages.
+     */
     private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
-    /** Loads a list of messages before the message with particular message id. */
+    /**
+     * Loads a list of messages before the message with particular message id.
+     *
+     * @param messageId Id of message before which to fetch messages.
+     * @param limit Number of messages to fetch before this message.
+     *
+     * @return [Result] of [Channel] with fetched messages.
+     */
     private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(olderWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
@@ -541,8 +555,7 @@ internal class ChannelLogic(
         mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
     }
 
-    // TODO: Make private after removing ChannelController
-    internal fun upsertMember(member: Member) {
+    private fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 

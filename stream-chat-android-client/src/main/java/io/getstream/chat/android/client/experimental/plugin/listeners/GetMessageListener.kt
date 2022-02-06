@@ -29,7 +29,7 @@ public interface GetMessageListener {
     )
 
     /**
-     * Register this side effect to return a result when original request is failed.
+     * Returns a [Result] from this side effect when original request is failed.
      *
      * @param cid CID of the channel.
      * @param messageId ID of the message which is fetched.
