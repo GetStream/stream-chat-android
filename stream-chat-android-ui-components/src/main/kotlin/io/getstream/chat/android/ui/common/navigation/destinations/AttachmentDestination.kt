@@ -115,7 +115,8 @@ public open class AttachmentDestination(
 
             else -> {
                 ChatLogger.instance.logE(
-                    "AttachmentDestination", "Could not load attachment. Mimetype: $mimeType. Type: $type")
+                    "AttachmentDestination", "Could not load attachment. Mimetype: $mimeType. Type: $type"
+                )
                 Toast.makeText(
                     context,
                     context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),

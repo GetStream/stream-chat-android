@@ -1,0 +1,24 @@
+apply plugin: "com.diffplug.spotless"
+
+spotless {
+    encoding 'UTF-8'
+    kotlin {
+        target "**/*.kt"
+        ktlint()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlinGradle {
+        target '*.gradle.kts'
+        ktlint()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}

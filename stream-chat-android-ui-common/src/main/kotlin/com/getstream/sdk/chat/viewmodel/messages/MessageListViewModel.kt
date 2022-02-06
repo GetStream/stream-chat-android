@@ -438,7 +438,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                                 attachment.imageUrl == attachmentToBeDeleted.imageUrl
                             }
                         }
-                        domain.editMessage(message).enqueue(
+
+                        client.updateMessage(message).enqueue(
                             onError = { chatError ->
                                 logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")
                             }

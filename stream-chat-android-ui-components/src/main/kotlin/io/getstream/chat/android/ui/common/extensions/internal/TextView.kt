@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.common.extensions.internal
 
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
-import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes

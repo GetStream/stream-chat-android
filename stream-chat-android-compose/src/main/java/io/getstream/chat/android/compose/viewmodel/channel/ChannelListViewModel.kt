@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
@@ -412,7 +413,7 @@ public class ChannelListViewModel(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.deleteChannel(channel.cid).enqueue()
+        chatClient.channel(channel.cid).delete().toUnitCall().enqueue()
     }
 
     /**
