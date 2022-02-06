@@ -89,6 +89,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - Renamed `onHeaderClickAction` parameter to `onHeaderActionClick` for the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+- Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 
 ### ❌ Removed
 
