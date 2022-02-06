@@ -18,6 +18,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 /**
  * Displays all of the available reactions the user can set on a message.
@@ -44,7 +45,7 @@ public fun ReactionsPicker(
     overlayColor: Color = ChatTheme.colors.overlay,
     cells: GridCells = GridCells.Fixed(5),
     onDismiss: () -> Unit = {},
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultReactionsPickerCenterContent(
@@ -79,7 +80,7 @@ internal fun DefaultReactionsPickerCenterContent(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
     cells: GridCells = GridCells.Fixed(5),
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
 ) {
     ExtendedReactionsOptions(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
