@@ -12,32 +12,83 @@ import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
 
+/**
+ * Feeds data to and controls the visibility of [SuggestionListUi].
+ *
+ * @param suggestionListUi Used for communication with the View.
+ * @param suggestionListControllerListener Listener used for event handling.
+ */
 @ExperimentalStreamChatApi
 public class SuggestionListController(
     private val suggestionListUi: SuggestionListUi,
+    private val suggestionListControllerListener: SuggestionListControllerListener? = null,
 ) {
     private val scope = CoroutineScope(DispatcherProvider.Main)
     private var currentSuggestions: Suggestions by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
         scope.launch { renderSuggestions(newSuggestions) }
     }
+
+    /**
+     * Lookup Handler used for searching for users to be mentioned.
+     *
+     * @see MessageInputView.UserLookupHandler
+     * @see MessageInputView.DefaultUserLookupHandler
+     */
     public var userLookupHandler: MessageInputView.UserLookupHandler
         by Delegates.observable(MessageInputView.DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }
+
+    /**
+     * The list of available commands.
+     *
+     * Reactively recomputes suggestions upon setting.
+     */
     public var commands: List<Command> by Delegates.observable(emptyList()) { _, _, _ -> computeSuggestions() }
+
+    /**
+     * Enables or disables mention suggestions.
+     *
+     * Reactively recomputes suggestions upon setting.
+     */
     public var mentionsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
+
+    /**
+     * Enables or disables commands suggestions.
+     *
+     * Reactively recomputes suggestions upon setting.
+     */
     public var commandsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
+
+    /**
+     * Text used for displaying suggestions based on the content.
+     *
+     * Reactively recomputes suggestions upon setting.
+     */
     private var messageText: String by Delegates.observable(String.EMPTY) { _, _, _ -> computeSuggestions() }
 
+    /**
+     * Updates the message text used for displaying suggestions.
+     */
     public fun onNewMessageText(newMessageText: String) {
         messageText = newMessageText
     }
 
+    /**
+     * Triggers the computation of suggestions if commands or mentions are enabled
+     * and the message contains significant patterns.
+     *
+     * For patterns:
+     * @see SuggestionListController.COMMAND_PATTERN
+     * @see SuggestionListController.MENTION_PATTERN
+     */
     private fun computeSuggestions() {
         scope.launch {
             when {
                 commandsEnabled && messageText.isCommandMessage() -> {
+                    suggestionListControllerListener?.containsCommands(true)
                     currentSuggestions = messageText.getCommandSuggestions()
                 }
                 mentionsEnabled && messageText.isMentionMessage() -> {
+                    suggestionListControllerListener?.containsMentions(true)
                     handleUserLookup(userLookupHandler, messageText)
                 }
                 else -> hideSuggestionList()
@@ -54,21 +105,34 @@ public class SuggestionListController(
         }
     }
 
+    /**
+     * Displays the list of available command suggestions if any exist.
+     */
     public fun showAvailableCommands() {
         currentSuggestions =
             Suggestions.CommandSuggestions(commands).takeIf { commandsEnabled } ?: Suggestions.EmptySuggestions
     }
 
+    /**
+     * Hides the suggestion list and notifies [suggestionListControllerListener]
+     * that the input doesn't contain commands or mentions.
+     */
     public fun hideSuggestionList() {
+        suggestionListControllerListener?.containsCommands(false)
+        suggestionListControllerListener?.containsMentions(false)
         currentSuggestions = Suggestions.EmptySuggestions
     }
 
+    /**
+     * Returns the suggestion list visibility.
+     */
     public fun isSuggestionListVisible(): Boolean {
         return suggestionListUi.isSuggestionListVisible()
     }
 
     private suspend fun renderSuggestions(suggestions: Suggestions) = withContext(DispatcherProvider.Main) {
         suggestionListUi.renderSuggestions(suggestions)
+        suggestionListControllerListener?.onSuggestionListUiVisibilityChanged(suggestionListUi.isSuggestionListVisible())
     }
 
     private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
@@ -87,6 +151,7 @@ public class SuggestionListController(
          * Pattern used for matching commands.
          */
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+
         /**
          * Pattern used for matching mentions. Includes [Pattern.MULTILINE] flag for proper newline support.
          */

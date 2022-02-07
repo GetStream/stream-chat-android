@@ -8,6 +8,12 @@ import io.getstream.chat.android.ui.suggestion.Suggestions
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListUi
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 
+/**
+ * Popup window containing a list of suggestions.
+ *
+ * @param suggestionListView View containing suggestions.
+ * @param anchor Anchor View used to anchor [suggestionListView].
+ */
 internal class SuggestionListPopupWindow(
     private val suggestionListView: SuggestionListView,
     private val anchor: View,
