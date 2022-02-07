@@ -770,6 +770,9 @@ public class io/getstream/chat/android/offline/utils/Event {
 	public final fun peekContent ()Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/offline/utils/PairExtensionsKt {
+}
+
 public abstract interface class io/getstream/chat/android/offline/utils/RetryPolicy {
 	public abstract fun retryTimeout (Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/client/errors/ChatError;)I
 	public abstract fun shouldRetry (Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/client/errors/ChatError;)Z
