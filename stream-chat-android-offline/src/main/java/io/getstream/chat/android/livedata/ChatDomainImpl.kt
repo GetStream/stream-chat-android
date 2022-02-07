@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -131,9 +130,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
-    @Suppress("DEPRECATION_ERROR")
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        chatDomainStateFlow.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> =
         chatDomainStateFlow.getChannelController(cid).map(::ChannelControllerImpl)

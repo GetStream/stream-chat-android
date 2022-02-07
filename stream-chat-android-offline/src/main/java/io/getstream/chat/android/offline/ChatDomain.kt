@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -115,22 +114,6 @@ public sealed interface ChatDomain {
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
-
-    /**
-     * Adds the provided channel to the active channels and replays events for all active channels.
-     *
-     * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     /**
      * Returns a ChannelController for given cid.

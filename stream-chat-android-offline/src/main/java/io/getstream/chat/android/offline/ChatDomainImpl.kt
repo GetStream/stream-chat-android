@@ -55,7 +55,6 @@ import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.sendGiphy
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.shuffleGiphy
@@ -870,8 +869,6 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
