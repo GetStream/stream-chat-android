@@ -135,7 +135,7 @@ The `MessageList` allows you to control the scroll state of the list by providin
 @Composable
 fun MessageList(
 	..., // State, UI & Actions
-	lazyListState: LazyListState = rememberLazyListState(),
+	lazyListState: LazyListState = rememberMessageListState(parentMessageId),
     ... // Content
 )
 ```
@@ -145,17 +145,17 @@ fun MessageList(
 You can customize this state in the following way:
 
 ```kotlin
-val myListState = rememberLazyListState()
+val myListState = rememberMessageListState(parentMessageId = state.parentMessageId)
 
 MessageList(
     ..., // the rest of the state, UI & actions
-    lazyListState = if (parentMessageId != null) rememberLazyListState() else myListState,
+    lazyListState = myListState,
 )
 ```
 
-We recommend keeping a separate instance of the `LazyListState` when you're in a thread, as per the condition above. This helps you keep the scroll state of the main list intact when you enter and leave threads.
+`rememberMessageListState()` keeps a separate instance of `LazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
 
-You can also provide custom logic where you define the starting scroll position of the state based on custom logic. For example, when deep linking.
+You can also provide your own instance of `LazyListState` based on your custom logic where you define the starting scroll position of the state, the offset and how it behaves based on user events. For example, when deep linking.
 
 ##  Customization
 

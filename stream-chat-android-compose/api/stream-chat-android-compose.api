@@ -1518,6 +1518,10 @@ public final class io/getstream/chat/android/compose/ui/util/MessageAlignmentPro
 	public final fun defaultMessageAlignmentProvider ()Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;
 }
 
+public final class io/getstream/chat/android/compose/ui/util/MessageListUtilsKt {
+	public static final fun rememberMessageListState (IILjava/lang/String;Landroidx/compose/runtime/Composer;II)Landroidx/compose/foundation/lazy/LazyListState;
+}
+
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion;
 	public abstract fun formatMessagePreview (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;)Landroidx/compose/ui/text/AnnotatedString;
