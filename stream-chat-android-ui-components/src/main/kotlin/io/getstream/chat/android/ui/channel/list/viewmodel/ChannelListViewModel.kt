@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Channel
@@ -263,7 +264,12 @@ public class ChannelListViewModel(
     }
 
     public fun hideChannel(channel: Channel) {
-        chatDomain.hideChannel(channel.cid, true).enqueue(
+        val keepHistory = true
+        val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            val (channelType, channelId) = channel.cid.cidToTypeAndId()
+            chatClient.hideChannel(channelType, channelId, !keepHistory)
+        } else chatDomain.hideChannel(channel.cid, keepHistory)
+        call.enqueue(
             onError = { chatError ->
                 logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                 _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
