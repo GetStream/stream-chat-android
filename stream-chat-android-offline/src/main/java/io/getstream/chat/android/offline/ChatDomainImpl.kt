@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
-import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -46,7 +45,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.toMutableSta
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.toMutableState
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
+import io.getstream.chat.android.offline.experimental.persistance.OfflineSupport
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
@@ -145,7 +144,7 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
-    private val offlinePlugin: OfflinePlugin,
+    private val offlineSupport: OfflineSupport,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
     override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
 ) : ChatDomain {
@@ -157,7 +156,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
-        offlinePlugin: OfflinePlugin,
+        offlineSupport: OfflineSupport
     ) : this(
         client = client,
         db = null,
@@ -167,7 +166,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext,
-        offlinePlugin = offlinePlugin,
+        offlineSupport = offlineSupport
     )
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
@@ -195,7 +194,7 @@ internal class ChatDomainImpl internal constructor(
 
     private var _repos: RepositoryFacade? = null
 
-    private val globalState: GlobalMutableState = offlinePlugin.globalState.toMutableState()
+    private val globalState: GlobalMutableState = offlineSupport.globalState.toMutableState()
 
     override val user: StateFlow<User?> by globalState::user
 
@@ -389,7 +388,6 @@ internal class ChatDomainImpl internal constructor(
         eventHandler.clear()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
-        offlinePlugin.clear()
     }
 
     override fun getVersion(): String {
@@ -482,8 +480,8 @@ internal class ChatDomainImpl internal constructor(
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
             val channelController = ChannelController(
-                mutableState = offlinePlugin.state.channel(channelType, channelId).toMutableState(),
-                channelLogic = offlinePlugin.logic.channel(channelType, channelId),
+                mutableState = offlineSupport.state.channel(channelType, channelId).toMutableState(),
+                channelLogic = offlineSupport.logic.channel(channelType, channelId),
                 client = client,
                 domainImpl = this,
             )
@@ -542,8 +540,8 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
-            val mutableState = offlinePlugin.state.queryChannels(filter, sort).toMutableState()
-            val logic = offlinePlugin.logic.queryChannels(filter, sort)
+            val mutableState = offlineSupport.state.queryChannels(filter, sort).toMutableState()
+            val logic = offlineSupport.logic.queryChannels(filter, sort)
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
 
@@ -895,8 +893,8 @@ internal class ChatDomainImpl internal constructor(
         return CoroutineCall(scope) {
             Result.success(
                 channel(cid).getThread(
-                    offlinePlugin.state.thread(parentId).toMutableState(),
-                    offlinePlugin.logic.thread(parentId)
+                    offlineSupport.state.thread(parentId).toMutableState(),
+                    offlineSupport.logic.thread(parentId)
                 )
             )
         }

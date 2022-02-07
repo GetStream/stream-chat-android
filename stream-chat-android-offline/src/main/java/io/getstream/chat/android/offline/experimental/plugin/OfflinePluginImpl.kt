@@ -54,7 +54,7 @@ internal class OfflinePluginImpl(
      * [StateRegistry] which contains all states of this plugin.
      */
     // TODO make it val and stateless when remove QueryChannelsMutableState::defaultChannelEventsHandler
-    public lateinit var state: StateRegistry
+    lateinit var state: StateRegistry
         private set
 
     /**

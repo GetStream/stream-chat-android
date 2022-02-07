@@ -40,7 +40,7 @@ object ChatHelper {
             }
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory().create(Config(userPresence = true, persistenceEnabled = true))
+        val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true)).create()
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 

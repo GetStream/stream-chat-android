@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.experimental.persistence.OfflinePluginFactory
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -28,7 +27,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.offline.experimental.persistance.OfflineSupport
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -38,7 +37,6 @@ import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
-import io.getstream.chat.android.offline.experimental.plugin.configuration.Config as OfflinePluginConfig
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat.
@@ -589,7 +587,7 @@ public sealed interface ChatDomain {
             UploadAttachmentsNetworkType.NOT_ROAMING
 
         private var retryPolicy: RetryPolicy = DefaultRetryPolicy()
-        private var offlinePluginFactory: OfflinePluginFactory = StreamOfflinePluginFactory(OfflinePluginConfig())
+        private var offlineSupport: OfflineSupport? = null
 
         @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
@@ -652,10 +650,6 @@ public sealed interface ChatDomain {
             return this
         }
 
-        public fun offlinePluginFactory(offlinePluginFactory: OfflinePluginFactory): Builder = apply {
-            this.offlinePluginFactory = offlinePluginFactory
-        }
-
         public fun build(): ChatDomain {
             instance?.run {
                 Log.e(
@@ -679,7 +673,7 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = offlinePluginFactory.create(),
+                offlineSupport!!,//Fix this!
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
                 retryPolicy
             )
