@@ -168,6 +168,7 @@ fun ChannelList(
     loadingContent: @Composable () -> Unit = { ... },
     emptyContent: @Composable () -> Unit = { ... },
     emptySearchContent: @Composable (String) -> Unit = { ... },
+    helperContent: @Composable BoxScope.() -> Unit = { ... },
     itemContent: @Composable (ChannelItem) -> Unit = { ... },
     divider: @Composable () -> Unit = { ... },
 )
@@ -178,6 +179,7 @@ fun ChannelList(
 * `emptyContent`: Customizable composable that allows you to override the empty state, when there are no channels available. 
 * `emptySearchContent`: Customizable composable that allows you to override the empty state, when there are no channels matching the search query.
 * `itemContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda when building your custom UI.
+* `helperContent`: Composable that represents helper content for the channel list. Empty by default, but can be used, for example, to display back to top floating action button.
 * `divider`: Customizable composable that allows you to override the item divider.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
