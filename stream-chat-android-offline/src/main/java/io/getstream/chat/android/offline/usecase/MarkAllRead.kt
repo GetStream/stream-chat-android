@@ -21,7 +21,7 @@ internal class MarkAllRead(private val domain: ChatDomainImpl) {
         }.awaitAll() // wait for the UI updates to avoid races
 
         // then update via remote API
-        domain.client.markAllRead().await()
+        domain.client.markAllReadInternal().await()
         Result(true)
     }
 }

@@ -354,7 +354,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun hide(clearHistory: Boolean = false): Call<Unit> {
-        return client.hideChannel(channelType, channelId, clearHistory)
+        return client.hideChannelInternal(channelType, channelId, clearHistory)
     }
 
     /**
