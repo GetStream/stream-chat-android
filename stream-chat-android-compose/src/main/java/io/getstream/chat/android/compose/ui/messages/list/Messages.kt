@@ -2,15 +2,17 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,32 +38,33 @@ import kotlin.math.abs
  *
  * @param messagesState Current state of messages, like messages to display, if we're loading more
  * and if we've reached the end of the list.
+ * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the scroll state.
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
- * @param itemContent Composable that represents the item that displays each message.
  * @param modifier Modifier for styling.
+ * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param itemContent Composable that represents the item that displays each message.
  */
 @Composable
 public fun Messages(
     messagesState: MessagesState,
+    lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
+    helperContent: @Composable BoxScope.() -> Unit = {
+        DefaultMessagesHelperContent(messagesState, lazyListState)
+    },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
-    val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState, parentMessageId) = messagesState
-    val state = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
-
-    val currentListState = if (parentMessageId != null) rememberLazyListState() else state
-    val firstVisibleItemIndex = currentListState.firstVisibleItemIndex
+    val (_, isLoadingMore, endOfMessages, messages) = messagesState
 
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            state = currentListState,
+            state = lazyListState,
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom,
             reverseLayout = true,
@@ -79,11 +82,11 @@ public fun Messages(
                     onLastVisibleMessageChanged(item.message)
                 }
 
-                if (index == 0 && currentListState.isScrollInProgress) {
+                if (index == 0 && lazyListState.isScrollInProgress) {
                     onScrolledToBottom()
                 }
 
-                if (!endOfMessages && index == messages.lastIndex && messages.isNotEmpty() && currentListState.isScrollInProgress) {
+                if (!endOfMessages && index == messages.lastIndex && messages.isNotEmpty() && lazyListState.isScrollInProgress) {
                     onMessagesStartReached()
                 }
             }
@@ -99,41 +102,64 @@ public fun Messages(
                 }
             }
         }
-        val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
+        helperContent()
+    }
+}
+
+/**
+ * Represents the default scrolling behavior and UI for [Messages], based on the state of messages and the scroll state.
+ *
+ * @param messagesState The state of messages, current message list, thread, user and more.
+ * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
+ */
+@Composable
+internal fun BoxScope.DefaultMessagesHelperContent(
+    messagesState: MessagesState,
+    lazyListState: LazyListState,
+) {
+    val (_, _, _, messages, _, _, newMessageState) = messagesState
+    val coroutineScope = rememberCoroutineScope()
+
+    val firstVisibleItemIndex = lazyListState.firstVisibleItemIndex
+
+    val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
+
+    LaunchedEffect(key1 = newMessageState, key2 = firstVisibleItemIndex, focusedItemIndex) {
         if (focusedItemIndex != -1) {
             coroutineScope.launch {
-                currentListState.scrollToItem(focusedItemIndex)
+                lazyListState.scrollToItem(focusedItemIndex)
             }
         }
-
         when {
-            !currentListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
+            !lazyListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
                 coroutineScope.launch {
-                    currentListState.animateScrollToItem(0)
+                    lazyListState.animateScrollToItem(0)
                 }
             }
-            !currentListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
+            !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
-                    currentListState.scrollToItem(5)
+                    lazyListState.scrollToItem(5)
                 }
-                currentListState.animateScrollToItem(0)
+                lazyListState.animateScrollToItem(0)
             }
 
-            abs(firstVisibleItemIndex) >= 3 -> {
-                MessagesScrollingOption(
-                    unreadCount = messagesState.unreadCount,
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    onClick = {
-                        coroutineScope.launch {
-                            if (firstVisibleItemIndex > 5) {
-                                currentListState.scrollToItem(5)
-                            }
-                            currentListState.animateScrollToItem(0)
-                        }
-                    }
-                )
-            }
+            else -> Unit
         }
+    }
+
+    if (abs(firstVisibleItemIndex) >= 3) {
+        MessagesScrollingOption(
+            unreadCount = messagesState.unreadCount,
+            modifier = Modifier.align(Alignment.BottomEnd),
+            onClick = {
+                coroutineScope.launch {
+                    if (firstVisibleItemIndex > 5) {
+                        lazyListState.scrollToItem(5)
+                    }
+                    lazyListState.animateScrollToItem(0)
+                }
+            }
+        )
     }
 }

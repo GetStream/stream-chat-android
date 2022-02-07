@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -164,6 +165,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
+                lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)
