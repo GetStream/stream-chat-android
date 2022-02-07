@@ -9,6 +9,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
@@ -28,6 +31,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.isPermanent
+import kotlinx.coroutines.awaitAll
 import java.util.Date
 
 /**
@@ -45,16 +49,29 @@ public class OfflinePlugin(
     QueryChannelListener,
     ThreadQueryListener,
     ChannelMarkReadListener,
-    EditMessageListener {
+    EditMessageListener,
+    GetMessageListener,
+    HideChannelListener,
+    MarkAllReadListener {
 
     internal constructor() : this(Config())
 
+    /**
+     * [StateRegistry] which contains all states of this plugin.
+     */
     // TODO make it val and stateless when remove QueryChannelsMutableState::defaultChannelEventsHandler
     public lateinit var state: StateRegistry
         private set
+
+    /**
+     * [LogicRegistry] which contains all the logic to handle side effects.
+     */
     internal lateinit var logic: LogicRegistry
         private set
 
+    /**
+     * Global state of this plugin.
+     */
     // TODO: Move to StateRegistry when we remove ChatDomain.
     public val globalState: GlobalState = GlobalMutableState()
 
@@ -164,6 +181,33 @@ public class OfflinePlugin(
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
 
+    override suspend fun onMarkAllReadRequest() {
+        logic.getActiveChannelsLogic().map { channel ->
+            channel.markReadAsync()
+        }.awaitAll()
+    }
+
+    override suspend fun onGetMessageResult(
+        result: Result<Message>,
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Unit = cid.cidToTypeAndId().let { (channelType, channelId) ->
+        logic.channel(channelType, channelId)
+            .onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    }
+
+    override suspend fun onGetMessageError(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Result<Message> = cid.cidToTypeAndId().let { (channelType, channelId) ->
+        logic.channel(channelType, channelId)
+            .onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    }
+
     /**
      * Updates the messages locally and saves it at database.
      *
@@ -213,12 +257,32 @@ public class OfflinePlugin(
         )
     }
 
+    override suspend fun onHideChannelPrecondition(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ): Result<Unit> =
+        logic.channel(channelType, channelId).onHideChannelPrecondition(channelType, channelId, clearHistory)
+
+    override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean): Unit =
+        logic.channel(channelType, channelId).onHideChannelRequest(channelType, channelId, clearHistory)
+
+    override suspend fun onHideChannelResult(
+        result: Result<Unit>,
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ): Unit = logic.channel(channelType, channelId).onHideChannelResult(result, channelType, channelId, clearHistory)
+
     internal fun clear() {
         logic.clear()
         state.clear()
     }
 
     public companion object {
+        /**
+         * Name of this plugin module.
+         */
         public const val MODULE_NAME: String = "Offline"
     }
 }

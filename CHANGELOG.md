@@ -56,6 +56,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatClient::loadMessageById`. [#2929](https://github.com/GetStream/stream-chat-android/pull/2929)
 
 ### ⚠️ Changed
 

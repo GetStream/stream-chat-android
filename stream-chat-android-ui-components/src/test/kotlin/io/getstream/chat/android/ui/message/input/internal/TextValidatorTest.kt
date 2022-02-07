@@ -1,8 +1,6 @@
 package io.getstream.chat.android.ui.message.input.internal
 
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be`
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class TextValidatorTest {
