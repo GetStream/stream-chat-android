@@ -198,7 +198,7 @@ internal class MessageOptionsView : FrameLayout {
 
     private fun configureBlock(configuration: Configuration, style: MessageListViewStyle) {
         binding.blockTV.isVisible = configuration.blockEnabled
-        if(configuration.blockEnabled) {
+        if (configuration.blockEnabled) {
             binding.blockTV.configureListItem(style.messageOptionsText, style.blockIcon)
         }
     }

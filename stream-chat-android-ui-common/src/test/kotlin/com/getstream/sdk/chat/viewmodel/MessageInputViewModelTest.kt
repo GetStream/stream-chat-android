@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.randomUser
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -16,6 +15,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
@@ -35,6 +35,7 @@ internal class MessageInputViewModelTest {
 
     private val CID = randomCID()
     private val chatDomain: ChatDomain = mock()
+    private val chatClient: ChatClient = mock()
 
     @Suppress("DEPRECATION_ERROR")
     private val channelControllerResult: Result<ChannelController> = mock()
@@ -46,21 +47,20 @@ internal class MessageInputViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.watchChannel(eq(CID), eq(0))) doReturn channelControllerCall
-        whenever(channelControllerResult.isSuccess) doReturn true
-        whenever(channelControllerResult.data()) doReturn channelController
-        whenever(channelController.toChannel()) doReturn channel
-        whenever(chatDomain.editMessage(any())) doReturn mock()
         whenever(chatDomain.keystroke(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.stopTyping(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.user) doReturn MutableLiveData(randomUser())
+        whenever(channelController.toChannel()) doReturn channel
         whenever(channelController.offlineChannelData) doReturn MutableLiveData(mock())
+        whenever(channelControllerResult.isSuccess) doReturn true
+        whenever(channelControllerResult.data()) doReturn channelController
     }
 
     @Test
     fun `Should show members`() {
         val members = createMembers()
         whenever(channelController.members) doReturn MutableLiveData(members)
-        val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
+        val messageInputViewModel = MessageInputViewModel(CID, chatDomain, chatClient)
         val mockObserver: Observer<List<Member>> = spy()
         messageInputViewModel.members.observeForever(mockObserver)
 
@@ -69,7 +69,7 @@ internal class MessageInputViewModelTest {
 
     @Test
     fun `Should show commands`() {
-        val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
+        val messageInputViewModel = MessageInputViewModel(CID, chatDomain, chatClient)
         val mockObserver: Observer<List<Command>> = spy()
         messageInputViewModel.commands.observeForever(mockObserver)
 

@@ -1877,6 +1877,21 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/EditMessageListener {
+	public abstract fun onMessageEditRequest (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageEditResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener {
+	public abstract fun onGetMessageError (Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetMessageResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener$DefaultImpls {
+	public static synthetic fun onGetMessageError$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun onGetMessageResult$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/MarkAllReadListener {
 	public abstract fun onMarkAllReadRequest (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -2833,6 +2848,7 @@ public final class io/getstream/chat/android/client/models/PushProvider : java/l
 	public static final field FIREBASE Lio/getstream/chat/android/client/models/PushProvider;
 	public static final field HUAWEI Lio/getstream/chat/android/client/models/PushProvider;
 	public static final field UNKNOWN Lio/getstream/chat/android/client/models/PushProvider;
+	public static final field XIAOMI Lio/getstream/chat/android/client/models/PushProvider;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/PushProvider;
 	public static fun values ()[Lio/getstream/chat/android/client/models/PushProvider;
 }

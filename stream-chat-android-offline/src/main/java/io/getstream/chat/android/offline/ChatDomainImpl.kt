@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -52,6 +53,7 @@ import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.sendGiphy
@@ -74,14 +76,12 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.DeleteChannel
 import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
-import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
@@ -262,7 +262,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    internal var initJob: Deferred<SyncState?>? = null
+    internal var initJob: Deferred<*>? = null
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
@@ -315,6 +315,10 @@ internal class ChatDomainImpl internal constructor(
                 ?.let { eventHandler.handleEvent(it) }
 
             syncState.also { syncStateFlow.value = it }
+
+            // Sync cached channels
+            val cachedChannelsCids = repos.selectAllCids()
+            replayEventsForChannels(cachedChannelsCids)
         }
 
         if (client.isSocketConnected()) {
@@ -914,7 +918,17 @@ internal class ChatDomainImpl internal constructor(
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> = LoadMessageById(this).invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    ): Call<Message> {
+        return CoroutineCall(scope) {
+            try {
+                validateCid(cid)
+                val channelController = channel(cid)
+                channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
+            } catch (e: IllegalArgumentException) {
+                Result(ChatError(e.message))
+            }
+        }
+    }
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
@@ -1001,6 +1015,14 @@ internal class ChatDomainImpl internal constructor(
      */
     override fun sendGiphy(message: Message): Call<Message> = client.sendGiphy(message)
 
+    @Deprecated(
+        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().updateMessage(message)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
+        level = DeprecationLevel.WARNING
+    )
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
     override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
@@ -1029,7 +1051,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun leaveChannel(cid: String): Call<Unit> = LeaveChannel(this).invoke(cid)
 
-    override fun deleteChannel(cid: String): Call<Unit> = DeleteChannel(this).invoke(cid)
+    override fun deleteChannel(cid: String): Call<Unit> = client.channel(cid).delete().toUnitCall()
 
     override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
         client.setMessageForReply(cid, message)

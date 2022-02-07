@@ -26,9 +26,9 @@ jobs:
           java-version: 11
       - uses: ./.github/actions/gradle-cache
         with:
-          key-prefix: gradle-ktlint
-      - name: ktlint
-        run: ./gradlew ktlintCheck --scan
+          key-prefix: gradle-lint
+      - name: spotless
+        run: ./gradlew spotlessCheck --scan
 
   api_check:
     name: API check
