@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +38,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param modifier Modifier for styling.
  * @param viewModel The ViewModel that loads all the data and connects it to the UI. We provide a
  * factory that builds the default ViewModel in case the user doesn't want to provide their own.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
  * @param onLastItemReached Handler for pagination, when the user reaches the last item in the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
@@ -62,6 +65,7 @@ public fun ChannelList(
             )
         )
     ),
+    lazyListState: LazyListState = rememberLazyListState(),
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
@@ -87,6 +91,7 @@ public fun ChannelList(
         modifier = modifier,
         channelsState = viewModel.channelsState,
         currentUser = viewModel.user.value,
+        lazyListState = lazyListState,
         onLastItemReached = onLastItemReached,
         onChannelClick = onChannelClick,
         onChannelLongClick = onChannelLongClick,
@@ -113,6 +118,7 @@ public fun ChannelList(
  * @param channelsState Current state of the Channel list, represented by [ChannelsState].
  * @param currentUser The data of the current user, used various states.
  * @param modifier Modifier for styling.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
  * @param onLastItemReached Handler for pagination, when the user reaches the end of the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
@@ -129,6 +135,7 @@ public fun ChannelList(
     channelsState: ChannelsState,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    lazyListState: LazyListState = rememberLazyListState(),
     onLastItemReached: () -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
@@ -157,6 +164,7 @@ public fun ChannelList(
         !isLoading && channels.isNotEmpty() -> Channels(
             modifier = modifier,
             channelsState = channelsState,
+            lazyListState = lazyListState,
             onLastItemReached = onLastItemReached,
             itemContent = itemContent,
             divider = divider

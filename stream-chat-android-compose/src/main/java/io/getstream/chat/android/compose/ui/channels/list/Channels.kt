@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +20,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
  *
  * @param channelsState Exposes if we're loading more items, reaches the end of the list and the
  * current list of channels to show.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
  * @param onLastItemReached Handler for when the user reaches the end of the list.
  * @param modifier Modifier for styling.
  * @param itemContent Customizable UI component, that represents each item in the list.
@@ -28,17 +29,17 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
 @Composable
 public fun Channels(
     channelsState: ChannelsState,
+    lazyListState: LazyListState,
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
     itemContent: @Composable (ChannelItemState) -> Unit,
     divider: @Composable () -> Unit,
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
-    val listState = rememberLazyListState()
 
     LazyColumn(
         modifier = modifier,
-        state = listState,
+        state = lazyListState,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
@@ -62,7 +63,7 @@ public fun Channels(
     }
 
     if (!endOfChannels && channelItems.isNotEmpty()) {
-        LoadMoreHandler(listState) {
+        LoadMoreHandler(lazyListState) {
             onLastItemReached()
         }
     }
