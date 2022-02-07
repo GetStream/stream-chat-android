@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION_ERROR")
 package io.getstream.chat.android.ui
 
 import android.content.Context
@@ -55,7 +56,7 @@ public object ChatUI {
     @Deprecated(
         message = "ChatUI.markdown is deprecated. Markdown support is extracted into another module. " +
             "See docs for more reference",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith(
             expression = "ChatUI.messageTextTransformer"
         )
