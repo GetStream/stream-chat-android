@@ -49,6 +49,7 @@ internal interface ChannelApi {
     @POST("/channels/read")
     fun markAllRead(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body map: Map<String, String> = emptyMap<String, String>()
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}")

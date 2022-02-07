@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMar
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
@@ -30,6 +31,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.isPermanent
+import kotlinx.coroutines.awaitAll
 import java.util.Date
 
 /**
@@ -49,7 +51,8 @@ public class OfflinePlugin(
     ChannelMarkReadListener,
     EditMessageListener,
     GetMessageListener,
-    HideChannelListener {
+    HideChannelListener,
+    MarkAllReadListener {
 
     internal constructor() : this(Config())
 
@@ -177,6 +180,12 @@ public class OfflinePlugin(
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
+
+    override suspend fun onMarkAllReadRequest() {
+        logic.getActiveChannelsLogic().map { channel ->
+            channel.markReadAsync()
+        }.awaitAll()
+    }
 
     override suspend fun onGetMessageResult(
         result: Result<Message>,

@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
@@ -1329,9 +1330,26 @@ public class ChatClient internal constructor(
         return api.acceptInvite(channelType, channelId, message)
     }
 
+    /**
+     * Marks all the channel as read.
+     *
+     * @return [Result] Empty unit result.
+     */
+    @InternalStreamChatApi
+    public fun markAllReadInternal(): Call<Unit> = api.markAllRead()
+
+    /**
+     * Marks all the channel as read.
+     *
+     * @return [Result] Empty unit result.
+     */
     @CheckResult
     public fun markAllRead(): Call<Unit> {
+        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>()
         return api.markAllRead()
+            .doOnStart(scope) {
+                relevantPlugins.forEach { it.onMarkAllReadRequest() }
+            }
     }
 
     /**

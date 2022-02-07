@@ -278,7 +278,12 @@ public class ChannelListViewModel(
     }
 
     public fun markAllRead() {
-        chatDomain.markAllRead().enqueue(
+        val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            chatClient.markAllRead()
+        } else {
+            chatDomain.markAllRead()
+        }
+        call.enqueue(
             onError = { chatError ->
                 logger.logE("Could not mark all messages as read. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
             }
