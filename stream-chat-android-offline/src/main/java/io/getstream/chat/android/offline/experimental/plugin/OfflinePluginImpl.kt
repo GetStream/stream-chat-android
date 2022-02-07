@@ -18,8 +18,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
@@ -31,7 +30,7 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-public class OfflinePluginImpl(
+internal class OfflinePluginImpl(
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,
     private val threadQueryListener: ThreadQueryListener,
@@ -64,12 +63,6 @@ public class OfflinePluginImpl(
     internal lateinit var logic: LogicRegistry
         private set
 
-    /**
-     * Global state of this plugin.
-     */
-    // TODO: Move to StateRegistry when we remove ChatDomain.
-    public val globalState: GlobalState = GlobalMutableState()
-
     override val name: String = MODULE_NAME
 
     override fun init(appContext: Context, chatClient: ChatClient) {
@@ -91,7 +84,7 @@ public class OfflinePluginImpl(
     }
 
     
-    internal fun clear() {
+    override fun clear() {
         logic.clear()
         state.clear()
     }

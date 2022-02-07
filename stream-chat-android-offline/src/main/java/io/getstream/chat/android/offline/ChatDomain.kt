@@ -38,7 +38,7 @@ import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
-import io.getstream.chat.android.offline.experimental.plugin.Config as OfflinePluginConfig
+import io.getstream.chat.android.offline.experimental.plugin.configuration.Config as OfflinePluginConfig
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat.

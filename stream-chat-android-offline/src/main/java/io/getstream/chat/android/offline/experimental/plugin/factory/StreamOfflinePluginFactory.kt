@@ -7,7 +7,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.plugin.Config
+import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
