@@ -13,6 +13,9 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.experimental.persistence.OfflinePluginFactory
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
@@ -25,7 +28,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -586,6 +589,7 @@ public sealed interface ChatDomain {
             UploadAttachmentsNetworkType.NOT_ROAMING
 
         private var retryPolicy: RetryPolicy = DefaultRetryPolicy()
+        private var offlinePluginFactory: OfflinePluginFactory = StreamOfflinePluginFactory(OfflinePluginConfig())
 
         @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
@@ -648,6 +652,10 @@ public sealed interface ChatDomain {
             return this
         }
 
+        public fun offlinePluginFactory(offlinePluginFactory: OfflinePluginFactory): Builder = apply {
+            this.offlinePluginFactory = offlinePluginFactory
+        }
+
         public fun build(): ChatDomain {
             instance?.run {
                 Log.e(
@@ -659,21 +667,9 @@ public sealed interface ChatDomain {
             return instance()
         }
 
-        // @ExperimentalStreamChatApi
-        // private fun getPlugin(): OfflinePlugin {
-        //     return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }
-        //         ?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
-        //         ?: OfflinePluginConfig(
-        //             backgroundSyncEnabled = backgroundSyncEnabled,
-        //             userPresence = userPresence,
-        //             persistenceEnabled = storageEnabled
-        //         ).let(::OfflinePlugin)
-        // }
-
         @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -683,13 +679,10 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = plugin,
+                offlinePlugin = offlinePluginFactory.create(),
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
                 retryPolicy
-            ).also { domainImpl ->
-                // TODO remove when plugin becomes stateless
-                plugin.initState(domainImpl, client)
-            }
+            )
         }
     }
 

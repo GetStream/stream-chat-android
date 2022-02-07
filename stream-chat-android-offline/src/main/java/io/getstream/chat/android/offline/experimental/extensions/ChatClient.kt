@@ -3,7 +3,7 @@ package io.getstream.chat.android.offline.experimental.extensions
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
 import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -13,7 +13,7 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
  */
 @ExperimentalStreamChatApi
 internal val ChatClient.state: StateRegistry
-    get() = requireNotNull(offlinePlugin?.state) {
+    get() = requireNotNull(offlinePluginImpl?.state) {
         "Offline plugin must be configured in ChatClient"
     }
 
@@ -22,16 +22,16 @@ internal val ChatClient.state: StateRegistry
  */
 @ExperimentalStreamChatApi
 internal val ChatClient.logic: LogicRegistry
-    get() = requireNotNull(offlinePlugin?.logic) {
+    get() = requireNotNull(offlinePluginImpl?.logic) {
         "Offline plugin must be configured in ChatClient"
     }
 
 /**
- * Returns [OfflinePlugin] if configured.
+ * Returns [OfflinePluginImpl] if configured.
  */
 @ExperimentalStreamChatApi
-private val ChatClient.offlinePlugin: OfflinePlugin?
-    get() = plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME } as? OfflinePlugin
+private val ChatClient.offlinePluginImpl: OfflinePluginImpl?
+    get() = plugins.firstOrNull { it.name == OfflinePluginImpl.MODULE_NAME } as? OfflinePluginImpl
 
 @InternalStreamChatApi
 @ExperimentalStreamChatApi

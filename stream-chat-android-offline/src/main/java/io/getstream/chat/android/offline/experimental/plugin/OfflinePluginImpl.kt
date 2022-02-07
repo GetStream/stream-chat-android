@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.experimental.plugin
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
@@ -24,13 +25,13 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature.
- * The entry point of all offline state ([OfflinePlugin.state]) and behavior ([OfflinePlugin.logic]).
+ * The entry point of all offline state ([OfflinePluginImpl.state]) and behavior ([OfflinePluginImpl.logic]).
  *
  * @param config Configuration options for this plugin.
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-public class OfflinePlugin(
+public class OfflinePluginImpl(
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,
     private val threadQueryListener: ThreadQueryListener,
@@ -40,7 +41,7 @@ public class OfflinePlugin(
     private val hideChannelListener: HideChannelListener,
     private val markAllReadListener: MarkAllReadListener,
     private val config: Config = Config(),
-) : Plugin,
+) : OfflinePlugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,

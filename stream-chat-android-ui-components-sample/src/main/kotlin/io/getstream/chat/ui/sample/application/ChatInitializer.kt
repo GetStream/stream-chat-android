@@ -10,7 +10,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.factory.OfflinePluginFactory
+import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
@@ -49,7 +49,7 @@ class ChatInitializer(private val context: Context) {
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = OfflinePluginFactory().create(Config(userPresence = true, persistenceEnabled = true))
+        val offlinePlugin = StreamOfflinePluginFactory().create(Config(userPresence = true, persistenceEnabled = true))
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)

@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -45,12 +46,13 @@ import io.getstream.chat.android.offline.experimental.channel.state.toMutableSta
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.toMutableState
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.sendGiphy
