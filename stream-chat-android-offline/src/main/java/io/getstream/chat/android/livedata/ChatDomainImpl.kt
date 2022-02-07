@@ -223,10 +223,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         chatDomainStateFlow.deleteReaction(cid, reaction)
 
     @Suppress("DEPRECATION_ERROR")
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlow.keystroke(cid, parentId)
-
-    @Suppress("DEPRECATION_ERROR")
     override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
         chatDomainStateFlow.stopTyping(cid, parentId)
 

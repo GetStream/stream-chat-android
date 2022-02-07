@@ -51,7 +51,6 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.sendGiphy
@@ -1030,8 +1029,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         DeleteReaction(this).invoke(cid, reaction)
-
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> = client.keystroke(cid, parentId)
 
     override fun stopTyping(cid: String, parentId: String?): Call<Boolean> = client.stopTyping(cid, parentId)
 

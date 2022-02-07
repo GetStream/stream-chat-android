@@ -47,7 +47,6 @@ internal class MessageInputViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.watchChannel(eq(CID), eq(0))) doReturn channelControllerCall
-        whenever(chatDomain.keystroke(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.stopTyping(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.user) doReturn MutableLiveData(randomUser())
         whenever(channelController.toChannel()) doReturn channel

@@ -442,26 +442,6 @@ public sealed interface ChatDomain {
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     /**
-     * Keystroke should be called whenever a user enters text into the message input.
-     * It automatically calls stopTyping when the user stops typing after 5 seconds.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
-     *
-     * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "keystroke is deprecated. Use extension function ChatClient::keystroke instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().keystroke(cid, parentId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun keystroke(cid: String, parentId: String?): Call<Boolean>
-
-    /**
      * StopTyping should be called when the user submits the text and finishes typing.
      *
      * @param cid The full channel id i. e. messaging:123.
