@@ -10,7 +10,10 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.doOnResult
+import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -18,6 +21,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
@@ -182,7 +186,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
 }
 
 /**
- * Cancels the message of "ephemeral" type. Removes the message from local storage.
+ *  Cancels the message of "ephemeral" type. Removes the message from local storage.
  * API call to remove the message is retried according to the retry policy specified on the chatDomain.
  *
  * @param message The `ephemeral` message to cancel.
@@ -302,4 +306,40 @@ internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
             Result(result.error())
         }
     }
+}
+
+/**
+ * Loads message for a given message id and channel id.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageId The id of the message.
+ * @param olderMessagesOffset How many new messages to load before the requested message.
+ * @param newerMessagesOffset How many new messages to load after the requested message.
+ *
+ * @return Executable async [Call] responsible for loading a message.
+ */
+@OptIn(ExperimentalStreamChatApi::class)
+@CheckResult
+public fun ChatClient.loadMessageById(
+    cid: String,
+    messageId: String,
+    olderMessagesOffset: Int,
+    newerMessagesOffset: Int,
+): Call<Message> {
+    val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
+    return this.getMessage(messageId)
+        .onErrorReturn(domainImpl().scope) {
+            relevantPlugins.first().onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+        }
+        .doOnResult(domainImpl().scope) { result ->
+            relevantPlugins.forEach {
+                it.onGetMessageResult(
+                    result,
+                    cid,
+                    messageId,
+                    olderMessagesOffset,
+                    newerMessagesOffset
+                )
+            }
+        }
 }

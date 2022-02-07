@@ -130,6 +130,32 @@ The behavior will be the same and you gain more control over the `ViewModel`.
 
 We recommend that you create an instance of our `ViewModel` if you're thinking of using our predefined state and operations. If you're looking into a more low-level solution, with more control, you can use the **stateless** version of our components.
 
+### Controlling the scroll state
+
+You can control the scroll state of the channel list by providing a `lazyListState` parameter, like in the example below:
+
+```kotlin
+@Composable
+fun ChannelList(
+    ..., // State
+    lazyListState: LazyListState = rememberLazyListState(),
+    ... // Actions & Content Slots
+)
+```
+
+* `lazyListState`: The scroll state of the list. While not a handler, you can use it to control the scroll and trigger custom scroll actions.
+
+To customize this state you can simply pass your own instance as a parameter:
+
+```kotlin
+val myListState = rememberLazyListState()
+ChannelList(
+    ..., // State
+    lazyListState = myListState,
+    ... // Actions & Content Slots
+)
+```
+
 ## Customization
 
 If you're looking to customize the UI of the `ChannelList`, there are a few ways you can do so, as per the signature:
@@ -142,6 +168,7 @@ fun ChannelList(
     loadingContent: @Composable () -> Unit = { ... },
     emptyContent: @Composable () -> Unit = { ... },
     emptySearchContent: @Composable (String) -> Unit = { ... },
+    helperContent: @Composable BoxScope.() -> Unit = { ... },
     itemContent: @Composable (ChannelItem) -> Unit = { ... },
     divider: @Composable () -> Unit = { ... },
 )
@@ -152,6 +179,7 @@ fun ChannelList(
 * `emptyContent`: Customizable composable that allows you to override the empty state, when there are no channels available. 
 * `emptySearchContent`: Customizable composable that allows you to override the empty state, when there are no channels matching the search query.
 * `itemContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda when building your custom UI.
+* `helperContent`: Composable that represents helper content for the channel list. Empty by default, but can be used, for example, to display back to top floating action button.
 * `divider`: Customizable composable that allows you to override the item divider.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
