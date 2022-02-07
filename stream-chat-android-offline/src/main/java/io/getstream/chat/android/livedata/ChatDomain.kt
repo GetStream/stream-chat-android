@@ -562,25 +562,6 @@ public sealed interface ChatDomain {
     public fun deleteChannel(cid: String): Call<Unit>
 
     /**
-     * Set the reply state for the channel.
-     *
-     * @param cid CID of the channel where reply state is being set.
-     * @param message The message we want reply to. The null value means dismiss reply state.
-     *
-     * @return Executable async [Call].
-     */
-    @CheckResult
-    @Deprecated(
-        message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().setMessageForReply(attachment)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
-
-    /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
      *
      * @param attachment The attachment to download.

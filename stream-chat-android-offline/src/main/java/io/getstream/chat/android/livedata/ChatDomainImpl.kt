@@ -246,10 +246,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
 
     @Suppress("DEPRECATION_ERROR")
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        chatDomainStateFlow.setMessageForReply(cid, message)
-
-    @Suppress("DEPRECATION_ERROR")
     override fun downloadAttachment(attachment: Attachment): Call<Unit> =
         chatDomainStateFlow.downloadAttachment(attachment)
 
