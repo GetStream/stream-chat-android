@@ -659,17 +659,16 @@ public sealed interface ChatDomain {
             return instance()
         }
 
-        @ExperimentalStreamChatApi
-        private fun getPlugin(): OfflinePlugin {
-            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }
-                ?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
-                ?: OfflinePluginConfig(
-                    backgroundSyncEnabled = backgroundSyncEnabled,
-                    userPresence = userPresence,
-                    persistenceEnabled = storageEnabled
-                )
-                    .let(::OfflinePlugin)
-        }
+        // @ExperimentalStreamChatApi
+        // private fun getPlugin(): OfflinePlugin {
+        //     return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }
+        //         ?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
+        //         ?: OfflinePluginConfig(
+        //             backgroundSyncEnabled = backgroundSyncEnabled,
+        //             userPresence = userPresence,
+        //             persistenceEnabled = storageEnabled
+        //         ).let(::OfflinePlugin)
+        // }
 
         @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
