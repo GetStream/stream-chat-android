@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -52,6 +53,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -86,7 +88,7 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener, ChannelMarkReadListener {
+) : QueryChannelListener, ChannelMarkReadListener, GetMessageListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -146,6 +148,78 @@ internal class ChannelLogic(
                 }
                 chatDomainImpl.addError(error)
             }
+    }
+
+    override suspend fun onGetMessageResult(
+        result: Result<Message>,
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ) {
+        if (result.isSuccess) {
+            result.data().let { message ->
+                upsertMessages(listOf(message))
+                loadOlderMessages(messageId, newerMessagesOffset)
+                loadNewerMessages(messageId, olderMessagesOffset)
+            }
+        }
+    }
+
+    override suspend fun onGetMessageError(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Result<Message> {
+        return chatDomainImpl.repos.selectMessage(messageId)?.let { message ->
+            Result(message)
+        } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+    }
+
+    /**
+     * Loads a list of messages after the newest message in the current list.
+     *
+     * @param messageId Id of message after which to fetch messages.
+     * @param limit Number of messages to fetch after this message.
+     *
+     * @return [Result] of [Channel] with fetched messages.
+     */
+    private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
+    }
+
+    /**
+     * Loads a list of messages before the message with particular message id.
+     *
+     * @param messageId Id of message before which to fetch messages.
+     * @param limit Number of messages to fetch before this message.
+     *
+     * @return [Result] of [Channel] with fetched messages.
+     */
+    private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
+        return runChannelQuery(olderWatchChannelRequest(limit = limit, baseMessageId = messageId))
+    }
+
+    private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
+        val preconditionResult = onQueryChannelPrecondition(mutableState.channelType, mutableState.channelId, request)
+        if (preconditionResult.isError) {
+            return Result.error(preconditionResult.error())
+        }
+
+        val offlineChannel = runChannelQueryOffline(request)
+
+        val onlineResult =
+            ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
+                .await().also { result ->
+                    onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
+                }
+
+        return when {
+            onlineResult.isSuccess -> onlineResult
+            offlineChannel != null -> Result.success(offlineChannel)
+            else -> onlineResult
+        }
     }
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
@@ -261,7 +335,13 @@ internal class ChannelLogic(
     internal fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = chatDomainImpl.user.value?.id
 
-        if (currentUserId?.let { message.shouldIncrementUnreadCount(it, mutableState._read.value?.lastMessageSeenDate) } == true) {
+        if (currentUserId?.let {
+            message.shouldIncrementUnreadCount(
+                    it,
+                    mutableState._read.value?.lastMessageSeenDate
+                )
+        } == true
+        ) {
             val newUnreadCount = mutableState._unreadCount.value + 1
             mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read
@@ -484,8 +564,7 @@ internal class ChannelLogic(
         mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
     }
 
-    // TODO: Make private after removing ChannelController
-    internal fun upsertMember(member: Member) {
+    private fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 

@@ -53,6 +53,7 @@ import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.keystroke
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.sendGiphy
@@ -81,7 +82,6 @@ import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
-import io.getstream.chat.android.offline.usecase.LoadMessageById
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
@@ -918,7 +918,17 @@ internal class ChatDomainImpl internal constructor(
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> = LoadMessageById(this).invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    ): Call<Message> {
+        return CoroutineCall(scope) {
+            try {
+                validateCid(cid)
+                val channelController = channel(cid)
+                channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
+            } catch (e: IllegalArgumentException) {
+                Result(ChatError(e.message))
+            }
+        }
+    }
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
