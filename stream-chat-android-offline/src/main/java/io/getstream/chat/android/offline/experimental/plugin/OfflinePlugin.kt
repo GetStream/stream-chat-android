@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
@@ -47,6 +48,7 @@ public class OfflinePlugin(
     ThreadQueryListener,
     ChannelMarkReadListener,
     EditMessageListener,
+    GetMessageListener,
     HideChannelListener {
 
     internal constructor() : this(Config())
@@ -176,6 +178,27 @@ public class OfflinePlugin(
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
         logic.channel(channelType, channelId).onChannelMarkReadPrecondition(channelType, channelId)
 
+    override suspend fun onGetMessageResult(
+        result: Result<Message>,
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Unit = cid.cidToTypeAndId().let { (channelType, channelId) ->
+        logic.channel(channelType, channelId)
+            .onGetMessageResult(result, cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    }
+
+    override suspend fun onGetMessageError(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Result<Message> = cid.cidToTypeAndId().let { (channelType, channelId) ->
+        logic.channel(channelType, channelId)
+            .onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    }
+
     /**
      * Updates the messages locally and saves it at database.
      *
@@ -228,7 +251,7 @@ public class OfflinePlugin(
     override suspend fun onHideChannelPrecondition(
         channelType: String,
         channelId: String,
-        clearHistory: Boolean
+        clearHistory: Boolean,
     ): Result<Unit> =
         logic.channel(channelType, channelId).onHideChannelPrecondition(channelType, channelId, clearHistory)
 
