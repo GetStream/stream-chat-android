@@ -47,12 +47,12 @@ internal class MarkAllReadTest {
     @Test
     fun `Given successful response When marking all channels as read Should update all the controllers and return true`() {
         return testCoroutines.dispatcher.runBlockingTest {
-            whenever(chatClient.markAllRead()) doReturn TestCall(Result(Unit))
+            whenever(chatClient.markAllReadInternal()) doReturn TestCall(Result(Unit))
 
             var result = markAllRead.invoke().execute()
 
             result.isSuccess.shouldBeTrue()
-            verify(chatClient, times(1)).markAllRead()
+            verify(chatClient, times(1)).markAllReadInternal()
             activeChannels.forEach {
                 verify(it).markRead()
             }
@@ -62,12 +62,12 @@ internal class MarkAllReadTest {
     @Test
     fun `Given failed response When marking all channels as read Should update all the controllers and return true`() {
         return testCoroutines.dispatcher.runBlockingTest {
-            whenever(chatClient.markAllRead()) doReturn TestCall(Result(ChatError()))
+            whenever(chatClient.markAllReadInternal()) doReturn TestCall(Result(ChatError()))
 
             var result = markAllRead.invoke().execute()
 
             result.isSuccess.shouldBeTrue()
-            verify(chatClient, times(1)).markAllRead()
+            verify(chatClient, times(1)).markAllReadInternal()
             activeChannels.forEach {
                 verify(it).markRead()
             }

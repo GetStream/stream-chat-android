@@ -81,7 +81,7 @@ internal object ReactionDtoTestData {
     @Language("JSON")
     val upstreamJson =
         """{
-          "created_at": "2020-06-10T11:04:31.000Z",  
+          "created_at": "2020-06-10T11:04:31.000Z",
           "message_id": "messageId",
           "score": 4,
           "type": "love",

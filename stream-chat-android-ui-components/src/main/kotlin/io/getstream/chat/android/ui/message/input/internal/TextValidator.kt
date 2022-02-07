@@ -4,7 +4,7 @@ internal fun isMessageTextValid(text: String): Boolean {
     return text.isNotEmpty() && !emptyGiphy(text)
 }
 
-private fun emptyGiphy(text: String) : Boolean {
+private fun emptyGiphy(text: String): Boolean {
     val giphyCommand = "/giphy"
 
     if (text.startsWith(giphyCommand)) {
@@ -15,4 +15,3 @@ private fun emptyGiphy(text: String) : Boolean {
 
     return false
 }
-

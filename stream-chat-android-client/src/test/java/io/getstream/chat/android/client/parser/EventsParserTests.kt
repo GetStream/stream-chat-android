@@ -33,7 +33,7 @@ internal class EventsParserTests {
         {
             "type": "${EventType.HEALTH_CHECK}",
             "created_at": "2020-06-10T11:04:31.000Z",
-            "me" : { 
+            "me" : {
                 "id": "$userId",
                 "role": "",
                 "banned": false,
@@ -43,7 +43,7 @@ internal class EventsParserTests {
         }
     """.trimIndent()
     private val channelTruncatedEvent = """
-        { 
+        {
             "type": "${EventType.CHANNEL_TRUNCATED}",
             "created_at": "2020-06-10T11:04:31.000Z",
             "cid": "",
@@ -54,7 +54,7 @@ internal class EventsParserTests {
         }
     """.trimIndent()
     private val notificationChannelTruncatedEvent = """
-        { 
+        {
             "type": "${EventType.NOTIFICATION_CHANNEL_TRUNCATED}",
             "created_at": "2020-06-10T11:04:31.000Z",
             "cid": "",
@@ -64,7 +64,7 @@ internal class EventsParserTests {
         }
     """.trimIndent()
     private val notificationChannelDeletedEvent = """
-        { 
+        {
             "type": "${EventType.NOTIFICATION_CHANNEL_DELETED}",
             "created_at": "2020-06-10T11:04:31.000Z",
             "cid": "",

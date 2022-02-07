@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
