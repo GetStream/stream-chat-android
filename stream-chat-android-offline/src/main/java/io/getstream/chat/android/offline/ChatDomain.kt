@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
@@ -567,24 +566,6 @@ public sealed interface ChatDomain {
         level = DeprecationLevel.WARNING
     )
     public fun deleteChannel(cid: String): Call<Unit>
-
-    /**
-     * Downloads the selected attachment to the "Download" folder in the public external storage directory.
-     *
-     * @param attachment The attachment to download.
-     *
-     * @return Executable async [Call] downloading attachment.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "downloadAttachment is deprecated. Use extension function ChatClient::downloadAttachment instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().downloadAttachment(attachment)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**
      * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name

@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
@@ -244,10 +243,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlow.leaveChannel(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun downloadAttachment(attachment: Attachment): Call<Unit> =
-        chatDomainStateFlow.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,
