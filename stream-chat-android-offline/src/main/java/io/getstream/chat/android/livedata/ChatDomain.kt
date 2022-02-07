@@ -435,26 +435,6 @@ public sealed interface ChatDomain {
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     /**
-     * StopTyping should be called when the user submits the text and finishes typing.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
-     *
-     * @return executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
-     * false if it wasn't sent.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "stopTyping is deprecated. Use extension function ChatClient::stopTyping instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().stopTyping(cid, parentId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
-
-    /**
      * Marks all messages of the specified channel as read.
      *
      * @param cid The full channel id i. e. messaging:123.
