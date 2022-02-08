@@ -32,7 +32,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
-- UnknownHostException is no longer considered a permanent network error
+- UnknownHostException is no longer considered a permanent network error. [#3054](https://github.com/GetStream/stream-chat-android/pull/3054)
 
 ### ❌ Removed
 
