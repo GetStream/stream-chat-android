@@ -140,7 +140,7 @@ public data class ReactionDrawable(
  * Contains [Painter]s for normal and selected states of the reaction icon.
  *
  * @param painter The [Painter] used to render the reaction in its normal state.
- * @param selectedPainter The [Painter] used to render the reaction in selected state.
+ * @param selectedPainter The [Painter] used to render the reaction in its selected state.
  */
 public data class ReactionIcon(
     val painter: Painter,
