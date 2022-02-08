@@ -50,16 +50,11 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
-import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.sendGiphy
-import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.shuffleGiphy
-import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -870,8 +865,6 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
@@ -1036,10 +1029,6 @@ internal class ChatDomainImpl internal constructor(
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         DeleteReaction(this).invoke(cid, reaction)
 
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> = client.keystroke(cid, parentId)
-
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> = client.stopTyping(cid, parentId)
-
     override fun markRead(cid: String): Call<Boolean> = MarkRead(this).invoke(cid)
 
     override fun markAllRead(): Call<Boolean> = MarkAllRead(this).invoke()
@@ -1052,11 +1041,6 @@ internal class ChatDomainImpl internal constructor(
     override fun leaveChannel(cid: String): Call<Unit> = LeaveChannel(this).invoke(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = client.channel(cid).delete().toUnitCall()
-
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        client.setMessageForReply(cid, message)
-
-    override fun downloadAttachment(attachment: Attachment): Call<Unit> = client.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,
