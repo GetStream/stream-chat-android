@@ -6,6 +6,7 @@ import java.net.UnknownHostException
 
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
+private const val API_ERROR = 500
 
 /**
  * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
@@ -22,10 +23,10 @@ public fun ChatError.isPermanent(): Boolean {
     return if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this
         // stream errors are mostly permanent. the exception to this are the rate limit and timeout error
-        val temporaryStreamErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT)
+        val temporaryStreamErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT, API_ERROR)
 
         when {
-            networkError.streamCode > 0 && networkError.statusCode in temporaryStreamErrors -> false
+            networkError.statusCode in temporaryStreamErrors -> false
 
             networkError.cause is UnknownHostException -> false
 
