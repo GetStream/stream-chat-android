@@ -153,10 +153,7 @@ public class ChatClient internal constructor(
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
 
-    public val plugins: List<Plugin> by lazy {
-        pluginFactoryList.map { pluginFactory -> pluginFactory.getOrCreate() }
-    }
-
+    public lateinit var plugins: List<Plugin>
     init {
         eventsObservable.subscribe { event ->
             when (event) {
@@ -197,6 +194,10 @@ public class ChatClient internal constructor(
             }
         }
         logger.logI("Initialised: " + getVersion())
+    }
+
+    internal fun initPlugins() {
+        plugins = pluginFactoryList.map { pluginFactory -> pluginFactory.getOrCreate() }
     }
 
     //region Set user
@@ -2019,6 +2020,7 @@ public class ChatClient internal constructor(
          */
         public fun build(): ChatClient = internalBuild().also {
             instance = it
+            it.initPlugins()
         }
 
         @InternalStreamChatApi
