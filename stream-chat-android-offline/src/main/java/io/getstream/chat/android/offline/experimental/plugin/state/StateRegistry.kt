@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.experimental.plugin.state
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -20,10 +19,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-/** Registry of all state objects exposed in offline plugin. */
-public class StateRegistry internal constructor(
-    private val chatDomainImpl: ChatDomainImpl,
-    private val chatClient: ChatClient,
+/** Registry of all state objects exposed in offline plugin. This class should have only once instance for the SDK*/
+public class StateRegistry private constructor(
+    private val chatDomainImpl: ChatDomainImpl
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
@@ -32,6 +30,11 @@ public class StateRegistry internal constructor(
 
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
+            /*
+                - We can have a scope provider
+                - latestUsers should be moved to another dependency, there's no reason for it to be inside ChatDomainImpl.
+                This way this class wouldn't depend on ChatDomainImpl which is a super big class and also depend on StateRegistry. The cross dependency should be avoided.
+             */
             QueryChannelsMutableState(filter, sort, chatDomainImpl.scope, chatDomainImpl.latestUsers)
         }
     }
@@ -67,5 +70,17 @@ public class StateRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
+    }
+
+    internal companion object {
+        private var instance: StateRegistry? = null
+
+        internal fun getOrCreate(chatDomainImpl: ChatDomainImpl): StateRegistry {
+            return instance ?: StateRegistry(chatDomainImpl).also { stateRegistry ->
+                instance = stateRegistry
+            }
+        }
+
+        internal fun get(): StateRegistry? = instance
     }
 }

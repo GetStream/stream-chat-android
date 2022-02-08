@@ -7,7 +7,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
 @ExperimentalStreamChatApi
-internal class ThreadQueryListenerImpl(private val logic: LogicRegistry): ThreadQueryListener {
+internal class ThreadQueryListenerImpl(private val logic: LogicRegistry) : ThreadQueryListener {
 
     override fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> =
         logic.thread(messageId).onGetRepliesPrecondition(messageId, limit)
@@ -30,5 +30,4 @@ internal class ThreadQueryListenerImpl(private val logic: LogicRegistry): Thread
         firstId: String,
         limit: Int,
     ): Unit = logic.thread(messageId).onGetRepliesMoreResult(result, messageId, firstId, limit)
-
 }

@@ -1,9 +1,9 @@
 package io.getstream.chat.android.offline.experimental.plugin.listener
 
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
 @ExperimentalStreamChatApi
 internal class ChannelMarkReadListenerImpl(private val logic: LogicRegistry) : ChannelMarkReadListener {

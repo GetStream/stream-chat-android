@@ -6,7 +6,7 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import kotlinx.coroutines.awaitAll
 
 @ExperimentalStreamChatApi
-internal class MarkAllReadListenerImpl(private val logic: LogicRegistry): MarkAllReadListener {
+internal class MarkAllReadListenerImpl(private val logic: LogicRegistry) : MarkAllReadListener {
     override suspend fun onMarkAllReadRequest() {
         logic.getActiveChannelsLogic().map { channel ->
             channel.markReadAsync()

@@ -21,7 +21,4 @@ public interface OfflinePlugin :
     EditMessageListener,
     GetMessageListener,
     HideChannelListener,
-    MarkAllReadListener {
-
-    public fun clear()
-}
+    MarkAllReadListener

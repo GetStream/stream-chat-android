@@ -11,7 +11,7 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
  * Document this!!
  */
 @ExperimentalStreamChatApi
-internal class QueryChannelsListenerImpl(private val logic: LogicRegistry): QueryChannelsListener {
+internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         logic.queryChannels(request).onQueryChannelsRequest(request)
@@ -20,5 +20,4 @@ internal class QueryChannelsListenerImpl(private val logic: LogicRegistry): Quer
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logic.queryChannels(request).onQueryChannelsResult(result, request)
     }
-
 }

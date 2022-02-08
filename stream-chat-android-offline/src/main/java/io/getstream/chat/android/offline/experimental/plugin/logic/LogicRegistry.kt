@@ -100,4 +100,16 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         channels.clear()
         threads.clear()
     }
+
+    internal companion object {
+        private var instance: LogicRegistry? = null
+
+        internal fun getOrCreate(stateRegistry: StateRegistry): LogicRegistry {
+            return instance ?: LogicRegistry(stateRegistry).also { logicRegistry ->
+                instance = logicRegistry
+            }
+        }
+
+        internal fun get(): LogicRegistry? = instance
+    }
 }

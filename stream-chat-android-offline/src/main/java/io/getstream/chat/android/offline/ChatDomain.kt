@@ -673,7 +673,6 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlineSupport!!,//Fix this!
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
                 retryPolicy
             )

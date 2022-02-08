@@ -49,7 +49,7 @@ class ChatInitializer(private val context: Context) {
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true)).create()
+        val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true), context)
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)

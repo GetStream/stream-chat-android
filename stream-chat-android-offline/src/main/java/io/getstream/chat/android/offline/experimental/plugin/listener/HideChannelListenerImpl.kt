@@ -6,7 +6,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
 @ExperimentalStreamChatApi
-internal class HideChannelListenerImpl(private val logic: LogicRegistry): HideChannelListener {
+internal class HideChannelListenerImpl(private val logic: LogicRegistry) : HideChannelListener {
     override suspend fun onHideChannelPrecondition(
         channelType: String,
         channelId: String,
@@ -17,7 +17,6 @@ internal class HideChannelListenerImpl(private val logic: LogicRegistry): HideCh
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {
         logic.channel(channelType, channelId).onHideChannelRequest(channelType, channelId, clearHistory)
     }
-
 
     override suspend fun onHideChannelResult(
         result: Result<Unit>,

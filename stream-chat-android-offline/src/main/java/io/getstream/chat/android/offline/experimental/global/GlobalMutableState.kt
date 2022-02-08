@@ -13,7 +13,7 @@ import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class GlobalMutableState : GlobalState {
+internal class GlobalMutableState private constructor() : GlobalState {
 
     internal val _initialized = MutableStateFlow(false)
     internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
@@ -56,6 +56,16 @@ internal class GlobalMutableState : GlobalState {
 
     override fun isInitialized(): Boolean {
         return _initialized.value
+    }
+
+    internal companion object {
+        private var instance: GlobalMutableState? = null
+
+        internal fun getOrCreate(): GlobalMutableState {
+            return instance ?: GlobalMutableState().also { globalState ->
+                instance = globalState
+            }
+        }
     }
 }
 

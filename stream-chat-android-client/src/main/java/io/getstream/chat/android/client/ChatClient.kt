@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
@@ -132,7 +133,7 @@ public class ChatClient internal constructor(
     private val appContext: Context,
     @property:InternalStreamChatApi
     @property:ExperimentalStreamChatApi
-    public val plugins: Collection<Plugin> = emptyList(),
+    public val pluginFactoryList: Collection<PluginFactory> = emptyList(),
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -151,6 +152,10 @@ public class ChatClient internal constructor(
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
+
+    public val plugins: List<Plugin> by lazy {
+        pluginFactoryList.map { pluginFactory -> pluginFactory.getOrCreate() }
+    }
 
     init {
         eventsObservable.subscribe { event ->
@@ -192,8 +197,6 @@ public class ChatClient internal constructor(
             }
         }
         logger.logI("Initialised: " + getVersion())
-
-        plugins.forEach { it.init(appContext, this) }
     }
 
     //region Set user
@@ -1808,7 +1811,7 @@ public class ChatClient internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-        private var plugins: List<Plugin> = emptyList()
+        private val pluginFactories: MutableList<PluginFactory> = mutableListOf()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
 
@@ -1937,8 +1940,8 @@ public class ChatClient internal constructor(
 
         @InternalStreamChatApi
         @ExperimentalStreamChatApi
-        public fun withPlugin(plugin: Plugin): Builder = apply {
-            plugins += plugin
+        public fun withPlugin(plugin: PluginFactory): Builder = apply {
+            pluginFactories.add(plugin)
         }
 
         /**
@@ -2004,7 +2007,7 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 appContext = appContext,
-                plugins = plugins,
+                pluginFactoryList = pluginFactories,
             )
         }
     }
