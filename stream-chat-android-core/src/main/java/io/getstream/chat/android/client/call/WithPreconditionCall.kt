@@ -2,12 +2,13 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.flatMap
-import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 internal class WithPreconditionCall<T : Any>(
     private val originalCall: Call<T>,
@@ -23,9 +24,13 @@ internal class WithPreconditionCall<T : Any>(
 
     override fun enqueue(callback: Call.Callback<T>) {
         job = scope.launch {
-            precondition.invoke()
+            val result = precondition.invoke()
                 .onSuccess { originalCall.enqueue(callback) }
-                .onError { callback.onResult(Result.error(it)) }
+            if (result.isError) {
+                withContext(DispatcherProvider.Main) {
+                    callback.onResult(Result.error(result.error()))
+                }
+            }
         }
     }
 
