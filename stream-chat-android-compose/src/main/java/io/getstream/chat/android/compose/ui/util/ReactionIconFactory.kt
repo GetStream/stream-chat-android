@@ -7,7 +7,7 @@ import androidx.compose.ui.res.painterResource
 import io.getstream.chat.android.compose.R
 
 /**
- * An interface that allows to create reaction icons for reaction types.
+ * An interface that allows the creation of reaction icons for reaction types.
  */
 public interface ReactionIconFactory {
 
