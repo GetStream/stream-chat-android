@@ -86,4 +86,8 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
-      
+      - name: Upload unittests
+        uses: actions/upload-artifact@v2
+        with:
+          name: unittests
+          path: ${{ github.workspace }}/stream-chat-android-offline/build/reports/tests/testDebugUnitTest/index.html
