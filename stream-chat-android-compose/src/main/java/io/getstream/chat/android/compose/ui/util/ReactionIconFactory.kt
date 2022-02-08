@@ -115,7 +115,7 @@ private class DefaultReactionIconFactory(
 
     companion object {
         /**
-         * The default reaction types we support by default.
+         * The reaction types we support by default.
          */
         private const val LOVE: String = "love"
         private const val THUMBS_UP: String = "like"
