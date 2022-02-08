@@ -139,7 +139,7 @@ public data class ReactionDrawable(
 /**
  * Contains [Painter]s for normal and selected states of the reaction icon.
  *
- * @param painter The [Painter] used to render the reaction in normal state.
+ * @param painter The [Painter] used to render the reaction in its normal state.
  * @param selectedPainter The [Painter] used to render the reaction in selected state.
  */
 public data class ReactionIcon(
