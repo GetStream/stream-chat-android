@@ -129,7 +129,7 @@ private class DefaultReactionIconFactory(
  * Contains drawable resources for normal and selected states of a reaction.
  *
  * @param iconResId The drawable resource id for the normal icon.
- * @param selectedIconResId The drawable resource id for
+ * @param selectedIconResId The drawable resource id for the selected state icon.
  */
 public data class ReactionDrawable(
     @DrawableRes public val iconResId: Int,
