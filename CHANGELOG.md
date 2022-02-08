@@ -87,9 +87,14 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 - Added [`Custom Attachments guide`](https://getstream.io/chat/docs/sdk/android/composee/guides/adding-custom-attachments/). [#2967](https://github.com/GetStream/stream-chat-android/pull/2967)
 - Added `onHeaderAvatarClick` parameter to the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+- Exposed `lazyListState` for the `ChannelList` and `Channels` components that allows you to control the scrolling behavior and state. [#3049](https://github.com/GetStream/stream-chat-android/pull/3049)
+- Exposed `helperContent` for the `ChannelList` and `Channels` components that allows you to implement a helper UI such as scroll to top button for the channel list. [#3049](https://github.com/GetStream/stream-chat-android/pull/3049)
+- Exposed `lazyListState` for the `MessageList` and `Messages` components that allows you to control the scrolling behavior and state. [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
+- Exposed `helperContent` for the `MessageList` and `Messages` components that allows you to override the default scrolling behavior UI.  [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
 
 ### ⚠️ Changed
 - Renamed `onHeaderClickAction` parameter to `onHeaderActionClick` for the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+- `MessageList` and `Messages` now have two new parameters that have default values. Please make sure that you check out the changes and that everything still works for you. [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
 
 ### ❌ Removed
 
