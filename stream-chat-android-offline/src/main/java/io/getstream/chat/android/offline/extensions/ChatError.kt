@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.extensions
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import java.net.UnknownHostException
 
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
@@ -18,17 +19,19 @@ private const val HTTP_TIMEOUT = 408
  * https://getstream.io/chat/docs/api_errors_response/?language=js
  */
 public fun ChatError.isPermanent(): Boolean {
-    var isPermanent = false
-    if (this is ChatNetworkError) {
+    return if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this
         // stream errors are mostly permanent. the exception to this are the rate limit and timeout error
         val temporaryStreamErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT)
-        if (networkError.streamCode > 0) {
-            isPermanent = true
-            if (networkError.statusCode in temporaryStreamErrors) {
-                isPermanent = false
-            }
+
+        when {
+            networkError.streamCode > 0 && networkError.statusCode in temporaryStreamErrors -> false
+
+            networkError.cause is UnknownHostException -> false
+
+            else -> true
         }
+    } else {
+        false
     }
-    return isPermanent
 }
