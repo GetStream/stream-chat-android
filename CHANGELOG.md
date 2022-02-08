@@ -32,6 +32,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ✅ Added
 
 ### ⚠️ Changed
+- UnknownHostException is no longer considered a permanent network error
 
 ### ❌ Removed
 
