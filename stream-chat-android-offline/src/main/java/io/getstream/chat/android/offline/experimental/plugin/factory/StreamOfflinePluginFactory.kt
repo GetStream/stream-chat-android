@@ -6,8 +6,8 @@ import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
 import io.getstream.chat.android.client.experimental.persistence.OfflinePluginFactory
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
@@ -40,15 +40,16 @@ public class StreamOfflinePluginFactory(
     private fun createOfflinePlugin(): OfflinePlugin {
         // This can only be called after ChatClient was instantiated!!
         val chatClient = ChatClient.instance()
-        val chatDomain = ChatDomain.Builder(appContext, chatClient).apply {
+        ChatDomain.Builder(appContext, chatClient).apply {
             if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
             if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
             recoveryEnabled()
             retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
-        }.build() as ChatDomainImpl
+        }.build()
 
-        val stateRegistry = StateRegistry.getOrCreate(chatDomain)
+        val stateRegistry =
+            StateRegistry.getOrCreate(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalStateRegistry = GlobalMutableState.getOrCreate()
 
