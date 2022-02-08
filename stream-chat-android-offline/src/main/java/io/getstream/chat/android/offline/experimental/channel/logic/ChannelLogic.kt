@@ -205,6 +205,7 @@ internal class ChannelLogic(
     ) {
         if (result.isSuccess) {
             result.data().let { message ->
+                storeMessageLocally(listOf(message))
                 upsertMessages(listOf(message))
                 loadOlderMessages(messageId, newerMessagesOffset)
                 loadNewerMessages(messageId, olderMessagesOffset)
