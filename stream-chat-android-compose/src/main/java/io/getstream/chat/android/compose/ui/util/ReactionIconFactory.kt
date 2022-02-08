@@ -126,7 +126,7 @@ private class DefaultReactionIconFactory(
 }
 
 /**
- * Contains drawable resources for normal and selected states of a reaction.
+ * Contains drawable resources for normal and selected reaction states.
  *
  * @param iconResId The drawable resource id for the normal icon.
  * @param selectedIconResId The drawable resource id for the selected state icon.
