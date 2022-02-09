@@ -567,9 +567,9 @@ public class MessageComposerController(
     }
 
     /**
-     * Gets the edit message call accordingly with feature toggle, using either chatDomain or chatClient
+     * Gets the edit message call accordingly with feature toggle, using either chatDomain or chatClient.
      *
-     * @param message
+     * @param message [Message]
      */
     private fun getEditMessageCall(message: Message): Call<Message> {
         return if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
