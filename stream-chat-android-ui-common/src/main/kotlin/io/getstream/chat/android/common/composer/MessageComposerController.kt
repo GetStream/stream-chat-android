@@ -2,11 +2,13 @@ package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -370,7 +372,7 @@ public class MessageComposerController(
      */
     public fun sendMessage(message: Message) {
         val sendMessageCall = if (isInEditMode) {
-            chatClient.updateMessage(message)
+            getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             chatDomain.sendMessage(message)
@@ -561,6 +563,19 @@ public class MessageComposerController(
                     delay(1000)
                 }
             }
+        }
+    }
+
+    /**
+     * Gets the edit message call accordingly with feature toggle, using either chatDomain or chatClient
+     *
+     * @param message
+     */
+    private fun getEditMessageCall(message: Message): Call<Message> {
+        return if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            chatClient.updateMessage(message)
+        } else {
+            chatDomain.editMessage(message)
         }
     }
 

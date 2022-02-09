@@ -989,6 +989,10 @@ public class ChatClient internal constructor(
             }
     }
 
+    public fun updateMessageInternal(message: Message): Call<Message> {
+        return api.updateMessage(message)
+    }
+
     /**
      * Partially updates specific [Message] fields retaining the fields which were set previously.
      *
