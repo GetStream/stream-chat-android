@@ -5,7 +5,7 @@ import android.os.Handler
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldNotBeEmpty
 import org.amshove.kluent.shouldNotBeNull
@@ -32,7 +32,7 @@ internal class IdGenerationDomainTest {
             offlineEnabled = true,
             recoveryEnabled = false,
             userPresence = true,
-            offlinePlugin = OfflinePlugin()
+            globalState = GlobalMutableState.create()
         )
         currentUserFake = randomUser()
     }

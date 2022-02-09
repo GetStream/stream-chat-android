@@ -50,8 +50,6 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.keystroke
-import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.sendGiphy
 import io.getstream.chat.android.offline.extensions.shuffleGiphy
@@ -155,6 +153,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
+        globalState: GlobalMutableState = GlobalMutableState.getOrCreate()
     ) : this(
         client = client,
         db = null,
@@ -164,10 +163,10 @@ internal class ChatDomainImpl internal constructor(
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext,
+        globalState = globalState
     )
 
     private val state: StateRegistry by lazy { StateRegistry.getOrCreate(this) }
-
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.

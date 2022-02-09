@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
 import java.util.Date
@@ -25,6 +26,7 @@ import java.util.Date
  * Used for integrations tests.
  * Initialises mock internals of [ChatClient]
  */
+@ExperimentalStreamChatApi
 internal class MockClientBuilder(
     private val testCoroutineScope: TestCoroutineScope,
 ) {
@@ -90,6 +92,8 @@ internal class MockClientBuilder(
 
         socket.sendEvent(connectedEvent)
 
-        return client
+        return client.apply {
+            plugins = mutableListOf()
+        }
     }
 }

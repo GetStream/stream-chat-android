@@ -66,6 +66,8 @@ internal class GlobalMutableState private constructor() : GlobalState {
                 instance = globalState
             }
         }
+
+        internal fun create(): GlobalMutableState = GlobalMutableState()
     }
 }
 

@@ -50,10 +50,14 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
         }
 
         fun givenPlugin(plugin: Plugin) = apply {
-            plugins.add(plugin)
+            pluginFactoryList.add(mock {
+                on(it.getOrCreate()) doReturn plugin
+            })
         }
 
-        fun get(): ChatClient = chatClient
+        fun get(): ChatClient = chatClient.also {
+            it.initPlugins()
+        }
     }
 }
 

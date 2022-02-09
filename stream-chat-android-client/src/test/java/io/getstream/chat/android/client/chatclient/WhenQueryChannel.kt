@@ -85,7 +85,9 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         }
 
         fun givenPlugin(plugin: Plugin) = apply {
-            plugins.add(plugin)
+            pluginFactoryList.add(mock {
+                on(it.getOrCreate()) doReturn plugin
+            })
         }
 
         fun givenChannelResponse(channelProvider: () -> Channel) = apply {
@@ -96,7 +98,9 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             }
         }
 
-        fun get(): ChatClient = chatClient
+        fun get(): ChatClient = chatClient.also {
+            it.initPlugins()
+        }
     }
 }
 
