@@ -130,10 +130,6 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     internal val scope: CoroutineScope,
-    private val appContext: Context,
-    @property:InternalStreamChatApi
-    @property:ExperimentalStreamChatApi
-    public val pluginFactoryList: Collection<PluginFactory> = emptyList(),
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -196,8 +192,8 @@ public class ChatClient internal constructor(
         logger.logI("Initialised: " + getVersion())
     }
 
-    internal fun initPlugins() {
-        plugins = pluginFactoryList.map { pluginFactory -> pluginFactory.getOrCreate() }
+    internal fun addPlugins(plugins: List<Plugin>) {
+        this.plugins = plugins
     }
 
     //region Set user
@@ -1812,7 +1808,6 @@ public class ChatClient internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-        private val pluginFactories: MutableList<PluginFactory> = mutableListOf()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
 
@@ -2006,21 +2001,25 @@ public class ChatClient internal constructor(
                 module.queryChannelsPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
-                scope = module.networkScope,
-                appContext = appContext,
-                pluginFactoryList = pluginFactories,
+                scope = module.networkScope
             )
         }
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+
         /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
         public fun build(): ChatClient = internalBuild().also {
             instance = it
-            it.initPlugins()
+            it.addPlugins(
+                pluginFactories.map { pluginFactory ->
+                    pluginFactory.getOrCreate()
+                }
+            )
         }
 
         @InternalStreamChatApi
