@@ -989,6 +989,11 @@ public class ChatClient internal constructor(
             }
     }
 
+    /**
+     * Updates the message in the API without causing any side effect in the local data of the SDK.
+     *
+     * @param message [Message] The message to be updated in the API
+     */
     public fun updateMessageInternal(message: Message): Call<Message> {
         return api.updateMessage(message)
     }
