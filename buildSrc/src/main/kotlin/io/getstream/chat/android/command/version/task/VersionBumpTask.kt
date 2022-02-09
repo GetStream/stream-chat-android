@@ -1,6 +1,6 @@
 package io.getstream.chat.android.command.version.task
 
-import io.getstream.chat.android.command.release.markdown.parser.hasBreakingChange
+import io.getstream.chat.android.command.utils.hasBreakingChange
 import io.getstream.chat.android.command.version.codechange.parseVersion
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.command.release.markdown.parser
+package io.getstream.chat.android.command.utils
 
 import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
