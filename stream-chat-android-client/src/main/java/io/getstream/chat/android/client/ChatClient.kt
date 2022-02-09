@@ -274,12 +274,18 @@ public class ChatClient internal constructor(
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
-            listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))
+            listener?.onError(
+                ChatError(
+                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                )
+            )
             return
         }
         val userState = userStateService.state
         when {
-            userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
+            userState is UserState.UserSet &&
+                userState.user.id == user.id &&
+                socketStateService.state == SocketState.Idle -> {
                 userStateService.onUserUpdated(user)
                 tokenManager.setTokenProvider(cacheableTokenProvider)
                 connectionListener = listener
@@ -294,7 +300,10 @@ public class ChatClient internal constructor(
                 socket.connect(user)
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
-                logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
+                logger.logE(
+                    "Trying to set user without disconnecting the previous one - make sure that previously " +
+                        "set user is disconnected."
+                )
                 listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
             }
             else -> {
@@ -971,8 +980,8 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here to
-     * store the updated message locally.
+     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here
+     * to store the updated message locally.
      *
      * @param message [Message] The message to be updated.
      */
@@ -1414,8 +1423,16 @@ public class ChatClient internal constructor(
         unset: List<String> = emptyList(),
     ): Call<User> {
         if (id != getCurrentUser()?.id) {
-            logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")
-            return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))
+            logger.logE(
+                "The client-side partial update allows you to update only the current user. Make sure the " +
+                    "user is set before updating it."
+            )
+            return ErrorCall(
+                ChatError(
+                    "The client-side partial update allows you to update only the " +
+                        "current user. Make sure the user is set before updating it."
+                )
+            )
         }
 
         return api.partialUpdateUser(
@@ -1803,7 +1820,8 @@ public class ChatClient internal constructor(
     /**
      * Builder to initialize the singleton [ChatClient] instance and configure its parameters.
      *
-     * @param apiKey The API key of your Stream Chat app obtained from the [Stream Dashboard](https://dashboard.getstream.io/).
+     * @param apiKey The API key of your Stream Chat app obtained from the
+     * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
@@ -1855,7 +1873,8 @@ public class ChatClient internal constructor(
          * around push notifications. Create your own subclass and override methods to customize
          * notification appearance and behavior.
          *
-         * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
+         * See the
+         * [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
          * documentation for more information.
          *
          *
@@ -1865,7 +1884,8 @@ public class ChatClient internal constructor(
         @JvmOverloads
         public fun notifications(
             notificationConfig: NotificationConfig,
-            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+            notificationsHandler: NotificationHandler =
+                NotificationHandlerFactory.createNotificationHandler(context = appContext),
         ): Builder = apply {
             this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
@@ -1878,7 +1898,8 @@ public class ChatClient internal constructor(
          * The default implementation uses Stream's own CDN to store these files,
          * which has a 20 MB upload size limit.
          *
-         * For more info, see [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
+         * For more info, see
+         * [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
          *
          * @param fileUploader Your custom implementation of [FileUploader].
          */
@@ -1914,7 +1935,8 @@ public class ChatClient internal constructor(
         /**
          * Sets the base URL to be used by the client.
          *
-         * By default, this is the URL of Stream's [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
+         * By default, this is the URL of Stream's
+         * [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
          * which provides low latency regardless of which region your Stream
          * app is hosted in.
          *
@@ -2060,7 +2082,9 @@ public class ChatClient internal constructor(
         @JvmStatic
         public fun instance(): ChatClient {
             return instance
-                ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+                ?: throw IllegalStateException(
+                    "ChatClient.Builder::build() must be called before obtaining ChatClient instance"
+                )
         }
 
         public val isInitialized: Boolean
@@ -2068,7 +2092,8 @@ public class ChatClient internal constructor(
 
         /**
          * Handles push message.
-         * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
+         * If user is not connected - automatically restores last user credentials and sets user without connecting
+         * to the socket.
          * Push message will be handled internally unless user overrides [NotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *

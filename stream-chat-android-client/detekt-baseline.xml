@@ -366,24 +366,12 @@
     <ID>MagicNumber:PerformanceUtils.kt$PerformanceUtils$1000.0</ID>
     <ID>MagicNumber:SyncStatus.kt$SyncStatus.AWAITING_ATTACHMENTS$4</ID>
     <ID>MagicNumber:SyncStatus.kt$SyncStatus.IN_PROGRESS$3</ID>
-    <ID>MaxLineLength:AttachmentHelper.kt$AttachmentHelper.Companion$private val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)</ID>
     <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests$fun</ID>
     <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests.Companion$"https://stream-chat-.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&amp;s=43257e963dbb993d65bd358d57b54a38" to false</ID>
     <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests.Companion$"https://stream-chat-us-east-c4.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&amp;s=43257e963dbb993d65bd358d57b54a38" to true</ID>
     <ID>MaxLineLength:BaseChatModule.kt$BaseChatModule$throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")</ID>
     <ID>MaxLineLength:ChannelUserRead.kt$ChannelUserRead$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$userState is UserState.UserSet &amp;&amp; userState.user.id == user.id &amp;&amp; socketStateService.state == SocketState.Idle</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext)</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Companion$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Companion$?:</ID>
     <ID>MaxLineLength:ChatSocketServiceImplTest.kt$ChatSocketServiceImplTest$fun</ID>
-    <ID>MaxLineLength:ConnectUserTest.kt$ConnectUserTest$result.error().message `should be equal to` "The user_id provided on the JWT token doesn't match with the current user you try to connect"</ID>
     <ID>MaxLineLength:DevTokenTest.kt$DevTokenTest$private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)</ID>
     <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)</ID>
@@ -423,28 +411,17 @@
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, null, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, date, cid, watcherCount, channelType, channelId, user)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val userStopWatchingEvent = UserStopWatchingEvent(EventType.USER_WATCHING_STOP, date, cid, watcherCount, channelType, channelId, user)</ID>
-    <ID>MaxLineLength:FileUploader.kt$FileUploader$*</ID>
-    <ID>MaxLineLength:FilterObject.kt$AutocompleteFilterObject : FilterObject</ID>
-    <ID>MaxLineLength:FilterObject.kt$GreaterThanOrEqualsFilterObject : FilterObject</ID>
-    <ID>MaxLineLength:FilterObject.kt$LessThanOrEqualsFilterObject : FilterObject</ID>
     <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
     <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
     <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
     <ID>MaxLineLength:Filters.kt$Filters$*</ID>
     <ID>MaxLineLength:Filters.kt$Filters$public</ID>
-    <ID>MaxLineLength:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$"&lt;-- ${response.code}${if (response.message.isEmpty()) "" else ' ' + response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"</ID>
     <ID>MaxLineLength:MessagesApiCallsTests.kt$MessagesApiCallsTests$verifySuccess(result, SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page"))</ID>
     <ID>MaxLineLength:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler$private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }</ID>
-    <ID>MaxLineLength:NetworkStateProvider.kt$NetworkStateProvider$hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &amp;&amp; hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)</ID>
     <ID>MaxLineLength:NotificationHandler.kt$NotificationHandler$*</ID>
     <ID>MaxLineLength:NotificationHandlerFactory.kt$NotificationHandlerFactory$private</ID>
     <ID>MaxLineLength:PinnedMessagesRequest.kt$PinnedMessagesRequest$*</ID>
     <ID>MaxLineLength:ProgressCallback.kt$ProgressCallback$*</ID>
-    <ID>MaxLineLength:QueryChannelRequest.kt$QueryChannelRequest$return keys.contains(Pagination.GREATER_THAN.toString()) || keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Channel>(it), QuerySort.Companion.asc&lt;Channel>(it)) }</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Message>(it), QuerySort.Companion.asc&lt;Message>(it)) }</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Channel>(it), QuerySort.Companion.desc&lt;Channel>(it)) }</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Message>(it), QuerySort.Companion.desc&lt;Message>(it)) }</ID>
     <ID>MaxLineLength:SocketFactory.kt$SocketFactory$private</ID>
     <ID>MaxLineLength:ToggleDialogController.kt$ToggleDialogController.ToggleEvent.CommitChanges$class</ID>
     <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDYzNTY1NjQtMTQ5Zi00YjJjLTg1MjUtZDIyMDU2ZmVjNDA0In0.R3-HY9Cno62yIhCjLXDBR8LF7y1udwX8m4LLNP2dIZo"</ID>

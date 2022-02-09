@@ -78,7 +78,12 @@ internal class HttpLoggingInterceptor : Interceptor {
         val contentLength = responseBody.contentLength()
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
         logger.logI(
-            "<-- ${response.code}${if (response.message.isEmpty()) "" else ' ' + response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"
+            "<-- ${response.code}${if (response.message.isEmpty()) {
+                ""
+            } else {
+                ' ' + response.message
+            }
+            } ${response.request.url} (${tookMs}ms${", $bodySize body"})"
         )
 
         if (!response.promisesBody()) {

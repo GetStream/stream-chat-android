@@ -22,9 +22,8 @@ public class HuaweiPushDeviceGenerator(context: Context, private val appId: Stri
     private val logger = ChatLogger.get("ChatNotifications")
 
     override fun isValidForThisDevice(context: Context): Boolean =
-        (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(context) == ConnectionResult.SUCCESS).also {
-            logger.logI("Is Huawei available on on this device -> $it")
-        }
+        (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(context) == ConnectionResult.SUCCESS)
+            .also { logger.logI("Is Huawei available on on this device -> $it") }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
         logger.logI("Getting Huawei token")

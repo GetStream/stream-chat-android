@@ -279,7 +279,10 @@ public class MessageListViewModel @JvmOverloads constructor(
                 }
                 call.enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                        logger.logE(
+                            "Could not mark cid: $cid as read. Error message: ${chatError.message}. " +
+                                "Cause message: ${chatError.cause?.message}"
+                        )
                     }
                 )
             }
@@ -293,7 +296,10 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.deleteMessage(event.message, event.hard)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE("Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}")
+                            logger.logE(
+                                "Could not delete message: ${chatError.message}, Hard: ${event.hard}. " +
+                                    "Cause: ${chatError.cause?.message}"
+                            )
                             _errorEvents.postValue(EventWrapper(ErrorEvent.DeleteMessageError(chatError)))
                         }
                     )
@@ -310,7 +316,10 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.PinMessage -> {
                 client.pinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not flag message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.logE(
+                            "Could not flag message: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
+                        )
                         _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
                     }
                 )
@@ -318,7 +327,10 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.UnpinMessage -> {
                 client.unpinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.logE(
+                            "Could not unpin message: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
+                        )
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(chatError)))
                     }
                 )
@@ -329,7 +341,10 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.RetryMessage -> {
                 domain.sendMessage(event.message).enqueue(
                     onError = { chatError ->
-                        logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.logE(
+                            "(Retry) Could not send message: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
+                        )
                     }
                 )
             }
@@ -368,14 +383,20 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyMessage -> {
                 client.setMessageForReply(event.cid, event.repliedMessage).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not reply message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.logE(
+                            "Could not reply message: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
+                        )
                     }
                 )
             }
             is Event.DownloadAttachment -> {
                 client.downloadAttachment(event.attachment).enqueue(
                     onError = { chatError ->
-                        logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.logE(
+                            "Attachment download error: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
+                        )
                     }
                 )
             }
@@ -445,7 +466,10 @@ public class MessageListViewModel @JvmOverloads constructor(
                             domain.editMessage(message)
                         }.enqueue(
                             onError = { chatError ->
-                                logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                                logger.logE(
+                                    "Could not edit message to remove its attachments: ${chatError.message}. " +
+                                        "Cause: ${chatError.cause?.message}"
+                                )
                             }
                         )
                     } else {
@@ -508,7 +532,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.sendGiphy(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
-                            "Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                            "Could not send giphy for message id: ${event.message.id}. " +
+                                "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                         )
                     }
                 )
@@ -517,7 +542,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.shuffleGiphy(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
-                            "Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                            "Could not shuffle giphy for message id: ${event.message.id}. " +
+                                "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                         )
                     }
                 )
@@ -526,7 +552,8 @@ public class MessageListViewModel @JvmOverloads constructor(
                 client.cancelMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
-                            "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                            "Could not cancel giphy for message id: ${event.message.id}. " +
+                                "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                         )
                     }
                 )
@@ -643,7 +670,8 @@ public class MessageListViewModel @JvmOverloads constructor(
             domain.deleteReaction(cid, reaction).enqueue(
                 onError = { chatError ->
                     logger.logE(
-                        "Could not delete reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        "Could not delete reaction for message with id: ${reaction.messageId} " +
+                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                     )
                 }
             )
@@ -651,7 +679,8 @@ public class MessageListViewModel @JvmOverloads constructor(
             domain.sendReaction(cid, reaction, enforceUnique = enforceUnique).enqueue(
                 onError = { chatError ->
                     logger.logE(
-                        "Could not send reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        "Could not send reaction for message with id: ${reaction.messageId} " +
+                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
                     )
                 }
             )

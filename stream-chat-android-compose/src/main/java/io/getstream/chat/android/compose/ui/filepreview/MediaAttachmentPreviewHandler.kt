@@ -18,7 +18,7 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         if (assetUrl.isNullOrEmpty()) return false
 
         // Check if the base of Attachment.mimeType is audio or video
-        if (!mimeType.isNullOrEmpty() && (mimeType.contains(ModelType.attach_audio) || mimeType.contains(ModelType.attach_video))) return true
+        if (mimeType.isAudioOrVideo()) return true
 
         // If the previous check fails check Attachment.type for file type
         if (type.isNullOrEmpty()) return false
@@ -32,6 +32,9 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
             supportedMimeSubTypes.any { subtype -> subtype in mimeType }
         }
     }
+
+    private fun String?.isAudioOrVideo(): Boolean =
+        !isNullOrEmpty() && (contains(ModelType.attach_audio) || contains(ModelType.attach_video))
 
     override fun handleAttachmentPreview(attachment: Attachment) {
         context.startActivity(

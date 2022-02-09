@@ -1,5 +1,8 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
+import android.graphics.drawable.Icon
+import android.inputmethodservice.Keyboard
+import android.view.Surface
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -40,6 +43,7 @@ import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -48,6 +52,7 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import org.w3c.dom.Text
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -75,7 +80,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param trailingContent Customizable composable that represents the trailing content of the composer, send button by default.
+ * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
+ * by default.
  */
 @Composable
 public fun MessageComposer(
@@ -192,7 +198,8 @@ public fun MessageComposer(
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param trailingContent Customizable composable that represents the trailing content of the composer, send button by default.
+ * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
+ * by default.
  */
 @Composable
 public fun MessageComposer(
@@ -269,9 +276,9 @@ public fun MessageComposer(
         Column(Modifier.padding(vertical = 4.dp)) {
             headerContent(messageComposerState)
 
-            Row(
+            Keyboard.Row(
                 Modifier.fillMaxWidth(),
-                verticalAlignment = Bottom
+                verticalAlignment = MessageItemGroupPosition.Bottom
             ) {
 
                 if (activeAction !is Edit) {
@@ -336,7 +343,7 @@ public fun DefaultMessageComposerFooterContent(
     onAlsoSendToChannelSelected: (Boolean) -> Unit,
 ) {
     if (messageComposerState.messageMode is MessageMode.MessageThread) {
-        Row(
+        Keyboard.Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -418,7 +425,7 @@ internal fun DefaultComposerIntegrations(
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-    Row(
+    Keyboard.Row(
         modifier = Modifier
             .height(44.dp)
             .padding(horizontal = 4.dp),
@@ -433,7 +440,11 @@ internal fun DefaultComposerIntegrations(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
                     contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+                    tint = if (isAttachmentsButtonEnabled) {
+                        ChatTheme.colors.textLowEmphasis
+                    } else {
+                        ChatTheme.colors.disabled
+                    },
                 )
             },
             onClick = onAttachmentsClick

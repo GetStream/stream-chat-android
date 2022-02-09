@@ -51,8 +51,8 @@ public fun ThreadParticipants(
             val itemPadding = Modifier.padding(start = (index * (itemSize.value / 2)).dp)
 
             /**
-             * Calculates the visual position of the item to define its zIndex. If we're aligned to the start of the screen,
-             * the first item should be the upper most.
+             * Calculates the visual position of the item to define its zIndex. If we're aligned to the start of
+             * the screen, the first item should be the upper most.
              *
              * If we're aligned to the end, then the last item should be the upper most.
              */

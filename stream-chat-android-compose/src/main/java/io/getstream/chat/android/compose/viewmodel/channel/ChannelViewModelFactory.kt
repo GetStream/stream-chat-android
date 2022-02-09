@@ -49,7 +49,10 @@ public class ChannelViewModelFactory(
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
+            ?: throw IllegalArgumentException(
+                "MessageListViewModelFactory can only create instances of the " +
+                    "following classes: ${factories.keys.joinToString { it.simpleName }}"
+            )
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T

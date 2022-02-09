@@ -11,7 +11,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Component that represents an online indicator to be used with [io.getstream.chat.android.compose.ui.components.avatar.UserAvatar].
+ * Component that represents an online indicator to be used with
+ * [io.getstream.chat.android.compose.ui.components.avatar.UserAvatar].
  *
  * @param modifier Modifier for styling.
  */

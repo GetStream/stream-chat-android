@@ -4,8 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.Icon
+import android.graphics.drawable.shapes.Shape
+import android.inputmethodservice.Keyboard
 import android.net.Uri
 import android.provider.Settings
+import android.view.Surface
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,6 +60,7 @@ import io.getstream.chat.android.compose.ui.components.attachments.images.Images
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import org.w3c.dom.Text
 import java.io.File
 
 /**
@@ -294,13 +299,13 @@ private fun AttachmentPickerOptions(
     onOptionClick: (AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
-    Row(
+    Keyboard.Row(
         Modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Row(
+        Keyboard.Row(
             Modifier.weight(4f),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -342,7 +347,11 @@ private fun AttachmentPickerOptions(
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_capture_option),
-                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled
+                        tint = if (!hasPickedFiles && !hasPickedImages) {
+                            ChatTheme.colors.textLowEmphasis
+                        } else {
+                            ChatTheme.colors.disabled
+                        }
                     )
                 },
                 onClick = { onOptionClick(MediaCapture) }
@@ -363,7 +372,9 @@ private fun AttachmentPickerOptions(
                         .mirrorRtl(layoutDirection = layoutDirection),
                     painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                    tint = if (hasPickedFiles || hasPickedImages) {
+                        ChatTheme.colors.primaryAccent
+                    } else ChatTheme.colors.textLowEmphasis
                 )
             }
         )

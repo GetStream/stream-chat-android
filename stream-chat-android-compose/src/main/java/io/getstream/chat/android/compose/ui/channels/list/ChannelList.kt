@@ -39,14 +39,17 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param modifier Modifier for styling.
  * @param viewModel The ViewModel that loads all the data and connects it to the UI. We provide a
  * factory that builds the default ViewModel in case the user doesn't want to provide their own.
- * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the
+ * scroll state.
  * @param onLastItemReached Handler for pagination, when the user reaches the last item in the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
- * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
- * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param emptySearchContent Composable that represents the empty content if there are no channels matching
+ * the search query.
+ * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement
+ * scroll to top button.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -122,14 +125,17 @@ public fun ChannelList(
  * @param channelsState Current state of the Channel list, represented by [ChannelsState].
  * @param currentUser The data of the current user, used various states.
  * @param modifier Modifier for styling.
- * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the
+ * scroll state.
  * @param onLastItemReached Handler for pagination, when the user reaches the end of the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
- * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
- * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param emptySearchContent Composable that represents the empty content if there are no channels matching the
+ * search query.
+ * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement
+ * scroll to top button.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].

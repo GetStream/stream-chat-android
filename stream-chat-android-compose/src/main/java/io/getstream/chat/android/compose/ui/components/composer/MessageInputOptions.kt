@@ -1,5 +1,7 @@
 package io.getstream.chat.android.compose.ui.components.composer
 
+import android.graphics.drawable.Icon
+import android.inputmethodservice.Keyboard
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +21,7 @@ import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import org.w3c.dom.Text
 
 /**
  * Shows the options "header" for the message input component. This is based on the currently active
@@ -35,12 +38,22 @@ public fun MessageInputOptions(
     modifier: Modifier = Modifier,
 ) {
     val optionImage =
-        painterResource(id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit)
+        painterResource(
+            id = if (activeAction is Reply) {
+                R.drawable.stream_compose_ic_reply
+            } else {
+                R.drawable.stream_compose_ic_edit
+            }
+        )
     val title = stringResource(
-        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message else R.string.stream_compose_edit_message
+        id = if (activeAction is Reply) {
+            R.string.stream_compose_reply_to_message
+        } else {
+            R.string.stream_compose_edit_message
+        }
     )
 
-    Row(
+    Keyboard.Row(
         modifier, verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

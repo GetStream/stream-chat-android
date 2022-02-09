@@ -372,8 +372,8 @@ public class MessageListViewModel(
     }
 
     /**
-     * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
-     * time the data loads and whenever we see a message that's newer than the current last seen message.
+     * Attempts to update the last seen message in the channel or thread. We only update the last seen message the
+     * first time the data loads and whenever we see a message that's newer than the current last seen message.
      *
      * @param message The message that is currently seen by the user.
      */
@@ -397,7 +397,8 @@ public class MessageListViewModel(
     }
 
     /**
-     * Updates the state of the last seen message. Based on if we're [isInThread] or not, it updates corresponding state.
+     * Updates the state of the last seen message. Based on if we're [isInThread] or not, it updates corresponding
+     * state.
      *
      * @param currentMessage The current message the user sees.
      */
@@ -583,8 +584,8 @@ public class MessageListViewModel(
 
     /**
      * Changes the current [messageMode] to be [Thread] and loads thread data using ChatDomain approach.
-     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage], after which we observe
-     * specific data from the thread.
+     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage], after which we
+     * observe specific data from the thread.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
@@ -921,8 +922,8 @@ public class MessageListViewModel(
 
     internal companion object {
         /**
-         * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
-         * we show a separator, if it's enabled in the list.
+         * The default threshold for showing date separators. If the message difference in hours is equal to this
+         * number, then we show a separator, if it's enabled in the list.
          */
         internal const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
 

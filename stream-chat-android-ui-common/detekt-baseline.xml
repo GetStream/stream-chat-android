@@ -30,37 +30,8 @@
     <ID>MagicNumber:StorageHelper.kt$StorageHelper$1000</ID>
     <ID>MagicNumber:StreamFileUtil.kt$StreamFileUtil$90</ID>
     <ID>MagicNumber:StreamImageLoaderFactory.kt$StreamImageLoaderFactory$0.25</ID>
-    <ID>MaxLineLength:CaptureMediaContract.kt$CaptureMediaContract$File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir, createFileName("STREAM_VID", "mp4"))</ID>
-    <ID>MaxLineLength:CaptureMediaContract.kt$CaptureMediaContract$File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir, createFileName("STREAM_IMG", "jpg"))</ID>
     <ID>MaxLineLength:CoilStreamImageLoader.kt$CoilStreamImageLoader$*</ID>
     <ID>MaxLineLength:CoilStreamImageLoader.kt$CoilStreamImageLoader$if</ID>
-    <ID>MaxLineLength:MessageComposerController.kt$MessageComposerController$*</ID>
-    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not edit message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not send keystroke cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not watch channel with cid: $cid. Error message: ${error.message}. Cause message: ${error.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageListItemLiveData.kt$MessageListItemLiveData$*</ID>
-    <ID>MaxLineLength:MessageListItemLiveDataBenchmark.kt$MessageListItemLiveDataBenchmark$println("changing read information 100 times on a message list with ${items.size} items took $duration milliseconds")</ID>
-    <ID>MaxLineLength:MessageListItemLiveDataBenchmark.kt$MessageListItemLiveDataBenchmark$println("changing typing information 100 times on a message list with ${items.size} items took $duration milliseconds")</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not delete reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not send reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:MessageListViewModelTest.kt$private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)</ID>
-    <ID>MaxLineLength:MockChatClientBuilder.kt$MockChatClientBuilder$public</ID>
-    <ID>MaxLineLength:ModelType.kt$ModelType$public const val attach_mime_docx: String = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"</ID>
-    <ID>MaxLineLength:ModelType.kt$ModelType$public const val attach_mime_pptx: String = "application/vnd.openxmlformats-officedocument.presentationml.presentation"</ID>
-    <ID>MaxLineLength:PermissionChecker.kt$PermissionChecker$*</ID>
-    <ID>MaxLineLength:PermissionChecker.kt$PermissionChecker$ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED</ID>
-    <ID>MaxLineLength:StorageHelper.kt$StorageHelper$selection = "${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL AND ${MediaStore.Files.FileColumns.MIME_TYPE} != ''"</ID>
-    <ID>MaxLineLength:StorageHelper.kt$StorageHelper$throw IllegalStateException("Unable to create cache file for attachment: $attachmentMetaData. Either file or URI cannot be null.")</ID>
     <ID>NestedBlockDepth:Linkify.kt$Linkify$private fun pruneOverlaps(links: MutableList&lt;LinkSpec>, text: Spannable)</ID>
     <ID>NestedBlockDepth:MessageListItemLiveData.kt$MessageListItemLiveData$ private fun addReads( messages: List&lt;MessageListItem>, reads: List&lt;ChannelUserRead>?, currentUserId: String, ): List&lt;MessageListItem></ID>
     <ID>NestedBlockDepth:MessageListViewModelTest.kt$MessageListViewModelTest$@Test fun `Should display thread messages when thread mode entered`()</ID>

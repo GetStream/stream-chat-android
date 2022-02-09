@@ -70,8 +70,8 @@ public class MessageComposerViewModel(
     public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
+     * sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
 

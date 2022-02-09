@@ -107,7 +107,11 @@ class MessagesActivity : AppCompatActivity() {
                         .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = listViewModel,
-                    lazyListState = if (listViewModel.currentMessagesState.parentMessageId != null) rememberLazyListState() else lazyListState,
+                    lazyListState = if (listViewModel.currentMessagesState.parentMessageId != null) {
+                        rememberLazyListState()
+                    } else {
+                        lazyListState
+                    },
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)

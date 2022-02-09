@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.components.channels
 
+import android.graphics.drawable.Icon
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,14 +42,24 @@ public fun MessageReadStatusIcon(
     val messageIcon = when {
         currentUserSentMessage && readCount == 0 -> R.drawable.stream_compose_message_sent
         !currentUserSentMessage || readCount != 0 -> R.drawable.stream_compose_message_seen
-        syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> R.drawable.stream_compose_ic_clock
+        syncStatus == SyncStatus.SYNC_NEEDED ||
+            syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> R.drawable.stream_compose_ic_clock
         syncStatus == SyncStatus.COMPLETED -> R.drawable.stream_compose_message_sent
         else -> null
     }
 
     if (messageIcon != null) {
         val iconTint =
-            if (!currentUserSentMessage || (readStatues.isNotEmpty() && readCount == readStatues.size)) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+            if (!currentUserSentMessage ||
+                (
+                    readStatues.isNotEmpty() &&
+                        readCount == readStatues.size
+                    )
+            ) {
+                ChatTheme.colors.primaryAccent
+            } else {
+                ChatTheme.colors.textLowEmphasis
+            }
 
         Icon(
             modifier = modifier,

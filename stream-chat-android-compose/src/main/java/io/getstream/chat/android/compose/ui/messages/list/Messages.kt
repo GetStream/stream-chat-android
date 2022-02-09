@@ -38,12 +38,15 @@ import kotlin.math.abs
  *
  * @param messagesState Current state of messages, like messages to display, if we're loading more
  * and if we've reached the end of the list.
- * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the scroll state.
+ * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
+ * scroll state.
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
- * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
+ * changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
- * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior
+ * based on the list state.
  * @param itemContent Composable that represents the item that displays each message.
  */
 @Composable
@@ -86,7 +89,11 @@ public fun Messages(
                     onScrolledToBottom()
                 }
 
-                if (!endOfMessages && index == messages.lastIndex && messages.isNotEmpty() && lazyListState.isScrollInProgress) {
+                if (!endOfMessages &&
+                    index == messages.lastIndex &&
+                    messages.isNotEmpty() &&
+                    lazyListState.isScrollInProgress
+                ) {
                     onMessagesStartReached()
                 }
             }

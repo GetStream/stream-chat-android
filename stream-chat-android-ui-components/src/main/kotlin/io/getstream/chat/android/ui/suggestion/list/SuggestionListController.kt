@@ -17,9 +17,10 @@ public class SuggestionListController(
     private val suggestionListUi: SuggestionListUi,
 ) {
     private val scope = CoroutineScope(DispatcherProvider.Main)
-    private var currentSuggestions: Suggestions by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
-        scope.launch { renderSuggestions(newSuggestions) }
-    }
+    private var currentSuggestions: Suggestions
+        by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
+            scope.launch { renderSuggestions(newSuggestions) }
+        }
     public var userLookupHandler: MessageInputView.UserLookupHandler
         by Delegates.observable(MessageInputView.DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }
     public var commands: List<Command> by Delegates.observable(emptyList()) { _, _, _ -> computeSuggestions() }

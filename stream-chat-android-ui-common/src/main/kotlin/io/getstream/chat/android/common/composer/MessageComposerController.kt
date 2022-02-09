@@ -128,8 +128,8 @@ public class MessageComposerController(
     private var cooldownInterval: Int = 0
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine
+     * if we're sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
 

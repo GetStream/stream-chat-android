@@ -66,7 +66,10 @@ internal class MessageListItemLiveDataBenchmark {
                 messageLd.typingChanged(emptyList())
             }
         }
-        println("changing typing information 100 times on a message list with ${items.size} items took $duration milliseconds")
+        println(
+            "changing typing information 100 times on a message list with ${items.size} " +
+                "items took $duration milliseconds"
+        )
         duration shouldBeLessThan 25
     }
 
@@ -84,7 +87,10 @@ internal class MessageListItemLiveDataBenchmark {
                 messageLd.readsChanged(reads, currentUser.value!!.id)
             }
         }
-        println("changing read information 100 times on a message list with ${items.size} items took $duration milliseconds")
+        println(
+            "changing read information 100 times on a message list with ${items.size} " +
+                "items took $duration milliseconds"
+        )
         duration shouldBeLessThan 50
     }
 

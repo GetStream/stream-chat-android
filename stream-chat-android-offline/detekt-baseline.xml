@@ -107,7 +107,6 @@
     <ID>MaxLineLength:ChannelControllerReactionsTest.kt$ChannelControllerReactionsTest.Fixture$ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(mapOf(user.id to user)))</ID>
     <ID>MaxLineLength:ChannelControllerTypingTests.kt$ChannelControllerTypingTests$fun</ID>
     <ID>MaxLineLength:ChannelDao.kt$ChannelDao$@Query("UPDATE stream_chat_channel_state SET hidden = :hidden, hideMessagesBefore = :hideMessagesBefore WHERE cid = :cid")</ID>
-    <ID>MaxLineLength:ChannelData.kt$ChannelData$internal</ID>
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")</ID>
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")</ID>
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")</ID>

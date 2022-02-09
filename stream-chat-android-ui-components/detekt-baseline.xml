@@ -145,8 +145,6 @@
     <ID>MaxLineLength:ShapeAppearanceModelFactory.kt$ShapeAppearanceModelFactory$* Class that creates the default version of ShapeAppearanceModel used in the background of messages, attachments, pictures...</ID>
     <ID>MaxLineLength:SimpleChannelListView.kt$SimpleChannelListView$check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set ChannelListItemViewHolderFactory first" }</ID>
     <ID>MaxLineLength:SuggestionListController.kt$SuggestionListController$by Delegates.observable(MessageInputView.DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }</ID>
-    <ID>MaxLineLength:SuggestionListController.kt$SuggestionListController$private</ID>
-    <ID>MaxLineLength:SuggestionListViewStyle.kt$SuggestionListViewStyle$*</ID>
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
     <ID>MaxLineLength:TextAndAttachmentsViewHolder.kt$TextAndAttachmentsViewHolder$data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>

@@ -31,26 +31,31 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
  * @param modifier Modifier for styling.
- * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the scroll state.
+ * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
+ * scroll state.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onMessagesStartReached Handler for pagination.
- * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
+ * changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
+ * on the list state.
  * @param itemContent Composable that represents each item in a list. By default, we provide
- * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
+ * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI
+ * and behavior.
  */
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
-    lazyListState: LazyListState = rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
+    lazyListState: LazyListState =
+        rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
@@ -161,9 +166,11 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  *
  * @param currentState The state of the component, represented by [MessagesState].
  * @param modifier Modifier for styling.
- * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the scroll state.
+ * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
+ * scroll state.
  * @param onMessagesStartReached Handler for pagination.
- * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
+ * changes.
  * @param onScrolledToBottom Handler when the user scrolls to the bottom.
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
  * @param onLongItemClick Handler for when the user long taps on an item.
@@ -172,7 +179,8 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
- * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior
+ * based on the list state.
  * @param itemContent Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  */

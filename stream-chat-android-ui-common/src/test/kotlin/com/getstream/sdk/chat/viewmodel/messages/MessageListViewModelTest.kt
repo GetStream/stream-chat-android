@@ -51,7 +51,11 @@ private val MESSAGES = createMessageList {
     )
 }
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
-private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
+private val THREAD_PARENT_MESSAGE = createMessage(
+    text = "parent message",
+    createdAt = Date.from(Instant.now()),
+    user = CURRENT_USER,
+)
 private val THREAD_MESSAGES = createMessageList {
     createMessage(
         createdAt = Date.from(Instant.now()),

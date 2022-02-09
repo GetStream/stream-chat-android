@@ -75,7 +75,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
                 _repliedMessage.addSource(channelController.repliedMessage) { _repliedMessage.value = it }
             } else {
                 val error = channelControllerResult.error()
-                logger.logE("Could not watch channel with cid: $cid. Error message: ${error.message}. Cause message: ${error.cause?.message}")
+                logger.logE(
+                    "Could not watch channel with cid: $cid. Error message: ${error.message}. " +
+                        "Cause message: ${error.cause?.message}"
+                )
             }
         }
     }
@@ -108,7 +111,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
         chatDomain.sendMessage(message.apply(messageTransformer)).enqueue(
             onError = { chatError ->
-                logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. " +
+                        "Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }
@@ -126,7 +132,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
         chatDomain.sendMessage(message).enqueue(
             onError = { chatError ->
-                logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. " +
+                        "Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }
@@ -156,7 +165,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
             chatDomain.editMessage(message)
         }.enqueue(
             onError = { chatError ->
-                logger.logE("Could not edit message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not edit message with cid: ${message.cid}. Error message: ${chatError.message}. " +
+                        "Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }
@@ -179,7 +191,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val parentId = activeThread.value?.id
         ChatClient.instance().keystroke(cid, parentId).enqueue(
             onError = { chatError ->
-                logger.logE("Could not send keystroke cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not send keystroke cid: $cid. Error message: ${chatError.message}. " +
+                        "Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }
@@ -191,7 +206,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val parentId = activeThread.value?.id
         ChatClient.instance().stopTyping(cid, parentId).enqueue(
             onError = { chatError ->
-                logger.logE("Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. " +
+                        "Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }

@@ -33,10 +33,30 @@ internal class QuerySortTest {
 
         @JvmStatic
         fun generateQuerySortInput() = listOf(
-            randomString().let { Arguments.of(QuerySort.Companion.asc<Channel>(it), QuerySort.Companion.asc<Channel>(it)) },
-            randomString().let { Arguments.of(QuerySort.Companion.asc<Message>(it), QuerySort.Companion.asc<Message>(it)) },
-            randomString().let { Arguments.of(QuerySort.Companion.desc<Channel>(it), QuerySort.Companion.desc<Channel>(it)) },
-            randomString().let { Arguments.of(QuerySort.Companion.desc<Message>(it), QuerySort.Companion.desc<Message>(it)) },
+            randomString().let {
+                Arguments.of(
+                    QuerySort.Companion.asc<Channel>(it),
+                    QuerySort.Companion.asc<Channel>(it)
+                )
+            },
+            randomString().let {
+                Arguments.of(
+                    QuerySort.Companion.asc<Message>(it),
+                    QuerySort.Companion.asc<Message>(it)
+                )
+            },
+            randomString().let {
+                Arguments.of(
+                    QuerySort.Companion.desc<Channel>(it),
+                    QuerySort.Companion.desc<Channel>(it)
+                )
+            },
+            randomString().let {
+                Arguments.of(
+                    QuerySort.Companion.desc<Message>(it),
+                    QuerySort.Companion.desc<Message>(it)
+                )
+            },
         )
     }
 }

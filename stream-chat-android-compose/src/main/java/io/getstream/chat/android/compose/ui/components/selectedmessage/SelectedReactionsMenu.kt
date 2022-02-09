@@ -39,7 +39,8 @@ import io.getstream.chat.android.compose.ui.util.ReactionIcon
  * @param reactionTypes The available reactions within the menu.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
+ * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog.
+ * By default [ReactionOptions].
  * @param centerContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
  */
 @Composable

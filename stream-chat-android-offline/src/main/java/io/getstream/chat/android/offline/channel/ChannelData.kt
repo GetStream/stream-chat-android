@@ -53,7 +53,13 @@ public data class ChannelData(
     }
 
     /** convert a channelEntity into a channel object */
-    internal fun toChannel(messages: List<Message>, members: List<Member>, reads: List<ChannelUserRead>, watchers: List<User>, watcherCount: Int): Channel {
+    internal fun toChannel(
+        messages: List<Message>,
+        members: List<Member>,
+        reads: List<ChannelUserRead>,
+        watchers: List<User>,
+        watcherCount: Int
+    ): Channel {
         val c = Channel(cooldown = cooldown, team = team, memberCount = memberCount)
         c.type = type
         c.id = channelId

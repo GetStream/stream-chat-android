@@ -36,8 +36,10 @@ import java.util.Date
  * @param messages A livedata object with the messages.
  * @param readsLd A livedata object with the read state per user.
  * @param typingLd A livedata object with the users who are currently typing.
- * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the item list.
- * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a date separator.
+ * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1
+ * of the item list.
+ * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert
+ * a date separator.
  *
  * Here's an example:
  *
@@ -196,7 +198,8 @@ internal class MessageListItemLiveData(
             }
 
             // date separator
-            val shouldAddDateSeparator = dateSeparatorHandler?.shouldAddDateSeparator(previousMessage, message) ?: false
+            val shouldAddDateSeparator =
+                dateSeparatorHandler?.shouldAddDateSeparator(previousMessage, message) ?: false
             if (shouldAddDateSeparator) {
                 items.add(MessageListItem.DateSeparatorItem(message.getCreatedAtOrThrow()))
             }
@@ -247,7 +250,10 @@ internal class MessageListItemLiveData(
     ): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
-        val sortedReads = reads.filter { it.user.id != currentUserId }.sortedBy { it.lastRead }.toMutableList()
+        val sortedReads = reads
+            .filter { it.user.id != currentUserId }
+            .sortedBy { it.lastRead }
+            .toMutableList()
         if (sortedReads.isEmpty()) return messages
 
         val messagesCopy = messages.toMutableList()
@@ -263,9 +269,11 @@ internal class MessageListItemLiveData(
                             // we got a match
                             sortedReads.removeLast()
                             val reversedIndex = messages.size - i - 1
-                            val messageItemCopy = messagesCopy[reversedIndex] as MessageListItem.MessageItem
+                            val messageItemCopy =
+                                messagesCopy[reversedIndex] as MessageListItem.MessageItem
                             val readBy = listOf(last) + messageItemCopy.messageReadBy
-                            val updatedMessageItem = messageItem.copy(messageReadBy = readBy)
+                            val updatedMessageItem =
+                                messageItem.copy(messageReadBy = readBy)
                             // update the message in the message copy
                             messagesCopy[reversedIndex] = updatedMessageItem
                         } else {

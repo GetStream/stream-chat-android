@@ -32,6 +32,7 @@ internal class ConnectUserTest {
         val result = client.connectUser(user, jwt).execute()
 
         result.isError `should be equal to` true
-        result.error().message `should be equal to` "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+        result.error().message `should be equal to`
+            "The user_id provided on the JWT token doesn't match with the current user you try to connect"
     }
 }

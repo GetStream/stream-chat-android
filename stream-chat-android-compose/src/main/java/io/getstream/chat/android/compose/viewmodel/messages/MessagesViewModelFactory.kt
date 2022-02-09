@@ -61,7 +61,8 @@ public class MessagesViewModelFactory(
                 channelId = channelId,
                 messageLimit = messageLimit,
                 enforceUniqueReactions = enforceUniqueReactions,
-                clipboardHandler = ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
+                clipboardHandler =
+                ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
                 showDateSeparators = showDateSeparators,
                 showSystemMessages = showSystemMessages
             )
@@ -78,7 +79,10 @@ public class MessagesViewModelFactory(
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
+            ?: throw IllegalArgumentException(
+                "MessageListViewModelFactory can only create instances of the " +
+                    "following classes: ${factories.keys.joinToString { it.simpleName }}"
+            )
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
