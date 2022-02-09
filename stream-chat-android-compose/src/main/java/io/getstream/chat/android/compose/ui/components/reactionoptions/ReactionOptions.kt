@@ -102,6 +102,7 @@ internal fun DefaultReactionOptionItem(
     ReactionOptionItem(
         modifier = Modifier
             .size(24.dp)
+            .size(ChatTheme.dimens.reactionOptionItemIconSize)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false),
