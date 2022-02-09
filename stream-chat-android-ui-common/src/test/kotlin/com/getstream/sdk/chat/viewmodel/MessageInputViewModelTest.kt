@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.randomUser
-import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -47,8 +46,6 @@ internal class MessageInputViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.watchChannel(eq(CID), eq(0))) doReturn channelControllerCall
-        whenever(chatDomain.keystroke(eq(CID), anyOrNull())) doReturn mock()
-        whenever(chatDomain.stopTyping(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.user) doReturn MutableLiveData(randomUser())
         whenever(channelController.toChannel()) doReturn channel
         whenever(channelController.offlineChannelData) doReturn MutableLiveData(mock())

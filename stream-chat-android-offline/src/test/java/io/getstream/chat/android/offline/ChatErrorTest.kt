@@ -5,6 +5,7 @@ import io.getstream.chat.android.offline.extensions.isPermanent
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Test
+import java.net.UnknownHostException
 
 internal class ChatErrorTest {
 
@@ -36,5 +37,11 @@ internal class ChatErrorTest {
     fun `cool down period error should be permanent`() {
         val error = ChatNetworkError.create(60, "", 403, null)
         error.isPermanent().shouldBeTrue()
+    }
+
+    @Test
+    fun `UnknownHost as cause should be a temporary error`() {
+        val error = ChatNetworkError.create(0, "", 500, UnknownHostException())
+        error.isPermanent().shouldBeFalse()
     }
 }

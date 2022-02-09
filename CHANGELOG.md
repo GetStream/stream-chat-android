@@ -1,25 +1,12 @@
-<!-- UNRELEASED START -->
 # UNRELEASED CHANGELOG
-## 🚨 Old UI Module removed
-`stream-chat-android` is deprecated and won't be maintained anymore. The module will continue working, but we won't be releasing new versions.
-The source code has been moved to this [archived repository](https://github.com/GetStream/stream-chat-android-old-ui)
-Consider migrating to `stream-chat-android-ui-components` or `stream-chat-android-compose`. Here you can find a set of useful resources for migration:
-- [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
-- [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/)
-- [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
-- [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
-- [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
-
 ## Common changes for all artifacts
 ### 🐞 Fixed
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Create new artifact to integrate Xiaomi Mi Push with Stream. You will need to add  `stream-chat-android-pushprovider-xiaomi` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi) for further details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
 
 ### ⚠️ Changed
-- Update Android Gradle Plugin version to 7.1.0 and Gradle version to 7.3.3. [#2989](https://github.com/GetStream/stream-chat-android/pull/2989)
 
 ### ❌ Removed
 
@@ -27,7 +14,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Internal implementation only asks to the provided `TokenProvider` a new token when it is really needed. [#2995](https://github.com/GetStream/stream-chat-android/pull/2995)
 
 ### ✅ Added
 
@@ -37,15 +23,12 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed memory leak related to database initialization.[#2974](https://github.com/GetStream/stream-chat-android/pull/2974)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new extension function `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
 
 ### ⚠️ Changed
-- Deprecated `ChatDomain::deleteChannel` in favour of `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
 
 ### ❌ Removed
 
@@ -55,7 +38,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new extension function `ChatClient::loadMessageById`. [#2929](https://github.com/GetStream/stream-chat-android/pull/2929)
 
 ### ⚠️ Changed
 
@@ -63,10 +45,8 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
 
 ### ⬆️ Improved
-- Replaced Lottie typing indicator with a custom view. [#3004](https://github.com/GetStream/stream-chat-android/pull/3004)
 
 ### ✅ Added
 
@@ -76,25 +56,12 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed the way our attachments work and are represented in Compose to support more attachment types. [#2955](https://github.com/GetStream/stream-chat-android/pull/2955)
-- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
 
 ### ⬆️ Improved
-- Improved RTL support in Compose [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
-- Made the SDK smaller by removing Materials Icons dependency [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
-- Removed unnecessary experimental flags, opted in into APIs we're using from Compose. [#2983](https://github.com/GetStream/stream-chat-android/pull/2983)
 
 ### ✅ Added
-- Added [`Custom Attachments guide`](https://getstream.io/chat/docs/sdk/android/composee/guides/adding-custom-attachments/). [#2967](https://github.com/GetStream/stream-chat-android/pull/2967)
-- Added `onHeaderAvatarClick` parameter to the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
-- Exposed `lazyListState` for the `ChannelList` and `Channels` components that allows you to control the scrolling behavior and state. [#3049](https://github.com/GetStream/stream-chat-android/pull/3049)
-- Exposed `helperContent` for the `ChannelList` and `Channels` components that allows you to implement a helper UI such as scroll to top button for the channel list. [#3049](https://github.com/GetStream/stream-chat-android/pull/3049)
-- Exposed `lazyListState` for the `MessageList` and `Messages` components that allows you to control the scrolling behavior and state. [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
-- Exposed `helperContent` for the `MessageList` and `Messages` components that allows you to override the default scrolling behavior UI.  [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
 
 ### ⚠️ Changed
-- Renamed `onHeaderClickAction` parameter to `onHeaderActionClick` for the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
-- `MessageList` and `Messages` now have two new parameters that have default values. Please make sure that you check out the changes and that everything still works for you. [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 
 ### ❌ Removed
@@ -138,11 +105,87 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added a `XiaomiMessagingDelegate` class to simplify custom implementations of `PushMessageReceiver` that forward messages to the SDK. See [Using a Custom PushMessageReceiver](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi#using-a-custom-pushmessagereceiver) for more details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+<!-- UNRELEASED START -->
+# February 9th, 2022 - 4.28.1
+## Common changes for all artifacts
+- Fix crash when events were received. [#3058](https://github.com/GetStream/stream-chat-android/pull/3058)
+
+# February 8th, 2022 - 4.28.0
+## 🚨 Old UI Module removed
+`stream-chat-android` is deprecated and won't be maintained anymore. The module will continue working, but we won't be releasing new versions.
+The source code has been moved to this [archived repository](https://github.com/GetStream/stream-chat-android-old-ui)
+Consider migrating to `stream-chat-android-ui-components` or `stream-chat-android-compose`. Here you can find a set of useful resources for migration:
+- [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
+- [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/)
+- [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
+- [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/)
+- [Old Sample App Migration PR](https://github.com/GetStream/stream-chat-android/pull/2467)
+
+## Common changes for all artifacts
+### ✅ Added
+- Create new artifact to integrate Xiaomi Mi Push with Stream. You will need to add  `stream-chat-android-pushprovider-xiaomi` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi) for further details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
+
+### ⚠️ Changed
+- Update Android Gradle Plugin version to 7.1.0 and Gradle version to 7.3.3. [#2989](https://github.com/GetStream/stream-chat-android/pull/2989)
+
+## stream-chat-android-client
+### ⬆️ Improved
+- Internal implementation only asks to the provided `TokenProvider` a new token when it is really needed. [#2995](https://github.com/GetStream/stream-chat-android/pull/2995)
+
+### ⚠️ Changed
+- UnknownHostException is no longer considered a permanent network error. [#3054](https://github.com/GetStream/stream-chat-android/pull/3054)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed memory leak related to database initialization.[#2974](https://github.com/GetStream/stream-chat-android/pull/2974)
+
+### ✅ Added
+- Added new extension function `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
+
+### ⚠️ Changed
+- Deprecated `ChatDomain::deleteChannel` in favour of `ChatClient::deleteChannel`. [#3007](https://github.com/GetStream/stream-chat-android/pull/3007)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added new extension function `ChatClient::loadMessageById`. [#2929](https://github.com/GetStream/stream-chat-android/pull/2929)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
+
+### ⬆️ Improved
+- Replaced Lottie typing indicator with a custom view. [#3004](https://github.com/GetStream/stream-chat-android/pull/3004)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed the way our attachments work and are represented in Compose to support more attachment types. [#2955](https://github.com/GetStream/stream-chat-android/pull/2955)
+- Fixed the logic for fetching encoding for URLs when opening PDFs and similar documents in the MessageList. [#3017](https://github.com/GetStream/stream-chat-android/pull/3017)
+
+### ⬆️ Improved
+- Improved RTL support in Compose [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
+- Made the SDK smaller by removing Materials Icons dependency [#2987](https://github.com/GetStream/stream-chat-android/pull/2987)
+- Removed unnecessary experimental flags, opted in into APIs we're using from Compose. [#2983](https://github.com/GetStream/stream-chat-android/pull/2983)
+
+### ✅ Added
+- Added [`Custom Attachments guide`](https://getstream.io/chat/docs/sdk/android/composee/guides/adding-custom-attachments/). [#2967](https://github.com/GetStream/stream-chat-android/pull/2967)
+- Added `onHeaderAvatarClick` parameter to the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+- Exposed `lazyListState` for the `ChannelList` and `Channels` components that allows you to control the scrolling behavior and state. [#3049](https://github.com/GetStream/stream-chat-android/pull/3049)
+- Exposed `helperContent` for the `ChannelList` and `Channels` components that allows you to implement a helper UI such as scroll to top button for the channel list. [#3049](https://github.com/GetStream/stream-chat-android/pull/3049)
+- Exposed `lazyListState` for the `MessageList` and `Messages` components that allows you to control the scrolling behavior and state. [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
+- Exposed `helperContent` for the `MessageList` and `Messages` components that allows you to override the default scrolling behavior UI.  [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
+
+### ⚠️ Changed
+- Renamed `onHeaderClickAction` parameter to `onHeaderActionClick` for the `ChannelsScreen` component. [#3016](https://github.com/GetStream/stream-chat-android/pull/3016)
+- `MessageList` and `Messages` now have two new parameters that have default values. Please make sure that you check out the changes and that everything still works for you. [#3044](https://github.com/GetStream/stream-chat-android/pull/3044)
+
+## stream-chat-android-pushprovider-xiaomi
+### ✅ Added
+- Added a `XiaomiMessagingDelegate` class to simplify custom implementations of `PushMessageReceiver` that forward messages to the SDK. See [Using a Custom PushMessageReceiver](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi#using-a-custom-pushmessagereceiver) for more details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
 <!-- UNRELEASED END -->
 
 # February 2nd, 2022 - 4.27.2
