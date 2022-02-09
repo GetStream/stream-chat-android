@@ -25,9 +25,9 @@ internal class WithPreconditionCall<T : Any>(
 
     override fun enqueue(callback: Call.Callback<T>) {
         job = scope.launch {
-            val result = precondition.invoke()
+            precondition.invoke()
                 .onSuccess { originalCall.enqueue(callback) }
-                .onErrorSuspend { it ->
+                .onErrorSuspend {
                     withContext(DispatcherProvider.Main) {
                         callback.onResult(Result.error(it))
                     }

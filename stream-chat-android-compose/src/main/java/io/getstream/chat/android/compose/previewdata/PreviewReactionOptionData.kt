@@ -13,28 +13,24 @@ internal object PreviewReactionOptionData {
     @Composable
     fun reactionOption1() = ReactionOptionItemState(
         painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-        isSelected = true,
         type = "like",
     )
 
     @Composable
     fun reactionOption2() = ReactionOptionItemState(
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_love),
-        isSelected = true,
+        painter = painterResource(R.drawable.stream_compose_ic_reaction_love_selected),
         type = "love"
     )
 
     @Composable
     fun reactionOption3() = ReactionOptionItemState(
         painter = painterResource(R.drawable.stream_compose_ic_reaction_wut),
-        isSelected = true,
         type = "wow"
     )
 
     @Composable
     fun reactionOption4() = ReactionOptionItemState(
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_down),
-        isSelected = true,
+        painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_down_selected),
         type = "sad"
     )
 
