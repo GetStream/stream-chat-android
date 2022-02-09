@@ -454,7 +454,10 @@ public abstract interface class io/getstream/chat/android/offline/experimental/g
 	public abstract fun isOnline ()Z
 }
 
-public final class io/getstream/chat/android/offline/experimental/plugin/OfflinePlugin$Companion {
+public final class io/getstream/chat/android/offline/experimental/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/experimental/persistence/OfflinePluginFactory, io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
+	public fun <init> (Lio/getstream/chat/android/offline/experimental/plugin/configuration/Config;Landroid/content/Context;)V
+	public fun getOrCreate ()Lio/getstream/chat/android/client/experimental/persistence/OfflinePlugin;
+	public synthetic fun getOrCreate ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
 public final class io/getstream/chat/android/offline/experimental/querychannels/state/ChannelsStateData$Loading : io/getstream/chat/android/offline/experimental/querychannels/state/ChannelsStateData {
