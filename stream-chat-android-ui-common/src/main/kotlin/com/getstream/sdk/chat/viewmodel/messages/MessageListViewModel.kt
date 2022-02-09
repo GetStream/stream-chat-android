@@ -35,6 +35,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.Threa
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -389,12 +390,20 @@ public class MessageListViewModel @JvmOverloads constructor(
                 if (message != null) {
                     _targetMessage.value = message!!
                 } else {
-                    domain.loadMessageById(
+                    val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                        client.loadMessageById(
+                            cid,
+                            event.messageId,
+                            MESSAGES_LIMIT,
+                            MESSAGES_LIMIT
+                        )
+                    } else domain.loadMessageById(
                         cid,
                         event.messageId,
                         MESSAGES_LIMIT,
                         MESSAGES_LIMIT
-                    ).enqueue { result ->
+                    )
+                    call.enqueue { result ->
                         if (result.isSuccess) {
                             _targetMessage.value = result.data()
                         } else {
@@ -406,12 +415,20 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.RemoveAttachment -> {
                 val attachmentToBeDeleted = event.attachment
-                domain.loadMessageById(
+                val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                    client.loadMessageById(
+                        cid,
+                        event.messageId,
+                        MESSAGES_LIMIT,
+                        MESSAGES_LIMIT
+                    )
+                } else domain.loadMessageById(
                     cid,
                     event.messageId,
                     MESSAGES_LIMIT,
                     MESSAGES_LIMIT
-                ).enqueue { result ->
+                )
+                call.enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
                         message.attachments.removeAll { attachment ->
@@ -435,12 +452,20 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyAttachment -> {
                 val messageId = event.repliedMessageId
                 val cid = event.cid
-                domain.loadMessageById(
+                val call = if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                    client.loadMessageById(
+                        cid,
+                        messageId,
+                        MESSAGES_LIMIT,
+                        MESSAGES_LIMIT
+                    )
+                } else domain.loadMessageById(
                     cid,
                     messageId,
                     MESSAGES_LIMIT,
                     MESSAGES_LIMIT
-                ).enqueue { result ->
+                )
+                call.enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
                         onEvent(Event.ReplyMessage(cid, message))

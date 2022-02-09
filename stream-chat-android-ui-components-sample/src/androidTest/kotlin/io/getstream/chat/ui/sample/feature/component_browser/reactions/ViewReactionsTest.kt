@@ -12,7 +12,7 @@ import org.junit.Test
 class ViewReactionsTest : ScreenshotTest {
 
     @Test
-     fun viewReactionsWithNoCustomization() {
+    fun viewReactionsWithNoCustomization() {
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserViewReactionsFragment>()
         compareScreenshot(fragmentScenario.waitForFragment())
     }
@@ -35,21 +35,21 @@ class ViewReactionsTest : ScreenshotTest {
     private fun testWithReactions(reactions: Map<String, Int>) {
         val fragmentArgs = bundleOf(CUSTOM_REACTIONS to reactions)
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserViewReactionsFragment>(fragmentArgs)
-        
+
         compareScreenshot(fragmentScenario.waitForFragment())
     }
 
-    private fun manyReactions(): Map<String, Int>{
+    private fun manyReactions(): Map<String, Int> {
         return mutableMapOf(
             SupportedReactions.DefaultReactionTypes.LOVE to 10,
             SupportedReactions.DefaultReactionTypes.WUT to 20,
             SupportedReactions.DefaultReactionTypes.LOL to 20,
             SupportedReactions.DefaultReactionTypes.THUMBS_UP to 20,
-            "sad"  to 20,
+            "sad" to 20,
         )
     }
 
-    private fun unsupportedReactions(): Map<String, Int>{
+    private fun unsupportedReactions(): Map<String, Int> {
         return mutableMapOf(
             "notSupported1" to 10,
             "notSupported2" to 10,

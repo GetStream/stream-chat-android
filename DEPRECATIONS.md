@@ -10,16 +10,16 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatDomain#createChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use extension function `ChatClient.createChannel` instead |
 | `ChatDomain#cancelMessage` | 2021.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient#cancelMessage` instead |
 | `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.11<br/>⌛ | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
-| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | Use `ChatUI.messageTextTransformer` instead. |
-| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
+| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.08 ⌛ | Use `ChatUI.messageTextTransformer` instead. |
+| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.08 ⌛ | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
 | `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | Use `ChatClient#showChannel` instead |
 | `ChatDomain#loadOlderMessages` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0  | 2022.02.22 ⌛ | Use `ChatClient#loadOlderMessages` instead |
-| `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#stopTyping` instead |
-| `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#keystroke` instead |
+| `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#stopTyping` instead |
+| `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 |  2022.02.08<br/>4.28.0 | Use `ChatClient#keystroke` instead |
 | `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.09<br/>4.24.0 | 2022.01.11<br/>4.26.0 | Use ChatDomain.mutedChannels instead |
-| `ChatDomain#downloadAttachment` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#downloadAttachment` instead |
-| `ChatDomain#setMessageForReply` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#setMessageForReply` instead |
-| `ChatDomain#replayEventsForActiveChannels` | 2021.11.24<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#replayEventsForActiveChannels` instead |
+| `ChatDomain#downloadAttachment` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#downloadAttachment` instead |
+| `ChatDomain#setMessageForReply` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#setMessageForReply` instead |
+| `ChatDomain#replayEventsForActiveChannels` | 2021.11.24<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#replayEventsForActiveChannels` instead |
 | `ChatDomain#online` | 2021.10.26<br/>4.21.0 | 2021.11.24<br/>4.23.0 | 2022.01.11<br/>4.26.0 | Use ChatDomain#connectionState instead |
 | `QueryChannelsController#newChannelEventFilter` | 2021.10.12<br/>4.20.0 | 2021.11.08<br/>4.22 | 2021.11.08<br/>4.22 | Use QueryChannelsController::chatEventHandler instead |
 | `QueryChannelsController#checkFilterOnChannelUpdatedEvent` | 2021.10.12<br/>4.20.0 | 2021.11.08<br/>4.22 | 2021.11.08<br/>4.22 | Use QueryChannelsController::chatEventHandler instead |

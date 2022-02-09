@@ -669,6 +669,7 @@ public class ChannelController internal constructor(
             ?.data()
             ?: domainImpl.repos.selectMessage(messageId)
             ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+        channelLogic.storeMessageLocally(listOf(message))
         upsertMessage(message)
         loadOlderMessages(messageId, newerMessagesOffset)
         loadNewerMessages(messageId, olderMessagesOffset)
