@@ -412,8 +412,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### ❌ Removed
 - Removed some redundant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
 
-<!-- end of unreleased -->
-
 # December 9th, 2021 - 4.24.0
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -798,8 +796,6 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 - Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
 - Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
-
-<!-- end of unreleased -->
 
 # September 15th, 2021 - 4.19.0
 ## Common changes for all artifacts
