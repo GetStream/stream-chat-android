@@ -3,17 +3,33 @@ package io.getstream.chat.android.command.version.codechange
 import java.io.File
 
 fun parseVersion(file: File, bumpMinor: Boolean): List<String> {
+    var versionChanged = false
+    val minorVersionMarker = "const val minorVersion ="
+    val patchVersionMarker = "const val minorVersion ="
+
     val newLines = file.readLines().map { line ->
         when {
-            line.trim().startsWith("const val minorVersion =") && bumpMinor -> bumpVersionInLine(line)
+            bumpMinor && line.trim().startsWith(minorVersionMarker) ->
+                bumpVersionInLine(line).also {
+                    versionChanged = true
+                }
 
-            line.trim().startsWith("const val patchVersion =") && !bumpMinor -> bumpVersionInLine(line)
+            !bumpMinor && line.trim().startsWith(patchVersionMarker) ->
+                bumpVersionInLine(line).also {
+                    versionChanged = true
+                }
 
             else -> line
         }
     }
 
-    return newLines.toList()
+    if (versionChanged) {
+        return newLines.toList()
+    } else {
+        throw IllegalStateException(
+            "The script could not bump the version. Both marker \"$minorVersionMarker\" and marker \"$patchVersionMarker\" could not be found"
+        )
+    }
 }
 
 private fun bumpVersionInLine(line: String): String {
