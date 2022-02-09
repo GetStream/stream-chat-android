@@ -110,6 +110,10 @@
 ### ❌ Removed
 
 <!-- UNRELEASED START -->
+# February 9th, 2022 - 4.28.1
+## Common changes for all artifacts
+- Fix crash when events were received. [#3058](https://github.com/GetStream/stream-chat-android/pull/3058)
+
 # February 8th, 2022 - 4.28.0
 ## 🚨 Old UI Module removed
 `stream-chat-android` is deprecated and won't be maintained anymore. The module will continue working, but we won't be releasing new versions.
