@@ -6,7 +6,6 @@ import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadAndResize
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -52,13 +51,6 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     private fun init(attrs: AttributeSet?) {
         style = GiphyMediaAttachmentViewStyle(context, attrs)
 
-        if (style.isConstantSizeEnabled()) {
-            binding.loadImage.updateLayoutParams {
-                this.height = style.giphyMaxHeight
-                this.width = style.giphyMaxHeight
-            }
-        }
-
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.giphyLabel.setImageDrawable(style.giphyIcon)
 
@@ -76,44 +68,42 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
-        if (style.isConstantSizeEnabled()) {
-            showConstantSizeGiphy(url)
-        } else {
-            showResizeableGiphy(url)
+        val giphyInfo = attachment.giphyInfo(style.giphyType)
+
+        val height = (giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP).dpToPx()
+        val width = giphyInfo?.width?.dpToPx()
+
+        this.updateLayoutParams {
+            this.height = height
+            if (width != null && width < height) {
+                this.width = width
+            }
         }
+        binding.imageView.updateLayoutParams {
+            this.height = height
+            if (width != null && width < height) {
+                this.width = width
+            }
+        }
+
+        loadGiphy(url)
     }
 
     /**
-     * Displays the Giphy image inside of a constant height container. We call [loadAndResize] here because we need to
-     * resize the container's width based on the constant height.
+     * Displays the Giphy image inside of the container. We call [loadAndResize] here because we need to
+     * resize the container's width based on the height.
+     *
+     * In case of original sized giphies, we don't have a constant max height. For resizable giphies, we rely on the
+     * information from the API to give use the constant height.
      */
-    private fun showConstantSizeGiphy(url: String) {
+    public fun loadGiphy(url: String) {
         CoroutineScope(DispatcherProvider.Main).launch {
             binding.imageView.loadAndResize(
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
                 container = this@GiphyMediaAttachmentView,
-                maxHeight = style.giphyMaxHeight,
-                onStart = { binding.loadImage.isVisible = true },
-                onComplete = { binding.loadImage.isVisible = false }
-            )
-        }
-    }
-
-    /**
-     * Displays the Giphy image inside of a resizeable container. We call [load] here as the container can be freely
-     * resized based on the image size.
-     */
-    private fun showResizeableGiphy(url: String) {
-        binding.giphyLabel.isVisible = true
-
-        CoroutineScope(DispatcherProvider.Main).launch {
-            binding.imageView.load(
-                data = url,
-                placeholderDrawable = style.placeholderIcon,
-                onStart = { binding.loadImage.isVisible = true },
-                onComplete = { binding.loadImage.isVisible = false },
-            )
+                onStart = { binding.loadImage.isVisible = true }
+            ) { binding.loadImage.isVisible = false }
         }
     }
 

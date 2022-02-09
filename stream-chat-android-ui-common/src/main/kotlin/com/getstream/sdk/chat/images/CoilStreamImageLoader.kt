@@ -1,17 +1,14 @@
 package com.getstream.sdk.chat.images
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
-import android.util.DisplayMetrics
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.updateLayoutParams
 import coil.drawable.MovieDrawable
 import coil.drawable.ScaleDrawable
 import coil.fetch.VideoFrameUriFetcher
@@ -23,11 +20,6 @@ import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
-import kotlin.math.roundToInt
-
-internal fun Int.dpToPx(): Int = dpToPxPrecise().roundToInt()
-internal fun Int.dpToPxPrecise(): Float = (this * displayMetrics().density)
-internal fun displayMetrics(): DisplayMetrics = Resources.getSystem().displayMetrics
 
 internal object CoilStreamImageLoader : StreamImageLoader {
 
@@ -100,7 +92,6 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         data: Any?,
         container: ViewGroup,
         placeholderDrawable: Drawable?,
-        maxHeight: Int,
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
@@ -125,19 +116,6 @@ internal object CoilStreamImageLoader : StreamImageLoader {
 
             result.drawable
         } ?: return
-
-        val widthToHeightRatio = (drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()).coerceAtMost(1.3f)
-        val height = drawable.intrinsicHeight.dpToPx().coerceAtMost(maxHeight)
-        val width = drawable.intrinsicWidth.dpToPx().coerceAtMost((height * widthToHeightRatio).toInt())
-
-        target.updateLayoutParams {
-            this.height = height
-            this.width = width
-        }
-        container.updateLayoutParams {
-            this.height = height
-            this.width = width
-        }
 
         if (drawable is ScaleDrawable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable) {
             (drawable.child as AnimatedImageDrawable).start()

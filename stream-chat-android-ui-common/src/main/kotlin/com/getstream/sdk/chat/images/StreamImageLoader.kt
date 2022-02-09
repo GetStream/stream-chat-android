@@ -41,7 +41,6 @@ public sealed interface StreamImageLoader {
         data: Any?,
         container: ViewGroup,
         placeholderDrawable: Drawable? = null,
-        maxHeight: Int,
         transformation: ImageTransformation = ImageTransformation.None,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},

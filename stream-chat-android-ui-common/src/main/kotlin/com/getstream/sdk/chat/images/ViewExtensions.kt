@@ -49,7 +49,6 @@ public suspend fun ImageView.loadAndResize(
     data: Any?,
     placeholderDrawable: Drawable?,
     transformation: ImageTransformation = ImageTransformation.None,
-    maxHeight: Int,
     container: ViewGroup,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
@@ -59,7 +58,6 @@ public suspend fun ImageView.loadAndResize(
         data = data,
         container = container,
         placeholderDrawable = placeholderDrawable,
-        maxHeight = maxHeight,
         transformation = transformation,
         onStart = onStart,
         onComplete = onComplete

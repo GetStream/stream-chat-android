@@ -48,13 +48,14 @@
 
     <LinearLayout
         android:id="@+id/messageContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         android:padding="1dp"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
+        app:layout_constraintWidth_default="wrap"
         >
 
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
@@ -67,7 +68,7 @@
 
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView
             android:id="@+id/mediaAttachmentView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
 
