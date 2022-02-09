@@ -238,7 +238,7 @@ internal class QueryChannelsLogic(
                 if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
                     client.state.channel(channelType, channelId).toChannel()
                 } else {
-                    chatDomainImpl.channel(cid).toChannel()
+                    chatDomainImpl.channel(channelType, channelId).toChannel()
                 }
             }
     }
