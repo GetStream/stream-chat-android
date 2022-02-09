@@ -84,7 +84,6 @@ internal class MockClientBuilder(
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtil,
-            appContext = mock(),
             scope = testCoroutineScope,
         )
 

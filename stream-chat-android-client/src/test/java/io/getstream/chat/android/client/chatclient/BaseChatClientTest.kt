@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -37,7 +37,7 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var config: ChatClientConfig
 
-    protected lateinit var pluginFactoryList: MutableList<PluginFactory>
+    protected lateinit var plugins: MutableList<Plugin>
 
     @Mock
     protected lateinit var api: ChatApi
@@ -48,7 +48,7 @@ internal open class BaseChatClientTest {
     @BeforeEach
     fun before() {
         MockitoAnnotations.openMocks(this)
-        pluginFactoryList = mutableListOf()
+        plugins = mutableListOf()
         chatClient = ChatClient(
             config = config,
             api = api,
@@ -60,9 +60,7 @@ internal open class BaseChatClientTest {
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = coroutineRule.scope,
-            pluginFactoryList = pluginFactoryList
         )
     }
 }

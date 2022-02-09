@@ -102,7 +102,6 @@ internal class ClientConnectionTests {
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = testCoroutines.scope,
         )
     }
