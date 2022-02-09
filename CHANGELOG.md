@@ -62,6 +62,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 
 ### ❌ Removed
 

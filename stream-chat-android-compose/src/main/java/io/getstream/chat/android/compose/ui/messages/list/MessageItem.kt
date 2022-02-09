@@ -263,17 +263,19 @@ internal fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-        val supportedReactions = ChatTheme.reactionTypes
 
         val reactionCounts = message.reactionCounts.ifEmpty { return }
+        val iconFactory = ChatTheme.reactionIconFactory
         reactionCounts
-            .filter { supportedReactions.containsKey(it.key) }
+            .filter { iconFactory.isReactionSupported(it.key) }
             .takeIf { it.isNotEmpty() }
             ?.map { it.key }
             ?.map { type ->
+                val isSelected = ownReactions.any { it.type == type }
+                val reactionIcon = iconFactory.createReactionIcon(type)
+                val painter = reactionIcon.getPainter(isSelected)
                 ReactionOptionItemState(
-                    painter = painterResource(requireNotNull(supportedReactions[type])),
-                    isSelected = ownReactions.any { it.type == type },
+                    painter = painter,
                     type = type
                 )
             }
