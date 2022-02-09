@@ -3,9 +3,10 @@ package io.getstream.chat.android.command.release.markdown.parser
 import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
 import io.getstream.chat.android.command.release.model.Section
-import io.getstream.chat.android.command.utils.UNRELEASED_END
-import io.getstream.chat.android.command.utils.UNRELEASED_START
 import java.io.File
+
+private const val UNRELEASED_START = "<!-- UNRELEASED START -->"
+private const val UNRELEASED_END = "<!-- UNRELEASED END -->"
 
 fun parseChangelogFile(file: File): Document {
     return file.readLines()
@@ -74,3 +75,21 @@ private fun List<String>.filterListSection(
         throw IllegalStateException("Could not find the start or end of unreleased section")
     }
 }
+
+fun hasBreakingChange(file: File): Boolean {
+    var hasBreakingChange = false
+
+    file.useLines { lines ->
+        lines.forEach { line ->
+            if (line.contains(UNRELEASED_END))
+                return hasBreakingChange
+
+            if (line.contains("- \uD83D\uDEA8 Breaking change")) {
+                hasBreakingChange = true
+            }
+        }
+    }
+
+    throw IllegalStateException("Could not reach the end of unreleased file")
+}
+
