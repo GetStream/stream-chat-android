@@ -5,12 +5,14 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class ReplyDecorator(
     private val style: MessageReplyStyle,
 ) : BaseDecorator() {
+
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -25,6 +27,11 @@ internal class ReplyDecorator(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupReplyView(viewHolder.binding.replyView, data)
 
     private fun setupReplyView(replyView: MessageReplyView, data: MessageListItem.MessageItem) {
         val replyToMessage = data.message.replyTo

@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -46,6 +47,15 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        with(viewHolder.binding) {
+            setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+        }
+    }
 
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,

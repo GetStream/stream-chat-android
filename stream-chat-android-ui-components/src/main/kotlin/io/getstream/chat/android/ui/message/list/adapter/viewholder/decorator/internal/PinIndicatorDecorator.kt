@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawableW
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -21,6 +22,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
  * shows a caption indicating that the message was pinned by a particular user.
  */
 internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
+
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -44,6 +46,13 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
+    }
 
     private fun setupPinIndicator(
         root: ConstraintLayout,

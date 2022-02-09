@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/stream_ui_spacing_small"
-    android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
     <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
@@ -28,19 +26,10 @@
         android:paddingTop="@dimen/stream_ui_spacing_tiny"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
         android:visibility="gone"
-        android:textDirection="locale"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         tools:visibility="visible"
-        />
-
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
-        style="?attr/streamUiMessageListItemAvatarStyle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/marginStart"
-        tools:src="@tools:sample/avatars"
         />
 
     <Space
@@ -57,12 +46,11 @@
 
     <LinearLayout
         android:id="@+id/messageContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:orientation="vertical"
-        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="@id/marginEnd"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
@@ -76,20 +64,29 @@
             android:visibility="gone"
             />
 
+        <io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
+            android:id="@+id/linkAttachmentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="@id/gapView"
+            />
+
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="start"
             android:hyphenationFrequency="normal"
             app:lineHeight="16sp"
-            android:paddingLeft="@dimen/stream_ui_spacing_medium"
+            android:paddingStart="@dimen/stream_ui_spacing_medium"
             android:paddingTop="@dimen/stream_ui_spacing_small"
-            android:paddingRight="@dimen/stream_ui_spacing_medium"
+            android:paddingEnd="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="@dimen/stream_ui_spacing_small"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
+            android:textColor="@color/stream_ui_text_color_primary"
             android:textColorLink="@color/stream_ui_accent_blue"
             android:textDirection="locale"
-            tools:text="@tools:sample/lorem"
             />
 
     </LinearLayout>
@@ -101,6 +98,17 @@
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@id/reactionsSpace"
         app:layout_constraintTop_toTopOf="@id/reactionsSpace"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        tools:src="@tools:sample/avatars"
         />
 
     <Space
@@ -119,9 +127,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         app:layout_constraintStart_toStartOf="@id/marginStart"
-        app:layout_constraintTop_toBottomOf="@id/messageContainer"
+        app:layout_constraintTop_toBottomOf="@+id/messageContainer"
+        />
+
+    <TextView
+        android:id="@+id/sentFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:textColor="@color/stream_ui_text_color_primary"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@+id/footnote"
+        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
     <ImageView
@@ -130,7 +150,7 @@
         android:layout_height="24dp"
         android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/footnote"
+        app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toStartOf="@id/avatarMineView"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
@@ -139,6 +159,9 @@
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarMineView"
         style="?attr/streamUiMessageListItemAvatarStyle"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

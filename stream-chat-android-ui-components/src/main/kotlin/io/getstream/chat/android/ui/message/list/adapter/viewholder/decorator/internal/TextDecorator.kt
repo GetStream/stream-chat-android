@@ -4,10 +4,12 @@ import android.widget.TextView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class TextDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
+
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -22,6 +24,11 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupTextView(viewHolder.binding.messageText, data)
 
     private fun setupTextView(textView: TextView, data: MessageListItem.MessageItem) {
         if (data.isMine) {

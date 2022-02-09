@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 public open class MessageBackgroundFactoryImpl(private val style: MessageListItemStyle) : MessageBackgroundFactory {
 
     /**
-     * Draws the background of plain text messages
+     * Draws the background of plain text messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
@@ -30,7 +30,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
-     * Draws the background of deleted messages,
+     * Draws the background of deleted messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
@@ -44,7 +44,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
-     * Draws the background of text and attachment messages,
+     * Draws the background of text and attachment messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
@@ -54,7 +54,17 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
-     * Draws the default background of messages,
+     * Draws the background of messages containing links and no other types of attachments.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun linkAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
+     * Draws the default background of messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].

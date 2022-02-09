@@ -10,11 +10,11 @@ import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINKS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
@@ -118,7 +119,8 @@ public open class MessageListItemViewHolderFactory {
             DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            TEXT_AND_ATTACHMENTS -> createTextAndAttachmentViewHolder(parentView)
+            // TODO uncomment and sort order priority
+            // TEXT_AND_ATTACHMENTS -> createTextAndAttachmentViewHolder(parentView)
             LOADING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
@@ -126,6 +128,7 @@ public open class MessageListItemViewHolderFactory {
             SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
             THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
+            LINKS -> createLinkAttachmentsViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -191,6 +194,17 @@ public open class MessageListItemViewHolderFactory {
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return ErrorMessageViewHolder(parentView, style)
+    }
+
+    protected fun createLinkAttachmentsViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return LinkAttachmentsViewHolder(
+            parent = parentView,
+            decorators = decoratorProvider.decorators,
+            listeners = listenerContainer,
+            style = style
+        )
     }
 
     private fun createEmptyMessageItemViewHolder(

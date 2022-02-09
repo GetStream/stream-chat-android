@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -34,6 +35,11 @@ internal class GapDecorator : BaseDecorator() {
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupGapView(viewHolder.binding.gapView, data)
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
 }

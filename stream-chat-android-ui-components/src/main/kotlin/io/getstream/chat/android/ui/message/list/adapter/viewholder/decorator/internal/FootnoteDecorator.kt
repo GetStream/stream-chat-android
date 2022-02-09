@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -73,6 +74,17 @@ internal class FootnoteDecorator(
             hideStatusIndicator()
         }
     }
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
 
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
