@@ -61,7 +61,6 @@ public class StreamOfflinePluginFactory(
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
-            config = config
         )
     }
 }

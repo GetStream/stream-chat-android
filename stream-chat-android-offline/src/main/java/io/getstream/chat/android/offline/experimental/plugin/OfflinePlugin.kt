@@ -16,7 +16,14 @@ import io.getstream.chat.android.offline.experimental.plugin.configuration.Confi
 /**
  * Implementation of [Plugin] that brings support for the offline feature.
  *
- * @param config Configuration options for this plugin.
+ * @param queryChannelsListener [QueryChannelsListener]
+ * @param queryChannelListener [QueryChannelListener]
+ * @param threadQueryListener [ThreadQueryListener]
+ * @param channelMarkReadListener [ChannelMarkReadListener]
+ * @param editMessageListener [EditMessageListener]
+ * @param getMessageListener [GetMessageListener]
+ * @param hideChannelListener [HideChannelListener]
+ * @param markAllReadListener [MarkAllReadListener]
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
@@ -29,7 +36,6 @@ internal class OfflinePlugin(
     private val getMessageListener: GetMessageListener,
     private val hideChannelListener: HideChannelListener,
     private val markAllReadListener: MarkAllReadListener,
-    private val config: Config = Config(),
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
