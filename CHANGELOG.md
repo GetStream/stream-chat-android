@@ -1,4 +1,5 @@
 # UNRELEASED CHANGELOG
+<!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
 
@@ -110,12 +111,12 @@
 
 ### ❌ Removed
 
-<!-- UNRELEASED START -->
+<!-- UNRELEASED END -->
+
 # February 9th, 2022 - 4.28.2
 ## Common changes for all artifacts
 - Fix crash with offline support. [#3063](https://github.com/GetStream/stream-chat-android/pull/3063)
 
-<!-- UNRELEASED END -->
 # February 9th, 2022 - 4.28.1
 ## Common changes for all artifacts
 - Fix crash when events were received. [#3058](https://github.com/GetStream/stream-chat-android/pull/3058)
