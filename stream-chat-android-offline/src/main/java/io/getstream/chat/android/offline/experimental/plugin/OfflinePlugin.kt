@@ -20,7 +20,7 @@ import io.getstream.chat.android.offline.experimental.plugin.configuration.Confi
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-internal class OfflinePluginImpl(
+internal class OfflinePlugin(
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,
     private val threadQueryListener: ThreadQueryListener,

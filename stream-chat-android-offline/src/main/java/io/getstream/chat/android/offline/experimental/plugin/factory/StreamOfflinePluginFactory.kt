@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
@@ -28,7 +28,7 @@ public class StreamOfflinePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
 
-    private var instance: OfflinePluginImpl? = null
+    private var instance: OfflinePlugin? = null
 
     override fun getOrCreate(): Plugin {
         return instance ?: createOfflinePlugin().also {
@@ -36,7 +36,7 @@ public class StreamOfflinePluginFactory(
         }
     }
 
-    private fun createOfflinePlugin(): OfflinePluginImpl {
+    private fun createOfflinePlugin(): OfflinePlugin {
         // This can only be called after ChatClient was instantiated!!
         val chatClient = ChatClient.instance()
         ChatDomain.Builder(appContext, chatClient).apply {
@@ -52,7 +52,7 @@ public class StreamOfflinePluginFactory(
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalStateRegistry = GlobalMutableState.getOrCreate()
 
-        return OfflinePluginImpl(
+        return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),

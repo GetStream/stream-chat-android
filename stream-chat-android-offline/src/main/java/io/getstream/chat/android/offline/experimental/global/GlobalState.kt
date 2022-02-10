@@ -5,13 +5,13 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePluginImpl
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Global state of [OfflinePluginImpl].
+ * Global state of [OfflinePlugin].
  */
 public interface GlobalState {
 
