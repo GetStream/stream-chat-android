@@ -61,12 +61,19 @@ internal class GlobalMutableState private constructor() : GlobalState {
     internal companion object {
         private var instance: GlobalMutableState? = null
 
+        /**
+         * Gets the singleton of GlobalMutableState of creates it in the first call
+         */
         internal fun getOrCreate(): GlobalMutableState {
             return instance ?: GlobalMutableState().also { globalState ->
                 instance = globalState
             }
         }
 
+        /**
+         * Creates an instance of GlobalMutableState with a fresh state. Please keep in mind that many instances of this class may
+         * cause the SDK to present an inconsistent state.
+         */
         internal fun create(): GlobalMutableState = GlobalMutableState()
     }
 }

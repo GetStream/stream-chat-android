@@ -11,10 +11,10 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChann
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 
 /**
- * Implementation of [Plugin] that brings support for the offline feature.
+ * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
+ * of its dependencies, so avoid to add logic here.
  *
  * @param queryChannelsListener [QueryChannelsListener]
  * @param queryChannelListener [QueryChannelListener]
@@ -48,10 +48,10 @@ internal class OfflinePlugin(
 
     override val name: String = MODULE_NAME
 
-    companion object {
+    private companion object {
         /**
          * Name of this plugin module.
          */
-        const val MODULE_NAME: String = "Offline"
+        private const val MODULE_NAME: String = "Offline"
     }
 }

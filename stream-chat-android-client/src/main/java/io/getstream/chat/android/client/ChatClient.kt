@@ -1936,8 +1936,8 @@ public class ChatClient internal constructor(
 
         @InternalStreamChatApi
         @ExperimentalStreamChatApi
-        public fun withPlugin(plugin: PluginFactory): Builder = apply {
-            pluginFactories.add(plugin)
+        public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
+            pluginFactories.add(pluginFactory)
         }
 
         /**
@@ -2007,6 +2007,9 @@ public class ChatClient internal constructor(
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
+        /**
+         * Factories of plugins that will be added to the SDK. Check [Plugin] and [PluginFactory]
+         */
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
         /**

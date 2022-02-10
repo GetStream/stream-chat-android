@@ -23,6 +23,9 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
 @ExperimentalStreamChatApi
+/**
+ * Implementation of [PluginFactory] that provides [OfflinePlugin]
+ */
 public class StreamOfflinePluginFactory(
     private val config: Config,
     private val appContext: Context,

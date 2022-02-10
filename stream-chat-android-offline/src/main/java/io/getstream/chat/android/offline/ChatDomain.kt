@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.persistance.OfflineSupport
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -585,7 +584,6 @@ public sealed interface ChatDomain {
             UploadAttachmentsNetworkType.NOT_ROAMING
 
         private var retryPolicy: RetryPolicy = DefaultRetryPolicy()
-        private var offlineSupport: OfflineSupport? = null
 
         @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
