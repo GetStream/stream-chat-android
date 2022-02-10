@@ -1,8 +1,10 @@
 name: App Distribute CI
 
 on:
-  release:
-    types: [released]
+  workflow_run:
+    workflows: ["Releases"]
+    types:
+      - completed
 
 jobs:
   build_ui_components_sample_app:

@@ -8,12 +8,10 @@ import io.getstream.chat.android.client.models.User
  *
  * @param user The user who left the reaction.
  * @param painter The icon of the reaction.
- * @param isMine If reaction belongs to the current user.
  * @param type The string representation of the reaction.
  */
 public data class UserReactionItemState(
     public val user: User,
     public val painter: Painter,
-    public val isMine: Boolean,
     public val type: String,
 )

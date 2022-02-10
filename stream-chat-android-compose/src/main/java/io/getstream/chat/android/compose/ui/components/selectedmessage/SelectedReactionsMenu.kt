@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
@@ -25,6 +24,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 /**
  * Represents the list of user reactions.
@@ -51,7 +51,7 @@ public fun SelectedReactionsMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
@@ -92,7 +92,7 @@ public fun SelectedReactionsMenu(
 @Composable
 internal fun DefaultSelectedReactionsHeaderContent(
     message: Message,
-    reactionTypes: Map<String, Int>,
+    reactionTypes: Map<String, ReactionIcon>,
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
@@ -144,25 +144,24 @@ internal fun DefaultSelectedReactionsCenterContent(
  *
  * @param message The message the reactions were left for.
  * @param currentUser The currently logged in user.
- * @param reactionTypes The available reactions within the menu.
  */
 @Composable
 private fun buildUserReactionItems(
     message: Message,
     currentUser: User?,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
 ): List<UserReactionItemState> {
+    val iconFactory = ChatTheme.reactionIconFactory
     return message.latestReactions
-        .filter { it.user != null && reactionTypes.contains(it.type) }
+        .filter { it.user != null && iconFactory.isReactionSupported(it.type) }
         .map {
             val user = requireNotNull(it.user)
             val type = it.type
-            val resId = requireNotNull(reactionTypes[type])
+            val isMine = currentUser?.id == user.id
+            val painter = iconFactory.createReactionIcon(type).getPainter(isMine)
 
             UserReactionItemState(
                 user = user,
-                painter = painterResource(resId),
-                isMine = currentUser?.id == user.id,
+                painter = painter,
                 type = type
             )
         }
