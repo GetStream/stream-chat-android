@@ -150,6 +150,7 @@ public class ChatClient internal constructor(
         PushNotificationReceivedListener { _, _ -> }
 
     public lateinit var plugins: List<Plugin>
+
     init {
         eventsObservable.subscribe { event ->
             when (event) {
@@ -2025,14 +2026,19 @@ public class ChatClient internal constructor(
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = internalBuild().also {
-            instance = it
-            it.addPlugins(
-                pluginFactories.map { pluginFactory ->
-                    pluginFactory.getOrCreate()
+        public fun build(): ChatClient = internalBuild()
+            .apply {
+                preSetUserListeners.add {
+                    addPlugins(
+                        pluginFactories.map { pluginFactory ->
+                            pluginFactory.getOrCreate()
+                        }
+                    )
                 }
-            )
-        }
+            }
+            .also {
+                instance = it
+            }
 
         @InternalStreamChatApi
         public abstract fun internalBuild(): ChatClient
