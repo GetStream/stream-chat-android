@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.experimental.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -29,7 +28,7 @@ public class StreamOfflinePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
 
-    private var instance: OfflinePlugin? = null
+    private var instance: OfflinePluginImpl? = null
 
     override fun getOrCreate(): Plugin {
         return instance ?: createOfflinePlugin().also {
@@ -37,7 +36,7 @@ public class StreamOfflinePluginFactory(
         }
     }
 
-    private fun createOfflinePlugin(): OfflinePlugin {
+    private fun createOfflinePlugin(): OfflinePluginImpl {
         // This can only be called after ChatClient was instantiated!!
         val chatClient = ChatClient.instance()
         ChatDomain.Builder(appContext, chatClient).apply {

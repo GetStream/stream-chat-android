@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.experimental.plugin
 
-import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
@@ -31,7 +30,7 @@ internal class OfflinePluginImpl(
     private val hideChannelListener: HideChannelListener,
     private val markAllReadListener: MarkAllReadListener,
     private val config: Config = Config(),
-) : OfflinePlugin,
+) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,
