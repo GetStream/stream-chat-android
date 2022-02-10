@@ -70,18 +70,22 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
 
         val giphyInfo = attachment.giphyInfo(style.giphyType)
 
-        val height = (giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP).dpToPx()
-        val width = giphyInfo?.width?.dpToPx()
+        val height = if (style.giphyType == GiphyInfoType.ORIGINAL) {
+            giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
+        } else {
+            (giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP).dpToPx()
+        }
+        val width = giphyInfo?.width
 
         this.updateLayoutParams {
             this.height = height
-            if (width != null && width < height) {
+            if (width != null && style.giphyType == GiphyInfoType.ORIGINAL) {
                 this.width = width
             }
         }
         binding.imageView.updateLayoutParams {
             this.height = height
-            if (width != null && width < height) {
+            if (width != null && style.giphyType == GiphyInfoType.ORIGINAL) {
                 this.width = width
             }
         }
@@ -102,8 +106,9 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
                 container = this@GiphyMediaAttachmentView,
-                onStart = { binding.loadImage.isVisible = true }
-            ) { binding.loadImage.isVisible = false }
+                onStart = { binding.loadImage.isVisible = true },
+                onComplete = { binding.loadImage.isVisible = false }
+            )
         }
     }
 

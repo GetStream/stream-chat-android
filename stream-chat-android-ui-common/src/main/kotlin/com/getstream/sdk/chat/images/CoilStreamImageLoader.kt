@@ -102,15 +102,15 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             val result = context.streamImageLoader.execute(
                 ImageRequest.Builder(context)
                     .headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
-                    .data(data)
                     .placeholder(placeholderDrawable)
-                    .applyTransformation(transformation)
+                    .data(data)
                     .listener(
                         onStart = { onStart() },
                         onCancel = { onComplete() },
                         onError = { _, _ -> onComplete() },
                         onSuccess = { _, _ -> onComplete() },
                     )
+                    .applyTransformation(transformation)
                     .build()
             )
 
