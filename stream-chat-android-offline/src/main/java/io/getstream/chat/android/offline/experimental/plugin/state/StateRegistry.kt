@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -14,6 +15,9 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.Threa
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
+import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
@@ -21,7 +25,10 @@ import java.util.concurrent.ConcurrentHashMap
 @ExperimentalStreamChatApi
 /** Registry of all state objects exposed in offline plugin. This class should have only once instance for the SDK*/
 public class StateRegistry private constructor(
-    private val chatDomainImpl: ChatDomainImpl
+    private val scope: CoroutineScope,
+    private val userStateFlow: StateFlow<User?>,
+    private val messageRepository: MessageRepository,
+    private var latestUsers: StateFlow<Map<String, User>>,
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
@@ -35,19 +42,13 @@ public class StateRegistry private constructor(
                 - latestUsers should be moved to another dependency, there's no reason for it to be inside ChatDomainImpl.
                 This way this class wouldn't depend on ChatDomainImpl which is a super big class and also depend on StateRegistry. The cross dependency should be avoided.
              */
-            QueryChannelsMutableState(filter, sort, chatDomainImpl.scope, chatDomainImpl.latestUsers)
+            QueryChannelsMutableState(filter, sort, scope, latestUsers)
         }
     }
 
     public fun channel(channelType: String, channelId: String): ChannelState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(
-                channelType,
-                channelId,
-                chatDomainImpl.scope,
-                chatDomainImpl.user,
-                chatDomainImpl.latestUsers
-            )
+            ChannelMutableState(channelType, channelId, scope, userStateFlow, latestUsers)
         }
     }
 
@@ -55,11 +56,11 @@ public class StateRegistry private constructor(
     public fun thread(messageId: String): ThreadState {
         return threads.getOrPut(messageId) {
             val (channelType, channelId) = runBlocking {
-                chatDomainImpl.repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
+                messageRepository.selectMessage(messageId)?.cid?.cidToTypeAndId()
                     ?: error("There is not such message with messageId = $messageId")
             }
             val channelsState = channel(channelType, channelId)
-            ThreadMutableState(messageId, channelsState.toMutableState(), chatDomainImpl.scope)
+            ThreadMutableState(messageId, channelsState.toMutableState(), scope)
         }
     }
 
@@ -80,8 +81,18 @@ public class StateRegistry private constructor(
          *
          * @param chatDomainImpl [ChatDomainImpl]
          */
-        internal fun getOrCreate(chatDomainImpl: ChatDomainImpl): StateRegistry {
-            return instance ?: StateRegistry(chatDomainImpl).also { stateRegistry ->
+        internal fun getOrCreate(
+            scope: CoroutineScope,
+            userStateFlow: StateFlow<User?>,
+            messageRepository: MessageRepository,
+            latestUsers: StateFlow<Map<String, User>>,
+        ): StateRegistry {
+            return instance ?: StateRegistry(
+                scope,
+                userStateFlow,
+                messageRepository,
+                latestUsers
+            ).also { stateRegistry ->
                 instance = stateRegistry
             }
         }

@@ -50,8 +50,9 @@ public class StreamOfflinePluginFactory(
             retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
-        val stateRegistry =
-            StateRegistry.getOrCreate(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
+        val stateRegistry = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl).run {
+            StateRegistry.getOrCreate(scope, user, repos, latestUsers)
+        }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalStateRegistry = GlobalMutableState.getOrCreate()
 

@@ -166,7 +166,7 @@ internal class ChatDomainImpl internal constructor(
         globalState = globalState
     )
 
-    private val state: StateRegistry by lazy { StateRegistry.getOrCreate(this) }
+    private val state: StateRegistry by lazy { StateRegistry.getOrCreate(scope, user, repos, latestUsers) }
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
