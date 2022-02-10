@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -234,7 +235,11 @@ internal class QueryChannelsLogic(
             .intersect(cidList)
             .associateWith { cid ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                client.state.channel(channelType, channelId).toChannel()
+                if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                    client.state.channel(channelType, channelId).toChannel()
+                } else {
+                    chatDomainImpl.channel(channelType, channelId).toChannel()
+                }
             }
     }
 

@@ -28,13 +28,13 @@ internal class MessageEllipsizeTest {
         }
 
         val text = buildString {
-                tallTextList.forEach(::append)
-                appendLine("...")
-            }
+            tallTextList.forEach(::append)
+            appendLine("...")
+        }
         val expected = buildString {
-                tallTextList.take(maxLineBreaks).forEach(::append)
-                appendLine("...")
-            }
+            tallTextList.take(maxLineBreaks).forEach(::append)
+            appendLine("...")
+        }
 
         val textLimit = 100
         val result = ellipsizeText(text, textLimit, maxLineBreaks)

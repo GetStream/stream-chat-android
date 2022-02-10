@@ -37,9 +37,11 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(),
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr)
+        defStyleAttr
+    )
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
         context.createStreamThemeWrapper(),

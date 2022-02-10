@@ -127,6 +127,36 @@ If you override the default actions to build your custom behavior, we still reco
 
 We recommend using the **bound** version for ease of use. Alternatively, you can use the stateless version and provide the data manually, for more control.
 
+### Controlling the scroll state
+
+The `MessageList` allows you to control the scroll state of the list by providing a `lazyListState` parameter, like so:
+
+```kotlin
+@Composable
+fun MessageList(
+    ..., // State, UI & Actions
+    lazyListState: LazyListState = rememberMessageListState(parentMessageId),
+    ... // Content
+)
+```
+
+* `lazyListState`: The scroll state of the list. While not a handler, you can use it to control the scroll and trigger custom scroll actions.
+
+You can customize this state in the following way:
+
+```kotlin
+val myListState = rememberMessageListState(parentMessageId = state.parentMessageId)
+
+MessageList(
+    ..., // the rest of the state, UI & actions
+    lazyListState = myListState,
+)
+```
+
+`rememberMessageListState()` keeps a separate instance of `LazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
+
+You can also provide your own instance of `LazyListState` based on your custom logic where you define the starting scroll position of the state, the offset and how it behaves based on user events. For example, when deep linking.
+
 ##  Customization
 
 We allow for a few ways of customizing the `MessageList` component, as per the signature:
@@ -138,6 +168,9 @@ fun MessageList(
     modifier: Modifier = Modifier,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
+    helperContent: @Composable BoxScope.() -> Unit = {
+        DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
+    },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
@@ -154,6 +187,7 @@ fun MessageList(
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
 * `loadingContent`: Used while loading the message data. By default shows a loading indicator that you can override.
 * `emptyContent`: An empty placeholder used when no messages are available. By default displays a message that you can override.
+* `helperContent`: Composable that represents helper content for the message list. By default handles the scrolling behavior and shows a floating button that can be used to scroll to the bottom.
 * `itemContent`: Composable that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItemState` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:

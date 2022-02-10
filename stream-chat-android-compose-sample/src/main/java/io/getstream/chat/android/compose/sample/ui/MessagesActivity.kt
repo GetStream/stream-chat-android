@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.sample
+package io.getstream.chat.android.compose.sample.ui
 
 import android.content.Context
 import android.content.Intent
@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -34,6 +35,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
@@ -89,6 +92,7 @@ class MessagesActivity : AppCompatActivity() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
         val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
+        val lazyListState = rememberLazyListState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
@@ -103,6 +107,7 @@ class MessagesActivity : AppCompatActivity() {
                         .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = listViewModel,
+                    lazyListState = if (listViewModel.currentMessagesState.parentMessageId != null) rememberLazyListState() else lazyListState,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
@@ -271,7 +276,7 @@ class MessagesActivity : AppCompatActivity() {
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
 
-        fun getIntent(context: Context, channelId: String): Intent {
+        fun createIntent(context: Context, channelId: String): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
             }

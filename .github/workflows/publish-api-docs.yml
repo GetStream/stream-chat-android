@@ -1,8 +1,10 @@
 name: Publish API docs
 
 on:
-  release:
-    types: [released]
+  workflow_run:
+    workflows: ["Publish"]
+    types:
+      - completed
 
 jobs:
   publish:

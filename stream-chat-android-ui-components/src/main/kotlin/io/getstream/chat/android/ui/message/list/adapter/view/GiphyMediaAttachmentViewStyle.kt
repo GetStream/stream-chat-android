@@ -60,12 +60,16 @@ public class GiphyMediaAttachmentViewStyle(
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
                 val giphyType =
-                    attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
-                        GiphyInfoType.FIXED_HEIGHT)
+                    attributes.getEnum(
+                        R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
+                        GiphyInfoType.FIXED_HEIGHT
+                    )
 
                 val scaleType =
-                    attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType,
-                        ImageView.ScaleType.FIT_CENTER)
+                    attributes.getEnum(
+                        R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType,
+                        ImageView.ScaleType.FIT_CENTER
+                    )
 
                 return GiphyMediaAttachmentViewStyle(
                     progressIcon = progressIcon,

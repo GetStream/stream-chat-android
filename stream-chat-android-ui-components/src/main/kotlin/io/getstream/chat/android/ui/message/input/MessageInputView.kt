@@ -440,10 +440,14 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun alertBigFileSendAttempt() {
-        Snackbar.make(this,
-            resources.getString(R.string.stream_ui_message_input_error_file_large_size,
-                messageInputViewStyle.attachmentMaxFileSize),
-            Snackbar.LENGTH_LONG)
+        Snackbar.make(
+            this,
+            resources.getString(
+                R.string.stream_ui_message_input_error_file_large_size,
+                messageInputViewStyle.attachmentMaxFileSize
+            ),
+            Snackbar.LENGTH_LONG
+        )
             .apply { anchorView = binding.sendButtonContainer }
             .show()
     }
@@ -451,8 +455,10 @@ public class MessageInputView : ConstraintLayout {
     private fun alertMaxAttachmentsCountExceeded() {
         Snackbar.make(
             this,
-            resources.getString(R.string.stream_ui_message_input_error_max_attachments_count_exceeded,
-                messageInputViewStyle.maxAttachmentsCount),
+            resources.getString(
+                R.string.stream_ui_message_input_error_max_attachments_count_exceeded,
+                messageInputViewStyle.maxAttachmentsCount
+            ),
             Snackbar.LENGTH_LONG,
         )
             .apply { anchorView = binding.sendButtonContainer }
@@ -769,16 +775,19 @@ public class MessageInputView : ConstraintLayout {
                 )
             },
             {
-                sendMessageHandler.sendToThread(parentMessage,
+                sendMessageHandler.sendToThread(
+                    parentMessage,
                     messageText,
-                    sendAlsoToChannel)
+                    sendAlsoToChannel
+                )
             },
             { customAttachments ->
                 sendMessageHandler.sendToThreadWithCustomAttachments(
                     parentMessage,
                     messageText,
                     sendAlsoToChannel,
-                    customAttachments)
+                    customAttachments
+                )
             }
         )
     }
