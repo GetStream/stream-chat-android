@@ -13,12 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 /**
  * Displays all available reactions a user can set on a message.
@@ -27,7 +27,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
- * @param reactionTypes All available reactions.
  * @param itemContent Composable that allows the user to customize the individual items shown in [ExtendedReactionsOptions].
  * By default it shows individual reactions.
  */
@@ -38,7 +37,7 @@ public fun ExtendedReactionsOptions(
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     cells: GridCells = GridCells.Fixed(5),
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultExtendedReactionsItemContent(
             option = option,
@@ -46,10 +45,10 @@ public fun ExtendedReactionsOptions(
         )
     },
 ) {
-    val options = reactionTypes.entries.map { (type, drawable) ->
+    val options = reactionTypes.entries.map { (type, reactionIcon) ->
+        val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
         ReactionOptionItemState(
-            painter = painterResource(id = drawable),
-            isSelected = ownReactions.any { ownReaction -> ownReaction.type == type },
+            painter = reactionIcon.getPainter(isSelected),
             type = type
         )
     }
