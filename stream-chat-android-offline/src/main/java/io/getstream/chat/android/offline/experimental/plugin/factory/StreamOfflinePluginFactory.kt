@@ -23,7 +23,6 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQuer
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @ExperimentalStreamChatApi
 /**

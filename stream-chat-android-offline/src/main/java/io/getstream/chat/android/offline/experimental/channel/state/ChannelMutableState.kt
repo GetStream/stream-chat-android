@@ -78,13 +78,13 @@ internal class ChannelMutableState(
 
     private fun messagesTransformation(messages: Flow<Collection<Message>>): StateFlow<List<Message>> {
         return messages.combine(userFlow) { messageCollection, user ->
-                messageCollection.asSequence()
-                    .filter { it.parentId == null || it.showInChannel }
-                    .filter { it.user.id == user?.id || !it.shadowed }
-                    .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-                    .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                    .toList()
-            }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+            messageCollection.asSequence()
+                .filter { it.parentId == null || it.showInChannel }
+                .filter { it.user.id == user?.id || !it.shadowed }
+                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .toList()
+        }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     }
 
     internal var lastMarkReadEvent: Date? = null
