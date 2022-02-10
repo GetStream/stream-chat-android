@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -50,8 +51,6 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
-import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.sendGiphy
 import io.getstream.chat.android.offline.extensions.shuffleGiphy
@@ -87,10 +86,7 @@ import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
-import io.getstream.chat.android.offline.utils.CallRetryService
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.RetryPolicy
 import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -145,7 +141,6 @@ internal class ChatDomainImpl internal constructor(
     internal var appContext: Context,
     private val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,
@@ -401,14 +396,6 @@ internal class ChatDomainImpl internal constructor(
     private fun initClean() {
         mainHandler.postDelayed(cleanTask, 5000)
     }
-
-    internal fun callRetryService() = CallRetryService(retryPolicy, client)
-
-    @Deprecated(
-        message = "This utility method is extracted to CallRetryService",
-        replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
-    )
-    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
 
     fun addError(error: ChatError) {
         globalState._errorEvent.value = Event(error)

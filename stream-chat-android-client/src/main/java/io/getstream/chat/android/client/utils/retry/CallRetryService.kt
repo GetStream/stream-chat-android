@@ -1,18 +1,29 @@
-package io.getstream.chat.android.offline.utils
+package io.getstream.chat.android.client.utils.retry
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.delay
 
-internal class CallRetryService(private val retryPolicy: RetryPolicy, private val client: ChatClient) {
+/**
+ * Service that allows retrying calls based on [RetryPolicy].
+ *
+ * @param retryPolicy The policy used for determining if the call should be retried.
+ */
+@InternalStreamChatApi
+public class CallRetryService(private val retryPolicy: RetryPolicy) {
 
     private val logger = ChatLogger.get("CallRetryService")
 
-    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
+    /**
+     * Runs the call and retries based on [RetryPolicy].
+     *
+     * @param runnable The call to be run.
+     */
+    public suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
         var attempt = 1
         var result: Result<T>
 
@@ -22,8 +33,8 @@ internal class CallRetryService(private val retryPolicy: RetryPolicy, private va
                 break
             } else {
                 // retry logic
-                val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
-                val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
+                val shouldRetry = retryPolicy.shouldRetry(attempt, result.error())
+                val timeout = retryPolicy.retryTimeout(attempt, result.error())
 
                 if (shouldRetry) {
                     // temporary failure, continue

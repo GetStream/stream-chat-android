@@ -104,6 +104,7 @@ internal class ClientConnectionTests {
             tokenUtils = tokenUtils,
             appContext = mock(),
             scope = testCoroutines.scope,
+            callRetryService = mock(),
         )
     }
 

@@ -41,6 +41,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun getCallRetryService ()Lio/getstream/chat/android/client/utils/retry/CallRetryService;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public final fun getConnectionId ()Ljava/lang/String;
 	public final fun getCurrentToken ()Ljava/lang/String;
@@ -164,6 +165,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public static synthetic fun notifications$default (Lio/getstream/chat/android/client/ChatClient$Builder;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun retryPolicy (Lio/getstream/chat/android/client/utils/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
@@ -1952,6 +1954,9 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 	public static final fun isMutedFor (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
 }
 
+public final class io/getstream/chat/android/client/extensions/ChatErrorKt {
+}
+
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
 	public static final fun enrichWithCid (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 }
@@ -3175,5 +3180,10 @@ public final class io/getstream/chat/android/client/utils/internal/toggle/Toggle
 public abstract interface class io/getstream/chat/android/client/utils/observable/Disposable {
 	public abstract fun dispose ()V
 	public abstract fun isDisposed ()Z
+}
+
+public abstract interface class io/getstream/chat/android/client/utils/retry/RetryPolicy {
+	public abstract fun retryTimeout (ILio/getstream/chat/android/client/errors/ChatError;)I
+	public abstract fun shouldRetry (ILio/getstream/chat/android/client/errors/ChatError;)Z
 }
 

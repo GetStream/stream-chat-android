@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -27,8 +28,6 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
-import io.getstream.chat.android.offline.utils.RetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
@@ -50,6 +49,8 @@ internal class WhenSendMessage {
 
     private val scope = testCoroutines.scope
 
+    private val callRetryService = mock<CallRetryService>()
+
     private val channelClient: ChannelClient = mock {
         on(it.sendMessage(any())) doReturn TestCall(Result(Message()))
     }
@@ -57,6 +58,7 @@ internal class WhenSendMessage {
     private val chatClient: ChatClient = mock {
         on(it.channel(any(), any())) doReturn channelClient
         on(it.channel(any())) doReturn channelClient
+        on(it.callRetryService) doReturn callRetryService
     }
 
     private val channelType: String = randomString()
@@ -65,7 +67,6 @@ internal class WhenSendMessage {
 
     private val repos: RepositoryFacade = mock()
 
-    private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
     private val userFlow = MutableStateFlow(randomUser())
 
     private val domainImpl: ChatDomainImpl = mock {
@@ -76,7 +77,6 @@ internal class WhenSendMessage {
         on(it.repos) doReturn repos
         on(it.isOnline()) doReturn true
         on(it.getActiveQueries()) doReturn emptyList()
-        on(it.retryPolicy) doReturn doNotRetryPolicy
         on(it.client) doReturn chatClient
     }
 
@@ -92,7 +92,7 @@ internal class WhenSendMessage {
     @Test
     @Ignore("Need to do something with MessageSendingService for this to work")
     fun `Message with failed attachment upload should be upload send the right state`() = scope.runBlockingTest {
-        whenever(domainImpl.runAndRetry<Message>(any())) doAnswer {
+        whenever(callRetryService.runAndRetry<Message>(any())) doAnswer {
             (it.arguments[0] as () -> Call<Message>).invoke().execute()
         }
 

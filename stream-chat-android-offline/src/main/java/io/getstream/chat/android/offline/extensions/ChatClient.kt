@@ -221,7 +221,7 @@ public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
             client = this@createChannel,
             repositoryFacade = domainImpl.repos,
             getChannelController = domainImpl::channel,
-            callRetryService = domainImpl.callRetryService(),
+            callRetryService = callRetryService,
             activeQueries = domainImpl.getActiveQueries(),
         ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
     }
@@ -263,7 +263,7 @@ internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
 
         validateCid(cid)
 
-        domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }.also { resultMessage ->
+        callRetryService.runAndRetry { channelClient.sendAction(request) }.also { resultMessage ->
             if (resultMessage.isSuccess) {
                 channelController.removeLocalMessage(resultMessage.data())
             }
@@ -292,7 +292,7 @@ internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
         }
 
-        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
+        val result = callRetryService.runAndRetry { channelClient.sendAction(request) }
 
         if (result.isSuccess) {
             val processedMessage: Message = result.data()

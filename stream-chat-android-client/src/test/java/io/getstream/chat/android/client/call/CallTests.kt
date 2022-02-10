@@ -1,9 +1,13 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.retry.CallRetryService
+import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
@@ -72,5 +76,26 @@ internal class CallTests {
             }.await()
             result shouldBeEqualTo Result(listOf(10, 20, 30))
         }
+    }
+
+    @Test
+    fun `Should retry a call according to RetryPolicy`() = runBlockingTest {
+        var currentValue = 0
+        val maxAttempts = 3
+        val callRetryService = CallRetryService(object : RetryPolicy {
+            override fun shouldRetry(attempt: Int, error: ChatError): Boolean = attempt < maxAttempts
+
+            override fun retryTimeout(attempt: Int, error: ChatError): Int = 0
+        })
+
+        CoroutineCall(testCoroutines.scope) {
+            currentValue++
+            Result.error(ChatError())
+        }
+            .retry(testCoroutines.scope, callRetryService)
+            .doOnStart(testCoroutines.scope) { currentValue++ }
+            .enqueue { }
+
+        currentValue `should be equal to` maxAttempts + 1
     }
 }

@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChann
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -23,14 +24,12 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.extensions.isPermanent
 import kotlinx.coroutines.awaitAll
 import java.util.Date
 
@@ -83,7 +82,6 @@ public class OfflinePlugin(
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
             if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
             recoveryEnabled()
-            retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
         initState(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl, chatClient)

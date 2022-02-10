@@ -14,7 +14,6 @@ import io.getstream.chat.android.offline.experimental.plugin.Config
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
 import io.getstream.chat.android.offline.utils.waitForSetUser
@@ -58,7 +57,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 backgroundSyncEnabled = backgroundSyncEnabled,
                 userPresence = userPresence,
                 persistenceEnabled = offlineEnabled,
-                retryPolicy = NoRetryPolicy(),
             )
         )
 

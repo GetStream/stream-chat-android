@@ -33,6 +33,7 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         userCredentialStorage = mock(),
         appContext = mock(),
         scope = testCoroutines.scope,
+        callRetryService = mock(),
     )
 
     @Test

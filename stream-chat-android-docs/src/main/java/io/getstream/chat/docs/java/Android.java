@@ -51,7 +51,6 @@ import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
-import io.getstream.chat.android.livedata.utils.RetryPolicy;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -587,23 +586,24 @@ public class Android {
             chatClient.disconnect();
         }
 
-        public void initializeChatDomainWithCustomRetryPolicy() {
-            ChatClient chatClient =
-                    new ChatClient.Builder("apiKey", requireContext()).build();
-            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
-                    .retryPolicy(new RetryPolicy() {
-                        @Override
-                        public boolean shouldRetry(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
-                            return attempt < 3;
-                        }
-
-                        @Override
-                        public int retryTimeout(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
-                            return 1000 * attempt;
-                        }
-                    })
-                    .build();
-        }
+        // TODO: ChatDomain docs will be removed in scope of https://github.com/GetStream/stream-chat-android/issues/3034
+//        public void initializeChatDomainWithCustomRetryPolicy() {
+//            ChatClient chatClient =
+//                    new ChatClient.Builder("apiKey", requireContext()).build();
+//            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
+//                    .retryPolicy(new RetryPolicy() {
+//                        @Override
+//                        public boolean shouldRetry(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
+//                            return attempt < 3;
+//                        }
+//
+//                        @Override
+//                        public int retryTimeout(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
+//                            return 1000 * attempt;
+//                        }
+//                    })
+//                    .build();
+//        }
 
         public void watchChannel() {
             ChatDomain chatDomain = ChatDomain.instance();

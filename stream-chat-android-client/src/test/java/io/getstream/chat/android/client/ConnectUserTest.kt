@@ -23,6 +23,7 @@ internal class ConnectUserTest {
         userCredentialStorage = mock(),
         appContext = mock(),
         scope = mock(),
+        callRetryService = mock(),
     )
 
     @Test

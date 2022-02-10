@@ -7,9 +7,12 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -35,7 +38,16 @@ internal class ChatDomainImplTest {
     fun `When create a new channel without author should set current user as author and return channel with author`() =
         testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
-            val sut = Fixture().get()
+            val callRetryService = mock<CallRetryService> {
+                onBlocking { runAndRetry<Message> { any() } } doAnswer {
+                    (it.arguments[0] as () -> Call<Message>).invoke().execute()
+                }
+            }
+            val chatClient = mock<ChatClient> {
+                on { it.channel(any()) } doReturn mock()
+                on(it.callRetryService) doReturn callRetryService
+            }
+            val sut = Fixture(chatClient).get()
 
             val result = sut.createChannel(newChannel).execute()
 
@@ -81,7 +93,10 @@ internal class ChatDomainImplTest {
             val awaitingAttachmentsMessage = randomMessage(
                 syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
                 attachments = mutableListOf(
-                    randomAttachment { uploadState = Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20) },
+                    randomAttachment {
+                        uploadState =
+                            Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20)
+                    },
                     randomAttachment { uploadState = Attachment.UploadState.Success },
                 ),
             )

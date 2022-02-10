@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -30,7 +31,6 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
-import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
@@ -79,7 +79,7 @@ public class ChannelController internal constructor(
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
     private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
+        messageSendingServiceFactory.create(domainImpl, this, client, client.channel(cid))
 
     internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
@@ -425,7 +425,7 @@ public class ChannelController internal constructor(
         }
 
         if (online) {
-            val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
+            val result = client.callRetryService.runAndRetry { client.sendReaction(reaction, enforceUnique) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.insertReaction(reaction)
@@ -473,7 +473,7 @@ public class ChannelController internal constructor(
             }
 
         if (online) {
-            val result = domainImpl.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
+            val result = client.callRetryService.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.insertReaction(reaction)
@@ -591,7 +591,7 @@ public class ChannelController internal constructor(
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
-            val job = domainImpl.scope.async { domainImpl.runAndRetry(runnable) }
+            val job = domainImpl.scope.async { client.callRetryService.runAndRetry(runnable) }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
@@ -634,7 +634,7 @@ public class ChannelController internal constructor(
             val runnable = {
                 client.deleteMessage(messageToBeDeleted.id, hard)
             }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = client.callRetryService.runAndRetry(runnable)
             if (result.isSuccess) {
                 val deletedMessage = result.data()
                 deletedMessage.syncStatus = SyncStatus.COMPLETED

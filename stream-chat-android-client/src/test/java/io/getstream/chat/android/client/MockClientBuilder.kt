@@ -84,6 +84,7 @@ internal class MockClientBuilder(
             tokenUtils = tokenUtil,
             appContext = mock(),
             scope = testCoroutineScope,
+            callRetryService = mock(),
         )
 
         client.connectUser(user, token).enqueue()

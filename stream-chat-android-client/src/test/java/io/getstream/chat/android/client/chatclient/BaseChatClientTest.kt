@@ -63,6 +63,7 @@ internal open class BaseChatClientTest {
             appContext = mock(),
             scope = coroutineRule.scope,
             plugins = plugins,
+            callRetryService = mock(),
         )
     }
 }

@@ -101,6 +101,9 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.retry.CallRetryService
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
@@ -133,6 +136,8 @@ public class ChatClient internal constructor(
     @property:InternalStreamChatApi
     @property:ExperimentalStreamChatApi
     public val plugins: Collection<Plugin> = emptyList(),
+    @property:InternalStreamChatApi
+    public val callRetryService: CallRetryService,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -1820,6 +1825,7 @@ public class ChatClient internal constructor(
         private var plugins: List<Plugin> = emptyList()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
+        private var retryPolicy: RetryPolicy = NoRetryPolicy()
 
         /**
          * Sets the log level to be used by the client.
@@ -1957,6 +1963,17 @@ public class ChatClient internal constructor(
             userCredentialStorage = credentialStorage
         }
 
+        /**
+         * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
+         * By default, no calls are retried.
+         * @see [NoRetryPolicy]
+         *
+         * @param retryPolicy Custom [RetryPolicy] implementation.
+         */
+        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
+            this.retryPolicy = retryPolicy
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -2014,6 +2031,7 @@ public class ChatClient internal constructor(
                 scope = module.networkScope,
                 appContext = appContext,
                 plugins = plugins,
+                callRetryService = CallRetryService(retryPolicy),
             )
         }
     }
