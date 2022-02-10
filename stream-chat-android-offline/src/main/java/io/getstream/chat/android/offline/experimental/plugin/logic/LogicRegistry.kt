@@ -104,12 +104,20 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     internal companion object {
         private var instance: LogicRegistry? = null
 
+        /**
+         * Gets the singleton of LogicRegistry or creates it in the first call
+         *
+         * @param stateRegistry [StateRegistry]
+         */
         internal fun getOrCreate(stateRegistry: StateRegistry): LogicRegistry {
             return instance ?: LogicRegistry(stateRegistry).also { logicRegistry ->
                 instance = logicRegistry
             }
         }
 
+        /**
+         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it returns null.
+         */
         internal fun get(): LogicRegistry? = instance
     }
 }

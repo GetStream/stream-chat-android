@@ -75,12 +75,20 @@ public class StateRegistry private constructor(
     internal companion object {
         private var instance: StateRegistry? = null
 
+        /**
+         * Gets the singleton of StateRegistry or creates it in the first call
+         *
+         * @param chatDomainImpl [ChatDomainImpl]
+         */
         internal fun getOrCreate(chatDomainImpl: ChatDomainImpl): StateRegistry {
             return instance ?: StateRegistry(chatDomainImpl).also { stateRegistry ->
                 instance = stateRegistry
             }
         }
 
+        /**
+         * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it returns null.
+         */
         internal fun get(): StateRegistry? = instance
     }
 }

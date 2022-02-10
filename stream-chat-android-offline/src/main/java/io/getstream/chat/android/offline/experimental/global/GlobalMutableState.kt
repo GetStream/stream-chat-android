@@ -62,7 +62,7 @@ internal class GlobalMutableState private constructor() : GlobalState {
         private var instance: GlobalMutableState? = null
 
         /**
-         * Gets the singleton of GlobalMutableState of creates it in the first call
+         * Gets the singleton of GlobalMutableState or creates it in the first call
          */
         internal fun getOrCreate(): GlobalMutableState {
             return instance ?: GlobalMutableState().also { globalState ->
