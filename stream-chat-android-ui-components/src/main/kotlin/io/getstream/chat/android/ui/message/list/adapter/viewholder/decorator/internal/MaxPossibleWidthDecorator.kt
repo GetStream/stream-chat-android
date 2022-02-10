@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -17,6 +18,11 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
 
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
+
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 

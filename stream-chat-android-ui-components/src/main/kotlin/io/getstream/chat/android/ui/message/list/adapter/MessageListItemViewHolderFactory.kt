@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
@@ -12,6 +11,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -27,11 +27,13 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Dat
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 public open class MessageListItemViewHolderFactory {
     internal lateinit var decoratorProvider: DecoratorProvider
@@ -129,11 +131,14 @@ public open class MessageListItemViewHolderFactory {
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
             THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
+            IMAGE_ATTACHMENT -> createImageAttachmentViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
 
-    protected fun createTextAndAttachmentViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<out MessageListItem> {
+    protected fun createTextAndAttachmentViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
         return TextAndAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
@@ -144,10 +149,25 @@ public open class MessageListItemViewHolderFactory {
         )
     }
 
-    protected fun createGiphyAttachmentViewHolder(
-        parentView: ViewGroup
+    protected fun createImageAttachmentViewHolder(
+        parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
-        return GiphyAttachmentViewHolder(parentView, decoratorProvider.decorators, listenerContainer, markdown = textTransformer)
+        return ImageAttachmentViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            textTransformer,
+        )
+    }
+
+    protected fun createGiphyAttachmentViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return GiphyAttachmentViewHolder(parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            textTransformer
+        )
     }
 
     protected fun createDateDividerViewHolder(

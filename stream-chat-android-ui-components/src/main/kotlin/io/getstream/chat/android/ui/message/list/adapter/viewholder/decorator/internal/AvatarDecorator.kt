@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.message.list.DefaultShowAvatarPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -24,6 +25,14 @@ internal class AvatarDecorator(
 
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+    }
+
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)

@@ -14,19 +14,17 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
- * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView].
- * Use this class together with [TransformStyle.mediaAttachmentStyleTransformer] to change styles programmatically.
+ * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.ImageAttachmentView].
+ * Use this class together with [TransformStyle.imageAttachmentStyleTransformer] to change styles programmatically.
  *
  * @param progressIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
- * @param giphyIcon Giphy icon. Default value is [R.drawable.stream_ui_giphy_label].
  * @param placeholderIcon Displayed while the Giphy is Loading.
  * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
  */
-public data class MediaAttachmentViewStyle(
+public data class ImageAttachmentViewStyle(
     public val progressIcon: Drawable,
-    public val giphyIcon: Drawable,
     public val placeholderIcon: Drawable,
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
@@ -34,62 +32,58 @@ public data class MediaAttachmentViewStyle(
 ) {
     internal companion object {
         /**
-         * Fetches styled attributes and returns them wrapped inside of [MediaAttachmentViewStyle].
+         * Fetches styled attributes and returns them wrapped inside of [ImageAttachmentViewStyle].
          */
-        operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
+        operator fun invoke(context: Context, attrs: AttributeSet?): ImageAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
-                R.styleable.MediaAttachmentView,
-                R.attr.streamUiMessageListMediaAttachmentStyle,
-                R.style.StreamUi_MessageList_MediaAttachment
+                R.styleable.ImageAttachmentView,
+                R.attr.streamUiMessageListImageAttachmentStyle,
+                R.style.StreamUi_MessageList_ImageAttachment
             ).use { a ->
-                val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
+                val progressIcon = a.getDrawable(R.styleable.ImageAttachmentView_streamUiImageAttachmentProgressIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
-                val giphyIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyIcon)
-                    ?: context.getDrawableCompat(R.drawable.stream_ui_giphy_label)!!
-
                 val imageBackgroundColor = a.getColor(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentImageBackgroundColor,
+                    R.styleable.ImageAttachmentView_streamUiImageAttachmentImageBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_grey)
                 )
 
                 val moreCountOverlayColor = a.getColor(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountOverlayColor,
+                    R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountOverlayColor,
                     context.getColorCompat(R.color.stream_ui_overlay)
                 )
 
                 val moreCountTextStyle = TextStyle.Builder(a)
                     .size(
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextSize,
-                        context.getDimension(R.dimen.stream_ui_message_media_attachment_more_count_text_size)
+                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextSize,
+                        context.getDimension(R.dimen.stream_ui_message_image_attachment_more_count_text_size)
                     )
                     .color(
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextColor,
+                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextColor,
                         context.getColorCompat(R.color.stream_ui_literal_white)
                     )
                     .font(
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountFontAssets,
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextFont
+                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountFontAssets,
+                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextFont
                     )
                     .style(
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextStyle,
+                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextStyle,
                         Typeface.NORMAL
                     )
                     .build()
 
                 val placeholderIcon =
-                    a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
+                    a.getDrawable(R.styleable.ImageAttachmentView_streamUiImageAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
-                return MediaAttachmentViewStyle(
+                return ImageAttachmentViewStyle(
                     progressIcon = progressIcon,
-                    giphyIcon = giphyIcon,
                     imageBackgroundColor = imageBackgroundColor,
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
-                ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
+                ).let(TransformStyle.imageAttachmentStyleTransformer::transform)
             }
         }
     }

@@ -6,6 +6,7 @@ import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -25,6 +26,7 @@ internal abstract class BaseDecorator : Decorator {
             is TextAndAttachmentsViewHolder -> decorateTextAndAttachmentsMessage(viewHolder, data)
             is GiphyViewHolder -> decorateGiphyMessage(viewHolder, data)
             is GiphyAttachmentViewHolder -> decorateGiphyAttachmentMessage(viewHolder, data)
+            is ImageAttachmentViewHolder -> decorateImageAttachmentMessage(viewHolder, data)
             is DateDividerViewHolder -> Unit
             else -> Unit
         }.exhaustive
@@ -37,6 +39,11 @@ internal abstract class BaseDecorator : Decorator {
 
     abstract fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    )
+
+    abstract fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     )
 

@@ -13,6 +13,7 @@ import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -31,6 +32,13 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
 
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
+    }
+
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         setupPinIndicator(root, pinIndicatorTextView, data)

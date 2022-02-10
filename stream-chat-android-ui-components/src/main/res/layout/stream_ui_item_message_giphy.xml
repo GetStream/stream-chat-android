@@ -72,7 +72,7 @@
                 tools:text="cats"
                 />
 
-            <io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
+            <io.getstream.chat.android.ui.message.list.adapter.view.internal.ImageAttachmentView
                 android:id="@+id/mediaAttachmentView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

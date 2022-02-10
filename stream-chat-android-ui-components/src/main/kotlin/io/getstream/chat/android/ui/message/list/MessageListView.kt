@@ -40,7 +40,8 @@ import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isDeleted
@@ -376,7 +377,7 @@ public class MessageListView : ConstraintLayout {
                 return@AttachmentClickListener
             }
 
-            if (attachment.type == ModelType.attach_giphy) {
+            if (attachment.isGiphy()) {
                 val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
 
                 if (url != null) {
@@ -384,7 +385,7 @@ public class MessageListView : ConstraintLayout {
                 }
             } else {
                 val destination = when {
-                    message.attachments.all(Attachment::isMedia) -> {
+                    message.attachments.all(Attachment::isImage) -> {
                         val filteredAttachments = message.attachments
                             .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
                         val attachmentGalleryItems = filteredAttachments.map {

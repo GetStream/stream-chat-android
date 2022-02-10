@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -20,6 +21,13 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
 
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
+    }
+
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
