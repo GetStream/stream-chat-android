@@ -439,7 +439,11 @@ public class MessageListViewModel @JvmOverloads constructor(
                             }
                         }
 
-                        client.updateMessage(message).enqueue(
+                        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                            client.updateMessage(message)
+                        } else {
+                            domain.editMessage(message)
+                        }.enqueue(
                             onError = { chatError ->
                                 logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")
                             }

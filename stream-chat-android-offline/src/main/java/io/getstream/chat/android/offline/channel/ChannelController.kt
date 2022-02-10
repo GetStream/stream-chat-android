@@ -586,7 +586,7 @@ public class ChannelController internal constructor(
 
         if (online) {
             val runnable = {
-                client.updateMessage(messageToBeEdited)
+                client.updateMessageInternal(messageToBeEdited)
             }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs

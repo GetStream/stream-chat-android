@@ -111,6 +111,11 @@
 ### ❌ Removed
 
 <!-- UNRELEASED START -->
+# February 9th, 2022 - 4.28.2
+## Common changes for all artifacts
+- Fix crash with offline support. [#3063](https://github.com/GetStream/stream-chat-android/pull/3063)
+
+<!-- UNRELEASED END -->
 # February 9th, 2022 - 4.28.1
 ## Common changes for all artifacts
 - Fix crash when events were received. [#3058](https://github.com/GetStream/stream-chat-android/pull/3058)
@@ -186,7 +191,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ## stream-chat-android-pushprovider-xiaomi
 ### ✅ Added
 - Added a `XiaomiMessagingDelegate` class to simplify custom implementations of `PushMessageReceiver` that forward messages to the SDK. See [Using a Custom PushMessageReceiver](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi#using-a-custom-pushmessagereceiver) for more details. [#2444](https://github.com/GetStream/stream-chat-android/pull/2444)
-<!-- UNRELEASED END -->
 
 # February 2nd, 2022 - 4.27.2
 ## stream-chat-android-offline
