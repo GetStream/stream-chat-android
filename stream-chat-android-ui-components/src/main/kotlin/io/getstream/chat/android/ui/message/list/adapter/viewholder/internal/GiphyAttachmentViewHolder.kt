@@ -94,14 +94,6 @@ internal class GiphyAttachmentViewHolder(
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
 
-        binding.root.updateConstraints {
-            if (data.isTheirs) {
-                constrainViewStartToEndOfView(binding.messageContainer, binding.marginStart)
-            } else {
-                constrainViewEndToEndOfView(binding.messageContainer, binding.marginEnd)
-            }
-        }
-
         imageCorners(binding.mediaAttachmentView, data)
 
         modifiedListeners(listeners)?.let { listeners ->
