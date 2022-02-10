@@ -53,16 +53,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
 
-        val plugin = StreamOfflinePluginFactory(
-            Config(
-                backgroundSyncEnabled = backgroundSyncEnabled,
-                userPresence = userPresence,
-                persistenceEnabled = offlineEnabled,
-                retryPolicy = NoRetryPolicy(),
-            ),
-            context
-        ).getOrCreate()
-
         chatDomainImpl = ChatDomainImpl(
             client,
             db,
