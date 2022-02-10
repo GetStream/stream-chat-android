@@ -4,6 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
@@ -21,6 +22,8 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChann
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @ExperimentalStreamChatApi
 /**
@@ -50,8 +53,11 @@ public class StreamOfflinePluginFactory(
             retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
+        val userStateFlow = MutableStateFlow<User?>(null)
+        chatClient.preSetUserListeners.add { user -> userStateFlow.value = user }
+
         val stateRegistry = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl).run {
-            StateRegistry.getOrCreate(scope, user, repos, latestUsers)
+            StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
         }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalStateRegistry = GlobalMutableState.getOrCreate()
