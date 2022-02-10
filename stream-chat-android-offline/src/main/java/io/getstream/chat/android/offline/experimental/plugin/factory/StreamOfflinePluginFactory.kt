@@ -3,7 +3,7 @@ package io.getstream.chat.android.offline.experimental.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.persistence.OfflinePlugin
-import io.getstream.chat.android.client.experimental.persistence.OfflinePluginFactory
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
@@ -27,11 +27,11 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 public class StreamOfflinePluginFactory(
     private val config: Config,
     private val appContext: Context,
-) : OfflinePluginFactory, PluginFactory {
+) : PluginFactory {
 
     private var instance: OfflinePlugin? = null
 
-    override fun getOrCreate(): OfflinePlugin {
+    override fun getOrCreate(): Plugin {
         return instance ?: createOfflinePlugin().also {
             instance = it
         }
