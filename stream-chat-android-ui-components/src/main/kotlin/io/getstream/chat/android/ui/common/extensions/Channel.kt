@@ -2,16 +2,20 @@ package io.getstream.chat.android.ui.common.extensions
 
 import android.content.Context
 import androidx.annotation.StringRes
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 
 /**
  * Returns the channel name if exists, or the list of member names if the channel is distinct.
  *
- * @param devValue The resource identifier of a fallback string if the [Channel] object lacks
+ * @param context The context to load string resources.
+ * @param currentUser The currently logged-in user.
+ * @param fallback The resource identifier of a fallback string if the [Channel] object lacks
  * information to construct a valid display name string.
  *
  * @return The display name of the channel.
@@ -19,13 +23,14 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 @JvmOverloads
 public fun Channel.getDisplayName(
     context: Context,
-    @StringRes devValue: Int = R.string.stream_ui_channel_list_untitled_channel,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    @StringRes fallback: Int = R.string.stream_ui_channel_list_untitled_channel,
 ): String {
     return name.takeIf { it.isNotEmpty() }
-        ?: getUsersExcludingCurrent()
+        ?: getUsersExcludingCurrent(currentUser)
             .joinToString { it.name }
             .takeIf { it.isNotEmpty() }
-        ?: context.getString(devValue)
+        ?: context.getString(fallback)
 }
 
 /**
