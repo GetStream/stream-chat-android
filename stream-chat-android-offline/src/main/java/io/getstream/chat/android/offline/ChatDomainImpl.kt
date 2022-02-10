@@ -613,7 +613,7 @@ internal class ChatDomainImpl internal constructor(
         if (cids.isNotEmpty() && online) {
             val filter = `in`("cid", cids)
             val request = QueryChannelsRequest(filter, 0, 30)
-            val result = client.queryChannels(request).await()
+            val result = client.queryChannelsInternal(request).await()
             if (result.isSuccess) {
                 val channels = result.data()
                 val foundChannelIds = channels.map { it.id }
@@ -727,7 +727,7 @@ internal class ChatDomainImpl internal constructor(
                 }
                 message.updatedLocallyAt != null -> {
                     logger.logD("Updating message: ${message.id}")
-                    client.updateMessage(message).await()
+                    client.updateMessageInternal(message).await()
                 }
                 else -> {
                     logger.logD("Sending message: ${message.id}")
