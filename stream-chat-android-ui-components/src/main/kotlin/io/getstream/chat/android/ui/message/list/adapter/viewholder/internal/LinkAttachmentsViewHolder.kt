@@ -13,14 +13,23 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadD
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
- * ViewHolder used for holding [io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView]
+ * ViewHolder used for displaying messages that contain link attachments
+ * and no other types of attachments.
+ *
+ * @param parent The parent container.
+ * @param decorators List of decorators applied to the ViewHolder.
+ * @param messageTextTransformer Formats strings and sets them on the respective TextView.
+ * @param listeners Listeners used by the ViewHolder.
+ * @param binding Binding generated for the layout.
  */
 internal class LinkAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listeners: MessageListListenerContainer?,
+    private val messageTextTransformer: ChatMessageTextTransformer,
+    private val listeners: MessageListListenerContainer?,
     internal val binding: StreamUiItemLinkAttachmentBinding = StreamUiItemLinkAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -29,6 +38,9 @@ internal class LinkAttachmentsViewHolder(
     private val style: MessageListItemStyle,
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
+    /**
+     * Initializes the class by setting the click listeners and link movement method.
+     */
     init {
         binding.run {
             listeners?.let { container ->
@@ -48,6 +60,9 @@ internal class LinkAttachmentsViewHolder(
                 avatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
+                linkAttachmentView.setLinkPreviewClickListener {
+                    listeners.linkClickListener.onLinkClick(it)
+                }
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
                     longClickTarget = root,
@@ -60,18 +75,20 @@ internal class LinkAttachmentsViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
-        // TODO - check with the team regarding diffing
+        updateHorizontalBias(data)
 
         val linkAttachment = data.message.attachments.firstOrNull { attachment -> attachment.hasLink() }
 
-        updateHorizontalBias(data)
-
         linkAttachment?.let { attachment ->
             binding.linkAttachmentView.showLinkAttachment(attachment, style)
-            binding.messageText.text = data.message.text
+            messageTextTransformer.transformAndApply(binding.messageText, data)
         }
     }
 
+    /**
+     * Updates the horizontal bias of the message according to the owner
+     * of the message.
+     */
     private fun updateHorizontalBias(data: MessageListItem.MessageItem) {
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.horizontalBias = if (data.isMine) 1f else 0f

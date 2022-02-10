@@ -52,6 +52,12 @@ internal class BackgroundDecorator(private val messageBackgroundFactory: Message
             messageBackgroundFactory.giphyAppearanceModel(viewHolder.binding.cardView.context)
     }
 
+    /**
+     * Decorates the background of the message container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,

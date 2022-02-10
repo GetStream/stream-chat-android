@@ -40,6 +40,12 @@ internal abstract class BaseDecorator : Decorator {
         data: MessageListItem.MessageItem,
     )
 
+    /**
+     * Applies various decorations to [LinkAttachmentsViewHolder].
+     *
+     * @param viewHolder The holder to be decorated.
+     * @param data The data used to define various decorations.
+     */
     abstract fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,

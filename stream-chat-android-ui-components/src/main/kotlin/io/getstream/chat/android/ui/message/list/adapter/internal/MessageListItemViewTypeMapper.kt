@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.common.extensions.isSystem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINKS
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -40,7 +40,7 @@ internal object MessageListItemViewTypeMapper {
             messageItem.message.isGiphyEphemeral() -> GIPHY
             // TODO uncomment and sort order priority
             // messageItem.message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
-            messageItem.message.attachments.any { attachment -> attachment.hasLink() } -> LINKS
+            messageItem.message.attachments.any { attachment -> attachment.hasLink() } -> LINK_ATTACHMENTS
             else -> PLAIN_TEXT
         }
     }

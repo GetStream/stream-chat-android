@@ -30,6 +30,12 @@ internal class MessageContainerMarginDecorator(private val style: MessageListIte
 
     override fun decorateGiphyMessage(viewHolder: GiphyViewHolder, data: MessageListItem.MessageItem) = Unit
 
+    /**
+     * Decorates the message container of the link attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,

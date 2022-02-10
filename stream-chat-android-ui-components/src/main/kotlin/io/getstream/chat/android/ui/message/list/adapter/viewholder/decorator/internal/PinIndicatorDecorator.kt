@@ -47,6 +47,12 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Decorates the pin indicator of the link attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,

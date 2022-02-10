@@ -48,6 +48,12 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Decorates the reactions section of the link attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,

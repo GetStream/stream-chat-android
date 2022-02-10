@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINKS
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -128,7 +128,7 @@ public open class MessageListItemViewHolderFactory {
             SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
             THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
-            LINKS -> createLinkAttachmentsViewHolder(parentView)
+            LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -196,6 +196,13 @@ public open class MessageListItemViewHolderFactory {
         return ErrorMessageViewHolder(parentView, style)
     }
 
+    /**
+     * Creates a ViewHolder for messages containing link attachments and no other type
+     * of attachments.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that displays messages with link attachments.
+     */
     protected fun createLinkAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
@@ -203,7 +210,8 @@ public open class MessageListItemViewHolderFactory {
             parent = parentView,
             decorators = decoratorProvider.decorators,
             listeners = listenerContainer,
-            style = style
+            style = style,
+            messageTextTransformer = textTransformer
         )
     }
 
