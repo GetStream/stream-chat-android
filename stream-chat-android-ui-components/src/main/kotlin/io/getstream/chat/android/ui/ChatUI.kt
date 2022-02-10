@@ -93,7 +93,7 @@ public object ChatUI {
     /**
      * Allows to generate a name for the given channel.
      */
-    public val channelNameFormatter: ChannelNameFormatter by lazyVar {
+    public var channelNameFormatter: ChannelNameFormatter by lazyVar {
         ChannelNameFormatter.defaultFormatter(appContext)
     }
 }
