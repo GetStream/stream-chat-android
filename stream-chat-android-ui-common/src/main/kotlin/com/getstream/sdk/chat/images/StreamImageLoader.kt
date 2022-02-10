@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
@@ -39,7 +38,6 @@ public sealed interface StreamImageLoader {
     public suspend fun loadAndResize(
         target: ImageView,
         data: Any?,
-        container: ViewGroup,
         placeholderDrawable: Drawable? = null,
         transformation: ImageTransformation = ImageTransformation.None,
         onStart: () -> Unit = {},

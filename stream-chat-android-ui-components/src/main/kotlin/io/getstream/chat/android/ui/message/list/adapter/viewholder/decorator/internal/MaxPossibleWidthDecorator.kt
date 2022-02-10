@@ -15,6 +15,12 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
         data: MessageListItem.MessageItem,
     ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 
+    /**
+     * Decorates the maximum width of the Giphy attachment, by changing the start and end margins of the container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,

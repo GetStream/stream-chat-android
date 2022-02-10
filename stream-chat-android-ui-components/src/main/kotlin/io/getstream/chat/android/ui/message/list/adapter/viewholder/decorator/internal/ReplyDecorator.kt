@@ -17,6 +17,12 @@ internal class ReplyDecorator(
         data: MessageListItem.MessageItem,
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
+    /**
+     * Decorates the reply section of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,

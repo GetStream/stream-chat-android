@@ -2,12 +2,10 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.loadAndResize
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
@@ -17,6 +15,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiGiphyMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.GiphyMediaAttachmentViewStyle
+import io.getstream.chat.android.ui.utils.GIPHY_INFO_DEFAULT_HEIGHT_DP
+import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.giphyInfo
+import io.getstream.chat.android.ui.utils.giphyUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -48,6 +50,9 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
         init(attrs)
     }
 
+    /**
+     * Initializes the style and configuration of the View based on the [style].
+     */
     private fun init(attrs: AttributeSet?) {
         style = GiphyMediaAttachmentViewStyle(context, attrs)
 
@@ -59,9 +64,11 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Displays a Giphy inside its container. Depending on [GiphyMediaAttachmentViewStyle.isConstantSizeEnabled]
+     * Displays a Giphy inside its container. Depending on [GiphyMediaAttachmentViewStyle.giphyType]
      * it displays the Giphy either inside of a constant height that resizes its width to keep aspect ratio or a
      * resizeable container that is resized according to the GIF.
+     *
+     * @param attachment The attachment holding the Giphy information.
      */
     public fun showGiphy(attachment: Attachment) {
         val url = attachment.giphyUrl(style.giphyType) ?: attachment.let {
@@ -99,21 +106,26 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
      *
      * In case of original sized giphies, we don't have a constant max height. For resizable giphies, we rely on the
      * information from the API to give use the constant height.
+     *
+     * @param url The URL required to load the giphy image.
      */
-    public fun loadGiphy(url: String) {
+    private fun loadGiphy(url: String) {
         CoroutineScope(DispatcherProvider.Main).launch {
             binding.imageView.loadAndResize(
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
-                container = this@GiphyMediaAttachmentView,
-                onStart = { binding.loadImage.isVisible = true },
-                onComplete = { binding.loadImage.isVisible = false }
-            )
+                onStart = { binding.loadImage.isVisible = true }
+            ) { binding.loadImage.isVisible = false }
         }
     }
 
     /**
      * Creates and sets the shape of the Giphy image container.
+     *
+     * @param topLeft The top left container corner.
+     * @param topRight The top right container corner.
+     * @param bottomRight The bottom right container corner.
+     * @param topLeft The bottom left container corner.
      */
     public fun setImageShapeByCorners(
         topLeft: Float,
@@ -132,81 +144,10 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
 
     /**
      * Applies the shape to the container that holds the Giphy image.
+     *
+     * @param shapeAppearanceModel The shape defining model, holding all the shape values, like the corner radius.
      */
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
-    }
-
-    public companion object {
-        /**
-         * Default width used for Giphy Images if no width metadata is available.
-         */
-        private const val GIPHY_INFO_DEFAULT_WIDTH_DP = 200
-
-        /**
-         * Default height used for Giphy Images if no width metadata is available.
-         */
-        private const val GIPHY_INFO_DEFAULT_HEIGHT_DP = 200
-
-        /**
-         * Returns an object containing extra information about the Giphy image based
-         * on its type.
-         *
-         * @see GiphyInfoType
-         * @see GiphyInfo
-         */
-        private fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
-            val giphyInfoMap =
-                (extraData[ModelType.attach_giphy] as? Map<String, Any>?)?.get(field.value) as? Map<String, String>?
-
-            return giphyInfoMap?.let { map ->
-                GiphyInfo(
-                    url = map["url"] ?: "",
-                    width = map["width"]?.toInt() ?: GIPHY_INFO_DEFAULT_WIDTH_DP.dpToPx(),
-                    height = map["height"]?.toInt() ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
-                )
-            }
-        }
-
-        /**
-         * Enum class that holds a value used to obtain Giphy images of different quality level.
-         */
-        public enum class GiphyInfoType(public val value: String) {
-            /**
-             * Original quality
-             */
-            ORIGINAL("original"),
-
-            /**
-             * Lower quality with a fixed height, adjusts width according to the Giphy aspect ratio
-             */
-            FIXED_HEIGHT("fixed_height"),
-
-            /**
-             * Lower quality with a fixed height with width adjusted according to the aspect ratio
-             * and played at a lower framerate.
-             */
-            FIXED_HEIGHT_DOWNSAMPLED("fixed_height_downsampled")
-        }
-
-        /**
-         * Contains extra information about Giphy attachments.
-         *
-         * @param url Url for the Giphy image.
-         * @param width The with of the Giphy image.
-         * @param height The Height of the Giphy Image.
-         */
-        private data class GiphyInfo(
-            val url: String,
-            @Px val width: Int,
-            @Px val height: Int,
-        )
-
-        /**
-         * Returns a url for a Giphy image based on its type.
-         *
-         * @see GiphyInfoType
-         */
-        private fun Attachment.giphyUrl(type: GiphyInfoType): String? = giphyInfo(type)?.url
     }
 }

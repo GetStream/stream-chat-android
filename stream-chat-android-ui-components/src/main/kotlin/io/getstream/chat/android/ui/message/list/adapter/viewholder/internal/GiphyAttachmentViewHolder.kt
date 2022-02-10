@@ -23,6 +23,15 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
+/**
+ * Represents the Giphy attachment holder, when the Giphy is already sent.
+ *
+ * @param parent The parent container.
+ * @param decorators List of decorators for various parts of the holder.
+ * @param listeners The listeners for various user interactions.
+ * @param markdown Markdown renderer, used for the message text.
+ * @param binding The binding that holds all the View references.
+ */
 internal class GiphyAttachmentViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
@@ -66,6 +75,15 @@ internal class GiphyAttachmentViewHolder(
         }
     }
 
+    /**
+     * Binds the data required to represent a Giphy attachment. Shows the Giphy, applies decorations and the transformations
+     * for text and the container shape.
+     *
+     * Loads the Giphy once things are set up.
+     *
+     * @param data The data that holds all the information required to show a Giphy.
+     * @param diff The difference from the previous draw.
+     */
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
@@ -91,14 +109,16 @@ internal class GiphyAttachmentViewHolder(
         }
 
         val attachment = data.message.attachments.first()
-
-        showGiphy(attachment)
-    }
-
-    private fun showGiphy(attachment: Attachment) {
         binding.mediaAttachmentView.showGiphy(attachment = attachment)
     }
 
+    /**
+     * Sets the listeners that are valid for the Giphy container.
+     *
+     * @param mediaAttachmentView The Giphy image container.
+     * @param listeners The set of listeners available.
+     * @param data The data used to propagate events through the listeners.
+     */
     private fun setListeners(
         mediaAttachmentView: GiphyMediaAttachmentView,
         listeners: MessageListListenerContainer,
@@ -114,6 +134,12 @@ internal class GiphyAttachmentViewHolder(
         }
     }
 
+    /**
+     * Decorates the image corners of the [GiphyMediaAttachmentView].
+     *
+     * @param mediaAttachmentView The View to decorate the corners of.
+     * @param data The data that holds all the information about the Giphy message.
+     */
     private fun imageCorners(mediaAttachmentView: GiphyMediaAttachmentView, data: MessageListItem.MessageItem) {
         val topLeftCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
         val topRightCorner = if (data.message.isReply()) 0f else BackgroundDecorator.DEFAULT_CORNER_RADIUS
