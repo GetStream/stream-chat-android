@@ -58,7 +58,7 @@ internal class GiphyViewHolder(
                         it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
                     } ?: return
 
-                    binding.mediaAttachmentView.load(url)
+                    binding.giphyPreview.load(url)
                 }
         }
 
