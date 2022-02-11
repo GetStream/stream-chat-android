@@ -294,6 +294,13 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
+
+    /**
+     * Provides a default long click handler for all messages. Based on the configuration options we have and the message
+     * type, we show different kind of options.
+     *
+     * We also disable editing of certain messages, like Giphy messages.
+     */
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
