@@ -79,7 +79,7 @@ public class StateRegistry private constructor(
         private var instance: StateRegistry? = null
 
         /**
-         * Gets the singleton of StateRegistry or creates it in the first call
+         * Gets the singleton of StateRegistry or creates it in the first call.
          *
          * @param chatDomainImpl [ChatDomainImpl]
          */
