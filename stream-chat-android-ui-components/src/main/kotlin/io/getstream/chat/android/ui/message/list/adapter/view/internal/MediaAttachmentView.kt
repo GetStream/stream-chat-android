@@ -5,9 +5,7 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
@@ -22,11 +20,27 @@ import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
 
+/**
+ * View used to display Media attachments such as images.
+ *
+ * Giphy images are handled by a separate View.
+ * @see GiphyMediaAttachmentView
+ */
 internal class MediaAttachmentView : ConstraintLayout {
+    /**
+     * Handles media attachment clicks.
+     */
     var attachmentClickListener: AttachmentClickListener? = null
+
+    /**
+     * Handles media attachment long clicks.
+     */
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var giphyBadgeEnabled: Boolean = true
 
+    /**
+     * Binding for [io.getstream.chat.android.ui.R.layout.stream_ui_media_attachment_view].
+     */
     internal val binding: StreamUiMediaAttachmentViewBinding =
         StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
             it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -38,6 +52,10 @@ internal class MediaAttachmentView : ConstraintLayout {
                 constrainViewToParentBySide(it.root, ConstraintSet.TOP)
             }
         }
+
+    /**
+     * Style applied to [MediaAttachmentView].
+     */
     private lateinit var style: MediaAttachmentViewStyle
 
     constructor(context: Context) : this(context, null, 0)
@@ -56,9 +74,12 @@ internal class MediaAttachmentView : ConstraintLayout {
         style = MediaAttachmentViewStyle(context, attrs)
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.moreCountLabel.setTextStyle(style.moreCountTextStyle)
-        binding.giphyLabel.setImageDrawable(style.giphyIcon)
     }
 
+    /**
+     * Displays the images in a message. Displays a count saying how many more
+     * images the message contains in case they don't all fit in the preview.
+     */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
         val showMore = {
@@ -66,40 +87,31 @@ internal class MediaAttachmentView : ConstraintLayout {
                 showMoreCount(andMoreCount)
             }
         }
-        val showGiphyLabel = {
-            if (giphyBadgeEnabled && attachment.type == ModelType.attach_giphy) {
-                binding.giphyLabel.isVisible = true
-            }
-        }
-
-        if (attachment.type == ModelType.attach_giphy) {
-            binding.imageView.updateLayoutParams {
-                height = style.giphyHeight
-            }
-        }
 
         showImageByUrl(url) {
             showMore()
-            showGiphyLabel()
         }
 
-        if (attachment.type != ModelType.attach_giphy) {
-            setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
-            setOnLongClickListener {
-                attachmentLongClickListener?.onAttachmentLongClick()
-                true
-            }
+        setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
+        setOnLongClickListener {
+            attachmentLongClickListener?.onAttachmentLongClick()
+            true
         }
     }
 
+    /**
+     * Sets the visibility for the progress bar.
+     */
     private fun showLoading(isLoading: Boolean) {
         binding.loadImage.isVisible = isLoading
     }
 
+    /**
+     * Loads the images.
+     */
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
-            placeholderDrawable = style.placeholderIcon,
             onStart = { showLoading(true) },
             onComplete = {
                 showLoading(false)
@@ -108,12 +120,19 @@ internal class MediaAttachmentView : ConstraintLayout {
         )
     }
 
+    /**
+     * Displays how many more images the message contains that are not
+     * able to fit inside the preview.
+     */
     private fun showMoreCount(andMoreCount: Int) {
         binding.moreCount.isVisible = true
         binding.moreCountLabel.text =
             context.getString(R.string.stream_ui_message_list_attachment_more_count, andMoreCount)
     }
 
+    /**
+     * Creates and sets the shape of the image/s container.
+     */
     fun setImageShapeByCorners(
         topLeft: Float,
         topRight: Float,
@@ -129,6 +148,11 @@ internal class MediaAttachmentView : ConstraintLayout {
             .let(this::setImageShape)
     }
 
+    /**
+     * Applies the shape to the image/s container. Also sets the container
+     * background color and the overlay color for the label that displays
+     * how many more images there are in a message.
+     */
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
@@ -140,6 +164,9 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     companion object {
+        /**
+         * When all images in a message are able to fit in the preview.
+         */
         private const val NO_MORE_COUNT = 0
     }
 }

@@ -37,9 +37,8 @@
                 android:layout_height="40dp"
                 android:padding="@dimen/stream_ui_spacing_small"
                 android:src="@drawable/stream_ui_ic_giphy"
-                app:layout_constraintBottom_toTopOf="@+id/mediaAttachmentView"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="ContentDescription"
                 />
 
@@ -52,8 +51,9 @@
                 android:text="@string/stream_ui_message_list_giphy_title"
                 android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
                 android:textDirection="locale"
+                app:layout_constraintBottom_toBottomOf="@id/giphyIconImageView"
                 app:layout_constraintStart_toEndOf="@id/giphyIconImageView"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/giphyIconImageView"
                 />
 
             <TextView
@@ -72,12 +72,13 @@
                 tools:text="cats"
                 />
 
-            <io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
-                android:id="@+id/mediaAttachmentView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/giphyPreview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/giphyIconImageView"
@@ -90,7 +91,7 @@
                 android:layout_marginTop="2dp"
                 android:background="@color/stream_ui_border"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mediaAttachmentView"
+                app:layout_constraintTop_toBottomOf="@id/giphyPreview"
                 />
 
             <TextView

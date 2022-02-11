@@ -4,6 +4,8 @@ import android.content.res.ColorStateList
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
@@ -11,6 +13,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadD
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.giphyInfo
 
 internal class GiphyViewHolder(
     parent: ViewGroup,
@@ -37,8 +41,6 @@ internal class GiphyViewHolder(
                     container.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
                 }
             }
-
-            mediaAttachmentView.giphyBadgeEnabled = false
         }
     }
 
@@ -51,7 +53,13 @@ internal class GiphyViewHolder(
             data.message
                 .attachments
                 .firstOrNull()
-                ?.let(binding.mediaAttachmentView::showAttachment)
+                ?.let {
+                    val url = it.giphyInfo(GiphyInfoType.FIXED_HEIGHT)?.url ?: it.let {
+                        it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
+                    } ?: return
+
+                    binding.giphyPreview.load(url)
+                }
         }
 
         binding.giphyQueryTextView.text = data.message
