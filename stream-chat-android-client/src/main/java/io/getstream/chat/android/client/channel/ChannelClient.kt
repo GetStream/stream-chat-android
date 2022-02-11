@@ -246,7 +246,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        return client.updateMessage(message)
+        return client.updateMessageInternal(message)
     }
 
     @CheckResult
