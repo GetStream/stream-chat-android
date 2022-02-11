@@ -26,7 +26,8 @@ internal class RepositoryFacadeBuilder {
 
     fun context(context: Context): RepositoryFacadeBuilder = apply { this.context = context }
     fun currentUser(user: User): RepositoryFacadeBuilder = apply { this.currentUser = user }
-    fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder = apply { this.isOfflineEnabled = isOfflineEnabled }
+    fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder =
+        apply { this.isOfflineEnabled = isOfflineEnabled }
     fun database(database: ChatDatabase?): RepositoryFacadeBuilder = apply { this.database = database }
     fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
     fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
@@ -53,14 +54,11 @@ internal class RepositoryFacadeBuilder {
     fun build(): RepositoryFacade {
         val config = requireNotNull(defaultConfig)
         val scope = requireNotNull(coroutineScope)
-
         val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
-
         val userRepository = factory.createUserRepository()
         val getUser: suspend (userId: String) -> User = { userId ->
             requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
         }
-
         val messageRepository = factory.createMessageRepository(getUser)
         val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 

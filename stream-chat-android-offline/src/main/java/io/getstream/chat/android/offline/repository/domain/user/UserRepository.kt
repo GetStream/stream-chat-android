@@ -9,10 +9,7 @@ internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)
     suspend fun insertUser(user: User)
     suspend fun insertCurrentUser(user: User)
-    suspend fun selectCurrentUser(): User?
     suspend fun selectUser(userId: String): User?
-    suspend fun selectUsers(userIds: List<String>): List<User>
-    suspend fun selectUserMap(userIds: List<String>): Map<String, User>
     suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
     suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 
@@ -22,12 +19,10 @@ internal interface UserRepository {
 
 internal class UserRepositoryImpl(
     private val userDao: UserDao,
-    currentUser: User?,
     cacheSize: Int = 100,
 ) : UserRepository {
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
-    private val currentUserMap: Map<String, User> = currentUser?.let { mapOf(it.id to it) } ?: emptyMap()
 
     private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
 
@@ -57,27 +52,9 @@ internal class UserRepositoryImpl(
         userDao.insert(userEntity)
     }
 
-    override suspend fun selectCurrentUser(): User? {
-        return userDao.select(ME_ID)?.let(::toModel)
-    }
-
     override suspend fun selectUser(userId: String): User? {
         return userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
     }
-
-    override suspend fun selectUsers(userIds: List<String>): List<User> {
-        val cacheUsers: List<User> = userIds.mapNotNull(userCache::get)
-        val missingUserIds = userIds.filter { userCache.get(it) == null }
-        val dbUsers = if (missingUserIds.isNotEmpty()) {
-            userDao.select(missingUserIds).map(::toModel).also(::cacheUsers)
-        } else {
-            emptyList()
-        }
-        return dbUsers + cacheUsers
-    }
-
-    override suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
-        selectUsers(userIds).associateBy(User::id) + currentUserMap
 
     override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> {
         return userDao.selectAllUser(limit, offset).map(::toModel)

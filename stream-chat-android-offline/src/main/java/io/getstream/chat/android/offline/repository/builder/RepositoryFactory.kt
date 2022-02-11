@@ -24,7 +24,7 @@ internal class RepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User?,
 ) {
-    fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), currentUser, 100)
+    fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), 100)
     fun createChannelConfigRepository(): ChannelConfigRepository =
         ChannelConfigRepositoryImpl(database.channelConfigDao())
 
