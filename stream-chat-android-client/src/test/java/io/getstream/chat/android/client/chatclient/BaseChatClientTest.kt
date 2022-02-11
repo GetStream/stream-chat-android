@@ -60,9 +60,7 @@ internal open class BaseChatClientTest {
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = coroutineRule.scope,
-            plugins = plugins,
         )
     }
 }

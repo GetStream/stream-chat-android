@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.extensions.state
-import io.getstream.chat.android.offline.experimental.plugin.QueryReference
+import io.getstream.chat.android.offline.experimental.plugin.query.QueryReference
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

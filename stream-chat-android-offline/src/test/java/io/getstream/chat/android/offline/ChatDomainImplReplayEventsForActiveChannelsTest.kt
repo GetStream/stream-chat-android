@@ -109,6 +109,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
             return ChatDomain.Builder(context, chatClient).build()
                 .let { it as ChatDomainImpl }
                 .apply {
+                    repos = mock()
                     scope = coroutineScope
                     eventHandler = eventHandlerImpl
                 }
