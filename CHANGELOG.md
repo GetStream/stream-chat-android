@@ -1,4 +1,5 @@
 # UNRELEASED CHANGELOG
+<!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
 
@@ -52,6 +53,11 @@
 - Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
 
 ### ⚠️ Changed
+- Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- Created a GiphyMediaAttachmentView and its respective style to customize giphies. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- You can now use `original` sized giphies that apply resizing based on the GIF size. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- Use `fixedHeight` or `fixedHeightDownsampled` giphies to use a fixed height that keeps the aspect ratio and takes up less memory. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
+- Make sure to check out our giphy attachment styles (GiphyMediaAttachmentView) for customization.
 
 ### ❌ Removed
 
@@ -111,12 +117,12 @@
 
 ### ❌ Removed
 
-<!-- UNRELEASED START -->
+<!-- UNRELEASED END -->
+
 # February 9th, 2022 - 4.28.2
 ## Common changes for all artifacts
 - Fix crash with offline support. [#3063](https://github.com/GetStream/stream-chat-android/pull/3063)
 
-<!-- UNRELEASED END -->
 # February 9th, 2022 - 4.28.1
 ## Common changes for all artifacts
 - Fix crash when events were received. [#3058](https://github.com/GetStream/stream-chat-android/pull/3058)
