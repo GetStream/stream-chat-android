@@ -670,7 +670,7 @@ internal class ChatDomainImpl internal constructor(
      * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
      */
     private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
-        val retriedMessages = repos.selectMessagesWaitForAttachments()
+        val retriedMessages = repos.selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
 
         val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
             message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
@@ -690,7 +690,7 @@ internal class ChatDomainImpl internal constructor(
      * @throws IllegalArgumentException when message contains non-synchronized attachments
      */
     private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val (messages, nonCorrectStateMessages) = repos.selectMessagesSyncNeeded().partition {
+        val (messages, nonCorrectStateMessages) = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED).partition {
             it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
         }
         if (nonCorrectStateMessages.isNotEmpty()) {
@@ -737,7 +737,7 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryReactions(): List<Reaction> {
-        return repos.selectReactionsSyncNeeded().onEach { reaction ->
+        return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
             val result = if (reaction.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).await()
             } else {

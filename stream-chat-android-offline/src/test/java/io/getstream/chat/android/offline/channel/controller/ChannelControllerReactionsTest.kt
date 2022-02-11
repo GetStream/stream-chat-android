@@ -157,13 +157,6 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             )
         }
 
-        fun givenMockedRepositories(): Fixture {
-            runBlocking {
-                whenever(repos.selectUserReactionsToMessage(any(), any())) doReturn emptyList()
-            }
-            return this
-        }
-
         fun givenMessageWithReactions(myReactions: List<Reaction>): Fixture {
             runBlocking {
                 val message = Message().apply {

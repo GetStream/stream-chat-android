@@ -65,8 +65,8 @@ internal class ChatDomainImplTest {
                 }
             }
             val repositoryFacade = mock<RepositoryFacade> {
-                onBlocking { selectMessagesSyncNeeded() } doReturn listOf(syncNeededMessageWithSuccessAttachment)
-                onBlocking { selectMessagesWaitForAttachments() } doReturn emptyList()
+                onBlocking { selectMessageBySyncState(SyncStatus.SYNC_NEEDED) } doReturn listOf(syncNeededMessageWithSuccessAttachment)
+                onBlocking { selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS) } doReturn emptyList()
             }
             val sut = Fixture(client)
                 .withRepositoryFacade(repositoryFacade)
@@ -94,8 +94,10 @@ internal class ChatDomainImplTest {
                 ),
             )
             val repositoryFacade = mock<RepositoryFacade> {
-                onBlocking { selectMessagesSyncNeeded() } doReturn emptyList()
-                onBlocking { selectMessagesWaitForAttachments() } doReturn listOf(awaitingAttachmentsMessage)
+                onBlocking { selectMessageBySyncState(SyncStatus.SYNC_NEEDED) } doReturn emptyList()
+                onBlocking {
+                    selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
+                } doReturn listOf(awaitingAttachmentsMessage)
             }
             val sut = Fixture()
                 .withRepositoryFacade(repositoryFacade)
@@ -123,8 +125,8 @@ internal class ChatDomainImplTest {
                 }
             }
             val repositoryFacade = mock<RepositoryFacade> {
-                onBlocking { selectMessagesSyncNeeded() } doReturn listOf(message)
-                onBlocking { selectMessagesWaitForAttachments() } doReturn emptyList()
+                onBlocking { selectMessageBySyncState(SyncStatus.SYNC_NEEDED) } doReturn listOf(message)
+                onBlocking { selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS) } doReturn emptyList()
             }
             val sut = Fixture(client)
                 .withRepositoryFacade(repositoryFacade)
