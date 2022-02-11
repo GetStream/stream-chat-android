@@ -25,7 +25,7 @@ public fun interface ChannelNameFormatter {
         /**
          * Builds the default channel name formatter.
          *
-         * @param context The context to load string resources.
+         * @param context The context used to load string resources.
          * @param fallback The resource identifier of a fallback string.
          *
          * @see [DefaultChannelNameFormatter]
