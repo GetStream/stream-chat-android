@@ -29,6 +29,9 @@ jobs:
           key-prefix: gradle-lint
       - name: spotless
         run: ./gradlew spotlessCheck --scan
+      - name: Detekt
+        if: always()
+        run: ./gradlew detekt
 
   api_check:
     name: API check
