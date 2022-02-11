@@ -462,3 +462,18 @@ If your predicate doesn't show avatars for your own messages (this is the defaul
 ```xml
 streamUiMessageEndMargin="0dp"
 ```
+## Configure giphy
+It is possible to configure the gifs size. Prior of version 4.23.0 gifs were auto-sizable and will resize themselves accordingly with the size of the image they load.
+
+As of v5.0.0, our Giphy holders are much more customizable. You can use three Giphy load modes:
+* `original`: The original Giphy file size, as given by the API.
+* `fixedHeight`: Smaller file size Giphy, that uses fixed height in order to improve scrolling performance and image loading speed.
+* `fixedHeightDownsampled`: Same as `fixedHeight`, but downsampled to only a few frames, making it roughly 6x smaller and faster to load, but less visually appealing.
+
+Alongside these Giphy types, you can also choose the `scaleType` when loading the Giphy:
+* `fitCenter`: The recommended setting, fits the GIF to the center of the container and keeps the aspect ratio.
+* `centerCrop`: Useful if you want larger size giphies and items, but don't care if the image is cropped.
+* `center`: Doesn't scale the image and centers it in the parent. Not recommended for most Giphy images as it will cause a lot of whitespace and smaller images.
+* ...
+
+We recommend always using `fitCenter` as the go-to way of loading Giphy images that doesn't cause images to crop. For the best performance, we recommend either `fixedHeight`, or `fixedHeightDownsampled` if you don't mind the low frame rate.
