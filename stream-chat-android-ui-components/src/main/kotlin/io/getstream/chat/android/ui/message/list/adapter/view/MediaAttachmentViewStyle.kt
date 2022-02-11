@@ -5,38 +5,35 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import androidx.annotation.DimenRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
-private const val DEFAULT_GIPHY_HEIGHT = 200
-
 /**
- * Style for [MediaAttachmentView].
+ * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView].
  * Use this class together with [TransformStyle.mediaAttachmentStyleTransformer] to change styles programmatically.
  *
  * @param progressIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
- * @param giphyIcon Giphy icon. Default value is [R.drawable.stream_ui_giphy_label].
+ * @param placeholderIcon Displayed while the image is Loading.
  * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
  */
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
-    public val giphyIcon: Drawable,
     public val placeholderIcon: Drawable,
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
-    @DimenRes public val giphyHeight: Int,
 ) {
     internal companion object {
+        /**
+         * Fetches styled attributes and returns them wrapped inside of [MediaAttachmentViewStyle].
+         */
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -46,9 +43,6 @@ public data class MediaAttachmentViewStyle(
             ).use { a ->
                 val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
-
-                val giphyIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyIcon)
-                    ?: context.getDrawableCompat(R.drawable.stream_ui_giphy_label)!!
 
                 val imageBackgroundColor = a.getColor(
                     R.styleable.MediaAttachmentView_streamUiMediaAttachmentImageBackgroundColor,
@@ -83,20 +77,12 @@ public data class MediaAttachmentViewStyle(
                     a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
-                val giphyHeight =
-                    a.getDimensionPixelSize(
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
-                        DEFAULT_GIPHY_HEIGHT.dpToPx()
-                    )
-
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
-                    giphyIcon = giphyIcon,
                     imageBackgroundColor = imageBackgroundColor,
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
-                    giphyHeight = giphyHeight,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

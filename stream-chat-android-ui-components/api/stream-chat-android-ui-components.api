@@ -2024,6 +2024,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemVi
 	public fun <init> ()V
 	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createErrorMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createGiphyAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
@@ -2040,6 +2041,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public static final field DATE_DIVIDER I
 	public static final field ERROR_MESSAGE I
 	public static final field GIPHY I
+	public static final field GIPHY_ATTACHMENT I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewType;
 	public static final field LOADING_INDICATOR I
 	public static final field MESSAGE_DELETED I
@@ -2064,20 +2066,26 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
 }
 
+public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle {
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Landroid/widget/ImageView$ScaleType;)V
+	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getGiphyType ()Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public final fun getImageBackgroundColor ()I
+	public final fun getPlaceholderIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getScaleType ()Landroid/widget/ImageView$ScaleType;
+}
+
 public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;I)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
-	public final fun component3 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()I
 	public final fun component4 ()I
-	public final fun component5 ()I
-	public final fun component6 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component7 ()I
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;I)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;IILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getGiphyHeight ()I
-	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getImageBackgroundColor ()I
 	public final fun getMoreCountOverlayColor ()I
 	public final fun getMoreCountTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2085,6 +2093,15 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaA
 	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setImageShapeByCorners (FFFF)V
+	public final fun showGiphy (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)V
+	public static synthetic fun showGiphy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;ILjava/lang/Object;)V
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
@@ -2660,5 +2677,33 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
 	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfo {
+	public fun <init> (Ljava/lang/String;II)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (Ljava/lang/String;II)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/utils/GiphyInfo;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()I
+	public final fun getUrl ()Ljava/lang/String;
+	public final fun getWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfoType : java/lang/Enum {
+	public static final field FIXED_HEIGHT Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static final field FIXED_HEIGHT_DOWNSAMPLED Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static final field ORIGINAL Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static fun values ()[Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
+	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
 }
 
