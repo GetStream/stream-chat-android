@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isDeleted
+import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
@@ -296,16 +297,20 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
+                val style = requireStyle()
+                val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
+                val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
                         MessageOptionsView.Configuration(
-                            viewStyle = requireStyle(),
+                            viewStyle = viewStyle,
                             channelConfig = channel.config,
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
                         ),
-                        requireStyle(),
+                        viewStyle,
                         messageListItemViewHolderFactory,
                         messageBackgroundFactory
                     )
