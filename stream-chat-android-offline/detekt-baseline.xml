@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
+    <ID>ComplexMethod:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanOrEqualsFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun inFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
+    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
+    <ID>ComplexMethod:EventHandlerImpl.kt$EventHandlerImpl$@OptIn(ExperimentalStreamChatApi::class) internal suspend fun handleEventsInternal(events: List&lt;ChatEvent>)</ID>
+    <ID>ComplexMethod:EventHandlerImpl.kt$EventHandlerImpl$internal suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>)</ID>
+    <ID>ComplexMethod:FilterObjectConverter.kt$private fun FilterObject.toMap(): Map&lt;String, Any></ID>
+    <ID>ComplexMethod:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
+    <ID>ComplexMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun objectToStringArguments()</ID>
+    <ID>ComplexMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun stringToObjectArguments()</ID>
+    <ID>ComplexMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
+    <ID>EmptyFunctionBlock:BaseDomainTest.kt$BaseDomainTest.&lt;no name provided>${}</ID>
+    <ID>EmptyFunctionBlock:BaseDomainTest2.kt$BaseDomainTest2.&lt;no name provided>${}</ID>
+    <ID>EmptyFunctionBlock:ChatDomainImpl.kt$ChatDomainImpl.Companion.&lt;no name provided>${}</ID>
+    <ID>ForbiddenComment:BaseDomainTest2.kt$BaseDomainTest2$// TODO: a chat domain without a user set should raise a clear error</ID>
+    <ID>ForbiddenComment:ChannelController.kt$ChannelController$// TODO: should we rename edit message into update message to be similar to llc?</ID>
+    <ID>ForbiddenComment:ChannelLogic.kt$ChannelLogic$// TODO: Make private after removing ChannelController</ID>
+    <ID>ForbiddenComment:EditMessageUseCaseTest.kt$EditMessageUseCaseTest$// TODO: this test is slow for unknown reasons</ID>
+    <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
+    <ID>ForbiddenComment:LoadOldMessagesTest.kt$LoadOldMessagesTest$// TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)</ID>
+    <ID>ForbiddenComment:MessageSendingService.kt$MessageSendingService$// TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach</ID>
+    <ID>ForbiddenComment:QueryChannelsLogic.kt$QueryChannelsLogic$// TODO: Make private after removing QueryChannelsController</ID>
+    <ID>ForbiddenComment:ThreadController.kt$ThreadController$// TODO: offline storage for thread load more</ID>
+    <ID>ForbiddenComment:Utils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
+    <ID>LargeClass:ChatDomainImpl.kt$ChatDomainImpl : ChatDomainGlobalState</ID>
+    <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
+    <ID>LongMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
+    <ID>LongMethod:ChatDomainImpl.kt$ChatDomainImpl$ suspend fun connectionRecovered(recoverAll: Boolean = false)</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun distinctFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanOrEqualsFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun inFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
+    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
+    <ID>LongMethod:EventHandlerImpl.kt$EventHandlerImpl$@OptIn(ExperimentalStreamChatApi::class) internal suspend fun handleEventsInternal(events: List&lt;ChatEvent>)</ID>
+    <ID>LongMethod:EventHandlerImpl.kt$EventHandlerImpl$internal suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>)</ID>
+    <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun objectToStringArguments()</ID>
+    <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun stringToObjectArguments()</ID>
+    <ID>LongMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
+    <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
+    <ID>LongParameterList:ChatClient.kt$( cid: String, offset: Int = 0, limit: Int = 0, filter: FilterObject = NeutralFilterObject, sort: QuerySort&lt;Member> = QuerySort.desc(Member::createdAt), members: List&lt;Member> = emptyList(), )</ID>
+    <ID>LongParameterList:ChatDomain.kt$ChatDomain$( cid: String, offset: Int = 0, limit: Int = 0, filter: FilterObject = NeutralFilterObject, sort: QuerySort&lt;Member> = QuerySort.desc(Member::createdAt), members: List&lt;Member> = emptyList(), )</ID>
+    <ID>LongParameterList:ChatDomainImpl.kt$ChatDomainImpl$( client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context, globalState: GlobalMutableState = GlobalMutableState.getOrCreate() )</ID>
+    <ID>LongParameterList:ChatDomainImpl.kt$ChatDomainImpl$( internal var client: ChatClient, @VisibleForTesting internal var db: ChatDatabase? = null, private val mainHandler: Handler, override var offlineEnabled: Boolean = true, internal var recoveryEnabled: Boolean = true, override var userPresence: Boolean = false, internal var backgroundSyncEnabled: Boolean = false, internal var appContext: Context, internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING, override val retryPolicy: RetryPolicy = DefaultRetryPolicy(), private val globalState: GlobalMutableState = GlobalMutableState.getOrCreate() )</ID>
+    <ID>LongParameterList:Mother.kt$( cid: String = randomCID(), id: String = randomString(), type: String = randomString(), watcherCount: Int = randomInt(), frozen: Boolean = randomBoolean(), lastMessageAt: Date? = randomDate(), createdAt: Date? = randomDate(), deletedAt: Date? = randomDate(), updatedAt: Date? = randomDate(), syncStatus: SyncStatus = randomSyncStatus(), memberCount: Int = randomInt(), messages: List&lt;Message> = mutableListOf(), members: List&lt;Member> = mutableListOf(), watchers: List&lt;User> = mutableListOf(), read: List&lt;ChannelUserRead> = mutableListOf(), config: Config = Config(), createdBy: User = randomUser(), unreadCount: Int? = randomInt(), team: String = randomString(), hidden: Boolean? = randomBoolean(), hiddenMessagesBefore: Date? = randomDate(), )</ID>
+    <ID>LongParameterList:Mother.kt$( createdAt: Date = randomDate(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), message: Message = randomMessage(), channel: Channel = randomChannel(), )</ID>
+    <ID>LongParameterList:Mother.kt$( createdAt: Date = randomDate(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), message: Message = randomMessage(), channel: Channel = randomChannel(), user: User = randomUser(), )</ID>
+    <ID>LongParameterList:Mother.kt$( createdAt: Date = randomDate(), cid: String = randomString(), watcherCount: Int = randomInt(), channelType: String = randomString(), channelId: String = randomString(), user: User = randomUser(), )</ID>
+    <ID>LongParameterList:Mother.kt$( createdAt: Date = randomDate(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), message: Message = randomMessage(), watcherCount: Int = randomInt(), totalUnreadCount: Int = randomInt(), unreadChannels: Int = randomInt(), )</ID>
+    <ID>LongParameterList:Mother.kt$( createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), name: String = randomString(), typingEventsEnabled: Boolean = randomBoolean(), readEventsEnabled: Boolean = randomBoolean(), connectEventsEnabled: Boolean = randomBoolean(), searchEnabled: Boolean = randomBoolean(), isReactionsEnabled: Boolean = randomBoolean(), isRepliesEnabled: Boolean = randomBoolean(), muteEnabled: Boolean = randomBoolean(), uploadsEnabled: Boolean = randomBoolean(), urlEnrichmentEnabled: Boolean = randomBoolean(), customEventsEnabled: Boolean = randomBoolean(), pushNotificationsEnabled: Boolean = randomBoolean(), messageRetention: String = randomString(), maxMessageLength: Int = randomInt(), automod: String = randomString(), automodBehavior: String = randomString(), blocklistBehavior: String = randomString(), commands: List&lt;Command> = emptyList(), )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), cid: String = randomCID(), text: String = randomString(), html: String = randomString(), parentId: String? = randomString(), command: String? = randomString(), attachments: MutableList&lt;Attachment> = mutableListOf(), mentionedUsers: MutableList&lt;User> = mutableListOf(), replyCount: Int = randomInt(), reactionCounts: MutableMap&lt;String, Int> = mutableMapOf(), reactionScores: MutableMap&lt;String, Int> = mutableMapOf(), syncStatus: SyncStatus = randomSyncStatus(), type: String = randomString(), latestReactions: MutableList&lt;Reaction> = mutableListOf(), ownReactions: MutableList&lt;Reaction> = mutableListOf(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), deletedAt: Date? = randomDate(), updatedLocallyAt: Date? = randomDate(), createdLocallyAt: Date? = randomDate(), user: User = randomUser(), extraData: MutableMap&lt;String, Any> = mutableMapOf(), silent: Boolean = randomBoolean(), replyTo: Message? = null, showInChannel: Boolean = randomBoolean(), shadowed: Boolean = false, channelInfo: ChannelInfo? = randomChannelInfo(), replyMessageId: String? = randomString(), pinned: Boolean = randomBoolean(), pinnedAt: Date? = randomDate(), pinExpires: Date? = randomDate(), pinnedBy: User? = randomUser(), threadParticipants: List&lt;User> = emptyList(), )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), cid: String = randomCID(), userId: String = randomString(), text: String = randomString(), attachments: List&lt;AttachmentEntity> = emptyList(), type: String = randomString(), syncStatus: SyncStatus = SyncStatus.COMPLETED, replyCount: Int = randomInt(), createdAt: Date? = randomDate(), createdLocallyAt: Date? = randomDate(), updatedAt: Date? = randomDate(), updatedLocallyAt: Date? = randomDate(), deletedAt: Date? = randomDate(), latestReactions: List&lt;ReactionEntity> = emptyList(), ownReactions: List&lt;ReactionEntity> = emptyList(), mentionedUsersId: List&lt;String> = emptyList(), reactionCounts: Map&lt;String, Int> = emptyMap(), reactionScores: Map&lt;String, Int> = emptyMap(), parentId: String? = randomString(), command: String? = randomString(), shadowed: Boolean = randomBoolean(), extraData: Map&lt;String, Any> = emptyMap(), replyToId: String? = randomString(), pinned: Boolean = randomBoolean(), pinnedAt: Date? = randomDate(), pinExpires: Date? = randomDate(), pinnedByUserId: String? = randomString(), threadParticipantsIds: List&lt;String> = emptyList(), )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), originalId: String = randomString(), name: String = randomString(), role: String = randomString(), createdAt: Date? = null, updatedAt: Date? = null, lastActive: Date? = null, invisible: Boolean = randomBoolean(), banned: Boolean = randomBoolean(), mutes: List&lt;String> = emptyList(), extraData: Map&lt;String, Any> = emptyMap(), )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), role: String = randomString(), invisible: Boolean = randomBoolean(), banned: Boolean = randomBoolean(), devices: List&lt;Device> = mutableListOf(), online: Boolean = randomBoolean(), createdAt: Date? = null, updatedAt: Date? = null, lastActive: Date? = null, totalUnreadCount: Int = positiveRandomInt(), unreadChannels: Int = positiveRandomInt(), mutes: List&lt;Mute> = mutableListOf(), teams: List&lt;String> = listOf(), channelMutes: List&lt;ChannelMute> = emptyList(), extraData: MutableMap&lt;String, Any> = mutableMapOf(), )</ID>
+    <ID>LongParameterList:Mother.kt$( messageId: String = randomString(), type: String = randomString(), score: Int = randomInt(), user: User? = randomUser(), userId: String = randomString(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), deletedAt: Date? = randomDate(), syncStatus: SyncStatus = randomSyncStatus(), extraData: MutableMap&lt;String, Any> = mutableMapOf(), enforceUnique: Boolean = randomBoolean(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), channel: Channel = randomChannel(), message: Message = randomMessage(), totalUnreadCount: Int = randomInt(), unreadChannels: Int = randomInt(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), channel: Channel = randomChannel(), totalUnreadCount: Int = randomInt(), unreadChannels: Int = randomInt(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), channel: Channel = randomChannel(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), member: Member = randomMember(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), message: Message = randomMessage(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), message: Message = randomMessage(), reaction: Reaction = randomReaction(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), parentId: String? = randomString(), )</ID>
+    <ID>LongParameterList:Mother.kt$( type: String = randomString(), createdAt: Date = Date(), user: User = randomUser(), cid: String = randomString(), channelType: String = randomString(), channelId: String = randomString(), totalUnreadCount: Int = randomInt(), unreadChannels: Int = randomInt(), )</ID>
+    <ID>LongParameterList:Mother.kt$( user: User = randomUser(), role: String? = randomString(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), isInvited: Boolean? = randomBoolean(), inviteAcceptedAt: Date? = randomDate(), inviteRejectedAt: Date? = randomDate(), shadowBanned: Boolean = randomBoolean(), )</ID>
+    <ID>LongParameterList:OfflinePlugin.kt$OfflinePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val getMessageListener: GetMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, )</ID>
+    <ID>LongParameterList:QueryMembers.kt$QueryMembers$( cid: String, offset: Int = 0, limit: Int = 0, filter: FilterObject = NeutralFilterObject, sort: QuerySort&lt;Member> = QuerySort.desc(Member::createdAt), members: List&lt;Member> = emptyList(), )</ID>
+    <ID>LongParameterList:QueryMembers.kt$QueryMembers$( cid: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
+    <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
+    <ID>LongParameterList:TestDataHelper.kt$( year: Int, month: Int, date: Int, hourOfDay: Int = 0, minute: Int = 0, seconds: Int = 0, )</ID>
+    <ID>LoopWithTooManyJumpStatements:CallRetryService.kt$CallRetryService$while (true) { result = runnable().await() if (result.isSuccess || result.error().isPermanent()) { break } else { // retry logic val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error()) val timeout = retryPolicy.retryTimeout(client, attempt, result.error()) if (shouldRetry) { // temporary failure, continue logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}") delay(timeout.toLong()) attempt += 1 } else { logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}") break } } }</ID>
+    <ID>MagicNumber:AnyChannelPaginationRequest.kt$AnyChannelPaginationRequest$30</ID>
+    <ID>MagicNumber:ChannelController.kt$ChannelController$15</ID>
+    <ID>MagicNumber:ChannelController.kt$ChannelController$3000</ID>
+    <ID>MagicNumber:ChannelController.kt$ChannelController$5000</ID>
+    <ID>MagicNumber:ChatDomainImpl.kt$ChatDomainImpl$3</ID>
+    <ID>MagicNumber:ChatDomainImpl.kt$ChatDomainImpl$30</ID>
+    <ID>MagicNumber:ChatDomainImpl.kt$ChatDomainImpl$5000</ID>
+    <ID>MagicNumber:ChatDomainImpl.kt$ChatDomainImpl.&lt;no name provided>$1000</ID>
+    <ID>MagicNumber:DefaultRetryPolicy.kt$DefaultRetryPolicy$1000</ID>
+    <ID>MagicNumber:DefaultRetryPolicy.kt$DefaultRetryPolicy$3</ID>
+    <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
+    <ID>MagicNumber:RepositoryFactory.kt$RepositoryFactory$100</ID>
+    <ID>MaxLineLength:AttachmentUrlValidatorTests.kt$AttachmentUrlValidatorTests$fun</ID>
+    <ID>MaxLineLength:AttachmentUrlValidatorTests.kt$AttachmentUrlValidatorTests$val result = sut.updateValidAttachmentsUrl(listOf(message.copy(updatedAt = Date())), mapOf(message.id to message))</ID>
+    <ID>MaxLineLength:CallRetryService.kt$CallRetryService$logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")</ID>
+    <ID>MaxLineLength:CallRetryService.kt$CallRetryService$logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")</ID>
+    <ID>MaxLineLength:ChannelController.kt$ChannelController$*</ID>
+    <ID>MaxLineLength:ChannelController.kt$ChannelController$io.getstream.chat.android.offline.experimental.channel.state.MessagesState.NoQueryActive -> MessagesState.NoQueryActive</ID>
+    <ID>MaxLineLength:ChannelController.kt$ChannelController$io.getstream.chat.android.offline.experimental.channel.state.MessagesState.OfflineNoResults -> MessagesState.OfflineNoResults</ID>
+    <ID>MaxLineLength:ChannelController.kt$ChannelController$is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.Result</ID>
+    <ID>MaxLineLength:ChannelController.kt$ChannelController$logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")</ID>
+    <ID>MaxLineLength:ChannelController.kt$ChannelController.MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
+    <ID>MaxLineLength:ChannelControllerReactionsTest.kt$ChannelControllerReactionsTest.Fixture$ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(mapOf(user.id to user)))</ID>
+    <ID>MaxLineLength:ChannelControllerTypingTests.kt$ChannelControllerTypingTests$fun</ID>
+    <ID>MaxLineLength:ChannelDao.kt$ChannelDao$@Query("UPDATE stream_chat_channel_state SET hidden = :hidden, hideMessagesBefore = :hideMessagesBefore WHERE cid = :cid")</ID>
+    <ID>MaxLineLength:ChannelData.kt$ChannelData$internal</ID>
+    <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")</ID>
+    <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")</ID>
+    <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")</ID>
+    <ID>MaxLineLength:ChannelsStateData.kt$ChannelsStateData.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
+    <ID>MaxLineLength:ChatClient.kt$*</ID>
+    <ID>MaxLineLength:ChatClientReferenceAdapter.kt$ChatClientReferenceAdapter$* Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].</ID>
+    <ID>MaxLineLength:ChatDomain.kt$ChatDomain$*</ID>
+    <ID>MaxLineLength:ChatDomain.kt$ChatDomain.Companion$?:</ID>
+    <ID>MaxLineLength:ChatDomainEventDomainImplTest.kt$ChatDomainEventDomainImplTest$fun</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$"\nMessage has ${message.syncStatus} syncStatus, while attachment has $attachmentUploadState upload state"</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$*</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$/* * It is necessary to initialize `RepositoryFacade` lazily to give time to the real RepositoryFacade to be set * instead of using `createNoOpRepos()`, otherwise the SDK will create a in memory Room's database which will be later * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is * not closed by room. */</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$// Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying ${queriesToRetry.size} queries and ${cids.size} channels")</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")</ID>
+    <ID>MaxLineLength:ChatDomainImpl.kt$ChatDomainImpl$throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${user.value?.id}. create a new ChatDomain when connecting a different user.")</ID>
+    <ID>MaxLineLength:ChatDomainImplCreateChannelTest.kt$ChatDomainImplCreateChannelTest$fun</ID>
+    <ID>MaxLineLength:ChatDomainImplTest.kt$ChatDomainImplTest$randomAttachment { uploadState = Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20) }</ID>
+    <ID>MaxLineLength:ChatEventHandler.kt$ChatEventHandler$*</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt; 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt;= 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it > 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it >= 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()</ID>
+    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$(expectedList + List(10) { randomChannel(members = List(positiveRandomInt(10)) { randomMember() }) }).shuffled()</ID>
+    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$List(positiveRandomInt(10)) { randomChannel(type = randomString(20) + stringQuery + randomString(20)) }</ID>
+    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()</ID>
+    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
+    <ID>MaxLineLength:DefaultChatEventHandlerTest.kt$DefaultChatEventHandlerTest$fun</ID>
+    <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$// the first time we connect we should only run recovery against channels and queries that had a failure</ID>
+    <ID>MaxLineLength:Extensions.kt$*</ID>
+    <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>
+    <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
+    <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
+    <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
+    <ID>MaxLineLength:GlobalMutableState.kt$GlobalMutableState.Companion$*</ID>
+    <ID>MaxLineLength:IdGenerationDomainTest.kt$IdGenerationDomainTest$fun</ID>
+    <ID>MaxLineLength:Mapper.kt$internal</ID>
+    <ID>MaxLineLength:MarkAllReadTest.kt$MarkAllReadTest$fun</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt; :dateFilter || createdLocallyAt &lt; :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt;= :dateFilter || createdLocallyAt &lt;= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
+    <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
+    <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
+    <ID>MaxLineLength:MessageRepository.kt$MessageRepositoryImpl$// the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)</ID>
+    <ID>MaxLineLength:MessageRepositoryTest.kt$MessageRepositoryTest$coInvoking { chatDomainImpl.repos.insertMessages(List(1000) { randomMessage() }) } shouldNotThrow (SQLiteException::class)</ID>
+    <ID>MaxLineLength:MessageRepositoryTest.kt$MessageRepositoryTest$coInvoking { chatDomainImpl.repos.selectMessages(List(1000) { randomString() }) } shouldNotThrow (SQLiteException::class)</ID>
+    <ID>MaxLineLength:MessageSendingServiceFactory.kt$MessageSendingServiceFactory$private fun createUploadAttachmentsWorker(domainImpl: ChatDomainImpl)</ID>
+    <ID>MaxLineLength:MessagesState.kt$MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
+    <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
+    <ID>MaxLineLength:NonMemberChatEventHandlerTest.kt$NonMemberChatEventHandlerTest$fun</ID>
+    <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
+    <ID>MaxLineLength:QueryChannelsController.kt$QueryChannelsController$*</ID>
+    <ID>MaxLineLength:QueryChannelsController.kt$QueryChannelsController$io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Loading -> ChannelsState.Loading</ID>
+    <ID>MaxLineLength:QueryChannelsController.kt$QueryChannelsController$io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.NoQueryActive -> ChannelsState.NoQueryActive</ID>
+    <ID>MaxLineLength:QueryChannelsController.kt$QueryChannelsController$io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.OfflineNoResults -> ChannelsState.OfflineNoResults</ID>
+    <ID>MaxLineLength:QueryChannelsController.kt$QueryChannelsController$is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Result</ID>
+    <ID>MaxLineLength:QueryChannelsController.kt$QueryChannelsController.ChannelsState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
+    <ID>MaxLineLength:QueryChannelsControllerIntegrationTest.kt$QueryChannelsControllerIntegrationTest$fun</ID>
+    <ID>MaxLineLength:QueryChannelsControllerIntegrationTest.kt$QueryChannelsControllerIntegrationTest.&lt;no name provided>$override</ID>
+    <ID>MaxLineLength:QueryChannelsControllerIntegrationTest.kt$QueryChannelsControllerIntegrationTest.Fixture$val query = QueryChannelsSpec(filter, QuerySort()).apply { cids = channelList.map(Channel::cid).toSet() }</ID>
+    <ID>MaxLineLength:QueryChannelsControllerTest.kt$QueryChannelsControllerTest$fun</ID>
+    <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$*</ID>
+    <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
+    <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
+    <ID>MaxLineLength:QueryMembersTest.kt$QueryMembersTest$fun</ID>
+    <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
+    <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
+    <ID>MaxLineLength:Reaction.kt$*</ID>
+    <ID>MaxLineLength:ReactionRepositoryTest.kt$ReactionRepositoryTest$whenever(reactionDao.selectSyncNeeded()).thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))</ID>
+    <ID>MaxLineLength:ReactionRepositoryTest.kt$ReactionRepositoryTest$whenever(reactionDao.selectUserReactionsToMessage(messageId, currentUser.id)).thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))</ID>
+    <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade$lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)</ID>
+    <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade$override suspend fun selectChannels(channelCIDs: List&lt;String>, forceCache: Boolean): List&lt;Channel></ID>
+    <ID>MaxLineLength:RepositoryFacadeBuilder.kt$RepositoryFacadeBuilder$fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder</ID>
+    <ID>MaxLineLength:RepositoryFacadeIntegrationTests.kt$RepositoryFacadeIntegrationTests$fun</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$(acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser) to acc.second + message</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$acc.first + listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser) to acc.second + channel</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$fun</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$result.any { it.cid == "cid1" &amp;&amp; it.messages.size == 1 &amp;&amp; it.messages.first().id == "messageId1" } shouldBeEqualTo true</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$result.any { it.cid == "cid2" &amp;&amp; it.messages.size == 1 &amp;&amp; it.messages.first().id == "messageId2" } shouldBeEqualTo true</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$val expectedListOfUser = latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser</ID>
+    <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(message1, message2)</ID>
+    <ID>MaxLineLength:SendReaction.kt$SendReaction$*</ID>
+    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }</ID>
+    <ID>MaxLineLength:TestUtils.kt$val connectivityManager = getApplicationContext&lt;Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager</ID>
+    <ID>MaxLineLength:ThreadMutableState.kt$ThreadMutableState$channelMutableState.messageList.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }</ID>
+    <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
+    <ID>MaxLineLength:WatchChannelTest.kt$WatchChannelTest$@Ignore("Flaky test. The list of messages into the livedata has some messages with a `createdAt` date in the future and break our test logic")</ID>
+    <ID>MaxLineLength:WhenEnrichChannel.kt$WhenEnrichChannel$fun</ID>
+    <ID>MaxLineLength:WhenHide.kt$WhenHide$fun</ID>
+    <ID>MaxLineLength:WhenKeystroke.kt$WhenKeystroke$fun</ID>
+    <ID>MaxLineLength:WhenObserveAttachmentsDBFlow.kt$WhenObserveAttachmentsDBFlow$attachment1.copy(uploadState = Attachment.UploadState.InProgress(positiveRandomLong(90), positiveRandomLong(10) + 90))</ID>
+    <ID>MaxLineLength:WhenObserveAttachmentsDBFlow.kt$WhenObserveAttachmentsDBFlow$fun</ID>
+    <ID>MaxLineLength:WhenObserveAttachmentsDBFlow.kt$WhenObserveAttachmentsDBFlow$verify(channelClient).sendMessage(argThat { id == "messageId1" &amp;&amp; attachments.first().title == "attachmentTitle" })</ID>
+    <ID>MaxLineLength:WhenQuery.kt$WhenQuery$fun</ID>
+    <ID>MaxLineLength:WhenSendNewMessage.kt$WhenSendNewMessage$fun</ID>
+    <ID>MaxLineLength:WhenSendNewMessage.kt$WhenSendNewMessage.Fixture$whenever(channelController.handleSendMessageSuccess(any())) doAnswer { invocationOnMock -> invocationOnMock.arguments.first() as Message }</ID>
+    <ID>MaxLineLength:WhenUpdateLastMessage.kt$WhenUpdateLastMessage$fun</ID>
+    <ID>MaxLineLength:WhenUploadAttachmentsTests.kt$WhenUploadAttachmentsTests$fun</ID>
+    <ID>NestedBlockDepth:CreateChannelService.kt$CreateChannelService$ suspend fun createChannel(channel: Channel, isOnline: Boolean, currentUser: User?): Result&lt;Channel></ID>
+    <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
+    <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$internal suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>)</ID>
+    <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
+    <ID>NestedBlockDepth:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, chatDomain: ChatDomainImpl, chatClient: ChatClient ): Result&lt;Unit></ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$ @Deprecated( message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead", replaceWith = ReplaceWith( expression = "ChatClient.instance().updateMessage(message)", imports = arrayOf("io.getstream.chat.android.client.ChatClient") ), level = DeprecationLevel.WARNING ) internal suspend fun editMessage(message: Message): Result&lt;Message></ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$ internal fun markRead(): Boolean</ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$ internal suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result&lt;Reaction></ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$internal suspend fun deleteMessage(message: Message, hard: Boolean = false): Result&lt;Message></ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$internal suspend fun deleteReaction(reaction: Reaction): Result&lt;Message></ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$internal suspend fun keystroke(parentId: String?): Result&lt;Boolean></ID>
+    <ID>ReturnCount:ChannelController.kt$ChannelController$internal suspend fun stopTyping(parentId: String?): Result&lt;Boolean></ID>
+    <ID>ReturnCount:ChannelLogic.kt$ChannelLogic$ private fun markReadInternal(): Boolean</ID>
+    <ID>ReturnCount:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, chatDomain: ChatDomainImpl, chatClient: ChatClient ): Result&lt;Unit></ID>
+    <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
+    <ID>SwallowedException:ChannelLogic.kt$ChannelLogic$e: Exception</ID>
+    <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
+    <ID>TooGenericExceptionCaught:ChannelController.kt$ChannelController$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ChannelLogic.kt$ChannelLogic$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DownloadAttachment.kt$DownloadAttachment$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
+    <ID>TooManyFunctions:ChannelController.kt$ChannelController</ID>
+    <ID>TooManyFunctions:ChannelLogic.kt$ChannelLogic : QueryChannelListenerChannelMarkReadListenerGetMessageListenerHideChannelListener</ID>
+    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepository</ID>
+    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepositoryImpl : ChannelRepository</ID>
+    <ID>TooManyFunctions:ChatClient.kt$io.getstream.chat.android.offline.extensions.ChatClient.kt</ID>
+    <ID>TooManyFunctions:ChatDomain.kt$ChatDomain</ID>
+    <ID>TooManyFunctions:ChatDomain.kt$ChatDomain$Builder</ID>
+    <ID>TooManyFunctions:ChatDomainImpl.kt$ChatDomainImpl : ChatDomain</ID>
+    <ID>TooManyFunctions:ChatDomainImpl.kt$ChatDomainImpl : ChatDomainGlobalState</ID>
+    <ID>TooManyFunctions:MessageDao.kt$MessageDao</ID>
+    <ID>TooManyFunctions:MessageRepository.kt$MessageRepositoryImpl : MessageRepository</ID>
+    <ID>TooManyFunctions:QueryChannelsController.kt$QueryChannelsController</ID>
+    <ID>TooManyFunctions:QueryChannelsLogic.kt$QueryChannelsLogic : QueryChannelsListener</ID>
+    <ID>TooManyFunctions:RepositoryFacade.kt$RepositoryFacade : UserRepositoryChannelRepositoryReactionRepositoryMessageRepositoryChannelConfigRepositoryQueryChannelsRepositorySyncStateRepositoryAttachmentRepository</ID>
+    <ID>TooManyFunctions:UserRepository.kt$UserRepositoryImpl : UserRepository</ID>
+    <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
+    <ID>UnusedPrivateMember:BaseDomainTest.kt$BaseDomainTest$private val backgroundSyncEnabled = false</ID>
+    <ID>UnusedPrivateMember:BaseDomainTest.kt$BaseDomainTest$private val recoveryEnabled = false</ID>
+    <ID>UnusedPrivateMember:ChannelController.kt$ChannelController$private fun upsertEventMessage(message: Message)</ID>
+    <ID>UnusedPrivateMember:ChatDomainImplTest.kt$ChatDomainImplTest.Fixture$private val userPresence = true</ID>
+    <ID>UnusedPrivateMember:ConnectedRecoveryTest.kt$ConnectedRecoveryTest$val syncState1 = chatDomainImpl.storeSyncState()</ID>
+    <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
+    <ID>UnusedPrivateMember:WhenHandleEvent.kt$WhenHandleEvent$private val chatClient: ChatClient = mock { on(it.channel(any())) doReturn mock() }</ID>
+    <ID>UnusedPrivateMember:WhenSendMessage.kt$WhenSendMessage$private fun mockFileUploadsSuccess(files: List&lt;File>)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _channelData = MutableStateFlow&lt;ChannelData?>(null)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _endOfNewerMessages = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _endOfOlderMessages = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _hidden = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loading = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loadingNewerMessages = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loadingOlderMessages = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _members = MutableStateFlow&lt;Map&lt;String, Member>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _messages = MutableStateFlow&lt;Map&lt;String, Message>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _muted = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _oldMessages = MutableStateFlow&lt;Map&lt;String, Message>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _read = MutableStateFlow&lt;ChannelUserRead?>(null)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _reads = MutableStateFlow&lt;Map&lt;String, ChannelUserRead>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _repliedMessage = MutableStateFlow&lt;Message?>(null)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _typing = MutableStateFlow&lt;Map&lt;String, ChatEvent>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _unreadCount = MutableStateFlow(0)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _watcherCount = MutableStateFlow(0)</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _watchers = MutableStateFlow&lt;Map&lt;String, User>>(emptyMap())</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _banned = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _channelMutes = MutableStateFlow&lt;List&lt;ChannelMute>>(emptyList())</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _channelUnreadCount = MutableStateFlow(0)</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _errorEvent = MutableStateFlow(Event(ChatError()))</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _initialized = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _mutedUsers = MutableStateFlow&lt;List&lt;Mute>>(emptyList())</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _totalUnreadCount = MutableStateFlow(0)</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))</ID>
+    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _user = MutableStateFlow&lt;User?>(null)</ID>
+    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _channels = MutableStateFlow&lt;Map&lt;String, Channel>>(emptyMap())</ID>
+    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _currentRequest = MutableStateFlow&lt;QueryChannelsRequest?>(null)</ID>
+    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _endOfChannels = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loading = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loadingMore = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ThreadMutableState.kt$ThreadMutableState$internal val _endOfOlderMessages = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ThreadMutableState.kt$ThreadMutableState$internal val _loadingOlderMessages = MutableStateFlow(false)</ID>
+    <ID>VariableNaming:ThreadMutableState.kt$ThreadMutableState$internal val _oldestInThread: MutableStateFlow&lt;Message?> = MutableStateFlow(null)</ID>
+  </CurrentIssues>
+</SmellBaseline>

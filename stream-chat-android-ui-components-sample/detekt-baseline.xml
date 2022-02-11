@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:UserRepository.kt$UserRepository$apiKey != null &amp;&amp; id != null &amp;&amp; name != null &amp;&amp; token != null &amp;&amp; image != null</ID>
+    <ID>ForbiddenComment:ChatInfoViewModel.kt$ChatInfoViewModel$// TODO: Handle error</ID>
+    <ID>ForbiddenComment:HomeFragmentViewModel.kt$HomeFragmentViewModel.State$// TODO: implement unread mentions count</ID>
+    <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$OnlyMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
+    <ID>LongMethod:PlainTextMessagesComponentBrowserFragment.kt$PlainTextMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
+    <ID>LongMethod:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithFileAttachmentsMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
+    <ID>LongMethod:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
+    <ID>LongMethod:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
+    <ID>LongParameterList:AddChannelViewController.kt$AddChannelViewController$( private val headerView: AddChannelHeader, private val usersTitle: TextView, private val usersRecyclerView: RecyclerView, private val createGroupContainer: ViewGroup, private val messageListView: MessageListView, private val messageInputView: MessageInputView, private val emptyStateView: View, private val loadingView: View, private val isAddGroupChannel: Boolean, )</ID>
+    <ID>LongParameterList:ConfirmationDialogFragment.kt$ConfirmationDialogFragment.Companion$( @DrawableRes iconResId: Int, @ColorRes iconTintResId: Int, title: String, description: String, confirmText: String, cancelText: String, hasConfirmButton: Boolean = true, )</ID>
+    <ID>MagicNumber:ChatFragment.kt$ChatFragment$4</ID>
+    <ID>MagicNumber:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$10</ID>
+    <ID>MagicNumber:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$20</ID>
+    <ID>MagicNumber:ComponentBrowserMessagesHeaderViewFragment.kt$ComponentBrowserMessagesHeaderViewFragment$3</ID>
+    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$10</ID>
+    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>
+    <ID>MagicNumber:DataProvider.kt$100000L</ID>
+    <ID>MagicNumber:DataProvider.kt$99</ID>
+    <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$6</ID>
+    <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$7</ID>
+    <ID>MaxLineLength:AddChannelFragment.kt$AddChannelFragment$is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel</ID>
+    <ID>MaxLineLength:AddGroupChannelMembersAdapter.kt$AddGroupChannelMembersAdapter.MemberViewHolder$inner</ID>
+    <ID>MaxLineLength:AddGroupChannelSelectNameFragment.kt$AddGroupChannelSelectNameFragment$is AddGroupChannelSelectNameViewModel.ErrorEvent.CreateChannelError -> R.string.add_group_channel_error_create_channel</ID>
+    <ID>MaxLineLength:ChatInfoFragment.kt$ChatInfoFragment$is ChatInfoItem.Option.Stateful.MuteDistinctChannel -> ChatInfoViewModel.Action.OptionMuteDistinctChannelClicked(isChecked)</ID>
+    <ID>MaxLineLength:ChatInfoSharedAttachmentsViewModel.kt$private</ID>
+    <ID>MaxLineLength:ChatViewModelFactory.kt$ChatViewModelFactory$?:</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserEditReactionsFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessageListBrowserFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserMessagesHeaderFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserTypingIndicatorFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserUserReactionsFragment)</ID>
+    <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment)</ID>
+    <ID>MaxLineLength:CustomLoginViewModel.kt$CustomLoginViewModel$image = "https://getstream.io/random_png?id=${loginCredentials.userId}&amp;name=${loginCredentials.userName}&amp;size=200"</ID>
+    <ID>MaxLineLength:GroupChatInfoAddUsersDialogFragment.kt$GroupChatInfoAddUsersDialogFragment$is GroupChatInfoAddUsersViewModel.ErrorEvent.AddMemberError -> R.string.chat_group_info_error_add_member</ID>
+    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$adapter.setMembersSeparatorClickListener { viewModel.onAction(GroupChatInfoViewModel.Action.MembersSeparatorClicked) }</ID>
+    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$is GroupChatInfoViewModel.ErrorEvent.ChangeGroupNameError -> R.string.chat_group_info_error_change_name</ID>
+    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel</ID>
+    <ID>MaxLineLength:GroupChatInfoMemberOptionView.kt$GroupChatInfoMemberOptionView$typedArray.getResourceId(R.styleable.GroupChatInfoMemberOptionView_optionIcon, R.drawable.ic_cancel)</ID>
+    <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member</ID>
+    <ID>MaxLineLength:GroupChatInfoMemberOptionsViewModel.kt$GroupChatInfoMemberOptionsViewModelFactory$"GroupChatInfoMemberOptionsViewModelFactory can only create instances of GroupChatInfoMemberOptionsViewModel"</ID>
+    <ID>MaxLineLength:GroupChatInfoViewModel.kt$GroupChatInfoViewModel$shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size &lt;= COLLAPSED_MEMBERS_COUNT</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDateDividerFragment)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDeletedMessages)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyFileAttachmentsMessages)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyMediaAttachmentsMessages)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextMessages)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextWithFileAttachmentsMessages)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserPlainTextWithMediaAttachmentsMessages)</ID>
+    <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserRepliedMessages)</ID>
+    <ID>MaxLineLength:PlainTextMessagesComponentBrowserFragment.kt$PlainTextMessagesComponentBrowserFragment$message = Message(text = "sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")</ID>
+    <ID>MaxLineLength:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithFileAttachmentsMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
+    <ID>MaxLineLength:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
+    <ID>MaxLineLength:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
+    <ID>MaxLineLength:SharedAttachment.kt$SharedAttachment$AttachmentItem : SharedAttachment</ID>
+    <ID>PackageNaming:AddGroupChannelSelectNameFragment.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
+    <ID>PackageNaming:AddGroupChannelSelectNameMembersAdapter.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
+    <ID>PackageNaming:AddGroupChannelSelectNameViewModel.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
+    <ID>PackageNaming:BaseMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:ComponentBrowserAvatarViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.avatarview</ID>
+    <ID>PackageNaming:ComponentBrowserChannelListHeaderViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.channel.list</ID>
+    <ID>PackageNaming:ComponentBrowserEditReactionsFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.reactions</ID>
+    <ID>PackageNaming:ComponentBrowserHomeFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.home</ID>
+    <ID>PackageNaming:ComponentBrowserMessagesHeaderViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.header</ID>
+    <ID>PackageNaming:ComponentBrowserSearchViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.search</ID>
+    <ID>PackageNaming:ComponentBrowserTypingIndicatorFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.typing</ID>
+    <ID>PackageNaming:ComponentBrowserUserReactionsFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.reactions</ID>
+    <ID>PackageNaming:ComponentBrowserViewReactionsFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.reactions</ID>
+    <ID>PackageNaming:CustomLoginFragment.kt$package io.getstream.chat.ui.sample.feature.custom_login</ID>
+    <ID>PackageNaming:CustomLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.custom_login</ID>
+    <ID>PackageNaming:DataProvider.kt$package io.getstream.chat.ui.sample.feature.component_browser.utils</ID>
+    <ID>PackageNaming:DateDividerComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:DeletedMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:GiphyMessageComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:MessageListComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages</ID>
+    <ID>PackageNaming:OnlyFileAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:PlainTextMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:RepliedMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
+    <ID>PackageNaming:UserLoginAdapter.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
+    <ID>PackageNaming:UserLoginFragment.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
+    <ID>PackageNaming:UserLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
+    <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
+    <ID>TooManyFunctions:AddChannelView.kt$AddChannelView : FrameLayout</ID>
+    <ID>TooManyFunctions:AddChannelViewController.kt$AddChannelViewController</ID>
+    <ID>TooManyFunctions:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment : Fragment</ID>
+    <ID>TooManyFunctions:Extensions.kt$io.getstream.chat.ui.sample.common.Extensions.kt</ID>
+    <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
+  </CurrentIssues>
+</SmellBaseline>
