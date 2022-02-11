@@ -4,12 +4,13 @@ package io.getstream.chat.android.ui.message.list.header.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
@@ -23,9 +24,13 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
  */
 @JvmName("bind")
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
-    channelState.observe(lifecycle) {
-        view.setTitle(it.getDisplayName(view.context, R.string.stream_ui_message_list_header_untitled_channel))
-        view.setAvatar(it)
+    channelState.observe(lifecycle) { channel ->
+        val channelName = ChatUI.channelNameFormatter.formatChannelName(
+            channel = channel,
+            currentUser = ChatClient.instance().getCurrentUser()
+        )
+        view.setTitle(channelName)
+        view.setAvatar(channel)
     }
 
     online.observe(lifecycle) { onlineState ->
