@@ -94,8 +94,10 @@ internal class CallTests {
         }
             .retry(testCoroutines.scope, callRetryService)
             .doOnStart(testCoroutines.scope) { currentValue++ }
-            .enqueue { }
+            .enqueue {
+                currentValue++
+            }
 
-        currentValue `should be equal to` maxAttempts + 1
+        currentValue `should be equal to` maxAttempts + 2
     }
 }

@@ -17,7 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added possibility to configure `RetryPolicy` using `ChatDomain.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
+- Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ### ⚠️ Changed
 

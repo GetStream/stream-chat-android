@@ -2,10 +2,12 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.retry.CallRetryService
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 /**
  * A wrapper around [Call] that allows retrying the original call based on [io.getstream.chat.android.client.utils.retry.RetryPolicy].
@@ -30,8 +32,11 @@ internal class RetryCall<T : Any>(
 
     override fun enqueue(callback: Call.Callback<T>) {
         scope.launch {
-            callRetryService.runAndRetry {
+            val result = callRetryService.runAndRetry {
                 originalCall
+            }
+            withContext(DispatcherProvider.Main) {
+                callback.onResult(result)
             }
         }
     }
