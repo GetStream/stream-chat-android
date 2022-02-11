@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -31,6 +32,17 @@ internal class GapDecorator : BaseDecorator() {
      */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupGapView(viewHolder.binding.gapView, data)
+
+    /**
+     * Decorates the gap of the message containing file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
 

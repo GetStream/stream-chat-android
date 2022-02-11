@@ -13,6 +13,7 @@ import io.getstream.chat.android.ui.common.extensions.hasReactions
 import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -37,6 +38,19 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
      */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+    }
+
+    /**
+     * Decorates the reactions section of the message containing file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)

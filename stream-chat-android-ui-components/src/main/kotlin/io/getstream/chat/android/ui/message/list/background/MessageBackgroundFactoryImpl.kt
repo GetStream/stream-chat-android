@@ -54,6 +54,16 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
+     * Draws the background of messages containing file attachments.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun fileAttachmentsMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
      * Draws the default background of messages,
      *
      * @param context [Context].

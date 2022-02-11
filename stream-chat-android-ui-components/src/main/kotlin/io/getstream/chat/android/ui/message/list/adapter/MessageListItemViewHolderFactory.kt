@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
@@ -24,6 +25,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -129,6 +131,7 @@ public open class MessageListItemViewHolderFactory {
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
             THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
+            FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -269,5 +272,22 @@ public open class MessageListItemViewHolderFactory {
             BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
+    }
+
+    /**
+     * Creates the empty message view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that represents the empty message.
+     */
+    private fun createFileAttachmentsViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return FileAttachmentsViewHolder(
+            parent = parentView,
+            decorators = decoratorProvider.decorators,
+            listeners = listenerContainer,
+            messageTextTransformer = textTransformer,
+        )
     }
 }
