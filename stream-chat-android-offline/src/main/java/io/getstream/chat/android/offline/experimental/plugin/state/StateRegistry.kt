@@ -23,7 +23,14 @@ import java.util.concurrent.ConcurrentHashMap
 
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-/** Registry of all state objects exposed in offline plugin. This class should have only once instance for the SDK*/
+/**
+ * Registry of all state objects exposed in the offline plugin. This class should have only one instance for the SDK.
+ *
+ * @param scope [CoroutineScope]
+ * @param userStateFlow The state flow that provides the user once it is set.
+ * @param messageRepository [MessageRepository] Repository for all messages
+ * @param latestUsers Latest users of the SDK.
+ */
 public class StateRegistry private constructor(
     private val scope: CoroutineScope,
     private val userStateFlow: StateFlow<User?>,
@@ -37,11 +44,6 @@ public class StateRegistry private constructor(
 
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
-            /*
-                - We can have a scope provider
-                - latestUsers should be moved to another dependency, there's no reason for it to be inside ChatDomainImpl.
-                This way this class wouldn't depend on ChatDomainImpl which is a super big class and also depend on StateRegistry. The cross dependency should be avoided.
-             */
             QueryChannelsMutableState(filter, sort, scope, latestUsers)
         }
     }
@@ -100,6 +102,10 @@ public class StateRegistry private constructor(
         /**
          * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it returns null.
          */
-        internal fun get(): StateRegistry? = instance
+        @Throws(IllegalArgumentException::class)
+        internal fun get(): StateRegistry = requireNotNull(instance) {
+            "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
+                "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
+        }
     }
 }

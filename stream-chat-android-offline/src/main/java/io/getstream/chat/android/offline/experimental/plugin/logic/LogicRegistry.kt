@@ -12,6 +12,7 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
@@ -41,6 +42,8 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 chatDomain,
                 chatDomain.client,
+                chatDomain.repos,
+                GlobalMutableState.getOrCreate()
             )
         }
     }
@@ -118,6 +121,10 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         /**
          * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it returns null.
          */
-        internal fun get(): LogicRegistry? = instance
+        @Throws(IllegalArgumentException::class)
+        internal fun get(): LogicRegistry = requireNotNull(instance) {
+            "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
+                "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
+        }
     }
 }
