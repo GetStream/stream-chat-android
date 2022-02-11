@@ -47,7 +47,7 @@ public fun interface ChannelNameFormatter {
  * - If the channel is distinct, then a comma-separated list of member names is returned
  * - Otherwise, the placeholder text defined in [R.string.stream_ui_channel_list_untitled_channel] is returned
  *
- * @param context The context to load string resources.
+ * @param context The context used to load string resources.
  * @param fallback The resource identifier of a fallback string.
  */
 private class DefaultChannelNameFormatter(
