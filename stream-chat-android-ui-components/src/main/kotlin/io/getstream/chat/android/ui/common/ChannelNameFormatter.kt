@@ -23,7 +23,7 @@ public fun interface ChannelNameFormatter {
 
     public companion object {
         /**
-         * Build the default channel name formatter.
+         * Builds the default channel name formatter.
          *
          * @param context The context to load string resources.
          * @param fallback The resource identifier of a fallback string.
