@@ -691,9 +691,6 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 }
 
 public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;)Ljava/lang/String;
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;I)Ljava/lang/String;
 	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IILjava/lang/Object;)Ljava/lang/String;
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
 }

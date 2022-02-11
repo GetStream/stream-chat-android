@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 
@@ -20,6 +21,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
  *
  * @return The display name of the channel.
  */
+@InternalStreamChatApi
 @JvmOverloads
 public fun Channel.getDisplayName(
     context: Context,
