@@ -14,6 +14,13 @@ public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
  */
 public fun Channel.isMutedFor(user: User): Boolean = user.channelMutes.any { mute -> mute.channel.cid == cid }
 
+/**
+ * Returns a list of users that are members of the channel excluding the currently
+ * logged in user.
+ *
+ * @param currentUser The currently logged in user.
+ * @return The list of users in the channel without the current user.
+ */
 @InternalStreamChatApi
 public fun Channel.getUsersExcludingCurrent(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
