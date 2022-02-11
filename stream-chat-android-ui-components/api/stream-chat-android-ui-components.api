@@ -2087,7 +2087,8 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/intern
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setImageShapeByCorners (FFFF)V
-	public final fun showGiphy (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun showGiphy (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)V
+	public static synthetic fun showGiphy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;ILjava/lang/Object;)V
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {

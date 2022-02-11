@@ -70,10 +70,3 @@ public data class GiphyInfo(
     @Px val width: Int,
     @Px val height: Int,
 )
-
-/**
- * Returns a url for a Giphy image based on its type.
- *
- * @see GiphyInfoType
- */
-internal fun Attachment.giphyUrl(type: GiphyInfoType): String? = giphyInfo(type)?.url

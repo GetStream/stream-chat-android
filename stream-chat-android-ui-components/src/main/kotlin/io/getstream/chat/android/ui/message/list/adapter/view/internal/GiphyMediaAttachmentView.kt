@@ -18,7 +18,6 @@ import io.getstream.chat.android.ui.message.list.adapter.view.GiphyMediaAttachme
 import io.getstream.chat.android.ui.utils.GIPHY_INFO_DEFAULT_HEIGHT_DP
 import io.getstream.chat.android.ui.utils.GiphyInfoType
 import io.getstream.chat.android.ui.utils.giphyInfo
-import io.getstream.chat.android.ui.utils.giphyUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -69,13 +68,17 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
      * resizeable container that is resized according to the GIF.
      *
      * @param attachment The attachment holding the Giphy information.
+     * @param giphyType The type of Giphy to load. By default we fetch this info from the [style].
      */
-    public fun showGiphy(attachment: Attachment) {
-        val url = attachment.giphyUrl(style.giphyType) ?: attachment.let {
+    public fun showGiphy(
+        attachment: Attachment,
+        giphyType: GiphyInfoType = style.giphyType,
+    ) {
+        val giphyInfo = attachment.giphyInfo(giphyType)
+
+        val url = giphyInfo?.url ?: attachment.let {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
-
-        val giphyInfo = attachment.giphyInfo(style.giphyType)
 
         val height = if (style.giphyType == GiphyInfoType.ORIGINAL) {
             giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
