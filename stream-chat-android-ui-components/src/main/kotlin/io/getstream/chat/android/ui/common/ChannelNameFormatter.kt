@@ -15,7 +15,7 @@ public fun interface ChannelNameFormatter {
     /**
      * Generates a name for the given channel.
      *
-     * @param channel The channel whose data is used to generate the name.
+     * @param channel The channel data used to generate the name.
      * @param currentUser The currently logged in user.
      * @return The display name for the given channel.
      */
