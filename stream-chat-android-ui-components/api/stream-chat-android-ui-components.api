@@ -8,6 +8,7 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
+	public final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
 	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
@@ -17,6 +18,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
+	public final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/ChannelNameFormatter;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
 	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
@@ -664,6 +666,16 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/ChannelNameFormatter {
+	public static final field Companion Lio/getstream/chat/android/ui/common/ChannelNameFormatter$Companion;
+	public abstract fun formatChannelName (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/ChannelNameFormatter$Companion {
+	public final fun defaultFormatter (Landroid/content/Context;I)Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+	public static synthetic fun defaultFormatter$default (Lio/getstream/chat/android/ui/common/ChannelNameFormatter$Companion;Landroid/content/Context;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+}
+
 public final class io/getstream/chat/android/ui/common/ChatUIInitializer : androidx/startup/Initializer {
 	public fun <init> ()V
 	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;
@@ -679,9 +691,7 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 }
 
 public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;)Ljava/lang/String;
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;I)Ljava/lang/String;
-	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;IILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IILjava/lang/Object;)Ljava/lang/String;
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
 }
 
