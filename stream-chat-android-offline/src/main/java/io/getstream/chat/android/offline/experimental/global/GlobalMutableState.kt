@@ -2,6 +2,7 @@
 
 package io.getstream.chat.android.offline.experimental.global
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
@@ -62,7 +63,7 @@ internal class GlobalMutableState private constructor() : GlobalState {
         private var instance: GlobalMutableState? = null
 
         /**
-         * Gets the singleton of GlobalMutableState or creates it in the first call
+         * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
         internal fun getOrCreate(): GlobalMutableState {
             return instance ?: GlobalMutableState().also { globalState ->
@@ -71,9 +72,10 @@ internal class GlobalMutableState private constructor() : GlobalState {
         }
 
         /**
-         * Creates an instance of GlobalMutableState with a fresh state. Please keep in mind that many instances of this class may
+         * Creates an instance of [GlobalMutableState] with a fresh state. Please keep in mind that many instances of this class may
          * cause the SDK to present an inconsistent state.
          */
+        @VisibleForTesting
         internal fun create(): GlobalMutableState = GlobalMutableState()
     }
 }

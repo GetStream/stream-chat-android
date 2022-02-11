@@ -26,7 +26,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalStreamChatApi
 /**
- * Implementation of [PluginFactory] that provides [OfflinePlugin]
+ * Implementation of [PluginFactory] that provides [OfflinePlugin].
+ *
+ * @param config [Config] Configuration of persistance of the SDK.
+ * @param appContext [Context]
  */
 public class StreamOfflinePluginFactory(
     private val config: Config,
