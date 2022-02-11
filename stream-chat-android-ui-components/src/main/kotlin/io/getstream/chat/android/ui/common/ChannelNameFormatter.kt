@@ -40,7 +40,7 @@ public fun interface ChannelNameFormatter {
 }
 
 /**
- * A simple implementation of [ChannelNameFormatter] that allows to generate a name for a channel
+ * A simple implementation of [ChannelNameFormatter] that generates the name for a channel
  * based on the following rules:
  *
  * - If the channel has a name, then its name is returned
