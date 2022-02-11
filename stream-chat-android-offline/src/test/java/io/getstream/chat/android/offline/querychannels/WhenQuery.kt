@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
@@ -218,11 +219,15 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                 )
             )
 
-            return QueryChannelsController(
-                chatDomainImpl,
+            val queryChannelsLogic = QueryChannelsLogic(
                 mutableState,
-                QueryChannelsLogic(mutableState, chatDomainImpl, chatClient),
+                chatDomainImpl,
+                chatClient,
+                chatDomainImpl.repos,
+                GlobalMutableState.create()
             )
+
+            return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)
         }
     }
 }
