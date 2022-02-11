@@ -38,7 +38,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
             val user = randomUser(id = "userId")
-            whenever(users.selectUser("userId")) doReturn user
+            // whenever(users.selectUser("userId")) doReturn user
             val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
             val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
             whenever(channels.selectChannels(eq(listOf("cid1", "cid2")), any())) doReturn listOf(channel1, channel2)
@@ -55,7 +55,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(100)
             val user = randomUser(id = "userId")
-            whenever(users.selectUser("userId")) doReturn user
+            // whenever(users.selectUser("userId")) doReturn user
             val message1 = randomMessage(id = "messageId1", cid = "cid1", user = user)
             val message2 = randomMessage(id = "messageId2", cid = "cid2", user = user)
             whenever(messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest))) doReturn listOf(

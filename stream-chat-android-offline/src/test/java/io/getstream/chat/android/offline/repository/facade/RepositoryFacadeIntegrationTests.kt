@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.randomChannelInfo
 import io.getstream.chat.android.offline.randomMessage
@@ -37,20 +38,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message When persisting the message Should store required fields`(): Unit = runBlocking {
-        val message = randomMessage(
-            user = randomUser(
-                // ignoring fields that are not persisted on purpose
-                totalUnreadCount = 0,
-                unreadChannels = 0,
-                online = false
-            ),
-            pinnedBy = randomUser(
-                // ignoring fields that are not persisted on purpose
-                totalUnreadCount = 0,
-                unreadChannels = 0,
-                online = false
-            )
-        )
+        val message = randomMessage(user = currentUser, pinnedBy = currentUser)
 
         repositoryFacade.insertMessages(listOf(message), cache = false)
         val result = repositoryFacade.selectMessage(message.id)
@@ -63,12 +51,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     fun `Given a message with theirs reaction When querying message Should return massage without own reactions`(): Unit =
         runBlocking {
             val messageId = randomString()
-            val theirsUser = randomUser(
-                // ignoring fields that are not persisted on purpose
-                totalUnreadCount = 0,
-                unreadChannels = 0,
-                online = false
-            )
+            val theirsUser = randomUser()
             val theirsReaction = randomReaction(
                 messageId = messageId,
                 user = theirsUser,
@@ -84,7 +67,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
             repositoryFacade.insertCurrentUser(randomUser())
             repositoryFacade.insertMessages(listOf(message), cache = false)
-            val result = repositoryFacade.selectMessage(message.id)
+            val result: Message? = repositoryFacade.selectMessage(message.id)
 
             result.shouldNotBeNull()
             result.latestReactions shouldBeEqualTo mutableListOf(theirsReaction)

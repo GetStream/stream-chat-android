@@ -81,9 +81,10 @@ internal class ReactionRepositoryTest {
 
     @Test
     fun `When dao returns reactions with syncNeeded == true they should contain current user data`() = runBlockingTest {
-        whenever(reactionDao.selectSyncNeeded()).thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))
+        whenever(reactionDao.selectSyncStatus(SyncStatus.SYNC_NEEDED))
+            .thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))
 
-        reactionRepo.selectReactionsBySyncStatus().apply {
+        reactionRepo.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).apply {
             this.size `should be equal to` 1
             this.first().user `should be equal to` currentUser
         }

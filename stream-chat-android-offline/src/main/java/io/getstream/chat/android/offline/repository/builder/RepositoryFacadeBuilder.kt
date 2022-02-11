@@ -57,7 +57,7 @@ internal class RepositoryFacadeBuilder {
         val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
         val userRepository = factory.createUserRepository()
         val getUser: suspend (userId: String) -> User = { userId ->
-            requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
+            requireNotNull(currentUser) { "User with the userId: `$userId` has not been found" }
         }
         val messageRepository = factory.createMessageRepository(getUser)
         val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
