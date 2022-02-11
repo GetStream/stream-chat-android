@@ -4,8 +4,6 @@
     <declare-styleable name="MediaAttachmentView">
         <!-- Drawable of the media attachment progressbar -->
         <attr name="streamUiMediaAttachmentProgressIcon" format="reference" />
-        <!-- Giphy icon drawable -->
-        <attr name="streamUiMediaAttachmentGiphyIcon" format="reference" />
         <!-- Media attachment placeholder icon -->
         <attr name="streamUiMediaAttachmentPlaceHolderIcon" format="reference" />
         <!-- Media attachment background color -->
@@ -27,7 +25,5 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
-        <attr name="streamUiMediaAttachmentGiphyHeight" format="dimension|reference" />
     </declare-styleable>
 </resources>
