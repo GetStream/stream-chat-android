@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getDisplayName
 
 /**
- *  An interface that allows to generate a name for the given channel.
+ *  An interface that generates a name for the given channel.
  */
 public fun interface ChannelNameFormatter {
 
