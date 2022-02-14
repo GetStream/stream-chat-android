@@ -22,6 +22,8 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -179,10 +181,10 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
+                .givenDeletingReactionResponse(Result(ChatError()))
                 .get()
 
             whenever(sut.domainImpl.isOnline()) doReturn true
-            whenever(sut.domainImpl.runAndRetry<Message>(any())) doAnswer { Result(ChatError()) }
 
             val result = sut.deleteReaction(mockReaction)
 
@@ -197,19 +199,19 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     @Test
     fun `when deleting reaction failed PERMANENTLY, the sync status is right and reaction is inserted`() =
         runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, currentUser)
-                .givenMockedRepositories()
-                .givenMessageWithReactions(myReactions)
-                .get()
-
             val chatError = ChatNetworkError.create(
                 description = "error",
                 streamCode = 401,
                 statusCode = 401
             )
 
+            val sut = Fixture(testCoroutines.scope, currentUser)
+                .givenMockedRepositories()
+                .givenMessageWithReactions(myReactions)
+                .givenDeletingReactionResponse(Result(chatError))
+                .get()
+
             whenever(sut.domainImpl.isOnline()) doReturn true
-            whenever(sut.domainImpl.runAndRetry<Message>(any())) doAnswer { Result(chatError) }
 
             val result = sut.deleteReaction(mockReaction)
 
@@ -227,10 +229,10 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
+                .givenDeletingReactionResponse(Result(Message()))
                 .get()
 
             whenever(sut.domainImpl.isOnline()) doReturn true
-            whenever(sut.domainImpl.runAndRetry<Message>(any())) doAnswer { Result(Message()) }
 
             val result = sut.deleteReaction(mockReaction)
 
@@ -245,8 +247,9 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     private class Fixture(scope: CoroutineScope, user: User) {
         private val repos: RepositoryFacade = mock()
         private val channelControllerImpl: ChannelController
-
-        val chatClient: ChatClient = mock()
+        val chatClient: ChatClient = mock {
+            on(it.retryPolicy) doReturn NoRetryPolicy()
+        }
         val chatDomainImpl: ChatDomainImpl = mock()
 
         init {
@@ -256,7 +259,13 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
             val mutableState =
-                ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(mapOf(user.id to user)))
+                ChannelMutableState(
+                    "channelType",
+                    "channelId",
+                    scope,
+                    userFlow,
+                    MutableStateFlow(mapOf(user.id to user))
+                )
             channelControllerImpl = ChannelController(
                 mutableState,
                 ChannelLogic(mutableState, chatDomainImpl),
@@ -280,6 +289,11 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
                 }
                 channelControllerImpl.upsertMessage(message)
             }
+            return this
+        }
+
+        fun givenDeletingReactionResponse(result: Result<Message>): Fixture {
+            whenever(chatClient.deleteReaction(any(), any())) doAnswer { TestCall(result) }
             return this
         }
 

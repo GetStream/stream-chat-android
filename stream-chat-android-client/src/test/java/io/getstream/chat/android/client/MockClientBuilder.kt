@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
@@ -85,6 +86,7 @@ internal class MockClientBuilder(
             userCredentialStorage = mock(),
             tokenUtils = tokenUtil,
             scope = testCoroutineScope,
+            retryPolicy = NoRetryPolicy(),
         )
 
         client.connectUser(user, token).enqueue()

@@ -60,6 +60,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+	public final fun getRetryPolicy ()Lio/getstream/chat/android/client/utils/retry/RetryPolicy;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun getVersion ()Ljava/lang/String;
@@ -166,6 +167,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public static synthetic fun notifications$default (Lio/getstream/chat/android/client/ChatClient$Builder;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun retryPolicy (Lio/getstream/chat/android/client/utils/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
@@ -1954,6 +1956,9 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
 }
 
+public final class io/getstream/chat/android/client/extensions/CallKt {
+}
+
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static synthetic fun getUsersExcludingCurrent$default (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
@@ -1961,7 +1966,6 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 }
 
 public final class io/getstream/chat/android/client/extensions/ChatErrorKt {
-	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
@@ -3193,5 +3197,10 @@ public final class io/getstream/chat/android/client/utils/internal/toggle/Toggle
 public abstract interface class io/getstream/chat/android/client/utils/observable/Disposable {
 	public abstract fun dispose ()V
 	public abstract fun isDisposed ()Z
+}
+
+public abstract interface class io/getstream/chat/android/client/utils/retry/RetryPolicy {
+	public abstract fun retryTimeout (ILio/getstream/chat/android/client/errors/ChatError;)I
+	public abstract fun shouldRetry (ILio/getstream/chat/android/client/errors/ChatError;)Z
 }
 

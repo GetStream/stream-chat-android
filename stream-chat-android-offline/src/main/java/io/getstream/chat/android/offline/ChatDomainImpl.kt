@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -38,7 +39,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
@@ -86,10 +86,7 @@ import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
-import io.getstream.chat.android.offline.utils.CallRetryService
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -142,7 +139,6 @@ internal class ChatDomainImpl internal constructor(
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
     private val globalState: GlobalMutableState = GlobalMutableState.getOrCreate()
 ) : ChatDomain, GlobalState by globalState {
     internal constructor(
@@ -360,14 +356,6 @@ internal class ChatDomainImpl internal constructor(
     private fun initClean() {
         mainHandler.postDelayed(cleanTask, 5000)
     }
-
-    internal fun callRetryService() = CallRetryService(retryPolicy, client)
-
-    @Deprecated(
-        message = "This utility method is extracted to CallRetryService",
-        replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
-    )
-    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
 
     fun addError(error: ChatError) {
         globalState._errorEvent.value = Event(error)

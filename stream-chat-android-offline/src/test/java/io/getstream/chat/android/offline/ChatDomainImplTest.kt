@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomLong
@@ -35,7 +36,11 @@ internal class ChatDomainImplTest {
     fun `When create a new channel without author should set current user as author and return channel with author`() =
         testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
-            val sut = Fixture().get()
+            val chatClient = mock<ChatClient> {
+                on { it.channel(any()) } doReturn mock()
+                on(it.retryPolicy) doReturn NoRetryPolicy()
+            }
+            val sut = Fixture(chatClient).get()
 
             val result = sut.createChannel(newChannel).execute()
 
@@ -81,7 +86,10 @@ internal class ChatDomainImplTest {
             val awaitingAttachmentsMessage = randomMessage(
                 syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
                 attachments = mutableListOf(
-                    randomAttachment { uploadState = Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20) },
+                    randomAttachment {
+                        uploadState =
+                            Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20)
+                    },
                     randomAttachment { uploadState = Attachment.UploadState.Success },
                 ),
             )
