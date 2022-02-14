@@ -102,8 +102,7 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.client.utils.retry.CallRetryService
-import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.client.utils.retry.DefaultNoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -133,8 +132,8 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     internal val scope: CoroutineScope,
-    @property:InternalStreamChatApi
-    public val callRetryService: CallRetryService,
+    // TODO: Make private/internal after migrating ChatDomain
+    public val retryPolicy: RetryPolicy,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -1825,7 +1824,7 @@ public class ChatClient internal constructor(
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
-        private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var retryPolicy: RetryPolicy = DefaultNoRetryPolicy()
 
         /**
          * Sets the log level to be used by the client.
@@ -1966,7 +1965,7 @@ public class ChatClient internal constructor(
         /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
-         * @see [NoRetryPolicy]
+         * @see [DefaultNoRetryPolicy]
          *
          * @param retryPolicy Custom [RetryPolicy] implementation.
          */
@@ -2029,7 +2028,7 @@ public class ChatClient internal constructor(
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,
-                callRetryService = CallRetryService(retryPolicy),
+                retryPolicy = retryPolicy,
             )
         }
     }

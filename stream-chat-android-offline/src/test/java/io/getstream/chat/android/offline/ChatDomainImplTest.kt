@@ -7,15 +7,13 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomLong
@@ -38,14 +36,9 @@ internal class ChatDomainImplTest {
     fun `When create a new channel without author should set current user as author and return channel with author`() =
         testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
-            val callRetryService = mock<CallRetryService> {
-                onBlocking { runAndRetry<Message> { any() } } doAnswer {
-                    (it.arguments[0] as () -> Call<Message>).invoke().execute()
-                }
-            }
             val chatClient = mock<ChatClient> {
                 on { it.channel(any()) } doReturn mock()
-                on(it.callRetryService) doReturn callRetryService
+                on(it.retryPolicy) doReturn NoRetryPolicy()
             }
             val sut = Fixture(chatClient).get()
 

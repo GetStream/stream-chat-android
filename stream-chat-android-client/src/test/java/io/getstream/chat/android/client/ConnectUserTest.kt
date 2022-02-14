@@ -22,7 +22,7 @@ internal class ConnectUserTest {
         queryChannelsPostponeHelper = mock(),
         userCredentialStorage = mock(),
         scope = mock(),
-        callRetryService = mock(),
+        retryPolicy = mock(),
     )
 
     @Test

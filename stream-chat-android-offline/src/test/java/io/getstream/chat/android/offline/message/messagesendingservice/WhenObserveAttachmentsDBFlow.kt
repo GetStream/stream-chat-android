@@ -8,11 +8,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.MessageSendingService
@@ -22,6 +20,7 @@ import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.positiveRandomLong
@@ -85,9 +84,8 @@ internal class WhenObserveAttachmentsDBFlow {
     private inner class Fixture {
         private val flow = MutableStateFlow<List<Attachment>>(emptyList())
         private val repositoryFacade = mock<RepositoryFacade>()
-        private val callRetryService = mock<CallRetryService> {}
         private val chatClient = mock<ChatClient> {
-            on(it.callRetryService) doReturn callRetryService
+            on(it.retryPolicy) doReturn NoRetryPolicy()
         }
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
@@ -121,10 +119,7 @@ internal class WhenObserveAttachmentsDBFlow {
             messageSendingService.sendMessage(message)
         }
 
-        suspend fun get(): MutableStateFlow<List<Attachment>> {
-            whenever(callRetryService.runAndRetry<Message>(any())) doAnswer {
-                (it.arguments[0] as () -> Call<Message>).invoke().execute()
-            }
+        fun get(): MutableStateFlow<List<Attachment>> {
             return flow
         }
     }

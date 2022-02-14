@@ -42,7 +42,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun getCallRetryService ()Lio/getstream/chat/android/client/utils/retry/CallRetryService;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public final fun getConnectionId ()Ljava/lang/String;
 	public final fun getCurrentToken ()Ljava/lang/String;
@@ -61,6 +60,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+	public final fun getRetryPolicy ()Lio/getstream/chat/android/client/utils/retry/RetryPolicy;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun getVersion ()Ljava/lang/String;
@@ -1953,6 +1953,9 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
 	public static final fun getUploadId (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/extensions/CallKt {
 }
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {

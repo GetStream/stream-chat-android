@@ -3,7 +3,6 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runBlockingTest
@@ -82,17 +81,17 @@ internal class CallTests {
     fun `Should retry a call according to RetryPolicy`() = runBlockingTest {
         var currentValue = 0
         val maxAttempts = 3
-        val callRetryService = CallRetryService(object : RetryPolicy {
+        val retryPolicy = object : RetryPolicy {
             override fun shouldRetry(attempt: Int, error: ChatError): Boolean = attempt < maxAttempts
 
             override fun retryTimeout(attempt: Int, error: ChatError): Int = 0
-        })
+        }
 
         CoroutineCall(testCoroutines.scope) {
             currentValue++
             Result.error(ChatError())
         }
-            .retry(testCoroutines.scope, callRetryService)
+            .retry(testCoroutines.scope, retryPolicy)
             .doOnStart(testCoroutines.scope) { currentValue++ }
             .enqueue {
                 currentValue++

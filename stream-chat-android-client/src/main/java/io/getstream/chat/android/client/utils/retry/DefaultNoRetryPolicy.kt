@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.errors.ChatError
 /**
  * Default retry policy that won't retry any calls.
  */
-internal class NoRetryPolicy : RetryPolicy {
+internal class DefaultNoRetryPolicy : RetryPolicy {
     /**
      * Shouldn't retry any calls.
      *

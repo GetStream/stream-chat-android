@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -23,6 +22,8 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -180,7 +181,7 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
-                .givenRunAndRetryResponse(Result(ChatError()))
+                .givenDeletingReactionResponse(Result(ChatError()))
                 .get()
 
             whenever(sut.domainImpl.isOnline()) doReturn true
@@ -207,7 +208,7 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
-                .givenRunAndRetryResponse(Result(chatError))
+                .givenDeletingReactionResponse(Result(chatError))
                 .get()
 
             whenever(sut.domainImpl.isOnline()) doReturn true
@@ -228,7 +229,7 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
                 .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
-                .givenRunAndRetryResponse(Result(Message()))
+                .givenDeletingReactionResponse(Result(Message()))
                 .get()
 
             whenever(sut.domainImpl.isOnline()) doReturn true
@@ -246,13 +247,13 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     private class Fixture(scope: CoroutineScope, user: User) {
         private val repos: RepositoryFacade = mock()
         private val channelControllerImpl: ChannelController
-        private val callRetryService = mock<CallRetryService>()
-        val chatClient: ChatClient = mock()
+        val chatClient: ChatClient = mock {
+            on(it.retryPolicy) doReturn NoRetryPolicy()
+        }
         val chatDomainImpl: ChatDomainImpl = mock()
 
         init {
             val userFlow = MutableStateFlow(user)
-            whenever(chatClient.callRetryService) doReturn callRetryService
             whenever(chatDomainImpl.user) doReturn userFlow
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
@@ -291,8 +292,8 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
             return this
         }
 
-        suspend fun givenRunAndRetryResponse(result: Result<Message>): Fixture {
-            whenever(callRetryService.runAndRetry<Message>(any())) doAnswer { result }
+        fun givenDeletingReactionResponse(result: Result<Message>): Fixture {
+            whenever(chatClient.deleteReaction(any(), any())) doAnswer { TestCall(result) }
             return this
         }
 

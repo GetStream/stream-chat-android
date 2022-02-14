@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
@@ -11,24 +10,29 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class ChatDomainImplCreateChannelTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val channelId = "ChannelId"
     private val channelType = "ChannelType"
@@ -207,13 +211,11 @@ internal class ChatDomainImplCreateChannelTest {
 
     private inner class Fixture {
         private val context: Context = mock()
-        private val callRetryService = mock<CallRetryService>()
         private val chatClient: ChatClient = mock {
             on(it.channel(any())) doReturn mock()
-            on(it.callRetryService) doReturn callRetryService
+            on(it.retryPolicy) doReturn NoRetryPolicy()
         }
         private var user: User = randomUser()
-        private val testScope = TestCoroutineScope()
         private var isOnline: Boolean = true
         private var repositoryFacade: RepositoryFacade = mock()
 
@@ -239,15 +241,12 @@ internal class ChatDomainImplCreateChannelTest {
             isOnline = false
         }
 
-        suspend fun get(): ChatDomainImpl {
-            whenever(callRetryService.runAndRetry<Message>(any())) doAnswer {
-                (it.arguments[0] as () -> Call<Message>).invoke().execute()
-            }
+        fun get(): ChatDomainImpl {
             return ChatDomain.Builder(context, chatClient).build().let { it as ChatDomainImpl }.apply {
                 offlineEnabled = false
                 setUser(this@Fixture.user)
                 repos = repositoryFacade
-                scope = testScope
+                scope = testCoroutines.scope
                 if (isOnline) setOnline() else setOffline()
             }
         }

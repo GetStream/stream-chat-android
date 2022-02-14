@@ -5,7 +5,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -13,13 +12,11 @@ import com.nhaarman.mockitokotlin2.same
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -28,6 +25,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
@@ -49,8 +47,6 @@ internal class WhenSendMessage {
 
     private val scope = testCoroutines.scope
 
-    private val callRetryService = mock<CallRetryService>()
-
     private val channelClient: ChannelClient = mock {
         on(it.sendMessage(any())) doReturn TestCall(Result(Message()))
     }
@@ -58,7 +54,7 @@ internal class WhenSendMessage {
     private val chatClient: ChatClient = mock {
         on(it.channel(any(), any())) doReturn channelClient
         on(it.channel(any())) doReturn channelClient
-        on(it.callRetryService) doReturn callRetryService
+        on(it.retryPolicy) doReturn NoRetryPolicy()
     }
 
     private val channelType: String = randomString()
@@ -92,10 +88,6 @@ internal class WhenSendMessage {
     @Test
     @Ignore("Need to do something with MessageSendingService for this to work")
     fun `Message with failed attachment upload should be upload send the right state`() = scope.runBlockingTest {
-        whenever(callRetryService.runAndRetry<Message>(any())) doAnswer {
-            (it.arguments[0] as () -> Call<Message>).invoke().execute()
-        }
-
         val attachments = randomAttachmentsWithFile().toMutableList()
         val files: List<File> = attachments.map { it.upload!! }
 
