@@ -588,8 +588,6 @@ public class ChannelController internal constructor(
         domainImpl.repos.insertMessage(messageToBeEdited)
 
         if (online) {
-            val runnable = {
-            }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()

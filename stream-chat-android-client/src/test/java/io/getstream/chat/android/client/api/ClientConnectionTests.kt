@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.retry.DefaultNoRetryPolicy
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -104,7 +104,7 @@ internal class ClientConnectionTests {
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
-            retryPolicy = DefaultNoRetryPolicy(),
+            retryPolicy = NoRetryPolicy(),
         )
     }
 
