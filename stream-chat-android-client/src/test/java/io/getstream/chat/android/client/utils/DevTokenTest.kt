@@ -31,7 +31,6 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         queryChannelsPostponeHelper = queryChannelsPostponeHelper,
         userStateService = userStateService,
         userCredentialStorage = mock(),
-        appContext = mock(),
         scope = testCoroutines.scope,
         callRetryService = mock(),
     )

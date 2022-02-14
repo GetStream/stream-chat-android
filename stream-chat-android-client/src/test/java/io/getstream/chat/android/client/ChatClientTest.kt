@@ -80,7 +80,6 @@ internal class ChatClientTest {
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = testCoroutines.scope,
             callRetryService = CallRetryService(NoRetryPolicy()),
         ).apply {

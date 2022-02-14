@@ -235,7 +235,10 @@ class CustomChannelViewHolder(
 
         binding.apply {
             avatarView.setChannelData(channel)
-            nameTextView.text = channel.getDisplayName(itemView.context)
+            nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
+                channel = channel,
+                currentUser = ChatClient.instance().getCurrentUser()
+            )
             membersCountTextView.text = itemView.context.resources.getQuantityString(
                 R.plurals.members_count,
                 channel.members.size,

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.experimental.plugin
+package io.getstream.chat.android.offline.experimental.plugin.query
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.core.ExperimentalStreamChatApi

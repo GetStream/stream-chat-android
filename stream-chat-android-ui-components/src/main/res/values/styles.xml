@@ -498,7 +498,6 @@
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
         <item name="streamUiMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
-        <item name="streamUiMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
         <item name="streamUiMediaAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
         <item name="streamUiMediaAttachmentImageBackgroundColor">@color/stream_ui_grey</item>
         <item name="streamUiMediaAttachmentMoreCountOverlayColor">@color/stream_ui_overlay</item>
@@ -506,8 +505,15 @@
         <item name="streamUiMediaAttachmentMoreCountTextSize">@dimen/stream_ui_message_media_attachment_more_count_text_size</item>
         <item name="streamUiMediaAttachmentMoreCountTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
+    </style>
 
-        <item name="streamUiMediaAttachmentGiphyHeight">200dp</item>
+    <style name="StreamUi.MessageList.GiphyMediaAttachment" parent="StreamUi">
+        <item name="streamUiGiphyMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
+        <item name="streamUiGiphyMediaAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
+        <item name="streamUiGiphyMediaAttachmentImageBackgroundColor">@color/stream_ui_literal_transparent</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyType">fixedHeight</item>
+        <item name="streamUiGiphyMediaAttachmentScaleType">fitCenter</item>
     </style>
 
     <style name="StreamUi.MessageList.FileAttachment" parent="StreamUi">

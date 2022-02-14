@@ -10,8 +10,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.utils.TestDataHelper
@@ -52,14 +50,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
 
-        val plugin = OfflinePlugin(
-            Config(
-                backgroundSyncEnabled = backgroundSyncEnabled,
-                userPresence = userPresence,
-                persistenceEnabled = offlineEnabled,
-            )
-        )
-
         chatDomainImpl = ChatDomainImpl(
             client,
             db,
@@ -69,9 +59,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             recoveryEnabled,
             backgroundSyncEnabled,
             context,
-            offlinePlugin = plugin,
         )
-        plugin.initState(chatDomainImpl, client)
+
         chatDomain = chatDomainImpl
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {

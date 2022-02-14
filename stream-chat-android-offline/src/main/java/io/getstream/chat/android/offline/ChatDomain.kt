@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -33,7 +32,6 @@ import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
-import io.getstream.chat.android.offline.experimental.plugin.Config as OfflinePluginConfig
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat.
@@ -647,22 +645,9 @@ public sealed interface ChatDomain {
             return instance()
         }
 
-        @ExperimentalStreamChatApi
-        private fun getPlugin(): OfflinePlugin {
-            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }
-                ?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
-                ?: OfflinePluginConfig(
-                    backgroundSyncEnabled = backgroundSyncEnabled,
-                    userPresence = userPresence,
-                    persistenceEnabled = storageEnabled
-                )
-                    .let(::OfflinePlugin)
-        }
-
         @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -672,12 +657,8 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = plugin,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
-            ).also { domainImpl ->
-                // TODO remove when plugin becomes stateless
-                plugin.initState(domainImpl, client)
-            }
+            )
         }
     }
 
