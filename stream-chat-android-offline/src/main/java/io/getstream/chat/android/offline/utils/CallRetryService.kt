@@ -3,9 +3,9 @@ package io.getstream.chat.android.offline.utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.isPermanent
 import kotlinx.coroutines.delay
 
 internal class CallRetryService(private val retryPolicy: RetryPolicy, private val client: ChatClient) {

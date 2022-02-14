@@ -56,7 +56,9 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMar
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -67,24 +69,30 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.client.utils.toCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.inOffsetWith
-import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
+import io.getstream.chat.android.offline.message.experimental.MessageSendingService
+import io.getstream.chat.android.offline.message.experimental.MessageSendingServiceFactory
+import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.wasCreatedAfter
 import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.offline.utils.toCid
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 import kotlin.math.max
 
@@ -93,11 +101,21 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) : QueryChannelListener, ChannelMarkReadListener, GetMessageListener, HideChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
     private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
+
+    private val messageSendingService: MessageSendingService =
+        messageSendingServiceFactory.create(
+            chatDomainImpl.appContext,
+            LogicRegistry.getOrCreate(StateRegistry.get()),
+            mutableState,
+            GlobalMutableState.get(),
+            chatDomainImpl.scope
+        )
 
     private fun loadingStateByRequest(request: QueryChannelRequest) = when {
         request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
@@ -345,6 +363,10 @@ internal class ChannelLogic(
         mutableState._messages.value = newMessages
     }
 
+    internal suspend fun updateLastMessageForChannel(message: Message) {
+        chatDomainImpl.repos.updateLastMessageForChannel(mutableState.cid, message)
+    }
+
     /**
      * Store the messages in the local cache.
      *
@@ -354,7 +376,7 @@ internal class ChannelLogic(
         chatDomainImpl.repos.insertMessages(messages)
     }
 
-    private fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
     internal fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
@@ -886,6 +908,49 @@ internal class ChannelLogic(
 
                 shouldUpdate
             }
+    }
+
+    public fun toChannel(): Channel = mutableState.toChannel()
+
+    internal fun replyMessage(repliedMessage: Message?) {
+        mutableState._repliedMessage.value = repliedMessage
+    }
+
+    internal suspend fun sendMessage(message: Message) = messageSendingService.sendNewMessage(message)
+
+    /**
+     * Cancels ephemeral Message.
+     * Removes message from the offline storage and memory and notifies about update.
+     */
+    internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
+        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
+        chatDomainImpl.repos.deleteChannelMessage(message)
+        removeLocalMessage(message)
+        return Result(true)
+    }
+
+    fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {
+        return chatDomainImpl.repos.observeAttachmentsForMessage(messageId)
+    }
+
+    suspend fun selectMessage(messageId: String): Message? {
+        return chatDomainImpl.repos.selectMessage(messageId)
+    }
+
+    internal suspend fun handleSendMessageSuccess(message: Message) {
+        message
+            .also { chatDomainImpl.repos.insertMessage(it) }
+            .also { upsertMessage(it) }
+    }
+
+    internal suspend fun handleSendMessageFail(message: Message, error: ChatError) {
+        logger.logE(
+            "Failed to send message with id ${message.id} and text ${message.text}: $error",
+            error
+        )
+        message
+            .also { chatDomainImpl.repos.insertMessage(it) }
+            .also { upsertMessage(it) }
     }
 
     private companion object {

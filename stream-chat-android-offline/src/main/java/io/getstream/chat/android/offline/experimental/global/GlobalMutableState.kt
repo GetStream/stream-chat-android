@@ -72,6 +72,15 @@ internal class GlobalMutableState private constructor() : GlobalState {
         }
 
         /**
+         * Gets the current Singleton of GlobalState. If the initialization is not done yet, it returns null.
+         */
+        @Throws(IllegalArgumentException::class)
+        internal fun get(): GlobalState = requireNotNull(instance) {
+            "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
+                "PluginFactory to be able to use GlobalState from the SDK"
+        }
+
+        /**
          * Creates an instance of [GlobalMutableState] with a fresh state. Please keep in mind that many instances of this class may
          * cause the SDK to present an inconsistent state.
          */

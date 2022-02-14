@@ -78,6 +78,11 @@ public fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
 }
 
 @InternalStreamChatApi
+public fun <T : Any, K : Any> Call<T>.mapWithError(successMapper: (T) -> K, errorMapper: (ChatError) -> K): Call<K> {
+    return MapCall(this, successMapper = successMapper, errorMapper = errorMapper)
+}
+
+@InternalStreamChatApi
 public fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
     return ZipCall(this, call)
 }
@@ -91,18 +96,46 @@ public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend
     DoOnResultCall(this, scope, function)
 
 @InternalStreamChatApi
-public fun <T : Any> Call<T>.withPrecondition(scope: CoroutineScope, precondition: suspend () -> Result<Unit>): Call<T> =
+public fun <T : Any> Call<T>.withPrecondition(
+    scope: CoroutineScope,
+    precondition: suspend () -> Result<Unit>,
+): Call<T> =
     WithPreconditionCall(this, scope, precondition)
 
 /**
- * Wraps this [Call] into [ReturnOnErrorCall] to return an item specified by side effect function when it encounters an error.
+ * Wraps this [Call] into [ReturnOnResultCall] to return an item specified by side effect function when it encounters an error.
  *
  * @param scope Scope of coroutine in which to execute side effect function.
- * @param function Function that returns data in the case of error.
+ * @param onError Function that returns data in the case of error.
  */
 @InternalStreamChatApi
-public fun <T : Any> Call<T>.onErrorReturn(scope: CoroutineScope, function: suspend () -> Result<T>): Call<T> =
-    ReturnOnErrorCall(this, scope, function)
+public fun <T : Any> Call<T>.onErrorReturn(scope: CoroutineScope, onError: suspend (ChatError) -> Result<T>): Call<T> =
+    ReturnOnResultCall(this, scope, onErrorReturn = onError)
+
+/**
+ * Wraps this [Call] into [ReturnOnResultCall] to return an item specified by side effect function when original call results in success.
+ *
+ * @param scope Scope of coroutine in which to execute side effect function.
+ * @param onSuccess Function that returns data in the case of success.
+ */
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.onSuccessReturn(scope: CoroutineScope, onSuccess: suspend (T) -> Result<T>): Call<T> =
+    ReturnOnResultCall(this, scope, onSuccessReturn = onSuccess)
+
+/**
+ * Wraps this [Call] into [ReturnOnResultCall] to return an item specified by side effect function.
+ *
+ * @param scope Scope of coroutine in which to execute side effect function.
+ * @param onSuccess Function that returns data in the case of success.
+ * @param onError Function that returns data in case of error.
+ */
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.returnOnResult(
+    scope: CoroutineScope,
+    onSuccess: suspend (T) -> Result<T>,
+    onError: suspend (ChatError) -> Result<T>,
+): Call<T> =
+    ReturnOnResultCall(this, scope, onSuccessReturn = onSuccess, onErrorReturn = onError)
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}

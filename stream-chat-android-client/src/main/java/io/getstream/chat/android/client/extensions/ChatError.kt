@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.extensions
+package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError

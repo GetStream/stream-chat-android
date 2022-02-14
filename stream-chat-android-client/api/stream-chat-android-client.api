@@ -1930,8 +1930,9 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener {
-	public abstract fun onMessageSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
-	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun onMessageSendPrecondition (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener {
@@ -1957,6 +1958,10 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 	public static synthetic fun getUsersExcludingCurrent$default (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
+}
+
+public final class io/getstream/chat/android/client/extensions/ChatErrorKt {
+	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
@@ -3148,6 +3153,9 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 	public abstract fun put (Lio/getstream/chat/android/client/user/CredentialConfig;)V
 }
 
+public final class io/getstream/chat/android/client/utils/PairExtensionsKt {
+}
+
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (JJ)V
@@ -3173,6 +3181,9 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public fun <init> ()V
 	public final fun provideCurrentTimeInSeconds ()J
+}
+
+public final class io/getstream/chat/android/client/utils/ValidationKt {
 }
 
 public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {

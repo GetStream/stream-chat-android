@@ -504,10 +504,6 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
-	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
-}
-
 public final class io/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType : java/lang/Enum {
 	public static final field CONNECTED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
 	public static final field METERED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
@@ -758,9 +754,6 @@ public class io/getstream/chat/android/offline/utils/Event {
 	public final fun getContentIfNotHandled ()Ljava/lang/Object;
 	public final fun getHasBeenHandled ()Z
 	public final fun peekContent ()Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/offline/utils/PairExtensionsKt {
 }
 
 public abstract interface class io/getstream/chat/android/offline/utils/RetryPolicy {

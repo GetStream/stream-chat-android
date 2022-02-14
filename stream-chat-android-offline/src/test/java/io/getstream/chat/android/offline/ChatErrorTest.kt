@@ -1,7 +1,7 @@
 package io.getstream.chat.android.offline
 
 import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.client.extensions.isPermanent
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Test

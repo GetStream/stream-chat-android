@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -36,6 +37,7 @@ internal class OfflinePlugin(
     private val getMessageListener: GetMessageListener,
     private val hideChannelListener: HideChannelListener,
     private val markAllReadListener: MarkAllReadListener,
+    private val sendMessageListener: SendMessageListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -44,7 +46,8 @@ internal class OfflinePlugin(
     EditMessageListener by editMessageListener,
     GetMessageListener by getMessageListener,
     HideChannelListener by hideChannelListener,
-    MarkAllReadListener by markAllReadListener {
+    MarkAllReadListener by markAllReadListener,
+    SendMessageListener by sendMessageListener {
 
     override val name: String = MODULE_NAME
 

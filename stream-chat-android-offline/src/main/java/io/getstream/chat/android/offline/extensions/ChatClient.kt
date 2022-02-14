@@ -21,12 +21,12 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
-import io.getstream.chat.android.offline.utils.validateCid
 
 private const val KEY_MESSAGE_ACTION = "image_action"
 private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
