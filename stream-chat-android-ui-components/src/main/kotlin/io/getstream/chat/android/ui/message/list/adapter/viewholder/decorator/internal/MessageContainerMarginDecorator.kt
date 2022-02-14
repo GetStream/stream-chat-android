@@ -34,6 +34,12 @@ internal class MessageContainerMarginDecorator(private val style: MessageListIte
         viewHolder.binding.run { configMargins(messageContainer, footnote, style) }
     }
 
+    /**
+     * Decorates the message container of the image attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

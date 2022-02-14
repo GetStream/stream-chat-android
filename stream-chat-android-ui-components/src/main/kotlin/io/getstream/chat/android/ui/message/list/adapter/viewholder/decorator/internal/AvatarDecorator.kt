@@ -37,6 +37,12 @@ internal class AvatarDecorator(
         setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
+    /**
+     * Decorates the avatar of the image attachment message, based on the message owner.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

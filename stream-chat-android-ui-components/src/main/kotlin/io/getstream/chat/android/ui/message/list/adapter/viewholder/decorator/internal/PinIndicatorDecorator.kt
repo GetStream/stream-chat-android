@@ -43,6 +43,12 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
         setupPinIndicator(root, pinIndicatorTextView, data)
     }
 
+    /**
+     * Decorates the pin indicator of the image attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

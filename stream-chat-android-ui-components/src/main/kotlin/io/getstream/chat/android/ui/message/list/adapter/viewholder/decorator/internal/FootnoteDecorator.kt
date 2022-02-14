@@ -68,6 +68,12 @@ internal class FootnoteDecorator(
         )
     }
 
+    /**
+     * Decorates the footnote of the image attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

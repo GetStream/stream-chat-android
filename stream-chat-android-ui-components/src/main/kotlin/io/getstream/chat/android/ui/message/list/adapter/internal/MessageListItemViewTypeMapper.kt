@@ -54,7 +54,7 @@ internal object MessageListItemViewTypeMapper {
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
-            message.attachments.any { it.isImage() } -> IMAGE_ATTACHMENT
+            message.attachments.all { it.isImage() || it.hasLink() } -> IMAGE_ATTACHMENT
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }

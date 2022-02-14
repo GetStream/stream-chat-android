@@ -40,6 +40,12 @@ internal class BackgroundDecorator(private val messageBackgroundFactory: Message
             )
     }
 
+    /**
+     * Decorates the background of the message container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

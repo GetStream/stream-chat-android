@@ -35,6 +35,12 @@ internal class GapDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
 
+    /**
+     * Decorates the gap of the image attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

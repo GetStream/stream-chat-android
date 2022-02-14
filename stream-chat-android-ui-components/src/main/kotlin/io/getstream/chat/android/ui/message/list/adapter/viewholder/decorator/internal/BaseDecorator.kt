@@ -48,6 +48,12 @@ internal abstract class BaseDecorator : Decorator {
         data: MessageListItem.MessageItem,
     )
 
+    /**
+     * Applies various decorations to the [ImageAttachmentViewHolder].
+     *
+     * @param viewHolder The holder to be decorated.
+     * @param data The data used to define various decorations.
+     */
     abstract fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,

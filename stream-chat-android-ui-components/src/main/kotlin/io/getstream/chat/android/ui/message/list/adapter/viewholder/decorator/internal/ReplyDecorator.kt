@@ -29,6 +29,12 @@ internal class ReplyDecorator(
         data: MessageListItem.MessageItem,
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
+    /**
+     * Decorates the reply section of the image attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateImageAttachmentMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
