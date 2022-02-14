@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isDeleted
+import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
@@ -294,19 +295,30 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
+
+    /**
+     * Provides a default long click handler for all messages. Based on the configuration options we have and the message
+     * type, we show different kind of options.
+     *
+     * We also disable editing of certain messages, like Giphy messages.
+     */
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
+                val style = requireStyle()
+                val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
+                val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
                         MessageOptionsView.Configuration(
-                            viewStyle = requireStyle(),
+                            viewStyle = viewStyle,
                             channelConfig = channel.config,
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
                         ),
-                        requireStyle(),
+                        viewStyle,
                         messageListItemViewHolderFactory,
                         messageBackgroundFactory
                     )

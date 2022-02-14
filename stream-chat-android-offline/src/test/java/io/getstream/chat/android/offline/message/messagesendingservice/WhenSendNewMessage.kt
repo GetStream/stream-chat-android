@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -23,21 +24,28 @@ import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.utils.CallRetryService
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldNotBeEmpty
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class WhenSendNewMessage {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
     @Test
     fun `Given message without attachments And offline Should return message as result with right data`() =
         runBlockingTest {
@@ -168,14 +176,16 @@ internal class WhenSendNewMessage {
 
     private class Fixture {
         private var repositoryFacade = mock<RepositoryFacade>()
+        private val chatClient = mock<ChatClient> {
+            on(it.retryPolicy) doReturn NoRetryPolicy()
+        }
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
             on(it.user) doReturn MutableStateFlow(randomUser())
             on(it.repos) doReturn repositoryFacade
-            on(it.scope) doReturn TestCoroutineScope()
+            on(it.scope) doReturn testCoroutines.scope
             on { generateMessageId() } doReturn randomString()
             on { getActiveQueries() } doReturn emptyList()
-            on { callRetryService() } doReturn CallRetryService(DefaultRetryPolicy(), mock())
         }
         private var channelController = mock<ChannelController>()
         private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
@@ -224,7 +234,13 @@ internal class WhenSendNewMessage {
 
         suspend fun get(): MessageSendingService {
             whenever(channelController.handleSendMessageSuccess(any())) doAnswer { invocationOnMock -> invocationOnMock.arguments.first() as Message }
-            return MessageSendingService(chatDomainImpl, channelController, channelClient, uploadAttachmentsWorker)
+            return MessageSendingService(
+                chatDomainImpl,
+                channelController,
+                chatClient,
+                channelClient,
+                uploadAttachmentsWorker,
+            )
         }
     }
 }

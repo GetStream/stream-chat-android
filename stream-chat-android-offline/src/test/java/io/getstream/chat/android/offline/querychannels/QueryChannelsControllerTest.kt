@@ -20,6 +20,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
@@ -429,14 +430,19 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
         val filter = Filters.neutral()
         val mutableState =
             QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope, MutableStateFlow(emptyMap()))
-        return QueryChannelsController(
-            chatDomainImpl,
+
+        val queryChannelsLogic = QueryChannelsLogic(
             mutableState,
-            QueryChannelsLogic(mutableState, chatDomainImpl, chatClient),
-        ).apply {
-            chatEventHandler = this@Fixture.chatEventHandler
-            queryChannelsSpec.cids = initialCids
-        }
+            chatDomainImpl,
+            chatClient,
+            chatDomainImpl.repos,
+            GlobalMutableState.create()
+        )
+        return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)
+            .apply {
+                chatEventHandler = this@Fixture.chatEventHandler
+                queryChannelsSpec.cids = initialCids
+            }
     }
 
     fun givenChannelFilterResponse(channels: List<Channel>): Fixture = apply {

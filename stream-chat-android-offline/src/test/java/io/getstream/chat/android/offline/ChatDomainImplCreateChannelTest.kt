@@ -18,13 +18,21 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 internal class ChatDomainImplCreateChannelTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val channelId = "ChannelId"
     private val channelType = "ChannelType"
@@ -205,9 +213,9 @@ internal class ChatDomainImplCreateChannelTest {
         private val context: Context = mock()
         private val chatClient: ChatClient = mock {
             on(it.channel(any())) doReturn mock()
+            on(it.retryPolicy) doReturn NoRetryPolicy()
         }
         private var user: User = randomUser()
-        private val testScope = TestCoroutineScope()
         private var isOnline: Boolean = true
         private var repositoryFacade: RepositoryFacade = mock()
 
@@ -238,7 +246,7 @@ internal class ChatDomainImplCreateChannelTest {
                 offlineEnabled = false
                 setUser(this@Fixture.user)
                 repos = repositoryFacade
-                scope = testScope
+                scope = testCoroutines.scope
                 if (isOnline) setOnline() else setOffline()
             }
         }

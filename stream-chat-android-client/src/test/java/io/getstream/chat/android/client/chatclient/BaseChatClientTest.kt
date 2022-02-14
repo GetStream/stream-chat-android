@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
@@ -60,9 +61,8 @@ internal open class BaseChatClientTest {
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = coroutineRule.scope,
-            plugins = plugins,
+            retryPolicy = NoRetryPolicy(),
         )
     }
 }
