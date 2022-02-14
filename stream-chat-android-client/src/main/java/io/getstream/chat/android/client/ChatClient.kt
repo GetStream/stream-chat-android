@@ -86,6 +86,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -150,8 +151,12 @@ public class ChatClient internal constructor(
         }
     )
 
-    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
-    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
+    private val initializationCoordinator = InitializationCoordinator.getOrCreate()
+
+    // public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
+    // public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
+
+
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -374,7 +379,7 @@ public class ChatClient internal constructor(
     }
 
     private fun notifySetUser(user: User) {
-        preSetUserListeners.forEach { it(user) }
+        initializationCoordinator.userConnected(user)
     }
 
     private fun storePushNotificationsConfig(userId: String, userName: String) {
@@ -774,9 +779,7 @@ public class ChatClient internal constructor(
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
-            userStateService.state.userOrError().let { user ->
-                disconnectListeners.forEach { listener -> listener(user) }
-            }
+            userStateService.state.userOrError().let(initializationCoordinator::userDisconnected)
         }
         connectionListener = null
         socketStateService.onDisconnectRequested()
@@ -2093,22 +2096,24 @@ public class ChatClient internal constructor(
          */
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
+        private fun configureInitializer(chatClient: ChatClient) {
+            chatClient.initializationCoordinator.addDatabaseCreatedListener {
+                chatClient.addPlugins(
+                    pluginFactories.map { pluginFactory ->
+                        pluginFactory.getOrCreate()
+                    }
+                )
+            }
+        }
+
         /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
         public fun build(): ChatClient = internalBuild()
-            .apply {
-                preSetUserListeners.add {
-                    addPlugins(
-                        pluginFactories.map { pluginFactory ->
-                            pluginFactory.getOrCreate()
-                        }
-                    )
-                }
-            }
             .also {
                 instance = it
+                configureInitializer(it)
             }
 
         @InternalStreamChatApi

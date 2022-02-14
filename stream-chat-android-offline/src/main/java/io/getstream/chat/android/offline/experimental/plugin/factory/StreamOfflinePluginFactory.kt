@@ -4,10 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
@@ -46,16 +43,7 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun createOfflinePlugin(): OfflinePlugin {
-        // This can only be called after ChatClient was instantiated!!
-        val chatClient = ChatClient.instance()
-        ChatDomain.Builder(appContext, chatClient).apply {
-            if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
-            if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
-            if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
-            recoveryEnabled()
-        }.build()
-
-        val userStateFlow = MutableStateFlow(chatClient.getCurrentUser())
+        val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
 
         val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl
         val stateRegistry = chatDomainImpl.run {

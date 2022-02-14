@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -32,6 +31,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
@@ -61,9 +61,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -158,10 +156,12 @@ internal class ChatDomainImpl internal constructor(
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext,
-        globalState = globalState
+        globalState = globalState,
     )
 
-    private val state: StateRegistry by lazy { StateRegistry.getOrCreate(scope, user, repos, latestUsers) }
+    private val state: StateRegistry by lazy {
+        StateRegistry.getOrCreate(scope, user, repos, RepositoryFacade.get().observeLatestUsers())
+    }
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
@@ -179,15 +179,8 @@ internal class ChatDomainImpl internal constructor(
      * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is
      * not closed by room.
      */
-    internal var repos: RepositoryFacade
-        get() = _repos ?: createNoOpRepos().also { repositoryFacade ->
-            _repos = repositoryFacade
-        }
-        set(value) {
-            _repos = value
-        }
-
-    private var _repos: RepositoryFacade? = null
+    internal val repos: RepositoryFacade
+        get() = RepositoryFacade.get()
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -224,10 +217,6 @@ internal class ChatDomainImpl internal constructor(
     }
 
     private fun clearConnectionState() {
-        globalState._initialized.value = false
-        globalState._connectionState.value = ConnectionState.OFFLINE
-        globalState._banned.value = false
-        globalState._mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
         latestUsers = MutableStateFlow(emptyMap())
@@ -238,18 +227,8 @@ internal class ChatDomainImpl internal constructor(
         clearUnreadCountState()
 
         globalState._user.value = user
-
-        repos = RepositoryFacadeBuilder {
-            context(appContext)
-            database(db)
-            currentUser(user)
-            scope(scope)
-            defaultConfig(defaultConfig)
-            setOfflineEnabled(offlineEnabled)
-        }.build()
-
-        latestUsers = repos.observeLatestUsers()
         // load channel configs from Room into memory
+
         initJob = scope.async {
             // fetch the configs for channels
             repos.cacheChannelConfigs()
@@ -284,18 +263,24 @@ internal class ChatDomainImpl internal constructor(
         if (current != null) {
             setUser(current)
         }
+
+        InitializationCoordinator.getOrCreate().addUserConnectedListener(::setUser)
+
         // past behaviour was to set the user on the chat domain
         // the new syntax is to automatically pick up changes from the client
         // listen to future user changes
-        client.preSetUserListeners.add {
-            setUser(it)
-        }
-        // disconnect if the low level client disconnects
-        client.disconnectListeners.add {
-            scope.launch {
-                disconnect()
-            }
-        }
+        //Todo: Use InitializationCoordinator
+        // client.preSetUserListeners.add {
+        //     setUser(it)
+        // }
+        // // disconnect if the low level client disconnects
+        // client.disconnectListeners.add {
+        //     scope.launch {
+        //         disconnect()
+        //     }
+        // }
+
+
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->
@@ -1004,14 +989,6 @@ internal class ChatDomainImpl internal constructor(
         members: List<Member>,
     ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
 // end region
-
-    private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
-        context(appContext)
-        scope(scope)
-        database(db)
-        defaultConfig(defaultConfig)
-        setOfflineEnabled(false)
-    }.build()
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {

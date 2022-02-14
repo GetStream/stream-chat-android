@@ -19,12 +19,15 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
+import kotlinx.coroutines.CoroutineScope
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
@@ -613,7 +616,16 @@ public sealed interface ChatDomain {
             }
             val offlineChatDomain = offlineChatDomainBuilder.build()
             instance = buildImpl(offlineChatDomain)
-            return instance()
+
+            return instance().also {
+                RepositoryFacadeBuilder {
+                    context(appContext)
+                    scope(CoroutineScope(DispatcherProvider.IO))
+                    defaultConfig(Config(connectEventsEnabled = true, muteEnabled = true))
+                    currentUser(ChatClient.instance().getCurrentUser()!!)
+                    setOfflineEnabled(true)
+                }.initialise()
+            }
         }
 
         internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomain): ChatDomainImpl {

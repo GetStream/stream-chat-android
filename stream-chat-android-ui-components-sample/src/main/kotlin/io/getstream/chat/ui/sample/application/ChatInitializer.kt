@@ -6,8 +6,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
@@ -57,6 +59,16 @@ class ChatInitializer(private val context: Context) {
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
             .build()
+
+        InitializationCoordinator.getOrCreate().addUserConnectedListener {
+            val chatClient = ChatClient.instance()
+            ChatDomain.Builder(context, chatClient).apply {
+                enableBackgroundSync()
+                offlineEnabled()
+                userPresenceEnabled()
+                recoveryEnabled()
+            }.build()
+        }
 
         // Using markdown as text transformer
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
