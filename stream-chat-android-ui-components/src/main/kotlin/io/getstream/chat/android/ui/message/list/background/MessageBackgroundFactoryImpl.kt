@@ -127,8 +127,6 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
             }
     }
 
-
-
     public companion object {
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_gainsboro
