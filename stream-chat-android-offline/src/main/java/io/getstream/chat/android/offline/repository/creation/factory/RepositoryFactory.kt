@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.repository.builder
+package io.getstream.chat.android.offline.repository.creation.factory
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -38,8 +38,7 @@ internal class RepositoryFactory(
 
     fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository =
-        MessageRepositoryImpl(database.messageDao(), getUser, currentUser, 100)
+    ): MessageRepository = MessageRepositoryImpl(database.messageDao(), getUser, currentUser, 100)
 
     fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         ReactionRepositoryImpl(database.reactionDao(), getUser)

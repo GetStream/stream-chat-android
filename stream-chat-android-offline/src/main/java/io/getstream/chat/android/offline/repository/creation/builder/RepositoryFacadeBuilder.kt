@@ -1,11 +1,11 @@
-package io.getstream.chat.android.offline.repository.builder
+package io.getstream.chat.android.offline.repository.creation.builder
 
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -55,24 +55,15 @@ internal class RepositoryFacadeBuilder {
         val config = requireNotNull(defaultConfig)
         val scope = requireNotNull(coroutineScope)
         val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
-        val userRepository = factory.createUserRepository()
-        val getUser: suspend (userId: String) -> User = { userId ->
-            requireNotNull(currentUser) { "User with the userId: `$userId` has not been found" }
-        }
-        val messageRepository = factory.createMessageRepository(getUser)
-        val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
-        return RepositoryFacade(
-            userRepository = userRepository,
-            configsRepository = factory.createChannelConfigRepository(),
-            channelsRepository = factory.createChannelRepository(getUser, getMessage),
-            queryChannelsRepository = factory.createQueryChannelsRepository(),
-            messageRepository = messageRepository,
-            reactionsRepository = factory.createReactionRepository(getUser),
-            syncStateRepository = factory.createSyncStateRepository(),
-            attachmentRepository = factory.createAttachmentRepository(),
-            scope = scope,
-            defaultConfig = config,
-        )
+        return RepositoryFacade.refreshAndGet(factory, scope, config)
+    }
+
+    fun initialise() {
+        val config = requireNotNull(defaultConfig)
+        val scope = requireNotNull(coroutineScope)
+        val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
+
+        return RepositoryFacade.initialise(factory, scope, config)
     }
 }
