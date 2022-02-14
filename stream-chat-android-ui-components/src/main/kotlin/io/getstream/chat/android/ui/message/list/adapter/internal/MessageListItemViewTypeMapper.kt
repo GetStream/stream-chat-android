@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.isError
@@ -54,9 +55,18 @@ internal object MessageListItemViewTypeMapper {
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
-            message.attachments.all { it.isImage() || it.hasLink() } -> IMAGE_ATTACHMENT
+            message.isImageAttachment() -> IMAGE_ATTACHMENT
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
+    }
+
+    /**
+     * Checks if the message contains only image attachments (Can also optionally contain links).
+     */
+    private fun Message.isImageAttachment(): Boolean {
+        return attachments.isNotEmpty() &&
+            attachments.any { it.isImage() } &&
+            attachments.all { it.isImage() || it.hasLink() }
     }
 }
