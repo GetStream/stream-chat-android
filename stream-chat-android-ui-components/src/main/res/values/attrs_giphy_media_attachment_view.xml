@@ -10,8 +10,6 @@
         <attr name="streamUiGiphyMediaAttachmentPlaceHolderIcon" format="reference" />
         <!-- Media attachment background color -->
         <attr name="streamUiGiphyMediaAttachmentImageBackgroundColor" format="color|reference" />
-        <!-- Sets the Giphy Attachment's height -->
-        <attr name="streamUiGiphyMediaAttachmentGiphyMaxHeight" format="dimension|reference" />
         <!-- Sets the Giphy type -->
         <attr name="streamUiGiphyMediaAttachmentGiphyType" format="enum">
             <enum name="original" value="0" />

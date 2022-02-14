@@ -36,7 +36,6 @@ internal class ImageAttachmentView : ConstraintLayout {
      * Handles image attachment long clicks.
      */
     var attachmentLongClickListener: AttachmentLongClickListener? = null
-    var giphyBadgeEnabled: Boolean = true
 
     /**
      * Binding for [R.layout.stream_ui_image_attachment_view].

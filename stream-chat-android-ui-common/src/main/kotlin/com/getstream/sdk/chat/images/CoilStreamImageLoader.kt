@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
-import android.view.ViewGroup
 import android.widget.ImageView
 import coil.drawable.MovieDrawable
 import coil.drawable.ScaleDrawable
@@ -87,10 +86,20 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         }
     }
 
+    /**
+     * Loads an image into a drawable and then applies the drawable to the container, resizing it based on the scale types
+     * and the given configuration.
+     *
+     * @param target The target to load the image into.
+     * @param data The data to load.
+     * @param placeholderDrawable Drawable that's shown while the image is loading.
+     * @param transformation The transformation for the image before applying to the target.
+     * @param onStart The callback when the load has started.
+     * @param onComplete The callback when the load has finished.
+     */
     override suspend fun loadAndResize(
         target: ImageView,
         data: Any?,
-        container: ViewGroup,
         placeholderDrawable: Drawable?,
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,

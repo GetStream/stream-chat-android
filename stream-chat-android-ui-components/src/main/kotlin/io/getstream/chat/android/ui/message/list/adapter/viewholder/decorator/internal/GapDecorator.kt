@@ -24,6 +24,12 @@ internal class GapDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
 
+    /**
+     * Decorates the gap of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,

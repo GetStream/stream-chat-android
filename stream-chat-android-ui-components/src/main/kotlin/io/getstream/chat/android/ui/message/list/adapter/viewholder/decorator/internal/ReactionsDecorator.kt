@@ -30,6 +30,12 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
         setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
     }
 
+    /**
+     * Decorates the reactions section of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,

@@ -28,11 +28,10 @@ class HostActivity : AppCompatActivity(R.layout.activity_main) {
             channelType: String,
             channelId: String,
 
-            ) = Intent(context, HostActivity::class.java).apply {
+        ) = Intent(context, HostActivity::class.java).apply {
             putExtra(EXTRA_CHANNEL_ID, channelId)
             putExtra(EXTRA_CHANNEL_TYPE, channelType)
             putExtra(EXTRA_MESSAGE_ID, messageId)
-
         }
     }
 }

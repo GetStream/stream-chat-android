@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView
+import io.getstream.chat.android.ui.utils.GiphyInfoType
 
 /**
  * Sets the style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView] by obtaining
@@ -28,7 +28,7 @@ public class GiphyMediaAttachmentViewStyle(
     public val giphyIcon: Drawable,
     public val placeholderIcon: Drawable,
     @ColorInt public val imageBackgroundColor: Int,
-    public val giphyType: GiphyMediaAttachmentView.Companion.GiphyInfoType,
+    public val giphyType: GiphyInfoType,
     public val scaleType: ImageView.ScaleType,
 ) {
     internal companion object {
@@ -60,12 +60,16 @@ public class GiphyMediaAttachmentViewStyle(
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
                 val giphyType =
-                    attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
-                        GiphyMediaAttachmentView.Companion.GiphyInfoType.FIXED_HEIGHT)
+                    attributes.getEnum(
+                        R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
+                        GiphyInfoType.FIXED_HEIGHT
+                    )
 
                 val scaleType =
-                    attributes.getEnum(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType,
-                        ImageView.ScaleType.FIT_CENTER)
+                    attributes.getEnum(
+                        R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType,
+                        ImageView.ScaleType.FIT_CENTER
+                    )
 
                 return GiphyMediaAttachmentViewStyle(
                     progressIcon = progressIcon,

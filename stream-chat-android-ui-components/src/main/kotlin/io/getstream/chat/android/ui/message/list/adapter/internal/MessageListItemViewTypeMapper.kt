@@ -36,18 +36,24 @@ internal object MessageListItemViewTypeMapper {
         }
     }
 
+    /**
+     * Transforms the given [messageItem] to the type of the message we should show in the list.
+     *
+     * @param messageItem The message item that holds all the information required to generate a message type.
+     * @return The [Int] message type.
+     */
     private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): Int {
         val message = messageItem.message
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
-        val (giphy, _) = linksAndGiphy.partition { attachment -> attachment.type == ModelType.attach_giphy }
+        val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
 
         return when {
             message.isError() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
-            giphy.isNotEmpty() -> GIPHY_ATTACHMENT
+            containsGiphy -> GIPHY_ATTACHMENT
             message.attachments.any { it.isImage() } -> IMAGE_ATTACHMENT
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT

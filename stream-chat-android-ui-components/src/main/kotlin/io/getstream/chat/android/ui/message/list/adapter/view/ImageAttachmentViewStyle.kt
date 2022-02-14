@@ -18,7 +18,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Use this class together with [TransformStyle.imageAttachmentStyleTransformer] to change styles programmatically.
  *
  * @param progressIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
- * @param placeholderIcon Displayed while the Giphy is Loading.
+ * @param placeholderIcon Displayed while the image is Loading.
  * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.

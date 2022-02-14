@@ -45,6 +45,8 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
@@ -988,6 +990,15 @@ public class ChatClient internal constructor(
     }
 
     /**
+     * Updates the message in the API without causing any side effect in the local data of the SDK.
+     *
+     * @param message [Message] The message to be updated in the API
+     */
+    public fun updateMessageInternal(message: Message): Call<Message> {
+        return api.updateMessage(message)
+    }
+
+    /**
      * Partially updates specific [Message] fields retaining the fields which were set previously.
      *
      * @param messageId The message ID.
@@ -1129,13 +1140,49 @@ public class ChatClient internal constructor(
         return api.showChannel(channelType, channelId)
     }
 
+    /**
+     * Hides the specified channel.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId Id of the channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     *
+     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
+     */
+    internal fun hideChannelInternal(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean = false,
+    ): Call<Unit> = api.hideChannel(channelType, channelId, clearHistory)
+
+    /**
+     * Hides the specified channel with side effects.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId Id of the channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     *
+     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
+     */
     @CheckResult
     public fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false,
     ): Call<Unit> {
-        return api.hideChannel(channelType, channelId, clearHistory)
+        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>()
+        return hideChannelInternal(channelType, channelId, clearHistory)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { it.onHideChannelRequest(channelType, channelId, clearHistory) }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { it.onHideChannelResult(result, channelType, channelId, clearHistory) }
+            }
+            .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
     }
 
     /**
@@ -1292,9 +1339,26 @@ public class ChatClient internal constructor(
         return api.acceptInvite(channelType, channelId, message)
     }
 
+    /**
+     * Marks all the channel as read.
+     *
+     * @return [Result] Empty unit result.
+     */
+    @InternalStreamChatApi
+    public fun markAllReadInternal(): Call<Unit> = api.markAllRead()
+
+    /**
+     * Marks all the channel as read.
+     *
+     * @return [Result] Empty unit result.
+     */
     @CheckResult
     public fun markAllRead(): Call<Unit> {
+        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>()
         return api.markAllRead()
+            .doOnStart(scope) {
+                relevantPlugins.forEach { it.onMarkAllReadRequest() }
+            }
     }
 
     /**

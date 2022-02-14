@@ -15,6 +15,12 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
         data: MessageListItem.MessageItem,
     ) = setupTextView(viewHolder.binding.messageText, data)
 
+    /**
+     * Decorates the text of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,

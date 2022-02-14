@@ -9,6 +9,9 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  */
 @ExperimentalStreamChatApi
 public interface Plugin {
+    /**
+     * Name of this plugin.
+     */
     public val name: String
 
     /**

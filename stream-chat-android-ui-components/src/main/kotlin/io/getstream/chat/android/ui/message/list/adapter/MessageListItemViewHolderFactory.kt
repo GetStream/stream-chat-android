@@ -72,10 +72,10 @@ public open class MessageListItemViewHolderFactory {
 
     private val textTransformer: ChatMessageTextTransformer by lazy { ChatUI.messageTextTransformer }
 
-    /*
-    * This is necessary to maintain the configuration of this factory, but without sharing the instance. Please use
-    * clone when sharing the factory between MessageListView and MessageOptionsDialogFragment
-    */
+    /**
+     * This is necessary to maintain the configuration of this factory, but without sharing the instance. Please use
+     * clone when sharing the factory between MessageListView and MessageOptionsDialogFragment
+     */
     internal fun clone(): MessageListItemViewHolderFactory {
         val newFactory = MessageListItemViewHolderFactory()
 
@@ -136,9 +136,13 @@ public open class MessageListItemViewHolderFactory {
         }
     }
 
-    protected fun createTextAndAttachmentViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
+    /**
+     * Creates the text and attachment view holder, that holds various types of attachments and the text at the bottom.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that can hold attachments and text.
+     */
+    protected fun createTextAndAttachmentViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<out MessageListItem> {
         return TextAndAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
@@ -147,6 +151,18 @@ public open class MessageListItemViewHolderFactory {
             attachmentViewFactory,
             style
         )
+    }
+
+    /**
+     * Creates the Giphy view holder, that holds various a Giphy image.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that holds a Giphy image in various quality types.
+     */
+    protected fun createGiphyAttachmentViewHolder(
+        parentView: ViewGroup
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return GiphyAttachmentViewHolder(parentView, decoratorProvider.decorators, listenerContainer, markdown = textTransformer)
     }
 
     protected fun createImageAttachmentViewHolder(
@@ -160,28 +176,36 @@ public open class MessageListItemViewHolderFactory {
         )
     }
 
-    protected fun createGiphyAttachmentViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return GiphyAttachmentViewHolder(parentView,
-            decoratorProvider.decorators,
-            listenerContainer,
-            textTransformer
-        )
-    }
-
+    /**
+     * Creates a date divider view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that represents the date divider.
+     */
     protected fun createDateDividerViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> {
         return DateDividerViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
+    /**
+     * Creates the deleted message view holder, that's visible only to the user that deleted the message.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that shows information about the deleted message.
+     */
     protected fun createMessageDeletedViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return MessageDeletedViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
+    /**
+     * Creates a text  view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that holds just text.
+     */
     protected fun createPlainTextViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
@@ -193,33 +217,65 @@ public open class MessageListItemViewHolderFactory {
         )
     }
 
+    /**
+     * Creates a thread separator view holder when in a Thread.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that represents the thread separator.
+     */
     protected fun createThreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> {
         return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
+    /**
+     * Creates the Giphy message view holder, that holds a Giphy that hasn't been sent yet and can be shuffled and canceled.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that can holds the Giphy preview and options.
+     */
     protected fun createGiphyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return GiphyViewHolder(parentView,
+        return GiphyViewHolder(
+            parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            giphyViewHolderStyle)
+            giphyViewHolderStyle
+        )
     }
 
+    /**
+     * Creates the system message view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that shows the system message.
+     */
     protected fun createSystemMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return SystemMessageViewHolder(parentView, style)
     }
 
+    /**
+     * Creates the error message view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that shows the error.
+     */
     protected fun createErrorMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return ErrorMessageViewHolder(parentView, style)
     }
 
+    /**
+     * Creates the empty message view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that represents the empty message.
+     */
     private fun createEmptyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem> {

@@ -586,7 +586,7 @@ public class ChannelController internal constructor(
 
         if (online) {
             val runnable = {
-                client.updateMessage(messageToBeEdited)
+                client.updateMessageInternal(messageToBeEdited)
             }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
@@ -669,6 +669,7 @@ public class ChannelController internal constructor(
             ?.data()
             ?: domainImpl.repos.selectMessage(messageId)
             ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+        channelLogic.storeMessageLocally(listOf(message))
         upsertMessage(message)
         loadOlderMessages(messageId, newerMessagesOffset)
         loadNewerMessages(messageId, olderMessagesOffset)

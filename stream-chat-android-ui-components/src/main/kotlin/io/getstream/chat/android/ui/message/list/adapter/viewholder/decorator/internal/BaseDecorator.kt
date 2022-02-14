@@ -37,6 +37,12 @@ internal abstract class BaseDecorator : Decorator {
         data: MessageListItem.MessageItem,
     )
 
+    /**
+     * Applies various decorations to the [GiphyAttachmentViewHolder].
+     *
+     * @param viewHolder The holder to be decorated.
+     * @param data The data used to define various decorations.
+     */
     abstract fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,

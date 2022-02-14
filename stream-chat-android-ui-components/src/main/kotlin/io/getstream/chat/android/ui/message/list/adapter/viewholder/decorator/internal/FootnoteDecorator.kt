@@ -49,6 +49,12 @@ internal class FootnoteDecorator(
         data,
     )
 
+    /**
+     * Decorates the footnote of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,
@@ -176,9 +182,9 @@ internal class FootnoteDecorator(
                 style.textStyleUserName.apply(textView)
             }
 
-            data.isBottomPosition()
-                && data.message.isDeleted()
-                && deletedMessageListItemPredicate == VisibleToAuthorOnly -> {
+            data.isBottomPosition() &&
+                data.message.isDeleted() &&
+                deletedMessageListItemPredicate == VisibleToAuthorOnly -> {
                 showOnlyVisibleToYou(textView, style)
             }
 

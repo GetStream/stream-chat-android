@@ -7,8 +7,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
@@ -131,9 +129,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
-    @Suppress("DEPRECATION_ERROR")
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        chatDomainStateFlow.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> =
         chatDomainStateFlow.getChannelController(cid).map(::ChannelControllerImpl)
@@ -227,14 +222,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         chatDomainStateFlow.deleteReaction(cid, reaction)
 
-    @Suppress("DEPRECATION_ERROR")
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlow.keystroke(cid, parentId)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlow.stopTyping(cid, parentId)
-
     override fun markRead(cid: String): Call<Boolean> = chatDomainStateFlow.markRead(cid)
 
     override fun markAllRead(): Call<Boolean> = chatDomainStateFlow.markAllRead()
@@ -248,14 +235,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlow.leaveChannel(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        chatDomainStateFlow.setMessageForReply(cid, message)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun downloadAttachment(attachment: Attachment): Call<Unit> =
-        chatDomainStateFlow.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,

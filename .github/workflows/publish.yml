@@ -1,8 +1,10 @@
 name: Publish
 
 on:
-  release:
-    types: [released]
+  workflow_run:
+    workflows: ["Releases"]
+    types:
+      - completed
 
 jobs:
   publish:

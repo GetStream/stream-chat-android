@@ -147,6 +147,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun updateChannelPartial (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun updateChannelPartial$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public final fun updateMessageInternal (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUsers (Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 }
@@ -1882,6 +1883,26 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun onMessageEditResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener {
+	public abstract fun onGetMessageError (Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetMessageResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener$DefaultImpls {
+	public static synthetic fun onGetMessageError$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun onGetMessageResult$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/HideChannelListener {
+	public abstract fun onHideChannelPrecondition (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onHideChannelRequest (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onHideChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/MarkAllReadListener {
+	public abstract fun onMarkAllReadRequest (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener {
 	public abstract fun onQueryChannelPrecondition (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1927,6 +1948,7 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 }
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
+	public static synthetic fun getUsersExcludingCurrent$default (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
 }
@@ -2834,6 +2856,7 @@ public final class io/getstream/chat/android/client/models/PushProvider : java/l
 	public static final field FIREBASE Lio/getstream/chat/android/client/models/PushProvider;
 	public static final field HUAWEI Lio/getstream/chat/android/client/models/PushProvider;
 	public static final field UNKNOWN Lio/getstream/chat/android/client/models/PushProvider;
+	public static final field XIAOMI Lio/getstream/chat/android/client/models/PushProvider;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/PushProvider;
 	public static fun values ()[Lio/getstream/chat/android/client/models/PushProvider;
 }
