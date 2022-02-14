@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -264,23 +265,14 @@ internal class ChatDomainImpl internal constructor(
             setUser(current)
         }
 
-        InitializationCoordinator.getOrCreate().addUserConnectedListener(::setUser)
-
-        // past behaviour was to set the user on the chat domain
-        // the new syntax is to automatically pick up changes from the client
-        // listen to future user changes
-        //Todo: Use InitializationCoordinator
-        // client.preSetUserListeners.add {
-        //     setUser(it)
-        // }
-        // // disconnect if the low level client disconnects
-        // client.disconnectListeners.add {
-        //     scope.launch {
-        //         disconnect()
-        //     }
-        // }
-
-
+        InitializationCoordinator.getOrCreate().run {
+            addUserConnectedListener(::setUser)
+            addUserDisconnectedListener {
+                scope.launch {
+                    disconnect()
+                }
+            }
+        }
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->
