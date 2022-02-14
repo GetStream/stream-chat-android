@@ -12,6 +12,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.GetMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.HideChannelListenerImpl
@@ -56,7 +57,8 @@ public class StreamOfflinePluginFactory(
         val userStateFlow = MutableStateFlow<User?>(null)
         chatClient.preSetUserListeners.add { user -> userStateFlow.value = user }
 
-        val stateRegistry = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl).run {
+        val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl
+        val stateRegistry = chatDomainImpl.run {
             StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
         }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
@@ -71,6 +73,11 @@ public class StreamOfflinePluginFactory(
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
+            deleteReactionListener = DeleteReactionListenerImpl(
+                logic = logic,
+                globalState = globalStateRegistry,
+                repos = chatDomainImpl.repos,
+            ),
         )
     }
 }
