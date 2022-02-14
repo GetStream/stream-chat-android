@@ -6,9 +6,20 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSugge
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal.CommandViewHolder
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal.MentionViewHolder
 
+/**
+ * A factory that creates ViewHolders used for displaying suggestion list items.
+ */
 public open class SuggestionListItemViewHolderFactory {
+
+    /**
+     * Style used by the suggestion list ViewHolders.
+     */
     internal lateinit var style: SuggestionListViewStyle
 
+    /**
+     * Creates the ViewHolder used for displaying a list
+     * of mention suggestion items.
+     */
     public open fun createMentionViewHolder(
         parentView: ViewGroup,
     ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
@@ -20,6 +31,10 @@ public open class SuggestionListItemViewHolderFactory {
         )
     }
 
+    /**
+     * Creates the ViewHolder used for displaying a list
+     * of command suggestion items.
+     */
     public open fun createCommandViewHolder(
         parentView: ViewGroup,
     ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {

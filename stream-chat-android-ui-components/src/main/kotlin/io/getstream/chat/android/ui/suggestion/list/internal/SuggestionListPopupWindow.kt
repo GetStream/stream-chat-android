@@ -27,6 +27,9 @@ internal class SuggestionListPopupWindow(
         inputMethodMode = INPUT_METHOD_NEEDED
     }
 
+    /**
+     * Renders the suggestion link by anchoring the popup and adjusting its dimensions.
+     */
     override fun renderSuggestions(suggestions: Suggestions) {
         suggestionListView.renderSuggestions(suggestions)
 
@@ -52,6 +55,9 @@ internal class SuggestionListPopupWindow(
         suggestionListView.renderSuggestions(Suggestions.EmptySuggestions)
     }
 
+    /**
+     * Shows if the suggestion list is currently visible.
+     */
     override fun isSuggestionListVisible(): Boolean {
         return suggestionListView.isSuggestionListVisible()
     }

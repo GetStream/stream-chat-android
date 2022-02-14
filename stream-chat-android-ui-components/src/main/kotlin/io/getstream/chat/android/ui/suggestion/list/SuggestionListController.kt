@@ -96,6 +96,12 @@ public class SuggestionListController(
         }
     }
 
+    /**
+     * Handles the user lookup used to generate mention suggestions.
+     *
+     * @see MessageInputView.UserLookupHandler
+     * @see MessageInputView.DefaultUserLookupHandler
+     */
     private suspend fun handleUserLookup(
         userLookupHandler: MessageInputView.UserLookupHandler,
         messageText: String,
@@ -130,15 +136,27 @@ public class SuggestionListController(
         return suggestionListUi.isSuggestionListVisible()
     }
 
+    /**
+     * Renders the suggestion list UI.
+     */
     private suspend fun renderSuggestions(suggestions: Suggestions) = withContext(DispatcherProvider.Main) {
         suggestionListUi.renderSuggestions(suggestions)
         suggestionListControllerListener?.onSuggestionListUiVisibilityChanged(suggestionListUi.isSuggestionListVisible())
     }
 
+    /**
+     * Checks if a string contains command patterns.
+     */
     private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
 
+    /**
+     * Checks if a string contains mention patterns.
+     */
     private fun String.isMentionMessage() = MENTION_PATTERN.matcher(this).find()
 
+    /**
+     * Uses the receiver string to fetch a list of command suggestions.
+     */
     private fun String.getCommandSuggestions(): Suggestions.CommandSuggestions {
         val commandPattern = removePrefix("/")
         return commands

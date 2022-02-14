@@ -30,7 +30,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.Debouncer
-import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -47,6 +46,7 @@ import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.message.input.mention.searchUsers
 import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.message.input.transliteration.StreamTransliterator
+import io.getstream.chat.android.ui.suggestion.list.DefaultSuggestionListControllerListener
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListControllerListener
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
@@ -88,16 +88,6 @@ public class MessageInputView : ConstraintLayout {
     private var isSendButtonEnabled: Boolean = true
     private var mentionsEnabled: Boolean = true
     private var commandsEnabled: Boolean = true
-
-    /**
-     * Shows if the suggestion list popup is visible.
-     */
-    private var isSuggestionListUiVisible: Boolean = false
-
-    /**
-     * Shows if the input text contains commands.
-     */
-    private var inputContainsCommands: Boolean = false
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
@@ -552,22 +542,11 @@ public class MessageInputView : ConstraintLayout {
     /**
      * Creates an instance of [SuggestionListControllerListener].
      *
-     * Used to modify attachment button visibility to discourage mixing
-     * commands and attachments since they are not compatible.
+     * Used to disable integration buttons, based on if commands or attachments are added to the message.
      */
-    private fun createSuggestionsListControllerListener(): SuggestionListControllerListener =
-        object : SuggestionListControllerListener {
-            override fun onSuggestionListUiVisibilityChanged(isVisible: Boolean) {
-                isSuggestionListUiVisible = isVisible
-                binding.attachmentsButton.isEnabled = !isSuggestionListUiVisible && !inputContainsCommands
-            }
-
-            override fun containsCommands(doesContain: Boolean) {
-                inputContainsCommands = doesContain
-                binding.attachmentsButton.isEnabled = !isSuggestionListUiVisible && !inputContainsCommands
-            }
-
-            override fun containsMentions(doesContain: Boolean) {}
+    private fun createSuggestionsListControllerListener(): DefaultSuggestionListControllerListener =
+        DefaultSuggestionListControllerListener { shouldEnable ->
+            binding.attachmentsButton.isEnabled = shouldEnable
         }
 
     /**
@@ -666,9 +645,9 @@ public class MessageInputView : ConstraintLayout {
                     refreshControlsState()
                     handleKeyStroke()
 
-                    // Debouncing when clearing the input will cause the suggestion list
-                    // popup to appear briefly after clearing the input in certain cases.
-                    if (messageText == String.EMPTY) {
+                    /* Debouncing when clearing the input will cause the suggestion list
+                    popup to appear briefly after clearing the input in certain cases. */
+                    if (messageText.isEmpty()) {
                         messageInputDebouncer?.cancelLastDebounce()
                         suggestionListController?.onNewMessageText(messageText)
                     } else {
