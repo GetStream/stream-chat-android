@@ -9,6 +9,7 @@ internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)
     suspend fun insertUser(user: User)
     suspend fun insertCurrentUser(user: User)
+    suspend fun selectUser(userId: String): User? //Todo: Implement later
     suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
     suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 
@@ -57,6 +58,10 @@ internal class UserRepositoryImpl(
 
     override suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User> {
         return userDao.selectUsersLikeName("$searchString%", limit, offset).map(::toModel)
+    }
+
+    override suspend fun selectUser(userId: String): User? {
+        return userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
     }
 
     private fun toEntity(user: User): UserEntity = with(user) {
