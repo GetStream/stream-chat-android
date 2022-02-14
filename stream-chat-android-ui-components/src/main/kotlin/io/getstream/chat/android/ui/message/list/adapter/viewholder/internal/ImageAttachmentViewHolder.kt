@@ -21,6 +21,15 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.Attachmen
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
+/**
+ * ViewHolder used for displaying messages that contain image attachments.
+ *
+ * @param parent The parent container.
+ * @param decorators List of decorators applied to the ViewHolder.
+ * @param listeners Listeners used by the ViewHolder.
+ * @param messageTextTransformer Formats strings and sets them on the respective TextView.
+ * @param binding Binding generated for the layout.
+ */
 internal class ImageAttachmentViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
@@ -94,31 +103,41 @@ internal class ImageAttachmentViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
-
-        binding.messageText.isVisible = data.message.text.isNotEmpty()
-        messageTextTransformer.transformAndApply(binding.messageText, data)
-
-        val listeners = modifiedListeners(listeners)
-        if (diff?.attachments != false || diff.positions) {
-            binding.imageAttachmentView.setPadding(1.dpToPx())
-            binding.imageAttachmentView.setupBackground(data)
-            binding.imageAttachmentView.attachmentClickListener = AttachmentClickListener {
-                listeners?.attachmentClickListener?.onAttachmentClick(data.message, it)
-            }
-            binding.imageAttachmentView.attachmentLongClickListener = AttachmentLongClickListener {
-                listeners?.messageLongClickListener?.onMessageLongClick(data.message)
-            }
-            binding.imageAttachmentView.showAttachments(data.message.attachments)
-        }
-
-        binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            horizontalBias = if (data.isTheirs) 0f else 1f
-        }
-
-        setupUploads(data)
+        bindMessageText(data)
+        bindHorizontalBias(data)
+        bindImageAttachments(data)
+        bindUploadingIndicator(data)
     }
 
-    private fun setupUploads(data: MessageListItem.MessageItem) {
+    /**
+     * Updates the image attachments section of the message.
+     */
+    private fun bindImageAttachments(data: MessageListItem.MessageItem) {
+        val listeners = modifiedListeners(listeners)
+
+        binding.imageAttachmentView.setPadding(1.dpToPx())
+        binding.imageAttachmentView.setupBackground(data)
+        binding.imageAttachmentView.attachmentClickListener = AttachmentClickListener {
+            listeners?.attachmentClickListener?.onAttachmentClick(data.message, it)
+        }
+        binding.imageAttachmentView.attachmentLongClickListener = AttachmentLongClickListener {
+            listeners?.messageLongClickListener?.onMessageLongClick(data.message)
+        }
+        binding.imageAttachmentView.showAttachments(data.message.attachments)
+    }
+
+    /**
+     * Updates the text section of the message.
+     */
+    private fun bindMessageText(data: MessageListItem.MessageItem) {
+        binding.messageText.isVisible = data.message.text.isNotEmpty()
+        messageTextTransformer.transformAndApply(binding.messageText, data)
+    }
+
+    /**
+     * Update the uploading status section of the message.
+     */
+    private fun bindUploadingIndicator(data: MessageListItem.MessageItem) {
         val totalAttachmentsCount = data.message.attachments.size
         val completedAttachmentsCount =
             data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
@@ -134,7 +153,17 @@ internal class ImageAttachmentViewHolder(
         }
     }
 
+    /**
+     * Updates the horizontal bias of the message according to the owner
+     * of the message.
+     */
+    private fun bindHorizontalBias(data: MessageListItem.MessageItem) {
+        binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            this.horizontalBias = if (data.isMine) 1f else 0f
+        }
+    }
+
     override fun onAttachedToWindow() {
-        setupUploads(data)
+        bindUploadingIndicator(data)
     }
 }
