@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -54,8 +55,7 @@ public class StreamOfflinePluginFactory(
             recoveryEnabled()
         }.build()
 
-        val userStateFlow = MutableStateFlow<User?>(null)
-        chatClient.preSetUserListeners.add { user -> userStateFlow.value = user }
+        val userStateFlow = MutableStateFlow(chatClient.getCurrentUser())
 
         val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl
         val stateRegistry = chatDomainImpl.run {

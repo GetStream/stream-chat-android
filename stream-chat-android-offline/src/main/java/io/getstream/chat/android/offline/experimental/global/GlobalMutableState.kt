@@ -78,6 +78,17 @@ internal class GlobalMutableState private constructor() : GlobalState {
         @VisibleForTesting
         internal fun create(): GlobalMutableState = GlobalMutableState()
     }
+
+    override fun clearState() {
+        _initialized.value = false
+        _connectionState.value = ConnectionState.OFFLINE
+        _totalUnreadCount.value = 0
+        _channelUnreadCount.value = 0
+        _banned.value = false
+
+        _mutedUsers.value = emptyList()
+        _channelMutes.value = emptyList()
+    }
 }
 
 @ExperimentalStreamChatApi
