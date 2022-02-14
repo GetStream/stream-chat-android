@@ -30,6 +30,16 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
+     * Draws the background of messages containing image attachments.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun imageAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
      * Draws the background of deleted messages,
      *
      * @param context [Context].
@@ -116,6 +126,8 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
                 setTint(ContextCompat.getColor(context, MESSAGE_OTHER_USER_BACKGROUND))
             }
     }
+
+
 
     public companion object {
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
