@@ -34,7 +34,6 @@ import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
@@ -193,7 +192,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             .database(db)
             .offlineEnabled()
             .userPresenceEnabled()
-            .retryPolicy(NoRetryPolicy())
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
 

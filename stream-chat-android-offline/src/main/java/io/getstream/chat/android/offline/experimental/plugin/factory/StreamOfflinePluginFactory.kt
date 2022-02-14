@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactor
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
@@ -52,7 +51,6 @@ public class StreamOfflinePluginFactory(
             if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
             if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
             recoveryEnabled()
-            retryPolicy(config.retryPolicy.toLiveDataRetryPolicy())
         }.build()
 
         val userStateFlow = MutableStateFlow<User?>(null)

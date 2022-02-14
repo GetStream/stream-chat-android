@@ -1,7 +1,10 @@
 package io.getstream.chat.android.offline.message
 
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -26,6 +29,7 @@ import java.util.Date
 internal class MessageSendingService(
     private val domainImpl: ChatDomainImpl,
     private val channelController: ChannelController,
+    private val chatClient: ChatClient,
     private val channelClient: ChannelClient,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker,
 ) {
@@ -138,7 +142,7 @@ internal class MessageSendingService(
         return Result.success(messageToSend)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
             .flatMapSuspend { newMessage ->
-                domainImpl.callRetryService().runAndRetry { channelClient.sendMessage(newMessage) }
+                channelClient.sendMessage(newMessage).retry(domainImpl.scope, chatClient.retryPolicy).await()
             }
             .mapSuspend(channelController::handleSendMessageSuccess)
             .recoverSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
