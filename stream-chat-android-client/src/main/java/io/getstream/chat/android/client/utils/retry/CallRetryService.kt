@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.delay
 
 /**
@@ -13,8 +12,7 @@ import kotlinx.coroutines.delay
  *
  * @param retryPolicy The policy used for determining if the call should be retried.
  */
-@InternalStreamChatApi
-public class CallRetryService(private val retryPolicy: RetryPolicy) {
+internal class CallRetryService(private val retryPolicy: RetryPolicy) {
 
     private val logger = ChatLogger.get("CallRetryService")
 
@@ -23,7 +21,7 @@ public class CallRetryService(private val retryPolicy: RetryPolicy) {
      *
      * @param runnable The call to be run.
      */
-    public suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
+    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
         var attempt = 1
         var result: Result<T>
 
