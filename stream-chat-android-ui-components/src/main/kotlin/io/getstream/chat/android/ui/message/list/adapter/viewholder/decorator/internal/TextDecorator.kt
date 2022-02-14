@@ -37,6 +37,12 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Decorates the text of the message containing file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,

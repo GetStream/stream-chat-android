@@ -44,7 +44,9 @@ internal object MessageListItemViewTypeMapper {
         val message = messageItem.message
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
-        val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
+        val (giphy, links) = linksAndGiphy.partition { attachment -> attachment.type == ModelType.attach_giphy }
+        val containsGiphy = giphy.isNotEmpty()
+        val containsLinks = links.isNotEmpty()
 
         return when {
             message.isError() -> ERROR_MESSAGE
@@ -54,7 +56,7 @@ internal object MessageListItemViewTypeMapper {
             containsGiphy -> GIPHY_ATTACHMENT
             // TODO uncomment and sort order priority
             // messageItem.message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
-            messageItem.message.attachments.any { attachment -> attachment.hasLink() } -> LINK_ATTACHMENTS
+            containsLinks -> LINK_ATTACHMENTS
             else -> PLAIN_TEXT
         }
     }
