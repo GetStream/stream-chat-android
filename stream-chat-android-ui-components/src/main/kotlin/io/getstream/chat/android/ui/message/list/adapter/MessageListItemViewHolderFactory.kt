@@ -160,11 +160,23 @@ public open class MessageListItemViewHolderFactory {
      * @return The [BaseMessageItemViewHolder] that holds a Giphy image in various quality types.
      */
     protected fun createGiphyAttachmentViewHolder(
-        parentView: ViewGroup
+        parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
-        return GiphyAttachmentViewHolder(parentView, decoratorProvider.decorators, listenerContainer, markdown = textTransformer)
+        return GiphyAttachmentViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            markdown = textTransformer
+        )
     }
 
+    /**
+     * Creates a ViewHolder for messages containing image attachments and no other type
+     * of attachments.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that displays messages with image attachments.
+     */
     protected fun createImageAttachmentViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
