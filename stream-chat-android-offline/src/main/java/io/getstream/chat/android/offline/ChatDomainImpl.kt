@@ -220,11 +220,6 @@ internal class ChatDomainImpl internal constructor(
     internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
         private set
 
-    private fun clearUnreadCountState() {
-        globalState._totalUnreadCount.value = 0
-        globalState._channelUnreadCount.value = 0
-    }
-
     private fun clearConnectionState() {
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
@@ -232,8 +227,10 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setUser(user: User) {
-        clearConnectionState()
-        clearUnreadCountState()
+        globalState._initialized.value = false
+        globalState._connectionState.value = ConnectionState.OFFLINE
+        globalState._banned.value = false
+        globalState._mutedUsers.value = emptyList()
 
         globalState._user.value = user
         // load channel configs from Room into memory
