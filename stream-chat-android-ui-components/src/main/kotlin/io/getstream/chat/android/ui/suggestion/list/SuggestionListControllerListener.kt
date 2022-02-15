@@ -25,9 +25,9 @@ public interface SuggestionListControllerListener {
  * The default implementation of [SuggestionListControllerListener].
  * Used to change the enabled state of the attachments button.
  *
- * @param shouldEnableAttachmentsButton A lambda used for changing the state of the attachments button.
+ * @param onInputStateChanged Used to react to the input state change to enable or disable attachments.
  */
-internal class DefaultSuggestionListControllerListener(private val shouldEnableAttachmentsButton: (shouldEnable: Boolean) -> Unit) :
+internal class DefaultSuggestionListControllerListener(private val onInputStateChanged: (shouldEnableAttachments: Boolean) -> Unit) :
     SuggestionListControllerListener {
 
     /**
@@ -36,7 +36,7 @@ internal class DefaultSuggestionListControllerListener(private val shouldEnableA
     private var isSuggestionListUiVisible: Boolean = false
         set(value) {
             field = value
-            shouldEnableAttachmentsButton(!isSuggestionListUiVisible && !inputContainsCommands)
+            onInputStateChanged(!isSuggestionListUiVisible && !inputContainsCommands)
         }
 
     /**
@@ -45,7 +45,7 @@ internal class DefaultSuggestionListControllerListener(private val shouldEnableA
     private var inputContainsCommands: Boolean = false
         set(value) {
             field = value
-            shouldEnableAttachmentsButton(!isSuggestionListUiVisible && !inputContainsCommands)
+            onInputStateChanged(!isSuggestionListUiVisible && !inputContainsCommands)
         }
 
     /**
