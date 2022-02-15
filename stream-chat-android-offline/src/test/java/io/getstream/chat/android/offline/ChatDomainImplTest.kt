@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
@@ -156,7 +157,7 @@ internal class ChatDomainImplTest {
         private val userPresence = true
         private val recoveryEnabled = true
 
-        private val chatDomainImpl = ChatDomain.Builder(mock<Context>(), client)
+        private val chatDomainImpl = ChatDomain.Builder(mock(), client)
             .database(db)
             .handler(handler)
             .offlineEnabled()
@@ -166,6 +167,7 @@ internal class ChatDomainImplTest {
             .let { it as ChatDomainImpl }
             .also {
                 it.setUser(randomUser())
+                RepositoryFacade.initialise(RepositoryFactory(db, randomUser()), mock(), mock())
             }
 
         fun withRepositoryFacade(repositoryFacade: RepositoryFacade) = apply {

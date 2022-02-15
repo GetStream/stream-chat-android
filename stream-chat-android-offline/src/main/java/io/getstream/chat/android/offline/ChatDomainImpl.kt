@@ -180,8 +180,16 @@ internal class ChatDomainImpl internal constructor(
      * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is
      * not closed by room.
      */
-    internal val repos: RepositoryFacade
-        get() = RepositoryFacade.get()
+
+    internal var repos: RepositoryFacade
+        get() = _repos ?: RepositoryFacade.get().also { repositoryFacade ->
+            _repos = repositoryFacade
+        }
+        set(value) {
+            _repos = value
+        }
+
+    private var _repos: RepositoryFacade? = null
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -265,14 +273,23 @@ internal class ChatDomainImpl internal constructor(
             setUser(current)
         }
 
-        InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener(::setUser)
-            addUserDisconnectedListener {
-                scope.launch {
-                    disconnect()
-                }
-            }
-        }
+        InitializationCoordinator.getOrCreate().addUserConnectedListener(::setUser)
+
+        // past behaviour was to set the user on the chat domain
+        // the new syntax is to automatically pick up changes from the client
+        // listen to future user changes
+        //Todo: Use InitializationCoordinator
+        // client.preSetUserListeners.add {
+        //     setUser(it)
+        // }
+        // // disconnect if the low level client disconnects
+        // client.disconnectListeners.add {
+        //     scope.launch {
+        //         disconnect()
+        //     }
+        // }
+
+
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->
@@ -333,6 +350,10 @@ internal class ChatDomainImpl internal constructor(
         mainHandler.postDelayed(cleanTask, 5000)
     }
 
+    @Deprecated(
+        message = "This utility method is extracted to CallRetryService",
+        replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
+    )
     fun addError(error: ChatError) {
         globalState._errorEvent.value = Event(error)
     }

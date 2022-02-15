@@ -2027,6 +2027,16 @@ public class ChatClient internal constructor(
             this.retryPolicy = retryPolicy
         }
 
+        private fun configureInitializer(chatClient: ChatClient) {
+            chatClient.initializationCoordinator.addDatabaseCreatedListener {
+                chatClient.addPlugins(
+                    pluginFactories.map { pluginFactory ->
+                        pluginFactory.getOrCreate()
+                    }
+                )
+            }
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -2083,7 +2093,9 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
-            )
+            ).also {
+                configureInitializer(it)
+            }
         }
     }
 
@@ -2096,16 +2108,6 @@ public class ChatClient internal constructor(
          */
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
-        private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addDatabaseCreatedListener {
-                chatClient.addPlugins(
-                    pluginFactories.map { pluginFactory ->
-                        pluginFactory.getOrCreate()
-                    }
-                )
-            }
-        }
-
         /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
@@ -2113,7 +2115,6 @@ public class ChatClient internal constructor(
         public fun build(): ChatClient = internalBuild()
             .also {
                 instance = it
-                configureInitializer(it)
             }
 
         @InternalStreamChatApi

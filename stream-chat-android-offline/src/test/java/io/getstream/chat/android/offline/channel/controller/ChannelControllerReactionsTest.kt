@@ -68,7 +68,6 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     fun `when add reaction should add it to own and latest reactions`() =
         coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
-                .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
                 .get()
 
@@ -85,7 +84,6 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     fun `when add reaction with enforce unique should remove current user other reactions`() =
         coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
-                .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
                 .get()
 
@@ -102,7 +100,6 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     fun `when add reaction with enforce unique should update reactions count`() =
         coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
-                .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
                 .get()
 
@@ -116,7 +113,6 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
     fun `when add reaction with enforce unique should update reactions score`() =
         coroutineTest {
             val sut = Fixture(testCoroutines.scope, currentUser)
-                .givenMockedRepositories()
                 .givenMessageWithReactions(myReactions)
                 .get()
 
