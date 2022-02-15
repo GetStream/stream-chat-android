@@ -7,8 +7,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
@@ -25,8 +23,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
@@ -112,9 +108,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override val errorEvents: LiveData<Event<ChatError>> = chatDomainStateFlow.errorEvents.map(::Event).asLiveData()
     override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlow.typingUpdates.asLiveData()
 
-    /** The retry policy for retrying failed requests */
-    override val retryPolicy: RetryPolicy = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
-
     override fun getVersion(): String = chatDomainStateFlow.getVersion()
 
     override fun isOnline(): Boolean = chatDomainStateFlow.isOnline()
@@ -131,9 +124,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
-    @Suppress("DEPRECATION_ERROR")
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        chatDomainStateFlow.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> =
         chatDomainStateFlow.getChannelController(cid).map(::ChannelControllerImpl)
@@ -227,14 +217,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         chatDomainStateFlow.deleteReaction(cid, reaction)
 
-    @Suppress("DEPRECATION_ERROR")
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlow.keystroke(cid, parentId)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlow.stopTyping(cid, parentId)
-
     override fun markRead(cid: String): Call<Boolean> = chatDomainStateFlow.markRead(cid)
 
     override fun markAllRead(): Call<Boolean> = chatDomainStateFlow.markAllRead()
@@ -248,14 +230,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlow.leaveChannel(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        chatDomainStateFlow.setMessageForReply(cid, message)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun downloadAttachment(attachment: Attachment): Call<Unit> =
-        chatDomainStateFlow.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,

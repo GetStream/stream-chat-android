@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.extensions.keystroke
@@ -149,7 +150,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public fun editMessage(message: Message) {
         stopTyping()
 
-        chatClient.updateMessage(message).enqueue(
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            chatClient.updateMessage(message)
+        } else {
+            chatDomain.editMessage(message)
+        }.enqueue(
             onError = { chatError ->
                 logger.logE("Could not edit message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }

@@ -13,8 +13,6 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
@@ -27,17 +25,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
-import io.getstream.chat.android.offline.experimental.plugin.Config as OfflinePluginConfig
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat.
@@ -97,9 +91,6 @@ public sealed interface ChatDomain {
      */
     public val banned: StateFlow<Boolean>
 
-    /** The retry policy for retrying failed requests */
-    public val retryPolicy: RetryPolicy
-
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
@@ -115,22 +106,6 @@ public sealed interface ChatDomain {
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
-
-    /**
-     * Adds the provided channel to the active channels and replays events for all active channels.
-     *
-     * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().replayEventsForActiveChannels(attachment)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     /**
      * Returns a ChannelController for given cid.
@@ -460,46 +435,6 @@ public sealed interface ChatDomain {
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     /**
-     * Keystroke should be called whenever a user enters text into the message input.
-     * It automatically calls stopTyping when the user stops typing after 5 seconds.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
-     *
-     * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "keystroke is deprecated. Use extension function ChatClient::keystroke instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().keystroke(cid, parentId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun keystroke(cid: String, parentId: String?): Call<Boolean>
-
-    /**
-     * StopTyping should be called when the user submits the text and finishes typing.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
-     *
-     * @return Executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
-     * false if it wasn't sent.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "stopTyping is deprecated. Use extension function ChatClient::stopTyping instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().stopTyping(cid, parentId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
-
-    /**
      * Marks all messages of the specified channel as read.
      *
      * @param cid The full channel id i. e. messaging:123.
@@ -586,43 +521,6 @@ public sealed interface ChatDomain {
     public fun deleteChannel(cid: String): Call<Unit>
 
     /**
-     * Set the reply state for the channel.
-     *
-     * @param cid CID of the channel where reply state is being set.
-     * @param message The message we want reply to. The null value means dismiss reply state.
-     *
-     * @return Executable async [Call].
-     */
-    @CheckResult
-    @Deprecated(
-        message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().setMessageForReply(attachment)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
-
-    /**
-     * Downloads the selected attachment to the "Download" folder in the public external storage directory.
-     *
-     * @param attachment The attachment to download.
-     *
-     * @return Executable async [Call] downloading attachment.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "downloadAttachment is deprecated. Use extension function ChatClient::downloadAttachment instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().downloadAttachment(attachment)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun downloadAttachment(attachment: Attachment): Call<Unit>
-
-    /**
      * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
      * in local database.
      *
@@ -680,8 +578,6 @@ public sealed interface ChatDomain {
         private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType =
             UploadAttachmentsNetworkType.NOT_ROAMING
 
-        private var retryPolicy: RetryPolicy = DefaultRetryPolicy()
-
         @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
@@ -738,11 +634,6 @@ public sealed interface ChatDomain {
             return this
         }
 
-        public fun retryPolicy(retryPolicy: RetryPolicy): Builder {
-            this.retryPolicy = retryPolicy
-            return this
-        }
-
         public fun build(): ChatDomain {
             instance?.run {
                 Log.e(
@@ -754,22 +645,9 @@ public sealed interface ChatDomain {
             return instance()
         }
 
-        @ExperimentalStreamChatApi
-        private fun getPlugin(): OfflinePlugin {
-            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }
-                ?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
-                ?: OfflinePluginConfig(
-                    backgroundSyncEnabled = backgroundSyncEnabled,
-                    userPresence = userPresence,
-                    persistenceEnabled = storageEnabled
-                )
-                    .let(::OfflinePlugin)
-        }
-
         @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -779,13 +657,8 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = plugin,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
-                retryPolicy
-            ).also { domainImpl ->
-                // TODO remove when plugin becomes stateless
-                plugin.initState(domainImpl, client)
-            }
+            )
         }
     }
 

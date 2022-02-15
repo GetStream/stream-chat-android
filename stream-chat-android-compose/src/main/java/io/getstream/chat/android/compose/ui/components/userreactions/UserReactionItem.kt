@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.components.userreactions
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +34,7 @@ public fun UserReactionItem(
     item: UserReactionItemState,
     modifier: Modifier = Modifier,
 ) {
-    val (user, painter, isMine, type) = item
+    val (user, painter, type) = item
 
     Column(
         modifier = modifier,
@@ -48,7 +48,7 @@ public fun UserReactionItem(
                 modifier = Modifier.size(ChatTheme.dimens.userReactionItemAvatarSize)
             )
 
-            Icon(
+            Image(
                 modifier = Modifier
                     .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
                     .size(ChatTheme.dimens.userReactionItemIconSize)
@@ -56,7 +56,6 @@ public fun UserReactionItem(
                     .align(Alignment.BottomEnd),
                 painter = painter,
                 contentDescription = type,
-                tint = if (isMine) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
             )
         }
 

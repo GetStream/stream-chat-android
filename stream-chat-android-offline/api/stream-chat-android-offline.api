@@ -14,7 +14,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun downloadAttachment (Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Landroidx/lifecycle/LiveData;
@@ -27,7 +26,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun getInitialized ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
 	public abstract fun getOfflineEnabled ()Z
-	public abstract fun getRetryPolicy ()Lio/getstream/chat/android/livedata/utils/RetryPolicy;
 	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Landroidx/lifecycle/LiveData;
 	public abstract fun getTypingUpdates ()Landroidx/lifecycle/LiveData;
@@ -39,7 +37,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun isInitialized ()Z
 	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z
-	public abstract fun keystroke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun leaveChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadMessageById (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadNewerMessages (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -51,17 +48,14 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun queryChannelsLoadMore (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun queryChannelsLoadMore (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;III)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun queryMembers (Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun replayEventsForActiveChannels (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun searchUsersByName (Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setMessageForReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setUserPresence (Z)V
 	public abstract fun showChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun stopTyping (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun threadLoadMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watchChannel (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
@@ -80,7 +74,6 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public final fun offlineEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public final fun retryPolicy (Lio/getstream/chat/android/livedata/utils/RetryPolicy;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
 	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
@@ -96,7 +89,6 @@ public final class io/getstream/chat/android/livedata/ChatDomain$DefaultImpls {
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryChannels$default (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/livedata/ChatDomain;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/livedata/ChatDomain;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/livedata/controller/ChannelController {
@@ -214,9 +206,6 @@ public final class io/getstream/chat/android/livedata/utils/EventObserver : andr
 	public synthetic fun onChanged (Ljava/lang/Object;)V
 }
 
-public abstract interface class io/getstream/chat/android/livedata/utils/RetryPolicy : io/getstream/chat/android/offline/utils/RetryPolicy {
-}
-
 public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public static final field Companion Lio/getstream/chat/android/offline/ChatDomain$Companion;
 	public abstract fun cancelMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -226,7 +215,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun downloadAttachment (Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
@@ -239,7 +227,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getOfflineEnabled ()Z
-	public abstract fun getRetryPolicy ()Lio/getstream/chat/android/offline/utils/RetryPolicy;
 	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
@@ -252,7 +239,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun isInitialized ()Z
 	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z
-	public abstract fun keystroke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun leaveChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadMessageById (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadNewerMessages (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -264,17 +250,14 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun queryChannelsLoadMore (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun queryChannelsLoadMore (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;III)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun queryMembers (Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun replayEventsForActiveChannels (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun searchUsersByName (Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setMessageForReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setUserPresence (Z)V
 	public abstract fun showChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun stopTyping (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun threadLoadMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watchChannel (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
@@ -293,7 +276,6 @@ public final class io/getstream/chat/android/offline/ChatDomain$Builder {
 	public final fun offlineEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun retryPolicy (Lio/getstream/chat/android/offline/utils/RetryPolicy;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
 	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
@@ -309,7 +291,6 @@ public final class io/getstream/chat/android/offline/ChatDomain$DefaultImpls {
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryChannels$default (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/offline/channel/ChannelController {
@@ -466,7 +447,9 @@ public abstract interface class io/getstream/chat/android/offline/experimental/g
 	public abstract fun isOnline ()Z
 }
 
-public final class io/getstream/chat/android/offline/experimental/plugin/OfflinePlugin$Companion {
+public final class io/getstream/chat/android/offline/experimental/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
+	public fun <init> (Lio/getstream/chat/android/offline/experimental/plugin/configuration/Config;Landroid/content/Context;)V
+	public fun getOrCreate ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
 public final class io/getstream/chat/android/offline/experimental/querychannels/state/ChannelsStateData$Loading : io/getstream/chat/android/offline/experimental/querychannels/state/ChannelsStateData {
@@ -512,10 +495,6 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun stopTyping (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
-	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
 public final class io/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType : java/lang/Enum {
@@ -771,10 +750,5 @@ public class io/getstream/chat/android/offline/utils/Event {
 }
 
 public final class io/getstream/chat/android/offline/utils/PairExtensionsKt {
-}
-
-public abstract interface class io/getstream/chat/android/offline/utils/RetryPolicy {
-	public abstract fun retryTimeout (Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/client/errors/ChatError;)I
-	public abstract fun shouldRetry (Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/client/errors/ChatError;)Z
 }
 

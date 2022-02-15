@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -19,15 +20,14 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
@@ -38,28 +38,21 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.global.toMutableState
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
-import io.getstream.chat.android.offline.extensions.downloadAttachment
-import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.keystroke
-import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
 import io.getstream.chat.android.offline.extensions.sendGiphy
-import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.shuffleGiphy
-import io.getstream.chat.android.offline.extensions.stopTyping
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -92,10 +85,7 @@ import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
-import io.getstream.chat.android.offline.utils.CallRetryService
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.RetryPolicy
 import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -148,10 +138,9 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
-    private val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    override val retryPolicy: RetryPolicy = DefaultRetryPolicy(),
-) : ChatDomain {
+    private val globalState: GlobalMutableState = GlobalMutableState.getOrCreate()
+) : ChatDomain, GlobalState by globalState {
     internal constructor(
         client: ChatClient,
         handler: Handler,
@@ -160,7 +149,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
-        offlinePlugin: OfflinePlugin,
+        globalState: GlobalMutableState = GlobalMutableState.getOrCreate()
     ) : this(
         client = client,
         db = null,
@@ -170,8 +159,11 @@ internal class ChatDomainImpl internal constructor(
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext,
-        offlinePlugin = offlinePlugin,
+        globalState = globalState
     )
+
+    private val state: StateRegistry by lazy { StateRegistry.getOrCreate(scope, user, repos, latestUsers) }
+    private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
@@ -197,49 +189,6 @@ internal class ChatDomainImpl internal constructor(
         }
 
     private var _repos: RepositoryFacade? = null
-
-    private val globalState: GlobalMutableState = offlinePlugin.globalState.toMutableState()
-
-    override val user: StateFlow<User?> by globalState::user
-
-    /** if the client connection has been initialized */
-    override val initialized: StateFlow<Boolean> = globalState.initialized
-
-    /**
-     * StateFlow<Boolean> that indicates if we are currently online
-     */
-    override val connectionState: StateFlow<ConnectionState> = globalState.connectionState
-
-    /**
-     * The total unread message count for the current user.
-     * Depending on your app you'll want to show this or the channelUnreadCount
-     */
-    override val totalUnreadCount: StateFlow<Int> = globalState.totalUnreadCount
-
-    /**
-     * the number of unread channels for the current user
-     */
-    override val channelUnreadCount: StateFlow<Int> = globalState.channelUnreadCount
-
-    /**
-     * list of users that you've muted
-     */
-    override val muted: StateFlow<List<Mute>> = globalState.muted
-
-    /**
-     * List of channels you've muted
-     */
-    override val channelMutes: StateFlow<List<ChannelMute>> = globalState.channelMutes
-
-    /**
-     * if the current user is banned or not
-     */
-    override val banned: StateFlow<Boolean> = globalState.banned
-
-    /**
-     * The error event state flow object is triggered when errors in the underlying components occur.
-     */
-    override val errorEvents: StateFlow<Event<ChatError>> = globalState.errorEvents
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -392,7 +341,8 @@ internal class ChatDomainImpl internal constructor(
         eventHandler.clear()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
-        offlinePlugin.clear()
+        logic.clear()
+        state.clear()
     }
 
     override fun getVersion(): String {
@@ -406,14 +356,6 @@ internal class ChatDomainImpl internal constructor(
     private fun initClean() {
         mainHandler.postDelayed(cleanTask, 5000)
     }
-
-    internal fun callRetryService() = CallRetryService(retryPolicy, client)
-
-    @Deprecated(
-        message = "This utility method is extracted to CallRetryService",
-        replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
-    )
-    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
 
     fun addError(error: ChatError) {
         globalState._errorEvent.value = Event(error)
@@ -485,8 +427,8 @@ internal class ChatDomainImpl internal constructor(
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
             val channelController = ChannelController(
-                mutableState = offlinePlugin.state.channel(channelType, channelId).toMutableState(),
-                channelLogic = offlinePlugin.logic.channel(channelType, channelId),
+                mutableState = state.channel(channelType, channelId).toMutableState(),
+                channelLogic = logic.channel(channelType, channelId),
                 client = client,
                 domainImpl = this,
             )
@@ -545,8 +487,8 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
-            val mutableState = offlinePlugin.state.queryChannels(filter, sort).toMutableState()
-            val logic = offlinePlugin.logic.queryChannels(filter, sort)
+            val mutableState = state.queryChannels(filter, sort).toMutableState()
+            val logic = logic.queryChannels(filter, sort)
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
 
@@ -659,7 +601,7 @@ internal class ChatDomainImpl internal constructor(
         if (cids.isNotEmpty() && online) {
             val filter = `in`("cid", cids)
             val request = QueryChannelsRequest(filter, 0, 30)
-            val result = client.queryChannels(request).await()
+            val result = client.queryChannelsInternal(request).await()
             if (result.isSuccess) {
                 val channels = result.data()
                 val foundChannelIds = channels.map { it.id }
@@ -773,7 +715,7 @@ internal class ChatDomainImpl internal constructor(
                 }
                 message.updatedLocallyAt != null -> {
                     logger.logD("Updating message: ${message.id}")
-                    client.updateMessage(message).await()
+                    client.updateMessageInternal(message).await()
                 }
                 else -> {
                     logger.logD("Sending message: ${message.id}")
@@ -870,8 +812,6 @@ internal class ChatDomainImpl internal constructor(
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
-    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        client.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
@@ -900,8 +840,8 @@ internal class ChatDomainImpl internal constructor(
         return CoroutineCall(scope) {
             Result.success(
                 channel(cid).getThread(
-                    offlinePlugin.state.thread(parentId).toMutableState(),
-                    offlinePlugin.logic.thread(parentId)
+                    state.thread(parentId).toMutableState(),
+                    logic.thread(parentId)
                 )
             )
         }
@@ -1036,10 +976,6 @@ internal class ChatDomainImpl internal constructor(
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         DeleteReaction(this).invoke(cid, reaction)
 
-    override fun keystroke(cid: String, parentId: String?): Call<Boolean> = client.keystroke(cid, parentId)
-
-    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> = client.stopTyping(cid, parentId)
-
     override fun markRead(cid: String): Call<Boolean> = MarkRead(this).invoke(cid)
 
     override fun markAllRead(): Call<Boolean> = MarkAllRead(this).invoke()
@@ -1052,11 +988,6 @@ internal class ChatDomainImpl internal constructor(
     override fun leaveChannel(cid: String): Call<Unit> = LeaveChannel(this).invoke(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = client.channel(cid).delete().toUnitCall()
-
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        client.setMessageForReply(cid, message)
-
-    override fun downloadAttachment(attachment: Attachment): Call<Unit> = client.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,

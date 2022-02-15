@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
@@ -31,8 +32,8 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         queryChannelsPostponeHelper = queryChannelsPostponeHelper,
         userStateService = userStateService,
         userCredentialStorage = mock(),
-        appContext = mock(),
         scope = testCoroutines.scope,
+        retryPolicy = NoRetryPolicy(),
     )
 
     @Test

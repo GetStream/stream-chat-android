@@ -1,10 +1,12 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 /**
  * A wrapper around [Call] that swallows the error and emits new data from [onErrorReturn].
@@ -29,7 +31,9 @@ internal class ReturnOnErrorCall<T : Any>(
             if (originalResult.isSuccess) callback.onResult(originalResult)
             else job = scope.launch {
                 val result = onErrorReturn()
-                callback.onResult(result)
+                withContext(DispatcherProvider.Main) {
+                    callback.onResult(result)
+                }
             }
         }
     }
