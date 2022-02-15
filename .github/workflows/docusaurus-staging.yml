@@ -18,8 +18,8 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: push
-        uses: GetStream/push-stream-chat-docusaurus-action@main
+        uses: GetStream/push-stream-chat-docusaurus-action@debug
         with:
-          target-branch: 'staging'
+          target-branch: 'push-action-debug'
         env:
           DOCUSAURUS_GH_TOKEN: ${{ secrets.DOCUSAURUS_GH_TOKEN }}
