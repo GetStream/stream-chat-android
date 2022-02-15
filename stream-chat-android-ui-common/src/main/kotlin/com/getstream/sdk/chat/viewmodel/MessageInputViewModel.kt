@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -15,6 +16,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.extensions.keystroke
@@ -106,11 +108,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
 
-        chatDomain.sendMessage(message.apply(messageTransformer)).enqueue(
-            onError = { chatError ->
-                logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
-            }
-        )
+        sendMessageInternal(message.apply(messageTransformer))
     }
 
     public fun sendMessageWithAttachments(
@@ -124,7 +122,17 @@ public class MessageInputViewModel @JvmOverloads constructor(
         }.toMutableList()
 
         val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
-        chatDomain.sendMessage(message).enqueue(
+        sendMessageInternal(message)
+    }
+
+    private fun sendMessageInternal(message: Message) {
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            validateCid(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            chatClient.sendMessage(channelType, channelId, message)
+        } else {
+            chatDomain.sendMessage(message)
+        }.enqueue(
             onError = { chatError ->
                 logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }
@@ -139,7 +147,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     ) {
         val message = Message(cid = cid, text = messageText, attachments = customAttachments.toMutableList())
             .apply(messageTransformer)
-        chatDomain.sendMessage(message).enqueue()
+        sendMessageInternal(message)
     }
 
     /**

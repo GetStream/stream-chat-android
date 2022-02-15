@@ -1,14 +1,23 @@
 package io.getstream.chat.android.offline.experimental.plugin.listener
 
+import android.content.Context
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.extensions.populateMentions
+import kotlinx.coroutines.CoroutineScope
 
 @ExperimentalStreamChatApi
-internal class SendMessageListenerImpl(private val logic: LogicRegistry) : SendMessageListener {
+internal class SendMessageListenerImpl(
+    private val context: Context,
+    private val logic: LogicRegistry,
+    private val globalState: GlobalMutableState,
+    private val scope: CoroutineScope
+) : SendMessageListener {
+
     override suspend fun onMessageSendPrecondition(
         channelType: String,
         channelId: String,

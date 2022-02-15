@@ -57,22 +57,23 @@ public class StreamOfflinePluginFactory(
         val userStateFlow = MutableStateFlow<User?>(null)
         chatClient.preSetUserListeners.add { user -> userStateFlow.value = user }
 
-        val stateRegistry = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl).run {
+        val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl
+        val stateRegistry = chatDomainImpl.run {
             StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
         }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
-        val globalStateRegistry = GlobalMutableState.getOrCreate()
+        val globalState = GlobalMutableState.getOrCreate()
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(logic),
-            editMessageListener = EditMessageListenerImpl(logic, globalStateRegistry),
+            editMessageListener = EditMessageListenerImpl(logic, globalState),
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
-            sendMessageListener = SendMessageListenerImpl(logic)
+            sendMessageListener = SendMessageListenerImpl(appContext, logic, globalState, chatDomainImpl.scope)
         )
     }
 }

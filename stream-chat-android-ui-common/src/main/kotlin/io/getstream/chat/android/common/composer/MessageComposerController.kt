@@ -4,11 +4,13 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -375,7 +377,13 @@ public class MessageComposerController(
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
-            chatDomain.sendMessage(message)
+            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+                validateCid(message.cid)
+                val (channelType, channelId) = message.cid.cidToTypeAndId()
+                chatClient.sendMessage(channelType, channelId, message)
+            } else {
+                chatDomain.sendMessage(message)
+            }
         }
 
         dismissMessageActions()
