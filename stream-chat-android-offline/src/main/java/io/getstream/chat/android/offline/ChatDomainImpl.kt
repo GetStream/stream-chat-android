@@ -220,17 +220,24 @@ internal class ChatDomainImpl internal constructor(
     internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
         private set
 
+    private fun clearUnreadCountState() {
+        globalState._totalUnreadCount.value = 0
+        globalState._channelUnreadCount.value = 0
+    }
+
     private fun clearConnectionState() {
+        globalState._initialized.value = false
+        globalState._connectionState.value = ConnectionState.OFFLINE
+        globalState._banned.value = false
+        globalState._mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
         latestUsers = MutableStateFlow(emptyMap())
     }
 
     internal fun setUser(user: User) {
-        globalState._initialized.value = false
-        globalState._connectionState.value = ConnectionState.OFFLINE
-        globalState._banned.value = false
-        globalState._mutedUsers.value = emptyList()
+        clearConnectionState()
+        clearUnreadCountState()
 
         globalState._user.value = user
         // load channel configs from Room into memory
@@ -334,10 +341,6 @@ internal class ChatDomainImpl internal constructor(
         mainHandler.postDelayed(cleanTask, 5000)
     }
 
-    @Deprecated(
-        message = "This utility method is extracted to CallRetryService",
-        replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
-    )
     fun addError(error: ChatError) {
         globalState._errorEvent.value = Event(error)
     }
