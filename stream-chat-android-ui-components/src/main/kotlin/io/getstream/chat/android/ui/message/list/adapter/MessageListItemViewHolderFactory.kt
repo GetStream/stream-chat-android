@@ -11,6 +11,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -26,6 +27,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Dat
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
@@ -129,6 +131,7 @@ public open class MessageListItemViewHolderFactory {
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
             THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
+            IMAGE_ATTACHMENT -> createImageAttachmentViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -157,9 +160,32 @@ public open class MessageListItemViewHolderFactory {
      * @return The [BaseMessageItemViewHolder] that holds a Giphy image in various quality types.
      */
     protected fun createGiphyAttachmentViewHolder(
-        parentView: ViewGroup
+        parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
-        return GiphyAttachmentViewHolder(parentView, decoratorProvider.decorators, listenerContainer, markdown = textTransformer)
+        return GiphyAttachmentViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            markdown = textTransformer
+        )
+    }
+
+    /**
+     * Creates a ViewHolder for messages containing image attachments and no other type
+     * of attachments.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that displays messages with image attachments.
+     */
+    protected fun createImageAttachmentViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return ImageAttachmentViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            textTransformer,
+        )
     }
 
     /**

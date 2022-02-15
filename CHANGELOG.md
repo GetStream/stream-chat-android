@@ -63,6 +63,8 @@
 - Use `fixedHeight` or `fixedHeightDownsampled` giphies to use a fixed height that keeps the aspect ratio and takes up less memory. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
 - Make sure to check out our giphy attachment styles (GiphyMediaAttachmentView) for customization.
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
+- Created an ImageAttachmentViewHolder that represents images in the message list. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
+- Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 
 ### ❌ Removed
 
