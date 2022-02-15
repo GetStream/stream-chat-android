@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline
 
-import android.content.Context
 import android.os.Handler
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer

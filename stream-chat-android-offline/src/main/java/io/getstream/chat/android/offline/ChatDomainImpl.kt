@@ -270,23 +270,10 @@ internal class ChatDomainImpl internal constructor(
             setUser(current)
         }
 
-        InitializationCoordinator.getOrCreate().addUserConnectedListener(::setUser)
-
         // past behaviour was to set the user on the chat domain
         // the new syntax is to automatically pick up changes from the client
         // listen to future user changes
-        //Todo: Use InitializationCoordinator
-        // client.preSetUserListeners.add {
-        //     setUser(it)
-        // }
-        // // disconnect if the low level client disconnects
-        // client.disconnectListeners.add {
-        //     scope.launch {
-        //         disconnect()
-        //     }
-        // }
-
-
+        InitializationCoordinator.getOrCreate().addUserConnectedListener(::setUser)
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->

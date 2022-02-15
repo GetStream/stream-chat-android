@@ -14,4 +14,3 @@ internal fun mockDb() = mock<ChatDatabase> {
     on { syncStateDao() } doReturn mock()
     on { attachmentDao() } doReturn mock()
 }
-

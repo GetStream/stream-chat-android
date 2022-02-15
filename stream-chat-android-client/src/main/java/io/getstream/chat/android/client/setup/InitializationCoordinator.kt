@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.setup
 
 import io.getstream.chat.android.client.models.User
 
-//Make it internal once ChatDomain is merged with ChatClient.
+// Make it internal once ChatDomain is merged with ChatClient.
 public class InitializationCoordinator private constructor() {
 
     private val userDisconnectedListeners: MutableList<(User?) -> Unit> = mutableListOf()

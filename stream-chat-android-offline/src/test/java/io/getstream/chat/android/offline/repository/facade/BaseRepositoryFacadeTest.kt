@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.repository.facade
 import androidx.annotation.CallSuper
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
