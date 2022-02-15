@@ -38,7 +38,20 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message When persisting the message Should store required fields`(): Unit = runBlocking {
-        val message = randomMessage(user = currentUser, pinnedBy = currentUser)
+        val message = randomMessage(
+            user = randomUser(
+                // ignoring fields that are not persisted on purpose
+                totalUnreadCount = 0,
+                unreadChannels = 0,
+                online = false
+            ),
+            pinnedBy = randomUser(
+                // ignoring fields that are not persisted on purpose
+                totalUnreadCount = 0,
+                unreadChannels = 0,
+                online = false
+            )
+        )
 
         repositoryFacade.insertMessages(listOf(message), cache = false)
         val result = repositoryFacade.selectMessage(message.id)
