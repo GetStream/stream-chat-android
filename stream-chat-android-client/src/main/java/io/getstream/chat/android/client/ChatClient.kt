@@ -153,11 +153,6 @@ public class ChatClient internal constructor(
 
     private val initializationCoordinator = InitializationCoordinator.getOrCreate()
 
-    // public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
-    // public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
-
-
-
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
 
