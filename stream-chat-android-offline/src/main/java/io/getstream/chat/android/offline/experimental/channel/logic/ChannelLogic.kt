@@ -346,6 +346,16 @@ internal class ChannelLogic(
     }
 
     /**
+     * Updates the messages locally and saves it at database.
+     *
+     * @param messages The list of messages to be updated in the SDK and to be saved in database.
+     */
+    internal suspend fun updateAndSaveMessages(messages: List<Message>) {
+        upsertMessages(messages)
+        storeMessageLocally(messages)
+    }
+
+    /**
      * Store the messages in the local cache.
      *
      * @param messages The messages to be stored. Check [Message].
@@ -385,7 +395,7 @@ internal class ChannelLogic(
         if (currentUserId?.let {
             message.shouldIncrementUnreadCount(
                     it,
-                    mutableState._read.value?.lastMessageSeenDate
+                    mutableState._read.value?.lastMessageSeenDate,
                 )
         } == true
         ) {

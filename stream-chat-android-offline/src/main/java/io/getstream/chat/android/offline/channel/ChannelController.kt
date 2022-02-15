@@ -32,7 +32,6 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
-import io.getstream.chat.android.offline.extensions.removeMyReaction
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
@@ -450,66 +449,9 @@ public class ChannelController internal constructor(
         return Result(reaction)
     }
 
-    internal suspend fun deleteReaction(reaction: Reaction): Result<Message> {
-        val currentUser = domainImpl.user.value ?: return Result(ChatError("Current user null in Chatdomain"))
-
-        val online = domainImpl.isOnline()
-        reaction.apply {
-            user = currentUser
-            userId = currentUser.id
-            syncStatus = SyncStatus.IN_PROGRESS
-            deletedAt = Date()
-        }
-        if (!online) {
-            reaction.syncStatus = SyncStatus.SYNC_NEEDED
-        }
-
-        domainImpl.repos.insertReaction(reaction)
-
-        // update flow
-        val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.apply { removeMyReaction(reaction) }
-            ?.also {
-                upsertMessage(it)
-                domainImpl.repos.insertMessage(it)
-            }
-
-        if (online) {
-            // TODO: Will be removed after migrating ChatDomain
-            val result = client.deleteReaction(reaction.messageId, reaction.type).retry(domainImpl.scope, client.retryPolicy).await()
-            return if (result.isSuccess) {
-                reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertReaction(reaction)
-                Result(result.data())
-            } else {
-                if (result.error().isPermanent()) {
-                    reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    reaction.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                domainImpl.repos.insertReaction(reaction)
-                Result(result.error())
-            }
-        }
-
-        return if (currentMessage != null) {
-            Result(currentMessage)
-        } else {
-            Result(ChatError("Local message was not found"))
-        }
-    }
-
     // This one needs to be public for flows such as running a message action
 
     internal fun upsertMessage(message: Message) {
-        channelLogic.upsertMessages(listOf(message))
-    }
-
-    private fun upsertEventMessage(message: Message) {
-        // make sure we don't lose ownReactions
-        getMessage(message.id)?.let {
-            message.ownReactions = it.ownReactions
-        }
         channelLogic.upsertMessages(listOf(message))
     }
 

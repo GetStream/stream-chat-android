@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -45,6 +46,7 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
@@ -55,6 +57,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQuer
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -557,9 +560,57 @@ public class ChatClient internal constructor(
         return api.sendReaction(messageId, reactionType, enforceUnique)
     }
 
+    /**
+     * Deletes the reaction associated with the message with the given message id.
+     * [cid] parameter is being used in side effect functions executed by plugins.
+     * You can skip it if plugins are not being used.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param messageId The id of the message to which reaction belongs.
+     * @param reactionType The type of reaction.
+     * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     *
+     * @return Executable async [Call] responsible for deleting the reaction.
+     */
     @CheckResult
-    public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
-        return api.deleteReaction(messageId, reactionType)
+    public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
+        val currentUser = getCurrentUser()
+
+        return api.deleteReaction(messageId = messageId, reactionType = reactionType)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .onErrorReturn(scope) { originalError ->
+                relevantPlugins.firstOrNull()
+                    ?.onDeleteReactionError(originalError = originalError, cid = cid, messageId = messageId)
+                    ?: Result.error(originalError)
+            }
+            .doOnStart(scope) {
+                relevantPlugins
+                    .forEach { plugin ->
+                        plugin.onDeleteReactionRequest(
+                            cid = cid,
+                            messageId = messageId,
+                            reactionType = reactionType,
+                            currentUser = currentUser!!,
+                        )
+                    }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onDeleteReactionResult(
+                        cid = cid,
+                        messageId = messageId,
+                        reactionType = reactionType,
+                        currentUser = currentUser!!,
+                        result = result,
+                    )
+                }
+            }
+            .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
     }
 
     @CheckResult
