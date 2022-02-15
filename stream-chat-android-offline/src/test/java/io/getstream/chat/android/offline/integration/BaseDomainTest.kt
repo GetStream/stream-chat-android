@@ -206,7 +206,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
 
         chatDomainImpl = chatDomain as ChatDomainImpl
 
-        RepositoryFacade.initialise(RepositoryFactory(db, user), chatDomainImpl.scope, mock())
+        chatDomainImpl.repos = RepositoryFacade.create(RepositoryFactory(db, user), chatDomainImpl.scope, mock())
 
         chatDomainImpl.scope = testCoroutines.scope
 

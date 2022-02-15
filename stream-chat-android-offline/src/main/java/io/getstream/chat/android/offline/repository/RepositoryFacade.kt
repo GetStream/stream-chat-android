@@ -178,7 +178,8 @@ internal class RepositoryFacade @VisibleForTesting internal constructor(
             "RepositoryFacade must be initialised first"
         )
 
-        private fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
+        @VisibleForTesting
+        internal fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
                 requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }

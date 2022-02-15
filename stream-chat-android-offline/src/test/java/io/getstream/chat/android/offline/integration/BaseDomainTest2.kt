@@ -197,7 +197,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
 
-        RepositoryFacade.initialise(
+        chatDomainImpl.repos = RepositoryFacade.create(
             RepositoryFactory(db, data.user1),
             chatDomainImpl.scope,
             Config(connectEventsEnabled = true, muteEnabled = true)

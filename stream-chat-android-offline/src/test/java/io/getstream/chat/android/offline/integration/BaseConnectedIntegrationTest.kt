@@ -65,7 +65,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
         chatDomain = chatDomainImpl
 
-        RepositoryFacade.initialise(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
+        chatDomainImpl.repos =
+            RepositoryFacade.create(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
 
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {

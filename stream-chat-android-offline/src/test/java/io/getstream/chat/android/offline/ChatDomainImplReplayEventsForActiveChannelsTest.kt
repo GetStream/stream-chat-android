@@ -112,7 +112,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
             return ChatDomain.Builder(context, chatClient).build()
                 .let { it as ChatDomainImpl }
                 .apply {
-                    RepositoryFacade.initialise(RepositoryFactory(mockDb(), randomUser()), mock(), mock())
+                    repos = RepositoryFacade.create(RepositoryFactory(mockDb(), randomUser()), mock(), mock())
                     // repos = mock()
                     scope = coroutineScope
                     eventHandler = eventHandlerImpl
