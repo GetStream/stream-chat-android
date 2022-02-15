@@ -48,7 +48,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getCurrentToken ()Ljava/lang/String;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getDevices ()Lio/getstream/chat/android/client/call/Call;
-	public final fun getDisconnectListeners ()Ljava/util/List;
 	public final fun getFileAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getGuestToken (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getImageAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -57,7 +56,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getNotifications ()Lio/getstream/chat/android/client/notifications/ChatNotifications;
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getPlugins ()Ljava/util/List;
-	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -3088,6 +3086,20 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
+}
+
+public final class io/getstream/chat/android/client/setup/InitializationCoordinator {
+	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
+	public final fun addDatabaseCreatedListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun addUserConnectedListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun databaseCreated ()V
+	public final fun userConnected (Lio/getstream/chat/android/client/models/User;)V
+	public final fun userDisconnected (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
+	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorResponse {
