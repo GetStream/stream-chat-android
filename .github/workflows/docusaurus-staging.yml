@@ -3,7 +3,7 @@ name: Publish Docusaurus to staging
 on:
   push:
     branches:
-      - develop
+      - task/fix-docusaurus-plugin
   workflow_dispatch:
 
 jobs:
@@ -20,6 +20,6 @@ jobs:
       - name: push
         uses: GetStream/push-stream-chat-docusaurus-action@debug
         with:
-          target-branch: 'push-action-debug'
+          target-branch: "push-action-debug"
         env:
           DOCUSAURUS_GH_TOKEN: ${{ secrets.DOCUSAURUS_GH_TOKEN }}
