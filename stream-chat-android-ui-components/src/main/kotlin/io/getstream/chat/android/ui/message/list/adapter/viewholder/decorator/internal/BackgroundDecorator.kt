@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -34,6 +35,23 @@ internal class BackgroundDecorator(private val messageBackgroundFactory: Message
     ) {
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.textAndAttachmentMessageBackground(
+                viewHolder.binding.messageContainer.context,
+                data
+            )
+    }
+
+    /**
+     * Decorates the background of the image message container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        viewHolder.binding.messageContainer.background =
+            messageBackgroundFactory.imageAttachmentMessageBackground(
                 viewHolder.binding.messageContainer.context,
                 data
             )

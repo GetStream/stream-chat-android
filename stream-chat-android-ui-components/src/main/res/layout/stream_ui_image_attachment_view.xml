@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mediaAttachmentContent"
+    android:id="@+id/imageAttachmentContent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="1dp"
@@ -60,7 +60,7 @@
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="@color/stream_ui_literal_white"
-            android:textSize="@dimen/stream_ui_message_media_attachment_more_count_text_size"
+            android:textSize="@dimen/stream_ui_message_image_attachment_more_count_text_size"
             android:textDirection="locale"
             tools:text="+9"
             />

@@ -17,32 +17,31 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
-import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
-import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+import io.getstream.chat.android.ui.databinding.StreamUiImageAttachmentViewBinding
+import io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
 
 /**
- * View used to display Media attachments such as images.
+ * View used to display image attachments.
  *
  * Giphy images are handled by a separate View.
  * @see GiphyMediaAttachmentView
  */
-internal class MediaAttachmentView : ConstraintLayout {
+internal class ImageAttachmentView : ConstraintLayout {
     /**
-     * Handles media attachment clicks.
+     * Handles image attachment clicks.
      */
     var attachmentClickListener: AttachmentClickListener? = null
 
     /**
-     * Handles media attachment long clicks.
+     * Handles image attachment long clicks.
      */
     var attachmentLongClickListener: AttachmentLongClickListener? = null
-    var giphyBadgeEnabled: Boolean = true
 
     /**
-     * Binding for [io.getstream.chat.android.ui.R.layout.stream_ui_media_attachment_view].
+     * Binding for [R.layout.stream_ui_image_attachment_view].
      */
-    internal val binding: StreamUiMediaAttachmentViewBinding =
-        StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
+    internal val binding: StreamUiImageAttachmentViewBinding =
+        StreamUiImageAttachmentViewBinding.inflate(streamThemeInflater).also {
             it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             val padding = 1.dpToPx()
             it.root.setPadding(padding, padding, padding, padding)
@@ -54,9 +53,9 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
 
     /**
-     * Style applied to [MediaAttachmentView].
+     * Style applied to [ImageAttachmentView].
      */
-    private lateinit var style: MediaAttachmentViewStyle
+    private lateinit var style: ImageAttachmentViewStyle
 
     constructor(context: Context) : this(context, null, 0)
 
@@ -71,7 +70,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
-        style = MediaAttachmentViewStyle(context, attrs)
+        style = ImageAttachmentViewStyle(context, attrs)
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.moreCountLabel.setTextStyle(style.moreCountTextStyle)
     }
@@ -112,6 +111,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
+            placeholderDrawable = style.placeholderIcon,
             onStart = { showLoading(true) },
             onComplete = {
                 showLoading(false)
