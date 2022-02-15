@@ -32,7 +32,7 @@ internal class EditMessageListenerImpl(
         val isOnline = globalState.isOnline()
         val messagesToEdit = message.updateMessageOnlineState(isOnline).let(::listOf)
 
-        updateAndSaveMessages(messagesToEdit, channelLogic)
+        channelLogic.updateAndSaveMessages(messagesToEdit)
     }
 
     /**
@@ -46,24 +46,13 @@ internal class EditMessageListenerImpl(
             val channelLogic = channelLogicForMessage(message)
             val messages = message.copy(syncStatus = SyncStatus.COMPLETED).let(::listOf)
 
-            updateAndSaveMessages(messages, channelLogic)
+            channelLogic.updateAndSaveMessages(messages)
         } else {
             val channelLogic = channelLogicForMessage(originalMessage)
             val failedMessage = originalMessage.updateFailedMessage(result.error()).let(::listOf)
 
-            updateAndSaveMessages(failedMessage, channelLogic)
+            channelLogic.updateAndSaveMessages(failedMessage)
         }
-    }
-
-    /**
-     * Updates the messages locally and saves it at database.
-     *
-     * @param messages The list of messages to be updated in the SDK and to be saved in database.
-     * @param channelLogic [ChannelLogic].
-     */
-    private suspend fun updateAndSaveMessages(messages: List<Message>, channelLogic: ChannelLogic) {
-        channelLogic.upsertMessages(messages)
-        channelLogic.storeMessageLocally(messages)
     }
 
     /**
