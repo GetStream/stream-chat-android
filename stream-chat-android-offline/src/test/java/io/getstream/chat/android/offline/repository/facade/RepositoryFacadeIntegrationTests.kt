@@ -51,7 +51,12 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     fun `Given a message with theirs reaction When querying message Should return massage without own reactions`(): Unit =
         runBlocking {
             val messageId = randomString()
-            val theirsUser = randomUser()
+            val theirsUser = randomUser(
+                // ignoring fields that are not persisted on purpose
+                totalUnreadCount = 0,
+                unreadChannels = 0,
+                online = false
+            )
             val theirsReaction = randomReaction(
                 messageId = messageId,
                 user = theirsUser,

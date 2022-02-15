@@ -54,7 +54,7 @@ internal class ReactionRepositoryImpl(
         reactionType: String,
         messageId: String,
         userId: String,
-    ): Reaction {
+    ): Reaction? {
         return reactionDao.selectUserReactionToMessage(
             reactionType = reactionType,
             messageId = messageId,
