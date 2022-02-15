@@ -12,6 +12,8 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
 import io.getstream.chat.android.offline.utils.waitForSetUser
@@ -62,6 +64,9 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         )
 
         chatDomain = chatDomainImpl
+
+        RepositoryFacade.initialise(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
+
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
