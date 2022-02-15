@@ -35,6 +35,8 @@ import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
@@ -201,7 +203,10 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
             .recoveryDisabled()
             .disableBackgroundSync()
             .build()
+
         chatDomainImpl = chatDomain as ChatDomainImpl
+
+        RepositoryFacade.initialise(RepositoryFactory(db, user), chatDomainImpl.scope, mock())
 
         chatDomainImpl.scope = testCoroutines.scope
 
