@@ -18,6 +18,10 @@ public class Debouncer(private val debounceMs: Long) {
     private val scope = CoroutineScope(DispatcherProvider.Main)
     private var job: Job? = null
 
+    /**
+     * Cancels the previous work and launches a new coroutine
+     * containing the new work.
+     * */
     public fun submit(work: () -> Unit) {
         job?.cancel()
         job = scope.launch {
@@ -26,12 +30,23 @@ public class Debouncer(private val debounceMs: Long) {
         }
     }
 
+    /**
+     * Cancels the previous work and launches a new coroutine
+     * containing the new suspendable work.
+     * */
     public fun submitSuspendable(work: suspend () -> Unit) {
         job?.cancel()
         job = scope.launch {
             delay(debounceMs)
             work()
         }
+    }
+
+    /**
+     * Cancels the current work without shutting down the Coroutine scope.
+     * */
+    public fun cancelLastDebounce() {
+        job?.cancel()
     }
 
     /**
