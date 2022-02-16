@@ -16,9 +16,7 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 @ExperimentalStreamChatApi
 public class OfflineErrorHandlerFactory : ErrorHandlerFactory {
 
-    private val offlineErrorHandler: OfflineErrorHandler by lazy {
-        createOfflineErrorHandler()
-    }
+    private val offlineErrorHandler: OfflineErrorHandler by lazy(::createOfflineErrorHandler)
 
     override fun getOrCreate(): ErrorHandler = offlineErrorHandler
 
