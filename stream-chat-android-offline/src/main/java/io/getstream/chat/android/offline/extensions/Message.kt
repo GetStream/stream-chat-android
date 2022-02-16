@@ -32,7 +32,7 @@ internal fun Message.updateUsers(users: Map<String, User>): Message =
  * Fills [Message.mentionedUsersIds] based on [Message.text] and [Channel.members].
  *
  * It combines the users found in the input with pre-set [Message.mentionedUsersIds], in case someone
- * is manually added as a mention.
+ * is manually added as a mention. Currently only searches through the channel members for possible mentions.
  *
  * @param channel The channel whose members we can check for the mention.
  */
