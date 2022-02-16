@@ -202,6 +202,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
             text.contains("@${it.name.lowercase()}")
         }.map { it.id }
 
+        this.selectedMentions.clear()
         return remainingMentions.toMutableList()
     }
 

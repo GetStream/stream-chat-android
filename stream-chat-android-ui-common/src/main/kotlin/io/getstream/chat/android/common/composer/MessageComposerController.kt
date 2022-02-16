@@ -446,6 +446,7 @@ public class MessageComposerController(
             text.contains("@${it.name.lowercase()}")
         }.map { it.id }
 
+        this.selectedMentions.clear()
         return remainingMentions.toMutableList()
     }
 
