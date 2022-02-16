@@ -207,20 +207,21 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
-     * Edit message.
+     * Updates the message in the channel with the new data.
      *
-     * @param message The Message sent.
+     * @param message The Message updated with the new information, that we need to send.
      */
     public fun editMessage(message: Message) {
+        val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
 
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            chatClient.updateMessage(message)
+            chatClient.updateMessage(updatedMessage)
         } else {
-            chatDomain.editMessage(message)
+            chatDomain.editMessage(updatedMessage)
         }.enqueue(
             onError = { chatError ->
-                logger.logE("Could not edit message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE("Could not edit message with cid: ${updatedMessage.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }
         )
     }
