@@ -21,7 +21,6 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.stopTyping
-import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -378,7 +377,6 @@ public class MessageComposerController(
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                validateCid(message.cid)
                 val (channelType, channelId) = message.cid.cidToTypeAndId()
                 chatClient.sendMessage(channelType, channelId, message)
             } else {

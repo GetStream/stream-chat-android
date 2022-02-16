@@ -21,7 +21,6 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.stopTyping
-import io.getstream.chat.android.offline.utils.validateCid
 import java.io.File
 
 /**
@@ -127,7 +126,6 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
     private fun sendMessageInternal(message: Message) {
         if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            validateCid(cid)
             val (channelType, channelId) = cid.cidToTypeAndId()
             chatClient.sendMessage(channelType, channelId, message)
         } else {

@@ -10,7 +10,7 @@ import kotlin.jvm.Throws
  */
 @InternalStreamChatApi
 @Throws(IllegalArgumentException::class)
-public fun validateCid(cid: String): String = cid.apply {
+internal fun validateCid(cid: String): String = cid.apply {
     require(cid.isNotEmpty()) { "cid can not be empty" }
     require(':' in cid) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
 }
