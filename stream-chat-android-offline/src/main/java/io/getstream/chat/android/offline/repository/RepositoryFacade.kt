@@ -161,10 +161,6 @@ internal class RepositoryFacade @VisibleForTesting internal constructor(
     internal companion object {
         private var instance: RepositoryFacade? = null
 
-        internal fun initialise(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config) {
-            instance = create(factory, scope, defaultConfig)
-        }
-
         /**
          * Use it get create and refresh the singleton of [RepositoryFacade]. This is needed when we currentUser of the
          * SDK is changes.

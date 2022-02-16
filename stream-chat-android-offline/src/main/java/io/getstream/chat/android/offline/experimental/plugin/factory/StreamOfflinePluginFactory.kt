@@ -55,20 +55,19 @@ public class StreamOfflinePluginFactory(
             recoveryEnabled()
         }.build()
 
-        RepositoryFacadeBuilder {
+        val scope = CoroutineScope(DispatcherProvider.IO)
+
+        val repos = RepositoryFacadeBuilder {
             context(appContext)
-            scope(CoroutineScope(DispatcherProvider.IO))
+            scope(scope)
             defaultConfig(io.getstream.chat.android.client.models.Config(connectEventsEnabled = true, muteEnabled = true))
             currentUser(ChatClient.instance().getCurrentUser()!!)
             setOfflineEnabled(true)
-        }.initialise()
+        }.build()
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
+        val stateRegistry = StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
 
-        val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl
-        val stateRegistry = chatDomainImpl.run {
-            StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
-        }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalStateRegistry = GlobalMutableState.getOrCreate()
 
@@ -84,7 +83,7 @@ public class StreamOfflinePluginFactory(
             deleteReactionListener = DeleteReactionListenerImpl(
                 logic = logic,
                 globalState = globalStateRegistry,
-                repos = chatDomainImpl.repos,
+                repos = repos,
             ),
         )
     }
