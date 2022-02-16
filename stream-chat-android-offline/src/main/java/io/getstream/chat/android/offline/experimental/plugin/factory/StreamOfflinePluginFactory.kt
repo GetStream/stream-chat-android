@@ -5,6 +5,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
@@ -20,6 +22,8 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChann
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalStreamChatApi
@@ -43,6 +47,22 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun createOfflinePlugin(): OfflinePlugin {
+        val chatClient = ChatClient.instance()
+        ChatDomain.Builder(appContext, chatClient).apply {
+            if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
+            if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
+            if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
+            recoveryEnabled()
+        }.build()
+
+        RepositoryFacadeBuilder {
+            context(appContext)
+            scope(CoroutineScope(DispatcherProvider.IO))
+            defaultConfig(io.getstream.chat.android.client.models.Config(connectEventsEnabled = true, muteEnabled = true))
+            currentUser(ChatClient.instance().getCurrentUser()!!)
+            setOfflineEnabled(true)
+        }.initialise()
+
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
 
         val chatDomainImpl = io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl

@@ -7,14 +7,9 @@ public class InitializationCoordinator private constructor() {
 
     private val userDisconnectedListeners: MutableList<(User?) -> Unit> = mutableListOf()
     private val userConnectedListeners: MutableList<(User) -> Unit> = mutableListOf()
-    private val databasedCreatedListeners: MutableList<() -> Unit> = mutableListOf()
 
     public fun addUserConnectedListener(listener: (User) -> Unit) {
         userConnectedListeners.add(listener)
-    }
-
-    public fun addDatabaseCreatedListener(listener: () -> Unit) {
-        databasedCreatedListeners.add(listener)
     }
 
     public fun addUserDisconnectedListener(listener: (User?) -> Unit) {
@@ -23,10 +18,6 @@ public class InitializationCoordinator private constructor() {
 
     public fun userConnected(user: User) {
         userConnectedListeners.forEach { function -> function.invoke(user) }
-    }
-
-    public fun databaseCreated() {
-        databasedCreatedListeners.forEach { function -> function.invoke() }
     }
 
     public fun userDisconnected(user: User) {

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -65,8 +64,6 @@ internal class RepositoryFacadeBuilder {
         val scope = requireNotNull(coroutineScope)
         val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
 
-        return RepositoryFacade.initialise(factory, scope, config).also {
-            InitializationCoordinator.getOrCreate().databaseCreated()
-        }
+        return RepositoryFacade.initialise(factory, scope, config)
     }
 }

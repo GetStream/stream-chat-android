@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
@@ -276,11 +275,6 @@ internal class ChatDomainImpl internal constructor(
         if (current != null) {
             setUser(current)
         }
-
-        // past behaviour was to set the user on the chat domain
-        // the new syntax is to automatically pick up changes from the client
-        // listen to future user changes
-        InitializationCoordinator.getOrCreate().addUserConnectedListener(::setUser)
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->

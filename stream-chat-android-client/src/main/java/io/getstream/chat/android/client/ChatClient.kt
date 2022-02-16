@@ -2046,7 +2046,7 @@ public class ChatClient internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addDatabaseCreatedListener {
+            chatClient.initializationCoordinator.addUserConnectedListener {
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.getOrCreate()
