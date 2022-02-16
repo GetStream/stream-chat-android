@@ -48,6 +48,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed setting custom empty and loading views for `MessageListView`. [#3082](https://github.com/GetStream/stream-chat-android/pull/3082)
 
 ### ⬆️ Improved
 - Disabled command popups when attachments are present. [#3051](https://github.com/GetStream/stream-chat-android/pull/3051)
