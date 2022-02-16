@@ -31,6 +31,8 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
@@ -59,7 +61,7 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
-    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
+    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory.getOrCreate(),
 ) {
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
@@ -79,7 +81,15 @@ public class ChannelController internal constructor(
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
     private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.create(domainImpl, this, client, client.channel(cid))
+        messageSendingServiceFactory.getOrCreateService(
+            LogicRegistry.get(),
+            GlobalMutableState.get(),
+            channelType,
+            channelId,
+            domainImpl.scope,
+            domainImpl.repos,
+            domainImpl.appContext
+        )
 
     internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
@@ -342,8 +352,12 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        return processedMessage
-            .let { message -> message.enrichWithCid(cid) }
+        // Don't update latest message with this id if it is already synced.
+        val latestUpdatedMessage = domainImpl.repos.selectMessage(processedMessage.id) ?: processedMessage
+        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
+            return latestUpdatedMessage
+        }
+        return latestUpdatedMessage.enrichWithCid(cid)
             .copy(syncStatus = SyncStatus.COMPLETED)
             .also { domainImpl.repos.insertMessage(it) }
             .also { upsertMessage(it) }
@@ -354,7 +368,11 @@ public class ChannelController internal constructor(
             "Failed to send message with id ${message.id} and text ${message.text}: $error",
             error
         )
-
+        // Don't update latest message with this id if it is already synced.
+        val latestUpdatedMessage = domainImpl.repos.selectMessage(message.id) ?: message
+        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
+            return latestUpdatedMessage
+        }
         return message.copy(
             syncStatus = if (error.isPermanent()) {
                 SyncStatus.FAILED_PERMANENTLY
@@ -426,7 +444,8 @@ public class ChannelController internal constructor(
 
         if (online) {
             // TODO: Will be removed after migrating ChatDomain
-            val result = client.sendReaction(reaction, enforceUnique).retry(domainImpl.scope, client.retryPolicy).await()
+            val result =
+                client.sendReaction(reaction, enforceUnique).retry(domainImpl.scope, client.retryPolicy).await()
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.insertReaction(reaction)
@@ -534,7 +553,9 @@ public class ChannelController internal constructor(
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
             // TODO: Will be removed after migrating ChatDomain
-            val job = domainImpl.scope.async { client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await() }
+            val job = domainImpl.scope.async {
+                client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await()
+            }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
@@ -575,7 +596,8 @@ public class ChannelController internal constructor(
 
         if (online) {
             // TODO: Will be removed after migrating ChatDomain
-            val result = client.deleteMessage(messageToBeDeleted.id, hard).retry(domainImpl.scope, client.retryPolicy).await()
+            val result =
+                client.deleteMessage(messageToBeDeleted.id, hard).retry(domainImpl.scope, client.retryPolicy).await()
             if (result.isSuccess) {
                 val deletedMessage = result.data()
                 deletedMessage.syncStatus = SyncStatus.COMPLETED

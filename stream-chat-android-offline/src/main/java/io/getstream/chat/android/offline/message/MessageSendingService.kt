@@ -2,8 +2,9 @@ package io.getstream.chat.android.offline.message
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -16,105 +17,129 @@ import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.recoverSuspend
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.UUID
 
+@ExperimentalStreamChatApi
 internal class MessageSendingService(
-    private val domainImpl: ChatDomainImpl,
-    private val channelController: ChannelController,
-    private val chatClient: ChatClient,
-    private val channelClient: ChannelClient,
+    private val logic: LogicRegistry,
+    private val globalState: GlobalState,
+    private val channelType: String,
+    private val channelId: String,
+    private val scope: CoroutineScope,
+    private val repos: RepositoryFacade,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker,
 ) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
 
-    internal suspend fun sendNewMessage(message: Message): Result<Message> {
-        return Result.success(
-            message.copy().apply {
-                if (id.isEmpty()) {
-                    id = domainImpl.generateMessageId()
-                }
-                if (cid.isEmpty()) {
-                    enrichWithCid(channelController.cid)
-                }
-                user = requireNotNull(domainImpl.user.value)
+    private val channel by lazy { logic.channel(channelType, channelId) }
 
-                val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
-                attachmentsToUpload.forEach { attachment ->
-                    if (attachment.uploadId == null) {
-                        attachment.uploadId = generateUploadId()
-                    }
-                    attachment.uploadState = Attachment.UploadState.Idle
-                }
-                nonFileAttachments.forEach { attachment ->
-                    attachment.uploadState = Attachment.UploadState.Success
-                }
+    internal suspend fun prepareNewMessageWithAttachments(message: Message): Result<Message> =
+        prepareNewMessage(message)
+            .flatMapSuspend(::uploadAttachments)
 
-                type = getMessageType(message)
-                createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
-                syncStatus = when {
-                    attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                    domainImpl.isOnline() -> SyncStatus.IN_PROGRESS
-                    else -> SyncStatus.SYNC_NEEDED
-                }
+    private suspend fun prepareNewMessage(message: Message): Result<Message> = Result.success(
+        message.copy().apply {
+            if (id.isEmpty()) {
+                id = generateMessageId()
             }
-        ).onSuccess { newMessage ->
-            // Update flow in channel controller
-            channelController.upsertMessage(newMessage)
-            // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-            // Update flow for currently running queries
-            domainImpl.getActiveQueries().forEach { query -> query.refreshChannel(channelController.cid) }
-        }.onSuccessSuspend { newMessage ->
-            // we insert early to ensure we don't lose messages
-            domainImpl.repos.insertMessage(newMessage)
-            domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-        }.flatMapSuspend(::sendMessage)
+            if (cid.isEmpty()) {
+                enrichWithCid(channel.cid)
+            }
+            user = requireNotNull(globalState.user.value)
+
+            val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
+            attachmentsToUpload.forEach { attachment ->
+                if (attachment.uploadId == null) {
+                    attachment.uploadId = generateUploadId()
+                }
+                attachment.uploadState = Attachment.UploadState.Idle
+            }
+            nonFileAttachments.forEach { attachment ->
+                attachment.uploadState = Attachment.UploadState.Success
+            }
+
+            type = getMessageType(message)
+            createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
+            syncStatus = when {
+                attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
+                globalState.isOnline() -> SyncStatus.IN_PROGRESS
+                else -> SyncStatus.SYNC_NEEDED
+            }
+        }
+    ).onSuccess { newMessage ->
+        // Update flow in channel controller
+        channel.upsertMessage(newMessage)
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update flow for currently running queries
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
+    }.onSuccessSuspend { newMessage ->
+        // we insert early to ensure we don't lose messages
+        repos.insertMessage(newMessage)
+        repos.updateLastMessageForChannel(newMessage.cid, newMessage)
     }
 
+    internal suspend fun sendNewMessage(message: Message): Result<Message> = prepareNewMessage(message)
+        .flatMapSuspend(::sendMessage)
+
     internal suspend fun sendMessage(message: Message): Result<Message> {
+        return uploadAttachments(message).let {
+            if (it.isSuccess) {
+                doSend(it.data())
+            } else it
+        }
+    }
+
+    private suspend fun uploadAttachments(message: Message): Result<Message> {
         return when {
-            domainImpl.isOnline() ->
+            globalState.isOnline() ->
                 if (message.hasPendingAttachments()) {
                     waitForAttachmentsToBeSent(message)
-                } else {
-                    doSend(message)
-                }
+                } else Result.success(message.copy(type = Message.TYPE_REGULAR))
 
             message.hasPendingAttachments() -> {
                 enqueueAttachmentUpload(message)
-                Result.success(message)
+                Result.success(message.copy(type = Message.TYPE_REGULAR))
             }
 
             else -> {
-                logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-                Result(message)
+                logger.logI("Chat is offline, not sending message with id ${message.id} and text ${message.text}")
+                Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
             }
         }
     }
 
-    private fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
+    private suspend fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
+        var allAttachmentsUploaded = false
+        var messageToBeSent = newMessage
         jobsMap = jobsMap + (
-            newMessage.id to domainImpl.scope.launch {
+            newMessage.id to scope.launch {
                 val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
-                domainImpl.repos.observeAttachmentsForMessage(newMessage.id)
+                repos.observeAttachmentsForMessage(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
-                                val messageToBeSent = domainImpl.repos.selectMessage(newMessage.id) ?: newMessage.copy(
+                                ephemeralUploadStatusMessage?.let {
+                                    cancelEphemeralMessage(it)
+                                }
+                                messageToBeSent = repos.selectMessage(newMessage.id) ?: newMessage.copy(
                                     attachments = attachments.toMutableList()
                                 )
-                                doSend(messageToBeSent)
+                                allAttachmentsUploaded = true
                                 jobsMap[newMessage.id]?.cancel()
                             }
                             attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
@@ -126,29 +151,82 @@ internal class MessageSendingService(
             }
             )
         enqueueAttachmentUpload(newMessage)
-        return Result.success(newMessage)
+        jobsMap[newMessage.id]?.join()
+        return if (allAttachmentsUploaded) {
+            Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
+        } else Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
+    }
+
+    /**
+     * Cancels ephemeral Message.
+     * Removes message from the offline storage and memory and notifies about update.
+     */
+    private suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
+        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
+        repos.deleteChannelMessage(message)
+        channel.removeLocalMessage(message)
+        return Result(true)
     }
 
     private fun enqueueAttachmentUpload(message: Message) {
-        uploadAttachmentsWorker.enqueueJob(
-            channelController.channelType,
-            channelController.channelId,
-            message.id
-        )
+        uploadAttachmentsWorker.enqueueJob(channelType, channelId, message.id)
     }
 
     private suspend fun doSend(message: Message): Result<Message> {
-        val messageToSend = message.copy(type = "regular")
-        return Result.success(messageToSend)
+        return Result.success(message)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
             .flatMapSuspend { newMessage ->
-                channelClient.sendMessage(newMessage).retry(domainImpl.scope, chatClient.retryPolicy).await()
+                val chatClient = ChatClient.instance()
+                chatClient.channel(message.cid).sendMessageInternal(newMessage)
+                    .retry(scope, chatClient.retryPolicy).await()
             }
-            .mapSuspend(channelController::handleSendMessageSuccess)
-            .recoverSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
+            .mapSuspend(::handleSendMessageSuccess)
+            .recoverSuspend { error -> handleSendMessageFail(message, error) }
+    }
+
+    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
+        // Don't update latest message with this id if it is already synced.
+        val latestUpdatedMessage = repos.selectMessage(processedMessage.id) ?: processedMessage
+        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
+            return latestUpdatedMessage
+        }
+        return latestUpdatedMessage.enrichWithCid(channel.cid)
+            .copy(syncStatus = SyncStatus.COMPLETED)
+            .also {
+                repos.insertMessage(it)
+                channel.upsertMessage(it)
+            }
+    }
+
+    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
+        logger.logE(
+            "Failed to send message with id ${message.id} and text ${message.text}: $error",
+            error
+        )
+        // Don't update latest message with this id if it is already synced.
+        val latestUpdatedMessage = repos.selectMessage(message.id) ?: message
+        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
+            return latestUpdatedMessage
+        }
+        return message.copy(
+            syncStatus = if (error.isPermanent()) {
+                SyncStatus.FAILED_PERMANENTLY
+            } else {
+                SyncStatus.SYNC_NEEDED
+            },
+            updatedLocallyAt = Date(),
+        )
+            .also {
+                repos.insertMessage(it)
+                channel.upsertMessage(it)
+            }
     }
 
     fun cancelJobs() {
         jobsMap.values.forEach { it.cancel() }
+    }
+
+    private fun generateMessageId(): String {
+        return globalState.user.value!!.id + "-" + UUID.randomUUID().toString()
     }
 }

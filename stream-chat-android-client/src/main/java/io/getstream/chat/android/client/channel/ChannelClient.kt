@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
@@ -265,6 +266,11 @@ public class ChannelClient internal constructor(
     @CheckResult
     public fun sendMessage(message: Message): Call<Message> {
         return client.sendMessage(channelType, channelId, message)
+    }
+
+    @InternalStreamChatApi
+    public fun sendMessageInternal(message: Message): Call<Message> {
+        return client.sendMessageInternal(channelType, channelId, message)
     }
 
     @CheckResult

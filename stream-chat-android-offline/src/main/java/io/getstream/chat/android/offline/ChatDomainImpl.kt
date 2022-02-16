@@ -718,7 +718,7 @@ internal class ChatDomainImpl internal constructor(
                 }
                 else -> {
                     logger.logD("Sending message: ${message.id}")
-                    channelClient.sendMessage(message).await()
+                    channelClient.sendMessageInternal(message).await()
                 }
             }
 

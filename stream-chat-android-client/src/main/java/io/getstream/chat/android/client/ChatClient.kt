@@ -1000,6 +1000,14 @@ public class ChatClient internal constructor(
         return api.getMessage(messageId)
     }
 
+    internal fun sendMessageInternal(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Call<Message> {
+        return api.sendMessage(channelType, channelId, message)
+    }
+
     /**
      * Sends the message to the given channel.
      *
@@ -1024,6 +1032,7 @@ public class ChatClient internal constructor(
             if (preparedMessageResult.isSuccess) {
                 preparedMessageResult.data().let { newMessage ->
                     api.sendMessage(channelType, channelId, newMessage)
+                        .retry(scope, retryPolicy)
                         .doOnResult(scope) { result ->
                             relevantPlugins.forEach {
                                 it.onMessageSendResult(
@@ -1033,8 +1042,7 @@ public class ChatClient internal constructor(
                                     newMessage
                                 )
                             }
-                        }
-                        .await()
+                        }.await()
                 }
             } else {
                 Result.error(preparedMessageResult.error())
