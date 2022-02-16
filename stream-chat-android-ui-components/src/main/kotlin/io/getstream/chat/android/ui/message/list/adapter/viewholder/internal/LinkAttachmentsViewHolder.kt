@@ -39,37 +39,12 @@ internal class LinkAttachmentsViewHolder(
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     /**
-     * Initializes the class by setting the click listeners and link movement method.
+     * Initializes the ViewHolder class.
      */
     init {
-        binding.run {
-            listeners?.let { container ->
-                root.setOnClickListener {
-                    container.messageClickListener.onMessageClick(data.message)
-                }
-                reactionsView.setReactionClickListener {
-                    container.reactionViewClickListener.onReactionViewClick(data.message)
-                }
-                footnote.setOnThreadClickListener {
-                    container.threadClickListener.onThreadClick(data.message)
-                }
-                root.setOnLongClickListener {
-                    container.messageLongClickListener.onMessageLongClick(data.message)
-                    true
-                }
-                avatarView.setOnClickListener {
-                    container.userClickListener.onUserClick(data.message.user)
-                }
-                linkAttachmentView.setLinkPreviewClickListener {
-                    listeners.linkClickListener.onLinkClick(it)
-                }
-                LongClickFriendlyLinkMovementMethod.set(
-                    textView = messageText,
-                    longClickTarget = root,
-                    onLinkClicked = container.linkClickListener::onLinkClick
-                )
-            }
-        }
+        applyLinkAttachmentViewStyle()
+        initializeListeners()
+        setLinkMovementMethod()
     }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
@@ -92,6 +67,61 @@ internal class LinkAttachmentsViewHolder(
     private fun updateHorizontalBias(data: MessageListItem.MessageItem) {
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.horizontalBias = if (data.isMine) 1f else 0f
+        }
+    }
+
+    /**
+     * Initializes listeners that enable handling clicks on various
+     * elements such as reactions, threads, message containers, etc.
+     */
+    private fun initializeListeners() {
+        binding.run {
+            listeners?.let { container ->
+                root.setOnClickListener {
+                    container.messageClickListener.onMessageClick(data.message)
+                }
+                reactionsView.setReactionClickListener {
+                    container.reactionViewClickListener.onReactionViewClick(data.message)
+                }
+                footnote.setOnThreadClickListener {
+                    container.threadClickListener.onThreadClick(data.message)
+                }
+                root.setOnLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                avatarView.setOnClickListener {
+                    container.userClickListener.onUserClick(data.message.user)
+                }
+                linkAttachmentView.setLinkPreviewClickListener {
+                    listeners.linkClickListener.onLinkClick(it)
+                }
+            }
+        }
+    }
+
+    /**
+     * Enables clicking on links.
+     */
+    private fun setLinkMovementMethod() {
+        listeners?.let { container ->
+            LongClickFriendlyLinkMovementMethod.set(
+                textView = binding.messageText,
+                longClickTarget = binding.root,
+                onLinkClicked = container.linkClickListener::onLinkClick
+            )
+        }
+    }
+
+    /**
+     * Applies styling to [io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView].
+     */
+    private fun applyLinkAttachmentViewStyle() {
+        with(binding.linkAttachmentView) {
+            setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
+            setDescriptionTextStyle(style.textStyleLinkDescription)
+            setTitleTextStyle(style.textStyleLinkTitle)
+            setLabelTextStyle(style.textStyleLinkLabel)
         }
     }
 }
