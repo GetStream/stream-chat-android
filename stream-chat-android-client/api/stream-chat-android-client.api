@@ -3099,18 +3099,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
 }
 
-public final class io/getstream/chat/android/client/setup/InitializationCoordinator {
-	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
-	public final fun addUserConnectedListener (Lkotlin/jvm/functions/Function1;)V
-	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
-	public final fun userConnected (Lio/getstream/chat/android/client/models/User;)V
-	public final fun userDisconnected (Lio/getstream/chat/android/client/models/User;)V
-}
-
-public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
-	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
-}
-
 public final class io/getstream/chat/android/client/socket/ErrorResponse {
 	public fun <init> ()V
 	public fun <init> (ILjava/lang/String;I)V
