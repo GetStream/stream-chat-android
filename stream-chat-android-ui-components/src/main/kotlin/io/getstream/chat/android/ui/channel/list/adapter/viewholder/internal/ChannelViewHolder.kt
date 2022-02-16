@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.ChatClient
@@ -51,7 +50,6 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         false
     ),
 ) : SwipeViewHolder(binding.root) {
-    private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().user
 
     private var optionsCount = 1
@@ -237,7 +235,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         lastMessage ?: return
 
         lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
-        lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
+        lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
