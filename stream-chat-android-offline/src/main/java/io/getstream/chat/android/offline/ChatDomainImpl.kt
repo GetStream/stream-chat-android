@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -71,7 +70,6 @@ import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.DeleteMessage
-import io.getstream.chat.android.offline.usecase.DeleteReaction
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
@@ -87,6 +85,7 @@ import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
+import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -139,7 +138,7 @@ internal class ChatDomainImpl internal constructor(
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    private val globalState: GlobalMutableState = GlobalMutableState.getOrCreate()
+    private val globalState: GlobalMutableState = GlobalMutableState.getOrCreate(),
 ) : ChatDomain, GlobalState by globalState {
     internal constructor(
         client: ChatClient,
@@ -149,7 +148,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
-        globalState: GlobalMutableState = GlobalMutableState.getOrCreate()
+        globalState: GlobalMutableState = GlobalMutableState.getOrCreate(),
     ) : this(
         client = client,
         db = null,
@@ -974,7 +973,7 @@ internal class ChatDomainImpl internal constructor(
         SendReaction(this).invoke(cid, reaction, enforceUnique)
 
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
-        DeleteReaction(this).invoke(cid, reaction)
+        client.deleteReaction(cid = cid, messageId = reaction.messageId, reactionType = reaction.type)
 
     override fun markRead(cid: String): Call<Boolean> = MarkRead(this).invoke(cid)
 

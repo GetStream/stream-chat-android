@@ -1,13 +1,11 @@
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class MapCall<T : Any, K : Any>(
     private val call: Call<T>,
-    private val successMapper: (T) -> K,
-    private val errorMapper: ((ChatError) -> K)? = null,
+    private val mapper: (T) -> K,
 ) : Call<K> {
 
     private var canceled = AtomicBoolean(false)
@@ -20,13 +18,11 @@ internal class MapCall<T : Any, K : Any>(
         val resultA = call.execute()
 
         return if (resultA.isSuccess) {
-            val data = successMapper(resultA.data())
+            val data = mapper(resultA.data())
             Result(data)
         } else {
             val error = resultA.error()
-            errorMapper?.let {
-                Result(it(error))
-            } ?: Result(error)
+            Result(error)
         }
     }
 
@@ -37,7 +33,7 @@ internal class MapCall<T : Any, K : Any>(
             }
 
             if (it.isSuccess) {
-                val data = successMapper(it.data())
+                val data = mapper(it.data())
                 callback.onResult(Result(data))
             } else {
                 val error = it.error()

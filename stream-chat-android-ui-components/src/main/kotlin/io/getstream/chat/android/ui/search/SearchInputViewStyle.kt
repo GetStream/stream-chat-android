@@ -17,7 +17,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
  * @property searchIconDrawable Drawable of search icon visible on the right side of the SearchInputView.
  * @property clearInputDrawable Drawable of clear input icon visible on the left side of the SearchInputView.
  * @property backgroundDrawable Drawable used as the view's background.
+ * @property containerBackgroundColor Color of the container background.
  * @property hintText Hint text.
+ * @property textSize The size of the text in the input.
+ * @property searchInputHeight The height of the root container.
  */
 public data class SearchInputViewStyle(
     @ColorInt val textColor: Int,
@@ -28,6 +31,7 @@ public data class SearchInputViewStyle(
     @ColorInt val containerBackgroundColor: Int,
     val hintText: String,
     val textSize: Int,
+    val searchInputHeight: Int,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SearchInputViewStyle {
@@ -61,11 +65,17 @@ public data class SearchInputViewStyle(
                     context.getColorCompat(R.color.stream_ui_text_color_primary)
                 )
 
-                val hintText = a.getText(R.styleable.SearchInputView_streamUiSearchInputViewHintText)?.toString() ?: context.getString(R.string.stream_ui_search_input_hint)
+                val hintText = a.getText(R.styleable.SearchInputView_streamUiSearchInputViewHintText)?.toString()
+                    ?: context.getString(R.string.stream_ui_search_input_hint)
 
                 val textSize = a.getDimensionPixelSize(
                     R.styleable.SearchInputView_streamUiSearchInputViewTextSize,
                     context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+
+                val searchInputHeight = a.getDimensionPixelSize(
+                    R.styleable.SearchInputView_streamUiSearchInputViewHeight,
+                    context.getDimension(R.dimen.stream_ui_search_input_height)
                 )
 
                 return SearchInputViewStyle(
@@ -77,6 +87,7 @@ public data class SearchInputViewStyle(
                     hintColor = hintColor,
                     hintText = hintText,
                     textSize = textSize,
+                    searchInputHeight = searchInputHeight
                 ).let(TransformStyle.searchInputViewStyleTransformer::transform)
             }
         }

@@ -12,27 +12,26 @@ import kotlinx.coroutines.withContext
 /**
  * A wrapper around [Call] that swallows the error and emits new data from [onErrorReturn].
  */
-internal class ReturnOnResultCall<T : Any>(
+internal class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
     private val scope: CoroutineScope,
-    private val onSuccessReturn: suspend (T) -> Result<T> = { data -> Result.success(data) },
-    private val onErrorReturn: suspend (ChatError) -> Result<T> = { error -> Result.error(error) },
+    private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>,
 ) : Call<T> {
 
     private var job: Job? = null
 
     override fun execute(): Result<T> = runBlocking {
         originalCall.execute().let {
-            if (it.isSuccess) onSuccessReturn(it.data())
+            if (it.isSuccess) it
             else onErrorReturn(it.error())
         }
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
         originalCall.enqueue { originalResult ->
-            job = scope.launch {
-                val result = if (originalResult.isSuccess) onSuccessReturn(originalResult.data())
-                else onErrorReturn(originalResult.error())
+            if (originalResult.isSuccess) callback.onResult(originalResult)
+            else job = scope.launch {
+                val result = onErrorReturn(originalResult.error())
                 withContext(DispatcherProvider.Main) {
                     callback.onResult(result)
                 }

@@ -4,9 +4,9 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.populateMentions
+import io.getstream.chat.android.offline.utils.validateCid
 
 internal class SendMessage(private val domainImpl: ChatDomainImpl) {
     /**

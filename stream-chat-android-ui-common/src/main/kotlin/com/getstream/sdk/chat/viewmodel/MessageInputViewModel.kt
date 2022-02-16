@@ -16,12 +16,12 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.client.utils.validateCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.stopTyping
+import io.getstream.chat.android.offline.utils.validateCid
 import java.io.File
 
 /**

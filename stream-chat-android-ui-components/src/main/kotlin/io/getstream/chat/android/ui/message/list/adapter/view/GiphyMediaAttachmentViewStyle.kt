@@ -39,7 +39,7 @@ public class GiphyMediaAttachmentViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.GiphyMediaAttachmentView,
-                R.attr.streamUiMessageListMediaAttachmentStyle,
+                R.attr.streamUiMessageListGiphyAttachmentStyle,
                 R.style.StreamUi_MessageList_GiphyMediaAttachment
             ).use { attributes ->
                 val progressIcon =

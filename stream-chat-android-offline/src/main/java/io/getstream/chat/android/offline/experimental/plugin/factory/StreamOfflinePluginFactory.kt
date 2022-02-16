@@ -12,6 +12,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.GetMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.HideChannelListenerImpl
@@ -22,7 +23,6 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.SendMessag
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.message.experimental.MessageSendingServiceFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalStreamChatApi
@@ -64,14 +64,6 @@ public class StreamOfflinePluginFactory(
         }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalState = GlobalMutableState.getOrCreate()
-        val messageSendingServiceFactory =
-            MessageSendingServiceFactory(
-                context = appContext,
-                logicRegistry = logic,
-                stateRegistry = stateRegistry,
-                globalState = globalState,
-                scope = chatDomainImpl.scope
-            )
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
@@ -82,7 +74,18 @@ public class StreamOfflinePluginFactory(
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
-            sendMessageListener = SendMessageListenerImpl(logic, messageSendingServiceFactory)
+            deleteReactionListener = DeleteReactionListenerImpl(
+                logic = logic,
+                globalState = globalState,
+                repos = chatDomainImpl.repos,
+            ),
+            sendMessageListener = SendMessageListenerImpl(
+                context = appContext,
+                logic = logic,
+                globalState = globalState,
+                scope = chatDomainImpl.scope,
+                repos = chatDomainImpl.repos
+            )
         )
     }
 }

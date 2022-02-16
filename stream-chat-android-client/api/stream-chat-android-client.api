@@ -34,7 +34,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun deleteReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnect ()V
@@ -1886,6 +1887,13 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteReactionListener {
+	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/errors/ChatError;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/EditMessageListener {
 	public abstract fun onMessageEditRequest (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageEditResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3157,9 +3165,6 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 	public abstract fun put (Lio/getstream/chat/android/client/user/CredentialConfig;)V
 }
 
-public final class io/getstream/chat/android/client/utils/PairExtensionsKt {
-}
-
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (JJ)V
@@ -3185,9 +3190,6 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public fun <init> ()V
 	public final fun provideCurrentTimeInSeconds ()J
-}
-
-public final class io/getstream/chat/android/client/utils/ValidationKt {
 }
 
 public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {

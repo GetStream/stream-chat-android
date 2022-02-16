@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.content.res.ColorStateList
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.images.load
@@ -49,18 +50,24 @@ internal class GiphyViewHolder(
 
         applyStyle()
 
-        if (diff?.attachments != false) {
-            data.message
-                .attachments
-                .firstOrNull()
-                ?.let {
-                    val url = it.giphyInfo(GiphyInfoType.FIXED_HEIGHT)?.url ?: it.let {
-                        it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
-                    } ?: return
+        data.message
+            .attachments
+            .firstOrNull()
+            ?.let {
+                val url = it.giphyInfo(GiphyInfoType.FIXED_HEIGHT)?.url ?: it.let {
+                    it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
+                } ?: return
 
-                    binding.giphyPreview.load(url)
-                }
-        }
+                binding.giphyPreview.load(
+                    data = url,
+                    onStart = {
+                        binding.loadingProgressBar.isVisible = true
+                    },
+                    onComplete = {
+                        binding.loadingProgressBar.isVisible = false
+                    }
+                )
+            }
 
         binding.giphyQueryTextView.text = data.message
             .text

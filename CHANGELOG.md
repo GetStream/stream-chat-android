@@ -48,11 +48,15 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed setting custom empty and loading views for `MessageListView`. [#3082](https://github.com/GetStream/stream-chat-android/pull/3082)
 
 ### ⬆️ Improved
+- Disabled command popups when attachments are present. [#3051](https://github.com/GetStream/stream-chat-android/pull/3051)
+- Disabled the attachments button when popups are present. [#3051](https://github.com/GetStream/stream-chat-android/pull/3051)
 
 ### ✅ Added
 - Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
+- Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081) 
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
@@ -61,6 +65,8 @@
 - Use `fixedHeight` or `fixedHeightDownsampled` giphies to use a fixed height that keeps the aspect ratio and takes up less memory. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
 - Make sure to check out our giphy attachment styles (GiphyMediaAttachmentView) for customization.
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
+- Created an ImageAttachmentViewHolder that represents images in the message list. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
+- Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 
 ### ❌ Removed
 
