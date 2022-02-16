@@ -58,11 +58,12 @@ internal open class BaseChatClientTest {
             tokenManager = tokenManager,
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtils,
             scope = coroutineRule.scope,
             retryPolicy = NoRetryPolicy(),
+            messagePrepHandler = messagePrepHandler,
         )
     }
 }

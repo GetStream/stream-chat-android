@@ -16,6 +16,7 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.extensions.populateMentions
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import io.getstream.chat.android.offline.message.getMessageType
@@ -48,7 +49,13 @@ internal class MessageSendingService(
         )
     }
 
-    internal suspend fun sendNewMessage(message: Message): Result<Unit> {
+    internal suspend fun prepareMessage(message: Message): Result<Message> {
+        message.populateMentions(channelLogic.toChannel())
+
+        if (message.replyMessageId != null) {
+            channelLogic.replyMessage(null)
+        }
+
         return Result.success(
             message.copy().apply {
                 if (id.isEmpty()) {
@@ -58,7 +65,6 @@ internal class MessageSendingService(
                     enrichWithCid(channelState.cid)
                 }
                 user = requireNotNull(globalState.user.value)
-
                 val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
                 attachmentsToUpload.forEach { attachment ->
                     if (attachment.uploadId == null) {
@@ -69,8 +75,7 @@ internal class MessageSendingService(
                 nonFileAttachments.forEach { attachment ->
                     attachment.uploadState = Attachment.UploadState.Success
                 }
-
-                type = getMessageType(message)
+                type = getMessageType(this)
                 createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
                 syncStatus = when {
                     attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
@@ -90,16 +95,16 @@ internal class MessageSendingService(
         }.flatMapSuspend(::sendMessage)
     }
 
-    internal suspend fun sendMessage(message: Message): Result<Unit> {
+    internal suspend fun sendMessage(message: Message): Result<Message> {
         return when {
             globalState.isOnline() ->
                 if (message.hasPendingAttachments()) {
                     waitForAttachmentsToBeSent(message)
-                } else Result.success(Unit)
+                } else Result.success(message.copy(type = Message.TYPE_REGULAR))
 
             message.hasPendingAttachments() -> {
                 enqueueAttachmentUpload(message)
-                Result.success(Unit)
+                Result.success(message.copy(type = Message.TYPE_REGULAR))
             }
 
             else -> {
@@ -109,9 +114,10 @@ internal class MessageSendingService(
         }
     }
 
-    private suspend fun waitForAttachmentsToBeSent(newMessage: Message): Result<Unit> {
+    private suspend fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
+        var messageToBeSent = newMessage
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
                 val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
@@ -122,6 +128,9 @@ internal class MessageSendingService(
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
                                 ephemeralUploadStatusMessage?.let { channelLogic.cancelEphemeralMessage(it) }
                                 allAttachmentsUploaded = true
+                                messageToBeSent = channelLogic.selectMessage(newMessage.id) ?: newMessage.copy(
+                                    attachments = attachments.toMutableList()
+                                )
                                 jobsMap[newMessage.id]?.cancel()
                             }
                             attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
@@ -135,7 +144,7 @@ internal class MessageSendingService(
         enqueueAttachmentUpload(newMessage)
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
-            Result.success(Unit)
+            Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
     }
 

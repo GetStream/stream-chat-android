@@ -1,35 +1,20 @@
 package io.getstream.chat.android.offline.experimental.plugin.listener
 
-import android.content.Context
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.extensions.populateMentions
-import kotlinx.coroutines.CoroutineScope
+import io.getstream.chat.android.offline.message.experimental.MessageSendingServiceFactory
 
 @ExperimentalStreamChatApi
 internal class SendMessageListenerImpl(
-    private val context: Context,
     private val logic: LogicRegistry,
-    private val globalState: GlobalMutableState,
-    private val scope: CoroutineScope
+    private val messageSendingServiceFactory: MessageSendingServiceFactory,
 ) : SendMessageListener {
 
-    override suspend fun onMessageSendPrecondition(
-        channelType: String,
-        channelId: String,
-        message: Message,
-    ): Result<Unit> {
-        val channelLogic = logic.channel(channelType, channelId)
-        message.populateMentions(channelLogic.toChannel())
-
-        if (message.replyMessageId != null) {
-            channelLogic.replyMessage(null)
-        }
-        return channelLogic.sendMessage(message)
+    override suspend fun prepareMessage(channelType: String, channelId: String, message: Message): Result<Message> {
+        return messageSendingServiceFactory.getOrCreate(channelType, channelId).prepareMessage(message)
     }
 
     override suspend fun onMessageSendRequest(channelType: String, channelId: String, message: Message) {

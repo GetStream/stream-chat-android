@@ -22,6 +22,7 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.SendMessag
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.message.experimental.MessageSendingServiceFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalStreamChatApi
@@ -63,6 +64,14 @@ public class StreamOfflinePluginFactory(
         }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalState = GlobalMutableState.getOrCreate()
+        val messageSendingServiceFactory =
+            MessageSendingServiceFactory(
+                context = appContext,
+                logicRegistry = logic,
+                stateRegistry = stateRegistry,
+                globalState = globalState,
+                scope = chatDomainImpl.scope
+            )
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
@@ -73,7 +82,7 @@ public class StreamOfflinePluginFactory(
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
-            sendMessageListener = SendMessageListenerImpl(appContext, logic, globalState, chatDomainImpl.scope)
+            sendMessageListener = SendMessageListenerImpl(logic, messageSendingServiceFactory)
         )
     }
 }

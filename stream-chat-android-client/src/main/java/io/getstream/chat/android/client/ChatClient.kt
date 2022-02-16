@@ -20,11 +20,11 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.mapWithError
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -56,8 +56,6 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQuer
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -101,14 +99,12 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
-import io.getstream.chat.android.client.utils.toCid
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
@@ -969,30 +965,30 @@ public class ChatClient internal constructor(
         message: Message,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
-
-        return api.sendMessage(channelType, channelId, message)
-            .mapWithError(
-                successMapper = { resultMessage ->
-                    resultMessage.enrichWithCid(Pair(channelType, channelId).toCid())
-                        .copy(syncStatus = SyncStatus.COMPLETED)
-                },
-                errorMapper = { chatError ->
-                    message.copy(
-                        syncStatus = if (chatError.isPermanent()) {
-                            SyncStatus.FAILED_PERMANENTLY
-                        } else {
-                            SyncStatus.SYNC_NEEDED
-                        },
-                        updatedLocallyAt = Date(),
-                    )
+        return CoroutineCall(scope) {
+            val preparedMessageResult =
+                relevantPlugins.firstOrNull()?.prepareMessage(channelType, channelId, message) ?: Result.success(
+                    message
+                )
+            if (preparedMessageResult.isSuccess) {
+                preparedMessageResult.data().let { newMessage ->
+                    api.sendMessage(channelType, channelId, newMessage)
+                        .doOnResult(scope) { result ->
+                            relevantPlugins.forEach {
+                                it.onMessageSendResult(
+                                    result,
+                                    channelType,
+                                    channelId,
+                                    newMessage
+                                )
+                            }
+                        }
+                        .await()
                 }
-            )
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onMessageSendResult(result, channelType, channelId, message) }
+            } else {
+                Result.error(preparedMessageResult.error())
             }
-            .precondition(relevantPlugins) {
-                onMessageSendPrecondition(channelType, channelId, message)
-            }
+        }
     }
 
     /**

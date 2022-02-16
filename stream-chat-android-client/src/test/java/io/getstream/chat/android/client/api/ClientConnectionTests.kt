@@ -100,11 +100,12 @@ internal class ClientConnectionTests {
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
+            messagePrepHandler,
         )
     }
 

@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMar
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -75,15 +76,10 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
-import io.getstream.chat.android.offline.message.experimental.MessageSendingService
-import io.getstream.chat.android.offline.message.experimental.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.wasCreatedAfter
@@ -101,21 +97,11 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) : QueryChannelListener, ChannelMarkReadListener, GetMessageListener, HideChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
     private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
-
-    private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.create(
-            chatDomainImpl.appContext,
-            LogicRegistry.getOrCreate(StateRegistry.get()),
-            mutableState,
-            GlobalMutableState.get(),
-            chatDomainImpl.scope
-        )
 
     private fun loadingStateByRequest(request: QueryChannelRequest) = when {
         request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
@@ -916,8 +902,6 @@ internal class ChannelLogic(
         mutableState._repliedMessage.value = repliedMessage
     }
 
-    internal suspend fun sendMessage(message: Message) = messageSendingService.sendNewMessage(message)
-
     /**
      * Cancels ephemeral Message.
      * Removes message from the offline storage and memory and notifies about update.
@@ -939,6 +923,8 @@ internal class ChannelLogic(
 
     internal suspend fun handleSendMessageSuccess(message: Message) {
         message
+            .enrichWithCid(cid = mutableState.cid)
+            .copy(syncStatus = SyncStatus.COMPLETED)
             .also { chatDomainImpl.repos.insertMessage(it) }
             .also { upsertMessage(it) }
     }
@@ -949,6 +935,14 @@ internal class ChannelLogic(
             error
         )
         message
+            .copy(
+                syncStatus = if (error.isPermanent()) {
+                    SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    SyncStatus.SYNC_NEEDED
+                },
+                updatedLocallyAt = Date(),
+            )
             .also { chatDomainImpl.repos.insertMessage(it) }
             .also { upsertMessage(it) }
     }

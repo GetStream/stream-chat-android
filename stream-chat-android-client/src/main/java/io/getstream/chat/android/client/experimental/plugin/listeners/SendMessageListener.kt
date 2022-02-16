@@ -6,11 +6,8 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 @ExperimentalStreamChatApi
 public interface SendMessageListener {
-    public suspend fun onMessageSendPrecondition(
-        channelType: String,
-        channelId: String,
-        message: Message,
-    ): Result<Unit>
+
+    public suspend fun prepareMessage(channelType: String, channelId: String, message: Message): Result<Message>
 
     public suspend fun onMessageSendRequest(
         channelType: String,
