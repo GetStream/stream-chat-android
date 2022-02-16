@@ -17,6 +17,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
@@ -123,8 +124,7 @@ public open class MessageListItemViewHolderFactory {
             DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            // TODO uncomment and sort order priority
-            // TEXT_AND_ATTACHMENTS -> createTextAndAttachmentViewHolder(parentView)
+            TEXT_AND_ATTACHMENTS -> createTextAndAttachmentViewHolder(parentView)
             LOADING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)

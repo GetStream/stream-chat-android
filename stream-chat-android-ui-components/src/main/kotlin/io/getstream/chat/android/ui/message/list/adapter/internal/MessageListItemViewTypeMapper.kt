@@ -48,9 +48,9 @@ internal object MessageListItemViewTypeMapper {
         val message = messageItem.message
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
-        val (giphy, links) = linksAndGiphy.partition { attachment -> attachment.type == ModelType.attach_giphy }
-        val containsGiphy = giphy.isNotEmpty()
-        val containsLinks = links.isNotEmpty()
+        val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
+
+        val containsOnlyLinks = message.containsOnlyLinkAttachments()
 
         return when {
             message.isError() -> ERROR_MESSAGE
@@ -58,8 +58,8 @@ internal object MessageListItemViewTypeMapper {
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
+            containsOnlyLinks -> LINK_ATTACHMENTS
             message.isImageAttachment() -> IMAGE_ATTACHMENT
-            containsLinks -> LINK_ATTACHMENTS
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
@@ -72,5 +72,14 @@ internal object MessageListItemViewTypeMapper {
         return attachments.isNotEmpty() &&
             attachments.any { it.isImage() } &&
             attachments.all { it.isImage() || it.hasLink() }
+    }
+
+    /**
+     * Checks if all attachments are link attachments.
+     */
+    private fun Message.containsOnlyLinkAttachments(): Boolean {
+        if (this.attachments.isEmpty()) return false
+
+        return this.attachments.all { attachment -> attachment.hasLink() }
     }
 }
