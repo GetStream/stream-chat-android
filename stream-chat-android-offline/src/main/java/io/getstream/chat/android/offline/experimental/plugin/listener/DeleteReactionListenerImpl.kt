@@ -104,31 +104,6 @@ internal class DeleteReactionListenerImpl(
     }
 
     /**
-     * Replaces the original response error if the user is offline, [cid] is specified and the message exists in the cache.
-     * This means that the message was updated locally but the API request failed due to lack of connection.
-     * The request will be synced once user's connection is recovered.
-     *
-     * @param originalError The original error returned by the API.
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param messageId The id of the message to which reaction belongs.
-     *
-     * @return result The original or offline related result.
-     */
-    override fun onDeleteReactionError(originalError: ChatError, cid: String?, messageId: String): Result<Message> {
-        if (cid == null || globalState.isOnline()) {
-            return Result.error(originalError)
-        }
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        val cachedMessage = logic.channel(channelType = channelType, channelId = channelId).getMessage(messageId)
-
-        return if (cachedMessage != null) {
-            Result.success(cachedMessage)
-        } else {
-            Result.error(ChatError(message = "Local message was not found."))
-        }
-    }
-
-    /**
      * Checks if current user is set.
      *
      * @param currentUser The currently logged in user.

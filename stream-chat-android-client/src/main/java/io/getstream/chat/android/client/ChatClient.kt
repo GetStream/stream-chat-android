@@ -43,6 +43,9 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -138,6 +141,7 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     // TODO: Make private/internal after migrating ChatDomain
     public val retryPolicy: RetryPolicy,
+    internal val errorHandlerFactory: ErrorHandlerFactory,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -584,9 +588,16 @@ public class ChatClient internal constructor(
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
             .onErrorReturn(scope) { originalError ->
-                relevantPlugins.firstOrNull()
-                    ?.onDeleteReactionError(originalError = originalError, cid = cid, messageId = messageId)
-                    ?: Result.error(originalError)
+                val errorHandler = errorHandlerFactory.getOrCreate()
+                if (errorHandler is DeleteReactionErrorHandler) {
+                    errorHandler.onDeleteReactionError(
+                        originalError = originalError,
+                        cid = cid,
+                        messageId = messageId,
+                    )
+                } else {
+                    Result.error(originalError)
+                }
             }
             .doOnStart(scope) {
                 relevantPlugins
@@ -1874,6 +1885,7 @@ public class ChatClient internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var errorHandlerFactory: ErrorHandlerFactory = NoOpErrorHandlerFactory()
 
         /**
          * Sets the log level to be used by the client.
@@ -2005,6 +2017,17 @@ public class ChatClient internal constructor(
         }
 
         /**
+         * Overrides the default no-op error handler factory.
+         *
+         * @see [ErrorHandlerFactory]
+         */
+        @InternalStreamChatApi
+        @ExperimentalStreamChatApi
+        public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
+            this.errorHandlerFactory = errorHandlerFactory
+        }
+
+        /**
          * Overrides a default, based on shared preferences implementation for [UserCredentialStorage].
          */
         public fun credentialStorage(credentialStorage: UserCredentialStorage): Builder = apply {
@@ -2088,6 +2111,7 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
+                errorHandlerFactory = errorHandlerFactory,
             ).also {
                 configureInitializer(it)
             }
