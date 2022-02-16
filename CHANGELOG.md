@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
+- Added the `member` field to the `MemberRemovedEvent`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
 
 ### ⚠️ Changed
 
