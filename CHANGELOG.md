@@ -47,7 +47,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved the logic around mentions and users that can be mentioned within the input. [#3087](https://github.com/GetStream/stream-chat-android/pull/3087)
+- Improved the logic around mentions and users that can be mentioned within the input. [#3088](https://github.com/GetStream/stream-chat-android/pull/3088)
 
 ### ✅ Added
 
@@ -59,7 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved the logic around mentions and users that can be mentioned within the input. [#3087](https://github.com/GetStream/stream-chat-android/pull/3087)
+- Improved the logic around mentions and users that can be mentioned within the input. [#3088](https://github.com/GetStream/stream-chat-android/pull/3088)
 
 ### ✅ Added
 
