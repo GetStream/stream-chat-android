@@ -2405,7 +2405,7 @@ public abstract interface class io/getstream/chat/android/ui/search/SearchInputV
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
-	public fun <init> (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;I)V
+	public fun <init> (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;II)V
 	public final fun component1 ()I
 	public final fun component2 ()I
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
@@ -2414,8 +2414,9 @@ public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
 	public final fun component6 ()I
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()I
-	public final fun copy (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;I)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;IILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public final fun component9 ()I
+	public final fun copy (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;II)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getClearInputDrawable ()Landroid/graphics/drawable/Drawable;
@@ -2423,6 +2424,7 @@ public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
 	public final fun getHintColor ()I
 	public final fun getHintText ()Ljava/lang/String;
 	public final fun getSearchIconDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getSearchInputHeight ()I
 	public final fun getTextColor ()I
 	public final fun getTextSize ()I
 	public fun hashCode ()I

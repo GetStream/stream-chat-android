@@ -25,8 +25,8 @@
 
     <FrameLayout
         android:id="@+id/loadingViewContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -38,14 +38,15 @@
             android:id="@+id/defaultLoadingView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             />
 
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/emptyStateViewContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -57,6 +58,7 @@
             android:id="@+id/defaultEmptyStateView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="@string/stream_ui_message_list_empty"
             android:textColor="@color/stream_ui_text_color_primary"
             android:textDirection="locale"

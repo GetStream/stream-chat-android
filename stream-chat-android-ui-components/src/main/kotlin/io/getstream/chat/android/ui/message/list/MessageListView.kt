@@ -527,7 +527,7 @@ public class MessageListView : ConstraintLayout {
 
         loadingViewContainer.removeView(binding.defaultLoadingView)
         messageListViewStyle?.loadingView?.let { loadingView ->
-            this.loadingView = streamThemeInflater.inflate(loadingView, null).apply {
+            this.loadingView = streamThemeInflater.inflate(loadingView, loadingViewContainer, false).apply {
                 isVisible = true
                 loadingViewContainer.addView(this)
             }
