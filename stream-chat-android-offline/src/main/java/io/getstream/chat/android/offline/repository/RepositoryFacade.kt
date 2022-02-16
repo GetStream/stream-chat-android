@@ -172,6 +172,7 @@ internal class RepositoryFacade @VisibleForTesting internal constructor(
         internal fun refreshAndGet(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config) =
             create(factory, scope, defaultConfig).also { facade -> instance = facade }
 
+        @Throws(IllegalStateException::class)
         internal fun get(): RepositoryFacade = instance ?: throw IllegalStateException(
             "RepositoryFacade must be initialised first"
         )
