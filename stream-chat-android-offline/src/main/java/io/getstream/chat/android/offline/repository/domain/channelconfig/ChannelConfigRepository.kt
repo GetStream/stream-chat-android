@@ -19,8 +19,7 @@ internal interface ChannelConfigRepository {
  */
 internal class ChannelConfigRepositoryImpl(private val channelConfigDao: ChannelConfigDao) : ChannelConfigRepository {
     private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
-
-    /* Do we need a method just to load a cache? Obs: This method inserts a performance gain. */
+    
     override suspend fun cacheChannelConfigs() {
         channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
             .associateBy(ChannelConfig::type)
