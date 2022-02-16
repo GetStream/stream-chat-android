@@ -23,15 +23,21 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.state
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.ChannelFilterRequest
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
+import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
+import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepository
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
+import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalStreamChatApi
@@ -39,6 +45,8 @@ internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val client: ChatClient,
+    private val repos: RepositoryFacade,
+    private val globalState: GlobalMutableState,
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
@@ -79,35 +87,39 @@ internal class QueryChannelsLogic(
 
         loading.value = true
 
-        return fetchChannelsFromCache(pagination)
+        return fetchChannelsFromCache(pagination, repos)
             .also { loading.value = it.isEmpty() }
             .let { Result.success(it) }
     }
 
-    private suspend fun fetchChannelsFromCache(pagination: AnyChannelPaginationRequest): List<Channel> {
+    private suspend fun fetchChannelsFromCache(
+        pagination: AnyChannelPaginationRequest,
+        queryChannelsRepository: QueryChannelsRepository,
+    ): List<Channel> {
         val queryChannelsSpec = mutableState.queryChannelsSpec
         val query =
-            chatDomainImpl.repos.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort) ?: return emptyList()
+            queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
+                ?: return emptyList()
 
-        return chatDomainImpl.repos.selectChannels(query.cids.toList(), pagination)
+        return repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
             .also { logger.logI("found ${it.size} channels in offline storage") }
-            .also { addChannels(it) }
+            .also { addChannels(it, repos) }
     }
 
     internal suspend fun addChannel(channel: Channel) {
-        addChannels(listOf(channel))
+        addChannels(listOf(channel), repos)
         chatDomainImpl.channel(channel).updateDataFromChannel(channel)
     }
 
-    private suspend fun addChannels(channels: List<Channel>) {
+    private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
-        chatDomainImpl.repos.insertQueryChannels(mutableState.queryChannelsSpec)
+        queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
         mutableState._channels.value = mutableState._channels.value + channels.map { it.cid to it }
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        onOnlineQueryResult(result, request)
+        onOnlineQueryResult(result, request, repos, globalState, chatDomainImpl)
         if (result.isSuccess) {
             updateOnlineChannels(result.data(), request.isFirstPage)
         }
@@ -116,11 +128,17 @@ internal class QueryChannelsLogic(
     }
 
     internal suspend fun runQueryOnline(request: QueryChannelsRequest): Result<List<Channel>> {
-        return chatDomainImpl.client.queryChannelsInternal(request).await()
+        return client.queryChannelsInternal(request).await()
             .also { onQueryChannelsResult(it, request) }
     }
 
-    private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+    private suspend fun onOnlineQueryResult(
+        result: Result<List<Channel>>,
+        request: QueryChannelsRequest,
+        channelConfigRepository: ChannelConfigRepository,
+        globalState: GlobalMutableState,
+        chatDomainImpl: ChatDomainImpl,
+    ) {
         if (result.isSuccess) {
             mutableState.recoveryNeeded.value = false
 
@@ -131,13 +149,13 @@ internal class QueryChannelsLogic(
             }
             // first things first, store the configs
             val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
-            chatDomainImpl.repos.insertChannelConfigs(channelConfigs)
+            channelConfigRepository.insertChannelConfigs(channelConfigs)
             logger.logI("api call returned ${channelsResponse.size} channels")
             chatDomainImpl.storeStateForChannels(channelsResponse)
         } else {
             logger.logI("Query with filter ${request.filter} failed, marking it as recovery needed")
             mutableState.recoveryNeeded.value = true
-            chatDomainImpl.addError(result.error())
+            globalState._errorEvent.value = Event(result.error())
         }
     }
 
@@ -161,18 +179,19 @@ internal class QueryChannelsLogic(
             (mutableState._channels.value - channels.map { it.cid }).values
                 .map(Channel::cid)
                 .filterNot { cid -> channelFilter(cid, mutableState.filter) }
-                .let { removeChannels(it) }
+                .let { removeChannels(it, repos) }
         }
         mutableState.channelsOffset.value += channels.size
         channels.forEach { chatDomainImpl.channel(it).updateDataFromChannel(it) }
-        addChannels(channels)
+        addChannels(channels, repos)
     }
 
-    internal suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
+    internal suspend fun removeChannel(cid: String) =
+        removeChannels(listOf(cid), repos)
 
-    private suspend fun removeChannels(cidList: List<String>) {
+    private suspend fun removeChannels(cidList: List<String>, queryChannelsRepository: QueryChannelsRepository) {
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList
-        chatDomainImpl.repos.insertQueryChannels(mutableState.queryChannelsSpec)
+        queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
         mutableState._channels.value = mutableState._channels.value - cidList
     }
 
@@ -183,7 +202,7 @@ internal class QueryChannelsLogic(
      */
     internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
-            handleEvent(event)
+            handleEvent(event, repos)
         }
     }
 
@@ -191,12 +210,12 @@ internal class QueryChannelsLogic(
      * Handles event received from the socket.
      * Responsible for synchronizing [QueryChannelsMutableState].
      */
-    internal suspend fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent, channelRepository: ChannelRepository) {
         // update the info for that channel from the channel repo
         logger.logI("Received channel event $event")
 
         val cachedChannel = if (event is CidEvent) {
-            chatDomainImpl.getCachedChannel(event.cid)
+            channelRepository.selectChannelWithoutMessages(event.cid)
         } else null
 
         val handlingResult = mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)

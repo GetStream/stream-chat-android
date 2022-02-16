@@ -25,6 +25,7 @@ import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isGiphy
 
 /**
  * Displays all available [MessageOptionItem]s.
@@ -123,7 +124,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (isOwnMessage) {
+        if (isOwnMessage && !selectedMessage.isGiphy()) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),

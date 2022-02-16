@@ -53,7 +53,9 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
             plugins.add(plugin)
         }
 
-        fun get(): ChatClient = chatClient
+        fun get(): ChatClient = chatClient.apply {
+            addPlugins(this@WhenMarkReadChannel.plugins)
+        }
     }
 }
 

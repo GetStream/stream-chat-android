@@ -10,10 +10,12 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -218,10 +220,10 @@ public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
     val domainImpl = domainImpl()
     return CoroutineCall(domainImpl.scope) {
         CreateChannelService(
+            scope = domainImpl.scope,
             client = this@createChannel,
             repositoryFacade = domainImpl.repos,
             getChannelController = domainImpl::channel,
-            callRetryService = domainImpl.callRetryService(),
             activeQueries = domainImpl.getActiveQueries(),
         ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
     }
@@ -263,7 +265,7 @@ internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
 
         validateCid(cid)
 
-        domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }.also { resultMessage ->
+        channelClient.sendAction(request).retry(domainImpl.scope, retryPolicy).await().also { resultMessage ->
             if (resultMessage.isSuccess) {
                 channelController.removeLocalMessage(resultMessage.data())
             }
@@ -292,7 +294,7 @@ internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
         }
 
-        val result = domainImpl.callRetryService().runAndRetry { channelClient.sendAction(request) }
+        val result = channelClient.sendAction(request).retry(domainImpl.scope, retryPolicy).await()
 
         if (result.isSuccess) {
             val processedMessage: Message = result.data()

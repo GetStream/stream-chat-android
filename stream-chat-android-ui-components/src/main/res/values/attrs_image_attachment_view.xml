@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ImageAttachmentView -->
+    <declare-styleable name="ImageAttachmentView">
+        <!-- Drawable of the image attachment progressbar -->
+        <attr name="streamUiImageAttachmentProgressIcon" format="reference" />
+        <!-- Image attachment placeholder icon -->
+        <attr name="streamUiImageAttachmentPlaceHolderIcon" format="reference" />
+        <!-- Image attachment background color -->
+        <attr name="streamUiImageAttachmentImageBackgroundColor" format="color|reference" />
+        <!-- Image attachment "more" count overlay color -->
+        <attr name="streamUiImageAttachmentMoreCountOverlayColor" format="color|reference" />
+
+        <!-- Text size of the image attachment "more" count text -->
+        <attr name="streamUiImageAttachmentMoreCountTextSize" format="dimension|reference" />
+        <!-- A color of the image attachment "more" count text -->
+        <attr name="streamUiImageAttachmentMoreCountTextColor" format="color|reference" />
+        <!-- Font name of the image attachment "more" count text -->
+        <attr name="streamUiImageAttachmentMoreCountTextFont" format="reference" />
+        <!-- Font assets reference for the image attachment "more" count text -->
+        <attr name="streamUiImageAttachmentMoreCountFontAssets" format="string" />
+        <!-- Text style of the image attachment "more" count text: "normal", "bold", and "italic". -->
+        <attr name="streamUiImageAttachmentMoreCountTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

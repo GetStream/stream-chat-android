@@ -31,10 +31,12 @@ internal class QueryChannelsMutableState(
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
     internal val _endOfChannels = MutableStateFlow(false)
-    internal val _sortedChannels =
+    private val _sortedChannels =
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap.values.updateUsers(userMap)
-        }.map { it.sortedWith(sort.comparator) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+        }
+            .map { it.sortedWith(sort.comparator) }
+            .stateIn(scope, SharingStarted.Eagerly, emptyList())
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)

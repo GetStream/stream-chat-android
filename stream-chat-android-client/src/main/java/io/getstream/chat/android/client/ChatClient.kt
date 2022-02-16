@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -43,7 +44,9 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
@@ -54,6 +57,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQuer
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -101,6 +105,8 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
@@ -129,10 +135,8 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     internal val scope: CoroutineScope,
-    private val appContext: Context,
-    @property:InternalStreamChatApi
-    @property:ExperimentalStreamChatApi
-    public val plugins: Collection<Plugin> = emptyList(),
+    // TODO: Make private/internal after migrating ChatDomain
+    public val retryPolicy: RetryPolicy,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -151,6 +155,8 @@ public class ChatClient internal constructor(
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
+
+    public lateinit var plugins: List<Plugin>
 
     init {
         eventsObservable.subscribe { event ->
@@ -192,8 +198,10 @@ public class ChatClient internal constructor(
             }
         }
         logger.logI("Initialised: " + getVersion())
+    }
 
-        plugins.forEach { it.init(appContext, this) }
+    internal fun addPlugins(plugins: List<Plugin>) {
+        this.plugins = plugins
     }
 
     //region Set user
@@ -552,9 +560,57 @@ public class ChatClient internal constructor(
         return api.sendReaction(messageId, reactionType, enforceUnique)
     }
 
+    /**
+     * Deletes the reaction associated with the message with the given message id.
+     * [cid] parameter is being used in side effect functions executed by plugins.
+     * You can skip it if plugins are not being used.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param messageId The id of the message to which reaction belongs.
+     * @param reactionType The type of reaction.
+     * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     *
+     * @return Executable async [Call] responsible for deleting the reaction.
+     */
     @CheckResult
-    public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
-        return api.deleteReaction(messageId, reactionType)
+    public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
+        val currentUser = getCurrentUser()
+
+        return api.deleteReaction(messageId = messageId, reactionType = reactionType)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .onErrorReturn(scope) { originalError ->
+                relevantPlugins.firstOrNull()
+                    ?.onDeleteReactionError(originalError = originalError, cid = cid, messageId = messageId)
+                    ?: Result.error(originalError)
+            }
+            .doOnStart(scope) {
+                relevantPlugins
+                    .forEach { plugin ->
+                        plugin.onDeleteReactionRequest(
+                            cid = cid,
+                            messageId = messageId,
+                            reactionType = reactionType,
+                            currentUser = currentUser!!,
+                        )
+                    }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onDeleteReactionResult(
+                        cid = cid,
+                        messageId = messageId,
+                        reactionType = reactionType,
+                        currentUser = currentUser!!,
+                        result = result,
+                    )
+                }
+            }
+            .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
     }
 
     @CheckResult
@@ -1817,9 +1873,9 @@ public class ChatClient internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-        private var plugins: List<Plugin> = emptyList()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
+        private var retryPolicy: RetryPolicy = NoRetryPolicy()
 
         /**
          * Sets the log level to be used by the client.
@@ -1946,8 +2002,8 @@ public class ChatClient internal constructor(
 
         @InternalStreamChatApi
         @ExperimentalStreamChatApi
-        public fun withPlugin(plugin: Plugin): Builder = apply {
-            plugins += plugin
+        public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
+            pluginFactories.add(pluginFactory)
         }
 
         /**
@@ -1955,6 +2011,17 @@ public class ChatClient internal constructor(
          */
         public fun credentialStorage(credentialStorage: UserCredentialStorage): Builder = apply {
             userCredentialStorage = credentialStorage
+        }
+
+        /**
+         * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
+         * By default, no calls are retried.
+         * @see [NoRetryPolicy]
+         *
+         * @param retryPolicy Custom [RetryPolicy] implementation.
+         */
+        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
+            this.retryPolicy = retryPolicy
         }
 
         @InternalStreamChatApi
@@ -2012,20 +2079,37 @@ public class ChatClient internal constructor(
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,
-                appContext = appContext,
-                plugins = plugins,
+                retryPolicy = retryPolicy,
             )
         }
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
         /**
+         * Factories of plugins that will be added to the SDK.
+         *
+         * @see [Plugin]
+         * @see [PluginFactory]
+         */
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+
+        /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = internalBuild().also {
-            instance = it
-        }
+        public fun build(): ChatClient = internalBuild()
+            .apply {
+                preSetUserListeners.add {
+                    addPlugins(
+                        pluginFactories.map { pluginFactory ->
+                            pluginFactory.getOrCreate()
+                        }
+                    )
+                }
+            }
+            .also {
+                instance = it
+            }
 
         @InternalStreamChatApi
         public abstract fun internalBuild(): ChatClient

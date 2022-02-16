@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldBeEqualTo
@@ -78,8 +79,8 @@ internal class ChatClientTest {
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = testCoroutines.scope,
+            retryPolicy = NoRetryPolicy(),
         ).apply {
             connectUser(user, token).enqueue()
         }

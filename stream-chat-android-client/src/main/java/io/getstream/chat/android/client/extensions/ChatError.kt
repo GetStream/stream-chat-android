@@ -1,7 +1,8 @@
-package io.getstream.chat.android.offline.extensions
+package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.net.UnknownHostException
 
 private const val HTTP_TOO_MANY_REQUESTS = 429
@@ -19,6 +20,7 @@ private const val HTTP_API_ERROR = 500
  * See the error codes here
  * https://getstream.io/chat/docs/api_errors_response/?language=js
  */
+@InternalStreamChatApi
 public fun ChatError.isPermanent(): Boolean {
     return if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this

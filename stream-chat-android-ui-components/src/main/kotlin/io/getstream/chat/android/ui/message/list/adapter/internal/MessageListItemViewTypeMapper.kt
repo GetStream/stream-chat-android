@@ -2,7 +2,9 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.isError
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.common.extensions.isSystem
@@ -10,11 +12,13 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
@@ -54,10 +58,19 @@ internal object MessageListItemViewTypeMapper {
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
-            // TODO uncomment and sort order priority
-            // messageItem.message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
+            message.isImageAttachment() -> IMAGE_ATTACHMENT
             containsLinks -> LINK_ATTACHMENTS
+            message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
+    }
+
+    /**
+     * Checks if the message contains only image attachments (Can also optionally contain links).
+     */
+    private fun Message.isImageAttachment(): Boolean {
+        return attachments.isNotEmpty() &&
+            attachments.any { it.isImage() } &&
+            attachments.all { it.isImage() || it.hasLink() }
     }
 }

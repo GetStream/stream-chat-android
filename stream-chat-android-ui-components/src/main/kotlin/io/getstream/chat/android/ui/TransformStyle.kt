@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
-import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+import io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
@@ -32,7 +32,7 @@ public object TransformStyle {
     public var editReactionsStyleTransformer: StyleTransformer<EditReactionsViewStyle> = noopTransformer()
     public var channelActionsDialogStyleTransformer: StyleTransformer<ChannelActionsDialogViewStyle> = noopTransformer()
     public var giphyViewHolderStyleTransformer: StyleTransformer<GiphyViewHolderStyle> = noopTransformer()
-    public var mediaAttachmentStyleTransformer: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
+    public var imageAttachmentStyleTransformer: StyleTransformer<ImageAttachmentViewStyle> = noopTransformer()
     public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentViewStyle> = noopTransformer()
     public var suggestionListStyleTransformer: StyleTransformer<SuggestionListViewStyle> = noopTransformer()

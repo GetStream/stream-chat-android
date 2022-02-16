@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMar
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -73,7 +74,6 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
-import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
@@ -346,6 +346,16 @@ internal class ChannelLogic(
     }
 
     /**
+     * Updates the messages locally and saves it at database.
+     *
+     * @param messages The list of messages to be updated in the SDK and to be saved in database.
+     */
+    internal suspend fun updateAndSaveMessages(messages: List<Message>) {
+        upsertMessages(messages)
+        storeMessageLocally(messages)
+    }
+
+    /**
      * Store the messages in the local cache.
      *
      * @param messages The messages to be stored. Check [Message].
@@ -385,7 +395,7 @@ internal class ChannelLogic(
         if (currentUserId?.let {
             message.shouldIncrementUnreadCount(
                     it,
-                    mutableState._read.value?.lastMessageSeenDate
+                    mutableState._read.value?.lastMessageSeenDate,
                 )
         } == true
         ) {

@@ -33,4 +33,9 @@ public interface MessageBackgroundFactory {
      * ShapeAppearanceModel for giphy card.
      */
     public fun giphyAppearanceModel(context: Context): Drawable
+
+    /**
+     * Background for message with image attachments.
+     */
+    public fun imageAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
 }

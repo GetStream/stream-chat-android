@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ### ⚠️ Changed
 
@@ -32,6 +33,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Moved `RetryPolicy` related logic to `ChatClient`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -48,8 +50,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Disabled command popups when attachments are present. [#3051](https://github.com/GetStream/stream-chat-android/pull/3051)
+- Disabled the attachments button when popups are present. [#3051](https://github.com/GetStream/stream-chat-android/pull/3051)
 
 ### ✅ Added
+- Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
+- Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081) 
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
@@ -57,6 +63,9 @@
 - You can now use `original` sized giphies that apply resizing based on the GIF size. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
 - Use `fixedHeight` or `fixedHeightDownsampled` giphies to use a fixed height that keeps the aspect ratio and takes up less memory. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
 - Make sure to check out our giphy attachment styles (GiphyMediaAttachmentView) for customization.
+- Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
+- Created an ImageAttachmentViewHolder that represents images in the message list. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
+- Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 
 ### ❌ Removed
 
@@ -69,6 +78,7 @@
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
+- Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
 
 ### ❌ Removed
 
