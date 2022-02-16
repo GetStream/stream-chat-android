@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView.MaxMessageLengthHandler
+import io.getstream.chat.android.ui.message.input.MessageInputView.MessageInputMentionListener
 import io.getstream.chat.android.ui.message.input.MessageInputView.MessageInputViewModeListener
 import io.getstream.chat.android.ui.message.input.MessageInputView.SelectedAttachmentsCountListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
@@ -145,6 +146,11 @@ public class MessageInputView : ConstraintLayout {
         }
 
     private var messageInputViewModeListener: MessageInputViewModeListener = MessageInputViewModeListener { }
+
+    /**
+     * Listener that handles selected mentions.
+     */
+    private var messageInputMentionListener: MessageInputMentionListener = MessageInputMentionListener { }
 
     public constructor(context: Context) : this(context, null)
 
@@ -269,6 +275,7 @@ public class MessageInputView : ConstraintLayout {
             object : SuggestionListView.OnSuggestionClickListener {
                 override fun onMentionClick(user: User) {
                     binding.messageInputFieldView.autoCompleteUser(user)
+                    messageInputMentionListener.onMentionSelected(user)
                 }
 
                 override fun onCommandClick(command: Command) {
@@ -545,6 +552,15 @@ public class MessageInputView : ConstraintLayout {
      */
     public fun setMessageInputModeListener(listener: MessageInputViewModeListener) {
         messageInputViewModeListener = listener
+    }
+
+    /**
+     * Sets a listener for the mention selection.
+     *
+     * @param listener The listener to be set.
+     */
+    public fun setMessageInputMentionListener(listener: MessageInputMentionListener) {
+        this.messageInputMentionListener = listener
     }
 
     /**
@@ -1064,14 +1080,27 @@ public class MessageInputView : ConstraintLayout {
 
     /**
      * Listener invoked when input mode changes.
-     * Can be used for changing view's appearance based on the current mode - for example, send message buttons' drawables
+     * Can be used for changing view's appearance based on the current mode - for example, send message buttons' drawables.
      */
     public fun interface MessageInputViewModeListener {
         /**
-         * Called when input mode changes
+         * Called when input mode changes.
          *
-         * @param inputMode Current input mode
+         * @param inputMode Current input mode.
          */
         public fun inputModeChanged(inputMode: InputMode)
+    }
+
+    /**
+     * Listener invoked whenever a user selects a mention from the suggestion popup list.
+     *
+     * Used to store the mention before sending the message.
+     */
+    public fun interface MessageInputMentionListener {
+
+        /**
+         * Called when the user is selected in the mention suggestion list.
+         */
+        public fun onMentionSelected(user: User)
     }
 }

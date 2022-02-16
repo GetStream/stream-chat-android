@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
@@ -50,6 +51,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private val _isDirectMessage: MediatorLiveData<Boolean> = MediatorLiveData()
     public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
     private val _channel = MediatorLiveData<Channel>()
+    private val selectedMentions = mutableSetOf<User>()
 
     private val logger = ChatLogger.get("MessageInputViewModel")
 
@@ -101,8 +103,27 @@ public class MessageInputViewModel @JvmOverloads constructor(
         activeThread.postValue(null)
     }
 
+    /**
+     * Stores the selected mention to a [Set], user for populating the mentioned user IDs.
+     *
+     * @param user The selected user to mention.
+     */
+    public fun selectMention(user: User) {
+        this.selectedMentions += user
+    }
+
+    /**
+     * Sends a regular message to the channel.
+     *
+     * @param messageText The current message text.
+     * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
+     */
     public fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
-        val message = Message(cid = cid, text = messageText)
+        val message = Message(
+            cid = cid,
+            text = messageText,
+            mentionedUsersIds = filterMentions(selectedMentions, messageText)
+        )
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
 
@@ -113,6 +134,13 @@ public class MessageInputViewModel @JvmOverloads constructor(
         )
     }
 
+    /**
+     * Sends a message with non-custom attachments.
+     *
+     * @param messageText The current message text.
+     * @param attachmentsWithMimeTypes Attachments that we support out of the box.
+     * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
+     */
     public fun sendMessageWithAttachments(
         messageText: String,
         attachmentsWithMimeTypes: List<Pair<File, String?>>,
@@ -123,7 +151,12 @@ public class MessageInputViewModel @JvmOverloads constructor(
             Attachment(upload = file, mimeType = mimeType)
         }.toMutableList()
 
-        val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
+        val message = Message(
+            cid = cid,
+            text = messageText,
+            attachments = attachments,
+            mentionedUsersIds = filterMentions(selectedMentions, messageText)
+        ).apply(messageTransformer)
         chatDomain.sendMessage(message).enqueue(
             onError = { chatError ->
                 logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
@@ -131,15 +164,45 @@ public class MessageInputViewModel @JvmOverloads constructor(
         )
     }
 
+    /**
+     * Sends a message with custom attachments.
+     *
+     * @param messageText The current message text.
+     * @param customAttachments Attachments that are custom built by the user.
+     * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
+     */
     @ExperimentalStreamChatApi
     public fun sendMessageWithCustomAttachments(
         messageText: String,
         customAttachments: List<Attachment>,
         messageTransformer: Message.() -> Unit = { },
     ) {
-        val message = Message(cid = cid, text = messageText, attachments = customAttachments.toMutableList())
+        val message = Message(
+            cid = cid, text = messageText,
+            attachments = customAttachments.toMutableList(),
+            mentionedUsersIds = filterMentions(selectedMentions, messageText)
+        )
             .apply(messageTransformer)
         chatDomain.sendMessage(message).enqueue()
+    }
+
+    /**
+     * Filters the current input and the mentions the user selected from the suggestion list. Removes any mentions which
+     * are selected but no longer present in the input.
+     *
+     * @param selectedMentions The set of selected users from the suggestion list.
+     * @param message The current message input.
+     *
+     * @return [MutableList] of user IDs of mentioned users.
+     */
+    private fun filterMentions(selectedMentions: Set<User>, message: String): MutableList<String> {
+        val text = message.lowercase()
+
+        val remainingMentions = selectedMentions.filter {
+            text.contains("@${it.name.lowercase()}")
+        }.map { it.id }
+
+        return remainingMentions.toMutableList()
     }
 
     /**
