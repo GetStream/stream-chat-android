@@ -40,12 +40,18 @@ public class StreamOfflinePluginFactory(
 
     private var instance: OfflinePlugin? = null
 
+    /**
+     * Gets the current instance of [OfflinePlugin] or creates a new one if there's no instance already created.
+     */
     override fun getOrCreate(): Plugin {
         return instance ?: createOfflinePlugin().also {
             instance = it
         }
     }
 
+    /**
+     * Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.
+     */
     private fun createOfflinePlugin(): OfflinePlugin {
         val chatClient = ChatClient.instance()
         ChatDomain.Builder(appContext, chatClient).apply {
@@ -61,7 +67,7 @@ public class StreamOfflinePluginFactory(
             context(appContext)
             scope(scope)
             defaultConfig(io.getstream.chat.android.client.models.Config(connectEventsEnabled = true, muteEnabled = true))
-            currentUser(ChatClient.instance().getCurrentUser()!!)
+            ChatClient.instance().getCurrentUser()?.let(this::currentUser)
             setOfflineEnabled(true)
         }.build()
 

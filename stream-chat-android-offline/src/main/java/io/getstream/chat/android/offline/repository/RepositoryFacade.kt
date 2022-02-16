@@ -165,7 +165,9 @@ internal class RepositoryFacade @VisibleForTesting internal constructor(
          * Use it get create and refresh the singleton of [RepositoryFacade]. This is needed when we currentUser of the
          * SDK is changes.
          *
-         * Todo: Improve documentation
+         * @param factory [RepositoryFactory]
+         * @param scope [CoroutineScope]
+         * @param defaultConfig [Config]
          */
         internal fun refreshAndGet(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config) =
             create(factory, scope, defaultConfig).also { facade -> instance = facade }
@@ -174,6 +176,14 @@ internal class RepositoryFacade @VisibleForTesting internal constructor(
             "RepositoryFacade must be initialised first"
         )
 
+        /**
+         * Creates a new instance of [RepositoryFacade] and doesn't populate the Singleton instance. This method should be
+         * used mainly for tests or internally by other constructor methods.
+         *
+         * @param factory [RepositoryFactory]
+         * @param scope [CoroutineScope]
+         * @param defaultConfig [Config]
+         */
         @VisibleForTesting
         internal fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
             val userRepository = factory.createUserRepository()
