@@ -348,10 +348,6 @@ internal class ChannelLogic(
         mutableState._messages.value = newMessages
     }
 
-    internal suspend fun updateLastMessageForChannel(message: Message) {
-        chatDomainImpl.repos.updateLastMessageForChannel(mutableState.cid, message)
-    }
-
     /**
      * Updates the messages locally and saves it at database.
      *

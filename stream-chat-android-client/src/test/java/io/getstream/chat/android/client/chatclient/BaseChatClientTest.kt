@@ -63,7 +63,6 @@ internal open class BaseChatClientTest {
             tokenUtils = tokenUtils,
             scope = coroutineRule.scope,
             retryPolicy = NoRetryPolicy(),
-            messagePrepHandler = messagePrepHandler,
         )
     }
 }

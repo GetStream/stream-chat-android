@@ -105,7 +105,6 @@ internal class ClientConnectionTests {
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
-            messagePrepHandler,
         )
     }
 

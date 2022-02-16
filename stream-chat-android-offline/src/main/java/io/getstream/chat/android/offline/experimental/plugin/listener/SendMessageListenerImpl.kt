@@ -88,7 +88,7 @@ internal class SendMessageListenerImpl(
             logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
         }.onSuccessSuspend { newMessage ->
             channel.storeMessageLocally(listOf(newMessage))
-            channel.updateLastMessageForChannel(newMessage)
+            repos.updateLastMessageForChannel(channel.cid, message)
         }.flatMapSuspend { newMessage ->
             sendMessage(channelType, channelId, newMessage)
         }
