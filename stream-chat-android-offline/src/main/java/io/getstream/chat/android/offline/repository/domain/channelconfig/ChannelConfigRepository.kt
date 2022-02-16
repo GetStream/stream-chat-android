@@ -19,7 +19,7 @@ internal interface ChannelConfigRepository {
  */
 internal class ChannelConfigRepositoryImpl(private val channelConfigDao: ChannelConfigDao) : ChannelConfigRepository {
     private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
-    
+
     override suspend fun cacheChannelConfigs() {
         channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
             .associateBy(ChannelConfig::type)
