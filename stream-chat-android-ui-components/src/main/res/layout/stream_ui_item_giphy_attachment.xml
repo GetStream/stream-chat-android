@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:hyphenationFrequency="normal"
-            android:lineHeight="16sp"
+            app:lineHeight="16sp"
             android:paddingLeft="@dimen/stream_ui_spacing_medium"
             android:paddingTop="@dimen/stream_ui_spacing_small"
             android:paddingRight="@dimen/stream_ui_spacing_medium"

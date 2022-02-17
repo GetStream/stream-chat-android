@@ -2,12 +2,13 @@ package io.getstream.chat.ui.sample.feature.chat.info.shared
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
-import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedGroupsItemBinding
 
@@ -39,7 +40,10 @@ class ChatInfoSharedGroupsViewHolder(
 
         binding.apply {
             avatarView.setChannelData(channel)
-            nameTextView.text = channel.getDisplayName(itemView.context)
+            nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
+                channel = channel,
+                currentUser = ChatClient.instance().getCurrentUser()
+            )
             membersCountTextView.text = itemView.context.resources.getQuantityString(
                 R.plurals.members_count_title,
                 channel.members.size,

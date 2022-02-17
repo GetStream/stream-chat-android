@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -19,8 +20,7 @@ import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.utils.CallRetryService
-import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
+import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.positiveRandomLong
@@ -69,7 +69,12 @@ internal class WhenObserveAttachmentsDBFlow {
                 .get()
 
             flow.value = listOf(
-                attachment1.copy(uploadState = Attachment.UploadState.InProgress(positiveRandomLong(90), positiveRandomLong(10) + 90)),
+                attachment1.copy(
+                    uploadState = Attachment.UploadState.InProgress(
+                        positiveRandomLong(90),
+                        positiveRandomLong(10) + 90
+                    )
+                ),
                 attachment2.copy(uploadState = Attachment.UploadState.Success)
             )
 
@@ -79,6 +84,9 @@ internal class WhenObserveAttachmentsDBFlow {
     private inner class Fixture {
         private val flow = MutableStateFlow<List<Attachment>>(emptyList())
         private val repositoryFacade = mock<RepositoryFacade>()
+        private val chatClient = mock<ChatClient> {
+            on(it.retryPolicy) doReturn NoRetryPolicy()
+        }
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
             on(it.user) doReturn MutableStateFlow(randomUser())
@@ -86,7 +94,6 @@ internal class WhenObserveAttachmentsDBFlow {
             on(it.scope) doReturn testCoroutineRule.scope
             on { generateMessageId() } doReturn randomString()
             on { getActiveQueries() } doReturn emptyList()
-            on { callRetryService() } doReturn CallRetryService(DefaultRetryPolicy(), mock())
         }
         private var channelController = mock<ChannelController>()
         private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
@@ -97,7 +104,7 @@ internal class WhenObserveAttachmentsDBFlow {
                     invocationOnMock.arguments.first() as Message
                 }
             }
-            MessageSendingService(chatDomainImpl, channelController, channelClient, uploadAttachmentsWorker)
+            MessageSendingService(chatDomainImpl, channelController, chatClient, channelClient, uploadAttachmentsWorker)
         }
 
         fun givenChannelClient(channelClient: ChannelClient) = apply {

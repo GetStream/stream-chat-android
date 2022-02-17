@@ -10,8 +10,9 @@ import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.errorhandler.factory.OfflineErrorHandlerFactory
+import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
+import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 
 /**
@@ -40,13 +41,15 @@ object ChatHelper {
             }
         )
 
-        val offlinePlugin = OfflinePlugin(Config(userPresence = true, persistenceEnabled = true))
+        val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true), context)
+        val offlineErrorHandlerFactory = OfflineErrorHandlerFactory()
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
             .withPlugin(offlinePlugin)
+            .withErrorHandler(offlineErrorHandlerFactory)
             .logLevel(logLevel)
             .build()
     }

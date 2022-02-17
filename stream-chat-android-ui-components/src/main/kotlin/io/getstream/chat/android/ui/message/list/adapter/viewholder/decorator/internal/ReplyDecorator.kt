@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageRe
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
@@ -37,6 +38,17 @@ internal class ReplyDecorator(
      */
     override fun decorateFileAttachmentsMessage(
         viewHolder: FileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupReplyView(viewHolder.binding.replyView, data)
+
+    /**
+     * Decorates the reply section of the image attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupReplyView(viewHolder.binding.replyView, data)
 

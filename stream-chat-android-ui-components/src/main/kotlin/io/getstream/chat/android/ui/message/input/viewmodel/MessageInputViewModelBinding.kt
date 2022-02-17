@@ -18,13 +18,22 @@ import java.io.File
  *
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
+ *
+ * @param view The View to bind to.
+ * @param lifecycleOwner The lifecycle owner to bind the data observing to.
  */
 @JvmName("bind")
-public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
+public fun MessageInputViewModel.bindView(
+    view: MessageInputView,
+    lifecycleOwner: LifecycleOwner,
+) {
     val handler = MessageInputView.DefaultUserLookupHandler(emptyList())
     view.setUserLookupHandler(handler)
     members.observe(lifecycleOwner) { members ->
         handler.users = members.map(Member::user)
+    }
+    view.setMessageInputMentionListener { selectedUser ->
+        selectMention(selectedUser)
     }
     commands.observe(lifecycleOwner, view::setCommands)
     maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)

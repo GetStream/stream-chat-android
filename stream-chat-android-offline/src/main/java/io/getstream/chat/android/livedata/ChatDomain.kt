@@ -23,7 +23,6 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
@@ -87,9 +86,6 @@ public sealed interface ChatDomain {
      * if the current user is banned or not
      */
     public val banned: LiveData<Boolean>
-
-    /** The retry policy for retrying failed requests */
-    public val retryPolicy: RetryPolicy
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
@@ -606,10 +602,6 @@ public sealed interface ChatDomain {
 
         public fun uploadAttachmentsWorkerNetworkType(networkType: UploadAttachmentsNetworkType): Builder = apply {
             offlineChatDomainBuilder.uploadAttachmentsWorkerNetworkType(networkType)
-        }
-
-        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
-            offlineChatDomainBuilder.retryPolicy(retryPolicy)
         }
 
         public fun build(): ChatDomain {
