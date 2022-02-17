@@ -32,4 +32,8 @@ jobs:
         with:
           name: screenshots
           path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/
-            
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "develop"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
