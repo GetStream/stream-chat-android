@@ -54,11 +54,11 @@ internal object MessageListItemViewTypeMapper {
         return when {
             message.isError() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
-            hasAttachments -> FILE_ATTACHMENTS
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
             message.isImageAttachment() -> IMAGE_ATTACHMENT
+            hasAttachments -> FILE_ATTACHMENTS
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
