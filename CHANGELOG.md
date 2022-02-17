@@ -131,6 +131,14 @@
 ### ❌ Removed
 
 <!-- UNRELEASED END -->
+# February 17th, 2022 - 4.28.4
+## stream-chat-android-client
+### ✅ Added
+- Added the `member` field to the `MemberRemovedEvent`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed how member removal is handled in `DefaultChatEventHandler`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
 
 # February 16th, 2022 - 4.28.3
 ## stream-chat-android-ui-components

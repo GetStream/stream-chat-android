@@ -837,5 +837,6 @@ internal fun randomMemberRemovedEvent(cid: String = randomString()): MemberRemov
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
+        member = randomMember()
     )
 }
