@@ -25,6 +25,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed how member removal is handled in `DefaultChatEventHandler`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
 
 ### ⬆️ Improved
 
