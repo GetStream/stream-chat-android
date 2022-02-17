@@ -34,4 +34,5 @@ jobs:
           path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/debug
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
-        base: develop
+        with: 
+          base: develop
