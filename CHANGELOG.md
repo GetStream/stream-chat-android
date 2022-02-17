@@ -59,6 +59,7 @@
 - Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081)
 - Added `ChatUI.dateFormatter` to allow customizing the way the dates are formatted. [#3085](https://github.com/GetStream/stream-chat-android/pull/3085)
 - Added a separate `LinkAttachmentsViewHolder` for handling messages containing link attachments and no other types of attachments. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
+- Added a separate `FileAttachmentsViewHolder` for handling messages containing file attachments of different types or file attachments not handled by one of the other `ViewHolder`s. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
@@ -69,7 +70,8 @@
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
 - Created an ImageAttachmentViewHolder that represents images in the message list. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 - Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
-- Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder` [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
+- Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder`. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
+- Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
 
 ### ❌ Removed
 
