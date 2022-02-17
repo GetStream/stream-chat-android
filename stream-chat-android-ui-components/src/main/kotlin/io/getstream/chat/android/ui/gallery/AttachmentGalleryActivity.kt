@@ -14,12 +14,12 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -39,7 +39,6 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private val initialIndex: Int by lazy { intent.getIntExtra(EXTRA_KEY_INITIAL_INDEX, 0) }
     private val viewModel: AttachmentGalleryViewModel by viewModels()
-    private val dateFormatter: DateFormatter by lazy { DateFormatter.from(this) }
     private lateinit var adapter: AttachmentGalleryPagerAdapter
     private val permissionChecker = PermissionChecker()
 
@@ -189,7 +188,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         return getString(
             R.string.stream_ui_attachment_gallery_date,
             relativeDay,
-            dateFormatter.formatTime(createdAt)
+            ChatUI.dateFormatter.formatTime(createdAt)
         )
     }
 

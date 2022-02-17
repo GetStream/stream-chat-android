@@ -57,6 +57,7 @@
 ### ✅ Added
 - Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
 - Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081)
+- Added `ChatUI.dateFormatter` to allow customizing the way the dates are formatted. [#3085](https://github.com/GetStream/stream-chat-android/pull/3085)
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
