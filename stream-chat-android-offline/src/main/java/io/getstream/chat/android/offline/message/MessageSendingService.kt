@@ -43,6 +43,7 @@ internal class MessageSendingService(
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker,
+    private val chatClient: ChatClient = ChatClient.instance()
 ) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -111,7 +112,7 @@ internal class MessageSendingService(
         // we insert early to ensure we don't lose messages
         repos.insertMessage(newMessage)
         repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-    }
+    }.flatMapSuspend(::uploadAttachments)
 
     /**
      * Sends a new message after preparing and uploading the attachments.
@@ -134,7 +135,9 @@ internal class MessageSendingService(
         return uploadAttachments(message).let {
             if (it.isSuccess) {
                 doSend(it.data())
-            } else it
+            } else it.recoverSuspend {
+                message
+            }
         }
     }
 
@@ -230,8 +233,7 @@ internal class MessageSendingService(
         return Result.success(message)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
             .flatMapSuspend { newMessage ->
-                val chatClient = ChatClient.instance()
-                chatClient.channel(message.cid).sendMessageInternal(newMessage)
+                chatClient.channel(newMessage.cid).sendMessageInternal(newMessage)
                     .retry(scope, chatClient.retryPolicy).await()
             }
             .mapSuspend(::handleSendMessageSuccess)

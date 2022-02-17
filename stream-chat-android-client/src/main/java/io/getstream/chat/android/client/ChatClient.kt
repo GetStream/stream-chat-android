@@ -1033,6 +1033,7 @@ public class ChatClient internal constructor(
         message: Message,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
+
         return CoroutineCall(scope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
             val preparedMessageResult =

@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Factory to generate and provide instances of [MessageSendingService].
  */
 @ExperimentalStreamChatApi
-internal class MessageSendingServiceFactory {
+internal class MessageSendingServiceFactory private constructor() {
     private val messageSendingServices: ConcurrentHashMap<Pair<String, String>, MessageSendingService> =
         ConcurrentHashMap()
 

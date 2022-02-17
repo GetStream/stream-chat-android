@@ -13,7 +13,10 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.message.MessageSendingService
+import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.randomAttachment
@@ -98,13 +101,25 @@ internal class WhenObserveAttachmentsDBFlow {
         private var channelController = mock<ChannelController>()
         private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
 
+        /** For plugin approach */
+        private val logicRegistry = mock<LogicRegistry>()
+        private val globalState = mock<GlobalState>()
+
         private val messageSendingService: MessageSendingService by lazy {
             runBlocking {
                 whenever(channelController.handleSendMessageSuccess(any())) doAnswer { invocationOnMock ->
                     invocationOnMock.arguments.first() as Message
                 }
             }
-            MessageSendingService(chatDomainImpl, channelController, chatClient, channelClient, uploadAttachmentsWorker)
+            MessageSendingServiceFactory.create().getOrCreateService(
+                logic = logicRegistry,
+                globalState,
+                channelController.channelType,
+                channelController.channelId,
+                chatDomainImpl.scope,
+                chatDomainImpl.repos,
+                chatDomainImpl.appContext
+            )
         }
 
         fun givenChannelClient(channelClient: ChannelClient) = apply {

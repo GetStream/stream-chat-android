@@ -11,12 +11,17 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -58,12 +63,12 @@ internal class WhenSendNewMessage {
                 createdLocallyAt = null,
                 syncStatus = SyncStatus.COMPLETED
             )
-            val sut = Fixture().givenOffline().givenCid("cid1").get()
+            val sut = Fixture().givenOffline().givenCid("test_type:test_channel").get()
 
             val result = sut.sendNewMessage(message)
 
             result.isSuccess.shouldBeTrue()
-            result.data().cid shouldBeEqualTo "cid1"
+            result.data().cid shouldBeEqualTo "test_type:test_channel"
             result.data().id.shouldNotBeEmpty()
             result.data().type shouldBeEqualTo "regular"
             result.data().text shouldBeEqualTo "text123"
@@ -74,39 +79,39 @@ internal class WhenSendNewMessage {
     @Test
     fun `Given message without attachments And offline Should update channel controller and repository`() =
         runBlockingTest {
-            val message = randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf())
-            val channelController = mock<ChannelController>()
+            val message = randomMessage(id = "messageId1", cid = "test_type:test_channel", attachments = mutableListOf())
+            val channel = mock<ChannelLogic>()
             val repositoryFacade = mock<RepositoryFacade>()
             val sut = Fixture()
-                .givenChannelController(channelController)
+                .givenChannelLogic(channel)
                 .givenRepositories(repositoryFacade)
                 .givenOffline()
-                .givenCid("cid1")
+                .givenCid("test_type:test_channel")
                 .get()
 
             sut.sendNewMessage(message)
 
-            verify(channelController).upsertMessage(argThat { id == "messageId1" })
+            // verify(channel).upsertMessage(argThat { id == "messageId1" })
             verify(repositoryFacade).insertMessage(argThat { id == "messageId1" }, eq(false))
-            verify(repositoryFacade).updateLastMessageForChannel(eq("cid1"), argThat { id == "messageId1" })
+            verify(repositoryFacade).updateLastMessageForChannel(eq("test_type:test_channel"), argThat { id == "messageId1" })
         }
 
     @Test
     fun `Given message without attachments And online And success network call Should send to BE`() =
         runBlockingTest {
             val message =
-                randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
+                randomMessage(id = "messageId1", cid = "test_type:test_channel", attachments = mutableListOf(), updatedAt = null)
             val channelClient = mock<ChannelClient>()
             val sut = Fixture()
                 .givenOnline()
                 .givenChannelClient(channelClient)
-                .givenCid("cid1")
+                .givenCid("test_type:test_channel")
                 .givenNetworkResponse(message)
                 .get()
 
             sut.sendNewMessage(message)
 
-            verify(channelClient).sendMessage(argThat { id == "messageId1" })
+            verify(channelClient).sendMessageInternal(argThat { id == "messageId1" })
         }
 
     @Test
@@ -135,9 +140,7 @@ internal class WhenSendNewMessage {
             val channelClient = mock<ChannelClient>()
             val sut = Fixture()
                 .givenOnline()
-                .givenCid("cid1")
-                .givenChannelType("channelType")
-                .givenChannelId("channelId")
+                .givenCid("test_type:test_channel")
                 .givenChannelClient(channelClient)
                 .givenAttachmentUploadWorker(uploadWorker)
                 .get()
@@ -178,6 +181,7 @@ internal class WhenSendNewMessage {
         private var repositoryFacade = mock<RepositoryFacade>()
         private val chatClient = mock<ChatClient> {
             on(it.retryPolicy) doReturn NoRetryPolicy()
+            onGeneric { }
         }
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
@@ -190,21 +194,43 @@ internal class WhenSendNewMessage {
         private var channelController = mock<ChannelController>()
         private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
 
+        /** For plugin approach */
+        private var channel = mock<ChannelLogic>()
+        private val logicRegistry = mock<LogicRegistry> {
+            onGeneric { channel(any(), any()) } doReturn channel
+        }
+        private val globalState: GlobalState = mock<GlobalMutableState>() {
+            on(it.user) doReturn MutableStateFlow(randomUser())
+        }
+
         fun givenOffline() = apply {
             whenever(chatDomainImpl.connectionState) doReturn MutableStateFlow(ConnectionState.OFFLINE)
+            whenever(globalState.connectionState) doReturn MutableStateFlow(ConnectionState.OFFLINE)
         }
 
         fun givenOnline() = apply {
             whenever(chatDomainImpl.connectionState) doReturn MutableStateFlow(ConnectionState.CONNECTED)
             whenever(chatDomainImpl.isOnline()) doReturn true
+
+            // For plugin approach.
+            whenever(globalState.connectionState) doReturn MutableStateFlow(ConnectionState.CONNECTED)
+            whenever(globalState.isOnline()) doReturn true
         }
 
         fun givenCid(cid: String) = apply {
+            whenever(channel.cid) doReturn cid
             whenever(channelController.cid) doReturn cid
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            whenever(channelController.channelType) doReturn channelType
+            whenever(channelController.channelId) doReturn channelId
         }
 
         fun givenChannelController(channelController: ChannelController) = apply {
             this.channelController = channelController
+        }
+
+        fun givenChannelLogic(channel: ChannelLogic) = apply {
+            this.channel = channel
         }
 
         fun givenRepositories(repositoryFacade: RepositoryFacade) = apply {
@@ -217,10 +243,11 @@ internal class WhenSendNewMessage {
         }
 
         fun givenNetworkResponse(message: Message) = apply {
-            whenever(channelClient.sendMessage(any())) doReturn message.asCall()
+            whenever(channelClient.sendMessageInternal(any())) doReturn message.asCall()
         }
 
         fun givenChannelClient(channelClient: ChannelClient) = apply {
+            whenever(chatClient.channel(any())) doReturn channelClient
             this.channelClient = channelClient
         }
 
@@ -235,11 +262,14 @@ internal class WhenSendNewMessage {
         suspend fun get(): MessageSendingService {
             whenever(channelController.handleSendMessageSuccess(any())) doAnswer { invocationOnMock -> invocationOnMock.arguments.first() as Message }
             return MessageSendingService(
-                chatDomainImpl,
-                channelController,
-                chatClient,
-                channelClient,
+                logic = logicRegistry,
+                globalState,
+                channelController.channelType,
+                channelController.channelId,
+                chatDomainImpl.scope,
+                chatDomainImpl.repos,
                 uploadAttachmentsWorker,
+                chatClient
             )
         }
     }
