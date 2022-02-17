@@ -8,7 +8,7 @@ The SDK provides an API for general configuration of the UI Component library's 
 * MIME type icons for attachments
 * Default font used across the UI components
 * Avatar bitmap loading logic
-* Attachments urls
+* Attachments URLs
 
 The full list of `ChatUI` properties you can override include:
 
@@ -20,7 +20,9 @@ The full list of `ChatUI` properties you can override include:
 * `markdown`: Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic or use more markdown modules. This property is deprecated and [ChatUI.messageTextTransformer](#transforming-message-text) should be used instead.
 * `style`: Allows overriding the global, default style of UI components, like the TextStyle.
 * `navigator`: Allows intercepting and modifying default navigation between SDKs components (e.g. redirection from `MessageListView` to `AttachmentGalleryActivity`).
-* `messageTextTransformer`: Allows customising the message text's format or style. For example, you can use it to provide markdown support or highlight specific messages by making them bold.
+* `messageTextTransformer`: Allows customizing the message text's format or style. For example, you can use it to provide markdown support or highlight specific messages by making them bold.
+* `channelNameFormatter`: Allows customizing the way channel names are formatted.
+* `dateFormatter`: Allows changing the way dates are formatted.
 
 :::note
 `ChatUI` is initialized out-of-the-box with default implementations - no initialization is required on app startup.
@@ -244,4 +246,35 @@ val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
 }
 
 ChatUI.navigator = ChatNavigator(navigationHandler)
+```
+
+### Customizing ChannelNameFormatter
+
+You can customize the way channel names are formatted by overriding the default `ChannelNameFormatter`:
+
+```kotlin
+ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
+    channel.name
+}
+```
+
+### Customizing DateFormatter
+
+Overriding the `DateFormatter` allows you to change the way dates are formatted in the application:
+
+```kotlin
+ChatUI.dateFormatter = object: DateFormatter {
+    private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    override fun formatDate(localDateTime: LocalDateTime?): String {
+        localDateTime ?: return ""
+        return dateFormatter.format(localDateTime) 
+    }
+
+    override fun formatTime(localTime: LocalTime?): String {
+        localTime ?: return ""
+        return dateTimeFormatter.format(localTime)
+    }
+}
 ```

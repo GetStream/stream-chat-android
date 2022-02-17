@@ -13,6 +13,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -49,12 +50,15 @@ internal object MessageListItemViewTypeMapper {
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
         val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
 
+        val containsOnlyLinks = message.containsOnlyLinkAttachments()
+
         return when {
             message.isError() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
             message.deletedAt != null -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
+            containsOnlyLinks -> LINK_ATTACHMENTS
             message.isImageAttachment() -> IMAGE_ATTACHMENT
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
@@ -68,5 +72,14 @@ internal object MessageListItemViewTypeMapper {
         return attachments.isNotEmpty() &&
             attachments.any { it.isImage() } &&
             attachments.all { it.isImage() || it.hasLink() }
+    }
+
+    /**
+     * Checks if all attachments are link attachments.
+     */
+    private fun Message.containsOnlyLinkAttachments(): Boolean {
+        if (this.attachments.isEmpty()) return false
+
+        return this.attachments.all { attachment -> attachment.hasLink() }
     }
 }

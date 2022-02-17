@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.offline.querychannels.BaseChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
@@ -52,12 +53,12 @@ class CustomChatEventHandler(private val channels: StateFlow<List<Channel>>) : B
         event: MemberRemovedEvent,
         filter: FilterObject,
         cachedChannel: Channel?,
-    ): EventHandlingResult = removeIfChannelIsPresent(channels, cachedChannel)
+    ): EventHandlingResult = handleMemberRemoval(channels, cachedChannel, event.member)
 
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = removeIfChannelIsPresent(channels, event.channel)
+    ): EventHandlingResult = handleMemberRemoval(channels, event.channel, event.member)
 
     private fun addIfChannelIsAbsentAndNotDraft(
         channels: StateFlow<List<Channel>>,
@@ -79,6 +80,21 @@ class CustomChatEventHandler(private val channels: StateFlow<List<Channel>>) : B
             addIfChannelIsAbsentAndNotDraft(channels, channel)
         } else {
             removeIfChannelIsPresent(channels, channel)
+        }
+    }
+
+    private fun handleMemberRemoval(
+        channels: StateFlow<List<Channel>>,
+        cachedChannel: Channel?,
+        member: Member,
+    ): EventHandlingResult {
+        val currentUserId = ChatClient.instance().getCurrentUser()?.id
+        val removedMemberId = member.getUserId()
+
+        return if (currentUserId == removedMemberId) {
+            removeIfChannelIsPresent(channels, cachedChannel)
+        } else {
+            EventHandlingResult.Skip
         }
     }
 
