@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.horizontalChainInParent
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
@@ -23,6 +24,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
+import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
 
@@ -51,17 +53,19 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
     )
 
     fun showAttachments(attachments: List<Attachment>) {
-        when (attachments.size) {
+        val images =
+            attachments.filter { attachment -> !attachment.hasLink() && attachment.type == ModelType.attach_image }
+        when (images.size) {
             0 -> Unit
-            1 -> showOne(attachments.first())
-            2 -> showTwo(attachments.first(), attachments[1])
-            3 -> showThree(attachments.first(), attachments[1], attachments[2])
+            1 -> showOne(images.first())
+            2 -> showTwo(images.first(), images[1])
+            3 -> showThree(images.first(), images[1], images[2])
             else -> showFour(
-                attachments.first(),
-                attachments[1],
-                attachments[2],
-                attachments[3],
-                attachments.size - MAX_PREVIEW_COUNT
+                images.first(),
+                images[1],
+                images[2],
+                images[3],
+                images.size - MAX_PREVIEW_COUNT
             )
         }
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)

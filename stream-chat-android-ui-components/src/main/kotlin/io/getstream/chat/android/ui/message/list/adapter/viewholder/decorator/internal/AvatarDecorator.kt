@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Fil
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -16,6 +17,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 internal class AvatarDecorator(
     private val showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
 ) : BaseDecorator() {
+
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -68,6 +70,20 @@ internal class AvatarDecorator(
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+    }
+
+    /**
+     * Decorates the avatar of the link attachment message, based on the message owner.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
