@@ -2048,7 +2048,7 @@ public class ChatClient internal constructor(
             chatClient.initializationCoordinator.addUserConnectedListener {
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
-                        pluginFactory.getOrCreate()
+                        pluginFactory.get()
                     }
                 )
             }

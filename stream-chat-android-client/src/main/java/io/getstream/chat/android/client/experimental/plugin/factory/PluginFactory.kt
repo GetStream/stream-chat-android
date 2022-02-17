@@ -7,10 +7,11 @@ import io.getstream.chat.android.client.experimental.plugin.Plugin
  * in certain API calls.
  */
 public interface PluginFactory {
+
     /**
-     * Gets [Plugin] if it was previously created or creates it and returns it if not.
+     * Creates a [Plugin]
      *
      * @return The [Plugin] instance.
      */
-    public fun getOrCreate(): Plugin
+    public fun get(): Plugin
 }

@@ -1886,7 +1886,7 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
-	public abstract fun getOrCreate ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
+	public abstract fun get ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/handler/StateHandler {
