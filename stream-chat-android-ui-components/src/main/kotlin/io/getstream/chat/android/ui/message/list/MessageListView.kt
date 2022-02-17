@@ -527,7 +527,7 @@ public class MessageListView : ConstraintLayout {
 
         loadingViewContainer.removeView(binding.defaultLoadingView)
         messageListViewStyle?.loadingView?.let { loadingView ->
-            this.loadingView = streamThemeInflater.inflate(loadingView, null).apply {
+            this.loadingView = streamThemeInflater.inflate(loadingView, loadingViewContainer, false).apply {
                 isVisible = true
                 loadingViewContainer.addView(this)
             }
@@ -666,7 +666,7 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
-            messageDateFormatter = DateFormatter.from(context)
+            messageDateFormatter = ChatUI.dateFormatter
         }
 
         if (::attachmentViewFactory.isInitialized.not()) {

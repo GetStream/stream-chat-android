@@ -5,6 +5,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -96,4 +97,9 @@ public object ChatUI {
     public var channelNameFormatter: ChannelNameFormatter by lazyVar {
         ChannelNameFormatter.defaultFormatter(appContext)
     }
+
+    /**
+     * Allows formatting date-time objects as strings.
+     */
+    public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
 }
