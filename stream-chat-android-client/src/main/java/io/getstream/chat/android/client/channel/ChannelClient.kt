@@ -257,9 +257,9 @@ public class ChannelClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel with side effects if there is any plugin added in the client.
      *
-     * @param message Message object
+     * @param message Message to send.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
@@ -268,7 +268,15 @@ public class ChannelClient internal constructor(
         return client.sendMessage(channelType, channelId, message)
     }
 
+    /**
+     * Sends the message to the given channel without running any side effects.
+     *
+     * @param message Message to send.
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
     @InternalStreamChatApi
+    @CheckResult
     public fun sendMessageInternal(message: Message): Call<Message> {
         return client.sendMessageInternal(channelType, channelId, message)
     }

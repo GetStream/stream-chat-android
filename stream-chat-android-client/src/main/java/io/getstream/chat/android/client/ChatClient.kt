@@ -1000,6 +1000,15 @@ public class ChatClient internal constructor(
         return api.getMessage(messageId)
     }
 
+    /**
+     * Sends the message to the given channel without running any side effects.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message Message to send.
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
     internal fun sendMessageInternal(
         channelType: String,
         channelId: String,
@@ -1025,6 +1034,7 @@ public class ChatClient internal constructor(
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
         return CoroutineCall(scope) {
+            // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
             val preparedMessageResult =
                 relevantPlugins.firstOrNull()?.prepareMessage(channelType, channelId, message) ?: Result.success(
                     message

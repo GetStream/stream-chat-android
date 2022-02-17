@@ -31,6 +31,9 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
 
+/**
+ * A service that does everything required to send message i.e. preparing the message, uploading attachments, setting correct state.
+ */
 @ExperimentalStreamChatApi
 internal class MessageSendingService(
     private val logic: LogicRegistry,
@@ -46,10 +49,29 @@ internal class MessageSendingService(
 
     private val channel by lazy { logic.channel(channelType, channelId) }
 
+    /**
+     * Prepares message and upload its attachments if it has any.
+     *
+     * @param message [Message] to be sent.
+     *
+     * @return [Result] with a prepared message.
+     */
     internal suspend fun prepareNewMessageWithAttachments(message: Message): Result<Message> =
         prepareNewMessage(message)
             .flatMapSuspend(::uploadAttachments)
 
+    /**
+     * Prepares the message and its attachments but doesn't upload attachments.
+     *
+     * Following steps are required to initialize message properly before sending the message to the backend API:
+     * 1. Message id is generated if the message doesn't have id.
+     * 2. Message cid is updated if the message doesn't have cid.
+     * 3. Message user is set to the current user.
+     * 4. Attachments are prepared with upload state.
+     * 5. Message timestamp and sync status is set.
+     *
+     * Then this message is inserted in database (Optimistic UI update) and final message is returned.
+     */
     private suspend fun prepareNewMessage(message: Message): Result<Message> = Result.success(
         message.copy().apply {
             if (id.isEmpty()) {
@@ -91,9 +113,23 @@ internal class MessageSendingService(
         repos.updateLastMessageForChannel(newMessage.cid, newMessage)
     }
 
+    /**
+     * Sends a new message after preparing and uploading the attachments.
+     *
+     * @param message Message to be sent.
+     *
+     * @return Result with a newly updated message.
+     */
     internal suspend fun sendNewMessage(message: Message): Result<Message> = prepareNewMessage(message)
         .flatMapSuspend(::sendMessage)
 
+    /**
+     * Sends the message without preparing.
+     *
+     * It is used when we have some messages already pending in database (due to any non permanent error)
+     *
+     * TODO: This method can be removed when ChatDomain is removed.
+     */
     internal suspend fun sendMessage(message: Message): Result<Message> {
         return uploadAttachments(message).let {
             if (it.isSuccess) {
@@ -102,6 +138,13 @@ internal class MessageSendingService(
         }
     }
 
+    /**
+     * Uploads the attachment of this message if there is any pending attachments and return the updated message.
+     *
+     * @param message [Message] whose attachments are to be uploaded.
+     *
+     * @return [Result] having message with latest attachments state or error if there was any.
+     */
     private suspend fun uploadAttachments(message: Message): Result<Message> {
         return when {
             globalState.isOnline() ->
@@ -121,6 +164,11 @@ internal class MessageSendingService(
         }
     }
 
+    /**
+     * Waits till all attachments are uploaded or either of them fails.
+     *
+     * @param newMessage Message whose attachments are to be uploaded.
+     */
     private suspend fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
@@ -160,6 +208,8 @@ internal class MessageSendingService(
     /**
      * Cancels ephemeral Message.
      * Removes message from the offline storage and memory and notifies about update.
+     *
+     * @param message [Message] to be cancelled.
      */
     private suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
         require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
@@ -168,10 +218,14 @@ internal class MessageSendingService(
         return Result(true)
     }
 
+    /**
+     * Enqueues attachment upload work.
+     */
     private fun enqueueAttachmentUpload(message: Message) {
         uploadAttachmentsWorker.enqueueJob(channelType, channelId, message.id)
     }
 
+    // TODO: Remove this method when ChatDomain is removed.
     private suspend fun doSend(message: Message): Result<Message> {
         return Result.success(message)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
@@ -184,6 +238,12 @@ internal class MessageSendingService(
             .recoverSuspend { error -> handleSendMessageFail(message, error) }
     }
 
+    /**
+     * Updates the message object and local database with new message state after message is sent successfully.
+     *
+     * @param processedMessage [Message] returned from API response.
+     * @return [Message] Updated message.
+     */
     internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
         // Don't update latest message with this id if it is already synced.
         val latestUpdatedMessage = repos.selectMessage(processedMessage.id) ?: processedMessage
@@ -198,6 +258,14 @@ internal class MessageSendingService(
             }
     }
 
+    /**
+     * Updates the message object and local database with new message state after message wasn't sent due to error.
+     *
+     * @param message [Message] that were being sent.
+     * @param error [ChatError] with the reason of failure.
+     *
+     * @return [Message] Updated message.
+     */
     internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
         logger.logE(
             "Failed to send message with id ${message.id} and text ${message.text}: $error",
@@ -222,10 +290,16 @@ internal class MessageSendingService(
             }
     }
 
+    /**
+     * Cancels all the running job.
+     */
     fun cancelJobs() {
         jobsMap.values.forEach { it.cancel() }
     }
 
+    /**
+     * Returns a unique message id prefixed with user id.
+     */
     private fun generateMessageId(): String {
         return globalState.user.value!!.id + "-" + UUID.randomUUID().toString()
     }
