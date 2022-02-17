@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
+import io.getstream.chat.android.offline.experimental.errorhandler.factory.OfflineErrorHandlerFactory
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -50,12 +51,14 @@ class ChatInitializer(private val context: Context) {
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true), context)
+        val offlineErrorHandlerFactory = OfflineErrorHandlerFactory()
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
+            .withErrorHandler(offlineErrorHandlerFactory)
             .build()
 
         // Using markdown as text transformer

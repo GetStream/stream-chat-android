@@ -1871,6 +1871,18 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun getName ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
+	public abstract fun getOrCreate ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler {
+	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/errors/ChatError;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
 	public abstract fun getName ()Ljava/lang/String;
 }
@@ -1888,7 +1900,6 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteReactionListener {
-	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/errors/ChatError;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

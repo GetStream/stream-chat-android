@@ -48,6 +48,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed setting custom empty and loading views for `MessageListView`. [#3082](https://github.com/GetStream/stream-chat-android/pull/3082)
 
 ### ⬆️ Improved
 - Disabled command popups when attachments are present. [#3051](https://github.com/GetStream/stream-chat-android/pull/3051)
@@ -55,7 +56,7 @@
 
 ### ✅ Added
 - Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
-- Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081) 
+- Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081)
 - Added `ChatUI.dateFormatter` to allow customizing the way the dates are formatted. [#3085](https://github.com/GetStream/stream-chat-android/pull/3085)
 
 ### ⚠️ Changed
@@ -128,6 +129,15 @@
 ### ❌ Removed
 
 <!-- UNRELEASED END -->
+
+# February 16th, 2022 - 4.28.3
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Improved the logic around mentions and users that can be mentioned within the input. [#3088](https://github.com/GetStream/stream-chat-android/pull/3088)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Improved the logic around mentions and users that can be mentioned within the input. [#3088](https://github.com/GetStream/stream-chat-android/pull/3088)
 
 # February 9th, 2022 - 4.28.2
 ## Common changes for all artifacts

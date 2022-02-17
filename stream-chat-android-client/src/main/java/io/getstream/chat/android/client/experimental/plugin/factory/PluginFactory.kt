@@ -9,6 +9,8 @@ import io.getstream.chat.android.client.experimental.plugin.Plugin
 public interface PluginFactory {
     /**
      * Gets [Plugin] if it was previously created or creates it and returns it if not.
+     *
+     * @return The [Plugin] instance.
      */
     public fun getOrCreate(): Plugin
 }

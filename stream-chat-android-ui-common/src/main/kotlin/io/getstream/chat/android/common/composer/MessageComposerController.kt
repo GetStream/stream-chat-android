@@ -176,6 +176,11 @@ public class MessageComposerController(
         get() = messageMode.value is MessageMode.MessageThread
 
     /**
+     * Represents the selected mentions based on the message suggestion list.
+     */
+    private val selectedMentions: MutableSet<User> = mutableSetOf()
+
+    /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
@@ -405,11 +410,13 @@ public class MessageComposerController(
 
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
+        val mentions = filterMentions(selectedMentions, message)
 
         return if (isInEditMode) {
             actionMessage.copy(
                 text = message,
-                attachments = attachments.toMutableList()
+                attachments = attachments.toMutableList(),
+                mentionedUsersIds = mentions
             )
         } else {
             Message(
@@ -417,9 +424,30 @@ public class MessageComposerController(
                 text = message,
                 parentId = parentMessageId,
                 replyMessageId = replyMessageId,
-                attachments = attachments.toMutableList()
+                attachments = attachments.toMutableList(),
+                mentionedUsersIds = mentions
             )
         }
+    }
+
+    /**
+     * Filters the current input and the mentions the user selected from the suggestion list. Removes any mentions which
+     * are selected but no longer present in the input.
+     *
+     * @param selectedMentions The set of selected users from the suggestion list.
+     * @param message The current message input.
+     *
+     * @return [MutableList] of user IDs of mentioned users.
+     */
+    private fun filterMentions(selectedMentions: Set<User>, message: String): MutableList<String> {
+        val text = message.lowercase()
+
+        val remainingMentions = selectedMentions.filter {
+            text.contains("@${it.name.lowercase()}")
+        }.map { it.id }
+
+        this.selectedMentions.clear()
+        return remainingMentions.toMutableList()
     }
 
     /**
@@ -504,6 +532,7 @@ public class MessageComposerController(
         val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
 
         setMessageInput(augmentedMessageText)
+        selectedMentions += user
     }
 
     /**
