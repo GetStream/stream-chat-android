@@ -4,12 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.KeyEvent
+import android.widget.MediaController
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -26,12 +31,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.devbrackets.android.exomedia.listener.OnErrorListener
-import com.devbrackets.android.exomedia.listener.OnPreparedListener
-import com.devbrackets.android.exomedia.ui.widget.VideoView
-import com.devbrackets.android.exomedia.ui.widget.controls.VideoControlsMobile
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
@@ -63,7 +65,8 @@ public class MediaPreviewActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                         finish()
-                    }
+                    },
+                    onBackPressed = { finish() }
                 )
             }
         }
@@ -75,15 +78,19 @@ public class MediaPreviewActivity : AppCompatActivity() {
      * @param url The URL of the stream for playback.
      * @param title The name of the file for playback.
      * @param onPlaybackError Handler for playback errors.
+     * @param onBackPressed Handler for back press action.
      */
     @Composable
     private fun MediaPreviewScreen(
         url: String,
         title: String,
         onPlaybackError: () -> Unit,
+        onBackPressed: () -> Unit = {},
     ) {
         val backgroundColor = Color.Black
         val controlsColor = Color.White
+
+        SystemBackPressedHandler(isEnabled = true, onBackPressed = onBackPressed)
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -93,13 +100,16 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     backgroundColor = backgroundColor,
                     elevation = 0.dp,
                     navigationIcon = {
+                        val layoutDirection = LocalLayoutDirection.current
+
                         IconButton(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(16.dp)
+                                .mirrorRtl(layoutDirection = layoutDirection),
                             onClick = { finish() }
                         ) {
-                            val layoutDirection = LocalLayoutDirection.current
-
                             Icon(
-                                modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
                                 painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                                 contentDescription = null,
                                 tint = controlsColor,
@@ -111,7 +121,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                             text = title,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Start,
-                            style = ChatTheme.typography.title3Bold,
+                            style = ChatTheme.typography.bodyBold,
                             maxLines = 1,
                             color = controlsColor
                         )
@@ -122,33 +132,28 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 val context = LocalContext.current
 
                 val videoView = remember {
+                    val mediaController = createMediaController(context, onBackPressed)
+
                     VideoView(context).apply {
-                        isPlaying // Workaround to init some internals of the library
-                        videoControls = VideoControlsMobile(context)
-                        setOnPreparedListener(
-                            object : OnPreparedListener {
-                                override fun onPrepared() {
-                                    start()
-                                }
-                            }
-                        )
-                        setOnErrorListener(
-                            object : OnErrorListener {
-                                override fun onError(e: Exception?): Boolean {
-                                    onPlaybackError()
-                                    return true
-                                }
-                            }
-                        )
                         setVideoURI(Uri.parse(url))
+                        setMediaController(mediaController)
+                        setOnErrorListener { _, _, _ ->
+                            onPlaybackError()
+                            true
+                        }
+                        setOnPreparedListener {
+                            start()
+                            mediaController.show()
+                        }
                     }
                 }
 
                 AndroidView(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(vertical = 16.dp)
                         .background(backgroundColor),
-                    factory = { videoView }
+                    factory = { videoView },
                 )
             }
         )
@@ -173,6 +178,27 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 color = navigationBarColor,
                 darkIcons = false
             )
+        }
+    }
+
+    /**
+     * Creates a custom instance of [MediaController] which no longer intercepts
+     * back press actions to hide media controls.
+     *
+     * @param context The Context used to create the [MediaController].
+     * @param onBackPressed Handler for back press action.
+     */
+    private fun createMediaController(
+        context: Context,
+        onBackPressed: () -> Unit = {},
+    ): MediaController {
+        return object : MediaController(context) {
+            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
+                    onBackPressed()
+                }
+                return super.dispatchKeyEvent(event)
+            }
         }
     }
 
