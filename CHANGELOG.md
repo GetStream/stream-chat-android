@@ -16,8 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
-- Added the `member` field to the `MemberRemovedEvent`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
 
 ### ⚠️ Changed
 
@@ -25,7 +23,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed how member removal is handled in `DefaultChatEventHandler`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
 
 ### ⬆️ Improved
 
@@ -113,6 +110,16 @@
 ### ❌ Removed
 
 <!-- UNRELEASED START -->
+# February 17th, 2022 - 4.28.4
+## stream-chat-android-client
+### ✅ Added
+- Added the `member` field to the `MemberRemovedEvent`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed how member removal is handled in `DefaultChatEventHandler`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
+<!-- UNRELEASED END -->
+
 # February 16th, 2022 - 4.28.3
 ## stream-chat-android-ui-components
 ### ⬆️ Improved
@@ -121,7 +128,6 @@
 ## stream-chat-android-compose
 ### ⬆️ Improved
 - Improved the logic around mentions and users that can be mentioned within the input. [#3088](https://github.com/GetStream/stream-chat-android/pull/3088)
-<!-- UNRELEASED END -->
 
 # February 9th, 2022 - 4.28.2
 ## Common changes for all artifacts
