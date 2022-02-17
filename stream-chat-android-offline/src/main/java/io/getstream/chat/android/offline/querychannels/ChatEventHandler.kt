@@ -170,7 +170,11 @@ internal fun removeIfCurrentUserLeftChannel(
     channel: Channel?,
     member: Member,
 ): EventHandlingResult {
-    val currentUserId = ChatClient.instance().getCurrentUser()?.id
+    val currentUserId: String? = if (ChatClient.isInitialized) {
+        ChatClient.instance().getCurrentUser()?.id
+    } else {
+        null
+    }
     val removedMemberId = member.getUserId()
 
     return if (currentUserId == removedMemberId) {
