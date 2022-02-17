@@ -31,9 +31,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: screenshots
-          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/
-      - name: pull-request
-        uses: repo-sync/pull-request@v2
-        with:
-          destination_branch: "develop"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/debug
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        base: develop
