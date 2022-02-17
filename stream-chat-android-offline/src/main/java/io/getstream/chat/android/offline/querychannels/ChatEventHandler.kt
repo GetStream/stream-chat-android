@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -15,6 +16,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -155,6 +157,24 @@ internal fun addIfChannelIsAbsent(channels: StateFlow<List<Channel>>, channel: C
 internal fun removeIfChannelIsPresent(channels: StateFlow<List<Channel>>, channel: Channel?): EventHandlingResult {
     return if (channel != null && channels.value.any { it.cid == channel.cid }) {
         EventHandlingResult.Remove(channel.cid)
+    } else {
+        EventHandlingResult.Skip
+    }
+}
+
+/**
+ * Checks if the current user has left the channel, if yes then it removes it. Otherwise, it simply skips the event.
+ */
+internal fun removeIfCurrentUserLeftChannel(
+    channels: StateFlow<List<Channel>>,
+    channel: Channel?,
+    member: Member,
+): EventHandlingResult {
+    val currentUserId = ChatClient.instance().getCurrentUser()?.id
+    val removedMemberId = member.getUserId()
+
+    return if (currentUserId == removedMemberId) {
+        removeIfChannelIsPresent(channels, channel)
     } else {
         EventHandlingResult.Skip
     }

@@ -79,7 +79,7 @@ public class DefaultChatEventHandler(
         event: MemberRemovedEvent,
         filter: FilterObject,
         cachedChannel: Channel?,
-    ): EventHandlingResult = removeIfChannelIsPresent(channels, cachedChannel)
+    ): EventHandlingResult = removeIfCurrentUserLeftChannel(channels, cachedChannel, event.member)
 
     /**
      * Handles [NotificationRemovedFromChannelEvent]. It removes the channel if it's present in the list.
@@ -90,5 +90,5 @@ public class DefaultChatEventHandler(
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = removeIfChannelIsPresent(channels, event.channel)
+    ): EventHandlingResult = removeIfCurrentUserLeftChannel(channels, event.channel, event.member)
 }
