@@ -83,6 +83,7 @@
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
 
 ### ❌ Removed
+- Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3092](https://github.com/GetStream/stream-chat-android/pull/3092)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
