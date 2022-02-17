@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
@@ -279,6 +280,12 @@ internal class ChatDomainImpl internal constructor(
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->
                 offlineSyncFirebaseMessagingHandler.syncMessages(appContext, "$channelType:$channelId")
+            }
+        }
+
+        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            scope.launch {
+                disconnect()
             }
         }
     }

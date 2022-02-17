@@ -1889,6 +1889,11 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun getOrCreate ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/handler/StateHandler {
+	public abstract fun clearState ()V
+	public abstract fun registerClearStateListener (Lkotlin/jvm/functions/Function0;)V
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener {
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -3097,6 +3102,15 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
+}
+
+public final class io/getstream/chat/android/client/setup/InitializationCoordinator {
+	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
+	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
+	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorResponse {

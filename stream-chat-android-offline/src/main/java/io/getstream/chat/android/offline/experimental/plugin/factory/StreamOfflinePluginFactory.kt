@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
+import io.getstream.chat.android.offline.experimental.plugin.handler.StateHandlerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
@@ -76,6 +77,13 @@ public class StreamOfflinePluginFactory(
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalStateRegistry = GlobalMutableState.getOrCreate()
 
+        val stateHandler = StateHandlerImpl().apply {
+            registerClearStateListener {
+                logic.clear()
+                globalStateRegistry.clearState()
+            }
+        }
+
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
@@ -90,6 +98,7 @@ public class StreamOfflinePluginFactory(
                 globalState = globalStateRegistry,
                 repos = repos,
             ),
+            stateHandler = stateHandler
         )
     }
 }
