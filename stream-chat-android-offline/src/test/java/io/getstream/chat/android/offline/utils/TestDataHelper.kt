@@ -427,7 +427,7 @@ internal class TestDataHelper {
 
     // member removed doesn't have a cid
     val memberRemovedFromChannel =
-        MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id)
+        MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)
 
     val notificationRemovedFromChannel =
         NotificationRemovedFromChannelEvent(
