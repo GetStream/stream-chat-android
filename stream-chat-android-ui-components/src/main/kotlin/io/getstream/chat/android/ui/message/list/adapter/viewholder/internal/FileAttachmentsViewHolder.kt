@@ -19,6 +19,21 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.Attachmen
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
+/**
+ * ViewHolder that displays message items containing file attachments.
+ *
+ * Note: This ViewHolder is used in situations where the message either contains
+ * multiple attachment types or a single attachment type that does not have
+ * a designated ViewHolder.
+ *
+ * You can see the full list of ViewHolders in [io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory].
+ *
+ * @param parent The parent container.
+ * @param decorators List of decorators applied to the ViewHolder.
+ * @param messageTextTransformer Formats strings and sets them on the respective TextView.
+ * @param listeners Listeners used by the ViewHolder.
+ * @param binding Binding generated for the layout.
+ */
 internal class FileAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
@@ -31,7 +46,48 @@ internal class FileAttachmentsViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
+    /**
+     * Initializes the ViewHolder class.
+     */
     init {
+        initializeListeners()
+        setLinkMovementMethod()
+        binding.fileAttachmentsView.setPadding(4.dpToPx())
+    }
+
+    /**
+     * Binds the data to the view.
+     */
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        super.bindData(data, diff)
+
+        updateHorizontalBias(data)
+
+        binding.fileAttachmentsView.setAttachments(data.message.attachments)
+
+        if (data.message.text.isNotEmpty()) {
+            messageTextTransformer.transformAndApply(binding.messageText, data)
+            binding.messageText.visibility = View.VISIBLE
+        } else {
+            binding.messageText.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Updates the horizontal bias of the message according to the owner
+     * of the message.
+     */
+    private fun updateHorizontalBias(data: MessageListItem.MessageItem) {
+        binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            this.horizontalBias = if (data.isMine) 1f else 0f
+        }
+    }
+
+    /**
+     * Initializes listeners that enable handling clicks on various
+     * elements such as reactions, threads, message containers, etc.
+     */
+    private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
                 reactionsView.setReactionClickListener {
@@ -55,38 +111,20 @@ internal class FileAttachmentsViewHolder(
                 }
                 binding.fileAttachmentsView.attachmentDownloadClickListener =
                     AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)
-                LongClickFriendlyLinkMovementMethod.set(
-                    textView = messageText,
-                    longClickTarget = root,
-                    onLinkClicked = container.linkClickListener::onLinkClick
-                )
-                binding.fileAttachmentsView.setPadding(4.dpToPx())
             }
         }
     }
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, diff)
-
-        updateHorizontalBias(data)
-
-        binding.fileAttachmentsView.setAttachments(data.message.attachments)
-
-        if (data.message.text.isNotEmpty()) {
-            messageTextTransformer.transformAndApply(binding.messageText, data)
-            binding.messageText.visibility = View.VISIBLE
-        } else {
-            binding.messageText.visibility = View.GONE
-        }
-    }
-
     /**
-     * Updates the horizontal bias of the message according to the owner
-     * of the message.
+     * Enables clicking on links.
      */
-    private fun updateHorizontalBias(data: MessageListItem.MessageItem) {
-        binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            this.horizontalBias = if (data.isMine) 1f else 0f
+    private fun setLinkMovementMethod() {
+        listeners?.let { listenerContainer ->
+            LongClickFriendlyLinkMovementMethod.set(
+                textView = binding.messageText,
+                longClickTarget = binding.root,
+                onLinkClicked = listenerContainer.linkClickListener::onLinkClick
+            )
         }
     }
 }

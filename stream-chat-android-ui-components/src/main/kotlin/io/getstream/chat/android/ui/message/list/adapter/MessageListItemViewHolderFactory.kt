@@ -37,41 +37,80 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
+/**
+ * A factory class designed to create ViewHolders for the RecyclerView
+ * inside [io.getstream.chat.android.ui.message.list.MessageListView].
+ */
 public open class MessageListItemViewHolderFactory {
+
+    /**
+     * Provides a list of decorators to be used by the various ViewHolders.
+     */
     internal lateinit var decoratorProvider: DecoratorProvider
 
     protected lateinit var attachmentViewFactory: AttachmentViewFactory
         private set
 
+    /**
+     * Style applied to the ViewHolders created by this class.
+     */
     private lateinit var style: MessageListItemStyle
 
+    /**
+     * Sets the style for messages containing replies.
+     */
     private lateinit var messageReplyStyle: MessageReplyStyle
 
+    /**
+     * Sets the style for the Giphy ViewHolder.
+     */
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
+    /**
+     * A container containing listeners used by the ViewHolders for
+     * setting reactions, opening message options, etc.
+     */
     protected var listenerContainer: MessageListListenerContainer? = null
         private set
 
+    /**
+     * Setter for [listenerContainer].
+     */
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer?) {
         this.listenerContainer = listenerContainer
     }
 
+    /**
+     * Setter for [attachmentViewFactory].
+     */
     internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         this.attachmentViewFactory = attachmentViewFactory
     }
 
+    /**
+     * Setter for [style].
+     */
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {
         this.style = style
     }
 
+    /**
+     * Setter for [messageReplyStyle].
+     */
     internal fun setReplyMessageListItemViewStyle(style: MessageReplyStyle) {
         this.messageReplyStyle = style
     }
 
+    /**
+     * Setter for [giphyViewHolderStyle].
+     */
     internal fun setGiphyViewHolderStyle(style: GiphyViewHolderStyle) {
         this.giphyViewHolderStyle = style
     }
 
+    /**
+     * Transforms the message text.
+     */
     private val textTransformer: ChatMessageTextTransformer by lazy { ChatUI.messageTextTransformer }
 
     /**
