@@ -142,7 +142,7 @@ public class ChatClient internal constructor(
     // TODO: Make private/internal after migrating ChatDomain
     public val retryPolicy: RetryPolicy,
     internal val errorHandlerFactory: ErrorHandlerFactory,
-    private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate()
+    private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -783,9 +783,7 @@ public class ChatClient internal constructor(
     public fun disconnect() {
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
-        runCatching {
-            userStateService.state.userOrError().let(initializationCoordinator::userDisconnected)
-        }
+        getCurrentUser().let(initializationCoordinator::userDisconnected)
         connectionListener = null
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()

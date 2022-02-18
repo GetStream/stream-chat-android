@@ -35,8 +35,8 @@ public class InitializationCoordinator private constructor() {
     /**
      * Notifies user disconnection
      */
-    internal fun userDisconnected(user: User) {
-        userConnectedListeners.forEach { function -> function.invoke(user) }
+    internal fun userDisconnected(user: User?) {
+        userDisconnectedListeners.forEach { function -> function.invoke(user) }
     }
 
     public companion object {
