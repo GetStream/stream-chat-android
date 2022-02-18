@@ -91,7 +91,10 @@ public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend
     DoOnResultCall(this, scope, function)
 
 @InternalStreamChatApi
-public fun <T : Any> Call<T>.withPrecondition(scope: CoroutineScope, precondition: suspend () -> Result<Unit>): Call<T> =
+public fun <T : Any> Call<T>.withPrecondition(
+    scope: CoroutineScope,
+    precondition: suspend () -> Result<Unit>,
+): Call<T> =
     WithPreconditionCall(this, scope, precondition)
 
 /**
@@ -101,7 +104,10 @@ public fun <T : Any> Call<T>.withPrecondition(scope: CoroutineScope, preconditio
  * @param function Function that returns data in the case of error.
  */
 @InternalStreamChatApi
-public fun <T : Any> Call<T>.onErrorReturn(scope: CoroutineScope, function: suspend () -> Result<T>): Call<T> =
+public fun <T : Any> Call<T>.onErrorReturn(
+    scope: CoroutineScope,
+    function: suspend (originalError: ChatError) -> Result<T>,
+): Call<T> =
     ReturnOnErrorCall(this, scope, function)
 
 @InternalStreamChatApi

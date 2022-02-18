@@ -8,10 +8,12 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -24,7 +26,6 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.CustomChannelListItemBinding
@@ -129,7 +130,10 @@ class ChannelList : Fragment() {
 
             binding.apply {
                 avatarView.setChannelData(channel)
-                nameTextView.text = channel.getDisplayName(itemView.context)
+                nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
+                    channel = channel,
+                    currentUser = ChatClient.instance().getCurrentUser()
+                )
                 membersCountTextView.text = itemView.context.resources.getQuantityString(
                     R.plurals.members_count,
                     channel.members.size,

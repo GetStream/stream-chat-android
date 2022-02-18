@@ -187,7 +187,7 @@ internal object EventArguments {
     private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)
     private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)
     private val memberAddedEvent = MemberAddedEvent(EventType.MEMBER_ADDED, date, user, cid, channelType, channelId, member)
-    private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId)
+    private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId, member)
     private val memberUpdatedEvent = MemberUpdatedEvent(EventType.MEMBER_UPDATED, date, user, cid, channelType, channelId, member)
     private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message, hardDelete = false)
     private val messageDeletedServerSideEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, null, cid, channelType, channelId, message, hardDelete = true)

@@ -40,10 +40,12 @@ import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isDeleted
+import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
@@ -293,19 +295,30 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
+
+    /**
+     * Provides a default long click handler for all messages. Based on the configuration options we have and the message
+     * type, we show different kind of options.
+     *
+     * We also disable editing of certain messages, like Giphy messages.
+     */
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
+                val style = requireStyle()
+                val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
+                val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
                         MessageOptionsView.Configuration(
-                            viewStyle = requireStyle(),
+                            viewStyle = viewStyle,
                             channelConfig = channel.config,
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
                         ),
-                        requireStyle(),
+                        viewStyle,
                         messageListItemViewHolderFactory,
                         messageBackgroundFactory
                     )
@@ -376,28 +389,37 @@ public class MessageListView : ConstraintLayout {
                 return@AttachmentClickListener
             }
 
-            val destination = when {
-                message.attachments.all(Attachment::isMedia) -> {
-                    val filteredAttachments = message.attachments
-                        .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
-                    val attachmentGalleryItems = filteredAttachments.map {
-                        AttachmentGalleryItem(
-                            attachment = it,
-                            user = message.user,
-                            createdAt = message.getCreatedAtOrThrow(),
-                            messageId = message.id,
-                            cid = message.cid,
-                            isMine = message.user.isCurrentUser()
-                        )
-                    }
-                    val attachmentIndex = filteredAttachments.indexOf(attachment)
+            if (attachment.isGiphy()) {
+                val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
 
-                    attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
-                    attachmentGalleryDestination
+                if (url != null) {
+                    ChatUI.navigator.navigate(WebLinkDestination(context, url))
                 }
-                else -> AttachmentDestination(message, attachment, context)
+            } else {
+                val destination = when {
+                    message.attachments.all(Attachment::isImage) -> {
+                        val filteredAttachments = message.attachments
+                            .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                        val attachmentGalleryItems = filteredAttachments.map {
+                            AttachmentGalleryItem(
+                                attachment = it,
+                                user = message.user,
+                                createdAt = message.getCreatedAtOrThrow(),
+                                messageId = message.id,
+                                cid = message.cid,
+                                isMine = message.user.isCurrentUser()
+                            )
+                        }
+                        val attachmentIndex = filteredAttachments.indexOf(attachment)
+
+                        attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                        attachmentGalleryDestination
+                    }
+                    else -> AttachmentDestination(message, attachment, context)
+                }
+
+                ChatUI.navigator.navigate(destination)
             }
-            ChatUI.navigator.navigate(destination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
@@ -505,7 +527,7 @@ public class MessageListView : ConstraintLayout {
 
         loadingViewContainer.removeView(binding.defaultLoadingView)
         messageListViewStyle?.loadingView?.let { loadingView ->
-            this.loadingView = streamThemeInflater.inflate(loadingView, null).apply {
+            this.loadingView = streamThemeInflater.inflate(loadingView, loadingViewContainer, false).apply {
                 isVisible = true
                 loadingViewContainer.addView(this)
             }
@@ -644,7 +666,7 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
-            messageDateFormatter = DateFormatter.from(context)
+            messageDateFormatter = ChatUI.dateFormatter
         }
 
         if (::attachmentViewFactory.isInitialized.not()) {

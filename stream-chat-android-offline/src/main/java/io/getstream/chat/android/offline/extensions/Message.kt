@@ -30,6 +30,11 @@ internal fun Message.updateUsers(users: Map<String, User>): Message =
 
 /**
  * Fills [Message.mentionedUsersIds] based on [Message.text] and [Channel.members].
+ *
+ * It combines the users found in the input with pre-set [Message.mentionedUsersIds], in case someone
+ * is manually added as a mention. Currently only searches through the channel members for possible mentions.
+ *
+ * @param channel The channel whose members we can check for the mention.
  */
 internal fun Message.populateMentions(channel: Channel) {
     if ('@' !in text) {
@@ -37,11 +42,13 @@ internal fun Message.populateMentions(channel: Channel) {
     }
 
     val text = text.lowercase()
-    mentionedUsersIds = channel.members.mapNotNullTo(mutableListOf()) { member ->
+    val mentions = mentionedUsersIds.toMutableSet() + channel.members.mapNotNullTo(mutableListOf()) { member ->
         if (text.contains("@${member.user.name.lowercase()}")) {
             member.user.id
         } else {
             null
         }
     }
+
+    mentionedUsersIds = mentions.toMutableList()
 }

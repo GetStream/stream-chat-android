@@ -246,7 +246,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        return client.updateMessage(message)
+        return client.updateMessageInternal(message)
     }
 
     @CheckResult
@@ -455,9 +455,17 @@ public class ChannelClient internal constructor(
         return client.sendAction(request)
     }
 
+    /**
+     * Deletes the reaction associated with the message with the given message id.
+     *
+     * @param messageId The id of the message to which reaction belongs.
+     * @param reactionType The type of reaction.
+     *
+     * @return Executable async [Call] responsible for deleting the reaction.
+     */
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
-        return client.deleteReaction(messageId, reactionType)
+        return client.deleteReaction(messageId = messageId, reactionType = reactionType, cid = cid)
     }
 
     @CheckResult

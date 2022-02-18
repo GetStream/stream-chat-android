@@ -118,6 +118,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 public final class com/getstream/sdk/chat/images/StreamImageLoader$DefaultImpls {
 	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun loadAndResize$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadAsBitmap$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/content/Context;Ljava/lang/String;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadVideoThumbnail$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
@@ -141,6 +142,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
 	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun loadAndResize$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
@@ -398,6 +400,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun keystroke ()V
 	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun resetThread ()V
+	public final fun selectMention (Lio/getstream/chat/android/client/models/User;)V
 	public final fun sendMessage (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessage$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V

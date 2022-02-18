@@ -26,7 +26,6 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -35,7 +34,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
@@ -52,6 +50,7 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -675,20 +674,21 @@ class Android {
             val chatDomain = ChatDomain.instance()
         }
 
-        fun initializeChatDomainWithCustomRetryPolicy() {
-            val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
-            val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
-                .retryPolicy(object : RetryPolicy {
-                    override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
-                        return attempt < 3
-                    }
-
-                    override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
-                        return 1000 * attempt
-                    }
-                })
-                .build()
-        }
+        // TODO: ChatDomain docs will be removed in scope of https://github.com/GetStream/stream-chat-android/issues/3034
+        // fun initializeChatDomainWithCustomRetryPolicy() {
+        //     val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
+        //     val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
+        //         .retryPolicy(object : RetryPolicy {
+        //             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
+        //                 return attempt < 3
+        //             }
+        //
+        //             override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
+        //                 return 1000 * attempt
+        //             }
+        //         })
+        //         .build()
+        // }
 
         fun watchChannel() {
             val chatDomain = ChatDomain.instance()
@@ -976,6 +976,35 @@ class Android {
                     )
 
                     return (imageResult.drawable as? BitmapDrawable)?.bitmap
+                }
+            }
+        }
+    }
+
+    class ChannelNameFormatterCustomization {
+
+        fun channelNameFormatterCustomization() {
+            ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
+                channel.name
+            }
+        }
+    }
+
+    class DateFormatterCustomization {
+
+        fun dateFormatterCustomization() {
+            ChatUI.dateFormatter = object : DateFormatter {
+                private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
+                private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+                override fun formatDate(localDateTime: LocalDateTime?): String {
+                    localDateTime ?: return ""
+                    return dateFormatter.format(localDateTime)
+                }
+
+                override fun formatTime(localTime: LocalTime?): String {
+                    localTime ?: return ""
+                    return dateTimeFormatter.format(localTime)
                 }
             }
         }

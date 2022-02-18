@@ -7,6 +7,8 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -30,8 +32,6 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
-import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.removeMyReaction
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
@@ -79,7 +79,7 @@ public class ChannelController internal constructor(
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
     private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
+        messageSendingServiceFactory.create(domainImpl, this, client, client.channel(cid))
 
     internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
@@ -425,7 +425,8 @@ public class ChannelController internal constructor(
         }
 
         if (online) {
-            val result = domainImpl.runAndRetry { client.sendReaction(reaction, enforceUnique) }
+            // TODO: Will be removed after migrating ChatDomain
+            val result = client.sendReaction(reaction, enforceUnique).retry(domainImpl.scope, client.retryPolicy).await()
             return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.insertReaction(reaction)
@@ -448,65 +449,9 @@ public class ChannelController internal constructor(
         return Result(reaction)
     }
 
-    internal suspend fun deleteReaction(reaction: Reaction): Result<Message> {
-        val currentUser = domainImpl.user.value ?: return Result(ChatError("Current user null in Chatdomain"))
-
-        val online = domainImpl.isOnline()
-        reaction.apply {
-            user = currentUser
-            userId = currentUser.id
-            syncStatus = SyncStatus.IN_PROGRESS
-            deletedAt = Date()
-        }
-        if (!online) {
-            reaction.syncStatus = SyncStatus.SYNC_NEEDED
-        }
-
-        domainImpl.repos.insertReaction(reaction)
-
-        // update flow
-        val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.apply { removeMyReaction(reaction) }
-            ?.also {
-                upsertMessage(it)
-                domainImpl.repos.insertMessage(it)
-            }
-
-        if (online) {
-            val result = domainImpl.runAndRetry { client.deleteReaction(reaction.messageId, reaction.type) }
-            return if (result.isSuccess) {
-                reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertReaction(reaction)
-                Result(result.data())
-            } else {
-                if (result.error().isPermanent()) {
-                    reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    reaction.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                domainImpl.repos.insertReaction(reaction)
-                Result(result.error())
-            }
-        }
-
-        return if (currentMessage != null) {
-            Result(currentMessage)
-        } else {
-            Result(ChatError("Local message was not found"))
-        }
-    }
-
     // This one needs to be public for flows such as running a message action
 
     internal fun upsertMessage(message: Message) {
-        channelLogic.upsertMessages(listOf(message))
-    }
-
-    private fun upsertEventMessage(message: Message) {
-        // make sure we don't lose ownReactions
-        getMessage(message.id)?.let {
-            message.ownReactions = it.ownReactions
-        }
         channelLogic.upsertMessages(listOf(message))
     }
 
@@ -585,13 +530,11 @@ public class ChannelController internal constructor(
         domainImpl.repos.insertMessage(messageToBeEdited)
 
         if (online) {
-            val runnable = {
-                client.updateMessage(messageToBeEdited)
-            }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
-            val job = domainImpl.scope.async { domainImpl.runAndRetry(runnable) }
+            // TODO: Will be removed after migrating ChatDomain
+            val job = domainImpl.scope.async { client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await() }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
@@ -631,10 +574,8 @@ public class ChannelController internal constructor(
         domainImpl.repos.insertMessage(messageToBeDeleted)
 
         if (online) {
-            val runnable = {
-                client.deleteMessage(messageToBeDeleted.id, hard)
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            // TODO: Will be removed after migrating ChatDomain
+            val result = client.deleteMessage(messageToBeDeleted.id, hard).retry(domainImpl.scope, client.retryPolicy).await()
             if (result.isSuccess) {
                 val deletedMessage = result.data()
                 deletedMessage.syncStatus = SyncStatus.COMPLETED

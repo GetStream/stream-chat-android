@@ -18,20 +18,44 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemVi
 import io.getstream.chat.android.ui.suggestion.list.adapter.internal.CommandListAdapter
 import io.getstream.chat.android.ui.suggestion.list.adapter.internal.MentionListAdapter
 
+/**
+ * A View that shows a list of suggestions.
+ */
 public class SuggestionListView : FrameLayout, SuggestionListUi {
 
+    /**
+     * A ViewBinding generated binding for [io.getstream.chat.android.ui.R.layout.stream_ui_suggestion_list_view].
+     */
     private val binding: StreamUiSuggestionListViewBinding =
         StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
+
+    /**
+     * Creates ViewHolders for mention and command suggestion items.
+     */
     private var viewHolderFactory: SuggestionListItemViewHolderFactory = SuggestionListItemViewHolderFactory()
 
+    /**
+     * Creates a mention suggestions list adapter for the RecyclerView.
+     */
     private val mentionListAdapter: MentionListAdapter = MentionListAdapter(::viewHolderFactory) {
         suggestionClickListener?.onMentionClick(it)
     }
+
+    /**
+     * Creates a command suggestions list adapter for the RecyclerView.
+     */
     private val commandListAdapter: CommandListAdapter = CommandListAdapter(::viewHolderFactory) {
         suggestionClickListener?.onCommandClick(it)
     }
 
+    /**
+     * Style used by the suggestion list.
+     */
     private lateinit var style: SuggestionListViewStyle
+
+    /**
+     * A listener that handles clicks on suggestion items.
+     */
     private var suggestionClickListener: OnSuggestionClickListener? = null
 
     public constructor(context: Context) : this(context, null, 0)
@@ -44,6 +68,10 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         defStyleAttr
     )
 
+    /**
+     * Initializes the View by setting the style for the suggestion list and
+     * initializing the RecyclerView.
+     */
     init {
         setSuggestionListViewStyle(SuggestionListViewStyle.createDefault(context))
         binding.suggestionsRecyclerView.apply {
@@ -52,10 +80,18 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         }
     }
 
+    /**
+     * A setter for [viewHolderFactory].
+     *
+     * Use this if you want to customize the UI by providing your own [SuggestionListItemViewHolderFactory].
+     */
     public fun setSuggestionListViewHolderFactory(viewHolderFactory: SuggestionListItemViewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory.also { it.style = style }
     }
 
+    /**
+     * Sets the style for the suggestion list.
+     */
     internal fun setSuggestionListViewStyle(style: SuggestionListViewStyle) {
         this.style = style
 
@@ -65,10 +101,19 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         viewHolderFactory.style = style
     }
 
+    /**
+     * A setter for [suggestionClickListener].
+     *
+     * Use this if you want to implement custom on item clicked behavior.
+     */
     public fun setOnSuggestionClickListener(suggestionClickListener: OnSuggestionClickListener) {
         this.suggestionClickListener = suggestionClickListener
     }
 
+    /**
+     * Renders the list of suggestions if the suggestion dataset is not empty.
+     * If the dataset is empty the list of suggestions is hidden.
+     */
     override fun renderSuggestions(suggestions: Suggestions) {
         binding.suggestionsCardView.isVisible = true
         when (suggestions) {
@@ -92,10 +137,16 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         }
     }
 
+    /**
+     * Shows if the suggestion list is currently visible.
+     */
     override fun isSuggestionListVisible(): Boolean {
         return binding.suggestionsCardView.isVisible
     }
 
+    /**
+     * Hides the suggestion list.
+     */
     private fun hideSuggestionList() {
         if (binding.suggestionsCardView.isVisible) {
             commandListAdapter.clear()
@@ -104,9 +155,19 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         }
     }
 
+    /**
+     * A listener used to handle clicks on different types of suggestion items.
+     */
     public interface OnSuggestionClickListener {
+
+        /**
+         * Handles clicks on mention suggestion items.
+         */
         public fun onMentionClick(user: User)
 
+        /**
+         * Handles Clicks on command suggestion items.
+         */
         public fun onCommandClick(command: Command)
     }
 }

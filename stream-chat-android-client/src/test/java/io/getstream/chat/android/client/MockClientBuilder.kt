@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -17,6 +18,8 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
 import java.util.Date
@@ -25,6 +28,7 @@ import java.util.Date
  * Used for integrations tests.
  * Initialises mock internals of [ChatClient]
  */
+@ExperimentalStreamChatApi
 internal class MockClientBuilder(
     private val testCoroutineScope: TestCoroutineScope,
 ) {
@@ -82,14 +86,17 @@ internal class MockClientBuilder(
             userStateService = userStateService,
             userCredentialStorage = mock(),
             tokenUtils = tokenUtil,
-            appContext = mock(),
             scope = testCoroutineScope,
+            retryPolicy = NoRetryPolicy(),
+            errorHandlerFactory = NoOpErrorHandlerFactory(),
         )
 
         client.connectUser(user, token).enqueue()
 
         socket.sendEvent(connectedEvent)
 
-        return client
+        return client.apply {
+            plugins = mutableListOf()
+        }
     }
 }

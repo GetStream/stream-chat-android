@@ -8,6 +8,18 @@ internal interface ReactionRepository {
     suspend fun insertReaction(reaction: Reaction)
     suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
     suspend fun selectReactionsSyncNeeded(): List<Reaction>
+
+    /**
+     * Selects the reaction of given type to the message if exists.
+     *
+     * @param reactionType The type of reaction.
+     * @param messageId The id of the message to which reaction belongs.
+     * @param userId The id of the user who is the owner of reaction.
+     *
+     * @return [Reaction] if exists, null otherwise.
+     */
+    suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): Reaction?
+
     suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
@@ -36,6 +48,18 @@ internal class ReactionRepositoryImpl(
 
     override suspend fun selectReactionsSyncNeeded(): List<Reaction> {
         return reactionDao.selectSyncNeeded().map { it.toModel(getUser) }
+    }
+
+    override suspend fun selectUserReactionToMessage(
+        reactionType: String,
+        messageId: String,
+        userId: String,
+    ): Reaction? {
+        return reactionDao.selectUserReactionToMessage(
+            reactionType = reactionType,
+            messageId = messageId,
+            userId = userId,
+        )?.toModel(getUser)
     }
 
     override suspend fun selectUserReactionsToMessage(

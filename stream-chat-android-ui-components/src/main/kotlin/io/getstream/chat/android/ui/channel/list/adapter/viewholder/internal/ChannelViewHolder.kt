@@ -5,21 +5,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -50,7 +50,6 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         false
     ),
 ) : SwipeViewHolder(binding.root) {
-    private val dateFormatter = DateFormatter.from(context)
     private val currentUser = ChatDomain.instance().user
 
     private var optionsCount = 1
@@ -217,7 +216,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
-        channelNameLabel.text = channel.getDisplayName(context, R.string.stream_ui_channel_list_untitled_channel)
+        channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
+            channel = channel,
+            currentUser = ChatClient.instance().getCurrentUser()
+        )
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
@@ -233,7 +235,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         lastMessage ?: return
 
         lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
-        lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
+        lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {

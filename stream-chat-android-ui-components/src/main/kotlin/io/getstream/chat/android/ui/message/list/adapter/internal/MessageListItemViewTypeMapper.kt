@@ -1,12 +1,19 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.common.extensions.internal.hasLink
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.isError
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.common.extensions.isSystem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
@@ -31,14 +38,48 @@ internal object MessageListItemViewTypeMapper {
         }
     }
 
+    /**
+     * Transforms the given [messageItem] to the type of the message we should show in the list.
+     *
+     * @param messageItem The message item that holds all the information required to generate a message type.
+     * @return The [Int] message type.
+     */
     private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): Int {
+        val message = messageItem.message
+
+        val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
+        val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
+
+        val containsOnlyLinks = message.containsOnlyLinkAttachments()
+
         return when {
-            messageItem.message.isError() -> ERROR_MESSAGE
-            messageItem.message.isSystem() -> SYSTEM_MESSAGE
-            messageItem.message.deletedAt != null -> MESSAGE_DELETED
-            messageItem.message.isGiphyEphemeral() -> GIPHY
-            messageItem.message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
+            message.isError() -> ERROR_MESSAGE
+            message.isSystem() -> SYSTEM_MESSAGE
+            message.deletedAt != null -> MESSAGE_DELETED
+            message.isGiphyEphemeral() -> GIPHY
+            containsGiphy -> GIPHY_ATTACHMENT
+            containsOnlyLinks -> LINK_ATTACHMENTS
+            message.isImageAttachment() -> IMAGE_ATTACHMENT
+            message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
+    }
+
+    /**
+     * Checks if the message contains only image attachments (Can also optionally contain links).
+     */
+    private fun Message.isImageAttachment(): Boolean {
+        return attachments.isNotEmpty() &&
+            attachments.any { it.isImage() } &&
+            attachments.all { it.isImage() || it.hasLink() }
+    }
+
+    /**
+     * Checks if all attachments are link attachments.
+     */
+    private fun Message.containsOnlyLinkAttachments(): Boolean {
+        if (this.attachments.isEmpty()) return false
+
+        return this.attachments.all { attachment -> attachment.hasLink() }
     }
 }

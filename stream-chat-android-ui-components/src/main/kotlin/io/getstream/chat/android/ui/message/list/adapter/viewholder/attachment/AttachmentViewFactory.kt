@@ -6,19 +6,20 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.setPadding
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.ImageAttachmentsGroupView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 
 /**
  * Factory for creating a content view for links attachments and other types of attachments.
@@ -42,10 +43,10 @@ public open class AttachmentViewFactory {
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer?,
         style: MessageListItemStyle,
-        parent: ViewGroup
+        parent: ViewGroup,
     ): View {
         val (linksAndGiphy, attachments) = data.message.attachments.partition { attachment -> attachment.hasLink() }
-        val (giphy, links) = linksAndGiphy.partition { attachment -> attachment.type == "giphy" }
+        val links = linksAndGiphy.filter { attachment -> attachment.type != ModelType.attach_link }
 
         return when {
             links.isNotEmpty() && attachments.isNotEmpty() -> createLinkAndAttachmentsContent(
@@ -58,7 +59,6 @@ public open class AttachmentViewFactory {
             )
             links.isNotEmpty() -> createLinkContent(links.first(), data.isMine, listeners, style, parent)
             attachments.isNotEmpty() -> createAttachmentsContent(data, listeners, attachments, parent)
-            giphy.isNotEmpty() -> createAttachmentsContent(data, listeners, giphy, parent)
             else -> error("Can't create content view for the empty attachments collection")
         }
     }
@@ -108,11 +108,11 @@ public open class AttachmentViewFactory {
         data: MessageListItem.MessageItem,
         listeners: MessageListListenerContainer?,
         attachments: List<Attachment>,
-        parent: View
+        parent: View,
     ): View {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
-                is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
+                is ImageAttachmentsGroupView -> setupImageAttachmentView(it, attachments, listeners, data)
                 is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
         }
@@ -153,7 +153,7 @@ public open class AttachmentViewFactory {
 
     private fun createAttachmentsView(attachments: List<Attachment>, context: Context): View {
         return when {
-            attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
+            attachments.isImage() -> ImageAttachmentsGroupView(context).apply {
                 layoutParams = DEFAULT_LAYOUT_PARAMS
             }
             attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
@@ -163,12 +163,12 @@ public open class AttachmentViewFactory {
         }
     }
 
-    private fun setupMediaAttachmentView(
-        mediaAttachmentsGroupView: MediaAttachmentsGroupView,
+    private fun setupImageAttachmentView(
+        imageAttachmentsGroupView: ImageAttachmentsGroupView,
         attachments: List<Attachment>,
         listeners: MessageListListenerContainer?,
         data: MessageListItem.MessageItem,
-    ) = mediaAttachmentsGroupView.run {
+    ) = imageAttachmentsGroupView.run {
         setPadding(MEDIA_ATTACHMENT_VIEW_PADDING)
         setupBackground(data)
         attachmentClickListener = AttachmentClickListener {
@@ -184,7 +184,7 @@ public open class AttachmentViewFactory {
         fileAttachmentsView: FileAttachmentsView,
         attachments: List<Attachment>,
         listeners: MessageListListenerContainer?,
-        message: Message
+        message: Message,
     ) = fileAttachmentsView.run {
         setPadding(FILE_ATTACHMENT_VIEW_PADDING)
 
@@ -203,7 +203,7 @@ public open class AttachmentViewFactory {
     }
 
     private companion object {
-        private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all(Attachment::isMedia)
+        private fun Collection<Attachment>.isImage(): Boolean = isNotEmpty() && all(Attachment::isImage)
 
         private val MEDIA_ATTACHMENT_VIEW_PADDING = 1.dpToPx()
         private val LINK_VIEW_PADDING = 8.dpToPx()
