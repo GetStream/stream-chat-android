@@ -159,7 +159,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     onClick = onClick
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_back),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                         contentDescription = null,
                         tint = Color.Black,
                     )
