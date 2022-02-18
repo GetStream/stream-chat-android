@@ -106,9 +106,9 @@ jobs:
           api-level: 28
           disable-animations: true
           profile: Nexus 4
-          script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest && ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests
-      - name: Upload screnshots
+          script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest stream-chat-android-ui-uitests:executeScreenshotTests
+      - name: Upload screnshots result
         uses: actions/upload-artifact@v2
         with:
-          name: screenshots
-          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/build/reports/shot/debug/verification/index.html
+          name: screenshots_results
+          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/build/reports/*
