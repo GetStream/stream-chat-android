@@ -4,6 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
@@ -87,6 +88,10 @@ public class StreamOfflinePluginFactory(
                 logic.clear()
                 globalStateRegistry.clearState()
             }
+        }
+
+        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            stateHandler.clearState()
         }
 
         return OfflinePlugin(
