@@ -1,11 +1,11 @@
-name: Snapshot-Record
+name: Snapshot-Test
 
 on: 
   schedule:
     - cron: '0 1 * * *'
 
 jobs:
-  record_snapshots:
+  run_snapshot_tests:
     name: Record snapshots
     runs-on: macos-latest
     steps:
@@ -26,7 +26,7 @@ jobs:
           disable-animations: true
           profile: Nexus 4
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests
-      - name: Upload screnshots
+      - name: Upload screnshot results
         uses: actions/upload-artifact@v2
         with:
           name: screenshots
