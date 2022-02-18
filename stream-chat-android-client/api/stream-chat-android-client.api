@@ -117,12 +117,9 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;ZLjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
 	public final fun setPlugins (Ljava/util/List;)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
@@ -1883,6 +1880,10 @@ public abstract interface class io/getstream/chat/android/client/experimental/er
 	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/errors/ChatError;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler {
+	public abstract fun onSendReactionError (Lio/getstream/chat/android/client/errors/ChatError;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
 	public abstract fun getName ()Ljava/lang/String;
 }
@@ -1953,6 +1954,12 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener {
 	public abstract fun onMessageSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendReactionListener {
+	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onSendReactionRequest (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener {
