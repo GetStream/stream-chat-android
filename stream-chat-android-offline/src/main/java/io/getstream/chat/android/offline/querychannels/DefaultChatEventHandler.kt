@@ -17,8 +17,9 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param channels The list of visible channels.
  */
-public class DefaultChatEventHandler(private val channels: StateFlow<List<Channel>>) :
-    BaseChatEventHandler() {
+public class DefaultChatEventHandler(
+    private val channels: StateFlow<List<Channel>>,
+) : BaseChatEventHandler() {
 
     /**
      *  Handles [NotificationAddedToChannelEvent] event. It adds the channel if it is absent.
@@ -78,7 +79,7 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
         event: MemberRemovedEvent,
         filter: FilterObject,
         cachedChannel: Channel?,
-    ): EventHandlingResult = removeIfChannelIsPresent(channels, cachedChannel)
+    ): EventHandlingResult = removeIfCurrentUserLeftChannel(channels, cachedChannel, event.member)
 
     /**
      * Handles [NotificationRemovedFromChannelEvent]. It removes the channel if it's present in the list.
@@ -89,5 +90,5 @@ public class DefaultChatEventHandler(private val channels: StateFlow<List<Channe
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = removeIfChannelIsPresent(channels, event.channel)
+    ): EventHandlingResult = removeIfCurrentUserLeftChannel(channels, event.channel, event.member)
 }

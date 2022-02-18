@@ -2,49 +2,47 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
-import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemLinkAttachmentBinding
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
- * ViewHolder used for displaying messages that contain image attachments.
+ * ViewHolder used for displaying messages that contain link attachments
+ * and no other types of attachments.
  *
  * @param parent The parent container.
  * @param decorators List of decorators applied to the ViewHolder.
- * @param listeners Listeners used by the ViewHolder.
  * @param messageTextTransformer Formats strings and sets them on the respective TextView.
+ * @param listeners Listeners used by the ViewHolder.
  * @param binding Binding generated for the layout.
  */
-internal class ImageAttachmentViewHolder(
+internal class LinkAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer?,
     private val messageTextTransformer: ChatMessageTextTransformer,
-    internal val binding: StreamUiItemImageAttachmentBinding = StreamUiItemImageAttachmentBinding.inflate(
+    private val listeners: MessageListListenerContainer?,
+    internal val binding: StreamUiItemLinkAttachmentBinding = StreamUiItemLinkAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false
     ),
+    private val style: MessageListItemStyle,
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     /**
      * Initializes the ViewHolder class.
      */
     init {
+        applyLinkAttachmentViewStyle()
         initializeListeners()
         setLinkMovementMethod()
     }
@@ -52,57 +50,23 @@ internal class ImageAttachmentViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
-        bindMessageText()
-        bindHorizontalBias()
-        bindImageAttachments(diff)
-        bindUploadingIndicator()
-    }
+        updateHorizontalBias(data)
 
-    /**
-     * Updates the text section of the message.
-     */
-    private fun bindMessageText() {
-        binding.messageText.isVisible = data.message.text.isNotEmpty()
-        messageTextTransformer.transformAndApply(binding.messageText, data)
+        val linkAttachment = data.message.attachments.firstOrNull { attachment -> attachment.hasLink() }
+
+        linkAttachment?.let { attachment ->
+            binding.linkAttachmentView.showLinkAttachment(attachment, style)
+            messageTextTransformer.transformAndApply(binding.messageText, data)
+        }
     }
 
     /**
      * Updates the horizontal bias of the message according to the owner
      * of the message.
      */
-    private fun bindHorizontalBias() {
+    private fun updateHorizontalBias(data: MessageListItem.MessageItem) {
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.horizontalBias = if (data.isMine) 1f else 0f
-        }
-    }
-
-    /**
-     * Updates the image attachments section of the message.
-     */
-    private fun bindImageAttachments(diff: MessageListItemPayloadDiff?) {
-        if (diff?.attachments != false) {
-            binding.imageAttachmentView.setPadding(1.dpToPx())
-            binding.imageAttachmentView.setupBackground(data)
-            binding.imageAttachmentView.showAttachments(data.message.attachments)
-        }
-    }
-
-    /**
-     * Update the uploading status section of the message.
-     */
-    private fun bindUploadingIndicator() {
-        val totalAttachmentsCount = data.message.attachments.size
-        val completedAttachmentsCount =
-            data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
-        if (completedAttachmentsCount == totalAttachmentsCount) {
-            binding.sentFiles.isVisible = false
-        } else {
-            binding.sentFiles.text =
-                context.getString(
-                    R.string.stream_ui_message_list_attachment_uploading,
-                    completedAttachmentsCount,
-                    totalAttachmentsCount
-                )
         }
     }
 
@@ -129,11 +93,8 @@ internal class ImageAttachmentViewHolder(
                 avatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
-                imageAttachmentView.attachmentClickListener = AttachmentClickListener { attachment ->
-                    container.attachmentClickListener.onAttachmentClick(data.message, attachment)
-                }
-                imageAttachmentView.attachmentLongClickListener = AttachmentLongClickListener {
-                    container.messageLongClickListener.onMessageLongClick(data.message)
+                linkAttachmentView.setLinkPreviewClickListener {
+                    listeners.linkClickListener.onLinkClick(it)
                 }
             }
         }
@@ -152,7 +113,15 @@ internal class ImageAttachmentViewHolder(
         }
     }
 
-    override fun onAttachedToWindow() {
-        bindUploadingIndicator()
+    /**
+     * Applies styling to [io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView].
+     */
+    private fun applyLinkAttachmentViewStyle() {
+        with(binding.linkAttachmentView) {
+            setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
+            setDescriptionTextStyle(style.textStyleLinkDescription)
+            setTitleTextStyle(style.textStyleLinkTitle)
+            setLabelTextStyle(style.textStyleLinkLabel)
+        }
     }
 }

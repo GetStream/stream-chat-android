@@ -1,11 +1,9 @@
 package io.getstream.chat.android.ui.search.internal
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
@@ -17,12 +15,10 @@ import io.getstream.chat.android.ui.search.internal.SearchResultListAdapter.Mess
 import io.getstream.chat.android.ui.search.list.SearchResultListView.SearchResultSelectedListener
 
 internal class SearchResultListAdapter(
-    context: Context,
     private val chatDomain: ChatDomain,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
-    private var dateFormatter = DateFormatter.from(context)
 
     var messagePreviewStyle: MessagePreviewStyle? = null
 
@@ -31,8 +27,6 @@ internal class SearchResultListAdapter(
             .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
                 messagePreviewStyle?.let(binding.root::styleView)
-                binding.root.dateFormatter = dateFormatter
-
                 MessagePreviewViewHolder(binding)
             }
     }
