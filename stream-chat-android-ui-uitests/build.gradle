@@ -10,13 +10,14 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "br.com.leandroferreira.mock"
+        applicationId "io.getstream.chat.ui.uitests"
         minSdk 21
         targetSdk 31
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.karumi.shot.ShotTestRunner"
+        testApplicationId "io.getstream.chat.ui.uitests.test"
     }
 
     buildTypes {
