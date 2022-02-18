@@ -108,6 +108,7 @@ jobs:
           profile: Nexus 4
           script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest stream-chat-android-ui-uitests:executeScreenshotTests
       - name: Upload screnshots result
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: screenshots_results
