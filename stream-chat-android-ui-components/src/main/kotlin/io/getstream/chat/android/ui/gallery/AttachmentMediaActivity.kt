@@ -124,7 +124,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         /**
          * Used to build an [Intent] to start the [AttachmentMediaActivity] with the required data.
          *
-         * @param context
+         * @param context The context to start the activity with.
          * @param url The URL of the media file.
          * @param title The title that will be shown in the header.
          * @param mimeType The MIME type of the file.
