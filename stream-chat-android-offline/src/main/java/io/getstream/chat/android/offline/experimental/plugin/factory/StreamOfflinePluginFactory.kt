@@ -83,6 +83,7 @@ public class StreamOfflinePluginFactory(
 
         val stateHandler = StateHandlerImpl().apply {
             registerClearStateListener {
+                stateRegistry.clear()
                 logic.clear()
                 globalStateRegistry.clearState()
             }
