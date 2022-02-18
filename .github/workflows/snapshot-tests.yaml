@@ -1,6 +1,8 @@
 name: Snapshot-Record
 
-on: workflow_dispatch
+on: 
+  schedule:
+    - cron: '0 1 * * *'
 
 jobs:
   record_snapshots:
@@ -23,10 +25,9 @@ jobs:
           api-level: 28
           disable-animations: true
           profile: Nexus 4
-          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Precord
+          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests
       - name: Upload screnshots
         uses: actions/upload-artifact@v2
         with:
           name: screenshots
           path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/
-            
