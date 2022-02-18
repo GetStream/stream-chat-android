@@ -102,7 +102,8 @@ internal fun createMemberRemovedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()}
+            "user": ${createUserJsonString()},
+            "member": ${createMemberJsonString()}
         """.trimIndent()
     )
 
