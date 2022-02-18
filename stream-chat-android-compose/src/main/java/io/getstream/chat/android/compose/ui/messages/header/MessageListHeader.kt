@@ -130,10 +130,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
     val layoutDirection = LocalLayoutDirection.current
 
     BackButton(
-        modifier = Modifier
-            .padding(8.dp)
-            .size(16.dp)
-            .mirrorRtl(layoutDirection = layoutDirection),
+        modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
         onBackPressed = onBackPressed,
     )
