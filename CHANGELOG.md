@@ -72,6 +72,7 @@
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder` [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 
 ### ❌ Removed
+- Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3098](https://github.com/GetStream/stream-chat-android/pull/3098)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
