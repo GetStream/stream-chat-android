@@ -1888,7 +1888,7 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
-	public abstract fun get ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
+	public abstract fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/handler/StateHandler {
@@ -3108,7 +3108,9 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator {
 	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
+	public final fun addUserConnectedListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun addUserSetListener (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {

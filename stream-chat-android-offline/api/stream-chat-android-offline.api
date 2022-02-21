@@ -25,7 +25,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public abstract fun getInitialized ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
-	public abstract fun getOfflineEnabled ()Z
 	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Landroidx/lifecycle/LiveData;
 	public abstract fun getTypingUpdates ()Landroidx/lifecycle/LiveData;
@@ -52,7 +51,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun sendGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setUserPresence (Z)V
 	public abstract fun showChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -70,8 +68,6 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public final fun enableBackgroundSync ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
-	public final fun offlineDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public final fun offlineEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
@@ -226,7 +222,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getOfflineEnabled ()Z
 	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
@@ -254,7 +249,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun sendGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setUserPresence (Z)V
 	public abstract fun showChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -273,7 +267,6 @@ public final class io/getstream/chat/android/offline/ChatDomain$Builder {
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public final fun offlineDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun offlineEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
@@ -455,7 +448,7 @@ public abstract interface class io/getstream/chat/android/offline/experimental/g
 
 public final class io/getstream/chat/android/offline/experimental/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
 	public fun <init> (Lio/getstream/chat/android/offline/experimental/plugin/configuration/Config;Landroid/content/Context;)V
-	public fun get ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
+	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
 public final class io/getstream/chat/android/offline/experimental/querychannels/state/ChannelsStateData$Loading : io/getstream/chat/android/offline/experimental/querychannels/state/ChannelsStateData {
