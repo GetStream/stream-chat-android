@@ -73,7 +73,6 @@ dependencies {
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.exoMedia
 
     // Tests
     testImplementation project(":stream-chat-android-test")

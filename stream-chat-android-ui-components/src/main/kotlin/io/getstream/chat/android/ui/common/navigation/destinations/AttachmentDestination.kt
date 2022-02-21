@@ -98,12 +98,13 @@ public open class AttachmentDestination(
         // Media
         when {
             playableContent(mimeType, type) -> {
-                val intent = Intent(context, AttachmentMediaActivity::class.java).apply {
-                    putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType)
-                    putExtra(AttachmentMediaActivity.FILE_TYPE_KEY, type)
-                    putExtra(AttachmentMediaActivity.URL_KEY, url)
-                    putExtra(AttachmentMediaActivity.HEADER_TITLE_KEY, title)
-                }
+                val intent = AttachmentMediaActivity.createIntent(
+                    context = context,
+                    url = url ?: "",
+                    title = title,
+                    mimeType = mimeType,
+                    type = type,
+                )
                 start(intent)
             }
             docMimeType(mimeType) -> {
