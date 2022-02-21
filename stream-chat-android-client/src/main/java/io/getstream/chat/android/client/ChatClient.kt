@@ -592,7 +592,6 @@ public class ChatClient internal constructor(
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
             .onMessageError(relevantErrorHandlers, cid, messageId)
-            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
