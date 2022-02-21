@@ -191,6 +191,7 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
                 stateCopy.viewThree.setImageShapeByCorners(0f, 0f, 0f, bottomLeftCorner)
                 stateCopy.viewFour.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
             }
+            else -> Unit
         }
     }
 
