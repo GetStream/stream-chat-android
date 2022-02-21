@@ -62,6 +62,7 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageEndMargin Margin for messages in the right side. Default value is 0dp.
  * @property messageMaxWidthFactorMine Factor used to compute max width for message sent by the current user. Should be in <0.75, 1> range.
  * @property messageMaxWidthFactorTheirs Factor used to compute max width for message sent by other user. Should be in <0.75, 1> range.
+ * @property showMessageStatusIndicator Flag if we need to show the read indicator or not.
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -103,6 +104,7 @@ public data class MessageListItemStyle(
     @Px public val messageEndMargin: Int,
     public val messageMaxWidthFactorMine: Float,
     public val messageMaxWidthFactorTheirs: Float,
+    public val showMessageStatusIndicator: Boolean,
 ) {
 
     @ColorInt
@@ -408,6 +410,11 @@ public data class MessageListItemStyle(
                 .reactionsColumns(R.styleable.MessageListView_streamUiEditReactionsColumns)
                 .build()
 
+            val showMessageStatusIndicator = attributes.getBoolean(
+                R.styleable.MessageListView_streamUiShowMessageStatusIndicator,
+                true
+            )
+
             val iconIndicatorSent = attributes.getDrawable(
                 R.styleable.MessageListView_streamUiIconIndicatorSent
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_single)!!
@@ -586,7 +593,8 @@ public data class MessageListItemStyle(
                 messageStartMargin = messageStartMargin,
                 messageEndMargin = messageEndMargin,
                 messageMaxWidthFactorMine = messageMaxWidthFactorMine,
-                messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs
+                messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs,
+                showMessageStatusIndicator = showMessageStatusIndicator
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }

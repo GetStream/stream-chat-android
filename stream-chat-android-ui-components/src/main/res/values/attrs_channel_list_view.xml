@@ -67,6 +67,7 @@
         </attr>
 
         <!-- Drawable of the message sent state indicator -->
+        <attr name="streamUiShowChannelStatusIndicator" format="boolean" />
         <attr name="streamUiIndicatorSentIcon" format="reference" />
         <!-- Drawable of the message read state indicator -->
         <attr name="streamUiIndicatorReadIcon" format="reference" />

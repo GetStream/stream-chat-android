@@ -256,6 +256,7 @@ internal class FootnoteDecorator(
     private fun setupDeliveryStateIndicator(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val status = data.message.syncStatus
         when {
+            !listViewStyle.itemStyle.showMessageStatusIndicator -> Unit
             data.isNotBottomPosition() -> footnoteView.hideStatusIndicator()
             data.isTheirs -> footnoteView.hideStatusIndicator()
             data.message.isEphemeral() -> footnoteView.hideStatusIndicator()
