@@ -64,6 +64,7 @@ public class StreamOfflinePluginFactory(
 
         val chatDomainImpl = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
         chatDomainImpl.setUser(user)
+        chatDomainImpl.userConnected(user)
 
         val scope = CoroutineScope(DispatcherProvider.IO)
 

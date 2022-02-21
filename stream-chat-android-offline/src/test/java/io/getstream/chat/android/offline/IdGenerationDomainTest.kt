@@ -65,6 +65,7 @@ internal class IdGenerationDomainTest {
 
     private fun setCurrentUser() {
         chatDomainImpl.setUser(currentUserFake)
+        chatDomainImpl.userConnected(currentUserFake)
         chatDomainImpl.user.value.shouldNotBeNull()
     }
 }

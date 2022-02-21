@@ -209,6 +209,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         ).enqueue()
         // manually configure the user since client is mocked
         chatDomainImpl.setUser(data.user1)
+        chatDomainImpl.userConnected(data.user1)
 
         chatDomain = chatDomainImpl
 

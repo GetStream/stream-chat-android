@@ -216,6 +216,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
 
         if (user != null) {
             chatDomainImpl.setUser(user)
+            chatDomainImpl.userConnected(user)
         }
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
