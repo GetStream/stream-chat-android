@@ -322,7 +322,7 @@ public class ChatClient internal constructor(
     ) {
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
-        initializationCoordinator.userConnected(user)
+        initializationCoordinator.userSet(user)
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()
