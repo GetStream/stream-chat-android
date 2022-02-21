@@ -4,6 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -45,12 +46,12 @@ public class StreamOfflinePluginFactory(
      *
      * @return The [Plugin] instance.
      */
-    override fun get(): Plugin = createOfflinePlugin()
+    override fun get(user: User): Plugin = createOfflinePlugin(user)
 
     /**
      * Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.
      */
-    private fun createOfflinePlugin(): OfflinePlugin {
+    private fun createOfflinePlugin(user: User): OfflinePlugin {
         val chatClient = ChatClient.instance()
 
         if (!ChatDomain.isInitialized) {
@@ -61,17 +62,17 @@ public class StreamOfflinePluginFactory(
             }.build()
         }
 
-        val currentUser = ChatClient.instance().getCurrentUser()
         val chatDomainImpl = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
-        currentUser?.let(chatDomainImpl::setUser)
+        chatDomainImpl.setUser(user)
 
         val scope = CoroutineScope(DispatcherProvider.IO)
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
             scope(scope)
-            defaultConfig(io.getstream.chat.android.client.models.Config(connectEventsEnabled = true, muteEnabled = true))
-            currentUser?.let(this::currentUser)
+            defaultConfig(io.getstream.chat.android.client.models.Config(connectEventsEnabled = true,
+                muteEnabled = true))
+            currentUser(user)
             setOfflineEnabled(config.persistenceEnabled)
         }.build()
 
@@ -89,9 +90,14 @@ public class StreamOfflinePluginFactory(
             }
         }
 
-        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
-            stateHandler.clearState()
+        InitializationCoordinator.getOrCreate().run {
+            addUserConnectedListener(chatDomainImpl::userConnected)
+
+            addUserDisconnectedListener {
+                stateHandler.clearState()
+            }
         }
+
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),

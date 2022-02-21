@@ -230,11 +230,13 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setUser(user: User) {
-        clearConnectionState()
-        clearUnreadCountState()
-
         globalState._user.value = user
         // load channel configs from Room into memory
+    }
+
+    internal fun userConnected(user: User) {
+        clearConnectionState()
+        clearUnreadCountState()
 
         initJob = scope.async {
             // fetch the configs for channels
@@ -744,7 +746,6 @@ internal class ChatDomainImpl internal constructor(
         // start by gathering all the users
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
-
             users.putAll(channel.users().associateBy { it.id })
             configs += ChannelConfig(channel.type, channel.config)
 

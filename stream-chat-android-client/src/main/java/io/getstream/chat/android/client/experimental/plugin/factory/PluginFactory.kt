@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.experimental.plugin.factory
 
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.models.User
 
 /**
  * Interface used to add new plugins to the SDK. Use this to provide a [Plugin] that will be used to cause side effects
@@ -13,5 +14,5 @@ public interface PluginFactory {
      *
      * @return The [Plugin] instance.
      */
-    public fun get(): Plugin
+    public fun get(user: User): Plugin
 }

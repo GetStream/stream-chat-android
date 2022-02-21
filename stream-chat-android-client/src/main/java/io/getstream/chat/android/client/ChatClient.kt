@@ -281,6 +281,8 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
+        initializationCoordinator.userSet(user)
+
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
@@ -295,7 +297,7 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                notifySetUser(user)
+                initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
                 initializeClientWithUser(user, cacheableTokenProvider)
@@ -320,7 +322,7 @@ public class ChatClient internal constructor(
     ) {
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
-        notifySetUser(user)
+        initializationCoordinator.userConnected(user)
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()
@@ -376,10 +378,6 @@ public class ChatClient internal constructor(
         return userCredentialStorage.get() != null
     }
 
-    private fun notifySetUser(user: User) {
-        initializationCoordinator.userConnected(user)
-    }
-
     private fun storePushNotificationsConfig(userId: String, userName: String) {
         userCredentialStorage.put(
             CredentialConfig(
@@ -396,7 +394,7 @@ public class ChatClient internal constructor(
             userStateService.onSetAnonymous()
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    notifySetUser(data.user)
+                    initializationCoordinator.userSet(data.user)
                     listener?.onSuccess(data)
                 }
 
@@ -2043,10 +2041,10 @@ public class ChatClient internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserConnectedListener {
+            chatClient.initializationCoordinator.addUserSetListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
-                        pluginFactory.get()
+                        pluginFactory.get(user)
                     }
                 )
             }
