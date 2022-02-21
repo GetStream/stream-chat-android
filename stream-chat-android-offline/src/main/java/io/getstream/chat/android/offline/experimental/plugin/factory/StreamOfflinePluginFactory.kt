@@ -70,8 +70,12 @@ public class StreamOfflinePluginFactory(
         val repos = RepositoryFacadeBuilder {
             context(appContext)
             scope(scope)
-            defaultConfig(io.getstream.chat.android.client.models.Config(connectEventsEnabled = true,
-                muteEnabled = true))
+            defaultConfig(
+                io.getstream.chat.android.client.models.Config(
+                    connectEventsEnabled = true,
+                    muteEnabled = true
+                )
+            )
             currentUser(user)
             setOfflineEnabled(config.persistenceEnabled)
         }.build()
@@ -97,7 +101,6 @@ public class StreamOfflinePluginFactory(
                 stateHandler.clearState()
             }
         }
-
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
