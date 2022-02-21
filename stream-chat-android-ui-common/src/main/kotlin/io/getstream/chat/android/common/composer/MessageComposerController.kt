@@ -360,7 +360,7 @@ public class MessageComposerController(
      * Clears all the data from the input - both the current [input] value and the
      * [selectedAttachments].
      */
-    private fun clearData() {
+    public fun clearData() {
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
