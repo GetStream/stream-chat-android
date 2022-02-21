@@ -47,16 +47,13 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
         val context = ApplicationProvider.getApplicationContext() as Context
         val handler: Handler = mock()
-        val offlineEnabled = true
         val userPresence = true
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
 
         chatDomainImpl = ChatDomainImpl(
             client,
-            db,
             handler,
-            offlineEnabled,
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,

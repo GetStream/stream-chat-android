@@ -62,7 +62,6 @@ import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -129,9 +128,7 @@ private const val CHANNEL_LIMIT = 30
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
     @VisibleForTesting
-    internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
-    override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
@@ -142,7 +139,6 @@ internal class ChatDomainImpl internal constructor(
     internal constructor(
         client: ChatClient,
         handler: Handler,
-        offlineEnabled: Boolean,
         recoveryEnabled: Boolean,
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
@@ -150,9 +146,7 @@ internal class ChatDomainImpl internal constructor(
         globalState: GlobalMutableState = GlobalMutableState.getOrCreate(),
     ) : this(
         client = client,
-        db = null,
         mainHandler = handler,
-        offlineEnabled = offlineEnabled,
         recoveryEnabled = recoveryEnabled,
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,

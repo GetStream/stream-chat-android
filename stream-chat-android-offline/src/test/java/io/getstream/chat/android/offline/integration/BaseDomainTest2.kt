@@ -191,8 +191,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client)
-            .database(db)
-            .offlineEnabled()
             .userPresenceEnabled()
             .buildImpl()
         ChatDomain.instance = chatDomainImpl

@@ -49,11 +49,6 @@ import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 internal class ChatDomainImpl internal constructor(internal val chatDomainStateFlow: ChatDomainStateFlow) :
     ChatDomain {
 
-    override var offlineEnabled: Boolean
-        get() = chatDomainStateFlow.offlineEnabled
-        set(value) {
-            chatDomainStateFlow.offlineEnabled = value
-        }
     override var userPresence: Boolean
         get() = chatDomainStateFlow.userPresence
         set(value) {

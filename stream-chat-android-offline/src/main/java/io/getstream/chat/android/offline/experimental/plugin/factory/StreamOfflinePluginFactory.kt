@@ -56,7 +56,6 @@ public class StreamOfflinePluginFactory(
         if (!ChatDomain.isInitialized) {
             ChatDomain.Builder(appContext, chatClient).apply {
                 if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
-                if (config.persistenceEnabled) offlineEnabled() else offlineDisabled()
                 if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
                 recoveryEnabled()
             }.build()

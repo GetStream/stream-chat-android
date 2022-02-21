@@ -157,9 +157,7 @@ internal class ChatDomainImplTest {
         private val recoveryEnabled = true
 
         private val chatDomainImpl = ChatDomain.Builder(mock(), client)
-            .database(db)
             .handler(handler)
-            .offlineEnabled()
             .userPresenceEnabled()
             .recoveryEnabled()
             .build()

@@ -196,9 +196,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
         val handler: Handler = mock()
 
         chatDomain = ChatDomain.Builder(context, client)
-            .database(db)
             .handler(handler)
-            .offlineEnabled()
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
