@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandlerProposal
-import io.getstream.chat.android.client.experimental.errorhandler.listeners.flatMap
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
@@ -592,9 +591,7 @@ public class ChatClient internal constructor(
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .flatMap { messageCall ->
-                messageCall.onMessageError(relevantErrorHandlers, cid, messageId)
-            }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
             .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
