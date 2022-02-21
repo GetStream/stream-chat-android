@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.test.randomString
 import org.junit.jupiter.api.Test
@@ -213,7 +212,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
-            InitializationCoordinator.getOrCreate().addUserSetListener(listener)
+            initializationCoordinator.addUserSetListener(listener)
         }
 
         fun givenUserAndToken(user: User, token: String) = apply {

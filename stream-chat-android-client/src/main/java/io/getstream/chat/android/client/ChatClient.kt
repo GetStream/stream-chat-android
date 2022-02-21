@@ -281,8 +281,6 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
-        initializationCoordinator.userSet(user)
-
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
@@ -297,6 +295,7 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
+                initializationCoordinator.userSet(user)
                 initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
@@ -320,9 +319,9 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: CacheableTokenProvider,
     ) {
+        initializationCoordinator.userSet(user)
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
-        initializationCoordinator.userSet(user)
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()

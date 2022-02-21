@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.setup
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.User
 
 /**
@@ -57,6 +58,9 @@ public class InitializationCoordinator private constructor() {
         private var instance: InitializationCoordinator? = null
 
         public fun getOrCreate(): InitializationCoordinator =
-            instance ?: InitializationCoordinator().also { instance = it }
+            instance ?: create().also { instance = it }
+
+        @VisibleForTesting
+        internal fun create(): InitializationCoordinator = InitializationCoordinator()
     }
 }

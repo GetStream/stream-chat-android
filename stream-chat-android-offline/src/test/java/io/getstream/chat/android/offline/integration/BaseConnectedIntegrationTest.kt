@@ -65,6 +65,9 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         chatDomainImpl.repos =
             RepositoryFacade.create(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
 
+        chatDomainImpl.setUser(data.user1)
+        chatDomainImpl.userConnected(data.user1)
+
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
@@ -95,6 +98,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             client = Companion.client!!
             // start from a clean db everytime
             chatDomainImpl = setupChatDomain(client)
+
             println("setup")
 
             // setup channel controller and query controllers for tests
