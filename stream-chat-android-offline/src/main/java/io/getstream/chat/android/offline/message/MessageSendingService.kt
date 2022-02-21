@@ -43,7 +43,8 @@ internal class MessageSendingService(
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker,
-    private val chatClient: ChatClient = ChatClient.instance()
+    // TODO: This should be removed once ChatDomain is merged.
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -57,9 +58,10 @@ internal class MessageSendingService(
      *
      * @return [Result] with a prepared message.
      */
-    internal suspend fun prepareNewMessageWithAttachments(message: Message): Result<Message> =
-        prepareNewMessage(message)
+    public suspend fun prepareNewMessageWithAttachments(message: Message): Result<Message> {
+        return prepareNewMessage(message)
             .flatMapSuspend(::uploadAttachments)
+    }
 
     /**
      * Prepares the message and its attachments but doesn't upload attachments.

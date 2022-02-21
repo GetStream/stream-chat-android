@@ -9,6 +9,8 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
+import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
@@ -64,6 +66,18 @@ public class StreamOfflinePluginFactory(
         }
         val logic = LogicRegistry.getOrCreate(stateRegistry)
         val globalState = GlobalMutableState.getOrCreate()
+
+        val defaultInterceptor = DefaultInterceptor(
+            sendMessageInterceptor = SendMessageInterceptorImpl(
+                context = appContext,
+                logic = logic,
+                globalState = globalState,
+                scope = chatDomainImpl.scope,
+                repos = chatDomainImpl.repos,
+            )
+        )
+
+        chatClient.addInterceptor(defaultInterceptor)
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),

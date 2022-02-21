@@ -44,6 +44,8 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.experimental.interceptor.Interceptor
+import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -159,6 +161,8 @@ public class ChatClient internal constructor(
 
     public lateinit var plugins: List<Plugin>
 
+    private var interceptors: MutableList<Interceptor> = mutableListOf()
+
     init {
         eventsObservable.subscribe { event ->
             when (event) {
@@ -203,6 +207,11 @@ public class ChatClient internal constructor(
 
     internal fun addPlugins(plugins: List<Plugin>) {
         this.plugins = plugins
+    }
+
+    @InternalStreamChatApi
+    public fun addInterceptor(interceptor: Interceptor) {
+        this.interceptors.add(interceptor)
     }
 
     //region Set user
@@ -1033,13 +1042,16 @@ public class ChatClient internal constructor(
         message: Message,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
-
+        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
         return CoroutineCall(scope) {
+
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
-            val preparedMessageResult =
-                relevantPlugins.firstOrNull()?.prepareMessage(channelType, channelId, message) ?: Result.success(
-                    message
-                )
+            // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
+            val preparedMessageResult = relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+                if (message.isSuccess) {
+                    interceptor.interceptMessage(channelType, channelId, message.data())
+                } else message
+            }
             if (preparedMessageResult.isSuccess) {
                 preparedMessageResult.data().let { newMessage ->
                     api.sendMessage(channelType, channelId, newMessage)

@@ -1,33 +1,36 @@
-package io.getstream.chat.android.offline.experimental.plugin.listener
+package io.getstream.chat.android.offline.experimental.interceptor
 
 import android.content.Context
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.extensions.populateMentions
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
 
-@ExperimentalStreamChatApi
-internal class SendMessageListenerImpl(
+/**
+ * Implementation of [SendMessageInterceptor] that upload attachments, update original message
+ * with new attachments and return updated message.
+ */
+internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,
     private val globalState: GlobalState,
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
     private val messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory.getOrCreate(),
-) : SendMessageListener {
+) : SendMessageInterceptor {
+    override suspend fun interceptMessage(channelType: String, channelId: String, message: Message): Result<Message> {
+        val channel = logic.channel(channelType, channelId)
+        message.populateMentions(channel.toChannel())
 
-    override suspend fun onMessageSendResult(
-        result: Result<Message>,
-        channelType: String,
-        channelId: String,
-        message: Message,
-    ) {
-        val service = messageSendingServiceFactory.getOrCreateService(
+        if (message.replyMessageId != null) {
+            channel.replyMessage(null)
+        }
+        return messageSendingServiceFactory.getOrCreateService(
             logic,
             globalState,
             channelType,
@@ -35,12 +38,6 @@ internal class SendMessageListenerImpl(
             scope,
             repos,
             context
-        )
-
-        if (result.isSuccess) {
-            service.handleSendMessageSuccess(result.data())
-        } else {
-            service.handleSendMessageFail(message, result.error())
-        }
+        ).prepareNewMessageWithAttachments(message)
     }
 }
