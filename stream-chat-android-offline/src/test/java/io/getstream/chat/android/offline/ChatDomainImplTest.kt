@@ -163,8 +163,10 @@ internal class ChatDomainImplTest {
             .build()
             .let { it as ChatDomainImpl }
             .also {
-                it.repos = RepositoryFacade.create(RepositoryFactory(db, randomUser()), mock(), mock())
-                it.setUser(randomUser())
+                val user = randomUser()
+                it.repos = RepositoryFacade.create(RepositoryFactory(db, user), mock(), mock())
+                it.setUser(user)
+                it.userConnected(user)
             }
 
         fun withRepositoryFacade(repositoryFacade: RepositoryFacade) = apply {
