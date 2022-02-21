@@ -46,4 +46,7 @@ internal class DeleteReactionErrorHandlerImpl(
             Result.error(ChatError(message = "Local message was not found."))
         }
     }
+
+    override val name: String
+        get() = "DeleteReactionErrorHandlerImpl"
 }

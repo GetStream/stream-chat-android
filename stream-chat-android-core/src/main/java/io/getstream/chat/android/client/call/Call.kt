@@ -104,11 +104,10 @@ public fun <T : Any> Call<T>.withPrecondition(
  * @param function Function that returns data in the case of error.
  */
 @InternalStreamChatApi
-public fun <T : Any> Call<T>.onErrorReturn(
+public fun <T: Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
     function: suspend (originalError: ChatError) -> Result<T>,
-): Call<T> =
-    ReturnOnErrorCall(this, scope, function)
+): ReturnOnErrorCall<T> = ReturnOnErrorCall<T>(this, scope, function)
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}

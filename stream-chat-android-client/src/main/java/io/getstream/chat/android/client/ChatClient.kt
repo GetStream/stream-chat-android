@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -43,9 +42,12 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
-import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandlerProposal
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.flatMap
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -161,6 +163,7 @@ public class ChatClient internal constructor(
         PushNotificationReceivedListener { _, _ -> }
 
     public lateinit var plugins: List<Plugin>
+    public lateinit var errorHandlers: List<ErrorHandler>
 
     init {
         eventsObservable.subscribe { event ->
@@ -583,22 +586,16 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandlerProposal>()
+
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onErrorReturn(scope) { originalError ->
-                val errorHandler = errorHandlerFactory.getOrCreate()
-                if (errorHandler is DeleteReactionErrorHandler) {
-                    errorHandler.onDeleteReactionError(
-                        originalError = originalError,
-                        cid = cid,
-                        messageId = messageId,
-                    )
-                } else {
-                    Result.error(originalError)
-                }
+            .flatMap { messageCall ->
+                messageCall.onMessageError(relevantErrorHandlers, cid, messageId)
             }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
