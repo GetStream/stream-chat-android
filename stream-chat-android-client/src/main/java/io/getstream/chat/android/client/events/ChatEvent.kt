@@ -185,7 +185,8 @@ public data class MemberRemovedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
-) : CidEvent(), UserEvent
+    override val member: Member,
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when a channel member is updated (promoted to moderator/accepted/.rejected the invite)

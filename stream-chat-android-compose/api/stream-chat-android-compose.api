@@ -1146,6 +1146,13 @@ public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePrevie
 	public final fun getMessageId ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/mediapreview/ComposableSingletons$MediaPreviewActivityKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/mediapreview/ComposableSingletons$MediaPreviewActivityKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/mediapreview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/mediapreview/MediaPreviewActivity$Companion;
@@ -1661,6 +1668,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun addSelectedAttachments (Ljava/util/List;)V
 	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/models/Message;
 	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
+	public final fun clearData ()V
 	public final fun dismissMessageActions ()V
 	public final fun getAlsoSendToChannel ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getCommandSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;

@@ -34,7 +34,6 @@ object Versions {
     internal const val DOKKASAURUS = "0.1.10"
     internal const val DOTENV = "5.2.2"
     internal const val ESPRESSO = "3.3.0"
-    internal const val EXOMEDIA = "743fa9757c" // TODO fix when proper release is available
     internal const val FRAGMENT_TESTING = "1.4.0"
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"
@@ -134,7 +133,6 @@ object Dependencies {
     const val dokkasaurus = "io.getstream:dokkasaurus:${Versions.DOKKASAURUS}"
     const val dotenv = "io.github.cdimascio:java-dotenv:${Versions.DOTENV}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO}"
-    const val exoMedia = "com.github.brianwernick:ExoMedia:${Versions.EXOMEDIA}"
     const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.FRAGMENT_TESTING}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics:${Versions.FIREBASE_CRASHLYTICS}"

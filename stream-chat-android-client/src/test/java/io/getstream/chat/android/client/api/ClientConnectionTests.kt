@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -105,6 +106,7 @@ internal class ClientConnectionTests {
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
+            errorHandlerFactory = NoOpErrorHandlerFactory(),
         )
     }
 

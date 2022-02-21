@@ -5,9 +5,9 @@ import android.text.Html
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.bold
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -20,22 +20,6 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 internal class MessagePreviewView : FrameLayout {
 
     private val binding = StreamUiMessagePreviewItemBinding.inflate(streamThemeInflater, this, true)
-    private var _dateFormatter: DateFormatter? = null
-
-    /**
-     * The formatter used to display the time/date for the message.
-     * If not set explicitly, a default implementation will be used.
-     */
-    var dateFormatter: DateFormatter
-        set(value) {
-            _dateFormatter = value
-        }
-        get() {
-            if (_dateFormatter == null) {
-                _dateFormatter = DateFormatter.from(context)
-            }
-            return _dateFormatter!!
-        }
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
@@ -73,7 +57,7 @@ internal class MessagePreviewView : FrameLayout {
         binding.avatarView.setUserData(message.user)
         binding.senderNameLabel.text = formatChannelName(message)
         binding.messageLabel.text = formatMessagePreview(message, currentUserMention)
-        binding.messageTimeLabel.text = dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
+        binding.messageTimeLabel.text = ChatUI.dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
     }
 
     private fun formatChannelName(message: Message): CharSequence {

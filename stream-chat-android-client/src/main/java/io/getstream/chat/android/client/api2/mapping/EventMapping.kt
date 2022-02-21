@@ -254,6 +254,7 @@ private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        member = member.toDomain(),
     )
 }
 
