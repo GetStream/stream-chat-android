@@ -1,7 +1,7 @@
 package io.getstream.chat.android.offline.message
 
 import android.content.Context
-import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Factory to generate and provide instances of [MessageSendingService].
  */
 @ExperimentalStreamChatApi
-internal class MessageSendingServiceFactory private constructor() {
+internal object MessageSendingServiceFactory {
     private val messageSendingServices: ConcurrentHashMap<Pair<String, String>, MessageSendingService> =
         ConcurrentHashMap()
 
@@ -37,6 +37,7 @@ internal class MessageSendingServiceFactory private constructor() {
         scope: CoroutineScope,
         repos: RepositoryFacade,
         context: Context,
+        chatClient: ChatClient // TODO: Remove this once ChatDomain is removed.
     ): MessageSendingService =
         messageSendingServices.getOrPut(channelType to channelId) {
             MessageSendingService(
@@ -47,26 +48,7 @@ internal class MessageSendingServiceFactory private constructor() {
                 scope,
                 repos,
                 UploadAttachmentsWorker(context),
+                chatClient,
             )
         }
-
-    internal companion object {
-        private var instance: MessageSendingServiceFactory? = null
-
-        /**
-         * Gets the singleton of [MessageSendingServiceFactory] or creates it in the first call.
-         */
-        internal fun getOrCreate(): MessageSendingServiceFactory {
-            return instance ?: MessageSendingServiceFactory().also { factory ->
-                instance = factory
-            }
-        }
-
-        /**
-         * Creates an instance of [MessageSendingServiceFactory] with a fresh state. Please keep in mind that many instances of this class may
-         * cause the SDK to present an inconsistent state.
-         */
-        @VisibleForTesting
-        internal fun create(): MessageSendingServiceFactory = MessageSendingServiceFactory()
-    }
 }

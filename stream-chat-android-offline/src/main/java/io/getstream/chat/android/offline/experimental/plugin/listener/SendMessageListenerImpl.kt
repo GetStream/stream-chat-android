@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.experimental.plugin.listener
 
 import android.content.Context
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -18,7 +19,6 @@ internal class SendMessageListenerImpl(
     private val globalState: GlobalState,
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
-    private val messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory.getOrCreate(),
 ) : SendMessageListener {
 
     override suspend fun onMessageSendResult(
@@ -27,14 +27,15 @@ internal class SendMessageListenerImpl(
         channelId: String,
         message: Message,
     ) {
-        val service = messageSendingServiceFactory.getOrCreateService(
+        val service = MessageSendingServiceFactory.getOrCreateService(
             logic,
             globalState,
             channelType,
             channelId,
             scope,
             repos,
-            context
+            context,
+            ChatClient.instance()
         )
 
         if (result.isSuccess) {

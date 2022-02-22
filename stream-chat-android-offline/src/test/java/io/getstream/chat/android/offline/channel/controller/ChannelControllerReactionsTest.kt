@@ -153,7 +153,6 @@ internal class ChannelControllerReactionsTest : SynchronizedCoroutineTest {
                 ChannelLogic(mutableState, chatDomainImpl),
                 chatClient,
                 chatDomainImpl,
-                messageSendingServiceFactory = mock(),
             )
         }
 

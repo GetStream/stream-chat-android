@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.experimental.interceptor
 
 import android.content.Context
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -21,7 +22,7 @@ internal class SendMessageInterceptorImpl(
     private val globalState: GlobalState,
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
-    private val messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory.getOrCreate(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : SendMessageInterceptor {
     override suspend fun interceptMessage(channelType: String, channelId: String, message: Message): Result<Message> {
         val channel = logic.channel(channelType, channelId)
@@ -30,14 +31,15 @@ internal class SendMessageInterceptorImpl(
         if (message.replyMessageId != null) {
             channel.replyMessage(null)
         }
-        return messageSendingServiceFactory.getOrCreateService(
+        return MessageSendingServiceFactory.getOrCreateService(
             logic,
             globalState,
             channelType,
             channelId,
             scope,
             repos,
-            context
+            context,
+            chatClient
         ).prepareNewMessageWithAttachments(message)
     }
 }

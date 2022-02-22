@@ -61,7 +61,6 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
-    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory.getOrCreate(),
 ) {
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
@@ -81,14 +80,15 @@ public class ChannelController internal constructor(
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
     private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.getOrCreateService(
+        MessageSendingServiceFactory.getOrCreateService(
             LogicRegistry.get(),
             GlobalMutableState.get(),
             channelType,
             channelId,
             domainImpl.scope,
             domainImpl.repos,
-            domainImpl.appContext
+            domainImpl.appContext,
+            client
         )
 
     internal val unfilteredMessages by mutableState::messageList

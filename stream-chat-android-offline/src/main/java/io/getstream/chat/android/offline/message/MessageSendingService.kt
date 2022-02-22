@@ -114,7 +114,7 @@ internal class MessageSendingService(
         // we insert early to ensure we don't lose messages
         repos.insertMessage(newMessage)
         repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-    }.flatMapSuspend(::uploadAttachments)
+    }
 
     /**
      * Sends a new message after preparing and uploading the attachments.
@@ -235,8 +235,11 @@ internal class MessageSendingService(
         return Result.success(message)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
             .flatMapSuspend { newMessage ->
-                chatClient.channel(newMessage.cid).sendMessageInternal(newMessage)
-                    .retry(scope, chatClient.retryPolicy).await()
+                val channelClient = chatClient.channel(newMessage.cid)
+                val call = channelClient.sendMessageInternal(newMessage)
+                call.retry(scope, chatClient.retryPolicy).await()
+                /*chatClient.channel(newMessage.cid).sendMessageInternal(newMessage)
+                    .retry(scope, chatClient.retryPolicy).await()*/
             }
             .mapSuspend(::handleSendMessageSuccess)
             .recoverSuspend { error -> handleSendMessageFail(message, error) }

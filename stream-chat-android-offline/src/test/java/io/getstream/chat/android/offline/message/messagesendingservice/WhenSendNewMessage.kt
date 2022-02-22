@@ -37,9 +37,6 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeTrue
-import org.amshove.kluent.shouldNotBeEmpty
-import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
@@ -50,31 +47,6 @@ internal class WhenSendNewMessage {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
-
-    @Test
-    fun `Given message without attachments And offline Should return message as result with right data`() =
-        runBlockingTest {
-            val message = randomMessage(
-                cid = "",
-                id = "",
-                attachments = mutableListOf(),
-                type = "1232423432",
-                text = "text123",
-                createdLocallyAt = null,
-                syncStatus = SyncStatus.COMPLETED
-            )
-            val sut = Fixture().givenOffline().givenCid("test_type:test_channel").get()
-
-            val result = sut.sendNewMessage(message)
-
-            result.isSuccess.shouldBeTrue()
-            result.data().cid shouldBeEqualTo "test_type:test_channel"
-            result.data().id.shouldNotBeEmpty()
-            result.data().type shouldBeEqualTo "regular"
-            result.data().text shouldBeEqualTo "text123"
-            result.data().createdLocallyAt.shouldNotBeNull()
-            result.data().syncStatus shouldBeEqualTo SyncStatus.SYNC_NEEDED
-        }
 
     @Test
     fun `Given message without attachments And offline Should update channel controller and repository`() =
@@ -91,7 +63,7 @@ internal class WhenSendNewMessage {
 
             sut.sendNewMessage(message)
 
-            // verify(channel).upsertMessage(argThat { id == "messageId1" })
+            verify(channel).upsertMessage(argThat { id == "messageId1" })
             verify(repositoryFacade).insertMessage(argThat { id == "messageId1" }, eq(false))
             verify(repositoryFacade).updateLastMessageForChannel(eq("test_type:test_channel"), argThat { id == "messageId1" })
         }
@@ -118,18 +90,20 @@ internal class WhenSendNewMessage {
     fun `Given message without attachments And online And success network call Should return message from BE`() =
         runBlockingTest {
             val message =
-                randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
+                randomMessage(id = "messageId1", cid = "test_type:test_channel", attachments = mutableListOf(), updatedAt = null)
             val networkMessage = message.copy(updatedAt = randomDate())
+            val channelClient = mock<ChannelClient>()
             val sut = Fixture()
                 .givenOnline()
-                .givenCid("cid1")
+                .givenCid("test_type:test_channel")
+                .givenChannelClient(channelClient)
                 .givenNetworkResponse(networkMessage)
                 .get()
 
             val result = sut.sendNewMessage(message)
 
             result.isSuccess
-            result.data() shouldBeEqualTo networkMessage
+            result.data() shouldBeEqualTo networkMessage.copy(syncStatus = SyncStatus.COMPLETED)
         }
 
     @Test
@@ -147,7 +121,7 @@ internal class WhenSendNewMessage {
 
             sut.sendNewMessage(message)
 
-            verify(uploadWorker).enqueueJob(eq("channelType"), eq("channelId"), eq("messageId1"))
+            verify(uploadWorker).enqueueJob(eq("test_type"), eq("test_channel"), eq("messageId1"))
             verify(channelClient, never()).sendMessage(any())
         }
 
@@ -163,7 +137,11 @@ internal class WhenSendNewMessage {
                 )
             )
             val repositoryFacade = mock<RepositoryFacade>()
+            val channelClient = mock<ChannelClient>()
             val sut = Fixture().givenRepositories(repositoryFacade)
+                .givenCid("test_type:test_channel")
+                .givenChannelClient(channelClient)
+                .givenNetworkResponse(message)
                 .get()
 
             sut.sendNewMessage(message)
@@ -181,7 +159,6 @@ internal class WhenSendNewMessage {
         private var repositoryFacade = mock<RepositoryFacade>()
         private val chatClient = mock<ChatClient> {
             on(it.retryPolicy) doReturn NoRetryPolicy()
-            onGeneric { }
         }
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
@@ -199,7 +176,7 @@ internal class WhenSendNewMessage {
         private val logicRegistry = mock<LogicRegistry> {
             onGeneric { channel(any(), any()) } doReturn channel
         }
-        private val globalState: GlobalState = mock<GlobalMutableState>() {
+        private val globalState: GlobalState = mock<GlobalMutableState> {
             on(it.user) doReturn MutableStateFlow(randomUser())
         }
 
@@ -231,6 +208,7 @@ internal class WhenSendNewMessage {
 
         fun givenChannelLogic(channel: ChannelLogic) = apply {
             this.channel = channel
+            whenever(logicRegistry.channel(any(), any())) doReturn this.channel
         }
 
         fun givenRepositories(repositoryFacade: RepositoryFacade) = apply {
