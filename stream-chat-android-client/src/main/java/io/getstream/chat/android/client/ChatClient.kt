@@ -2044,6 +2044,12 @@ public class ChatClient internal constructor(
                         pluginFactory.get(user)
                     }
                 )
+
+                chatClient.addErrorHandlers(
+                    errorHandlerFactories.map { factory ->
+                        factory.create()
+                    }
+                )
             }
         }
 
