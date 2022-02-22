@@ -433,6 +433,7 @@ public final class io/getstream/chat/android/offline/experimental/errorhandler/f
 }
 
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
+	public static final fun getGlobalState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/experimental/global/GlobalState;
 }
 
 public abstract interface class io/getstream/chat/android/offline/experimental/global/GlobalState {
