@@ -43,6 +43,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that represents each item in a list. By default, we provide
  * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI and behavior.
  */
@@ -68,6 +69,7 @@ public fun MessageList(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
     },
+    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
@@ -91,6 +93,7 @@ public fun MessageList(
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
         helperContent = helperContent,
+        loadingMoreContent = loadingMoreContent,
         loadingContent = loadingContent,
         emptyContent = emptyContent
     )
@@ -173,6 +176,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  */
@@ -194,6 +198,7 @@ public fun MessageList(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(currentState, lazyListState)
     },
+    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(
             messageListItem = it,
@@ -217,6 +222,7 @@ public fun MessageList(
             onLastVisibleMessageChanged = onLastVisibleMessageChanged,
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
+            loadingMoreContent = loadingMoreContent,
             itemContent = itemContent
         )
         else -> emptyContent()

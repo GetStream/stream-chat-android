@@ -25,6 +25,11 @@ public interface MessageBackgroundFactory {
     public fun textAndAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
 
     /**
+     * Background for messages containing file attachments.
+     */
+    public fun fileAttachmentsMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
+
+    /**
      * Background for messages containing link attachments and no other types of attachments.
      */
     public fun linkAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
