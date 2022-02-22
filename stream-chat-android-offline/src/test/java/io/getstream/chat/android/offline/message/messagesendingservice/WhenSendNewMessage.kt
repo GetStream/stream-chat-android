@@ -137,11 +137,8 @@ internal class WhenSendNewMessage {
                 )
             )
             val repositoryFacade = mock<RepositoryFacade>()
-            val channelClient = mock<ChannelClient>()
             val sut = Fixture().givenRepositories(repositoryFacade)
                 .givenCid("test_type:test_channel")
-                .givenChannelClient(channelClient)
-                .givenNetworkResponse(message)
                 .get()
 
             sut.sendNewMessage(message)

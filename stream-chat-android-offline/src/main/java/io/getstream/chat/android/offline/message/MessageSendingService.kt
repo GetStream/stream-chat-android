@@ -158,13 +158,14 @@ internal class MessageSendingService(
                 } else Result.success(message.copy(type = Message.TYPE_REGULAR))
 
             message.hasPendingAttachments() -> {
+                // We enqueue attachments upload here if user is offline but an error is returned so message is not sent right away.
                 enqueueAttachmentUpload(message)
-                Result.success(message.copy(type = Message.TYPE_REGULAR))
+                Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
             }
 
             else -> {
-                logger.logI("Chat is offline, not sending message with id ${message.id} and text ${message.text}")
-                Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
+                logger.logI("Chat is offline and there is no pending attachments to upload in message with ${message.id} and text ${message.text}")
+                Result(ChatError("Chat is offline, there is no pending attachments to upload in message with id ${message.id} and text ${message.text}"))
             }
         }
     }
