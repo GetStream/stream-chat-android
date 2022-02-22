@@ -160,7 +160,7 @@ public class ChatClient internal constructor(
         PushNotificationReceivedListener { _, _ -> }
 
     public lateinit var plugins: List<Plugin>
-    
+
     /**
      * Error handlers for API calls.
      */

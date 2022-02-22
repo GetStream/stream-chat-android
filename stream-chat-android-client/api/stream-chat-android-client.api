@@ -9,7 +9,6 @@ public final class io/getstream/chat/android/client/BuildConfig {
 public final class io/getstream/chat/android/client/ChatClient {
 	public static final field Companion Lio/getstream/chat/android/client/ChatClient$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
-	public field errorHandlers Ljava/util/List;
 	public field plugins Ljava/util/List;
 	public final fun acceptInvite (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun addDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
@@ -50,7 +49,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getDevices ()Lio/getstream/chat/android/client/call/Call;
 	public final fun getDisconnectListeners ()Ljava/util/List;
-	public final fun getErrorHandlers ()Ljava/util/List;
 	public final fun getFileAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getGuestToken (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getImageAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -126,7 +124,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
-	public final fun setErrorHandlers (Ljava/util/List;)V
 	public final fun setPlugins (Ljava/util/List;)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
