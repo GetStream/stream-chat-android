@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
  * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel menu.
  * @param selectedChannelMenuUserItemAvatarSize The size of a member avatar in the selected channel menu.
  * @param attachmentsContentImageWidth The width of image attachments in the message list.
+ * @param attachmentsContentImageGridSpacing The spacing between image tiles in the message list.
  * @param attachmentsContentImageHeight The height of image attachments in the message list.
  * @param attachmentsContentGiphyWidth The with of Giphy attachments in the message list.
  * @param attachmentsContentGiphyHeight The height of Giphy attachments in the message list.
@@ -49,6 +50,7 @@ public data class StreamDimens(
     public val selectedChannelMenuUserItemHorizontalPadding: Dp,
     public val selectedChannelMenuUserItemAvatarSize: Dp,
     public val attachmentsContentImageWidth: Dp,
+    public val attachmentsContentImageGridSpacing: Dp,
     public val attachmentsContentImageHeight: Dp,
     public val attachmentsContentGiphyWidth: Dp,
     public val attachmentsContentGiphyHeight: Dp,
@@ -89,6 +91,7 @@ public data class StreamDimens(
             selectedChannelMenuUserItemHorizontalPadding = 8.dp,
             selectedChannelMenuUserItemAvatarSize = 64.dp,
             attachmentsContentImageWidth = 250.dp,
+            attachmentsContentImageGridSpacing = 2.dp,
             attachmentsContentImageHeight = 200.dp,
             attachmentsContentGiphyWidth = 250.dp,
             attachmentsContentGiphyHeight = 200.dp,

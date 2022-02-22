@@ -72,6 +72,7 @@
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder` [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 
 ### ❌ Removed
+- Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3098](https://github.com/GetStream/stream-chat-android/pull/3098)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -79,6 +80,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Exposed a way to clear the message composer externally, e.g. when using custom sendMessage handlers. [#3100](https://github.com/GetStream/stream-chat-android/pull/3100)
+- Added the `attachmentsContentImageGridSpacing` option to `StreamDimens`, to make it possible to customize the spacing between image attachment tiles via `ChatTheme`. [#3105](https://github.com/GetStream/stream-chat-android/pull/3105)
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
