@@ -160,7 +160,11 @@ public class ChatClient internal constructor(
         PushNotificationReceivedListener { _, _ -> }
 
     public lateinit var plugins: List<Plugin>
-    public lateinit var errorHandlers: List<ErrorHandler>
+    
+    /**
+     * Error handlers for API calls.
+     */
+    private var errorHandlers: List<ErrorHandler> = emptyList()
 
     init {
         eventsObservable.subscribe { event ->
