@@ -21,6 +21,7 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.HideChanne
 import io.getstream.chat.android.offline.experimental.plugin.listener.MarkAllReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelsListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.SendReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -107,11 +108,8 @@ public class StreamOfflinePluginFactory(
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
-            deleteReactionListener = DeleteReactionListenerImpl(
-                logic = logic,
-                globalState = globalStateRegistry,
-                repos = repos,
-            )
+            deleteReactionListener = DeleteReactionListenerImpl(logic, globalStateRegistry, repos),
+            sendReactionListener = SendReactionListenerImpl(logic, globalStateRegistry, repos),
         )
     }
 }

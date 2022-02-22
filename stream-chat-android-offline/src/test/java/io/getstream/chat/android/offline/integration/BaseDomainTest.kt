@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -181,7 +180,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
             on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { sendReaction(any<Reaction>(), any()) } doReturn TestCall(
+            on { sendReaction(any(), any(), any()) } doReturn TestCall(
                 Result(data.reaction1)
             )
             on { connectUser(any(), any<String>()) } doAnswer {

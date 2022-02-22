@@ -16,7 +16,7 @@ public interface DeleteReactionErrorHandler : ErrorHandler {
     /**
      * Returns a [Result] from this side effect when original request is failed.
      *
-     * @param originalError The original error returned by the API.
+     * @param originalCall The original call.
      * @param cid The full channel id, i.e. "messaging:123".
      * @param messageId The id of the message to which reaction belongs.
      *
@@ -30,7 +30,7 @@ public interface DeleteReactionErrorHandler : ErrorHandler {
 }
 
 @ExperimentalStreamChatApi
-public fun Call<Message>.onMessageError(
+internal fun Call<Message>.onMessageError(
     errorHandlers: List<DeleteReactionErrorHandler>,
     cid: String?,
     messageId: String,
