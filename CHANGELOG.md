@@ -10,7 +10,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- These version updates mean our SDK now expects the minimum of AGP 7.x.x. We recommend using 7.2+. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- These version updates mean our SDK now expects the minimum of AGP 7.x.x. We recommend using 7.1+. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
 
 ### ❌ Removed
 
