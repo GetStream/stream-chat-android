@@ -16,5 +16,5 @@ public interface ErrorHandlerFactory {
      *
      * @return The [ErrorHandler] instance.
      */
-    public fun getOrCreate(): ErrorHandler
+    public fun create(): ErrorHandler
 }

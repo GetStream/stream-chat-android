@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -43,9 +42,10 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
-import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -140,7 +140,6 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     // TODO: Make private/internal after migrating ChatDomain
     public val retryPolicy: RetryPolicy,
-    internal val errorHandlerFactory: ErrorHandlerFactory,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -161,6 +160,11 @@ public class ChatClient internal constructor(
         PushNotificationReceivedListener { _, _ -> }
 
     public lateinit var plugins: List<Plugin>
+
+    /**
+     * Error handlers for API calls.
+     */
+    private var errorHandlers: List<ErrorHandler> = emptyList()
 
     init {
         eventsObservable.subscribe { event ->
@@ -206,6 +210,10 @@ public class ChatClient internal constructor(
 
     internal fun addPlugins(plugins: List<Plugin>) {
         this.plugins = plugins
+    }
+
+    internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
+        this.errorHandlers = errorHandlers.sorted()
     }
 
     //region Set user
@@ -583,22 +591,13 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
+
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onErrorReturn(scope) { originalError ->
-                val errorHandler = errorHandlerFactory.getOrCreate()
-                if (errorHandler is DeleteReactionErrorHandler) {
-                    errorHandler.onDeleteReactionError(
-                        originalError = originalError,
-                        cid = cid,
-                        messageId = messageId,
-                    )
-                } else {
-                    Result.error(originalError)
-                }
-            }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -1887,7 +1886,6 @@ public class ChatClient internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
-        private var errorHandlerFactory: ErrorHandlerFactory = NoOpErrorHandlerFactory()
 
         /**
          * Sets the log level to be used by the client.
@@ -2026,7 +2024,7 @@ public class ChatClient internal constructor(
         @InternalStreamChatApi
         @ExperimentalStreamChatApi
         public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
-            this.errorHandlerFactory = errorHandlerFactory
+            this.errorHandlerFactories.add(errorHandlerFactory)
         }
 
         /**
@@ -2103,7 +2101,6 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
-                errorHandlerFactory = errorHandlerFactory,
             )
         }
     }
@@ -2118,6 +2115,14 @@ public class ChatClient internal constructor(
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
         /**
+         * Factories of error handlers that will be added to the SDK.
+         *
+         * @see [Plugin]
+         * @see [PluginFactory]
+         */
+        protected val errorHandlerFactories: MutableList<ErrorHandlerFactory> = mutableListOf()
+
+        /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
@@ -2127,6 +2132,12 @@ public class ChatClient internal constructor(
                     addPlugins(
                         pluginFactories.map { pluginFactory ->
                             pluginFactory.getOrCreate()
+                        }
+                    )
+
+                    addErrorHandlers(
+                        errorHandlerFactories.map { factory ->
+                            factory.create()
                         }
                     )
                 }
