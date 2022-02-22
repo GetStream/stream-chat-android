@@ -28,6 +28,7 @@ public interface ErrorHandler : Comparable<ErrorHandler> {
 
         /**
          * Default priority
+         */
         public const val DEFAULT_PRIORITY: Int = 1
     }
 }
