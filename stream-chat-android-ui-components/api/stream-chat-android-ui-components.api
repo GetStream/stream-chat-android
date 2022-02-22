@@ -431,7 +431,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyl
 	public final fun getMutedChannelIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getOptionsEnabled ()Z
 	public final fun getOptionsIcon ()Landroid/graphics/drawable/Drawable;
-	public final fun getShowChannelStatusIndicator ()Z
+	public final fun getShowChannelDeliveryStatusIndicator ()Z
 	public final fun getSwipeEnabled ()Z
 	public final fun getUnreadMessageCounterBackgroundColor ()I
 	public final fun getUnreadMessageCounterText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -1581,7 +1581,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListItemStyl
 	public final fun getPinnedMessageIndicatorIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getPinnedMessageIndicatorTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getReactionsViewStyle ()Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
-	public final fun getShowMessageStatusIndicator ()Z
+	public final fun getShowMessageDeliveryStatusIndicator ()Z
 	public final fun getStyleLinkTextColor (Z)Ljava/lang/Integer;
 	public final fun getStyleTextColor (Z)Ljava/lang/Integer;
 	public final fun getTextStyleDateSeparator ()Lio/getstream/chat/android/ui/common/style/TextStyle;

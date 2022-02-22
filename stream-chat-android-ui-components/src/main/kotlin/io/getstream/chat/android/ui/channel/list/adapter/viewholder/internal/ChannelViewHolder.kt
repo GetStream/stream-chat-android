@@ -258,9 +258,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun StreamUiChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(
         lastMessage: Message?,
     ) {
-        messageStatusImageView.isVisible = lastMessage != null && style.showChannelStatusIndicator
+        messageStatusImageView.isVisible = lastMessage != null && style.showChannelDeliveryStatusIndicator
 
-        if (lastMessage == null || !style.showChannelStatusIndicator) return
+        if (lastMessage == null || !style.showChannelDeliveryStatusIndicator) return
 
         // read - if the last message doesn't belong to current user, or if channel reads indicates it
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read

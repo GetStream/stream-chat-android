@@ -203,7 +203,7 @@
         <attr name="streamUiEditReactionsColumns" format="integer" />
 
         <!-- Indicator icons -->
-        <attr name="streamUiShowMessageStatusIndicator" format="boolean" />
+        <attr name="streamUiShowMessageDeliveryStatusIndicator" format="boolean" />
         <attr name="streamUiIconIndicatorSent" format="reference" />
         <attr name="streamUiIconIndicatorRead" format="reference" />
         <attr name="streamUiIconIndicatorPendingSync" format="reference" />

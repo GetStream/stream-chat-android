@@ -62,7 +62,7 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageEndMargin Margin for messages in the right side. Default value is 0dp.
  * @property messageMaxWidthFactorMine Factor used to compute max width for message sent by the current user. Should be in <0.75, 1> range.
  * @property messageMaxWidthFactorTheirs Factor used to compute max width for message sent by other user. Should be in <0.75, 1> range.
- * @property showMessageStatusIndicator Flag if we need to show the read indicator or not.
+ * @property showMessageDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -104,7 +104,7 @@ public data class MessageListItemStyle(
     @Px public val messageEndMargin: Int,
     public val messageMaxWidthFactorMine: Float,
     public val messageMaxWidthFactorTheirs: Float,
-    public val showMessageStatusIndicator: Boolean,
+    public val showMessageDeliveryStatusIndicator: Boolean,
 ) {
 
     @ColorInt
@@ -410,8 +410,8 @@ public data class MessageListItemStyle(
                 .reactionsColumns(R.styleable.MessageListView_streamUiEditReactionsColumns)
                 .build()
 
-            val showMessageStatusIndicator = attributes.getBoolean(
-                R.styleable.MessageListView_streamUiShowMessageStatusIndicator,
+            val showMessageDeliveryStatusIndicator = attributes.getBoolean(
+                R.styleable.MessageListView_streamUiShowMessageDeliveryStatusIndicator,
                 true
             )
 
@@ -594,7 +594,7 @@ public data class MessageListItemStyle(
                 messageEndMargin = messageEndMargin,
                 messageMaxWidthFactorMine = messageMaxWidthFactorMine,
                 messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs,
-                showMessageStatusIndicator = showMessageStatusIndicator
+                showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }

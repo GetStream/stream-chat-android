@@ -41,7 +41,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property emptyStateView Empty state view. Default value is [R.layout.stream_ui_channel_list_empty_state_view].
  * @property loadingMoreView Loading more view. Default value is [R.layout.stream_ui_channel_list_loading_more_view].
  * @property edgeEffectColor Color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default value is null.
- * @property showChannelStatusIndicator Flag if we need to show the read indicator or not.
+ * @property showChannelDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
@@ -66,7 +66,7 @@ public data class ChannelListViewStyle(
     @LayoutRes public val emptyStateView: Int,
     @LayoutRes public val loadingMoreView: Int,
     @ColorInt public val edgeEffectColor: Int?,
-    public val showChannelStatusIndicator: Boolean
+    public val showChannelDeliveryStatusIndicator: Boolean
 ) {
 
     internal companion object {
@@ -165,8 +165,8 @@ public data class ChannelListViewStyle(
                     )
                     .build()
 
-                val showChannelStatusIndicator = a.getBoolean(
-                    R.styleable.ChannelListView_streamUiShowChannelStatusIndicator,
+                val showChannelDeliveryStatusIndicator = a.getBoolean(
+                    R.styleable.ChannelListView_streamUiShowChannelDeliveryStatusIndicator,
                     true
                 )
 
@@ -257,7 +257,7 @@ public data class ChannelListViewStyle(
                     emptyStateView = emptyStateView,
                     loadingMoreView = loadingMoreView,
                     edgeEffectColor = edgeEffectColor,
-                    showChannelStatusIndicator = showChannelStatusIndicator
+                    showChannelDeliveryStatusIndicator = showChannelDeliveryStatusIndicator
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }
