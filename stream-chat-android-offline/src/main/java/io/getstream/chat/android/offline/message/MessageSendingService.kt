@@ -14,8 +14,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.mapSuspend
-import io.getstream.chat.android.client.utils.onSuccess
-import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
@@ -58,9 +56,9 @@ internal class MessageSendingService(
      *
      * @return [Result] with a prepared message.
      */
-    public suspend fun prepareNewMessageWithAttachments(message: Message): Result<Message> {
-        return prepareNewMessage(message)
-            .flatMapSuspend(::uploadAttachments)
+    suspend fun prepareNewMessageWithAttachments(message: Message): Result<Message> {
+        val preparedMessage = prepareNewMessage(message)
+        return uploadAttachments(preparedMessage)
     }
 
     /**
@@ -75,8 +73,8 @@ internal class MessageSendingService(
      *
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
-    private suspend fun prepareNewMessage(message: Message): Result<Message> = Result.success(
-        message.copy().apply {
+    private suspend fun prepareNewMessage(message: Message): Message {
+        val newMessage = message.copy().apply {
             if (id.isEmpty()) {
                 id = generateMessageId()
             }
@@ -104,16 +102,15 @@ internal class MessageSendingService(
                 else -> SyncStatus.SYNC_NEEDED
             }
         }
-    ).onSuccess { newMessage ->
         // Update flow in channel controller
         channel.upsertMessage(newMessage)
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
         // Update flow for currently running queries
         logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
-    }.onSuccessSuspend { newMessage ->
         // we insert early to ensure we don't lose messages
         repos.insertMessage(newMessage)
         repos.updateLastMessageForChannel(newMessage.cid, newMessage)
+        return newMessage
     }
 
     /**
@@ -123,8 +120,10 @@ internal class MessageSendingService(
      *
      * @return Result with a newly updated message.
      */
-    internal suspend fun sendNewMessage(message: Message): Result<Message> = prepareNewMessage(message)
-        .flatMapSuspend(::sendMessage)
+    internal suspend fun sendNewMessage(message: Message): Result<Message> {
+        val preparedMessage = prepareNewMessage(message)
+        return sendMessage(preparedMessage)
+    }
 
     /**
      * Sends the message without preparing.
@@ -134,13 +133,9 @@ internal class MessageSendingService(
      * TODO: This method can be removed when ChatDomain is removed.
      */
     internal suspend fun sendMessage(message: Message): Result<Message> {
-        return uploadAttachments(message).let {
-            if (it.isSuccess) {
-                doSend(it.data())
-            } else it.recoverSuspend {
-                message
-            }
-        }
+        return uploadAttachments(message)
+            .flatMapSuspend { doSend(it) }
+            .recoverSuspend { message }
     }
 
     /**
@@ -232,19 +227,11 @@ internal class MessageSendingService(
     }
 
     // TODO: Remove this method when ChatDomain is removed.
-    private suspend fun doSend(message: Message): Result<Message> {
-        return Result.success(message)
-            .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
-            .flatMapSuspend { newMessage ->
-                val channelClient = chatClient.channel(newMessage.cid)
-                val call = channelClient.sendMessageInternal(newMessage)
-                call.retry(scope, chatClient.retryPolicy).await()
-                /*chatClient.channel(newMessage.cid).sendMessageInternal(newMessage)
-                    .retry(scope, chatClient.retryPolicy).await()*/
-            }
+    private suspend fun doSend(message: Message): Result<Message> =
+        chatClient.channel(message.cid).sendMessageInternal(message)
+            .retry(scope, chatClient.retryPolicy).await()
             .mapSuspend(::handleSendMessageSuccess)
             .recoverSuspend { error -> handleSendMessageFail(message, error) }
-    }
 
     /**
      * Updates the message object and local database with new message state after message is sent successfully.

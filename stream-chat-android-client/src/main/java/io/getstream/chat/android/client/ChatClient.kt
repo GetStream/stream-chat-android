@@ -108,6 +108,7 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -1058,28 +1059,23 @@ public class ChatClient internal constructor(
 
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
             // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
-            val preparedMessageResult = relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data())
                 } else message
-            }
-            if (preparedMessageResult.isSuccess) {
-                preparedMessageResult.data().let { newMessage ->
-                    api.sendMessage(channelType, channelId, newMessage)
-                        .retry(scope, retryPolicy)
-                        .doOnResult(scope) { result ->
-                            relevantPlugins.forEach {
-                                it.onMessageSendResult(
-                                    result,
-                                    channelType,
-                                    channelId,
-                                    newMessage
-                                )
-                            }
-                        }.await()
-                }
-            } else {
-                Result.error(preparedMessageResult.error())
+            }.flatMapSuspend { newMessage ->
+                api.sendMessage(channelType, channelId, newMessage)
+                    .retry(scope, retryPolicy)
+                    .doOnResult(scope) { result ->
+                        relevantPlugins.forEach {
+                            it.onMessageSendResult(
+                                result,
+                                channelType,
+                                channelId,
+                                newMessage
+                            )
+                        }
+                    }.await()
             }
         }
     }
