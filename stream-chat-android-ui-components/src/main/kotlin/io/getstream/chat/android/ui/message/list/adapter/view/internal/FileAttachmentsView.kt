@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
+import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
@@ -61,6 +62,10 @@ internal class FileAttachmentsView : RecyclerView {
         style = FileAttachmentViewStyle(context, attrs)
     }
 
+    /**
+     * Sets click listeners on individual items and filters out attachments containing links
+     * before setting the data on the RecyclerView adapter.
+     */
     fun setAttachments(attachments: List<Attachment>) {
         if (!::fileAttachmentsAdapter.isInitialized) {
             fileAttachmentsAdapter = FileAttachmentsAdapter(
@@ -79,7 +84,9 @@ internal class FileAttachmentsView : RecyclerView {
             adapter = fileAttachmentsAdapter
         }
 
-        fileAttachmentsAdapter.setItems(attachments)
+        val filteredAttachments = attachments.filter { attachment -> !attachment.hasLink() }
+
+        fileAttachmentsAdapter.setItems(filteredAttachments)
     }
 
     override fun onDetachedFromWindow() {

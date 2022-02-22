@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
@@ -26,6 +27,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
@@ -37,41 +39,80 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
+/**
+ * A factory class designed to create ViewHolders for the RecyclerView
+ * inside [io.getstream.chat.android.ui.message.list.MessageListView].
+ */
 public open class MessageListItemViewHolderFactory {
+
+    /**
+     * Provides a list of decorators to be used by the various ViewHolders.
+     */
     internal lateinit var decoratorProvider: DecoratorProvider
 
     protected lateinit var attachmentViewFactory: AttachmentViewFactory
         private set
 
+    /**
+     * Style applied to the ViewHolders created by this class.
+     */
     private lateinit var style: MessageListItemStyle
 
+    /**
+     * Sets the style for messages containing replies.
+     */
     private lateinit var messageReplyStyle: MessageReplyStyle
 
+    /**
+     * Sets the style for the Giphy ViewHolder.
+     */
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
+    /**
+     * A container containing listeners used by the ViewHolders for
+     * setting reactions, opening message options, etc.
+     */
     protected var listenerContainer: MessageListListenerContainer? = null
         private set
 
+    /**
+     * Setter for [listenerContainer].
+     */
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer?) {
         this.listenerContainer = listenerContainer
     }
 
+    /**
+     * Setter for [attachmentViewFactory].
+     */
     internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         this.attachmentViewFactory = attachmentViewFactory
     }
 
+    /**
+     * Setter for [style].
+     */
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {
         this.style = style
     }
 
+    /**
+     * Setter for [messageReplyStyle].
+     */
     internal fun setReplyMessageListItemViewStyle(style: MessageReplyStyle) {
         this.messageReplyStyle = style
     }
 
+    /**
+     * Setter for [giphyViewHolderStyle].
+     */
     internal fun setGiphyViewHolderStyle(style: GiphyViewHolderStyle) {
         this.giphyViewHolderStyle = style
     }
 
+    /**
+     * Transforms the message text.
+     */
     private val textTransformer: ChatMessageTextTransformer by lazy { ChatUI.messageTextTransformer }
 
     /**
@@ -134,6 +175,7 @@ public open class MessageListItemViewHolderFactory {
             THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
             LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
+            FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
             IMAGE_ATTACHMENT -> createImageAttachmentViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
@@ -298,6 +340,23 @@ public open class MessageListItemViewHolderFactory {
             BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
+    }
+
+    /**
+     * Creates a ViewHolder for messages containing file attachments.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that represents the message with file attachments.
+     */
+    private fun createFileAttachmentsViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return FileAttachmentsViewHolder(
+            parent = parentView,
+            decorators = decoratorProvider.decorators,
+            listeners = listenerContainer,
+            messageTextTransformer = textTransformer,
+        )
     }
 
     /**
