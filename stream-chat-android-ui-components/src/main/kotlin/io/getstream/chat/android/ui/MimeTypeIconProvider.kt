@@ -48,7 +48,7 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         ModelType.attach_mime_quicktime to R.drawable.stream_ui_ic_file_mov,
         ModelType.attach_mime_video_quicktime to R.drawable.stream_ui_ic_file_mov,
         ModelType.attach_mime_mp4 to R.drawable.stream_ui_ic_file_mov,
-        ModelType.attach_mime_video_mp4 to R.drawable.stream_ui_ic_file_mov,
+        ModelType.attach_mime_video_mp4 to R.drawable.stream_ui_ic_file_mp4,
         ModelType.attach_mime_m4a to R.drawable.stream_ui_ic_file_m4a,
         ModelType.attach_mime_mp3 to R.drawable.stream_ui_ic_file_mp3,
     )
