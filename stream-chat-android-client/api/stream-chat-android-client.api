@@ -1891,11 +1891,6 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/plugin/handler/StateHandler {
-	public abstract fun clearState ()V
-	public abstract fun registerClearStateListener (Lkotlin/jvm/functions/Function0;)V
-}
-
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener {
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

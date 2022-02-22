@@ -13,7 +13,6 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
-import io.getstream.chat.android.offline.experimental.plugin.handler.StateHandlerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
@@ -89,19 +88,13 @@ public class StreamOfflinePluginFactory(
         val stateRegistry = StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.getOrCreate(stateRegistry)
 
-        val stateHandler = StateHandlerImpl().apply {
-            registerClearStateListener {
-                stateRegistry.clear()
-                logic.clear()
-                globalStateRegistry.clearState()
-            }
-        }
-
         InitializationCoordinator.getOrCreate().run {
             addUserConnectedListener(chatDomainImpl::userConnected)
 
             addUserDisconnectedListener {
-                stateHandler.clearState()
+                stateRegistry.clear()
+                logic.clear()
+                globalStateRegistry.clearState()
             }
         }
 
@@ -118,8 +111,7 @@ public class StreamOfflinePluginFactory(
                 logic = logic,
                 globalState = globalStateRegistry,
                 repos = repos,
-            ),
-            stateHandler = stateHandler
+            )
         )
     }
 }
