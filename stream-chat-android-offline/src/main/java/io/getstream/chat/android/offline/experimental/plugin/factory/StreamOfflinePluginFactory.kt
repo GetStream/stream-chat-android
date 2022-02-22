@@ -53,6 +53,8 @@ public class StreamOfflinePluginFactory(
      */
     private fun createOfflinePlugin(user: User): OfflinePlugin {
         val chatClient = ChatClient.instance()
+        val globalStateRegistry = GlobalMutableState.getOrCreate()
+        globalStateRegistry.clearState()
 
         if (!ChatDomain.isInitialized) {
             ChatDomain.Builder(appContext, chatClient).apply {
@@ -81,11 +83,11 @@ public class StreamOfflinePluginFactory(
             setOfflineEnabled(config.persistenceEnabled)
         }.build()
 
+        chatDomainImpl.repos = repos
+
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
         val stateRegistry = StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
-
         val logic = LogicRegistry.getOrCreate(stateRegistry)
-        val globalStateRegistry = GlobalMutableState.getOrCreate()
 
         val stateHandler = StateHandlerImpl().apply {
             registerClearStateListener {

@@ -27,7 +27,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import java.util.Date
 
-internal class RepositoryFacade @VisibleForTesting internal constructor(
+internal class RepositoryFacade(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
@@ -159,23 +159,6 @@ internal class RepositoryFacade @VisibleForTesting internal constructor(
     }
 
     internal companion object {
-        private var instance: RepositoryFacade? = null
-
-        /**
-         * Use it get create and refresh the singleton of [RepositoryFacade]. This is needed when we currentUser of the
-         * SDK is changes.
-         *
-         * @param factory [RepositoryFactory]
-         * @param scope [CoroutineScope]
-         * @param defaultConfig [Config]
-         */
-        internal fun refreshAndGet(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config) =
-            create(factory, scope, defaultConfig).also { facade -> instance = facade }
-
-        @Throws(IllegalStateException::class)
-        internal fun get(): RepositoryFacade = instance ?: throw IllegalStateException(
-            "RepositoryFacade must be initialised first"
-        )
 
         /**
          * Creates a new instance of [RepositoryFacade] and doesn't populate the Singleton instance. This method should be

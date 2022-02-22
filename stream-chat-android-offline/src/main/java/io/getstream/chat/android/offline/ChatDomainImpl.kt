@@ -175,15 +175,7 @@ internal class ChatDomainImpl internal constructor(
      * not closed by room.
      */
 
-    internal var repos: RepositoryFacade
-        get() = _repos ?: RepositoryFacade.get().also { repositoryFacade ->
-            _repos = repositoryFacade
-        }
-        set(value) {
-            _repos = value
-        }
-
-    private var _repos: RepositoryFacade? = null
+    internal lateinit var repos: RepositoryFacade
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE

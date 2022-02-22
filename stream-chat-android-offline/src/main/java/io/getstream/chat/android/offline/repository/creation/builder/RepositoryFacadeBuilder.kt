@@ -56,6 +56,6 @@ internal class RepositoryFacadeBuilder {
         val scope = requireNotNull(coroutineScope)
         val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
 
-        return RepositoryFacade.refreshAndGet(factory, scope, config)
+        return RepositoryFacade.create(factory, scope, config)
     }
 }
