@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 /**
  * A wrapper around [Call] that swallows the error and emits new data from [onErrorReturn].
  */
-internal class ReturnOnErrorCall<T : Any>(
+public class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
     private val scope: CoroutineScope,
     private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>,
