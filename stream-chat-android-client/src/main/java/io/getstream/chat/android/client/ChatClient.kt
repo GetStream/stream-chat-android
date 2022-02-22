@@ -45,7 +45,9 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.SendReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -635,23 +637,12 @@ public class ChatClient internal constructor(
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
         val relevantPlugins = plugins.filterIsInstance<SendReactionListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
         return api.sendReaction(reaction, enforceUnique)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            // .onErrorReturn(scope) { originalError ->
-            //     val errorHandler = errorHandlerFactory.getOrCreate()
-            //     if (errorHandler is SendReactionErrorHandler) {
-            //         errorHandler.onSendReactionError(
-            //             originalError = originalError,
-            //             reaction = reaction,
-            //             enforceUnique = enforceUnique,
-            //             currentUser = currentUser!!,
-            //         )
-            //     } else {
-            //         Result.error(originalError)
-            //     }
-            // }
+            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -659,7 +650,7 @@ public class ChatClient internal constructor(
                             cid = cid,
                             reaction = reaction,
                             enforceUnique = enforceUnique,
-                            currentUser = currentUser!!,
+                            currentUser = currentUser,
                         )
                     }
             }
@@ -669,7 +660,7 @@ public class ChatClient internal constructor(
                         cid = cid,
                         reaction = reaction,
                         enforceUnique = enforceUnique,
-                        currentUser = currentUser!!,
+                        currentUser = currentUser,
                         result = result,
                     )
                 }

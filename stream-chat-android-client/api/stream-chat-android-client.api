@@ -1899,12 +1899,12 @@ public final class io/getstream/chat/android/client/experimental/errorhandler/li
 	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
-public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerKt {
-	public static final fun onMessageError (Lio/getstream/chat/android/client/call/Call;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun onSendReactionError (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler {
-	public abstract fun onSendReactionError (Lio/getstream/chat/android/client/errors/ChatError;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
