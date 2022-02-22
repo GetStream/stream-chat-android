@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -67,7 +66,6 @@ internal open class BaseChatClientTest {
             tokenUtils = tokenUtils,
             scope = coroutineRule.scope,
             retryPolicy = NoRetryPolicy(),
-            errorHandlerFactory = NoOpErrorHandlerFactory(),
             initializationCoordinator = initializationCoordinator
         )
     }

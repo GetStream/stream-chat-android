@@ -171,6 +171,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public final fun build ()Lio/getstream/chat/android/client/ChatClient;
+	protected final fun getErrorHandlerFactories ()Ljava/util/List;
 	protected final fun getPluginFactories ()Ljava/util/List;
 }
 
@@ -1871,16 +1872,36 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler : java/lang/Comparable {
+	public static final field Companion Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion;
+	public static final field DEFAULT_PRIORITY I
+	public abstract fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getPriority ()I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion {
+	public static final field DEFAULT_PRIORITY I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
-	public abstract fun getOrCreate ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
+	public abstract fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler {
-	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/errors/ChatError;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerKt {
+	public static final fun onMessageError (Lio/getstream/chat/android/client/call/Call;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
