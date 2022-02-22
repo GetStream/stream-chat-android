@@ -343,10 +343,10 @@ public open class MessageListItemViewHolderFactory {
     }
 
     /**
-     * Creates the empty message view holder.
+     * Creates a ViewHolder for messages containing file attachments.
      *
      * @param parentView The parent container.
-     * @return The [BaseMessageItemViewHolder] that represents the empty message.
+     * @return The [BaseMessageItemViewHolder] that represents the message with file attachments.
      */
     private fun createFileAttachmentsViewHolder(
         parentView: ViewGroup,
