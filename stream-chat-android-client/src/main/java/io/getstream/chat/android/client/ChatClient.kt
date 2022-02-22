@@ -44,7 +44,7 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
-import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandlerProposal
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
@@ -587,7 +587,7 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandlerProposal>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
 
         val currentUser = getCurrentUser()
 

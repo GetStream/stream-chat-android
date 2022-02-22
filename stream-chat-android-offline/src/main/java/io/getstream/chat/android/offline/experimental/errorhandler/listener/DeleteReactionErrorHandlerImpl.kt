@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandlerProposal
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -15,11 +15,11 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 
 @ExperimentalStreamChatApi
-internal class DeleteReactionErrorHandlerProposalImpl(
+internal class DeleteReactionErrorHandlerImpl(
     private val scope: CoroutineScope,
     private val logic: LogicRegistry,
     private val globalState: GlobalState,
-) : DeleteReactionErrorHandlerProposal {
+) : DeleteReactionErrorHandler {
 
     override fun onDeleteReactionError(
         originalCall: Call<Message>,

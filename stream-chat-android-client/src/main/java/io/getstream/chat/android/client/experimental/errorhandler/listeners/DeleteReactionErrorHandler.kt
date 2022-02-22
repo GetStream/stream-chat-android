@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.experimental.errorhandler.listeners
 
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -21,5 +22,20 @@ public interface DeleteReactionErrorHandler : ErrorHandler {
      *
      * @return result The replacement for the original result.
      */
-    public fun onDeleteReactionError(originalError: ChatError, cid: String?, messageId: String): Result<Message>
+    public fun onDeleteReactionError(
+        originalCall: Call<Message>,
+        cid: String?,
+        messageId: String,
+    ): ReturnOnErrorCall<Message>
+}
+
+@ExperimentalStreamChatApi
+public fun Call<Message>.onMessageError(
+    errorHandlers: List<DeleteReactionErrorHandler>,
+    cid: String?,
+    messageId: String,
+): Call<Message> {
+    return errorHandlers.fold(this) { messageCall, errorHandler ->
+        errorHandler.onDeleteReactionError(messageCall, cid, messageId)
+    }
 }
