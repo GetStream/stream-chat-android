@@ -83,6 +83,7 @@
 - Exposed a way to clear the message composer externally, e.g. when using custom sendMessage handlers. [#3100](https://github.com/GetStream/stream-chat-android/pull/3100)
 - Exposed `loadingMoreContent` for the `ChannelList` and `Channels` components that allows you to override the default loading more content. [#3103](https://github.com/GetStream/stream-chat-android/pull/3103)
 - Exposed `loadingMoreContent` for the `MessageList` and `Messages` components that allows you to override the default loading more content. [#3103](https://github.com/GetStream/stream-chat-android/pull/3103)
+- Added the `attachmentsContentImageGridSpacing` option to `StreamDimens`, to make it possible to customize the spacing between image attachment tiles via `ChatTheme`. [#3105](https://github.com/GetStream/stream-chat-android/pull/3105)
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
