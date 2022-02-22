@@ -59,6 +59,7 @@
 - Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081)
 - Added `ChatUI.dateFormatter` to allow customizing the way the dates are formatted. [#3085](https://github.com/GetStream/stream-chat-android/pull/3085)
 - Added a separate `LinkAttachmentsViewHolder` for handling messages containing link attachments and no other types of attachments. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
+- Added ways to show/hide the delivery status indicators for channels and messages. [#3102](https://github.com/GetStream/stream-chat-android/pull/3102)
 - Added a separate `FileAttachmentsViewHolder` for handling messages containing file attachments of different types or file attachments not handled by one of the other `ViewHolder`s. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
 
 ### ⚠️ Changed
