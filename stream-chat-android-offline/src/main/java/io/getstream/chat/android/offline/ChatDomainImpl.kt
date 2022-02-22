@@ -81,7 +81,6 @@ import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendMessage
-import io.getstream.chat.android.offline.usecase.SendReaction
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
@@ -970,7 +969,7 @@ internal class ChatDomainImpl internal constructor(
     override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
-        SendReaction(this).invoke(cid, reaction, enforceUnique)
+        client.sendReaction(reaction = reaction, enforceUnique = enforceUnique, cid = cid)
 
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         client.deleteReaction(cid = cid, messageId = reaction.messageId, reactionType = reaction.type)

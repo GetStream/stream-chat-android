@@ -34,7 +34,7 @@ internal class DeleteReactionErrorHandlerImpl(
      * This means that the message was updated locally but the API request failed due to lack of connection.
      * The request will be synced once user's connection is recovered.
      *
-     * @param originalError The original error returned by the API.
+     * @param originalCall The original call.
      * @param cid The full channel id, i.e. "messaging:123".
      * @param messageId The id of the message to which reaction belongs.
      *
@@ -61,7 +61,7 @@ internal class DeleteReactionErrorHandlerImpl(
     }
 
     override val name: String
-        get() = "DeleteReactionErrorHandlerProposalImpl"
+        get() = "DeleteReactionErrorHandlerImpl"
 
     override val priority: Int
         get() = ErrorHandler.DEFAULT_PRIORITY

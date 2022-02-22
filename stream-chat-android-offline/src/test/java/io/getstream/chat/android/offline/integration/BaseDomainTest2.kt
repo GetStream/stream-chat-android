@@ -159,7 +159,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
+            on { sendReaction(any(), any(), any()) } doReturn TestCall(
                 Result(data.reaction1)
             )
         }

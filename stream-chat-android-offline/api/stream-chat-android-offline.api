@@ -432,6 +432,11 @@ public final class io/getstream/chat/android/offline/experimental/errorhandler/f
 	public fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
 }
 
+public final class io/getstream/chat/android/offline/experimental/errorhandler/factory/SendReactionErrorHandlerFactory : io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
+	public fun <init> ()V
+	public fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
+}
+
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
 	public static final fun getGlobalState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/experimental/global/GlobalState;
 }
