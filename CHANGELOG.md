@@ -74,6 +74,7 @@
 - Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
 
 ### ❌ Removed
+- Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3098](https://github.com/GetStream/stream-chat-android/pull/3098)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -81,12 +82,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Exposed a way to clear the message composer externally, e.g. when using custom sendMessage handlers. [#3100](https://github.com/GetStream/stream-chat-android/pull/3100)
+- Added the `attachmentsContentImageGridSpacing` option to `StreamDimens`, to make it possible to customize the spacing between image attachment tiles via `ChatTheme`. [#3105](https://github.com/GetStream/stream-chat-android/pull/3105)
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
 
 ### ❌ Removed
+- Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3092](https://github.com/GetStream/stream-chat-android/pull/3092)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -133,6 +137,14 @@
 ### ❌ Removed
 
 <!-- UNRELEASED END -->
+# February 17th, 2022 - 4.28.4
+## stream-chat-android-client
+### ✅ Added
+- Added the `member` field to the `MemberRemovedEvent`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed how member removal is handled in `DefaultChatEventHandler`. [#3090](https://github.com/GetStream/stream-chat-android/pull/3090)
 
 # February 16th, 2022 - 4.28.3
 ## stream-chat-android-ui-components

@@ -99,6 +99,7 @@ internal data class MemberRemovedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
+    val member: DownstreamMemberDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

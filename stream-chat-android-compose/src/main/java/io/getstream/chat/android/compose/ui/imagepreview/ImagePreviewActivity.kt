@@ -40,6 +40,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -218,25 +219,21 @@ public class ImagePreviewActivity : AppCompatActivity() {
             color = ChatTheme.colors.barsBackground
         ) {
             Row(
-                Modifier.fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { finish() },
-                    painter = painterResource(id = R.drawable.stream_compose_ic_close),
-                    contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                    tint = ChatTheme.colors.textHighEmphasis
-                )
+                IconButton(onClick = ::finish) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                        contentDescription = stringResource(id = R.string.stream_compose_cancel),
+                        tint = ChatTheme.colors.textHighEmphasis,
+                    )
+                }
 
                 ImagePreviewHeaderTitle(
-                    modifier = Modifier
-                        .weight(8f),
+                    modifier = Modifier.weight(8f),
                     message = message
                 )
 
@@ -523,16 +520,21 @@ public class ImagePreviewActivity : AppCompatActivity() {
             elevation = 4.dp,
             color = ChatTheme.colors.barsBackground
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(8.dp)
-                        .clickable { onShareImageClick(attachments[pagerState.currentPage]) },
-                    painter = painterResource(id = R.drawable.stream_compose_ic_share),
-                    contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-                    tint = ChatTheme.colors.textHighEmphasis
-                )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    onClick = { onShareImageClick(attachments[pagerState.currentPage]) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_share),
+                        contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
+                        tint = ChatTheme.colors.textHighEmphasis,
+                    )
+                }
 
                 Text(
                     modifier = Modifier.align(Alignment.Center),
@@ -545,19 +547,16 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     color = ChatTheme.colors.textHighEmphasis
                 )
 
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(8.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(),
-                            onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = true) }
-                        ),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
-                    contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
-                    tint = ChatTheme.colors.textHighEmphasis
-                )
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = true) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
+                        contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
+                        tint = ChatTheme.colors.textHighEmphasis,
+                    )
+                }
             }
         }
     }
