@@ -14,6 +14,14 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * [DeleteReactionErrorHandler] implementation for [io.getstream.chat.android.offline.experimental.errorhandler.OfflineErrorHandler].
+ * Checks if the change was done offline and can be synced.
+ *
+ * @param scope [CoroutineScope]
+ * @param logic [LogicRegistry]
+ * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
+ */
 @ExperimentalStreamChatApi
 internal class DeleteReactionErrorHandlerImpl(
     private val scope: CoroutineScope,
@@ -21,6 +29,17 @@ internal class DeleteReactionErrorHandlerImpl(
     private val globalState: GlobalState,
 ) : DeleteReactionErrorHandler {
 
+    /**
+     * Replaces the original response error if the user is offline, [cid] is specified and the message exists in the cache.
+     * This means that the message was updated locally but the API request failed due to lack of connection.
+     * The request will be synced once user's connection is recovered.
+     *
+     * @param originalError The original error returned by the API.
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param messageId The id of the message to which reaction belongs.
+     *
+     * @return result The original or offline related result.
+     */
     override fun onDeleteReactionError(
         originalCall: Call<Message>,
         cid: String?,
