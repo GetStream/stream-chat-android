@@ -10,7 +10,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * Error handler for [io.getstream.chat.android.client.ChatClient.deleteReaction] calls.
  */
 @ExperimentalStreamChatApi
-public interface DeleteReactionErrorHandler: ErrorHandler {
+public interface DeleteReactionErrorHandler : ErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request is failed.

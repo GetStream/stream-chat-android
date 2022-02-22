@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
-import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandlerProposal
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
@@ -141,7 +140,6 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     // TODO: Make private/internal after migrating ChatDomain
     public val retryPolicy: RetryPolicy,
-    internal val errorHandlerFactory: ErrorHandlerFactory,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -208,6 +206,10 @@ public class ChatClient internal constructor(
 
     internal fun addPlugins(plugins: List<Plugin>) {
         this.plugins = plugins
+    }
+
+    internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
+        this.errorHandlers = errorHandlers.sorted()
     }
 
     //region Set user
@@ -1880,7 +1882,6 @@ public class ChatClient internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
-        private var errorHandlerFactory: ErrorHandlerFactory = NoOpErrorHandlerFactory()
 
         /**
          * Sets the log level to be used by the client.
@@ -2019,7 +2020,7 @@ public class ChatClient internal constructor(
         @InternalStreamChatApi
         @ExperimentalStreamChatApi
         public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
-            this.errorHandlerFactory = errorHandlerFactory
+            this.errorHandlerFactories.add(errorHandlerFactory)
         }
 
         /**
@@ -2096,7 +2097,6 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
-                errorHandlerFactory = errorHandlerFactory,
             )
         }
     }
@@ -2111,6 +2111,14 @@ public class ChatClient internal constructor(
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
         /**
+         * Factories of error handlers that will be added to the SDK.
+         *
+         * @see [Plugin]
+         * @see [PluginFactory]
+         */
+        protected val errorHandlerFactories: MutableList<ErrorHandlerFactory> = mutableListOf()
+
+        /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
@@ -2120,6 +2128,12 @@ public class ChatClient internal constructor(
                     addPlugins(
                         pluginFactories.map { pluginFactory ->
                             pluginFactory.getOrCreate()
+                        }
+                    )
+
+                    addErrorHandlers(
+                        errorHandlerFactories.map { factory ->
+                            factory.create()
                         }
                     )
                 }

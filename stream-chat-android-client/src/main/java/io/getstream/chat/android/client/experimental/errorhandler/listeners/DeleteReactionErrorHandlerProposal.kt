@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.experimental.errorhandler.listeners
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result

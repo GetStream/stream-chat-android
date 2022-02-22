@@ -104,7 +104,7 @@ public fun <T : Any> Call<T>.withPrecondition(
  * @param function Function that returns data in the case of error.
  */
 @InternalStreamChatApi
-public fun <T: Any> Call<T>.onErrorReturn(
+public fun <T : Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
     function: suspend (originalError: ChatError) -> Result<T>,
 ): ReturnOnErrorCall<T> = ReturnOnErrorCall<T>(this, scope, function)

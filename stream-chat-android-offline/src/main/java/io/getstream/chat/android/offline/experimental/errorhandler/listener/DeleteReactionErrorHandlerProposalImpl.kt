@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandlerProposal
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
@@ -42,4 +43,7 @@ internal class DeleteReactionErrorHandlerProposalImpl(
 
     override val name: String
         get() = "DeleteReactionErrorHandlerProposalImpl"
+
+    override val priority: Int
+        get() = ErrorHandler.DEFAULT_PRIORITY
 }

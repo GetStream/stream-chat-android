@@ -9,6 +9,7 @@ public final class io/getstream/chat/android/client/BuildConfig {
 public final class io/getstream/chat/android/client/ChatClient {
 	public static final field Companion Lio/getstream/chat/android/client/ChatClient$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
+	public field errorHandlers Ljava/util/List;
 	public field plugins Ljava/util/List;
 	public final fun acceptInvite (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun addDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
@@ -49,6 +50,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getDevices ()Lio/getstream/chat/android/client/call/Call;
 	public final fun getDisconnectListeners ()Ljava/util/List;
+	public final fun getErrorHandlers ()Ljava/util/List;
 	public final fun getFileAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getGuestToken (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getImageAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -124,6 +126,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
+	public final fun setErrorHandlers (Ljava/util/List;)V
 	public final fun setPlugins (Ljava/util/List;)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
@@ -173,6 +176,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public final fun build ()Lio/getstream/chat/android/client/ChatClient;
+	protected final fun getErrorHandlerFactories ()Ljava/util/List;
 	protected final fun getPluginFactories ()Ljava/util/List;
 }
 
@@ -1873,16 +1877,44 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler : java/lang/Comparable {
+	public static final field Companion Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion;
+	public static final field DEFAULT_PRIORITY I
+	public abstract fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getPriority ()I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion {
+	public static final field DEFAULT_PRIORITY I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
-	public abstract fun getOrCreate ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
+	public abstract fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler {
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
 	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/errors/ChatError;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerProposal : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerProposal$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerProposal;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerProposalKt {
+	public static final fun onMessageError (Lio/getstream/chat/android/client/call/Call;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
