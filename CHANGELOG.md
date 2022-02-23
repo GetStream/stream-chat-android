@@ -79,6 +79,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the implementation of SystemBackPressedHandler to utilize the Compose tree lifecycle owner and back pressed dispatcher owner. [#3120](https://github.com/GetStream/stream-chat-android/pull/3120)
 
 ### ⬆️ Improved
 
