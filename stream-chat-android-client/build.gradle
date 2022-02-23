@@ -3,7 +3,7 @@ import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
@@ -71,7 +71,7 @@ dependencies {
     implementation Dependencies.retrofit
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
-    kapt Dependencies.moshiCodegen
+    ksp Dependencies.moshiCodegen
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
     debugImplementation Dependencies.flipper

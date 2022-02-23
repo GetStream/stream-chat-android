@@ -665,7 +665,6 @@ class Android {
         fun initializeChatDomain() {
             val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
             val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
-                .offlineEnabled()
                 .userPresenceEnabled()
                 .build()
         }

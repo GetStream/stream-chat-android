@@ -29,7 +29,6 @@ internal class IdGenerationDomainTest {
             client = clientMock,
             handler = handlerFake,
             backgroundSyncEnabled = true,
-            offlineEnabled = true,
             recoveryEnabled = false,
             userPresence = true,
             globalState = GlobalMutableState.create()
@@ -65,8 +64,8 @@ internal class IdGenerationDomainTest {
     }
 
     private fun setCurrentUser() {
-        chatDomainImpl.offlineEnabled = false
         chatDomainImpl.setUser(currentUserFake)
+        chatDomainImpl.userConnected(currentUserFake)
         chatDomainImpl.user.value.shouldNotBeNull()
     }
 }

@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -33,7 +32,6 @@ import io.getstream.chat.android.offline.experimental.channel.thread.logic.Threa
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
@@ -402,70 +400,6 @@ public class ChannelController internal constructor(
 
     internal suspend fun sendFile(file: File): Result<String> {
         return client.sendFile(channelType, channelId, file).await()
-    }
-
-    /**
-     * sendReaction posts the reaction on local storage
-     * message reaction count should increase, latest reactions and own_reactions should be updated
-     *
-     * If you're online we make the API call to sync to the server
-     * If the request fails we retry according to the retry policy set on the repo
-     */
-    internal suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
-        val currentUser = domainImpl.user.value ?: return Result(ChatError("Current user null in Chatdomain"))
-
-        reaction.apply {
-            user = currentUser
-            userId = currentUser.id
-            syncStatus = SyncStatus.IN_PROGRESS
-            this.enforceUnique = enforceUnique
-        }
-        val online = domainImpl.isOnline()
-        // insert the message into local storage
-
-        if (!online) {
-            reaction.syncStatus = SyncStatus.SYNC_NEEDED
-        }
-        if (enforceUnique) {
-            // remove all user's reactions to the message
-            domainImpl.repos.updateReactionsForMessageByDeletedDate(
-                userId = currentUser.id,
-                messageId = reaction.messageId,
-                deletedAt = Date()
-            )
-        }
-        // update flow
-        val currentMessage = getMessage(reaction.messageId)?.copy()
-        currentMessage?.let {
-            it.addMyReaction(reaction, enforceUnique = enforceUnique)
-            upsertMessage(it)
-            domainImpl.repos.insertMessage(it)
-        }
-
-        if (online) {
-            // TODO: Will be removed after migrating ChatDomain
-            val result =
-                client.sendReaction(reaction, enforceUnique).retry(domainImpl.scope, client.retryPolicy).await()
-            return if (result.isSuccess) {
-                reaction.syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertReaction(reaction)
-                Result(result.data())
-            } else {
-                logger.logE(
-                    "Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}",
-                    result.error()
-                )
-
-                if (result.error().isPermanent()) {
-                    reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    reaction.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                domainImpl.repos.insertReaction(reaction)
-                Result(result.error())
-            }
-        }
-        return Result(reaction)
     }
 
     // This one needs to be public for flows such as running a message action

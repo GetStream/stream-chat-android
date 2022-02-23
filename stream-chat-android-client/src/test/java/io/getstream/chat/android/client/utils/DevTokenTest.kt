@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -35,7 +34,6 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         userStateService = userStateService,
         scope = testCoroutines.scope,
         retryPolicy = NoRetryPolicy(),
-        errorHandlerFactory = NoOpErrorHandlerFactory(),
     )
 
     @Test

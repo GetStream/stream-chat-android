@@ -459,6 +459,17 @@ public class ChannelClient internal constructor(
         return client.deleteImage(channelType, channelId, url)
     }
 
+    /**
+     * Sends the reaction.
+     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the current user.
+     *
+     * @see [ChatClient.sendReaction]
+     *
+     * @param reaction The [Reaction] to send.
+     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     *
+     * @return Executable async [Call] responsible for sending the reaction.
+     */
     @CheckResult
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
         return client.sendReaction(reaction, enforceUnique)
@@ -471,6 +482,8 @@ public class ChannelClient internal constructor(
 
     /**
      * Deletes the reaction associated with the message with the given message id.
+     *
+     * @see [ChatClient.deleteReaction]
      *
      * @param messageId The id of the message to which reaction belongs.
      * @param reactionType The type of reaction.
