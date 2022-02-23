@@ -679,25 +679,25 @@ internal class ChatDomainImpl internal constructor(
         messages.forEach { message ->
             val channelClient = client.channel(message.cid)
 
-            val result = when {
+            when {
                 message.deletedAt != null -> {
                     logger.logD("Deleting message: ${message.id}")
                     channelClient.deleteMessage(message.id).await()
                 }
                 message.updatedLocallyAt != null -> {
                     logger.logD("Updating message: ${message.id}")
-                    client.updateMessageInternal(message).await()
+                    client.updateMessage(message).await()
                 }
                 else -> {
                     logger.logD("Sending message: ${message.id}")
-                    channelClient.sendMessage(message).await()
-                }
-            }
+                    val result = channelClient.sendMessage(message).await()
 
-            if (result.isSuccess) {
-                repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-            } else if (result.isError && result.error().isPermanent()) {
-                markMessageAsFailed(message)
+                    if (result.isSuccess) {
+                        repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
+                    } else if (result.isError && result.error().isPermanent()) {
+                        markMessageAsFailed(message)
+                    }
+                }
             }
         }
 
