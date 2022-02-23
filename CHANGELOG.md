@@ -6,6 +6,7 @@
 ### ⬆️ Improved
 - We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.0. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
 - Updated Google's Accompanist version. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
 
 ### ✅ Added
 
@@ -28,6 +29,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
 
 ### ⬆️ Improved
 
@@ -82,6 +84,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed back press handling. [#3120](https://github.com/GetStream/stream-chat-android/pull/3120)
 
 ### ⬆️ Improved
 
@@ -98,6 +101,7 @@
 
 ### ❌ Removed
 - Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3092](https://github.com/GetStream/stream-chat-android/pull/3092)
+- Removed `SystemBackPressHandler` in favor of `BackHandler` from the Compose framework. [#3120](https://github.com/GetStream/stream-chat-android/pull/3120)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed

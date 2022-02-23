@@ -17,7 +17,6 @@ class Setup {
             .build()
 
         val domain = ChatDomain.Builder(applicationContext, client)
-            .offlineEnabled()
             .build()
     }
 
