@@ -84,6 +84,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed back press handling. [#3120](https://github.com/GetStream/stream-chat-android/pull/3120)
 
 ### ⬆️ Improved
 
@@ -100,6 +101,7 @@
 
 ### ❌ Removed
 - Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3092](https://github.com/GetStream/stream-chat-android/pull/3092)
+- Removed `SystemBackPressHandler` in favor of `BackHandler` from the Compose framework. [#3120](https://github.com/GetStream/stream-chat-android/pull/3120)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
