@@ -25,6 +25,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
 
 ### ⬆️ Improved
 
