@@ -385,21 +385,6 @@ public sealed interface ChatDomain {
     public fun editMessage(message: Message): Call<Message>
 
     /**
-     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to mark as deleted.
-     *
-     * @return Executable async [Call] responsible for deleting a message.
-     * @param hard Use to hard delete the message (delete in backend). CAN'T BE UNDONE.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun deleteMessage(message: Message, hard: Boolean = false): Call<Message>
-
-    public fun deleteMessage(message: Message): Call<Message>
-
-    /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
      * API call to send the reaction is retried according to the retry policy specified on the chatDomain.
      *
@@ -415,6 +400,17 @@ public sealed interface ChatDomain {
     public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
+     * Marks all messages of the specified channel as read.
+     *
+     * @param cid The full channel id i. e. messaging:123.
+     *
+     * @return Executable async [Call] which completes with [Result] having data equal to true if the mark read event
+     * was sent or false if there was no need to mark read (i. e. the messages are already marked as read).
+     */
+    @CheckResult
+    public fun markRead(cid: String): Call<Boolean>
+
+    /**
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain.
      *
      * @param cid The full channel id, ie messaging:123.
@@ -426,17 +422,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
-
-    /**
-     * Marks all messages of the specified channel as read.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] which completes with [Result] having data equal to true if the mark read event
-     * was sent or false if there was no need to mark read (i. e. the messages are already marked as read).
-     */
-    @CheckResult
-    public fun markRead(cid: String): Call<Boolean>
 
     /**
      * Marks all messages on a channel as read.

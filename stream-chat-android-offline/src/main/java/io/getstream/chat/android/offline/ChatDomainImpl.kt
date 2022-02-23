@@ -67,7 +67,6 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
@@ -935,11 +934,6 @@ internal class ChatDomainImpl internal constructor(
         level = DeprecationLevel.WARNING
     )
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
-
-    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
-        DeleteMessage(this).invoke(message, hard)
-
-    override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         client.sendReaction(reaction = reaction, enforceUnique = enforceUnique, cid = cid)
