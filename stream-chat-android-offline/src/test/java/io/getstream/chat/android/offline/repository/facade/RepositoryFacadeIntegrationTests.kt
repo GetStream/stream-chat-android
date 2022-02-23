@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.randomChannelInfo
 import io.getstream.chat.android.offline.randomMessage
@@ -84,7 +85,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
             repositoryFacade.insertCurrentUser(randomUser())
             repositoryFacade.insertMessages(listOf(message), cache = false)
-            val result = repositoryFacade.selectMessage(message.id)
+            val result: Message? = repositoryFacade.selectMessage(message.id)
 
             result.shouldNotBeNull()
             result.latestReactions shouldBeEqualTo mutableListOf(theirsReaction)

@@ -92,6 +92,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -143,6 +144,7 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     // TODO: Make private/internal after migrating ChatDomain
     public val retryPolicy: RetryPolicy,
+    private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -155,9 +157,6 @@ public class ChatClient internal constructor(
             }
         }
     )
-
-    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
-    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -307,7 +306,8 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                notifySetUser(user)
+                initializationCoordinator.userSet(user)
+                initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
                 initializeClientWithUser(user, cacheableTokenProvider)
@@ -330,9 +330,9 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: CacheableTokenProvider,
     ) {
+        initializationCoordinator.userSet(user)
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
-        notifySetUser(user)
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
         warmUp()
@@ -388,10 +388,6 @@ public class ChatClient internal constructor(
         return userCredentialStorage.get() != null
     }
 
-    private fun notifySetUser(user: User) {
-        preSetUserListeners.forEach { it(user) }
-    }
-
     private fun storePushNotificationsConfig(userId: String, userName: String) {
         userCredentialStorage.put(
             CredentialConfig(
@@ -408,7 +404,7 @@ public class ChatClient internal constructor(
             userStateService.onSetAnonymous()
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    notifySetUser(data.user)
+                    initializationCoordinator.userSet(data.user)
                     listener?.onSuccess(data)
                 }
 
@@ -822,11 +818,7 @@ public class ChatClient internal constructor(
     public fun disconnect() {
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
-        runCatching {
-            userStateService.state.userOrError().let { user ->
-                disconnectListeners.forEach { listener -> listener(user) }
-            }
-        }
+        getCurrentUser().let(initializationCoordinator::userDisconnected)
         connectionListener = null
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()
@@ -2084,6 +2076,22 @@ public class ChatClient internal constructor(
             this.retryPolicy = retryPolicy
         }
 
+        private fun configureInitializer(chatClient: ChatClient) {
+            chatClient.initializationCoordinator.addUserSetListener { user ->
+                chatClient.addPlugins(
+                    pluginFactories.map { pluginFactory ->
+                        pluginFactory.get(user)
+                    }
+                )
+
+                chatClient.addErrorHandlers(
+                    errorHandlerFactories.map { factory ->
+                        factory.create()
+                    }
+                )
+            }
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -2140,7 +2148,9 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
-            )
+            ).also {
+                configureInitializer(it)
+            }
         }
     }
 
@@ -2166,21 +2176,6 @@ public class ChatClient internal constructor(
          * of the [Builder].
          */
         public fun build(): ChatClient = internalBuild()
-            .apply {
-                preSetUserListeners.add {
-                    addPlugins(
-                        pluginFactories.map { pluginFactory ->
-                            pluginFactory.getOrCreate()
-                        }
-                    )
-
-                    addErrorHandlers(
-                        errorHandlerFactories.map { factory ->
-                            factory.create()
-                        }
-                    )
-                }
-            }
             .also {
                 instance = it
             }
