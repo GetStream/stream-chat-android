@@ -12,6 +12,8 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
 import io.getstream.chat.android.offline.utils.waitForSetUser
@@ -45,16 +47,13 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
         val context = ApplicationProvider.getApplicationContext() as Context
         val handler: Handler = mock()
-        val offlineEnabled = true
         val userPresence = true
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
 
         chatDomainImpl = ChatDomainImpl(
             client,
-            db,
             handler,
-            offlineEnabled,
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
@@ -62,6 +61,13 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         )
 
         chatDomain = chatDomainImpl
+
+        chatDomainImpl.repos =
+            RepositoryFacade.create(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
+
+        chatDomainImpl.setUser(data.user1)
+        chatDomainImpl.userConnected(data.user1)
+
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
@@ -92,6 +98,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             client = Companion.client!!
             // start from a clean db everytime
             chatDomainImpl = setupChatDomain(client)
+
             println("setup")
 
             // setup channel controller and query controllers for tests

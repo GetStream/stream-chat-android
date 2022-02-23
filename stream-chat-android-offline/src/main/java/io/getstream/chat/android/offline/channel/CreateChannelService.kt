@@ -69,7 +69,10 @@ internal class CreateChannelService(
             if (isOnline) {
                 val members = channel.members.map(Member::getUserId)
                 // TODO: Remove after migrating ChatDomain
-                val result = client.createChannel(channel.type, channel.id, members, channel.extraData).retry(scope, client.retryPolicy).await()
+                val result = client
+                    .createChannel(channel.type, channel.id, members, channel.extraData)
+                    .retry(scope, client.retryPolicy)
+                    .await()
 
                 if (result.isSuccess) {
                     channel.syncStatus = SyncStatus.COMPLETED

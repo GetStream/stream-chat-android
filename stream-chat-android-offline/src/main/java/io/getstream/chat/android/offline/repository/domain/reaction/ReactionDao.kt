@@ -13,7 +13,7 @@ internal interface ReactionDao {
     suspend fun insert(reactionEntity: ReactionEntity)
 
     @Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.syncStatus IN (:syncStatus)")
-    suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<ReactionEntity>
+    suspend fun selectSyncStatus(syncStatus: SyncStatus): List<ReactionEntity>
 
     @Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")
     suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): ReactionEntity?

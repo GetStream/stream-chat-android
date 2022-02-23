@@ -16,7 +16,7 @@ internal class MapConverter {
     private val memberEntityMapAdapter = moshi.adapter<Map<String, MemberEntity>>()
 
     @TypeConverter
-    fun readMapToString(someObjects: Map<String, ChannelUserReadEntity>?): String {
+    fun readMapToString(someObjects: Map<String, ChannelUserReadEntity>?): String? {
         return channelUserReadMapAdapter.toJson(someObjects)
     }
 

@@ -34,6 +34,8 @@ import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
@@ -193,14 +195,15 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
         val handler: Handler = mock()
 
         chatDomain = ChatDomain.Builder(context, client)
-            .database(db)
             .handler(handler)
-            .offlineEnabled()
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
             .build()
+
         chatDomainImpl = chatDomain as ChatDomainImpl
+
+        chatDomainImpl.repos = RepositoryFacade.create(RepositoryFactory(db, user), chatDomainImpl.scope, mock())
 
         chatDomainImpl.scope = testCoroutines.scope
 
@@ -212,6 +215,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
 
         if (user != null) {
             chatDomainImpl.setUser(user)
+            chatDomainImpl.userConnected(user)
         }
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))

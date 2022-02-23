@@ -11,6 +11,7 @@ import io.getstream.chat.android.offline.extensions.lastMessage
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
@@ -26,7 +27,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import java.util.Date
 
-internal class RepositoryFacade constructor(
+internal class RepositoryFacade(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
@@ -46,7 +47,8 @@ internal class RepositoryFacade constructor(
     SyncStateRepository by syncStateRepository,
     AttachmentRepository by attachmentRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = selectChannels(channelCIDs, null, forceCache)
+    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> =
+        selectChannels(channelCIDs, null, forceCache)
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
@@ -153,6 +155,41 @@ internal class RepositoryFacade constructor(
                     messages = listOf(lastMessage)
                 }.also { channelsRepository.insertChannel(it) }
             }
+        }
+    }
+
+    internal companion object {
+
+        /**
+         * Creates a new instance of [RepositoryFacade] and doesn't populate the Singleton instance. This method should be
+         * used mainly for tests or internally by other constructor methods.
+         *
+         * @param factory [RepositoryFactory]
+         * @param scope [CoroutineScope]
+         * @param defaultConfig [Config]
+         */
+        @VisibleForTesting
+        internal fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
+            val userRepository = factory.createUserRepository()
+            val getUser: suspend (userId: String) -> User = { userId ->
+                requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
+            }
+
+            val messageRepository = factory.createMessageRepository(getUser)
+            val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
+
+            return RepositoryFacade(
+                userRepository = userRepository,
+                configsRepository = factory.createChannelConfigRepository(),
+                channelsRepository = factory.createChannelRepository(getUser, getMessage),
+                queryChannelsRepository = factory.createQueryChannelsRepository(),
+                messageRepository = factory.createMessageRepository(getUser),
+                reactionsRepository = factory.createReactionRepository(getUser),
+                syncStateRepository = factory.createSyncStateRepository(),
+                attachmentRepository = factory.createAttachmentRepository(),
+                scope = scope,
+                defaultConfig = defaultConfig,
+            )
         }
     }
 }

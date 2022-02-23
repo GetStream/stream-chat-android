@@ -124,15 +124,6 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             channelData.deletedAt shouldBeEqualTo data.channelDeletedEvent.createdAt
         }
 
-    @Test
-    fun `the current user information should be stored using users insertMe`(): Unit = runBlocking {
-        data.user1.extraData = mutableMapOf("snack" to "icecream")
-        chatDomainImpl.repos.insertCurrentUser(data.user1)
-        val me = chatDomainImpl.repos.selectCurrentUser()
-        me.shouldNotBeNull()
-        me?.id shouldBeEqualTo "broad-lake-3"
-    }
-
     @Ignore
     @Test
     fun `handle unread counts on the connect event`(): Unit = runBlocking {

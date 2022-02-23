@@ -5,18 +5,18 @@ import com.squareup.moshi.adapter
 
 internal class SetConverter {
     @OptIn(ExperimentalStdlibApi::class)
-    private val adapter = moshi.adapter<MutableSet<String>>()
+    private val adapter = moshi.adapter<Set<String>>()
 
     @TypeConverter
-    fun stringToSortedSet(data: String?): MutableSet<String>? {
+    fun stringToSortedSet(data: String?): Set<String> {
         if (data.isNullOrEmpty() || data == "null") {
-            return mutableSetOf()
+            return setOf()
         }
-        return adapter.fromJson(data)
+        return adapter.fromJson(data) ?: emptySet()
     }
 
     @TypeConverter
-    fun sortedSetToString(someObjects: MutableSet<String>?): String {
+    fun sortedSetToString(someObjects: Set<String>?): String {
         return adapter.toJson(someObjects)
     }
 }
