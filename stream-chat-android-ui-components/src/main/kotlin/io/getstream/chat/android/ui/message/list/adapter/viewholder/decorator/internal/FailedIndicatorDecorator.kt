@@ -70,6 +70,12 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
         setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
     }
 
+    /**
+     * Decorates the visibility of the "failed" section of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
@@ -77,11 +83,23 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
         setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
     }
 
+    /**
+     * Does nothing for deleted messages as they can't contain the "failed" section.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Does nothing for ephemeral Giphy messages as they can't contain the "failed" section.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,

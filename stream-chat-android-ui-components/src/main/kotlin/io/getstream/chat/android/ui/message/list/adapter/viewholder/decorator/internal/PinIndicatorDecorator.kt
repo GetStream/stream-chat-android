@@ -78,6 +78,12 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
         setupPinIndicator(root, pinIndicatorTextView, data)
     }
 
+    /**
+     * Decorates the pin indicator of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
@@ -85,18 +91,30 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
         setupPinIndicator(root, pinIndicatorTextView, data)
     }
 
+    /**
+     * Does nothing for the deleted message as it can't be pinned.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Does nothing for the ephemeral Giphy message as it can't be pinned.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
 
     /**
-     * Decorates the pin indicator of the link attachment message.
+     * Decorates the pin indicator of the link attachments message.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

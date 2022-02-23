@@ -62,6 +62,13 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
         data: MessageListItem.MessageItem,
     ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 
+    /**
+     * Decorates the maximum width of the plain text message, by changing
+     * the start and end margins of the container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
@@ -69,6 +76,13 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
         applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
     }
 
+    /**
+     * Decorates the maximum width of the deleted message, by changing
+     * the start and end margins of the container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
@@ -76,6 +90,13 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
         applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
     }
 
+    /**
+     * Decorates the maximum width of the ephemeral Giphy message, by changing
+     * the start and end margins of the container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
@@ -84,7 +105,8 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
     }
 
     /**
-     * Decorates the maximum width of the link attachment message, by changing the start and end margins of the container.
+     * Decorates the maximum width of the link attachments message, by changing
+     * the start and end margins of the container.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

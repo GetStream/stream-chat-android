@@ -60,11 +60,23 @@ internal class ReplyDecorator(
         data: MessageListItem.MessageItem,
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
+    /**
+     * Decorates the reply section of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
+    /**
+     * Does nothing for the ephemeral Giphy message as it can't contain reply section.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,

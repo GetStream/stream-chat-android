@@ -69,6 +69,9 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
         data: MessageListItem.MessageItem,
     ) = setupTextView(viewHolder.binding.messageText, data)
 
+    /**
+     * Does nothing for the ephemeral Giphy message as it can't contain text.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,

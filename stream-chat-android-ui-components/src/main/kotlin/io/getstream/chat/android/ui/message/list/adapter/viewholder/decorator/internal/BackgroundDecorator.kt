@@ -84,6 +84,12 @@ internal class BackgroundDecorator(
             )
     }
 
+    /**
+     * Decorates the background of the deleted message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
@@ -95,6 +101,12 @@ internal class BackgroundDecorator(
             )
     }
 
+    /**
+     * Decorates the background of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
@@ -106,6 +118,12 @@ internal class BackgroundDecorator(
             )
     }
 
+    /**
+     * Decorates the background of the ephemeral Giphy message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,

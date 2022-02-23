@@ -96,11 +96,23 @@ internal abstract class BaseDecorator : Decorator {
         data: MessageListItem.MessageItem,
     )
 
+    /**
+     * Applies various decorations to the [MessageDeletedViewHolder].
+     *
+     * @param viewHolder The holder to be decorated.
+     * @param data The data used to define various decorations.
+     */
     protected open fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Applies various decorations to the [GiphyViewHolder].
+     *
+     * @param viewHolder The holder to be decorated.
+     * @param data The data used to define various decorations.
+     */
     abstract fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
