@@ -44,16 +44,15 @@ import io.getstream.chat.android.offline.repository.domain.user.UserEntity
         CommandInnerEntity::class,
         SyncStateEntity::class,
     ],
-    version = 54,
+    version = 55,
     exportSchema = false
 )
-
 @TypeConverters(
     FilterObjectConverter::class,
-    QuerySortConverter::class,
-    ExtraDataConverter::class,
     ListConverter::class,
     MapConverter::class,
+    QuerySortConverter::class,
+    ExtraDataConverter::class,
     SetConverter::class,
     SyncStatusConverter::class,
     DateConverter::class,

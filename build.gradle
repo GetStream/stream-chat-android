@@ -38,6 +38,7 @@ buildscript {
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
         classpath Dependencies.spotlessGradlePlugin
+        classpath Dependencies.ksp
     }
 }
 
