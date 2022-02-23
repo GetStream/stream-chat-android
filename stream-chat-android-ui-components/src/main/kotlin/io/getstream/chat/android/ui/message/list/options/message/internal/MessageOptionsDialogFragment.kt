@@ -29,6 +29,10 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import java.io.Serializable
@@ -307,6 +311,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
+    /**
+     * Positions the reactions bubble near the message bubble according to the design.
+     */
     private fun anchorReactionsViewToMessageView() {
         val reactionsWidth = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_total_width)
         val reactionsOffset = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
@@ -314,6 +321,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         when (val viewHolder = viewHolder) {
             is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
             is CustomAttachmentsViewHolder -> viewHolder.binding.messageContainer
+            is LinkAttachmentsViewHolder -> viewHolder.binding.messageContainer
+            is FileAttachmentsViewHolder -> viewHolder.binding.messageContainer
+            is GiphyAttachmentViewHolder -> viewHolder.binding.messageContainer
+            is ImageAttachmentViewHolder -> viewHolder.binding.messageContainer
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
@@ -396,7 +407,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 style,
                 messageViewHolderFactory,
                 messageBackgroundFactory,
-                attachmentFactories
+                attachmentFactories,
             )
         }
 

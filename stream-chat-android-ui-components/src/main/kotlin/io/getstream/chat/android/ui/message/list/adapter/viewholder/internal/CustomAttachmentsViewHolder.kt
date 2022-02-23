@@ -38,7 +38,10 @@ internal class CustomAttachmentsViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
-    private lateinit var attachmentViewHolder: AttachmentViewHolder
+    /**
+     * The inner ViewHolder with custom attachments.
+     */
+    private var attachmentViewHolder: AttachmentViewHolder? = null
 
     /**
      * Initializes the ViewHolder class.
@@ -77,11 +80,12 @@ internal class CustomAttachmentsViewHolder(
      * Updates the custom attachments section of the message.
      */
     private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
-        attachmentViewHolder = attachmentFactories.createViewHolder(data.message, listeners, binding.root)
-        attachmentViewHolder.onBindViewHolder(data.message)
-
-        binding.attachmentsContainer.removeAllViews()
-        binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
+        this.attachmentViewHolder = attachmentFactories.createViewHolder(data.message, listeners, binding.root)
+            .also { attachmentViewHolder ->
+                attachmentViewHolder.onBindViewHolder(data.message)
+                binding.attachmentsContainer.removeAllViews()
+                binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
+            }
     }
 
     /**
@@ -129,16 +133,25 @@ internal class CustomAttachmentsViewHolder(
         }
     }
 
+    /**
+     * Called when a view in this ViewHolder has been recycled.
+     */
     override fun unbind() {
+        attachmentViewHolder?.onUnbindViewHolder()
         super.unbind()
-        attachmentViewHolder.onUnbindViewHolder()
     }
 
+    /**
+     * Called when a view in this ViewHolder has been attached to a window.
+     */
     override fun onDetachedFromWindow() {
-        attachmentViewHolder.onViewDetachedFromWindow()
+        attachmentViewHolder?.onViewDetachedFromWindow()
     }
 
+    /**
+     * Called when a view in this ViewHolder has been detached from its window.
+     */
     override fun onAttachedToWindow() {
-        attachmentViewHolder.onViewAttachedToWindow()
+        attachmentViewHolder?.onViewAttachedToWindow()
     }
 }
