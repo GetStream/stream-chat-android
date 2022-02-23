@@ -21,6 +21,7 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -49,7 +50,7 @@ internal class ChatDomainImplCreateChannelTest {
     fun `given offline chat domain when creating channel should mark it with sync needed and store in database`(): Unit =
         runBlocking {
             val currentUser = randomUser()
-            val repositoryFacade: RepositoryFacade = mock()
+            val repositoryFacade: RepositoryFacade = mockRepositoryFacade()
             val channel = Channel(
                 cid = channelCid,
                 id = channelId,
@@ -92,7 +93,7 @@ internal class ChatDomainImplCreateChannelTest {
     fun `given online chat domain when creating channel should store it in database `(): Unit =
         runBlocking {
             val currentUser = randomUser()
-            val repositoryFacade: RepositoryFacade = mock()
+            val repositoryFacade: RepositoryFacade = mockRepositoryFacade()
             val channel = Channel(
                 cid = channelCid,
                 id = channelId,
@@ -134,7 +135,7 @@ internal class ChatDomainImplCreateChannelTest {
     @Test
     fun `given online chat domain when creating channel is completed should mark it with proper sync states`(): Unit =
         runBlocking {
-            val repositoryFacade: RepositoryFacade = mock()
+            val repositoryFacade: RepositoryFacade = mockRepositoryFacade()
 
             val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
@@ -160,7 +161,7 @@ internal class ChatDomainImplCreateChannelTest {
     @Test
     fun `given online chat domain when creating channel failed should mark it with proper sync states`(): Unit =
         runBlocking {
-            val repositoryFacade: RepositoryFacade = mock()
+            val repositoryFacade: RepositoryFacade = mockRepositoryFacade()
 
             val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
@@ -186,7 +187,7 @@ internal class ChatDomainImplCreateChannelTest {
     @Test
     fun `given online chat domain when creating channel failed permanently should mark it with proper sync states`(): Unit =
         runBlocking {
-            val repositoryFacade: RepositoryFacade = mock()
+            val repositoryFacade: RepositoryFacade = mockRepositoryFacade()
 
             val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
@@ -243,12 +244,18 @@ internal class ChatDomainImplCreateChannelTest {
 
         fun get(): ChatDomainImpl {
             return ChatDomain.Builder(context, chatClient).build().let { it as ChatDomainImpl }.apply {
-                offlineEnabled = false
                 setUser(this@Fixture.user)
+                userConnected(this@Fixture.user)
                 repos = repositoryFacade
                 scope = testCoroutines.scope
                 if (isOnline) setOnline() else setOffline()
             }
         }
+    }
+
+    private fun mockRepositoryFacade() = mock<RepositoryFacade> {
+        val user = randomUser()
+
+        on(it.observeLatestUsers()) doReturn MutableStateFlow(mapOf(user.id to user))
     }
 }

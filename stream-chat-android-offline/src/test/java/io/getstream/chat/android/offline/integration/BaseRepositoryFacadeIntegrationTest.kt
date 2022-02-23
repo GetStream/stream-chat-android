@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
+import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.After

@@ -36,7 +36,6 @@ public class AndroidIntroduction {
         // Step 2 - Set up the domain for offline storage
         ChatDomain domain = new ChatDomain.Builder(applicationContext, client)
                 // Enable offline support
-                .offlineEnabled()
                 .build();
 
         // Step 2 - Authenticate and connect the user
