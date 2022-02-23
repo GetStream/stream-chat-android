@@ -39,6 +39,10 @@ internal class EventBatchUpdate private constructor(
     private val userMap: MutableMap<String, User>,
 ) {
 
+    /**
+     * Adds the message and updates the last message for the given channel.
+     * Increments the unread count if the right conditions apply.
+     */
     fun addMessageData(cid: String, message: Message, isNewMessage: Boolean = false) {
         addMessage(message)
         getCurrentChannel(cid)?.also { channel ->
