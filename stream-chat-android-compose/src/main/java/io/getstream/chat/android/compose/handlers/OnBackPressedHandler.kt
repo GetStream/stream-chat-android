@@ -1,12 +1,11 @@
 package io.getstream.chat.android.compose.handlers
 
-import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.platform.LocalLifecycleOwner
 
 /**
  * Special composable function that intercepts the [OnBackPressedDispatcher].
@@ -27,14 +26,13 @@ public fun SystemBackPressedHandler(
     onBackPressed: () -> Unit,
 ) {
     if (LocalInspectionMode.current) return
-
-    val backPressedDispatcher =
-        (LocalLifecycleOwner.current as ComponentActivity).onBackPressedDispatcher
+    val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+    val dispatcher = backPressedDispatcherOwner?.onBackPressedDispatcher ?: return
 
     val callback = buildBackPressedCallback(isEnabled, onBackPressed)
 
-    DisposableEffect(backPressedDispatcher) {
-        backPressedDispatcher.addCallback(callback)
+    DisposableEffect(backPressedDispatcherOwner) {
+        dispatcher.addCallback(callback)
 
         onDispose {
             callback.remove()
