@@ -3,7 +3,6 @@ package io.getstream.chat.android.compose.viewmodel.imagepreview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 
 /**

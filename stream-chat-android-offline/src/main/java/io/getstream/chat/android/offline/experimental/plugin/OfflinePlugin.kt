@@ -55,8 +55,7 @@ internal class OfflinePlugin(
     MarkAllReadListener by markAllReadListener,
     DeleteReactionListener by deleteReactionListener,
     SendReactionListener by sendReactionListener,
-    DeleteMessageListener by deleteMessageListener
-{
+    DeleteMessageListener by deleteMessageListener {
 
     override val name: String = MODULE_NAME
 
