@@ -9,15 +9,14 @@ import io.getstream.chat.android.client.utils.Result
 public interface DeleteMessageListener {
 
     /**
-     * Method called when a request for message edition happens. Use it to update database, update messages in the SDK,
-     * update the UI when a message occurs...
+     * Method called when a request to delete a message in the API happens
      *
-     * @param message [Message].
+     * @param messageId
      */
     public suspend fun onMessageDeleteRequest(messageId: String)
 
     /**
-     * Method called when a request for message edition return. Use it to update database, update messages or to present
+     * Method called when a request for message deletion return. Use it to update database, update messages or to present
      * an error to the user.
      *
      * @param result the result of the API call.
