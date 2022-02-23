@@ -4,6 +4,7 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import java.util.Date
 
@@ -28,8 +29,7 @@ internal interface MessageRepository {
     suspend fun insertMessage(message: Message, cache: Boolean = false)
     suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date)
     suspend fun deleteChannelMessage(message: Message)
-    suspend fun selectMessagesSyncNeeded(): List<Message>
-    suspend fun selectMessagesWaitForAttachments(): List<Message>
+    suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 }
 
 internal class MessageRepositoryImpl(
@@ -137,12 +137,8 @@ internal class MessageRepositoryImpl(
         messageCache.remove(message.id)
     }
 
-    override suspend fun selectMessagesSyncNeeded(): List<Message> {
-        return messageDao.selectSyncNeeded().map { it.toModel(getUser, ::selectMessage) }
-    }
-
-    override suspend fun selectMessagesWaitForAttachments(): List<Message> {
-        return messageDao.selectWaitForAttachments().map { it.toModel(getUser, ::selectMessage) }
+    override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
     }
 
     private fun List<Message>.filterReactions(): List<Message> = also {

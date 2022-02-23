@@ -12,6 +12,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
+import io.getstream.chat.android.offline.utils.mockDb
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +112,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
             return ChatDomain.Builder(context, chatClient).build()
                 .let { it as ChatDomainImpl }
                 .apply {
-                    repos = mock()
+                    repos = RepositoryFacade.create(RepositoryFactory(mockDb(), randomUser()), mock(), mock())
                     scope = coroutineScope
                     eventHandler = eventHandlerImpl
                 }

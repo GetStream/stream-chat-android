@@ -36,9 +36,6 @@ public sealed interface ChatDomain {
     /** The current user on the chatDomain object */
     public val user: LiveData<User?>
 
-    /** if offline is enabled */
-    public var offlineEnabled: Boolean
-
     /** if we want to track user presence */
     public var userPresence: Boolean
 
@@ -576,14 +573,6 @@ public sealed interface ChatDomain {
             offlineChatDomainBuilder.disableBackgroundSync()
         }
 
-        public fun offlineEnabled(): Builder = apply {
-            offlineChatDomainBuilder.offlineEnabled()
-        }
-
-        public fun offlineDisabled(): Builder = apply {
-            offlineChatDomainBuilder.offlineDisabled()
-        }
-
         public fun recoveryEnabled(): Builder = apply {
             offlineChatDomainBuilder.recoveryEnabled()
         }
@@ -613,6 +602,7 @@ public sealed interface ChatDomain {
             }
             val offlineChatDomain = offlineChatDomainBuilder.build()
             instance = buildImpl(offlineChatDomain)
+
             return instance()
         }
 

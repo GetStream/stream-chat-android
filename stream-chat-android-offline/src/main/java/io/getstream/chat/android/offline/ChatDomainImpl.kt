@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
@@ -61,9 +62,6 @@ import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -129,9 +127,7 @@ private const val CHANNEL_LIMIT = 30
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
     @VisibleForTesting
-    internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
-    override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
@@ -142,7 +138,6 @@ internal class ChatDomainImpl internal constructor(
     internal constructor(
         client: ChatClient,
         handler: Handler,
-        offlineEnabled: Boolean,
         recoveryEnabled: Boolean,
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
@@ -150,17 +145,17 @@ internal class ChatDomainImpl internal constructor(
         globalState: GlobalMutableState = GlobalMutableState.getOrCreate(),
     ) : this(
         client = client,
-        db = null,
         mainHandler = handler,
-        offlineEnabled = offlineEnabled,
         recoveryEnabled = recoveryEnabled,
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext,
-        globalState = globalState
+        globalState = globalState,
     )
 
-    private val state: StateRegistry by lazy { StateRegistry.getOrCreate(scope, user, repos, latestUsers) }
+    private val state: StateRegistry by lazy {
+        StateRegistry.getOrCreate(scope, user, repos, repos.observeLatestUsers())
+    }
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
@@ -178,15 +173,8 @@ internal class ChatDomainImpl internal constructor(
      * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is
      * not closed by room.
      */
-    internal var repos: RepositoryFacade
-        get() = _repos ?: createNoOpRepos().also { repositoryFacade ->
-            _repos = repositoryFacade
-        }
-        set(value) {
-            _repos = value
-        }
 
-    private var _repos: RepositoryFacade? = null
+    internal lateinit var repos: RepositoryFacade
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
@@ -233,22 +221,14 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setUser(user: User) {
+        globalState._user.value = user
+        // load channel configs from Room into memory
+    }
+
+    internal fun userConnected(user: User) {
         clearConnectionState()
         clearUnreadCountState()
 
-        globalState._user.value = user
-
-        repos = RepositoryFacadeBuilder {
-            context(appContext)
-            database(db)
-            currentUser(user)
-            scope(scope)
-            defaultConfig(defaultConfig)
-            setOfflineEnabled(offlineEnabled)
-        }.build()
-
-        latestUsers = repos.observeLatestUsers()
-        // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
             repos.cacheChannelConfigs()
@@ -283,22 +263,16 @@ internal class ChatDomainImpl internal constructor(
         if (current != null) {
             setUser(current)
         }
-        // past behaviour was to set the user on the chat domain
-        // the new syntax is to automatically pick up changes from the client
-        // listen to future user changes
-        client.preSetUserListeners.add {
-            setUser(it)
-        }
-        // disconnect if the low level client disconnects
-        client.disconnectListeners.add {
-            scope.launch {
-                disconnect()
-            }
-        }
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->
                 offlineSyncFirebaseMessagingHandler.syncMessages(appContext, "$channelType:$channelId")
+            }
+        }
+
+        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            scope.launch {
+                disconnect()
             }
         }
     }
@@ -669,7 +643,7 @@ internal class ChatDomainImpl internal constructor(
      * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
      */
     private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
-        val retriedMessages = repos.selectMessagesWaitForAttachments()
+        val retriedMessages = repos.selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
 
         val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
             message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
@@ -689,7 +663,7 @@ internal class ChatDomainImpl internal constructor(
      * @throws IllegalArgumentException when message contains non-synchronized attachments
      */
     private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val (messages, nonCorrectStateMessages) = repos.selectMessagesSyncNeeded().partition {
+        val (messages, nonCorrectStateMessages) = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED).partition {
             it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
         }
         if (nonCorrectStateMessages.isNotEmpty()) {
@@ -736,7 +710,7 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryReactions(): List<Reaction> {
-        return repos.selectReactionsSyncNeeded().onEach { reaction ->
+        return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
             val result = if (reaction.deletedAt != null) {
                 client.deleteReaction(reaction.messageId, reaction.type).await()
             } else {
@@ -763,7 +737,6 @@ internal class ChatDomainImpl internal constructor(
         // start by gathering all the users
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
-
             users.putAll(channel.users().associateBy { it.id })
             configs += ChannelConfig(channel.type, channel.config)
 
@@ -1003,14 +976,6 @@ internal class ChatDomainImpl internal constructor(
         members: List<Member>,
     ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
 // end region
-
-    private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
-        context(appContext)
-        scope(scope)
-        database(db)
-        defaultConfig(defaultConfig)
-        setOfflineEnabled(false)
-    }.build()
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {
