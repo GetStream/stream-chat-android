@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -63,7 +63,5 @@ public fun SimpleMenu(
         }
     }
 
-    SystemBackPressedHandler(isEnabled = true) {
-        onDismiss()
-    }
+    BackHandler(enabled = true, onBack = onDismiss)
 }
