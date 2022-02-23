@@ -690,7 +690,7 @@ public class ChannelClient internal constructor(
         sort: QuerySort<Member> = QuerySort(),
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
-        return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+        return client.queryMembersInternal(channelType, channelId, offset, limit, filter, sort, members)
     }
 
     @CheckResult
