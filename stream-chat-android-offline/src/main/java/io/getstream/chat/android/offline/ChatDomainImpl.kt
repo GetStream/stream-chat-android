@@ -573,7 +573,7 @@ internal class ChatDomainImpl internal constructor(
         return if (cids.isNotEmpty()) {
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
-                    eventHandler.handleEventsInternal(resultChatEvent.data())
+                    eventHandler.handleEventsInternal(resultChatEvent.data(), isFromSync = true)
                     updateLastSyncDate(now)
                 }
             }

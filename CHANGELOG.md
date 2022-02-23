@@ -23,6 +23,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed updating `ChatDomain::totalUnreadCount` and `ChatDomain::channelUnreadCount` after restoring app from the background and
+  when sending a message to a channel without read enabled. [#3121](https://github.com/GetStream/stream-chat-android/pull/3121)
 
 ### ⬆️ Improved
 

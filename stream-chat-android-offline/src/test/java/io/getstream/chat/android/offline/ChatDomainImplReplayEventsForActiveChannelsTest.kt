@@ -77,7 +77,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 
             sut.replayEvents(cid)
 
-            verify(eventHandlerImpl).handleEventsInternal(events)
+            verify(eventHandlerImpl).handleEventsInternal(events, isFromSync = true)
         }
 
     private class Fixture(private val coroutineScope: CoroutineScope) {
