@@ -451,33 +451,6 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Query members without any side effect.
-     *
-     * @param channelType The type of channel.
-     * @param channelId The id of the channel.
-     * @param offset Offset limit.
-     * @param limit Number of members to fetch.
-     * @param filter [FilterObject] to filter members of certain type.
-     * @param sort Sort the list of members.
-     * @param members List of members.
-     *
-     * @return [Call] with a list of members or an error.
-     */
-    // TODO: It can be removed once ChatDomain is removed.
-    @CheckResult
-    internal fun queryMembersInternal(
-        channelType: String,
-        channelId: String,
-        offset: Int,
-        limit: Int,
-        filter: FilterObject,
-        sort: QuerySort<Member>,
-        members: List<Member>,
-    ): Call<List<Member>> {
-        return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
-    }
-
-    /**
      * Query members and apply side effects if there are any.
      *
      * @param channelType The type of channel.

@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
@@ -76,7 +75,6 @@ import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
-import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.ShowChannel
@@ -967,14 +965,6 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
     ): Call<List<User>> = SearchUsersByName(this).invoke(querySearch, offset, userLimit, userPresence)
 
-    override fun queryMembers(
-        cid: String,
-        offset: Int,
-        limit: Int,
-        filter: FilterObject,
-        sort: QuerySort<Member>,
-        members: List<Member>,
-    ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
 // end region
 
     companion object {
