@@ -24,7 +24,6 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
@@ -186,11 +185,10 @@ public open class MessageListItemViewHolderFactory {
     }
 
     /**
-     * Creates the custom attachments view holder, that holds various types
-     * of attachments and the text at the bottom.
+     * Creates the custom attachments view holder.
      *
      * @param parentView The parent container.
-     * @return The [BaseMessageItemViewHolder] that can hold attachments and text.
+     * @return The [BaseMessageItemViewHolder] that displays messages with custom attachments.
      */
     protected fun createCustomAttachmentsViewHolder(
         parentView: ViewGroup,
@@ -200,7 +198,7 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             textTransformer,
-            attachmentFactories
+            attachmentFactories,
         )
     }
 

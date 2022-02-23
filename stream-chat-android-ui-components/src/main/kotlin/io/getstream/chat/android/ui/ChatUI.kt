@@ -14,7 +14,6 @@ import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.lazyVar
@@ -108,5 +107,5 @@ public object ChatUI {
     /**
      * Allows adding support for custom attachments in the message list.
      */
-    public var attachmentFactories: AttachmentFactories by lazyVar {  AttachmentFactories() }
+    public var attachmentFactories: AttachmentFactories by lazyVar { AttachmentFactories() }
 }

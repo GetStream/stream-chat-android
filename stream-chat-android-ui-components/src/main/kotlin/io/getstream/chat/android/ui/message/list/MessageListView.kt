@@ -983,10 +983,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Allows clients to set a list of attachment factories. Use this
-     * method to create a custom content view for the message attachments.
+     * Allows clients to set an instance of [AttachmentFactories] that holds
+     * a list of custom attachment factories. Use this method to create a custom
+     * content view for the message attachments.
      *
-     * @param attachmentFactories The list of factories for custom attachments.
+     * @param attachmentFactories Hold the list of factories for custom attachments.
      */
     public fun setAttachmentFactories(attachmentFactories: AttachmentFactories) {
         check(::adapter.isInitialized.not()) {
