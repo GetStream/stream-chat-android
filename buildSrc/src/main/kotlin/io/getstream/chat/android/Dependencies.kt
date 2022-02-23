@@ -55,7 +55,7 @@ object Versions {
     internal const val KLUENT = "1.68"
     internal const val KOTLIN = "1.6.10"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.8.0"
-    internal const val KSP = "1.5.31-1.0.1"
+    internal const val KSP = "1.6.10-1.0.4"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.4.0"
     internal const val MARKWON = "4.6.2"

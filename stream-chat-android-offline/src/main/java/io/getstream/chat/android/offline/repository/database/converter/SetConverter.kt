@@ -16,7 +16,7 @@ internal class SetConverter {
     }
 
     @TypeConverter
-    fun sortedSetToString(someObjects: Set<String>): String {
+    fun sortedSetToString(someObjects: Set<String>?): String {
         return adapter.toJson(someObjects)
     }
 }
