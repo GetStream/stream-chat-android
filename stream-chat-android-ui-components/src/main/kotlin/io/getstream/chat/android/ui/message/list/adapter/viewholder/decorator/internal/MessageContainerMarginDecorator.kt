@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
@@ -12,12 +13,19 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Ima
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class MessageContainerMarginDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
+internal class MessageContainerMarginDecorator(
+    private val style: MessageListItemStyle,
+) : BaseDecorator() {
 
-    override fun decorateTextAndAttachmentsMessage(
-        viewHolder: TextAndAttachmentsViewHolder,
+    /**
+     * Decorates the message container of the custom attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateCustomAttachmentsMessage(
+        viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         viewHolder.binding.run { configMargins(messageContainer, footnote, style) }
@@ -50,12 +58,12 @@ internal class MessageContainerMarginDecorator(private val style: MessageListIte
     }
 
     /**
-     * Decorates the message container of the image attachment.
+     * Decorates the message container of the image attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.
      */
-    override fun decorateImageAttachmentMessage(
+    override fun decorateImageAttachmentsMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {

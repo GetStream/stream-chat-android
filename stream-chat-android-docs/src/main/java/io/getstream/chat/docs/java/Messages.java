@@ -19,11 +19,9 @@ import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
@@ -450,7 +448,7 @@ public class Messages {
 
         public void setAttachmentFactory() {
             AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
-            messageListView.setAttachmentViewFactory(attachmentViewFactory);
+            messageListView.setAttachmentFactories(attachmentViewFactory);
         }
 
         private class MyAttachmentViewFactory extends AttachmentViewFactory {

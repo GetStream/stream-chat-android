@@ -27,8 +27,9 @@ import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import java.io.Serializable
 
@@ -169,7 +170,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         viewHolder = viewHolderFactory
             .createViewHolder(
                 binding.messageContainer,
-                MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
+                MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactories)
             ).also { viewHolder ->
                 viewHolder.itemView.setOnClickListener {
                     dismiss()
@@ -312,7 +313,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         when (val viewHolder = viewHolder) {
             is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
-            is TextAndAttachmentsViewHolder -> viewHolder.binding.messageContainer
+            is CustomAttachmentsViewHolder -> viewHolder.binding.messageContainer
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
@@ -378,6 +379,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         var messageArg: Message? = null
         var messageViewHolderFactory: MessageListItemViewHolderFactory? = null
+        var attachmentFactories: AttachmentFactories = AttachmentFactories()
 
         fun newReactionOptionsInstance(
             message: Message,
@@ -385,6 +387,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
+            attachmentFactories: AttachmentFactories,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.REACTION_OPTIONS,
@@ -392,7 +395,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 configuration,
                 style,
                 messageViewHolderFactory,
-                messageBackgroundFactory
+                messageBackgroundFactory,
+                attachmentFactories
             )
         }
 
@@ -402,6 +406,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
+            attachmentFactories: AttachmentFactories,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.MESSAGE_OPTIONS,
@@ -409,7 +414,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 configuration,
                 style,
                 messageViewHolderFactory,
-                messageBackgroundFactory
+                messageBackgroundFactory,
+                attachmentFactories,
             )
         }
 
@@ -420,8 +426,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
+            attachmentFactories: AttachmentFactories,
         ): MessageOptionsDialogFragment {
-            messageListViewStyle = style
+            this.messageListViewStyle = style
+            this.attachmentFactories = attachmentFactories
             this.messageViewHolderFactory =
                 messageViewHolderFactory.clone()
                     .apply {

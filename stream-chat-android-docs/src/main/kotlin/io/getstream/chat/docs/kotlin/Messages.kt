@@ -480,7 +480,7 @@ class Messages(
 
         fun setAttachmentFactory() {
             val attachmentViewFactory = CustomAttachmentViewFactory()
-            messageListView.setAttachmentViewFactory(attachmentViewFactory)
+            messageListView.setAttachmentFactories(attachmentViewFactory)
         }
 
         private inner class MyAttachmentViewFactory : AttachmentViewFactory() {

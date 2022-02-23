@@ -8,6 +8,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.isError
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.common.extensions.isSystem
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.CUSTOM_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
@@ -19,21 +20,26 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
 
 internal object MessageListItemViewTypeMapper {
 
-    fun getViewTypeValue(messageListItem: MessageListItem): Int = listItemToViewType(messageListItem)
+    fun getViewTypeValue(messageListItem: MessageListItem, attachmentFactories: AttachmentFactories): Int {
+        return listItemToViewType(messageListItem, attachmentFactories)
+    }
 
-    private fun listItemToViewType(messageListItem: MessageListItem): Int {
+    private fun listItemToViewType(
+        messageListItem: MessageListItem,
+        attachmentFactories: AttachmentFactories,
+    ): Int {
         return when (messageListItem) {
             is MessageListItem.DateSeparatorItem -> DATE_DIVIDER
             is MessageListItem.LoadingMoreIndicatorItem -> LOADING_INDICATOR
             is MessageListItem.ThreadSeparatorItem -> THREAD_SEPARATOR
-            is MessageListItem.MessageItem -> messageItemToViewType(messageListItem)
+            is MessageListItem.MessageItem -> messageItemToViewType(messageListItem, attachmentFactories)
             is MessageListItem.TypingItem -> TYPING_INDICATOR
             is MessageListItem.ThreadPlaceholderItem -> THREAD_PLACEHOLDER
         }
@@ -43,9 +49,13 @@ internal object MessageListItemViewTypeMapper {
      * Transforms the given [messageItem] to the type of the message we should show in the list.
      *
      * @param messageItem The message item that holds all the information required to generate a message type.
+     * @param attachmentFactories The list of custom attachment factories.
      * @return The [Int] message type.
      */
-    private fun messageItemToViewType(messageItem: MessageListItem.MessageItem): Int {
+    private fun messageItemToViewType(
+        messageItem: MessageListItem.MessageItem,
+        attachmentFactories: AttachmentFactories,
+    ): Int {
         val message = messageItem.message
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
@@ -55,6 +65,7 @@ internal object MessageListItemViewTypeMapper {
         val containsOnlyLinks = message.containsOnlyLinkAttachments()
 
         return when {
+            attachmentFactories.canHandle(message) -> CUSTOM_ATTACHMENTS
             message.isError() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
             message.deletedAt != null -> MESSAGE_DELETED
@@ -63,7 +74,6 @@ internal object MessageListItemViewTypeMapper {
             containsOnlyLinks -> LINK_ATTACHMENTS
             message.isImageAttachment() -> IMAGE_ATTACHMENT
             hasAttachments -> FILE_ATTACHMENTS
-            message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
     }
