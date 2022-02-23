@@ -58,7 +58,7 @@ internal class QueryMembers(private val domainImpl: ChatDomainImpl) {
 
         val result = domainImpl.client
             .channel(cid)
-            .queryMembers(offset, limit, filter, sort, members)
+            .queryMembersInternal(offset, limit, filter, sort, members)
             .await()
 
         if (result.isSuccess) {

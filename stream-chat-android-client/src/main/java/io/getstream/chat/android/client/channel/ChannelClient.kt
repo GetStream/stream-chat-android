@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
@@ -682,8 +683,43 @@ public class ChannelClient internal constructor(
         return client.sendEvent(eventType, channelType, channelId, extraData)
     }
 
+    /**
+     * Queries members for this channel.
+     *
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members.
+     *
+     * @return [Call] with a list of members or an error.
+     */
     @CheckResult
     public fun queryMembers(
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member> = QuerySort(),
+        members: List<Member> = emptyList(),
+    ): Call<List<Member>> {
+        return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+    }
+
+    /**
+     * Queries members for this channel.
+     *
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members.
+     *
+     * @return [Call] with a list of members or an error.
+     */
+    // TODO: Remove this method once [QueryMembers] usecase is removed.
+    @CheckResult
+    @InternalStreamChatApi
+    public fun queryMembersInternal(
         offset: Int,
         limit: Int,
         filter: FilterObject,
