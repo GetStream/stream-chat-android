@@ -73,6 +73,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
@@ -82,6 +83,7 @@ import io.getstream.chat.android.offline.message.wasCreatedAfter
 import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
 import io.getstream.chat.android.offline.utils.toCid
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -390,15 +392,16 @@ internal class ChannelLogic(
      * @param message [Message].
      */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = chatDomainImpl.user.value?.id
+        val currentUserId = GlobalMutableState.getOrCreate().user.value?.id ?: return
 
-        if (currentUserId?.let {
+        val shouldIncrementUnreadCount =
             message.shouldIncrementUnreadCount(
-                    it,
-                    mutableState._read.value?.lastMessageSeenDate,
-                )
-        } == true
-        ) {
+                currentUserId = currentUserId,
+                lastMessageAtDate = mutableState._read.value?.lastMessageSeenDate,
+                isChannelMuted = isChannelMutedForCurrentUser(mutableState.cid)
+            )
+
+        if (shouldIncrementUnreadCount) {
             val newUnreadCount = mutableState._unreadCount.value + 1
             mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read
