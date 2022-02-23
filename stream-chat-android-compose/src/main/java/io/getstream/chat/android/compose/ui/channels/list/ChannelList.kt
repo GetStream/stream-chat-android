@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFacto
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -78,6 +79,7 @@ public fun ChannelList(
         )
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
         DefaultChannelItem(
             channelItem = channelItem,
@@ -100,6 +102,7 @@ public fun ChannelList(
         emptyContent = emptyContent,
         emptySearchContent = emptySearchContent,
         helperContent = helperContent,
+        loadingMoreContent = loadingMoreContent,
         itemContent = itemContent,
         divider = divider
     )
@@ -128,6 +131,7 @@ public fun ChannelList(
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -151,6 +155,7 @@ public fun ChannelList(
         )
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
         DefaultChannelItem(
             channelItem = channelItem,
@@ -171,6 +176,7 @@ public fun ChannelList(
             lazyListState = lazyListState,
             onLastItemReached = onLastItemReached,
             helperContent = helperContent,
+            loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
             divider = divider
         )

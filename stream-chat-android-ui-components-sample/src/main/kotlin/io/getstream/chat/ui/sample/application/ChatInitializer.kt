@@ -10,6 +10,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.experimental.errorhandler.factory.DeleteReactionErrorHandlerFactory
+import io.getstream.chat.android.offline.experimental.errorhandler.factory.SendReactionErrorHandlerFactory
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -58,6 +59,7 @@ class ChatInitializer(private val context: Context) {
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
             .withErrorHandler(DeleteReactionErrorHandlerFactory())
+            .withErrorHandler(SendReactionErrorHandlerFactory())
             .build()
 
         // Using markdown as text transformer

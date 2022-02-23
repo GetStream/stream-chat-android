@@ -4,6 +4,7 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
@@ -29,6 +30,20 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
      */
     override fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)
+    }
+
+    /**
+     * Decorates the visibility of the "failed" section of the message containing
+     * file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         setupFailedIndicator(viewHolder.binding.deliveryFailedIcon, data)

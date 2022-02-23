@@ -48,7 +48,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getCurrentToken ()Ljava/lang/String;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getDevices ()Lio/getstream/chat/android/client/call/Call;
-	public final fun getDisconnectListeners ()Ljava/util/List;
 	public final fun getFileAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getGuestToken (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getImageAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -57,7 +56,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getNotifications ()Lio/getstream/chat/android/client/notifications/ChatNotifications;
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/api/models/QuerySort;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getPlugins ()Ljava/util/List;
-	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -117,12 +115,9 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;ZLjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
 	public final fun setPlugins (Ljava/util/List;)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
@@ -1902,8 +1897,12 @@ public final class io/getstream/chat/android/client/experimental/errorhandler/li
 	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
-public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandlerKt {
-	public static final fun onMessageError (Lio/getstream/chat/android/client/call/Call;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun onSendReactionError (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
@@ -1911,7 +1910,7 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
-	public abstract fun getOrCreate ()Lio/getstream/chat/android/client/experimental/plugin/Plugin;
+	public abstract fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/experimental/plugin/Plugin;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener {
@@ -1976,6 +1975,12 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener {
 	public abstract fun onMessageSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendReactionListener {
+	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onSendReactionRequest (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener {
@@ -3122,6 +3127,17 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
+}
+
+public final class io/getstream/chat/android/client/setup/InitializationCoordinator {
+	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
+	public final fun addUserConnectedListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
+	public final fun addUserSetListener (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
+	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorResponse {

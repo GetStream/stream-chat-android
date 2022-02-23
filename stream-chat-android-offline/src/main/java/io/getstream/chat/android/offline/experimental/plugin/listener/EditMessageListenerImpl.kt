@@ -16,7 +16,7 @@ import java.util.Date
 @ExperimentalStreamChatApi
 internal class EditMessageListenerImpl(
     private val logic: LogicRegistry,
-    private val globalState: GlobalState
+    private val globalState: GlobalState,
 ) : EditMessageListener {
 
     /**

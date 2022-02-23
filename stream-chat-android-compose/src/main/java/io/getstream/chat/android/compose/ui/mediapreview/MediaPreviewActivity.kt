@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -35,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
@@ -89,7 +89,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
         onPlaybackError: () -> Unit,
         onBackPressed: () -> Unit,
     ) {
-        SystemBackPressedHandler(isEnabled = true, onBackPressed = onBackPressed)
+        BackHandler(enabled = true, onBack = onBackPressed)
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),

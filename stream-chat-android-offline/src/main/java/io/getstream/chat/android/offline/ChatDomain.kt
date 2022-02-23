@@ -28,7 +28,6 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
@@ -40,9 +39,6 @@ public sealed interface ChatDomain {
 
     /** The current user on the chatDomain object */
     public val user: StateFlow<User?>
-
-    /** if offline is enabled */
-    public var offlineEnabled: Boolean
 
     /** if we want to track user presence */
     public var userPresence: Boolean
@@ -568,7 +564,6 @@ public sealed interface ChatDomain {
 
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
-        private var database: ChatDatabase? = null
         private var handler: Handler = Handler(Looper.getMainLooper())
 
         private var userPresence: Boolean = false
@@ -577,12 +572,6 @@ public sealed interface ChatDomain {
         private var backgroundSyncEnabled: Boolean = true
         private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType =
             UploadAttachmentsNetworkType.NOT_ROAMING
-
-        @VisibleForTesting
-        internal fun database(db: ChatDatabase): Builder {
-            this.database = db
-            return this
-        }
 
         @VisibleForTesting
         internal fun handler(handler: Handler) = apply {
@@ -596,11 +585,6 @@ public sealed interface ChatDomain {
 
         public fun disableBackgroundSync(): Builder {
             backgroundSyncEnabled = false
-            return this
-        }
-
-        public fun offlineEnabled(): Builder {
-            this.storageEnabled = true
             return this
         }
 
@@ -650,9 +634,7 @@ public sealed interface ChatDomain {
         internal fun buildImpl(): ChatDomainImpl {
             return ChatDomainImpl(
                 client,
-                database,
                 handler,
-                storageEnabled,
                 recoveryEnabled,
                 userPresence,
                 backgroundSyncEnabled,

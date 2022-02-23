@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.channels
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
@@ -32,7 +33,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
 import io.getstream.chat.android.compose.state.channel.list.MuteChannel
@@ -98,12 +98,12 @@ public fun ChannelsScreen(
         )
     )
 
-    val delegatedSelectedChannel by listViewModel.selectedChannel
+    val selectedChannel by listViewModel.selectedChannel
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
-    SystemBackPressedHandler(isEnabled = true) {
-        if (delegatedSelectedChannel != null) {
+    BackHandler(enabled = true) {
+        if (selectedChannel != null) {
             listViewModel.selectChannel(null)
         } else {
             onBackPressed()
@@ -158,7 +158,7 @@ public fun ChannelsScreen(
             }
         }
 
-        val selectedChannel = delegatedSelectedChannel ?: Channel()
+        val selectedChannel = selectedChannel ?: Channel()
         AnimatedVisibility(
             visible = selectedChannel.cid.isNotEmpty(),
             enter = fadeIn(),
