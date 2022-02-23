@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
@@ -31,7 +30,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -39,15 +37,13 @@ import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
 @OptIn(ExperimentalStreamChatApi::class)
-internal class DeleteReactionsTests : SynchronizedCoroutineTest {
+internal class DeleteReactionsTests {
 
     companion object {
         @JvmField
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
-
-    override fun getTestScope(): TestCoroutineScope = TestCoroutineScope()
 
     private val currentUser = User()
     private val myReactions: List<Reaction> = listOf(
@@ -81,7 +77,7 @@ internal class DeleteReactionsTests : SynchronizedCoroutineTest {
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)
         }
-        val (sut, stateRegistry) = Fixture(getTestScope(), currentUser)
+        val (sut, stateRegistry) = Fixture(testCoroutines.scope, currentUser)
             .givenMessageWithReactions(message)
             .get()
 

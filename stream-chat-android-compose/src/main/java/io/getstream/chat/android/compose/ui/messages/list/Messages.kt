@@ -44,6 +44,7 @@ import kotlin.math.abs
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that represents the item that displays each message.
  */
 @Composable
@@ -57,6 +58,7 @@ public fun Messages(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(messagesState, lazyListState)
     },
+    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
@@ -93,12 +95,7 @@ public fun Messages(
 
             if (isLoadingMore) {
                 item {
-                    LoadingIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(8.dp)
-                    )
+                    loadingMoreContent()
                 }
             }
         }
@@ -162,4 +159,17 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         )
     }
+}
+
+/**
+ * The default loading more indicator.
+ */
+@Composable
+internal fun DefaultMessagesLoadingMoreIndicator() {
+    LoadingIndicator(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(8.dp)
+    )
 }

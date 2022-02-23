@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
  * @property itemStyle Style for message list view holders.
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
+ * @property replyMessageStyle Styles messages that are replies.
  * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
  * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
  * @property replyIcon Icon for reply option. Default value is [R.drawable.stream_ui_ic_arrow_curve_left_grey].
@@ -41,6 +42,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property unpinIcon Icon for unpin message option. Default value is [R.drawable.stream_ui_ic_unpin].
  * @property pinMessageEnabled Enables/disables pin message feature. Disabled by default.
  * @property muteIcon Icon for mute option. Default value is [R.drawable.stream_ui_ic_mute].
+ * @property unmuteIcon Icon for the unmute option. Default value is [R.drawable.stream_ui_ic_umnute].
  * @property muteEnabled Enables/disables "mute user" option.
  * @property blockIcon Icon for block option. Default value is [R.drawable.stream_ui_ic_user_block].
  * @property blockEnabled Enables/disables "block user" option.
@@ -55,6 +57,8 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property userReactionsBackgroundColor Background color of user reactions card. Default value is [R.color.stream_ui_white].
  * @property userReactionsTitleText Text appearance of of user reactions card title.
  * @property optionsOverlayDimColor Overlay dim color. Default value is [R.color.stream_ui_literal_transparent].
+ * @property emptyViewTextStyle Style for the text displayed in the empty view when no data is present.
+ * @property loadingView Layout for the loading view. Default value is [R.layout.stream_ui_default_loading_view].
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
  */

@@ -20,5 +20,6 @@ public object MessageListItemViewType {
     public const val THREAD_PLACEHOLDER: Int = OFFSET + 11
     public const val GIPHY_ATTACHMENT: Int = OFFSET + 12
     public const val IMAGE_ATTACHMENT: Int = OFFSET + 13
+    public const val FILE_ATTACHMENTS: Int = OFFSET + 14
     public const val LINK_ATTACHMENTS: Int = OFFSET + 15
 }

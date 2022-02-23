@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.experimental.plugin.listener
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -14,6 +13,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.extensions.removeMyReaction
+import io.getstream.chat.android.offline.extensions.updateSyncStatus
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import java.util.Date
 
@@ -114,38 +114,5 @@ internal class DeleteReactionListenerImpl(
         } else {
             Result.error(ChatError(message = "Current user is null!"))
         }
-    }
-
-    /**
-     * Updates the reaction's sync status based on [result].
-     *
-     * @param result The API call result.
-     *
-     * @return [Reaction] object with updated [Reaction.syncStatus].
-     */
-    private fun Reaction.updateSyncStatus(result: Result<Message>): Reaction {
-        return if (result.isSuccess) {
-            copy(syncStatus = SyncStatus.COMPLETED)
-        } else {
-            updateFailedReactionSyncStatus(result.error())
-        }
-    }
-
-    /**
-     * Updates the reaction's sync status based on [chatError].
-     * Status can be either [SyncStatus.FAILED_PERMANENTLY] or [SyncStatus.SYNC_NEEDED] depends on type of error.
-     *
-     * @param chatError The error returned by the API call.
-     *
-     * @return [Reaction] object with updated [Reaction.syncStatus].
-     */
-    private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError): Reaction {
-        return copy(
-            syncStatus = if (chatError.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-        )
     }
 }

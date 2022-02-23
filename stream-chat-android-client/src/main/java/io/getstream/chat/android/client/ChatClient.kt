@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -43,9 +42,12 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
-import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.SendReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -56,6 +58,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllRea
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
@@ -140,7 +143,6 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     // TODO: Make private/internal after migrating ChatDomain
     public val retryPolicy: RetryPolicy,
-    internal val errorHandlerFactory: ErrorHandlerFactory,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -161,6 +163,11 @@ public class ChatClient internal constructor(
         PushNotificationReceivedListener { _, _ -> }
 
     public lateinit var plugins: List<Plugin>
+
+    /**
+     * Error handlers for API calls.
+     */
+    private var errorHandlers: List<ErrorHandler> = emptyList()
 
     init {
         eventsObservable.subscribe { event ->
@@ -206,6 +213,10 @@ public class ChatClient internal constructor(
 
     internal fun addPlugins(plugins: List<Plugin>) {
         this.plugins = plugins
+    }
+
+    internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
+        this.errorHandlers = errorHandlers.sorted()
     }
 
     //region Set user
@@ -554,16 +565,6 @@ public class ChatClient internal constructor(
         return api.getReactions(messageId, offset, limit)
     }
 
-    @CheckResult
-    @JvmOverloads
-    public fun sendReaction(
-        messageId: String,
-        reactionType: String,
-        enforceUnique: Boolean = false,
-    ): Call<Reaction> {
-        return api.sendReaction(messageId, reactionType, enforceUnique)
-    }
-
     /**
      * Deletes the reaction associated with the message with the given message id.
      * [cid] parameter is being used in side effect functions executed by plugins.
@@ -583,22 +584,13 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
+
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onErrorReturn(scope) { originalError ->
-                val errorHandler = errorHandlerFactory.getOrCreate()
-                if (errorHandler is DeleteReactionErrorHandler) {
-                    errorHandler.onDeleteReactionError(
-                        originalError = originalError,
-                        cid = cid,
-                        messageId = messageId,
-                    )
-                } else {
-                    Result.error(originalError)
-                }
-            }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -624,10 +616,56 @@ public class ChatClient internal constructor(
             .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
     }
 
+    /**
+     * Sends the reaction.
+     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the current user.
+     * [cid] parameter is being used in side effect functions executed by plugins.
+     * You can skip it if plugins are not being used.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param reaction The [Reaction] to send.
+     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     *
+     * @return Executable async [Call] responsible for sending the reaction.
+     */
     @CheckResult
     @JvmOverloads
-    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
+    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
+        val relevantPlugins = plugins.filterIsInstance<SendReactionListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
+        val currentUser = getCurrentUser()
+
         return api.sendReaction(reaction, enforceUnique)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
+            .doOnStart(scope) {
+                relevantPlugins
+                    .forEach { plugin ->
+                        plugin.onSendReactionRequest(
+                            cid = cid,
+                            reaction = reaction,
+                            enforceUnique = enforceUnique,
+                            currentUser = currentUser,
+                        )
+                    }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onSendReactionResult(
+                        cid = cid,
+                        reaction = reaction,
+                        enforceUnique = enforceUnique,
+                        currentUser = currentUser,
+                        result = result,
+                    )
+                }
+            }
+            .precondition(relevantPlugins) { onSendReactionPrecondition(currentUser, reaction) }
     }
     //endregion
 
@@ -1887,7 +1925,6 @@ public class ChatClient internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
-        private var errorHandlerFactory: ErrorHandlerFactory = NoOpErrorHandlerFactory()
 
         /**
          * Sets the log level to be used by the client.
@@ -2026,7 +2063,7 @@ public class ChatClient internal constructor(
         @InternalStreamChatApi
         @ExperimentalStreamChatApi
         public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
-            this.errorHandlerFactory = errorHandlerFactory
+            this.errorHandlerFactories.add(errorHandlerFactory)
         }
 
         /**
@@ -2103,7 +2140,6 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
-                errorHandlerFactory = errorHandlerFactory,
             )
         }
     }
@@ -2118,6 +2154,14 @@ public class ChatClient internal constructor(
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
         /**
+         * Factories of error handlers that will be added to the SDK.
+         *
+         * @see [Plugin]
+         * @see [PluginFactory]
+         */
+        protected val errorHandlerFactories: MutableList<ErrorHandlerFactory> = mutableListOf()
+
+        /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
@@ -2127,6 +2171,12 @@ public class ChatClient internal constructor(
                     addPlugins(
                         pluginFactories.map { pluginFactory ->
                             pluginFactory.getOrCreate()
+                        }
+                    )
+
+                    addErrorHandlers(
+                        errorHandlerFactories.map { factory ->
+                            factory.create()
                         }
                     )
                 }

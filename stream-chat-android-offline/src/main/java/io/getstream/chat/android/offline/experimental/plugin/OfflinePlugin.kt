@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -26,6 +27,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param hideChannelListener [HideChannelListener]
  * @param markAllReadListener [MarkAllReadListener]
  * @param deleteReactionListener [DeleteReactionListener]
+ * @param sendReactionListener [SendReactionListener]
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
@@ -39,6 +41,7 @@ internal class OfflinePlugin(
     private val hideChannelListener: HideChannelListener,
     private val markAllReadListener: MarkAllReadListener,
     private val deleteReactionListener: DeleteReactionListener,
+    private val sendReactionListener: SendReactionListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -48,7 +51,8 @@ internal class OfflinePlugin(
     GetMessageListener by getMessageListener,
     HideChannelListener by hideChannelListener,
     MarkAllReadListener by markAllReadListener,
-    DeleteReactionListener by deleteReactionListener {
+    DeleteReactionListener by deleteReactionListener,
+    SendReactionListener by sendReactionListener {
 
     override val name: String = MODULE_NAME
 

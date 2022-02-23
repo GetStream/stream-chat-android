@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
 import io.getstream.chat.android.ui.common.extensions.isSystem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
@@ -49,6 +50,7 @@ internal object MessageListItemViewTypeMapper {
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
         val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
+        val hasAttachments = message.attachments.isNotEmpty()
 
         val containsOnlyLinks = message.containsOnlyLinkAttachments()
 
@@ -60,6 +62,7 @@ internal object MessageListItemViewTypeMapper {
             containsGiphy -> GIPHY_ATTACHMENT
             containsOnlyLinks -> LINK_ATTACHMENTS
             message.isImageAttachment() -> IMAGE_ATTACHMENT
+            hasAttachments -> FILE_ATTACHMENTS
             message.attachments.isNotEmpty() -> TEXT_AND_ATTACHMENTS
             else -> PLAIN_TEXT
         }
