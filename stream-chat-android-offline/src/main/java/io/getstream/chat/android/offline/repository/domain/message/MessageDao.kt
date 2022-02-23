@@ -121,18 +121,13 @@ internal abstract class MessageDao {
     abstract suspend fun select(id: String): MessageEntity?
 
     @Transaction
-    open suspend fun selectSyncNeeded(): List<MessageEntity> {
-        return selectBySyncStatus(SyncStatus.SYNC_NEEDED)
-    }
-
-    @Transaction
     open suspend fun selectWaitForAttachments(): List<MessageEntity> {
         return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
 
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")
     @Transaction
-    protected abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
+    abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
 
     private companion object {
         private const val SQLITE_MAX_VARIABLE_NUMBER = 999

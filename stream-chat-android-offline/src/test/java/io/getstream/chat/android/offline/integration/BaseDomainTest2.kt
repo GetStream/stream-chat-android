@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
@@ -33,6 +34,8 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
@@ -125,7 +128,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         }
     }
 
-    internal fun createClientMock(isConnected: Boolean = true): ChatClient {
+    private fun createClientMock(isConnected: Boolean = true): ChatClient {
         val connectedEvent = if (isConnected) {
             ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
         } else {
@@ -185,15 +188,18 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             .build()
     }
 
-    internal fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
-
+    private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client)
-            .database(db)
-            .offlineEnabled()
             .userPresenceEnabled()
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
+
+        chatDomainImpl.repos = RepositoryFacade.create(
+            RepositoryFactory(db, data.user1),
+            chatDomainImpl.scope,
+            Config(connectEventsEnabled = true, muteEnabled = true)
+        )
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error
@@ -203,6 +209,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         ).enqueue()
         // manually configure the user since client is mocked
         chatDomainImpl.setUser(data.user1)
+        chatDomainImpl.userConnected(data.user1)
 
         chatDomain = chatDomainImpl
 

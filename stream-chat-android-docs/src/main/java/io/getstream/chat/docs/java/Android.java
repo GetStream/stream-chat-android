@@ -574,7 +574,6 @@ public class Android {
             ChatClient chatClient =
                     new ChatClient.Builder("apiKey", requireContext()).build();
             ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
-                    .offlineEnabled()
                     .userPresenceEnabled()
                     .build();
         }
