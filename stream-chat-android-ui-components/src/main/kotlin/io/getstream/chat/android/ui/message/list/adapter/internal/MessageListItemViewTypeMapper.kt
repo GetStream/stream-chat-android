@@ -28,13 +28,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 internal object MessageListItemViewTypeMapper {
 
     fun getViewTypeValue(messageListItem: MessageListItem, attachmentFactories: AttachmentFactories): Int {
-        return listItemToViewType(messageListItem, attachmentFactories)
-    }
-
-    private fun listItemToViewType(
-        messageListItem: MessageListItem,
-        attachmentFactories: AttachmentFactories,
-    ): Int {
         return when (messageListItem) {
             is MessageListItem.DateSeparatorItem -> DATE_DIVIDER
             is MessageListItem.LoadingMoreIndicatorItem -> LOADING_INDICATOR
