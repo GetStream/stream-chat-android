@@ -293,9 +293,11 @@ public class MessageListViewModel @JvmOverloads constructor(
                 client.deleteMessage(event.message.id, event.hard)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE("Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}. " +
-                                "If you're using OfflinePlugin, the message should be deleted in the database and " +
-                                "it will be deleted in the backend when the SDK sync its information.")
+                            logger.logE(
+                                "Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}. " +
+                                    "If you're using OfflinePlugin, the message should be deleted in the database and " +
+                                    "it will be deleted in the backend when the SDK sync its information."
+                            )
                         }
                     )
             }
