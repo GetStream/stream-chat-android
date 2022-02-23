@@ -4,12 +4,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateLastMessage
 import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.users
+import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -42,12 +44,17 @@ internal class EventBatchUpdate private constructor(
         getCurrentChannel(cid)?.also { channel ->
             channel.updateLastMessage(message)
 
-            val currentUserId = domainImpl.user.value?.id
+            val currentUserId = GlobalMutableState.getOrCreate().user.value?.id ?: return
 
-            if (isNewMessage && currentUserId != null) {
+            if (isNewMessage) {
                 val lastReadDate = channel.read.firstOrNull { it.user.id == currentUserId }?.lastMessageSeenDate
 
-                if (message.shouldIncrementUnreadCount(currentUserId, lastReadDate)) {
+                if (message.shouldIncrementUnreadCount(
+                        currentUserId = currentUserId,
+                        lastMessageAtDate = lastReadDate,
+                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid)
+                    )
+                ) {
                     channel.incrementUnreadCount(currentUserId, message.createdAt)
                 }
             }
