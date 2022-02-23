@@ -1,16 +1,18 @@
 package io.getstream.chat.docs.java;
 
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.getstream.sdk.chat.adapter.MessageListItem;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +31,9 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory;
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle;
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories;
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory;
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder;
 import io.getstream.chat.docs.java.helpers.MyFileUploader;
 
 public class Messages {
@@ -430,53 +433,62 @@ public class Messages {
     }
 
     class CustomAttachments {
+        private class CustomAttachmentViewFactory implements AttachmentFactory {
 
-        private class CustomAttachmentViewFactory extends AttachmentViewFactory {
-            @NotNull
+            private static final String MY_URL_ADDRESS = "https://myurl.com";
+
             @Override
-            public View createAttachmentView(
-                    @NotNull MessageListItem.MessageItem data,
-                    @NotNull MessageListListenerContainer listeners,
-                    @NotNull MessageListItemStyle style,
-                    @NotNull ViewGroup parent
-            ) {
-                return super.createAttachmentView(data, listeners, style, parent);
+            public boolean canHandle(@NonNull Message message) {
+                boolean containsMyAttachments = false;
+                for (Attachment attachment : message.getAttachments()) {
+                    if (attachment.getImageUrl().contains(MY_URL_ADDRESS)) {
+                        containsMyAttachments = true;
+                    }
+                }
+                return containsMyAttachments;
+            }
+
+            @NonNull
+            @Override
+            public AttachmentViewHolder createViewHolder(@NonNull Message message,
+                                                         @Nullable MessageListListenerContainer listeners,
+                                                         @NonNull ViewGroup parent) {
+                // put your custom attachment view creation here
+                return new CustomAttachmentsViewHolder(new TextView(parent.getContext()), listeners);
+            }
+        }
+
+        private class CustomAttachmentsViewHolder extends AttachmentViewHolder {
+
+            private Message message;
+            private TextView textView;
+
+            public CustomAttachmentsViewHolder(@NonNull TextView textView,
+                                               MessageListListenerContainer listeners) {
+                super(textView);
+                this.textView = textView;
+
+                textView.setOnClickListener(v -> {
+                    Attachment attachment = message.getAttachments().iterator().next();
+                    listeners.getAttachmentClickListener().onAttachmentClick(message, attachment);
+                });
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull Message message) {
+                this.message = message;
+
+                Attachment attachment = message.getAttachments().iterator().next();
+                textView.setText("Image URL: " + attachment.getImageUrl());
             }
         }
 
         private MessageListView messageListView;
 
         public void setAttachmentFactory() {
-            AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
-            messageListView.setAttachmentFactories(attachmentViewFactory);
-        }
-
-        private class MyAttachmentViewFactory extends AttachmentViewFactory {
-
-            private static final String MY_URL_ADDRESS = "https://myurl.com";
-
-            @NotNull
-            @Override
-            public View createAttachmentView(
-                    @NotNull MessageListItem.MessageItem data,
-                    @NotNull MessageListListenerContainer listeners,
-                    @NotNull MessageListItemStyle style,
-                    @NotNull ViewGroup parent
-            ) {
-                boolean containsMyAttachments = false;
-                for (Attachment attachment : data.getMessage().getAttachments()) {
-                    if (attachment.getImageUrl().contains(MY_URL_ADDRESS)) {
-                        containsMyAttachments = true;
-                    }
-                }
-
-                if (containsMyAttachments) {
-                    // put your custom attachment view creation here
-                    return new View(parent.getContext());
-                } else {
-                    return super.createAttachmentView(data, listeners, style, parent);
-                }
-            }
+            AttachmentFactory customAttachmentViewFactory = new CustomAttachmentViewFactory();
+            AttachmentFactories attachmentFactories = new AttachmentFactories(Collections.singletonList(customAttachmentViewFactory));
+            messageListView.setAttachmentFactories(attachmentFactories);
         }
     }
 }
