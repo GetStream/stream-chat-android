@@ -719,10 +719,10 @@ class Android {
         }
 
         fun sendMessage() {
-            val chatDomain = ChatDomain.instance()
+            val chatClient = ChatClient.instance()
             val message = Message(text = "Hello world")
 
-            chatDomain.sendMessage(message)
+            chatClient.sendMessage("messaging", "1234", message)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()

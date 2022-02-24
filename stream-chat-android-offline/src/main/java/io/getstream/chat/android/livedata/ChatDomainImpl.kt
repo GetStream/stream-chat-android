@@ -182,8 +182,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun createChannel(channel: Channel): Call<Channel> = chatDomainStateFlow.createChannel(channel)
 
-    override fun sendMessage(message: Message): Call<Message> = chatDomainStateFlow.sendMessage(message)
-
     override fun cancelMessage(message: Message): Call<Boolean> = chatDomainStateFlow.cancelMessage(message)
 
     override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlow.shuffleGiphy(message)

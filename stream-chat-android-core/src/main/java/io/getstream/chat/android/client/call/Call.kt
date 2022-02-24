@@ -101,13 +101,13 @@ public fun <T : Any> Call<T>.withPrecondition(
  * Wraps this [Call] into [ReturnOnErrorCall] to return an item specified by side effect function when it encounters an error.
  *
  * @param scope Scope of coroutine in which to execute side effect function.
- * @param function Function that returns data in the case of error.
+ * @param onError Function that returns data in the case of error.
  */
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
     function: suspend (originalError: ChatError) -> Result<T>,
-): ReturnOnErrorCall<T> = ReturnOnErrorCall<T>(this, scope, function)
+): ReturnOnErrorCall<T> = ReturnOnErrorCall(this, scope, function)
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}

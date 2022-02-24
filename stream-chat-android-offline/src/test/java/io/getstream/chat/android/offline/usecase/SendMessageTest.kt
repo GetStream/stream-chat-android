@@ -28,7 +28,7 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
         // check that current state is empty
         channelController.messages.value.size `should be equal to` 0
 
-        chatDomain.sendMessage(message).execute()
+        client.channel(data.channel1.cid).sendMessage(message).execute()
 
         channelController.messages.value.last() `should be equal to` message
     }

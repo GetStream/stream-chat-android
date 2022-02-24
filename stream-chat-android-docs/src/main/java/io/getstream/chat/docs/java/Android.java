@@ -633,11 +633,11 @@ public class Android {
         }
 
         public void sendMessage() {
-            ChatDomain chatDomain = ChatDomain.instance();
+            ChatClient chatClient = ChatClient.instance();
             Message message = new Message();
             message.setText("Hello world");
 
-            chatDomain.sendMessage(message)
+            chatClient.sendMessage("messaging", "1234", message, false)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             Message message1 = result.data();
@@ -870,50 +870,50 @@ public class Android {
 
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
                     viewStyle ->
-                        new MessageInputViewStyle(
-                                true,
-                                genericDrawable,
-                                true,
-                                genericDrawable,
-                                textStyleGeneric,
-                                true,
-                                true,
-                                true,
-                                genericDrawable,
-                                genericDrawable,
-                                true,
-                                genericDrawable,
-                                "Send also to channel custom label",
-                                "Send also to chat custom label",
-                                textStyleGeneric,
-                                true,
-                                true,
-                                colorBlack,
-                                genericDrawable,
-                                genericDrawable,
-                                20,
-                                genericDrawable,
-                                attachmentSelectionDialogStyle,
-                                genericDrawable,
-                                genericDrawable,
-                                genericDrawable,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                genericDrawable,
-                                genericDrawable,
-                                colorBlack,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                "Empty state text",
-                                "Empty state text",
-                                genericDrawable,
-                                textStyleGeneric,
-                                genericDrawable,
-                                10,
-                                genericDrawable,
-                                genericDrawable
-                        )
+                            new MessageInputViewStyle(
+                                    true,
+                                    genericDrawable,
+                                    true,
+                                    genericDrawable,
+                                    textStyleGeneric,
+                                    true,
+                                    true,
+                                    true,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    true,
+                                    genericDrawable,
+                                    "Send also to channel custom label",
+                                    "Send also to chat custom label",
+                                    textStyleGeneric,
+                                    true,
+                                    true,
+                                    colorBlack,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    20,
+                                    genericDrawable,
+                                    attachmentSelectionDialogStyle,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    colorBlack,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    "Empty state text",
+                                    "Empty state text",
+                                    genericDrawable,
+                                    textStyleGeneric,
+                                    genericDrawable,
+                                    10,
+                                    genericDrawable,
+                                    genericDrawable
+                            )
             );
         }
     }
