@@ -164,10 +164,9 @@ internal class ChatDomainImpl internal constructor(
 
     /** stores the mapping from cid to ChannelController */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
+    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     override val typingUpdates: StateFlow<TypingEvent> = globalState.typingUpdates
-
-    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     private var _eventHandler: EventHandlerImpl? = null
 
@@ -388,7 +387,10 @@ internal class ChatDomainImpl internal constructor(
                 mutableState = state.channel(channelType, channelId).toMutableState(),
                 channelLogic = logic.channel(channelType, channelId),
                 client = client,
-                domainImpl = this,
+                userPresence = userPresence,
+                repos = repos,
+                scope = scope,
+                globalState = globalState
             )
             activeChannelMapImpl[cid] = channelController
             addTypingChannel(channelController)
