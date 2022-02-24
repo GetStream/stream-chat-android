@@ -184,9 +184,16 @@ internal class ChatDomainImpl internal constructor(
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
+    private var _eventHandler: EventHandlerImpl? = null
+
     @VisibleForTesting
     // Todo: Move this dependency to constructor
-    internal val eventHandler: EventHandlerImpl by lazy { EventHandlerImpl(this, client, globalState, scope, repos) }
+    internal var eventHandler: EventHandlerImpl
+        get() = _eventHandler ?: EventHandlerImpl(this, client, globalState, scope, repos)
+        set(value) {
+            _eventHandler = value
+        }
+
     private var logger = ChatLogger.get("Domain")
 
     private val cleanTask = object : Runnable {
@@ -284,7 +291,7 @@ internal class ChatDomainImpl internal constructor(
         repos.insertCurrentUser(me)
         globalState._mutedUsers.value = me.mutes
         globalState._channelMutes.value = me.channelMutes
-        setTotalUnreadCount(me.totalUnreadCount)
+        globalState._totalUnreadCount.value = me.totalUnreadCount
         setChannelUnreadCount(me.unreadChannels)
         setBanned(me.banned)
     }
@@ -419,10 +426,6 @@ internal class ChatDomainImpl internal constructor(
         scope.launch { globalState._typingChannels.emitAll(channelController.typing) }
     }
 
-    internal fun setConnecting() {
-        globalState._connectionState.value = ConnectionState.CONNECTING
-    }
-
     override fun isOnline(): Boolean = globalState.isOnline()
 
     override fun isOffline(): Boolean = globalState.isOffline()
@@ -510,7 +513,7 @@ internal class ChatDomainImpl internal constructor(
      * - event recovery for those channels
      * - API calls to create local channels, messages and reactions
      */
-    // TODO: Move this to another place. Probably to ChatClient.
+// TODO: Move this to another place. Probably to ChatClient.
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0. ensure load is complete
         initJob?.join()
@@ -769,7 +772,7 @@ internal class ChatDomainImpl internal constructor(
     override fun getChannelConfig(channelType: String): Config =
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
-    // region use-case functions
+// region use-case functions
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
