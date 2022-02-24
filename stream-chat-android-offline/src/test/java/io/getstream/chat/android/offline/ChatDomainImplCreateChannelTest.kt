@@ -17,6 +17,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
@@ -218,6 +220,7 @@ internal class ChatDomainImplCreateChannelTest {
         }
         private var user: User = randomUser()
         private var isOnline: Boolean = true
+        private val globalMutableState = GlobalMutableState.create()
         private var repositoryFacade: RepositoryFacade = mock()
 
         fun givenUser(user: User) = apply {
@@ -235,21 +238,24 @@ internal class ChatDomainImplCreateChannelTest {
         }
 
         fun givenOnline(): Fixture = apply {
-            isOnline = true
+            globalMutableState._connectionState.value = ConnectionState.CONNECTED
         }
 
         fun givenOffline(): Fixture = apply {
-            isOnline = false
+            globalMutableState._connectionState.value = ConnectionState.OFFLINE
         }
 
         fun get(): ChatDomainImpl {
-            return ChatDomain.Builder(context, chatClient).build().let { it as ChatDomainImpl }.apply {
-                setUser(this@Fixture.user)
-                userConnected(this@Fixture.user)
-                repos = repositoryFacade
-                scope = testCoroutines.scope
-                if (isOnline) setOnline() else setOffline()
-            }
+            return ChatDomain.Builder(context, chatClient)
+                .globalMutableState(globalMutableState)
+                .build()
+                .let { it as ChatDomainImpl }
+                .apply {
+                    setUser(this@Fixture.user)
+                    userConnected(this@Fixture.user)
+                    repos = repositoryFacade
+                    scope = testCoroutines.scope
+                }
         }
     }
 

@@ -48,6 +48,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
+import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
@@ -185,7 +186,8 @@ internal class ChatDomainImpl internal constructor(
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     @VisibleForTesting
-    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this, client)
+    //Todo: Move this dependency to constructor
+    internal val eventHandler: EventHandlerImpl by lazy { EventHandlerImpl(this, client, globalState, scope, repos) }
     private var logger = ChatLogger.get("Domain")
 
     private val cleanTask = object : Runnable {
@@ -247,7 +249,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         if (client.isSocketConnected()) {
-            setOnline()
+            globalState._connectionState.value = ConnectionState.CONNECTED
         }
         startListening()
         initClean()
@@ -418,20 +420,8 @@ internal class ChatDomainImpl internal constructor(
         scope.launch { globalState._typingChannels.emitAll(channelController.typing) }
     }
 
-    internal fun setOffline() {
-        globalState._connectionState.value = ConnectionState.OFFLINE
-    }
-
-    internal fun setOnline() {
-        globalState._connectionState.value = ConnectionState.CONNECTED
-    }
-
     internal fun setConnecting() {
         globalState._connectionState.value = ConnectionState.CONNECTING
-    }
-
-    internal fun setInitialized() {
-        globalState._initialized.value = true
     }
 
     override fun isOnline(): Boolean = globalState.isOnline()
@@ -521,6 +511,7 @@ internal class ChatDomainImpl internal constructor(
      * - event recovery for those channels
      * - API calls to create local channels, messages and reactions
      */
+    //TODO: Move this to another place. Probably to ChatClient.
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0. ensure load is complete
         initJob?.join()

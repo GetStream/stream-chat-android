@@ -58,6 +58,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             recoveryEnabled,
             backgroundSyncEnabled,
             context,
+            globalState = globalMutableState
         )
 
         chatDomain = chatDomainImpl
