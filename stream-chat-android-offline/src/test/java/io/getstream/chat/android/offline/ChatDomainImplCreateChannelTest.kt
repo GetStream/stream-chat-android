@@ -37,7 +37,6 @@ internal class ChatDomainImplCreateChannelTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-
     private val channelId = "ChannelId"
     private val channelType = "ChannelType"
     private val channelCid = "$channelType:$channelId"
