@@ -46,7 +46,6 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
-import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
@@ -171,7 +170,7 @@ internal class ChatDomainImpl internal constructor(
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     @VisibleForTesting
-    //Todo: Move this dependency to constructor
+    // Todo: Move this dependency to constructor
     internal val eventHandler: EventHandlerImpl by lazy { EventHandlerImpl(this, client, globalState, scope, repos) }
     private var logger = ChatLogger.get("Domain")
 
