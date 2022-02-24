@@ -97,7 +97,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
         @OptIn(ExperimentalStreamChatApi::class)
         fun givenTypingEvents(areSupported: Boolean) = apply {
-            mutableState.channelConfig.value = randomConfig(typingEventsEnabled = areSupported)
+            mutableState._channelConfig.value = randomConfig(typingEventsEnabled = areSupported)
         }
 
         fun givenParentId(parentId: String?) = apply {
