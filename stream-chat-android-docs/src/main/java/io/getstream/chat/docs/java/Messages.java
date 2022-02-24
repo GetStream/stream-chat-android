@@ -433,7 +433,7 @@ public class Messages {
     }
 
     class CustomAttachments {
-        private class CustomAttachmentViewFactory implements AttachmentFactory {
+        private class CustomAttachmentFactory implements AttachmentFactory {
 
             private static final String MY_URL_ADDRESS = "https://myurl.com";
 
@@ -486,8 +486,8 @@ public class Messages {
         private MessageListView messageListView;
 
         public void setAttachmentFactory() {
-            AttachmentFactory customAttachmentViewFactory = new CustomAttachmentViewFactory();
-            AttachmentFactories attachmentFactories = new AttachmentFactories(Collections.singletonList(customAttachmentViewFactory));
+            AttachmentFactory customAttachmentFactory = new CustomAttachmentFactory();
+            AttachmentFactories attachmentFactories = new AttachmentFactories(Collections.singletonList(customAttachmentFactory));
             messageListView.setAttachmentFactories(attachmentFactories);
         }
     }

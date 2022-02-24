@@ -465,7 +465,7 @@ class Messages(
     }
 
     inner class CustomAttachment() {
-        private inner class CustomAttachmentViewFactory : AttachmentFactory {
+        private inner class CustomAttachmentFactory : AttachmentFactory {
             private val MY_URL_ADDRESS = "https://myurl.com"
 
             override fun canHandle(message: Message): Boolean {
@@ -505,8 +505,8 @@ class Messages(
         private lateinit var messageListView: MessageListView
 
         fun setAttachmentFactory() {
-            val customAttachmentViewFactory = CustomAttachmentViewFactory()
-            val attachmentFactories = AttachmentFactories(listOf(customAttachmentViewFactory))
+            val customAttachmentFactory = CustomAttachmentFactory()
+            val attachmentFactories = AttachmentFactories(listOf(customAttachmentFactory))
             messageListView.setAttachmentFactories(attachmentFactories)
         }
     }
