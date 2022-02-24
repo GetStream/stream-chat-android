@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -83,19 +85,23 @@ public fun ChannelList(
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
+        val user by viewModel.user.collectAsState()
+
         DefaultChannelItem(
             channelItem = channelItem,
-            currentUser = viewModel.user.value,
+            currentUser = user,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
+    val user by viewModel.user.collectAsState()
+
     ChannelList(
         modifier = modifier,
         channelsState = viewModel.channelsState,
-        currentUser = viewModel.user.value,
+        currentUser = user,
         lazyListState = lazyListState,
         onLastItemReached = onLastItemReached,
         onChannelClick = onChannelClick,
