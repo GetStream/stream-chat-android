@@ -1923,6 +1923,11 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteMessageListener {
+	public abstract fun onMessageDeleteRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteReactionListener {
 	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

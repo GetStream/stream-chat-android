@@ -19,10 +19,6 @@ public final class io/getstream/chat/android/compose/handlers/LoadMoreHandlerKt 
 	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/handlers/OnBackPressedHandlerKt {
-	public static final fun SystemBackPressedHandler (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-}
-
 public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
 	public static final field DATE Lio/getstream/chat/android/compose/state/DateFormatType;
 	public static final field TIME Lio/getstream/chat/android/compose/state/DateFormatType;
@@ -1653,7 +1649,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelVi
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;Ljava/lang/String;)V
 	public final fun deleteCurrentImage (Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
@@ -1665,7 +1661,7 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;Ljava/lang/String;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

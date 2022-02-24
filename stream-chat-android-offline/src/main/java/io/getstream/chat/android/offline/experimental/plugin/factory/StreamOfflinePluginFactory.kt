@@ -16,6 +16,7 @@ import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInt
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.GetMessageListenerImpl
@@ -127,6 +128,7 @@ public class StreamOfflinePluginFactory(
             markAllReadListener = MarkAllReadListenerImpl(logic),
             deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
             sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
+            deleteMessageListener = DeleteMessageListenerImpl(logic, globalState, repos),
             sendMessageListener = SendMessageListenerImpl(logic, repos),
         )
     }
