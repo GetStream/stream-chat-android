@@ -322,10 +322,6 @@ internal class ChatDomainImpl internal constructor(
         globalState._errorEvent.value = Event(error)
     }
 
-    fun isActiveChannel(cid: String): Boolean {
-        return activeChannelMapImpl.containsKey(cid)
-    }
-
     fun getActiveChannelCids(): List<String> {
         return activeChannelMapImpl.keys().toList()
     }

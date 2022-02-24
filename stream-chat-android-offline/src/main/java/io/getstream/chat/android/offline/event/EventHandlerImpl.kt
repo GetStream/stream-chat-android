@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -57,28 +58,38 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
 import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 
+@ExperimentalStreamChatApi
 internal class EventHandlerImpl(
+    private var recoveryEnabled: Boolean = true,
     private val domainImpl: ChatDomainImpl,
     private val client: ChatClient,
     private val mutableGlobalState: GlobalMutableState,
     private val scope: CoroutineScope,
-    private val repos: RepositoryFacade
+    private val repos: RepositoryFacade,
+    private val syncManager: SyncManager,
 ) {
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
+
+    private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
 
     internal fun handleEvents(events: List<ChatEvent>) {
         handleConnectEvents(events)
@@ -103,21 +114,28 @@ internal class EventHandlerImpl(
 
                     scope.launch {
                         // Todo: Figure out where to put this
-                        if (domainImpl.recoveryEnabled) {
+                        if (recoveryEnabled) {
                             // the first time we connect we should only run recovery against channels and queries that had a failure
                             if (firstConnect) {
                                 firstConnect = false
-                                domainImpl.connectionRecovered(false)
+                                syncManager.connectionRecovered(false)
                             } else {
                                 // the second time (ie coming from background, or reconnecting we should recover all)
-                                domainImpl.connectionRecovered(true)
+                                syncManager.connectionRecovered(true)
                             }
+                        }
+
+                        //Todo: Events belong to EventHandlerImpl
+                        // 4. recover missing events
+                        val activeChannelCids = getActiveChannelCids()
+                        if (activeChannelCids.isNotEmpty()) {
+                            replayEventsForChannels(activeChannelCids)
                         }
                     }
                 }
                 is HealthEvent -> {
                     scope.launch {
-                        domainImpl.retryFailedEntities()
+                        syncManager.retryFailedEntities()
                     }
                 }
 
@@ -129,6 +147,17 @@ internal class EventHandlerImpl(
             }
         }
     }
+
+    private suspend fun replayEventsForChannels(cids: List<String>) {
+        val resultChatEvent = queryEvents(cids)
+        if (resultChatEvent.isSuccess) {
+            handleEventsInternal(resultChatEvent.data(), isFromSync = true)
+        }
+    }
+
+
+    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
+        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     internal suspend fun handleEvent(event: ChatEvent) {
         handleConnectEvents(listOf(event))
@@ -447,17 +476,10 @@ internal class EventHandlerImpl(
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
-            .forEach {
-                val (cid, eventList) = it
-                if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                    val (channelType, channelId) = cid.cidToTypeAndId()
-                    if (client.logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
-                        client.logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
-                    }
-                } else {
-                    if (domainImpl.isActiveChannel(cid)) {
-                        domainImpl.channel(cid).handleEvents(eventList)
-                    }
+            .forEach { (cid, eventList) ->
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                if (client.logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
+                    client.logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
                 }
             }
 
@@ -475,52 +497,28 @@ internal class EventHandlerImpl(
         sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
             val event = userPresenceChanged as UserPresenceChangedEvent
 
-            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                client.state.getActiveChannelStates()
-                    .filter { channelState ->
-                        channelState.members.value
-                            .map { member -> member.user.id }
-                            .contains(event.user.id)
-                    }
-                    .forEach { channelState ->
-                        client.logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
-                            .handleEvent(userPresenceChanged)
-                    }
-            } else {
-                domainImpl.allActiveChannels()
-                    .filter { channelControllerImpl ->
-                        channelControllerImpl.members.value
-                            .map { member -> member.user.id }
-                            .contains(event.user.id)
-                    }
-                    .forEach { channelController ->
-                        channelController.handleEvent(userPresenceChanged)
-                    }
-            }
+            client.state.getActiveChannelStates()
+                .filter { channelState ->
+                    channelState.members.value
+                        .map { member -> member.user.id }
+                        .contains(event.user.id)
+                }
+                .forEach { channelState ->
+                    client.logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
+                        .handleEvent(userPresenceChanged)
+                }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            for (queryChannelsLogic in client.logic.getActiveQueryChannelsLogic()) {
-                queryChannelsLogic.handleEvents(events)
-            }
-        } else {
-            for (queryChannelsController in domainImpl.getActiveQueries()) {
-                queryChannelsController.handleEvents(sortedEvents)
-            }
+        for (queryChannelsLogic in client.logic.getActiveQueryChannelsLogic()) {
+            queryChannelsLogic.handleEvents(events)
         }
     }
 
     private fun handleChannelControllerEvent(event: ChatEvent) {
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            client.logic.getActiveChannelsLogic().forEach { channelLogic ->
-                channelLogic.handleEvent(event)
-            }
-        } else {
-            domainImpl.allActiveChannels().forEach { channelController ->
-                channelController.handleEvent(event)
-            }
+        client.logic.getActiveChannelsLogic().forEach { channelLogic ->
+            channelLogic.handleEvent(event)
         }
     }
 
@@ -561,7 +559,7 @@ internal class EventHandlerImpl(
             return false
         }
 
-        return domainImpl.repos.selectChannels(listOf(cid)).let { channels ->
+        return repos.selectChannels(listOf(cid)).let { channels ->
             val channel = channels.firstOrNull()
             if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
                 true
