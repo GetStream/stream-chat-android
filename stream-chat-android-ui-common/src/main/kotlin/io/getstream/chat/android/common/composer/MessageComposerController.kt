@@ -381,12 +381,8 @@ public class MessageComposerController(
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
-            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                val (channelType, channelId) = message.cid.cidToTypeAndId()
-                chatClient.sendMessage(channelType, channelId, message)
-            } else {
-                chatDomain.sendMessage(message)
-            }
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            chatClient.sendMessage(channelType, channelId, message)
         }
 
         dismissMessageActions()

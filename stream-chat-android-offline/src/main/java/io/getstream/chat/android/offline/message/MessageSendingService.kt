@@ -1,20 +1,13 @@
 package io.getstream.chat.android.offline.message
 
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.flatMapSuspend
-import io.getstream.chat.android.client.utils.mapSuspend
-import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
@@ -41,8 +34,6 @@ internal class MessageSendingService(
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker,
-    // TODO: This should be removed once ChatDomain is merged.
-    private val chatClient: ChatClient = ChatClient.instance(),
 ) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -114,29 +105,15 @@ internal class MessageSendingService(
     }
 
     /**
-     * Sends a new message after preparing and uploading the attachments.
-     *
-     * @param message Message to be sent.
-     *
-     * @return Result with a newly updated message.
-     */
-    internal suspend fun sendNewMessage(message: Message): Result<Message> {
-        val preparedMessage = prepareNewMessage(message)
-        return sendMessage(preparedMessage)
-    }
-
-    /**
-     * Sends the message without preparing.
+     * Tries to upload attachments of this [message] without preparing.
      *
      * It is used when we have some messages already pending in database (due to any non permanent error)
      *
-     * TODO: This method can be removed when ChatDomain is removed.
+     * @param message [Message] to be retried.
+     *
+     * @return [Result] having message with latest attachments state or error if there was any.
      */
-    internal suspend fun sendMessage(message: Message): Result<Message> {
-        return uploadAttachments(message)
-            .flatMapSuspend { doSend(it) }
-            .recoverSuspend { message }
-    }
+    internal suspend fun retryMessage(message: Message): Result<Message> = uploadAttachments(message)
 
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
@@ -224,65 +201,6 @@ internal class MessageSendingService(
      */
     private fun enqueueAttachmentUpload(message: Message) {
         uploadAttachmentsWorker.enqueueJob(channelType, channelId, message.id)
-    }
-
-    // TODO: Remove this method when ChatDomain is removed.
-    private suspend fun doSend(message: Message): Result<Message> =
-        chatClient.channel(message.cid).sendMessageInternal(message)
-            .retry(scope, chatClient.retryPolicy).await()
-            .mapSuspend(::handleSendMessageSuccess)
-            .recoverSuspend { error -> handleSendMessageFail(message, error) }
-
-    /**
-     * Updates the message object and local database with new message state after message is sent successfully.
-     *
-     * @param processedMessage [Message] returned from API response.
-     * @return [Message] Updated message.
-     */
-    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = repos.selectMessage(processedMessage.id) ?: processedMessage
-        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
-            return latestUpdatedMessage
-        }
-        return latestUpdatedMessage.enrichWithCid(channel.cid)
-            .copy(syncStatus = SyncStatus.COMPLETED)
-            .also {
-                repos.insertMessage(it)
-                channel.upsertMessage(it)
-            }
-    }
-
-    /**
-     * Updates the message object and local database with new message state after message wasn't sent due to error.
-     *
-     * @param message [Message] that were being sent.
-     * @param error [ChatError] with the reason of failure.
-     *
-     * @return [Message] Updated message.
-     */
-    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
-        logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: $error",
-            error
-        )
-        // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = repos.selectMessage(message.id) ?: message
-        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
-            return latestUpdatedMessage
-        }
-        return message.copy(
-            syncStatus = if (error.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-            updatedLocallyAt = Date(),
-        )
-            .also {
-                repos.insertMessage(it)
-                channel.upsertMessage(it)
-            }
     }
 
     /**

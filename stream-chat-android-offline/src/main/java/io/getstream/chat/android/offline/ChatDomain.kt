@@ -305,19 +305,6 @@ public sealed interface ChatDomain {
     public fun createChannel(channel: Channel): Call<Channel>
 
     /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for sending a message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun sendMessage(message: Message): Call<Message>
-
-    /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain.
      *

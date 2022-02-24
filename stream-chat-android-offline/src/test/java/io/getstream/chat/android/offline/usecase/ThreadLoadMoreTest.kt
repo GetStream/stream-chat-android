@@ -18,11 +18,11 @@ internal class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
         // start a new thread
         val message1 = data.createMessage()
         val channelState = chatDomain.watchChannel(data.channel1.cid, 10).execute().data()
-        val result = chatDomain.sendMessage(message1).execute()
+        val result = client.channel(data.channel1.cid).sendMessage(message1).execute()
         assertSuccess(result)
         val parentId = result.data().id
         val message2 = data.createMessage().copy().apply { this.parentId = parentId }
-        val result2 = chatDomain.sendMessage(message2).execute()
+        val result2 = client.channel(data.channel1.cid).sendMessage(message2).execute()
         assertSuccess(result2)
         val parentMessage = channelState.getMessage(parentId)!!
         parentMessage.id shouldBeEqualTo parentId

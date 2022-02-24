@@ -15,6 +15,7 @@ public interface SendMessageInterceptor {
      * @param channelType The type of the channel in which message is sent.
      * @param channelId The id of the the channel in which message is sent.
      * @param message Message to be sent.
+     * @param isRetrying If this message is being retried instead of a new message.
      *
      * @return [Result] of [Message] after intercepting.
      */
@@ -22,5 +23,6 @@ public interface SendMessageInterceptor {
         channelType: String,
         channelId: String,
         message: Message,
+        isRetrying: Boolean
     ): Result<Message>
 }

@@ -158,16 +158,13 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     private fun sendMessageInternal(message: Message) {
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            chatClient.sendMessage(channelType, channelId, message)
-        } else {
-            chatDomain.sendMessage(message)
-        }.enqueue(
-            onError = { chatError ->
-                logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
-            }
-        )
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        chatClient.sendMessage(channelType, channelId, message)
+            .enqueue(
+                onError = { chatError ->
+                    logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                }
+            )
     }
 
     /**

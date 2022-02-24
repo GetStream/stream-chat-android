@@ -327,16 +327,13 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onGiphyActionSelected(event)
             }
             is Event.RetryMessage -> {
-                if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-                    domain.sendMessage(event.message)
-                } else {
-                    val (channelType, channelId) = event.message.cid.cidToTypeAndId()
-                    client.sendMessage(channelType, channelId, event.message)
-                }.enqueue(
-                    onError = { chatError ->
-                        logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
-                    }
-                )
+                val (channelType, channelId) = event.message.cid.cidToTypeAndId()
+                client.sendMessage(channelType, channelId, event.message)
+                    .enqueue(
+                        onError = { chatError ->
+                            logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        }
+                    )
             }
             is Event.MessageReaction -> {
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)

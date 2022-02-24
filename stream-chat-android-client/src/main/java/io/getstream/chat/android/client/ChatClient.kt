@@ -1081,6 +1081,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
+        isRetrying: Boolean = false
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
         val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
@@ -1090,7 +1091,7 @@ public class ChatClient internal constructor(
             // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
             relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
-                    interceptor.interceptMessage(channelType, channelId, message.data())
+                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message
             }.flatMapSuspend { newMessage ->
                 api.sendMessage(channelType, channelId, newMessage)

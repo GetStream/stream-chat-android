@@ -78,7 +78,6 @@ import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
-import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
@@ -309,7 +308,6 @@ internal class ChatDomainImpl internal constructor(
         stopClean()
         clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
-        activeChannelMapImpl.values.forEach(ChannelController::cancelJobs)
         eventHandler.clear()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
@@ -901,8 +899,6 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun createChannel(channel: Channel): Call<Channel> = client.createChannel(channel)
-
-    override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
 
     override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 

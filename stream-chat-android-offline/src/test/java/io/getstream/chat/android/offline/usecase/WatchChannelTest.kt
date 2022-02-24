@@ -24,7 +24,7 @@ internal class WatchChannelTest : BaseConnectedIntegrationTest() {
         assertSuccess(result)
         var messages = channelController.messages.value
         messages.size shouldBeGreaterThan 0
-        val result2 = chatDomain.sendMessage(message1).execute()
+        val result2 = client.channel(data.channel1.cid).sendMessage(message1).execute()
         assertSuccess(result2)
         messages = channelController.messages.value
         messages.last() shouldBeEqualTo message1

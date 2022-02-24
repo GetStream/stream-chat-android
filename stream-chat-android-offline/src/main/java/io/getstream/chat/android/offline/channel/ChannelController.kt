@@ -30,10 +30,6 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.message.MessageSendingService
-import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
@@ -76,18 +72,6 @@ public class ChannelController internal constructor(
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
-
-    private val messageSendingService: MessageSendingService =
-        MessageSendingServiceFactory.getOrCreateService(
-            LogicRegistry.get(),
-            GlobalMutableState.get(),
-            channelType,
-            channelId,
-            domainImpl.scope,
-            domainImpl.repos,
-            domainImpl.appContext,
-            client
-        )
 
     internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
@@ -288,10 +272,10 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal suspend fun sendMessage(message: Message): Result<Message> = messageSendingService.sendNewMessage(message)
+    internal suspend fun sendMessage(message: Message): Result<Message> = channelClient.sendMessage(message).await()
 
     internal suspend fun retrySendMessage(message: Message): Result<Message> =
-        messageSendingService.sendMessage(message)
+        channelClient.sendMessage(message, true).await()
 
     internal suspend fun uploadAttachments(
         message: Message,
@@ -576,8 +560,6 @@ public class ChannelController internal constructor(
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
     }
-
-    internal fun cancelJobs() = messageSendingService.cancelJobs()
 
     public sealed class MessagesState {
         /** The ChannelController is initialized but no query is currently running.

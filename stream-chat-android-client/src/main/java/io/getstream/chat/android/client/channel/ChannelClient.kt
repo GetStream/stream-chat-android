@@ -260,12 +260,13 @@ public class ChannelClient internal constructor(
      * Sends the message to the given channel with side effects if there is any plugin added in the client.
      *
      * @param message Message to send.
+     * @param isRetrying True if this message is being retried.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
-    public fun sendMessage(message: Message): Call<Message> {
-        return client.sendMessage(channelType, channelId, message)
+    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
+        return client.sendMessage(channelType, channelId, message, isRetrying)
     }
 
     /**

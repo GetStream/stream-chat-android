@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.message
 
 import android.content.Context
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
@@ -37,7 +36,6 @@ internal object MessageSendingServiceFactory {
         scope: CoroutineScope,
         repos: RepositoryFacade,
         context: Context,
-        chatClient: ChatClient // TODO: Remove this once ChatDomain is removed.
     ): MessageSendingService =
         messageSendingServices.getOrPut(channelType to channelId) {
             MessageSendingService(
@@ -48,7 +46,6 @@ internal object MessageSendingServiceFactory {
                 scope,
                 repos,
                 UploadAttachmentsWorker(context),
-                chatClient,
             )
         }
 }

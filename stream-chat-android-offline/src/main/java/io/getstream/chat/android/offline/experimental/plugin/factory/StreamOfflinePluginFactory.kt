@@ -28,6 +28,7 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.SendReacti
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,8 +57,8 @@ public class StreamOfflinePluginFactory(
      */
     private fun createOfflinePlugin(user: User): OfflinePlugin {
         val chatClient = ChatClient.instance()
-        val globalStateRegistry = GlobalMutableState.getOrCreate()
-        globalStateRegistry.clearState()
+        val globalState = GlobalMutableState.getOrCreate()
+        globalState.clearState()
 
         if (!ChatDomain.isInitialized) {
             ChatDomain.Builder(appContext, chatClient).apply {
@@ -91,15 +92,15 @@ public class StreamOfflinePluginFactory(
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
         val stateRegistry = StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.getOrCreate(stateRegistry)
-        val globalState = GlobalMutableState.getOrCreate()
 
         val defaultInterceptor = DefaultInterceptor(
             sendMessageInterceptor = SendMessageInterceptorImpl(
                 context = appContext,
                 logic = logic,
                 globalState = globalState,
-                scope = chatDomainImpl.scope,
-                repos = chatDomainImpl.repos,
+                scope = scope,
+                repos = repos,
+                messageSendingService = MessageSendingServiceFactory
             )
         )
 
@@ -111,7 +112,7 @@ public class StreamOfflinePluginFactory(
             addUserDisconnectedListener {
                 stateRegistry.clear()
                 logic.clear()
-                globalStateRegistry.clearState()
+                globalState.clearState()
             }
         }
 
@@ -124,15 +125,9 @@ public class StreamOfflinePluginFactory(
             getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
             markAllReadListener = MarkAllReadListenerImpl(logic),
-            deleteReactionListener = DeleteReactionListenerImpl(logic, globalStateRegistry, repos),
-            sendReactionListener = SendReactionListenerImpl(logic, globalStateRegistry, repos),
-            sendMessageListener = SendMessageListenerImpl(
-                context = appContext,
-                logic = logic,
-                globalState = globalState,
-                scope = scope,
-                repos = repos
-            ),
+            deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
+            sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
+            sendMessageListener = SendMessageListenerImpl(logic, repos),
         )
     }
 }
