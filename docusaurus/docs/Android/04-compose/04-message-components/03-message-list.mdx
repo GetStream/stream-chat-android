@@ -171,6 +171,7 @@ fun MessageList(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
     },
+    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
@@ -188,6 +189,7 @@ fun MessageList(
 * `loadingContent`: Used while loading the message data. By default shows a loading indicator that you can override.
 * `emptyContent`: An empty placeholder used when no messages are available. By default displays a message that you can override.
 * `helperContent`: Composable that represents helper content for the message list. By default handles the scrolling behavior and shows a floating button that can be used to scroll to the bottom.
+* `loadingMoreContent`: Composable that represents the loading more content, when we're loading the next page.
 * `itemContent`: Composable that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItemState` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:

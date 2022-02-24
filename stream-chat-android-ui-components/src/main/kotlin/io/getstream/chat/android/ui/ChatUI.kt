@@ -1,10 +1,13 @@
 @file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui
 
 import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
+import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
@@ -12,16 +15,10 @@ import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.utils.lazyVar
 
 /**
  * ChatUI handles any configuration for the Chat UI elements.
- *
- * @param fonts Allows setting default fonts used by UI components.
- * @param markdown Allows customizing the markdown parsing behaviour, e.g. useful if you want to use more markdown modules.
- * @param avatarBitmapFactory Allows intercepting and providing custom bitmap displayed with AvatarView.
- * @param navigator A class responsible for handling navigation to chat destinations. Allows overriding a default navigation between chat components.
- * @param supportedReactions Allows overriding default set of message reactions available.
- * @param mimeTypeIconProvider Allows overriding default icons for attachments MIME types.
  *
  * @see ChatMarkdown
  * @see ChatFonts
@@ -31,28 +28,27 @@ public object ChatUI {
     internal lateinit var appContext: Context
 
     public var style: ChatStyle = ChatStyle()
+
+    /**
+     * A class responsible for handling navigation to chat destinations. Allows overriding
+     * a default navigation between chat components.
+     */
     public var navigator: ChatNavigator = ChatNavigator()
-    public var imageHeadersProvider: ImageHeadersProvider
-        get() = StreamImageLoader.instance().imageHeadersProvider
-        set(value) {
-            StreamImageLoader.instance().imageHeadersProvider = value
-        }
 
-    private var fontsOverride: ChatFonts? = null
-    private val defaultFonts: ChatFonts by lazy { ChatFontsImpl(style, appContext) }
-    public var fonts: ChatFonts
-        get() = fontsOverride ?: defaultFonts
-        set(value) {
-            fontsOverride = value
-        }
+    /**
+     * Provides HTTP headers for image loading requests.
+     */
+    public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
 
-    private var markdownOverride: ChatMarkdown? = null
-    private val defaultMarkdown: ChatMarkdown by lazy {
-        ChatMarkdown { textView, message ->
-            textView.text = message
-        }
-    }
+    /**
+     * Allows setting default fonts used by UI components.
+     */
+    public var fonts: ChatFonts by lazyVar { ChatFontsImpl(style, appContext) }
 
+    /**
+     * Allows customizing the markdown parsing behaviour, e.g. useful if you want
+     * to use more markdown modules.
+     */
     @Deprecated(
         message = "ChatUI.markdown is deprecated. Markdown support is extracted into another module. " +
             "See docs for more reference",
@@ -61,14 +57,19 @@ public object ChatUI {
             expression = "ChatUI.messageTextTransformer"
         )
     )
-    public var markdown: ChatMarkdown
-        get() = markdownOverride ?: defaultMarkdown
-        set(value) {
-            markdownOverride = value
+    public var markdown: ChatMarkdown by lazyVar {
+        ChatMarkdown { textView, message ->
+            textView.text = message
         }
+    }
 
-    private var textTransformerOverride: ChatMessageTextTransformer? = null
-    private val defaultTextTransformer: ChatMessageTextTransformer by lazy {
+    /**
+     * Allows customising the message text's format or style.
+     *
+     * For example, it can be used to provide markdown support in chat or it can be used
+     * to highlight specific messages by making them bold etc.
+     */
+    public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
             // Bypass to markdown by default for backwards compatibility.
             markdown.setText(textView, messageItem.message.text)
@@ -76,36 +77,29 @@ public object ChatUI {
     }
 
     /**
-     * Allows customising the message text's format or style.
-     * For example, it can be used to provide markdown support in chat or it can be used to highlight specific messages by making them bold etc.
+     * Allows intercepting and providing custom bitmap displayed with AvatarView.
      */
-    public var messageTextTransformer: ChatMessageTextTransformer
-        get() = textTransformerOverride ?: defaultTextTransformer
-        set(value) {
-            textTransformerOverride = value
-        }
+    public var avatarBitmapFactory: AvatarBitmapFactory by lazyVar { AvatarBitmapFactory(appContext) }
 
-    private var avatarBitmapFactoryOverride: AvatarBitmapFactory? = null
-    private val defaultAvatarBitmapFactory: AvatarBitmapFactory by lazy { AvatarBitmapFactory(appContext) }
-    public var avatarBitmapFactory: AvatarBitmapFactory
-        get() = avatarBitmapFactoryOverride ?: defaultAvatarBitmapFactory
-        set(value) {
-            avatarBitmapFactoryOverride = value
-        }
+    /**
+     * Allows overriding default set of message reactions available.
+     */
+    public var supportedReactions: SupportedReactions by lazyVar { SupportedReactions(appContext) }
 
-    private var supportedReactionsOverride: SupportedReactions? = null
-    private val defaultSupportedReactions: SupportedReactions by lazy { SupportedReactions(appContext) }
-    public var supportedReactions: SupportedReactions
-        get() = supportedReactionsOverride ?: defaultSupportedReactions
-        set(value) {
-            supportedReactionsOverride = value
-        }
+    /**
+     * Allows overriding default icons for attachments MIME types.
+     */
+    public var mimeTypeIconProvider: MimeTypeIconProvider by lazyVar { MimeTypeIconProviderImpl() }
 
-    private var mimeTypeIconProviderOverride: MimeTypeIconProvider? = null
-    private val defaultMimeTypeIconProvider: MimeTypeIconProvider by lazy { MimeTypeIconProviderImpl() }
-    public var mimeTypeIconProvider: MimeTypeIconProvider
-        get() = mimeTypeIconProviderOverride ?: defaultMimeTypeIconProvider
-        set(value) {
-            mimeTypeIconProviderOverride = value
-        }
+    /**
+     * Allows to generate a name for the given channel.
+     */
+    public var channelNameFormatter: ChannelNameFormatter by lazyVar {
+        ChannelNameFormatter.defaultFormatter(appContext)
+    }
+
+    /**
+     * Allows formatting date-time objects as strings.
+     */
+    public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,6 +50,7 @@ public fun ImageAttachmentContent(
     modifier: Modifier = Modifier,
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
+    val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
 
     Row(
         modifier
@@ -58,7 +60,8 @@ public fun ImageAttachmentContent(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {},
                 onLongClick = { onLongItemClick(message) }
-            )
+            ),
+        horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         val attachments =
             message.attachments.filter { !it.hasLink() && it.isMedia() }
@@ -79,7 +82,8 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 0..3 step 2) {
                     if (imageIndex < imageCount) {
@@ -98,7 +102,8 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 1..4 step 2) {
                     if (imageIndex < imageCount) {

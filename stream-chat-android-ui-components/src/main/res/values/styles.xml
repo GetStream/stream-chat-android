@@ -380,6 +380,7 @@
         <item name="streamUiEditReactionsColumns">5</item>
 
         <!-- Indicator icons -->
+        <item name="streamUiShowMessageDeliveryStatusIndicator">true</item>
         <item name="streamUiIconIndicatorSent">@drawable/stream_ui_ic_check_single</item>
         <item name="streamUiIconIndicatorRead">@drawable/stream_ui_ic_check_double</item>
         <item name="streamUiIconIndicatorPendingSync">@drawable/stream_ui_ic_clock</item>
@@ -605,6 +606,7 @@
         <item name="streamUiLastMessageDateTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiLastMessageDateTextStyle">normal</item>
 
+        <item name="streamUiShowChannelDeliveryStatusIndicator">true</item>
         <item name="streamUiIndicatorSentIcon">@drawable/stream_ui_ic_check_single</item>
         <item name="streamUiIndicatorReadIcon">@drawable/stream_ui_ic_check_double</item>
         <item name="streamUiIndicatorPendingSyncIcon">@drawable/stream_ui_ic_clock</item>
@@ -759,6 +761,7 @@
         <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiSearchInputViewHeight">@dimen/stream_ui_search_input_height</item>
     </style>
 
     <style name="StreamUi.SearchResultListView" parent="StreamUi">

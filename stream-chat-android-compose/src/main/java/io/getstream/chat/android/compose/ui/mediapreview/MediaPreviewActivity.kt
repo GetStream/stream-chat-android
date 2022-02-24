@@ -4,12 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.MediaController
 import android.widget.Toast
+import android.widget.VideoView
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -26,10 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.devbrackets.android.exomedia.listener.OnErrorListener
-import com.devbrackets.android.exomedia.listener.OnPreparedListener
-import com.devbrackets.android.exomedia.ui.widget.VideoView
-import com.devbrackets.android.exomedia.ui.widget.controls.VideoControlsMobile
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -63,7 +67,8 @@ public class MediaPreviewActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                         finish()
-                    }
+                    },
+                    onBackPressed = { finish() }
                 )
             }
         }
@@ -75,82 +80,22 @@ public class MediaPreviewActivity : AppCompatActivity() {
      * @param url The URL of the stream for playback.
      * @param title The name of the file for playback.
      * @param onPlaybackError Handler for playback errors.
+     * @param onBackPressed Handler for back press action.
      */
     @Composable
     private fun MediaPreviewScreen(
         url: String,
         title: String,
         onPlaybackError: () -> Unit,
+        onBackPressed: () -> Unit,
     ) {
-        val backgroundColor = Color.Black
-        val controlsColor = Color.White
+        BackHandler(enabled = true, onBack = onBackPressed)
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            backgroundColor = backgroundColor,
-            topBar = {
-                TopAppBar(
-                    backgroundColor = backgroundColor,
-                    elevation = 0.dp,
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { finish() }
-                        ) {
-                            val layoutDirection = LocalLayoutDirection.current
-
-                            Icon(
-                                modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
-                                contentDescription = null,
-                                tint = controlsColor,
-                            )
-                        }
-                    },
-                    title = {
-                        Text(
-                            text = title,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Start,
-                            style = ChatTheme.typography.title3Bold,
-                            maxLines = 1,
-                            color = controlsColor
-                        )
-                    }
-                )
-            },
-            content = {
-                val context = LocalContext.current
-
-                val videoView = remember {
-                    VideoView(context).apply {
-                        isPlaying // Workaround to init some internals of the library
-                        videoControls = VideoControlsMobile(context)
-                        setOnPreparedListener(
-                            object : OnPreparedListener {
-                                override fun onPrepared() {
-                                    start()
-                                }
-                            }
-                        )
-                        setOnErrorListener(
-                            object : OnErrorListener {
-                                override fun onError(e: Exception?): Boolean {
-                                    onPlaybackError()
-                                    return true
-                                }
-                            }
-                        )
-                        setVideoURI(Uri.parse(url))
-                    }
-                }
-
-                AndroidView(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(backgroundColor),
-                    factory = { videoView }
-                )
-            }
+            backgroundColor = Color.Black,
+            topBar = { MediaPreviewToolbar(title, onBackPressed) },
+            content = { MediaPreviewContent(url, onBackPressed, onPlaybackError) }
         )
     }
 
@@ -173,6 +118,124 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 color = navigationBarColor,
                 darkIcons = false
             )
+        }
+    }
+
+    /**
+     * Represents a toolbar with a back button and a file name.
+     *
+     * @param title The name of the file for playback.
+     * @param onBackPressed Handler for back press action.
+     */
+    @Composable
+    private fun MediaPreviewToolbar(
+        title: String,
+        onBackPressed: () -> Unit = {},
+    ) {
+        TopAppBar(
+            backgroundColor = Color.Black,
+            elevation = 0.dp,
+            navigationIcon = {
+                IconButton(
+                    modifier = Modifier.mirrorRtl(LocalLayoutDirection.current),
+                    onClick = { onBackPressed() }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    style = ChatTheme.typography.title3Bold,
+                    maxLines = 1,
+                    color = Color.White
+                )
+            }
+        )
+    }
+
+    /**
+     * Represents a video player with media controls.
+     *
+     * @param url The URL of the stream for playback.
+     * @param onBackPressed Handler for back press action.
+     * @param onPlaybackError Handler for playback errors.
+     */
+    @Composable
+    private fun MediaPreviewContent(
+        url: String,
+        onBackPressed: () -> Unit = {},
+        onPlaybackError: () -> Unit,
+    ) {
+        val context = LocalContext.current
+
+        val contentView = remember {
+            val mediaController = createMediaController(context, onBackPressed)
+
+            val frameLayout = FrameLayout(context).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            }
+
+            val videoView = VideoView(context).apply {
+                setVideoURI(Uri.parse(url))
+                setMediaController(mediaController)
+                setOnErrorListener { _, _, _ ->
+                    onPlaybackError()
+                    true
+                }
+                setOnPreparedListener {
+                    start()
+                    mediaController.show()
+                }
+                mediaController.setAnchorView(frameLayout)
+
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER
+                }
+            }
+
+            frameLayout.apply { addView(videoView) }
+        }
+
+        AndroidView(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 56.dp)
+                .background(Color.Black),
+            factory = { contentView },
+        )
+    }
+
+    /**
+     * Creates a custom instance of [MediaController] which no longer intercepts
+     * back press actions to hide media controls.
+     *
+     * @param context The Context used to create the [MediaController].
+     * @param onBackPressed Handler for back press action.
+     */
+    private fun createMediaController(
+        context: Context,
+        onBackPressed: () -> Unit = {},
+    ): MediaController {
+        return object : MediaController(context) {
+            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
+                    onBackPressed()
+                }
+                return super.dispatchKeyEvent(event)
+            }
         }
     }
 

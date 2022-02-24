@@ -193,6 +193,11 @@ public class MessageComposerViewModel(
         messageComposerController.toggleCommandsVisibility()
 
     /**
+     * Clears the input and the current state of the composer.
+     */
+    public fun clearData(): Unit = messageComposerController.clearData()
+
+    /**
      * Disposes the inner [MessageComposerController].
      */
     override fun onCleared() {

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
@@ -59,6 +60,9 @@ public class SearchInputView : FrameLayout {
         style = SearchInputViewStyle(context, attrs)
 
         binding.root.setOnClickListener { binding.inputField.focusAndShowKeyboard() }
+        binding.root.updateLayoutParams {
+            this.height = style.searchInputHeight
+        }
 
         binding.clearInputButton.setImageDrawable(style.clearInputDrawable)
         binding.searchIcon.setImageDrawable(style.searchIconDrawable)
@@ -105,6 +109,9 @@ public class SearchInputView : FrameLayout {
         binding.clearInputButton.isVisible = isClearButtonVisible
     }
 
+    /**
+     * Used to reach to detach from window events. Cancels any current input values that are debounced.
+     */
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         inputDebouncer.shutdown()
@@ -173,11 +180,28 @@ public class SearchInputView : FrameLayout {
         this.searchStartedListener = searchStartedListener
     }
 
+    /**
+     * Listener that exposes a handle when the input changes.
+     */
     public fun interface InputChangedListener {
+        /**
+         * Handle when the input changes.
+         *
+         * @param query The current query value.
+         */
         public fun onInputChanged(query: String)
     }
 
+    /**
+     * Listener that exposes a handle when the search starts.
+     */
     public fun interface SearchStartedListener {
+
+        /**
+         * Handle when the search starts.
+         *
+         * @param query The current value of the query with which the search started.
+         */
         public fun onSearchStarted(query: String)
     }
 }

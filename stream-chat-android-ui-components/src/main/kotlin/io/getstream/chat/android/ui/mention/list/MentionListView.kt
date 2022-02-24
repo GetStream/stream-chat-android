@@ -38,7 +38,7 @@ public class MentionListView : ViewFlipper {
         init(attrs)
     }
 
-    private val adapter = MentionListAdapter(context, ChatDomain.instance())
+    private val adapter = MentionListAdapter(ChatDomain.instance())
 
     private var loadMoreListener: LoadMoreListener? = null
 
