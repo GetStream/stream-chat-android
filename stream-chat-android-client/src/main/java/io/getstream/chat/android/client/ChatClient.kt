@@ -169,6 +169,7 @@ public class ChatClient internal constructor(
     public lateinit var plugins: List<Plugin>
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
+
     /**
      * Error handlers for API calls.
      */
@@ -1081,11 +1082,12 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel. If [isRetrying] is set to true, the message may not be prepared again.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param message Message object
+     * @param isRetrying True if this message is being retried.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
@@ -1094,7 +1096,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
-        isRetrying: Boolean = false
+        isRetrying: Boolean = false,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
         val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()

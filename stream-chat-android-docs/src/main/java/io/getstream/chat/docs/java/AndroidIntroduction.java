@@ -91,16 +91,7 @@ public class AndroidIntroduction {
         message.putExtraValue("customField", "123");
 
         // Using the low level client
-        channelClient.sendMessage(message).enqueue(result -> {
-            if (result.isSuccess()) {
-                Message sentMessage = result.data();
-            } else {
-                // Handle result.error()
-            }
-        });
-
-        // Using the offline support library
-        chatDomain.sendMessage(message).enqueue(result -> {
+        channelClient.sendMessage(message, false).enqueue(result -> {
             if (result.isSuccess()) {
                 Message sentMessage = result.data();
             } else {
