@@ -264,7 +264,6 @@ public class MessageListView : ConstraintLayout {
             is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
             is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
             is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
-            is MessageListViewModel.ErrorEvent.DeleteMessageError -> R.string.stream_ui_message_list_error_delete_message
         }.let(::showToast)
     }
 

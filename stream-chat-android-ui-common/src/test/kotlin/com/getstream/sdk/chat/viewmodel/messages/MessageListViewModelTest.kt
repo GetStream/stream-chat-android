@@ -104,7 +104,7 @@ internal class MessageListViewModelTest {
         whenever(domain.threadLoadMore(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
-        whenever(domain.deleteMessage(any(), any())) doReturn deleteMessageCall
+        whenever(client.deleteMessage(any(), any())) doReturn deleteMessageCall
         whenever(domain.getThread(any(), any())) doReturn getThreadCall
         whenever(getThreadResult.isSuccess) doReturn true
         whenever(getThreadResult.data()) doReturn threadController
@@ -157,7 +157,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = false))
 
-        verify(domain).deleteMessage(MESSAGE, false)
+        verify(client).deleteMessage(MESSAGE.id, false)
     }
 
     @Test
@@ -167,7 +167,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true))
 
-        verify(domain).deleteMessage(MESSAGE, true)
+        verify(client).deleteMessage(MESSAGE.id, true)
     }
 
     @Test
