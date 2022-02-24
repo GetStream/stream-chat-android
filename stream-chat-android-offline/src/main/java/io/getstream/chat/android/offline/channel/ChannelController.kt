@@ -110,7 +110,7 @@ public class ChannelController internal constructor(
     public val loadingNewerMessages: StateFlow<Boolean> by mutableState::loadingNewerMessages
     public val endOfOlderMessages: StateFlow<Boolean> by mutableState::endOfOlderMessages
     public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
-    public val channelConfig: StateFlow<Config> by mutableState::channelConfig
+    public val channelConfig: StateFlow<Config> by mutableState::_channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
@@ -123,7 +123,7 @@ public class ChannelController internal constructor(
         }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
+        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
@@ -140,7 +140,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
+        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
@@ -163,7 +163,7 @@ public class ChannelController internal constructor(
      * @return whether the channel was marked as read or not
      */
     internal fun markRead(): Boolean {
-        if (!mutableState.channelConfig.value.readEventsEnabled) {
+        if (!mutableState._channelConfig.value.readEventsEnabled) {
             return false
         }
 
