@@ -103,7 +103,7 @@ internal class EventHandlerImpl(
                     mutableGlobalState._initialized.value = true
 
                     scope.launch {
-                        //Todo: Figure out where to put this
+                        // Todo: Figure out where to put this
                         if (domainImpl.recoveryEnabled) {
                             // the first time we connect we should only run recovery against channels and queries that had a failure
                             if (firstConnect) {

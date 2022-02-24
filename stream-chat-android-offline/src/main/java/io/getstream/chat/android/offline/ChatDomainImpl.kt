@@ -48,7 +48,6 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
-import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
@@ -187,7 +186,7 @@ internal class ChatDomainImpl internal constructor(
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     @VisibleForTesting
-    //Todo: Move this dependency to constructor
+    // Todo: Move this dependency to constructor
     internal val eventHandler: EventHandlerImpl by lazy { EventHandlerImpl(this, client, globalState, scope, repos) }
     private var logger = ChatLogger.get("Domain")
 
@@ -513,7 +512,7 @@ internal class ChatDomainImpl internal constructor(
      * - event recovery for those channels
      * - API calls to create local channels, messages and reactions
      */
-    //TODO: Move this to another place. Probably to ChatClient.
+    // TODO: Move this to another place. Probably to ChatClient.
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0. ensure load is complete
         initJob?.join()
