@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.utils.toCid
 import kotlinx.coroutines.CoroutineScope
 
@@ -27,7 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 internal class QueryMembersErrorHandlerImpl(
     private val scope: CoroutineScope,
     private val globalState: GlobalState,
-    private val repos: RepositoryFacade,
+    private val channelRepository: ChannelRepository,
 ) : QueryMembersErrorHandler {
 
     override fun onQueryMembersError(
@@ -47,7 +48,7 @@ internal class QueryMembersErrorHandlerImpl(
                 // retrieve from database
                 val clampedOffset = offset.coerceAtLeast(0)
                 val clampedLimit = limit.coerceAtLeast(0)
-                val membersFromDatabase = repos
+                val membersFromDatabase = channelRepository
                     .selectMembersForChannel(Pair(channelType, channelId).toCid())
                     .sortedWith(sort.comparator)
                     .drop(clampedOffset)
