@@ -16,6 +16,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
@@ -47,13 +49,14 @@ import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.message.input.mention.searchUsers
 import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.message.input.transliteration.StreamTransliterator
+import io.getstream.chat.android.ui.suggestion.list.DefaultSuggestionListControllerListener
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListController
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListControllerListener
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -138,8 +141,15 @@ public class MessageInputView : ConstraintLayout {
 
     private var scope: CoroutineScope? = null
     private var bigFileSelectionListener: BigFileSelectionListener? = null
+
+    /**
+     * Listener used for reacting to changes in the number of selected attachments
+     */
     private var selectedAttachmentsCountListener: SelectedAttachmentsCountListener =
         SelectedAttachmentsCountListener { attachmentsCount, maxAttachmentsCount ->
+
+            suggestionListController?.commandsEnabled = attachmentsCount == 0
+
             if (attachmentsCount > maxAttachmentsCount) {
                 alertMaxAttachmentsCountExceeded()
             }
@@ -292,7 +302,10 @@ public class MessageInputView : ConstraintLayout {
         } else {
             suggestionListView
         }
-        suggestionListController = SuggestionListController(suggestionListUi).also {
+        suggestionListController = SuggestionListController(
+            suggestionListUi = suggestionListUi,
+            suggestionListControllerListener = createSuggestionsListControllerListener()
+        ).also {
             it.mentionsEnabled = mentionsEnabled
             it.commandsEnabled = commandsEnabled
             it.userLookupHandler = userLookupHandler
@@ -478,7 +491,7 @@ public class MessageInputView : ConstraintLayout {
     private fun startCooldownTimerIfNecessary() {
         if (cooldownInterval > 0) {
             cooldownTimerJob?.cancel()
-            cooldownTimerJob = GlobalScope.launch(DispatcherProvider.Main) {
+            cooldownTimerJob = findViewTreeLifecycleOwner()?.lifecycleScope?.launch(DispatcherProvider.Main) {
                 with(binding) {
                     val previousInputHint = binding.messageInputFieldView.messageHint
 
@@ -535,6 +548,16 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
+     * Creates an instance of [SuggestionListControllerListener].
+     *
+     * Used to disable integration buttons, based on if commands or attachments are added to the message.
+     */
+    private fun createSuggestionsListControllerListener(): DefaultSuggestionListControllerListener =
+        DefaultSuggestionListControllerListener { shouldEnableAttachments ->
+            binding.attachmentsButton.isEnabled = shouldEnableAttachments
+        }
+
+    /**
      * Sets a click listener for the attachment button. If you want to implement custom attachment flow do not forget
      * to set selected attachments via the [submitAttachments] method.
      *
@@ -545,9 +568,9 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
-     * Sets a listener for message input view mode changes
+     * Sets a listener for message input view mode changes.
      *
-     * @param listener The listener to be set
+     * @param listener The listener to be set.
      * @see [InputMode]
      */
     public fun setMessageInputModeListener(listener: MessageInputViewModeListener) {
@@ -566,11 +589,11 @@ public class MessageInputView : ConstraintLayout {
     /**
      * Sets a send message button enabled drawable.
      * Keep in mind that [MessageInputView] displays two different send message buttons:
-     * - sendMessageButtonEnabled - when the user is able to send a message
-     * - sendMessageButtonDisabled - when the user is not able to send a message (send button is disabled)
+     * - sendMessageButtonEnabled - when the user is able to send a message.
+     * - sendMessageButtonDisabled - when the user is not able to send a message (send button is disabled).
      *
-     * Drawable will override the one provided either by attributes or TransformStyle.messageInputStyleTransformer
-     * @param drawable The drawable to be set
+     * Drawable will override the one provided either by attributes or TransformStyle.messageInputStyleTransformer.
+     * @param drawable The drawable to be set.
      */
     public fun setSendMessageButtonEnabledDrawable(drawable: Drawable) {
         binding.sendMessageButtonEnabled.setImageDrawable(drawable)
@@ -579,7 +602,7 @@ public class MessageInputView : ConstraintLayout {
     /**
      * Sets a send message button disabled drawable.
 
-     * @param drawable The drawable to be set
+     * @param drawable The drawable to be set.
      * @see [setSendMessageButtonEnabledDrawable]
      */
     public fun setSendMessageButtonDisabledDrawable(drawable: Drawable) {
@@ -638,7 +661,17 @@ public class MessageInputView : ConstraintLayout {
 
                     refreshControlsState()
                     handleKeyStroke()
-                    messageInputDebouncer?.submitSuspendable { suggestionListController?.onNewMessageText(messageText) }
+
+                    /** Debouncing when clearing the input will cause the suggestion list
+                     popup to appear briefly after clearing the input in certain cases. */
+                    if (messageText.isEmpty()) {
+                        messageInputDebouncer?.cancelLastDebounce()
+                        suggestionListController?.onNewMessageText(messageText)
+                    } else {
+                        messageInputDebouncer?.submitSuspendable {
+                            suggestionListController?.onNewMessageText(messageText)
+                        }
+                    }
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {

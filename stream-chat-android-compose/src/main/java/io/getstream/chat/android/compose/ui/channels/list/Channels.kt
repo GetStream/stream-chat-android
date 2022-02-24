@@ -26,6 +26,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
  * @param onLastItemReached Handler for when the user reaches the end of the list.
  * @param modifier Modifier for styling.
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Customizable UI component, that represents each item in the list.
  * @param divider Customizable UI component, that represents item dividers.
  */
@@ -36,6 +37,7 @@ public fun Channels(
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
     helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit,
     divider: @Composable () -> Unit,
 ) {
@@ -62,7 +64,7 @@ public fun Channels(
 
             if (isLoadingMore) {
                 item {
-                    LoadingFooter(modifier = Modifier.fillMaxWidth())
+                    loadingMoreContent()
                 }
             }
         }
@@ -75,6 +77,14 @@ public fun Channels(
 
         helperContent()
     }
+}
+
+/**
+ * The default loading more indicator.
+ */
+@Composable
+internal fun DefaultChannelsLoadingMoreIndicator() {
+    LoadingFooter(modifier = Modifier.fillMaxWidth())
 }
 
 /**

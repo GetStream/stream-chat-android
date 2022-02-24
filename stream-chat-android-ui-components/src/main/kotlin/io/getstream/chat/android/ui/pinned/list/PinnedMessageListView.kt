@@ -41,7 +41,7 @@ public class PinnedMessageListView : ViewFlipper {
 
     private var loadMoreListener: LoadMoreListener? = null
 
-    private val adapter = PinnedMessageListAdapter(context, ChatDomain.instance())
+    private val adapter = PinnedMessageListAdapter(ChatDomain.instance())
 
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()

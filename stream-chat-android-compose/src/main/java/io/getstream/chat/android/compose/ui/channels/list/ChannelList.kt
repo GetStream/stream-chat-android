@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +49,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -80,20 +83,25 @@ public fun ChannelList(
         )
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
+        val user by viewModel.user.collectAsState()
+
         DefaultChannelItem(
             channelItem = channelItem,
-            currentUser = viewModel.user.value,
+            currentUser = user,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
+    val user by viewModel.user.collectAsState()
+
     ChannelList(
         modifier = modifier,
         channelsState = viewModel.channelsState,
-        currentUser = viewModel.user.value,
+        currentUser = user,
         lazyListState = lazyListState,
         onLastItemReached = onLastItemReached,
         onChannelClick = onChannelClick,
@@ -102,6 +110,7 @@ public fun ChannelList(
         emptyContent = emptyContent,
         emptySearchContent = emptySearchContent,
         helperContent = helperContent,
+        loadingMoreContent = loadingMoreContent,
         itemContent = itemContent,
         divider = divider
     )
@@ -130,6 +139,7 @@ public fun ChannelList(
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -153,6 +163,7 @@ public fun ChannelList(
         )
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
         DefaultChannelItem(
             channelItem = channelItem,
@@ -173,6 +184,7 @@ public fun ChannelList(
             lazyListState = lazyListState,
             onLastItemReached = onLastItemReached,
             helperContent = helperContent,
+            loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
             divider = divider
         )

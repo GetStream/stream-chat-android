@@ -29,7 +29,7 @@ public class SearchResultListView : ViewFlipper {
      */
     private var loadMoreListener: LoadMoreListener? = null
 
-    private val adapter = SearchResultListAdapter(context, ChatDomain.instance())
+    private val adapter = SearchResultListAdapter(ChatDomain.instance())
 
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()
