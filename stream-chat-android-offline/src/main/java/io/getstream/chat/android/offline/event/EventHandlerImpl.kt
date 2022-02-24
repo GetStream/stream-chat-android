@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -76,11 +77,11 @@ internal class EventHandlerImpl(
     internal fun handleEvents(events: List<ChatEvent>) {
         handleConnectEvents(events)
         domainImpl.scope.launch {
-            handleEventsInternal(events)
+            handleEventsInternal(events, isFromSync = false)
         }
     }
 
-    internal fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
+    private fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
         // send out the connect events
         for (event in sortedEvents) {
 
@@ -123,10 +124,10 @@ internal class EventHandlerImpl(
 
     internal suspend fun handleEvent(event: ChatEvent) {
         handleConnectEvents(listOf(event))
-        handleEventsInternal(listOf(event))
+        handleEventsInternal(listOf(event), isFromSync = false)
     }
 
-    internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
+    private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
         events.sortedBy(ChatEvent::createdAt)
 
         val batchBuilder = EventBatchUpdate.Builder()
@@ -206,8 +207,12 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    updateTotalUnreadCountsIfNeeded(
+                        totalUnreadCount = event.totalUnreadCount,
+                        channelUnreadCount = event.unreadChannels,
+                        isFromSync = isFromSync,
+                        cid = event.cid,
+                    )
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     domainImpl.repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
                         ?.let(batch::addChannel)
@@ -224,8 +229,12 @@ internal class EventHandlerImpl(
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    updateTotalUnreadCountsIfNeeded(
+                        totalUnreadCount = event.totalUnreadCount,
+                        channelUnreadCount = event.unreadChannels,
+                        isFromSync = isFromSync,
+                        cid = event.cid,
+                    )
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
@@ -352,8 +361,12 @@ internal class EventHandlerImpl(
                         ?.let(batch::addChannel)
 
                 is NotificationMarkReadEvent -> {
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    updateTotalUnreadCountsIfNeeded(
+                        totalUnreadCount = event.totalUnreadCount,
+                        channelUnreadCount = event.unreadChannels,
+                        isFromSync = isFromSync,
+                        cid = event.cid,
+                    )
                     batch.getCurrentChannel(event.cid)
                         ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
@@ -416,13 +429,13 @@ internal class EventHandlerImpl(
     }
 
     @OptIn(ExperimentalStreamChatApi::class)
-    internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+    internal suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
             logger.logD("Received event: $chatEvent")
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }
-        updateOfflineStorageFromEvents(sortedEvents)
+        updateOfflineStorageFromEvents(sortedEvents, isFromSync)
 
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
@@ -501,6 +514,54 @@ internal class EventHandlerImpl(
         } else {
             domainImpl.allActiveChannels().forEach { channelController ->
                 channelController.handleEvent(event)
+            }
+        }
+    }
+
+    /**
+     * Updates total unread count and channels unread count if channel has [ChannelCapabilities.READ_EVENTS] and event doesn't
+     * come from sync endpoint.
+     * @see [shouldUpdateTotalUnreadCounts]
+     *
+     * @param totalUnreadCount The new total unread messages count.
+     * @param channelUnreadCount The new total channels unread count.
+     * @param isFromSync Flag to determine if event comes from sync endpoint
+     * @param cid CID of the channel.
+     */
+    private suspend fun updateTotalUnreadCountsIfNeeded(
+        totalUnreadCount: Int,
+        channelUnreadCount: Int,
+        isFromSync: Boolean,
+        cid: String,
+    ) {
+        if (shouldUpdateTotalUnreadCounts(isFromSync, cid)) {
+            domainImpl.setTotalUnreadCount(totalUnreadCount)
+            domainImpl.setChannelUnreadCount(channelUnreadCount)
+        }
+    }
+
+    /**
+     * Checks if unread counts should be updated for particular channel.
+     * The unread counts shouldn't be updated if the event comes from the sync endpoint, because those ones are not
+     * enriched with unread info, or if channel in the DB doesn't contain [ChannelCapabilities.READ_EVENTS] capability.
+     *
+     * @param isFromSync Flag to determine if event comes from sync endpoint
+     * @param cid CID of the channel.
+     *
+     * @return True if unread counts should be updated
+     */
+    private suspend fun shouldUpdateTotalUnreadCounts(isFromSync: Boolean, cid: String): Boolean {
+        if (isFromSync) {
+            return false
+        }
+
+        return domainImpl.repos.selectChannels(listOf(cid)).let { channels ->
+            val channel = channels.firstOrNull()
+            if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
+                true
+            } else {
+                logger.logD("Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing.")
+                false
             }
         }
     }
