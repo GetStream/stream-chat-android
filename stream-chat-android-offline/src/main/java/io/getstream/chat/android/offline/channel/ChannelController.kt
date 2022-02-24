@@ -29,10 +29,13 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.isEphemeral
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
@@ -52,8 +55,11 @@ public class ChannelController internal constructor(
     private val channelLogic: ChannelLogic,
     private val client: ChatClient,
     @VisibleForTesting
-    internal val domainImpl: ChatDomainImpl,
+    private val userPresence: Boolean,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
+    private val repos: RepositoryFacade,
+    private val scope: CoroutineScope,
+    private val globalState: GlobalState
 ) {
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
@@ -86,7 +92,7 @@ public class ChannelController internal constructor(
                 it.messages
             )
         }
-    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
+    }.stateIn(scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
     public val oldMessages: StateFlow<List<Message>> by mutableState::oldMessages
     public val watcherCount: StateFlow<Int> by mutableState::watcherCount
     public val watchers: StateFlow<List<User>> by mutableState::watchers
@@ -112,7 +118,7 @@ public class ChannelController internal constructor(
                 threadState,
                 threadLogic,
                 client
-            ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
+            ).also { scope.launch { it.loadOlderMessages() } }
         }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
@@ -181,7 +187,7 @@ public class ChannelController internal constructor(
                 lastMarkReadEvent = lastMessageDate
 
                 // update live data with new read
-                domainImpl.user.value?.let { currentUser ->
+                globalState.user.value?.let { currentUser ->
                     updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
                 }
 
@@ -197,10 +203,10 @@ public class ChannelController internal constructor(
                 val now = Date()
                 mutableState.hideMessagesBefore = now
                 channelLogic.removeMessagesBefore(now)
-                domainImpl.repos.deleteChannelMessagesBefore(cid, now)
-                domainImpl.repos.setHiddenForChannel(cid, true, now)
+                repos.deleteChannelMessagesBefore(cid, now)
+                repos.setHiddenForChannel(cid, true, now)
             } else {
-                domainImpl.repos.setHiddenForChannel(cid, true)
+                repos.setHiddenForChannel(cid, true)
             }
         }
         return result
@@ -212,7 +218,7 @@ public class ChannelController internal constructor(
 
     /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {
-        val result = domainImpl.user.value?.let { currentUser ->
+        val result = globalState.user.value?.let { currentUser ->
             channelClient.removeMembers(currentUser.id).await()
         }
 
@@ -229,7 +235,7 @@ public class ChannelController internal constructor(
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
             return
         }
-        runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(domainImpl.userPresence))
+        runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence))
     }
 
     /** Loads a list of messages before the oldest message in the current list. */
@@ -309,8 +315,8 @@ public class ChannelController internal constructor(
                 message.syncStatus = SyncStatus.FAILED_PERMANENTLY
             }
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
-            domainImpl.repos.deleteChannelMessage(message)
-            domainImpl.repos.insertMessage(message)
+            repos.deleteChannelMessage(message)
+            repos.insertMessage(message)
             upsertMessage(message)
         }
     }
@@ -338,7 +344,7 @@ public class ChannelController internal constructor(
      */
     internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
         require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-        domainImpl.repos.deleteChannelMessage(message)
+        repos.deleteChannelMessage(message)
         removeLocalMessage(message)
         return Result(true)
     }
@@ -364,7 +370,7 @@ public class ChannelController internal constructor(
     }
 
     public fun clean() {
-        domainImpl.scope.launch {
+        scope.launch {
             // cleanup your own typing state
             val now = Date()
             if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
@@ -419,7 +425,7 @@ public class ChannelController internal constructor(
     )
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
-        val online = domainImpl.isOnline()
+        val online = globalState.isOnline()
         val messageToBeEdited = message.copy(
             updatedLocallyAt = Date(),
             syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
@@ -429,15 +435,15 @@ public class ChannelController internal constructor(
         upsertMessage(messageToBeEdited)
 
         // Update Room State
-        domainImpl.repos.insertMessage(messageToBeEdited)
+        repos.insertMessage(messageToBeEdited)
 
         if (online) {
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
             // TODO: Will be removed after migrating ChatDomain
-            val job = domainImpl.scope.async {
-                client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await()
+            val job = scope.async {
+                client.updateMessageInternal(messageToBeEdited).retry(scope, client.retryPolicy).await()
             }
             editJobs[message.id] = job
             val result = job.await()
@@ -445,7 +451,7 @@ public class ChannelController internal constructor(
                 val editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
-                domainImpl.repos.insertMessage(editedMessage)
+                repos.insertMessage(editedMessage)
 
                 return Result(editedMessage)
             } else {
@@ -459,7 +465,7 @@ public class ChannelController internal constructor(
                 )
 
                 upsertMessage(failedMessage)
-                domainImpl.repos.insertMessage(failedMessage)
+                repos.insertMessage(failedMessage)
                 return Result(result.error())
             }
         }
@@ -476,7 +482,7 @@ public class ChannelController internal constructor(
         val message = client.getMessage(messageId).await()
             .takeIf { it.isSuccess }
             ?.data()
-            ?: domainImpl.repos.selectMessage(messageId)
+            ?: repos.selectMessage(messageId)
             ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         channelLogic.storeMessageLocally(listOf(message))
         upsertMessage(message)
