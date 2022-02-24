@@ -25,7 +25,7 @@ object Versions {
     internal const val COMPOSE_ACCOMPANIST = "0.23.0"
     internal const val COMPOSE_ACTIVITY = "1.4.0"
     internal const val COMPOSE_VIEW_MODEL = "2.4.1"
-    public const val COMPOSE = "1.1.0"
+    public const val COMPOSE = "1.1.1"
     internal const val CONSTRAINT_LAYOUT = "2.1.2"
     internal const val COROUTINES = "1.5.2"
     internal const val DEXTER = "6.2.3"
