@@ -55,6 +55,8 @@ internal class ChannelMutableState(
     internal val lastMessageAt = MutableStateFlow<Date?>(null)
     internal val _repliedMessage = MutableStateFlow<Message?>(null)
     internal val _unreadCount = MutableStateFlow(0)
+    /** Channel config data. */
+    internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 
     internal var hideMessagesBefore: Date? = null
 
@@ -96,9 +98,10 @@ internal class ChannelMutableState(
             .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    /** Channel configuration data. */
-    internal val channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
     override val repliedMessage: StateFlow<Message?> = _repliedMessage
+
+    /** Channel config data */
+    override val channelConfig: StateFlow<Config> = _channelConfig
 
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
@@ -173,7 +176,7 @@ internal class ChannelMutableState(
         val watcherCount = _watcherCount.value
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
-        channel.config = channelConfig.value
+        channel.config = _channelConfig.value
         channel.unreadCount = _unreadCount.value
         channel.lastMessageAt =
             lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }

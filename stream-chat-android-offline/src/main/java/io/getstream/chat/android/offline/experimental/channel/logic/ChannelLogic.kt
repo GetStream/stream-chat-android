@@ -338,7 +338,7 @@ internal class ChannelLogic(
         setWatchers(c.watchers)
         upsertMessages(c.messages)
         mutableState.lastMessageAt.value = c.lastMessageAt
-        mutableState.channelConfig.value = c.config
+        mutableState._channelConfig.value = c.config
     }
 
     internal fun upsertMessages(messages: List<Message>) {
@@ -866,7 +866,7 @@ internal class ChannelLogic(
      * @return True if channel is marked as read otheriwse False.
      */
     private fun markReadInternal(): Boolean {
-        if (!mutableState.channelConfig.value.readEventsEnabled) {
+        if (!mutableState._channelConfig.value.readEventsEnabled) {
             return false
         }
 
