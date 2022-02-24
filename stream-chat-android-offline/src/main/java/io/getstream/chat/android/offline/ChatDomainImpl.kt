@@ -46,6 +46,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
+import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
@@ -169,19 +170,9 @@ internal class ChatDomainImpl internal constructor(
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
-    private var _eventHandler: EventHandlerImpl? = null
-
     @VisibleForTesting
-    // Todo: Move this dependency to constructor
-    internal var eventHandler: EventHandlerImpl
-        get() = _eventHandler ?: EventHandlerImpl(this, client, globalState, scope, repos)
-            .also { eventHandler ->
-                _eventHandler = eventHandler
-            }
-        set(value) {
-            _eventHandler = value
-        }
-
+    //Todo: Move this dependency to constructor
+    internal val eventHandler: EventHandlerImpl by lazy { EventHandlerImpl(this, client, globalState, scope, repos) }
     private var logger = ChatLogger.get("Domain")
 
     private val cleanTask = object : Runnable {
@@ -410,6 +401,10 @@ internal class ChatDomainImpl internal constructor(
         scope.launch { globalState._typingChannels.emitAll(channelController.typing) }
     }
 
+    internal fun setConnecting() {
+        globalState._connectionState.value = ConnectionState.CONNECTING
+    }
+
     override fun isOnline(): Boolean = globalState.isOnline()
 
     override fun isOffline(): Boolean = globalState.isOffline()
@@ -497,7 +492,7 @@ internal class ChatDomainImpl internal constructor(
      * - event recovery for those channels
      * - API calls to create local channels, messages and reactions
      */
-// TODO: Move this to another place. Probably to ChatClient.
+    // TODO: Move this to another place. Probably to ChatClient.
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0. ensure load is complete
         initJob?.join()
@@ -756,7 +751,7 @@ internal class ChatDomainImpl internal constructor(
     override fun getChannelConfig(channelType: String): Config =
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
-// region use-case functions
+    // region use-case functions
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
