@@ -58,6 +58,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
@@ -1028,6 +1029,30 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun sendAction(request: SendActionRequest): Call<Message> {
         return api.sendAction(request)
+    }
+
+    /**
+     * Sends selected giphy message to the channel specified by [Message.cid].
+     * The call will be retried accordingly to [retryPolicy].
+     * @see [RetryPolicy]
+     *
+     * @param message The message to send.
+     *
+     * @return Executable async [Call] responsible for sending the Giphy.
+     */
+    public fun sendGiphy(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>()
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
+        }
+
+        return sendAction(request)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    listener.onGiphySendResult(cid = message.cid, result)
+                }
+            }
     }
 
     @CheckResult
@@ -2201,6 +2226,9 @@ public class ChatClient internal constructor(
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        private const val KEY_MESSAGE_ACTION = "image_action"
+        private const val MESSAGE_ACTION_SEND = "send"
 
         private var instance: ChatClient? = null
 

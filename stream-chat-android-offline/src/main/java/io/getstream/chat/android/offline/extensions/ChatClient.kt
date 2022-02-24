@@ -244,36 +244,6 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
 }
 
 /**
- * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
- * Returns new "ephemeral" message with new giphy url.
- * API call to remove the message is retried according to the retry policy specified on the chatDomain.
- *
- * @param message The message to send.
- * @see io.getstream.chat.android.offline.utils.RetryPolicy
- */
-internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
-    val domainImpl = domainImpl()
-
-    return CoroutineCall(domainImpl.scope) {
-        val cid = message.cid
-        val channelController = domainImpl.channel(cid)
-        val channelClient = channel(channelController.channelType, channelController.channelId)
-
-        val request = message.run {
-            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
-        }
-
-        validateCid(cid)
-
-        channelClient.sendAction(request).retry(domainImpl.scope, retryPolicy).await().also { resultMessage ->
-            if (resultMessage.isSuccess) {
-                channelController.removeLocalMessage(resultMessage.data())
-            }
-        }
-    }
-}
-
-/**
  * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
  * Returns new "ephemeral" message with new giphy url.
  * API call to remove the message is retried according to the retry policy specified on the chatDomain

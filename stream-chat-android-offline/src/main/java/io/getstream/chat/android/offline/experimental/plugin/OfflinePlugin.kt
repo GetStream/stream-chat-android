@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -29,6 +30,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param markAllReadListener [MarkAllReadListener]
  * @param deleteReactionListener [DeleteReactionListener]
  * @param sendReactionListener [SendReactionListener]
+ * @param deleteMessageListener [DeleteMessageListener]
+ * @param sendGiphyListener [SendGiphyListener]
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
@@ -43,7 +46,8 @@ internal class OfflinePlugin(
     private val markAllReadListener: MarkAllReadListener,
     private val deleteReactionListener: DeleteReactionListener,
     private val sendReactionListener: SendReactionListener,
-    private val deleteMessageListener: DeleteMessageListener
+    private val deleteMessageListener: DeleteMessageListener,
+    private val sendGiphyListener: SendGiphyListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -55,7 +59,8 @@ internal class OfflinePlugin(
     MarkAllReadListener by markAllReadListener,
     DeleteReactionListener by deleteReactionListener,
     SendReactionListener by sendReactionListener,
-    DeleteMessageListener by deleteMessageListener {
+    DeleteMessageListener by deleteMessageListener,
+    SendGiphyListener by sendGiphyListener {
 
     override val name: String = MODULE_NAME
 
