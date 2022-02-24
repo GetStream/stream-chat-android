@@ -4,7 +4,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.0. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104), [#3123](https://github.com/GetStream/stream-chat-android/pull/3123) 
 - Updated Google's Accompanist version. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
 - Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
 
@@ -98,7 +98,7 @@
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)
-- Since we're using Compose 1.1.0 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104), [#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
 
 ### ❌ Removed
 - Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3092](https://github.com/GetStream/stream-chat-android/pull/3092)
