@@ -1092,6 +1092,7 @@ public class ChatClient internal constructor(
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
+    @JvmOverloads
     public fun sendMessage(
         channelType: String,
         channelId: String,

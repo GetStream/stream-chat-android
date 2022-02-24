@@ -265,6 +265,7 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
+    @JvmOverloads
     public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
         return client.sendMessage(channelType, channelId, message, isRetrying)
     }

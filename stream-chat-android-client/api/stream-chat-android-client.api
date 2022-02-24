@@ -114,6 +114,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
@@ -753,6 +754,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun sendImage (Ljava/io/File;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendImage (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
