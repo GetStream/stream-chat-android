@@ -114,6 +114,7 @@ public class StreamOfflinePluginFactory(
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
+                MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
             }
         }
 

@@ -25,6 +25,7 @@ internal class SendMessageInterceptorImpl(
     private val repos: RepositoryFacade,
     private val messageSendingService: MessageSendingServiceFactory,
 ) : SendMessageInterceptor {
+
     override suspend fun interceptMessage(
         channelType: String,
         channelId: String,

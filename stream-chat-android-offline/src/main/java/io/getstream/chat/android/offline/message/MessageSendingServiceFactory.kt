@@ -48,4 +48,6 @@ internal object MessageSendingServiceFactory {
                 UploadAttachmentsWorker(context),
             )
         }
+
+    fun getAllServices(): List<MessageSendingService> = messageSendingServices.values.toList()
 }

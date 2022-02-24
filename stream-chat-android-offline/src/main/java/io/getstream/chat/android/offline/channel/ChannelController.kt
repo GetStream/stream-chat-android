@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
@@ -331,40 +330,6 @@ public class ChannelController internal constructor(
                 mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
             mutableState._messages.value = newMessages
         }
-    }
-
-    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = domainImpl.repos.selectMessage(processedMessage.id) ?: processedMessage
-        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
-            return latestUpdatedMessage
-        }
-        return latestUpdatedMessage.enrichWithCid(cid)
-            .copy(syncStatus = SyncStatus.COMPLETED)
-            .also { domainImpl.repos.insertMessage(it) }
-            .also { upsertMessage(it) }
-    }
-
-    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
-        logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: $error",
-            error
-        )
-        // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = domainImpl.repos.selectMessage(message.id) ?: message
-        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
-            return latestUpdatedMessage
-        }
-        return message.copy(
-            syncStatus = if (error.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-            updatedLocallyAt = Date(),
-        )
-            .also { domainImpl.repos.insertMessage(it) }
-            .also { upsertMessage(it) }
     }
 
     /**
