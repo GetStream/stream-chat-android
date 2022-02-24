@@ -19,10 +19,6 @@ public final class io/getstream/chat/android/compose/handlers/LoadMoreHandlerKt 
 	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/handlers/OnBackPressedHandlerKt {
-	public static final fun SystemBackPressedHandler (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-}
-
 public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
 	public static final field DATE Lio/getstream/chat/android/compose/state/DateFormatType;
 	public static final field TIME Lio/getstream/chat/android/compose/state/DateFormatType;
