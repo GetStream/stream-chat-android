@@ -7,14 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Flag
@@ -50,9 +48,11 @@ import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -61,6 +61,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -92,6 +93,12 @@ public class MessageListViewModel(
     private val showSystemMessages: Boolean = true,
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD),
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current state of the [Channel].
+     */
+    public val channelState: ChannelState =
+        ChatClientReferenceAdapter(chatClient).watchChannel(channelId, messageLimit).asState(viewModelScope)
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
@@ -151,19 +158,19 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatDomain::connectionState
+    public val connectionState: StateFlow<ConnectionState> by chatClient.globalState::connectionState
 
     /**
      * Gives us information about the online state of the device.
      */
     public val isOnline: Flow<Boolean>
-        get() = chatDomain.connectionState.map { it == ConnectionState.CONNECTED }
+        get() = chatClient.globalState.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?>
-        get() = chatDomain.user
+        get() = chatClient.globalState.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
@@ -198,43 +205,31 @@ public class MessageListViewModel(
      */
     init {
         viewModelScope.launch {
-            val result =
-                chatDomain.watchChannel(channelId, messageLimit)
-                    .await()
-
-            if (result.isSuccess) {
-                val controller = result.data()
-
-                observeConversation(controller)
-                observeTypingUsers(controller)
-            } else {
-                result.error().cause?.printStackTrace()
-                showEmptyState()
-            }
+            observeTypingUsers()
+            observeChannel()
         }
     }
 
+    // TODO - update kdocs
     /**
-     * Starts observing the current conversation using the [controller]. We observe the
+     * Starts observing the current channel. We observe the
      * 'loadingOlderMessages', 'messagesState', 'user' and 'endOfOlderMessages' states from our
      * controller, as well as build the `newMessageState` using [getNewMessageState] and combine it
      * into a [MessagesState] that holds all the information required for the screen.
-     *
-     * @param controller The controller for the channel with the current [channelId].
      */
-    private fun observeConversation(controller: ChannelController) {
+    private fun observeChannel() {
         viewModelScope.launch {
-            controller.messagesState
+            channelState.messagesState
                 .combine(user) { state, user ->
                     when (state) {
-                        is ChannelController.MessagesState.NoQueryActive,
-                        is ChannelController.MessagesState.Loading,
+                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.NoQueryActive,
+                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is ChannelController.MessagesState.OfflineNoResults -> messagesState.copy(
+                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.OfflineNoResults -> messagesState.copy(
                             isLoading = false,
                             messageItems = emptyList()
                         )
-                        is ChannelController.MessagesState.Result -> {
+                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
@@ -242,12 +237,17 @@ public class MessageListViewModel(
                                     isInThread = false
                                 ),
                                 isLoadingMore = false,
-                                endOfMessages = controller.endOfOlderMessages.value,
+                                endOfMessages = channelState.endOfOlderMessages.value,
                                 currentUser = user
                             )
                         }
                     }
-                }.collect { newState ->
+                }
+                .catch {
+                    it.cause?.printStackTrace()
+                    showEmptyState()
+                }
+                .collect { newState ->
                     val newLastMessage =
                         (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
@@ -266,7 +266,7 @@ public class MessageListViewModel(
                         newState
                     }
                     lastLoadedMessage = newLastMessage
-                    controller.toChannel().let { channel ->
+                    channelState.toChannel().let { channel ->
                         ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
                         setCurrentChannel(channel)
                     }
@@ -277,9 +277,9 @@ public class MessageListViewModel(
     /**
      * Starts observing the list of typing users.
      */
-    private fun observeTypingUsers(controller: ChannelController) {
+    private fun observeTypingUsers() {
         viewModelScope.launch {
-            controller.typing.collect {
+            channelState.typing.collect {
                 typingUsers = it.users
             }
         }
@@ -412,12 +412,8 @@ public class MessageListViewModel(
             messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
 
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            val (channelType, id) = channelId.cidToTypeAndId()
-            chatClient.markRead(channelType, id).enqueue()
-        } else {
-            chatDomain.markRead(channelId).enqueue()
-        }
+        val (channelType, id) = channelId.cidToTypeAndId()
+        chatClient.markRead(channelType, id).enqueue()
     }
 
     /**
@@ -449,20 +445,15 @@ public class MessageListViewModel(
      */
     private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE).not()) {
-            chatDomain.threadLoadMore(channelId, threadMode.parentMessage.id, messageLimit)
-                .enqueue()
+        if (threadMode.threadState != null) {
+            chatClient.getRepliesMore(
+                messageId = threadMode.parentMessage.id,
+                firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
+                limit = DEFAULT_MESSAGE_LIMIT,
+            ).enqueue()
         } else {
-            if (threadMode.threadState != null) {
-                chatClient.getRepliesMore(
-                    messageId = threadMode.parentMessage.id,
-                    firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
-                    limit = DEFAULT_MESSAGE_LIMIT,
-                ).enqueue()
-            } else {
-                threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
-                logger.logW("Thread state must be not null for offline plugin thread load more!")
-            }
+            threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
+            logger.logW("Thread state must be not null for offline plugin thread load more!")
         }
     }
 
@@ -569,44 +560,12 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads the thread data.
-     *
-     * @param parentMessage The message with the thread we want to observe.
-     */
-    private fun loadThread(parentMessage: Message) {
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            loadThreadWithOfflinePlugin(parentMessage)
-        } else {
-            loadThreadWithChatDomain(parentMessage)
-        }
-    }
-
-    /**
-     * Changes the current [messageMode] to be [Thread] and loads thread data using ChatDomain approach.
-     * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage], after which we observe
-     * specific data from the thread.
-     *
-     * @param parentMessage The message with the thread we want to observe.
-     */
-    private fun loadThreadWithChatDomain(parentMessage: Message) {
-        messageMode = MessageMode.MessageThread(parentMessage)
-        chatDomain.getThread(channelId, parentMessage.id).enqueue { result ->
-            if (result.isSuccess) {
-                val controller = result.data()
-                observeThreadMessages(controller.threadId, controller.messages, controller.endOfOlderMessages)
-            } else {
-                messageMode = MessageMode.Normal
-            }
-        }
-    }
-
-    /**
      *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
      *  directly. The data is observed by using [ThreadState].
      *
      * @param parentMessage The message with the thread we want to observe.
      */
-    private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
+    private fun loadThread(parentMessage: Message) {
         val threadState = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
         messageMode = MessageMode.MessageThread(parentMessage, threadState)
         observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
@@ -733,6 +692,7 @@ public class MessageListViewModel(
      *
      * @param message Message to delete.
      */
+    // TODO Update to use ChatClient once (https://github.com/GetStream/stream-chat-android/pull/3013) gets merged
     @JvmOverloads
     public fun deleteMessage(message: Message, hard: Boolean = false) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
@@ -770,7 +730,7 @@ public class MessageListViewModel(
      * @param user The user to mute or unmute.
      */
     private fun updateUserMute(user: User) {
-        val isUserMuted = chatDomain.muted.value.any { it.target.id == user.id }
+        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
 
         if (isUserMuted) {
             chatClient.unmuteUser(user.id)
@@ -789,9 +749,17 @@ public class MessageListViewModel(
      */
     private fun reactToMessage(reaction: Reaction, message: Message) {
         if (message.ownReactions.any { it.messageId == reaction.messageId && it.type == reaction.type }) {
-            chatDomain.deleteReaction(channelId, reaction).enqueue()
+            chatClient.deleteReaction(
+                messageId = message.id,
+                reactionType = reaction.type,
+                cid = channelState.cid
+            ).enqueue()
         } else {
-            chatDomain.sendReaction(channelId, reaction, enforceUniqueReactions).enqueue()
+            chatClient.sendReaction(
+                reaction = reaction,
+                enforceUnique = enforceUniqueReactions,
+                cid = channelState.cid
+            ).enqueue()
         }
     }
 
@@ -913,6 +881,8 @@ public class MessageListViewModel(
     public fun performGiphyAction(action: GiphyAction) {
         val message = action.message
         when (action) {
+            // TODO - sendGiphy() and shuffleGiphy() should be ported to ChatClient soon. They are currently internalized in the offline module.
+            // TODO - port this to chatClient once done
             is SendGiphy -> chatDomain.sendGiphy(message)
             is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelMessage(message)
