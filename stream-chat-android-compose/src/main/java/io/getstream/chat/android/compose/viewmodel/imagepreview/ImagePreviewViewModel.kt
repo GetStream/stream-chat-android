@@ -8,8 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -17,14 +16,14 @@ import kotlinx.coroutines.flow.StateFlow
  */
 public class ImagePreviewViewModel(
     private val chatClient: ChatClient,
-    private val chatDomain: ChatDomain,
-    private val messageId: String,
+    globalState: GlobalState,
+    messageId: String,
 ) : ViewModel() {
 
     /**
      * The currently logged in user.
      */
-    public val user: StateFlow<User?> = chatClient.globalState.user
+    public val user: StateFlow<User?> = globalState.user
 
     /**
      * Represents the message that we observe to show the UI data.
@@ -80,7 +79,6 @@ public class ImagePreviewViewModel(
      *
      * @param currentImage The image attachment to remove from the message we're updating.
      */
-    // TODO remove after delete message gets migrated (PR: https://github.com/GetStream/stream-chat-android/pull/3013)
     public fun deleteCurrentImage(currentImage: Attachment) {
         val attachments = message.attachments
         val numberOfAttachments = attachments.size
@@ -95,7 +93,7 @@ public class ImagePreviewViewModel(
 
             chatClient.updateMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
-            chatDomain.deleteMessage(message).enqueue { result ->
+            chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result.isSuccess) {
                     message = result.data()
                 }

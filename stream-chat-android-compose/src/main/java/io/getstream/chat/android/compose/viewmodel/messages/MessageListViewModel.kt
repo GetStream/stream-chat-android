@@ -698,7 +698,7 @@ public class MessageListViewModel(
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()
 
-        chatDomain.deleteMessage(message, hard).enqueue()
+        chatClient.deleteMessage(message.id, hard).enqueue()
     }
 
     /**
