@@ -3,8 +3,8 @@ package io.getstream.chat.android.common.composer
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -18,6 +18,8 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
 import io.getstream.chat.android.offline.extensions.keystroke
 import io.getstream.chat.android.offline.extensions.stopTyping
 import kotlinx.coroutines.CoroutineScope
@@ -54,11 +56,18 @@ public class MessageComposerController(
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
+
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
      */
     private val scope = CoroutineScope(DispatcherProvider.Main)
+
+    /**
+     * Holds information about the current state of the [Channel].
+     */
+    public val channelState: ChannelState =
+        ChatClientReferenceAdapter(chatClient).watchChannel(channelId, 0).asState(scope)
 
     /**
      * Full message composer state holding all the required information.
@@ -185,24 +194,18 @@ public class MessageComposerController(
      */
     init {
         scope.launch {
-            val result = chatDomain.watchChannel(channelId, 0).await()
+            channelState.channelConfig.onEach {
+                maxMessageLength = it.maxMessageLength
+                commands = it.commands
+            }.launchIn(scope)
 
-            if (result.isSuccess) {
-                val channelController = result.data()
+            channelState.members.onEach { members ->
+                users = members.map { it.user }
+            }.launchIn(scope)
 
-                channelController.channelConfig.onEach {
-                    maxMessageLength = it.maxMessageLength
-                    commands = it.commands
-                }.launchIn(scope)
-
-                channelController.members.onEach { members ->
-                    users = members.map { it.user }
-                }.launchIn(scope)
-
-                channelController.channelData.onEach {
-                    cooldownInterval = it.cooldown
-                }.launchIn(scope)
-            }
+            channelState.channelData.onEach {
+                cooldownInterval = it.cooldown
+            }.launchIn(scope)
         }
 
         setupComposerState()
