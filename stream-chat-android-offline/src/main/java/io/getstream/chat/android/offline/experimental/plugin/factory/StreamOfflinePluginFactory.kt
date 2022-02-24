@@ -14,6 +14,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.GetMessageListenerImpl
@@ -111,6 +112,7 @@ public class StreamOfflinePluginFactory(
             markAllReadListener = MarkAllReadListenerImpl(logic),
             deleteReactionListener = DeleteReactionListenerImpl(logic, globalStateRegistry, repos),
             sendReactionListener = SendReactionListenerImpl(logic, globalStateRegistry, repos),
+            deleteMessageListener = DeleteMessageListenerImpl(logic, globalStateRegistry, repos),
             queryMembersListener = QueryMembersListenerImpl(repos),
         )
     }

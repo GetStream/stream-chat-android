@@ -66,7 +66,6 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.DeleteMessage
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.HideChannel
@@ -490,7 +489,7 @@ internal class ChatDomainImpl internal constructor(
         return if (cids.isNotEmpty()) {
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
-                    eventHandler.handleEventsInternal(resultChatEvent.data())
+                    eventHandler.handleEventsInternal(resultChatEvent.data(), isFromSync = true)
                     updateLastSyncDate(now)
                 }
             }
@@ -678,25 +677,25 @@ internal class ChatDomainImpl internal constructor(
         messages.forEach { message ->
             val channelClient = client.channel(message.cid)
 
-            val result = when {
+            when {
                 message.deletedAt != null -> {
                     logger.logD("Deleting message: ${message.id}")
                     channelClient.deleteMessage(message.id).await()
                 }
                 message.updatedLocallyAt != null -> {
                     logger.logD("Updating message: ${message.id}")
-                    client.updateMessageInternal(message).await()
+                    client.updateMessage(message).await()
                 }
                 else -> {
                     logger.logD("Sending message: ${message.id}")
-                    channelClient.sendMessage(message).await()
-                }
-            }
+                    val result = channelClient.sendMessage(message).await()
 
-            if (result.isSuccess) {
-                repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-            } else if (result.isError && result.error().isPermanent()) {
-                markMessageAsFailed(message)
+                    if (result.isSuccess) {
+                        repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
+                    } else if (result.isError && result.error().isPermanent()) {
+                        markMessageAsFailed(message)
+                    }
+                }
             }
         }
 
@@ -933,11 +932,6 @@ internal class ChatDomainImpl internal constructor(
         level = DeprecationLevel.WARNING
     )
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
-
-    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
-        DeleteMessage(this).invoke(message, hard)
-
-    override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         client.sendReaction(reaction = reaction, enforceUnique = enforceUnique, cid = cid)

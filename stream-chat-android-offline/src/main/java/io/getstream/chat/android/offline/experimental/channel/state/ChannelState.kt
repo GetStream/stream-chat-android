@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.experimental.channel.state
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
@@ -83,6 +84,9 @@ public interface ChannelState {
 
     /** If we need to recover state when connection established again. */
     public val recoveryNeeded: Boolean
+
+    /** Channel config data */
+    public val channelConfig: StateFlow<Config>
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel

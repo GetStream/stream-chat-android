@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.experimental.errorhandler.listeners.onRe
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
@@ -1066,7 +1067,19 @@ public class ChatClient internal constructor(
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
+
         return api.deleteMessage(messageId, hard)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { listener ->
+                    listener.onMessageDeleteRequest(messageId)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    listener.onMessageDeleteResult(messageId, result)
+                }
+            }
     }
 
     @CheckResult

@@ -2,9 +2,12 @@ package io.getstream.chat.android.offline.event
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -31,17 +34,21 @@ internal class TotalUnreadCountTest {
     private val data = TestDataHelper()
 
     @Test
-    fun `when new message event is received, unread counts in the domain instance should be updated`() =
+    fun `When new message event is received for channel with read capability Should properly update total unread counts`() =
         testCoroutines.scope.runBlockingTest {
             val chatDomain: ChatDomainImpl = mock()
+            val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
             val sut = Fixture(chatDomain, testCoroutines.scope, data.user1)
                 .givenMockedRepositories()
+                .givenChannel(channelWithReadCapability)
                 .get()
 
             val newMessageEventWithUnread = data.newMessageEvent.copy(
+                cid = channelWithReadCapability.cid,
                 totalUnreadCount = 5,
                 unreadChannels = 2
             )
+
             sut.handleEvent(newMessageEventWithUnread)
 
             verify(chatDomain).setTotalUnreadCount(5)
@@ -49,14 +56,17 @@ internal class TotalUnreadCountTest {
         }
 
     @Test
-    fun `when mark read event is received, unread counts in the domain instance should be updated`() =
+    fun `When mark read event is received for channel with read capability Should properly update total unread counts`() =
         testCoroutines.scope.runBlockingTest {
             val chatDomain: ChatDomainImpl = mock()
+            val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
             val sut = Fixture(chatDomain, testCoroutines.scope, data.user1)
                 .givenMockedRepositories()
+                .givenChannel(channelWithReadCapability)
                 .get()
 
             val markReadEventWithUnread = data.user1ReadNotification.copy(
+                cid = channelWithReadCapability.cid,
                 totalUnreadCount = 0,
                 unreadChannels = 0
             )
@@ -104,6 +114,12 @@ internal class TotalUnreadCountTest {
                 whenever(repos.selectChannels(any<List<String>>(), any<Boolean>())) doReturn emptyList()
             }
             return this
+        }
+
+        fun givenChannel(channel: Channel) = apply {
+            runBlockingTest {
+                whenever(repos.selectChannels(eq(listOf(channel.cid)), any<Boolean>())) doReturn listOf(channel)
+            }
         }
 
         fun get(): EventHandlerImpl = eventHandlerImpl

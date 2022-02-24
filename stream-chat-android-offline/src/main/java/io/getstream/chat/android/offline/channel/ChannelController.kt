@@ -110,7 +110,7 @@ public class ChannelController internal constructor(
     public val loadingNewerMessages: StateFlow<Boolean> by mutableState::loadingNewerMessages
     public val endOfOlderMessages: StateFlow<Boolean> by mutableState::endOfOlderMessages
     public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
-    public val channelConfig: StateFlow<Config> by mutableState::channelConfig
+    public val channelConfig: StateFlow<Config> by mutableState::_channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
@@ -123,7 +123,7 @@ public class ChannelController internal constructor(
         }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
+        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
@@ -140,7 +140,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
+        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
@@ -163,7 +163,7 @@ public class ChannelController internal constructor(
      * @return whether the channel was marked as read or not
      */
     internal fun markRead(): Boolean {
-        if (!mutableState.channelConfig.value.readEventsEnabled) {
+        if (!mutableState._channelConfig.value.readEventsEnabled) {
             return false
         }
 
@@ -495,42 +495,6 @@ public class ChannelController internal constructor(
             }
         }
         return Result(messageToBeEdited)
-    }
-
-    internal suspend fun deleteMessage(message: Message, hard: Boolean = false): Result<Message> {
-        val online = domainImpl.isOnline()
-        val messageToBeDeleted = message.copy(deletedAt = Date())
-        messageToBeDeleted.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
-
-        // Update flow
-        upsertMessage(messageToBeDeleted)
-
-        // Update Room State
-        domainImpl.repos.insertMessage(messageToBeDeleted)
-
-        if (online) {
-            // TODO: Will be removed after migrating ChatDomain
-            val result = client.deleteMessage(messageToBeDeleted.id, hard).retry(domainImpl.scope, client.retryPolicy).await()
-            if (result.isSuccess) {
-                val deletedMessage = result.data()
-                deletedMessage.syncStatus = SyncStatus.COMPLETED
-                upsertMessage(deletedMessage)
-                domainImpl.repos.insertMessage(deletedMessage)
-                return Result(deletedMessage)
-            } else {
-                val failureMessage = messageToBeDeleted.copy(
-                    syncStatus = if (result.error().isPermanent()) {
-                        SyncStatus.FAILED_PERMANENTLY
-                    } else {
-                        SyncStatus.SYNC_NEEDED
-                    }
-                )
-                upsertMessage(failureMessage)
-                domainImpl.repos.insertMessage(failureMessage)
-                return Result(result.error())
-            }
-        }
-        return Result(messageToBeDeleted)
     }
 
     public fun toChannel(): Channel = mutableState.toChannel()
