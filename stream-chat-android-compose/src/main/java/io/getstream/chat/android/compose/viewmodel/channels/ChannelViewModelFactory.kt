@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewmodel.channel
+package io.getstream.chat.android.compose.viewmodel.channels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -8,11 +8,11 @@
 
     <application>
         <activity
-            android:name=".ui.imagepreview.ImagePreviewActivity"
+            android:name="io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewActivity"
             android:exported="false"
             />
         <activity
-            android:name=".ui.mediapreview.MediaPreviewActivity"
+            android:name="io.getstream.chat.android.compose.ui.attachments.preview.MediaPreviewActivity"
             android:exported="false"
             />
     </application>

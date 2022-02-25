@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewmodel.channel
+package io.getstream.chat.android.compose.viewmodel.channels
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -18,10 +18,10 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.state.QueryConfig
-import io.getstream.chat.android.compose.state.channel.list.Cancel
-import io.getstream.chat.android.compose.state.channel.list.ChannelAction
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
-import io.getstream.chat.android.compose.state.channel.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.Cancel
+import io.getstream.chat.android.compose.state.channels.list.ChannelAction
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData

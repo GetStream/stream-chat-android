@@ -33,19 +33,19 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
-import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
-import io.getstream.chat.android.compose.state.channel.list.MuteChannel
-import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
-import io.getstream.chat.android.compose.state.channel.list.ViewInfo
+import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
+import io.getstream.chat.android.compose.state.channels.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channels.list.MuteChannel
+import io.getstream.chat.android.compose.state.channels.list.UnmuteChannel
+import io.getstream.chat.android.compose.state.channels.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
 /**

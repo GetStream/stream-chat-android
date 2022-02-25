@@ -25,13 +25,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
-import io.getstream.chat.android.compose.state.channel.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
