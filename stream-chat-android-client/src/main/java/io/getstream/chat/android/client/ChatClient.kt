@@ -67,6 +67,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembe
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
@@ -1094,7 +1095,32 @@ public class ChatClient internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
-                    listener.onGiphySendResult(cid = message.cid, result)
+                    listener.onGiphySendResult(cid = message.cid, result = result)
+                }
+            }
+    }
+
+    /**
+     * Performs Giphy shuffle operation in the channel specified by [Message.cid].
+     * Returns new "ephemeral" message with new giphy url.
+     * The call will be retried accordingly to [retryPolicy].
+     * @see [RetryPolicy]
+     *
+     * @param message The message to send.
+     *
+     * @return Executable async [Call] responsible for shuffling the Giphy.
+     */
+    public fun shuffleGiphy(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>()
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
+        }
+
+        return sendAction(request)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    listener.onShuffleGiphyResult(cid = message.cid, result = result)
                 }
             }
     }
@@ -2314,6 +2340,7 @@ public class ChatClient internal constructor(
 
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
+        private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
 
         private var instance: ChatClient? = null
 
