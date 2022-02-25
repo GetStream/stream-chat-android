@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
@@ -57,7 +58,8 @@ class ChatInfoViewModel(
                     channelClient.queryMembers(
                         offset = 0,
                         limit = 1,
-                        filter = chatDomain.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral()
+                        filter = chatDomain.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
+                        sort = QuerySort()
                     ).await()
 
                 if (result.isSuccess) {

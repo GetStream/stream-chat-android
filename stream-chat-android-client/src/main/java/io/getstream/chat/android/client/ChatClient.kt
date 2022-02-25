@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -471,7 +470,7 @@ public class ChatClient internal constructor(
      * @param limit Number of members to fetch.
      * @param filter [FilterObject] to filter members of certain type.
      * @param sort Sort the list of members.
-     * @param members List of members.
+     * @param members List of members to search in distinct channels.
      *
      * @return [Call] with a list of members or an error.
      */
@@ -479,10 +478,10 @@ public class ChatClient internal constructor(
     public fun queryMembers(
         channelType: String,
         channelId: String,
-        offset: Int = 0,
-        limit: Int = 0,
-        filter: FilterObject = NeutralFilterObject,
-        sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
