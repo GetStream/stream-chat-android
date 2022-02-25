@@ -191,6 +191,9 @@ internal class ChatDomainImpl internal constructor(
     // Todo: Move this dependency to constructor
     internal var eventHandler: EventHandlerImpl
         get() = _eventHandler ?: EventHandlerImpl(this, client, globalState, scope, repos)
+            .also { eventHandler ->
+                _eventHandler = eventHandler
+            }
         set(value) {
             _eventHandler = value
         }
