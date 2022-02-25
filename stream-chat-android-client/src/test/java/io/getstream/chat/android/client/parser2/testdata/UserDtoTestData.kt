@@ -14,6 +14,8 @@ internal object UserDtoTestData {
         """{
             "id": "",
             "role": "",
+            "name": "username",
+            "image": "image",
             "invisible": false,
             "banned": false,
             "devices": [],
@@ -33,6 +35,8 @@ internal object UserDtoTestData {
         DownstreamUserDto(
             banned = false,
             id = "",
+            name = "username",
+            image = "image",
             invisible = false,
             role = "",
             devices = emptyList(),
@@ -79,12 +83,15 @@ internal object UserDtoTestData {
             ],
             "teams": [ "team1", "team2" ],
             "channel_mutes": [],
-            "name": "username"
+            "name": "username",
+            "image": "image"
          }"""
     val downstreamUser =
         DownstreamUserDto(
             banned = false,
             id = "userId",
+            name = "username",
+            image = "image",
             invisible = false,
             role = "owner",
             devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider")),
@@ -106,7 +113,7 @@ internal object UserDtoTestData {
             ),
             teams = listOf("team1", "team2"),
             channel_mutes = emptyList(),
-            extraData = mapOf("name" to "username"),
+            extraData = emptyMap(),
         )
 
     @Language("JSON")
@@ -114,6 +121,8 @@ internal object UserDtoTestData {
         """{
             "banned": true,
             "id": "userId",
+            "name": "username",
+            "image": "image",
             "invisible": false,
             "role": "owner",
             "devices": [],
@@ -123,6 +132,8 @@ internal object UserDtoTestData {
     val upstreamUserWithoutExtraData = UpstreamUserDto(
         id = "userId",
         role = "owner",
+        name = "username",
+        image = "image",
         invisible = false,
         banned = true,
         devices = emptyList(),
@@ -135,6 +146,8 @@ internal object UserDtoTestData {
         """{
             "banned": false,
             "id": "userId",
+            "name": "username",
+            "image": "image",
             "invisible": false,
             "role": "owner",
             "devices": [
@@ -143,8 +156,7 @@ internal object UserDtoTestData {
               "push_provider": "provider"
              }
             ],
-            "teams": [ "team1", "team2"],
-            "name": "username"
+            "teams": [ "team1", "team2"]
          }""".withoutWhitespace()
 
     val upstreamUser = UpstreamUserDto(
@@ -154,6 +166,8 @@ internal object UserDtoTestData {
         banned = false,
         devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider")),
         teams = listOf("team1", "team2"),
-        extraData = mapOf("name" to "username"),
+        name = "username",
+        image = "image",
+        extraData = emptyMap(),
     )
 }

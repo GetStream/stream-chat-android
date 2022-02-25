@@ -24,6 +24,7 @@
 - Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ### ⚠️ Changed
+- Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
 
 ### ❌ Removed
 

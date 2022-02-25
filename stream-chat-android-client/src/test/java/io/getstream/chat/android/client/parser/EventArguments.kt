@@ -120,7 +120,9 @@ internal object EventArguments {
         lastActive = date,
         unreadChannels = 2,
         totalUnreadCount = 26,
-        extraData = mutableMapOf("name" to "Bender", "image" to "https://api.adorable.io/avatars/285/bender.png")
+        name = "Bender",
+        image = "https://api.adorable.io/avatars/285/bender.png",
+        extraData = mutableMapOf(),
     )
 
     private val member = Member(user, role = "user", createdAt = date, updatedAt = date)
