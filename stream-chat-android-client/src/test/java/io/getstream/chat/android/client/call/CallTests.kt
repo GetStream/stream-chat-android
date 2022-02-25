@@ -66,6 +66,20 @@ internal class CallTests {
     }
 
     @Test
+    fun `Should return from onErrorReturn when precondition fails`() {
+        runBlockingTest {
+            val result = CoroutineCall(testCoroutines.scope) {
+                Result(listOf(10, 20, 30))
+            }.withPrecondition(testCoroutines.scope) {
+                Result.error(ChatError("Error from precondition"))
+            }.onErrorReturn(testCoroutines.scope) {
+                Result(listOf(0, 1))
+            }.await()
+            result shouldBeEqualTo Result(listOf(0, 1))
+        }
+    }
+
+    @Test
     fun `Should not return from onErrorReturn when original call gives success`() {
         runBlockingTest {
             val result = CoroutineCall(testCoroutines.scope) {

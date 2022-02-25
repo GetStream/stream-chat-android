@@ -97,6 +97,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryUsers (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun reconnectSocket ()V
 	public final fun rejectInvite (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -1901,6 +1902,14 @@ public final class io/getstream/chat/android/client/experimental/errorhandler/li
 	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/QueryMembersErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun onQueryMembersError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/QueryMembersErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/QueryMembersErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
 	public abstract fun onSendReactionError (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
 }
@@ -1979,6 +1988,10 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener$DefaultImpls {
 	public static fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/QueryMembersListener {
+	public abstract fun onQueryChannelsResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener {

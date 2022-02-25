@@ -698,12 +698,23 @@ public class ChannelClient internal constructor(
         return client.sendEvent(eventType, channelType, channelId, extraData)
     }
 
+    /**
+     * Queries members for this channel.
+     *
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members to search in distinct channels.
+     *
+     * @return [Call] with a list of members or an error.
+     */
     @CheckResult
     public fun queryMembers(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member> = QuerySort(),
+        sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
