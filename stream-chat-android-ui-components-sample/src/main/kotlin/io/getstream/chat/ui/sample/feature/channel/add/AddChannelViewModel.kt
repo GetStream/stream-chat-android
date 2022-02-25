@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.extensions.searchUsersByName
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,13 +53,44 @@ class AddChannelViewModel : ViewModel() {
             _state.value = State.Loading
         }
         latestSearchCall?.cancel()
-        latestSearchCall = chatClient.searchUsersByName(searchQuery, offset, USERS_LIMIT, true)
+        latestSearchCall = chatClient.queryUsers(createSearchQuery(searchQuery, offset, USERS_LIMIT, true))
         latestSearchCall?.enqueue { result ->
             if (result.isSuccess) {
                 val users = result.data()
                 _state.postValue(if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users))
                 updatePaginationData(users)
             }
+        }
+    }
+
+    private fun createSearchQuery(querySearch: String, offset: Int, usersLimit: Int, userPresence: Boolean): QueryUsersRequest {
+        val filter = if (querySearch.isEmpty()) {
+            val currentUserId = chatClient.getCurrentUser()?.id
+            if (currentUserId != null) {
+                Filters.ne(FIELD_ID, currentUserId)
+            } else {
+                Filters.neutral()
+            }
+        } else {
+            createFilter(
+                Filters.autocomplete(FIELD_NAME, querySearch),
+                chatClient.getCurrentUser()?.id?.let { id -> Filters.ne(FIELD_ID, id) }
+            )
+        }
+        return QueryUsersRequest(
+            filter = filter,
+            offset = offset,
+            limit = usersLimit,
+            querySort = USERS_QUERY_SORT,
+            presence = userPresence
+        )
+    }
+
+    private fun createFilter(defaultFilter: FilterObject, optionalFilter: FilterObject?): FilterObject {
+        return if (optionalFilter != null) {
+            Filters.and(defaultFilter, optionalFilter)
+        } else {
+            defaultFilter
         }
     }
 
@@ -111,6 +145,11 @@ class AddChannelViewModel : ViewModel() {
     companion object {
         private const val USERS_LIMIT = 30
         private const val CHANNEL_MESSAGING_TYPE = "messaging"
+
+        private val USERS_QUERY_SORT = QuerySort.asc(User::name)
+
+        private const val FIELD_NAME = "name"
+        private const val FIELD_ID = "id"
     }
 
     sealed class State {

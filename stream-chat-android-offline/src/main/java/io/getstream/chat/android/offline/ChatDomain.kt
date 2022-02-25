@@ -486,25 +486,6 @@ public sealed interface ChatDomain {
     )
     public fun deleteChannel(cid: String): Call<Unit>
 
-    /**
-     * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
-     * in local database.
-     *
-     * @param querySearch Search string used as autocomplete.
-     * @param offset Offset for paginated requests.
-     * @param userLimit The page size in the request.
-     * @param userPresence Presence flag to obtain additional info such as last active date.
-     *
-     * @return Executable async [Call] querying users.
-     */
-    @CheckResult
-    public fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>>
-
     public data class Builder(
         private val appContext: Context,
         private val client: ChatClient,
