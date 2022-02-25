@@ -110,17 +110,6 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
-        InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener(chatDomainImpl::userConnected)
-
-            addUserDisconnectedListener {
-                stateRegistry.clear()
-                logic.clear()
-                globalState.clearState()
-                MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
-            }
-        }
-
         val activeEntitiesManager = ActiveEntitiesManager(
             chatClient = chatClient,
             logic = logic,
@@ -138,7 +127,7 @@ public class StreamOfflinePluginFactory(
             activeEntitiesManager = activeEntitiesManager
         )
 
-        EventHandlerImpl(
+        val eventHandler = EventHandlerImpl(
             recoveryEnabled = true,
             domainImpl = chatDomainImpl,
             client = chatClient,
@@ -148,6 +137,19 @@ public class StreamOfflinePluginFactory(
             syncManager = syncManager,
             activeEntitiesManager = activeEntitiesManager
         )
+
+        chatDomainImpl.eventHandler = eventHandler
+
+        InitializationCoordinator.getOrCreate().run {
+            addUserConnectedListener(chatDomainImpl::userConnected)
+
+            addUserDisconnectedListener {
+                stateRegistry.clear()
+                logic.clear()
+                globalState.clearState()
+                MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
+            }
+        }
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
