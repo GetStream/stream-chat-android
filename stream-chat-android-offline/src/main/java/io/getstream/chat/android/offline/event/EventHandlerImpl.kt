@@ -64,6 +64,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
@@ -79,12 +80,13 @@ import java.util.Date
 @ExperimentalStreamChatApi
 internal class EventHandlerImpl(
     private var recoveryEnabled: Boolean = true,
-    private val domainImpl: ChatDomainImpl,
+    private val domainImpl: ChatDomainImpl, // Todo: This needs to go away
     private val client: ChatClient,
     private val mutableGlobalState: GlobalMutableState,
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
+    private val activeEntitiesManager: ActiveEntitiesManager,
 ) {
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
@@ -125,9 +127,9 @@ internal class EventHandlerImpl(
                             }
                         }
 
-                        //Todo: Events belong to EventHandlerImpl
+                        // Todo: Events belong to EventHandlerImpl
                         // 4. recover missing events
-                        val activeChannelCids = getActiveChannelCids()
+                        val activeChannelCids = activeEntitiesManager.activeChannelsCids()
                         if (activeChannelCids.isNotEmpty()) {
                             replayEventsForChannels(activeChannelCids)
                         }
@@ -154,7 +156,6 @@ internal class EventHandlerImpl(
             handleEventsInternal(resultChatEvent.data(), isFromSync = true)
         }
     }
-
 
     private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
         client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()

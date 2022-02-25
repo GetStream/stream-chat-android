@@ -35,6 +35,8 @@ internal class ActiveEntitiesManager(
 
     fun activeChannels(): List<ChannelController> = activeChannelMap.values.toList()
 
+    fun activeChannelsCids(): List<String> = activeChannelMap.keys.toList()
+
     internal fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
     }
@@ -63,5 +65,4 @@ internal class ActiveEntitiesManager(
         }
         return activeChannelMap.getValue(cid)
     }
-
 }

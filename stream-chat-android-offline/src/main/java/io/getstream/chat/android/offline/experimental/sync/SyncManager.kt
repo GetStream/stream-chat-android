@@ -101,7 +101,7 @@ internal class SyncManager(
             .map { it.key }
             .toList()
 
-        logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying ${queriesToRetry} queries and ${cids.size} channels")
+        logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying $queriesToRetry queries and ${cids.size} channels")
 
         var missingChannelIds = listOf<String>()
 

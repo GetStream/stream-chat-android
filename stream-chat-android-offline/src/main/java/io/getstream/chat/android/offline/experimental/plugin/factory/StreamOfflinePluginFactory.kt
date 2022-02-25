@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.SendReacti
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
@@ -120,15 +121,21 @@ public class StreamOfflinePluginFactory(
             }
         }
 
+        val activeEntitiesManager = ActiveEntitiesManager(
+            chatClient = chatClient,
+            logic = logic,
+            stateRegistry = stateRegistry,
+            scope = scope,
+            userPresence = true, // Todo fix that later!!
+            repos = repos,
+            globalState = globalState,
+        )
+
         val syncManager = SyncManager(
             chatClient = chatClient,
-                globalState = globalState,
-                repos =repos,
-                logic = logic,
-                stateRegistry =stateRegistry,
-                scope = scope,
-                eventHandler =
-                userPresence
+            globalState = globalState,
+            repos = repos,
+            activeEntitiesManager = activeEntitiesManager
         )
 
         EventHandlerImpl(
@@ -138,7 +145,8 @@ public class StreamOfflinePluginFactory(
             mutableGlobalState = globalState,
             scope = scope,
             repos = repos,
-            syncManager = syncManager
+            syncManager = syncManager,
+            activeEntitiesManager = activeEntitiesManager
         )
 
         return OfflinePlugin(
