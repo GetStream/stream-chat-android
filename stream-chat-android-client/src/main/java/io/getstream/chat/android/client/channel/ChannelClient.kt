@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
@@ -256,15 +257,30 @@ public class ChannelClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel with side effects if there is any plugin added in the client.
      *
-     * @param message Message object
+     * @param message Message to send.
+     * @param isRetrying True if this message is being retried.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
-    public fun sendMessage(message: Message): Call<Message> {
-        return client.sendMessage(channelType, channelId, message)
+    @JvmOverloads
+    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
+        return client.sendMessage(channelType, channelId, message, isRetrying)
+    }
+
+    /**
+     * Sends the message to the given channel without running any side effects.
+     *
+     * @param message Message to send.
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
+    @InternalStreamChatApi
+    @CheckResult
+    public fun sendMessageInternal(message: Message): Call<Message> {
+        return client.sendMessageInternal(channelType, channelId, message)
     }
 
     @CheckResult

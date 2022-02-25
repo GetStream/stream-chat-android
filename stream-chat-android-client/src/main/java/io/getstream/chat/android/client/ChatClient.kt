@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
@@ -51,6 +52,8 @@ import io.getstream.chat.android.client.experimental.errorhandler.listeners.Send
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onQueryMembersError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
+import io.getstream.chat.android.client.experimental.interceptor.Interceptor
+import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -114,6 +117,7 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -168,6 +172,8 @@ public class ChatClient internal constructor(
 
     public lateinit var plugins: List<Plugin>
 
+    private var interceptors: MutableList<Interceptor> = mutableListOf()
+
     /**
      * Error handlers for API calls.
      */
@@ -217,6 +223,11 @@ public class ChatClient internal constructor(
 
     internal fun addPlugins(plugins: List<Plugin>) {
         this.plugins = plugins
+    }
+
+    @InternalStreamChatApi
+    public fun addInterceptor(interceptor: Interceptor) {
+        this.interceptors.add(interceptor)
     }
 
     internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
@@ -1088,29 +1099,65 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel without running any side effects.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param message Message object
+     * @param message Message to send.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
-    @CheckResult
-    public fun sendMessage(
+    internal fun sendMessageInternal(
         channelType: String,
         channelId: String,
         message: Message,
     ): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
-
         return api.sendMessage(channelType, channelId, message)
-            .doOnStart(scope) { relevantPlugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach {
-                    it.onMessageSendResult(result, channelType, channelId, message)
-                }
+    }
+
+    /**
+     * Sends the message to the given channel. If [isRetrying] is set to true, the message may not be prepared again.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message Message object
+     * @param isRetrying True if this message is being retried.
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun sendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean = false,
+    ): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
+        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
+        return CoroutineCall(scope) {
+
+            // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
+            // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
+            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+                if (message.isSuccess) {
+                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
+                } else message
+            }.flatMapSuspend { newMessage ->
+                api.sendMessage(channelType, channelId, newMessage)
+                    .retry(scope, retryPolicy)
+                    .doOnResult(scope) { result ->
+                        relevantPlugins.forEach {
+                            it.onMessageSendResult(
+                                result,
+                                channelType,
+                                channelId,
+                                newMessage
+                            )
+                        }
+                    }.await()
             }
+        }
     }
 
     /**
