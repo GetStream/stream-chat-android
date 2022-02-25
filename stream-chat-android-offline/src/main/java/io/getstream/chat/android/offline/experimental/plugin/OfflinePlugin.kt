@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllRea
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -32,6 +33,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param sendReactionListener [SendReactionListener]
  * @param deleteMessageListener [DeleteMessageListener]
  * @param sendGiphyListener [SendGiphyListener]
+ * @param sendMessageListener [SendMessageListener]
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
@@ -48,6 +50,7 @@ internal class OfflinePlugin(
     private val sendReactionListener: SendReactionListener,
     private val deleteMessageListener: DeleteMessageListener,
     private val sendGiphyListener: SendGiphyListener,
+    private val sendMessageListener: SendMessageListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -60,7 +63,8 @@ internal class OfflinePlugin(
     DeleteReactionListener by deleteReactionListener,
     SendReactionListener by sendReactionListener,
     DeleteMessageListener by deleteMessageListener,
-    SendGiphyListener by sendGiphyListener {
+    SendGiphyListener by sendGiphyListener,
+    SendMessageListener by sendMessageListener {
 
     override val name: String = MODULE_NAME
 

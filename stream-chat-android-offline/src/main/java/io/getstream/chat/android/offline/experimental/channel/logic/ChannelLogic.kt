@@ -99,6 +99,9 @@ internal class ChannelLogic(
 
     private val logger = ChatLogger.get("Query channel request")
 
+    public val cid: String
+        get() = mutableState.cid
+
     private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
 
     private fun loadingStateByRequest(request: QueryChannelRequest) = when {
@@ -338,7 +341,7 @@ internal class ChannelLogic(
         setWatchers(c.watchers)
         upsertMessages(c.messages)
         mutableState.lastMessageAt.value = c.lastMessageAt
-        mutableState.channelConfig.value = c.config
+        mutableState._channelConfig.value = c.config
     }
 
     internal fun upsertMessages(messages: List<Message>) {
@@ -366,7 +369,7 @@ internal class ChannelLogic(
         chatDomainImpl.repos.insertMessages(messages)
     }
 
-    private fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
     internal fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
@@ -866,7 +869,7 @@ internal class ChannelLogic(
      * @return True if channel is marked as read otheriwse False.
      */
     private fun markReadInternal(): Boolean {
-        if (!mutableState.channelConfig.value.readEventsEnabled) {
+        if (!mutableState._channelConfig.value.readEventsEnabled) {
             return false
         }
 
@@ -899,6 +902,12 @@ internal class ChannelLogic(
 
                 shouldUpdate
             }
+    }
+
+    public fun toChannel(): Channel = mutableState.toChannel()
+
+    internal fun replyMessage(repliedMessage: Message?) {
+        mutableState._repliedMessage.value = repliedMessage
     }
 
     private companion object {

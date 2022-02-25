@@ -40,7 +40,7 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
         clientMock.loadOlderMessages(data.channel1.cid, 10).execute()
 
         val messages1: Collection<Message> = channelController.messages.value
-        chatDomain.sendMessage(newMessage).execute()
+        clientMock.channel(data.channel1.cid).sendMessage(newMessage).execute()
 
         val messages2 = channelController.messages.value
 

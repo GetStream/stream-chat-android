@@ -662,8 +662,8 @@ public class MessageInputView : ConstraintLayout {
                     refreshControlsState()
                     handleKeyStroke()
 
-                    /* Debouncing when clearing the input will cause the suggestion list
-                    popup to appear briefly after clearing the input in certain cases. */
+                    /** Debouncing when clearing the input will cause the suggestion list
+                     popup to appear briefly after clearing the input in certain cases. */
                     if (messageText.isEmpty()) {
                         messageInputDebouncer?.cancelLastDebounce()
                         suggestionListController?.onNewMessageText(messageText)

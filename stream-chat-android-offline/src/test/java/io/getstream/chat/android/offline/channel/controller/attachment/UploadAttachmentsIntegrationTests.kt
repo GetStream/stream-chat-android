@@ -39,7 +39,7 @@ import java.io.File
 internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrationTest() {
 
     private val channelClient: ChannelClient = mock {
-        on(it.sendMessage(any())) doReturn TestCall(Result(Message()))
+        on(it.sendMessage(any(), any())) doReturn TestCall(Result(Message()))
     }
 
     private val chatClient: ChatClient = mock {

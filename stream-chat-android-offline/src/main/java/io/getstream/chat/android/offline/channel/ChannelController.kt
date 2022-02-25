@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
@@ -30,8 +29,6 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
-import io.getstream.chat.android.offline.message.MessageSendingService
-import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
@@ -57,7 +54,6 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
-    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
@@ -75,9 +71,6 @@ public class ChannelController internal constructor(
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
-
-    private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.create(domainImpl, this, client, client.channel(cid))
 
     internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
@@ -110,7 +103,7 @@ public class ChannelController internal constructor(
     public val loadingNewerMessages: StateFlow<Boolean> by mutableState::loadingNewerMessages
     public val endOfOlderMessages: StateFlow<Boolean> by mutableState::endOfOlderMessages
     public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
-    public val channelConfig: StateFlow<Config> by mutableState::channelConfig
+    public val channelConfig: StateFlow<Config> by mutableState::_channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
@@ -123,7 +116,7 @@ public class ChannelController internal constructor(
         }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
+        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
@@ -140,7 +133,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
+        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
@@ -163,7 +156,7 @@ public class ChannelController internal constructor(
      * @return whether the channel was marked as read or not
      */
     internal fun markRead(): Boolean {
-        if (!mutableState.channelConfig.value.readEventsEnabled) {
+        if (!mutableState._channelConfig.value.readEventsEnabled) {
             return false
         }
 
@@ -278,10 +271,10 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal suspend fun sendMessage(message: Message): Result<Message> = messageSendingService.sendNewMessage(message)
+    internal suspend fun sendMessage(message: Message): Result<Message> = channelClient.sendMessage(message).await()
 
     internal suspend fun retrySendMessage(message: Message): Result<Message> =
-        messageSendingService.sendMessage(message)
+        channelClient.sendMessage(message, true).await()
 
     internal suspend fun uploadAttachments(
         message: Message,
@@ -337,32 +330,6 @@ public class ChannelController internal constructor(
                 mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
             mutableState._messages.value = newMessages
         }
-    }
-
-    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        return processedMessage
-            .let { message -> message.enrichWithCid(cid) }
-            .copy(syncStatus = SyncStatus.COMPLETED)
-            .also { domainImpl.repos.insertMessage(it) }
-            .also { upsertMessage(it) }
-    }
-
-    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
-        logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: $error",
-            error
-        )
-
-        return message.copy(
-            syncStatus = if (error.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-            updatedLocallyAt = Date(),
-        )
-            .also { domainImpl.repos.insertMessage(it) }
-            .also { upsertMessage(it) }
     }
 
     /**
@@ -469,7 +436,9 @@ public class ChannelController internal constructor(
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
             // TODO: Will be removed after migrating ChatDomain
-            val job = domainImpl.scope.async { client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await() }
+            val job = domainImpl.scope.async {
+                client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await()
+            }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
@@ -519,8 +488,6 @@ public class ChannelController internal constructor(
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
     }
-
-    internal fun cancelJobs() = messageSendingService.cancelJobs()
 
     public sealed class MessagesState {
         /** The ChannelController is initialized but no query is currently running.
