@@ -10,7 +10,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.event.EventHandlerImpl
-import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
+import io.getstream.chat.android.offline.event.EventHandlerProvider
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
@@ -36,6 +36,7 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -121,35 +122,11 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
-        val activeEntitiesManager = ActiveEntitiesManager(
-            chatClient = chatClient,
-            logic = logic,
-            stateRegistry = stateRegistry,
-            scope = scope,
-            userPresence = true, // Todo fix that later!!
-            repos = repos,
-            globalState = globalState,
-        )
-
-        val syncManager = SyncManager(
-            chatClient = chatClient,
-            globalState = globalState,
-            repos = repos,
-            activeEntitiesManager = activeEntitiesManager
-        )
-
-        val eventHandler = EventHandlerImpl(
-            recoveryEnabled = true,
-            domainImpl = chatDomainImpl,
-            client = chatClient,
-            mutableGlobalState = globalState,
-            scope = scope,
-            repos = repos,
-            syncManager = syncManager,
-            activeEntitiesManager = activeEntitiesManager
-        )
+        val eventHandler =
+            createEventHandler(chatClient, chatDomainImpl, logic, stateRegistry, scope, repos, globalState)
 
         chatDomainImpl.eventHandler = eventHandler
+        EventHandlerProvider.set(eventHandler)
 
         InitializationCoordinator.getOrCreate().run {
             addUserConnectedListener(chatDomainImpl::userConnected)
@@ -178,6 +155,44 @@ public class StreamOfflinePluginFactory(
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
+        )
+    }
+
+    private fun createEventHandler(
+        chatClient: ChatClient,
+        domainImpl: ChatDomainImpl,
+        logic: LogicRegistry,
+        stateRegistry: StateRegistry,
+        scope: CoroutineScope,
+        repos: RepositoryFacade,
+        globalState: GlobalMutableState,
+    ): EventHandlerImpl {
+        val activeEntitiesManager = ActiveEntitiesManager(
+            chatClient = chatClient,
+            logic = logic,
+            stateRegistry = stateRegistry,
+            scope = scope,
+            userPresence = true, // Todo fix that later!!
+            repos = repos,
+            globalState = globalState,
+        )
+
+        val syncManager = SyncManager(
+            chatClient = chatClient,
+            globalState = globalState,
+            repos = repos,
+            activeEntitiesManager = activeEntitiesManager
+        )
+
+        return EventHandlerImpl(
+            recoveryEnabled = true,
+            domainImpl = domainImpl,
+            client = chatClient,
+            mutableGlobalState = globalState,
+            scope = scope,
+            repos = repos,
+            syncManager = syncManager,
+            activeEntitiesManager = activeEntitiesManager
         )
     }
 }
