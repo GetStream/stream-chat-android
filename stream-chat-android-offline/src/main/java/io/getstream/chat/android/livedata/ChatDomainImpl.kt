@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -218,20 +217,5 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
 
-    override fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>> = chatDomainStateFlow.searchUsersByName(querySearch, offset, userLimit, userPresence)
-
-    override fun queryMembers(
-        cid: String,
-        offset: Int,
-        limit: Int,
-        filter: FilterObject,
-        sort: QuerySort<Member>,
-        members: List<Member>,
-    ): Call<List<Member>> = chatDomainStateFlow.queryMembers(cid, offset, limit, filter, sort, members)
     // end region
 }

@@ -46,8 +46,10 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.QueryMembersErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.SendReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onQueryMembersError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
 import io.getstream.chat.android.client.experimental.interceptor.Interceptor
 import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
@@ -61,6 +63,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
@@ -459,6 +462,19 @@ public class ChatClient internal constructor(
         return api.getGuestUser(userId, userName)
     }
 
+    /**
+     * Query members and apply side effects if there are any.
+     *
+     * @param channelType The type of channel.
+     * @param channelId The id of the channel.
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members to search in distinct channels.
+     *
+     * @return [Call] with a list of members or an error.
+     */
     @CheckResult
     public fun queryMembers(
         channelType: String,
@@ -467,9 +483,26 @@ public class ChatClient internal constructor(
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member>,
-        members: List<Member>,
+        members: List<Member> = emptyList(),
     ): Call<List<Member>> {
+        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
+        val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onQueryChannelsResult(
+                        result,
+                        channelType,
+                        channelId,
+                        offset,
+                        limit,
+                        filter,
+                        sort,
+                        members
+                    )
+                }
+            }
+            .onQueryMembersError(errorHandlers, channelType, channelId, offset, limit, filter, sort, members)
     }
 
     /**
@@ -1606,10 +1639,15 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Query users matching [query] request.
+     *
+     * @param query [QueryUsersRequest] with query parameters like filters, sort to get matching users.
+     *
+     * @return [Call] with a list of [User].
+     */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.queryUsers(query)
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
     @CheckResult
     public fun addMembers(
