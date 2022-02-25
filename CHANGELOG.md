@@ -76,8 +76,11 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
+
 
 ### ⬆️ Improved
+- Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ✅ Added
 
