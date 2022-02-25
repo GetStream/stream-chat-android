@@ -76,7 +76,6 @@ import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.QueryMembers
-import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
@@ -949,13 +948,6 @@ internal class ChatDomainImpl internal constructor(
     override fun leaveChannel(cid: String): Call<Unit> = LeaveChannel(this).invoke(cid)
 
     override fun deleteChannel(cid: String): Call<Unit> = client.channel(cid).delete().toUnitCall()
-
-    override fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>> = SearchUsersByName(this).invoke(querySearch, offset, userLimit, userPresence)
 
     override fun queryMembers(
         cid: String,
