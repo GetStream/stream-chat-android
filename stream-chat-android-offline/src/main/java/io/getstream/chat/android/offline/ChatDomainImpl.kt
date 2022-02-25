@@ -173,7 +173,7 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     // Todo: Move this dependency to constructor
     internal var eventHandler: EventHandlerImpl
-        get() = _eventHandler ?: EventHandlerImpl(this, client, globalState, scope, repos)
+        get() = _eventHandler ?: throw IllegalArgumentException("EventHandlerImpl was not initialized yet")
         set(value) {
             _eventHandler = value
         }
