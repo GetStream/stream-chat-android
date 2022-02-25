@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllRea
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
@@ -31,6 +32,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param markAllReadListener [MarkAllReadListener]
  * @param deleteReactionListener [DeleteReactionListener]
  * @param sendReactionListener [SendReactionListener]
+ * @param deleteMessageListener [DeleteMessageListener]
+ * @param sendGiphyListener [SendGiphyListener]
  * @param sendMessageListener [SendMessageListener]
  */
 @InternalStreamChatApi
@@ -47,6 +50,7 @@ internal class OfflinePlugin(
     private val deleteReactionListener: DeleteReactionListener,
     private val sendReactionListener: SendReactionListener,
     private val deleteMessageListener: DeleteMessageListener,
+    private val sendGiphyListener: SendGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val queryMembersListener: QueryMembersListener,
 ) : Plugin,
@@ -61,6 +65,7 @@ internal class OfflinePlugin(
     DeleteReactionListener by deleteReactionListener,
     SendReactionListener by sendReactionListener,
     DeleteMessageListener by deleteMessageListener,
+    SendGiphyListener by sendGiphyListener,
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener {
 
