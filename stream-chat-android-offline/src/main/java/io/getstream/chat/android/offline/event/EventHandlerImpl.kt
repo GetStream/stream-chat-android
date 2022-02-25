@@ -59,6 +59,9 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.client.utils.onSuccess
+import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.extensions.logic
@@ -127,7 +130,6 @@ internal class EventHandlerImpl(
                             }
                         }
 
-                        // Todo: Events belong to EventHandlerImpl
                         // 4. recover missing events
                         val activeChannelCids = activeEntitiesManager.activeChannelsCids()
                         if (activeChannelCids.isNotEmpty()) {
@@ -150,20 +152,29 @@ internal class EventHandlerImpl(
         }
     }
 
-    private suspend fun replayEventsForChannels(cids: List<String>) {
+    internal suspend fun replyEventsForActiveChannels(): Result<List<ChatEvent>> {
+        return replayEventsForChannels(activeEntitiesManager.activeChannelsCids())
+    }
+
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         val resultChatEvent = queryEvents(cids)
-        if (resultChatEvent.isSuccess) {
-            handleEventsInternal(resultChatEvent.data(), isFromSync = true)
+
+        return resultChatEvent.onSuccessSuspend { eventList ->
+            handleEventsInternal(eventList, isFromSync = true)
         }
     }
 
-    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
+    internal fun addNewChannelToReplayEvents(cid: String) {
+        activeEntitiesManager.channel(cid)
+    }
 
     internal suspend fun handleEvent(event: ChatEvent) {
         handleConnectEvents(listOf(event))
         handleEventsInternal(listOf(event), isFromSync = false)
     }
+
+    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
+        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
         events.sortedBy(ChatEvent::createdAt)

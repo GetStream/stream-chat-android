@@ -2,35 +2,44 @@ package io.getstream.chat.android.offline.service.sync
 
 import android.content.Context
 import androidx.work.Constraints
+import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.event.EventHandlerProvider
+import io.getstream.chat.android.offline.utils.validateCid
 
+@ExperimentalStreamChatApi
 internal class SyncMessagesWork(
     appContext: Context,
     workerParams: WorkerParameters,
-) : Worker(appContext, workerParams) {
+) : CoroutineWorker(appContext, workerParams) {
 
     private val logger = ChatLogger.get("SyncMessagesWork")
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val cid = inputData.getString(DATA_CID)!!
-        val result = ChatClient.instance().replayEventsForActiveChannels(cid).execute()
+
+        try {
+            validateCid(cid)
+        } catch (ex: IllegalArgumentException) {
+            return Result.failure()
+        }
+
+        val eventHandlerImpl = EventHandlerProvider.get()
+        eventHandlerImpl.addNewChannelToReplayEvents(cid)
+        val result = eventHandlerImpl.replyEventsForActiveChannels()
 
         return if (result.isSuccess) {
             logger.logD("Sync success.")
-
             Result.success()
         } else {
             logger.logD("Sync failed.")
-
             Result.retry()
         }
     }
