@@ -4,30 +4,22 @@ package io.getstream.chat.android.offline.extensions
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
-import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
-
-private const val KEY_MESSAGE_ACTION = "image_action"
-private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-private const val MESSAGE_ACTION_SEND = "send"
 
 /**
  * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
@@ -194,43 +186,6 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
     val channelController = domainImpl().channel(cid)
 
     return channelController.markRead()
-}
-
-/**
- * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
- * Returns new "ephemeral" message with new giphy url.
- * API call to remove the message is retried according to the retry policy specified on the chatDomain
- *
- * @param message The message to send.
- * @see io.getstream.chat.android.offline.utils.RetryPolicy
- */
-internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
-    val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
-        val cid = message.cid
-        val channelController = domainImpl.channel(cid)
-        val channelClient = channel(channelController.channelType, channelController.channelId)
-
-        validateCid(cid)
-
-        val request = message.run {
-            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
-        }
-
-        val result = channelClient.sendAction(request).retry(domainImpl.scope, retryPolicy).await()
-
-        if (result.isSuccess) {
-            val processedMessage: Message = result.data()
-            processedMessage.apply {
-                syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertMessage(this)
-            }
-            channelController.upsertMessage(processedMessage)
-            Result(processedMessage)
-        } else {
-            Result(result.error())
-        }
-    }
 }
 
 /**

@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembe
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -34,7 +35,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param sendReactionListener [SendReactionListener]
  * @param deleteMessageListener [DeleteMessageListener]
  * @param sendGiphyListener [SendGiphyListener]
+ * @param shuffleGiphyListener [ShuffleGiphyListener]
  * @param sendMessageListener [SendMessageListener]
+ * @param queryMembersListener [QueryMembersListener]
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
@@ -51,6 +54,7 @@ internal class OfflinePlugin(
     private val sendReactionListener: SendReactionListener,
     private val deleteMessageListener: DeleteMessageListener,
     private val sendGiphyListener: SendGiphyListener,
+    private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val queryMembersListener: QueryMembersListener,
 ) : Plugin,
@@ -66,6 +70,7 @@ internal class OfflinePlugin(
     SendReactionListener by sendReactionListener,
     DeleteMessageListener by deleteMessageListener,
     SendGiphyListener by sendGiphyListener,
+    ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener {
 
