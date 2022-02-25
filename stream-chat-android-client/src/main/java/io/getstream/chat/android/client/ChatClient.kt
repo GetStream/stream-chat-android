@@ -1614,10 +1614,15 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Query users matching [query] request.
+     *
+     * @param query [QueryUsersRequest] with query parameters like filters, sort to get matching users.
+     *
+     * @return [Call] with a list of [User].
+     */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.queryUsers(query)
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
     @CheckResult
     public fun addMembers(
