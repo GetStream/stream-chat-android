@@ -84,6 +84,10 @@
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 - Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104), [#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
+- Renamed the `state.channel` package to `state.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Renamed the `viewmodel.channel` package to `viewmodel.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Moved the contents of the `ui.imagepreview` and `ui.mediapreview` packages to `ui.attachments.preview`. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Moved the preview handlers from the `ui.filepreview` package to `ui.attachments.preview.handler` [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 
 ### ❌ Removed
 
