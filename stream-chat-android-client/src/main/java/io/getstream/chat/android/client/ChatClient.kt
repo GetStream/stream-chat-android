@@ -64,6 +64,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllRea
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendEventListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
@@ -85,6 +86,7 @@ import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
@@ -1566,7 +1568,27 @@ public class ChatClient internal constructor(
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
     ): Call<ChatEvent> {
-        return api.sendEvent(eventType, channelType, channelId, extraData)
+        val relevantPlugins = plugins.filterIsInstance<SendEventListener>()
+        val eventTime = Date()
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onSendEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onSendEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onSendEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
     }
 
     public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
@@ -1997,6 +2019,40 @@ public class ChatClient internal constructor(
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
+    /**
+     * Sends a [EventType.TYPING_START] event to the backend.
+     *
+     * @param channelType The type of this channel i.e. messaging etc.
+     * @param channelId The id of this channel.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
+    @CheckResult
+    public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val extraData: Map<Any, Any> = parentId?.let {
+            mapOf(ARG_TYPING_PARENT_ID to parentId)
+        } ?: emptyMap()
+        return sendEvent(EventType.TYPING_START, channelType, channelId, extraData)
+    }
+
+    /**
+     * Sends a [EventType.TYPING_STOP] event to the backend.
+     *
+     * @param channelType The type of this channel i.e. messaging etc.
+     * @param channelId The id of this channel.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
+    @CheckResult
+    public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val extraData: Map<Any, Any> = parentId?.let {
+            mapOf(ARG_TYPING_PARENT_ID to parentId)
+        } ?: emptyMap()
+        return sendEvent(EventType.TYPING_STOP, channelType, channelId, extraData)
+    }
+
     internal fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
         if (connectedEvent != null) {
             val user = connectedEvent.me
@@ -2341,6 +2397,8 @@ public class ChatClient internal constructor(
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+
+        private const val ARG_TYPING_PARENT_ID = "parent_id"
 
         private var instance: ChatClient? = null
 

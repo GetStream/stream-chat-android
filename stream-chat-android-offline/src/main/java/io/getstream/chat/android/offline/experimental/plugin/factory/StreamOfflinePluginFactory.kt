@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.MarkAllRea
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelsListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryMembersListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.SendEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendGiphyListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendReactionListenerImpl
@@ -137,6 +138,7 @@ public class StreamOfflinePluginFactory(
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
+            sendEventListener = SendEventListenerImpl(stateRegistry),
         )
     }
 }

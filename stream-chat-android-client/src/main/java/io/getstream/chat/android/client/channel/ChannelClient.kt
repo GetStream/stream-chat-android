@@ -63,7 +63,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -654,32 +653,22 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun keystroke(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_START, channelType, channelId)
+        return client.keystroke(channelType, channelId)
     }
 
     @CheckResult
-    public fun keystroke(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_START,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
+    public fun keystroke(parentId: String? = null): Call<ChatEvent> {
+        return client.keystroke(channelType, channelId, parentId)
     }
 
     @CheckResult
     public fun stopTyping(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
+        return client.stopTyping(channelType, channelId)
     }
 
     @CheckResult
     public fun stopTyping(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_STOP,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
+        return client.stopTyping(channelType, channelId, parentId)
     }
 
     /**
