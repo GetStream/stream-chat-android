@@ -15,19 +15,16 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -80,8 +77,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -146,9 +141,6 @@ internal class ChatDomainImpl internal constructor(
     }
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
-    // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
-    private val entitiesRetryMutex = Mutex()
-
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
@@ -163,10 +155,6 @@ internal class ChatDomainImpl internal constructor(
      */
 
     internal lateinit var repos: RepositoryFacade
-
-    /** the event subscription */
-    private var eventSubscription: Disposable = EMPTY_DISPOSABLE
-
     /** stores the mapping from cid to ChannelController */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
@@ -288,10 +276,6 @@ internal class ChatDomainImpl internal constructor(
         globalState._errorEvent.value = Event(error)
     }
 
-    fun getActiveChannelCids(): List<String> {
-        return activeChannelMapImpl.keys().toList()
-    }
-
     @VisibleForTesting
     fun addActiveChannel(cid: String, channelController: ChannelController) {
         activeChannelMapImpl[cid] = channelController
@@ -379,122 +363,6 @@ internal class ChatDomainImpl internal constructor(
             val logic = logic.queryChannels(filter, sort)
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
-
-    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
-
-    /**
-     * Updates [SyncState.lastSyncedAt] exposed via [syncStateFlow] with a given date.
-     *
-     * @param date The new last sync date.
-     */
-    private fun updateLastSyncDate(date: Date) {
-        syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = date) }
-    }
-
-    internal suspend fun retryFailedEntities() {
-        entitiesRetryMutex.withLock {
-            // retry channels, messages and reactions in that order..
-            val channels = retryChannels()
-            val messages = retryMessages()
-            val reactions = retryReactions()
-            logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
-        }
-    }
-
-    @VisibleForTesting
-    internal suspend fun retryChannels(): List<Channel> {
-        return repos.selectChannelsSyncNeeded().onEach { channel ->
-            val result = client.createChannel(
-                channel.type,
-                channel.id,
-                channel.members.map(UserEntity::getUserId),
-                channel.extraData
-            ).await()
-
-            when {
-                result.isSuccess -> {
-                    channel.syncStatus = SyncStatus.COMPLETED
-                    repos.insertChannel(channel)
-                }
-                result.isError && result.error().isPermanent() -> {
-                    channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                    repos.insertChannel(channel)
-                }
-            }
-        }
-    }
-
-    @VisibleForTesting
-    internal suspend fun retryMessages(): List<Message> {
-        return retryMessagesWithSyncedAttachments() + retryMessagesWithPendingAttachments()
-    }
-
-    /**
-     * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
-     */
-    private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
-        val retriedMessages = repos.selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
-
-        val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
-            message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
-        }
-
-        failedMessages.forEach { markMessageAsFailed(it) }
-
-        needToBeSync.forEach { message -> channel(message.cid).retrySendMessage(message) }
-
-        return retriedMessages
-    }
-
-    /**
-     * Retries messages with [SyncStatus.SYNC_NEEDED] status.
-     * Messages to retry should have all attachments synchronized or don't have them at all.
-     *
-     * @throws IllegalArgumentException when message contains non-synchronized attachments
-     */
-    private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val (messages, nonCorrectStateMessages) = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED).partition {
-            it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
-        }
-        if (nonCorrectStateMessages.isNotEmpty()) {
-            val message = nonCorrectStateMessages.first()
-            val attachmentUploadState =
-                message.attachments.firstOrNull { it.uploadState != Attachment.UploadState.Success }
-                    ?: Attachment.UploadState.Success
-            logger.logE(
-                "Logical error. Messages with non-synchronized attachments should have another sync status!" +
-                    "\nMessage has ${message.syncStatus} syncStatus, while attachment has $attachmentUploadState upload state"
-            )
-        }
-
-        messages.forEach { message ->
-            val channelClient = client.channel(message.cid)
-
-            when {
-                message.deletedAt != null -> {
-                    logger.logD("Deleting message: ${message.id}")
-                    channelClient.deleteMessage(message.id).await()
-                }
-                message.updatedLocallyAt != null -> {
-                    logger.logD("Updating message: ${message.id}")
-                    client.updateMessage(message).await()
-                }
-                else -> {
-                    logger.logD("Sending message: ${message.id}")
-                    val result = channelClient.sendMessageInternal(message).await()
-
-                    if (result.isSuccess) {
-                        repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-                    } else if (result.isError && result.error().isPermanent()) {
-                        markMessageAsFailed(message)
-                    }
-                }
-            }
-        }
-
-        return messages
-    }
 
     private suspend fun markMessageAsFailed(message: Message) =
         repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
