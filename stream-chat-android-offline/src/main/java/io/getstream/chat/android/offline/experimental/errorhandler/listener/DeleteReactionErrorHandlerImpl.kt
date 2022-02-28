@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * [DeleteReactionErrorHandler] implementation for [io.getstream.chat.android.offline.experimental.errorhandler.OfflineErrorHandler].
@@ -24,7 +23,6 @@ import kotlinx.coroutines.CoroutineScope
  */
 @ExperimentalStreamChatApi
 internal class DeleteReactionErrorHandlerImpl(
-    private val scope: CoroutineScope,
     private val logic: LogicRegistry,
     private val globalState: GlobalState,
 ) : DeleteReactionErrorHandler {
@@ -45,7 +43,7 @@ internal class DeleteReactionErrorHandlerImpl(
         cid: String?,
         messageId: String,
     ): ReturnOnErrorCall<Message> {
-        return originalCall.onErrorReturn(scope) { originalError ->
+        return originalCall.onErrorReturn(logic.scope) { originalError ->
             if (cid == null || globalState.isOnline()) {
                 Result.error<Message>(originalError)
             }
