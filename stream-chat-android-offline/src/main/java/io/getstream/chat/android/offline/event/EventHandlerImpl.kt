@@ -59,8 +59,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.client.utils.onSuccess
+import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -76,6 +75,8 @@ import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -86,7 +87,6 @@ internal class EventHandlerImpl(
     private val domainImpl: ChatDomainImpl, // Todo: This needs to go away
     private val client: ChatClient,
     private val mutableGlobalState: GlobalMutableState,
-    private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
     private val activeEntitiesManager: ActiveEntitiesManager,
@@ -95,15 +95,78 @@ internal class EventHandlerImpl(
     private var firstConnect = true
 
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
+    private var eventSubscription: Disposable = ChatDomainImpl.EMPTY_DISPOSABLE
+    private var handlerEventJob: Deferred<*>? = null
 
-    internal fun handleEvents(events: List<ChatEvent>) {
-        handleConnectEvents(events)
-        scope.launch {
-            handleEventsInternal(events, isFromSync = false)
+    internal fun initialize(user: User, scope: CoroutineScope) {
+        handlerEventJob = scope.async { replayEvensForAllChannels(user) }
+    }
+
+    /**
+     * Start listening to chat events
+     */
+    internal fun startListening(scope: CoroutineScope) {
+        if (eventSubscription.isDisposed) {
+            eventSubscription = client.subscribe {
+                handlerEventJob = scope.async { handleEvents(listOf(it)) }
+            }
         }
     }
 
-    private fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
+    internal fun stopListening() {
+        eventSubscription.dispose()
+    }
+
+    internal fun clear() {
+        firstConnect = true
+    }
+
+    internal suspend fun replyEventsForActiveChannels(): Result<List<ChatEvent>> {
+        return replayEventsForChannels(activeEntitiesManager.activeChannelsCids())
+    }
+
+    internal fun addNewChannelToReplayEvents(cid: String) {
+        activeEntitiesManager.channel(cid)
+    }
+
+    private suspend fun handleEvent(event: ChatEvent) {
+        handleConnectEvents(listOf(event))
+        handleEventsInternal(listOf(event), isFromSync = false)
+    }
+
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+        val resultChatEvent = queryEvents(cids)
+
+        return resultChatEvent.onSuccessSuspend { eventList ->
+            handleEventsInternal(eventList, isFromSync = true)
+        }
+    }
+
+    private suspend fun replayEvensForAllChannels(user: User) {
+        repos.cacheChannelConfigs()
+
+        // load the current user from the db
+        val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
+
+        // retrieve the last time the user marked all as read and handle it as an event
+        //Todo: This is not a real event and should be not handled in EventHandler
+        syncState.markedAllReadAt
+            ?.let { MarkAllReadEvent(user = user, createdAt = it) }
+            ?.let { handleEvent(it) }
+
+        syncState.also { syncStateFlow.value = it }
+
+        // Sync cached channels
+        val cachedChannelsCids = repos.selectAllCids()
+        replayEventsForChannels(cachedChannelsCids)
+    }
+
+    private suspend fun handleEvents(events: List<ChatEvent>) {
+        handleConnectEvents(events)
+        handleEventsInternal(events, isFromSync = false)
+    }
+
+    private suspend fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
         // send out the connect events
         for (event in sortedEvents) {
 
@@ -117,30 +180,26 @@ internal class EventHandlerImpl(
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
                     mutableGlobalState._initialized.value = true
 
-                    scope.launch {
-                        // Todo: Figure out where to put this
-                        if (recoveryEnabled) {
-                            // the first time we connect we should only run recovery against channels and queries that had a failure
-                            if (firstConnect) {
-                                firstConnect = false
-                                syncManager.connectionRecovered(false)
-                            } else {
-                                // the second time (ie coming from background, or reconnecting we should recover all)
-                                syncManager.connectionRecovered(true)
-                            }
+                    // Todo: Figure out where to put this
+                    if (recoveryEnabled) {
+                        // the first time we connect we should only run recovery against channels and queries that had a failure
+                        if (firstConnect) {
+                            firstConnect = false
+                            syncManager.connectionRecovered(false)
+                        } else {
+                            // the second time (ie coming from background, or reconnecting we should recover all)
+                            syncManager.connectionRecovered(true)
                         }
+                    }
 
-                        // 4. recover missing events
-                        val activeChannelCids = activeEntitiesManager.activeChannelsCids()
-                        if (activeChannelCids.isNotEmpty()) {
-                            replayEventsForChannels(activeChannelCids)
-                        }
+                    // 4. recover missing events
+                    val activeChannelCids = activeEntitiesManager.activeChannelsCids()
+                    if (activeChannelCids.isNotEmpty()) {
+                        replayEventsForChannels(activeChannelCids)
                     }
                 }
                 is HealthEvent -> {
-                    scope.launch {
-                        syncManager.retryFailedEntities()
-                    }
+                    syncManager.retryFailedEntities()
                 }
 
                 is ConnectingEvent -> {
@@ -150,27 +209,6 @@ internal class EventHandlerImpl(
                 else -> Unit // Ignore other events
             }
         }
-    }
-
-    internal suspend fun replyEventsForActiveChannels(): Result<List<ChatEvent>> {
-        return replayEventsForChannels(activeEntitiesManager.activeChannelsCids())
-    }
-
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
-        val resultChatEvent = queryEvents(cids)
-
-        return resultChatEvent.onSuccessSuspend { eventList ->
-            handleEventsInternal(eventList, isFromSync = true)
-        }
-    }
-
-    internal fun addNewChannelToReplayEvents(cid: String) {
-        activeEntitiesManager.channel(cid)
-    }
-
-    internal suspend fun handleEvent(event: ChatEvent) {
-        handleConnectEvents(listOf(event))
-        handleEventsInternal(listOf(event), isFromSync = false)
     }
 
     private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
@@ -477,7 +515,7 @@ internal class EventHandlerImpl(
         }
     }
 
-    internal suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
+    private suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
             logger.logD("Received event: $chatEvent")
         }
@@ -591,9 +629,5 @@ internal class EventHandlerImpl(
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
-    }
-
-    internal fun clear() {
-        firstConnect = true
     }
 }

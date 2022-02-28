@@ -129,13 +129,18 @@ public class StreamOfflinePluginFactory(
         EventHandlerProvider.set(eventHandler)
 
         InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener(chatDomainImpl::userConnected)
+            addUserConnectedListener {
+                chatDomainImpl.userConnected(user)
+                eventHandler.startListening(scope)
+            }
 
             addUserDisconnectedListener {
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
                 MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
+                eventHandler.stopListening()
+                eventHandler.clear()
             }
         }
 
@@ -189,7 +194,6 @@ public class StreamOfflinePluginFactory(
             domainImpl = domainImpl,
             client = chatClient,
             mutableGlobalState = globalState,
-            scope = scope,
             repos = repos,
             syncManager = syncManager,
             activeEntitiesManager = activeEntitiesManager
