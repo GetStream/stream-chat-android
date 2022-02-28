@@ -32,21 +32,19 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.event.EventHandlerImpl
-import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
@@ -146,21 +144,10 @@ internal class ChatDomainImpl internal constructor(
      */
 
     internal lateinit var repos: RepositoryFacade
-    /** stores the mapping from cid to ChannelController */
-    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
-    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     override val typingUpdates: StateFlow<TypingEvent> = globalState.typingUpdates
 
-    private var _eventHandler: EventHandlerImpl? = null
-
-    @VisibleForTesting
-    // Todo: Move this dependency to constructor
-    internal var eventHandler: EventHandlerImpl
-        get() = _eventHandler ?: throw IllegalArgumentException("EventHandlerImpl was not initialized yet")
-        set(value) {
-            _eventHandler = value
-        }
+    internal lateinit var activeEntitiesManager: ActiveEntitiesManager
 
     private var logger = ChatLogger.get("Domain")
 
@@ -170,7 +157,7 @@ internal class ChatDomainImpl internal constructor(
             mainHandler.postDelayed(this, 1000)
         }
     }
-    private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
+
     internal var initJob: Deferred<*>? = null
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
@@ -267,11 +254,6 @@ internal class ChatDomainImpl internal constructor(
         globalState._errorEvent.value = Event(error)
     }
 
-    @VisibleForTesting
-    fun addActiveChannel(cid: String, channelController: ChannelController) {
-        activeChannelMapImpl[cid] = channelController
-    }
-
     fun setChannelUnreadCount(newCount: Int) {
         globalState._channelUnreadCount.value = newCount
     }
@@ -286,7 +268,7 @@ internal class ChatDomainImpl internal constructor(
 
     internal fun channel(cid: String): ChannelController {
         val (channelType, channelId) = cid.cidToTypeAndId()
-        return channel(channelType, channelId)
+        return activeEntitiesManager.channel(channelType, channelId)
     }
 
     /**
@@ -296,29 +278,7 @@ internal class ChatDomainImpl internal constructor(
         return repos.selectChannelWithoutMessages(cid)
     }
 
-    internal fun channel(
-        channelType: String,
-        channelId: String,
-    ): ChannelController {
-        val cid = "%s:%s".format(channelType, channelId)
-        if (!activeChannelMapImpl.containsKey(cid)) {
-            val channelController = ChannelController(
-                mutableState = state.channel(channelType, channelId).toMutableState(),
-                channelLogic = logic.channel(channelType, channelId),
-                client = client,
-                userPresence = userPresence,
-                repos = repos,
-                scope = scope,
-                globalState = globalState
-            )
-            activeChannelMapImpl[cid] = channelController
-            addTypingChannel(channelController)
-        }
-        return activeChannelMapImpl.getValue(cid)
-    }
-
-    internal fun allActiveChannels(): List<ChannelController> =
-        activeChannelMapImpl.values.toList()
+    internal fun allActiveChannels(): List<ChannelController> = activeEntitiesManager.activeChannels()
 
     fun generateMessageId(): String {
         return user.value!!.id + "-" + UUID.randomUUID().toString()
@@ -337,7 +297,7 @@ internal class ChatDomainImpl internal constructor(
     override fun isInitialized(): Boolean = globalState.isInitialized()
 
     override fun getActiveQueries(): List<QueryChannelsController> {
-        return activeQueryMapImpl.values.toList()
+        return activeEntitiesManager.activeQueries()
     }
 
     /**
@@ -349,7 +309,7 @@ internal class ChatDomainImpl internal constructor(
         filter: FilterObject,
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
-        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
+        activeEntitiesManager.activeQueryMap.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
             val mutableState = state.queryChannels(filter, sort).toMutableState()
             val logic = logic.queryChannels(filter, sort)
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
@@ -424,9 +384,7 @@ internal class ChatDomainImpl internal constructor(
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     override fun clean() {
-        for (channelController in activeChannelMapImpl.values.toList()) {
-            channelController.clean()
-        }
+        activeEntitiesManager.clean()
     }
 
     override fun getChannelConfig(channelType: String): Config =

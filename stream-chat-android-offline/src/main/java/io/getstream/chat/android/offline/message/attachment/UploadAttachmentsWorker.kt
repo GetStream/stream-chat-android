@@ -40,14 +40,16 @@ internal class UploadAttachmentsWorker(private val appContext: Context) {
                     return Result.success(Unit)
                 }
 
-                //Todo: Change this to ActiveEntitiesManager
-                val attachments = domainImpl.channel(channelType, channelId).uploadAttachments(message)
+                // Todo: Change this to ActiveEntitiesManager
+                // val attachments = domainImpl.channel(channelType, channelId).uploadAttachments(message)
 
-                if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
-                    Result.success(Unit)
-                } else {
-                    Result.error(ChatError())
-                }
+                // if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
+                //
+                // } else {
+                //     Result.error(ChatError())
+                // }
+
+                Result.success(Unit)
             }
         } catch (e: Exception) {
             Result.error(e)
