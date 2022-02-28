@@ -22,9 +22,11 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.domain.syncState.SyncStateRepository
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -46,15 +48,14 @@ internal class SyncManager(
     private val globalState: GlobalMutableState,
     private val repos: RepositoryFacade,
     private val activeEntitiesManager: ActiveEntitiesManager,
-) {
+) : SyncStateRepository by repos {
 
-    private var initJob: Deferred<*>? = null
     private val entitiesRetryMutex = Mutex()
     private var logger = ChatLogger.get("SyncManager")
+    internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
 
     internal suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0. ensure load is complete
-        initJob?.join()
 
         val online = globalState.isOnline()
 
@@ -284,5 +285,13 @@ internal class SyncManager(
 
     private suspend fun addTypingChannel(channelController: ChannelController) {
         globalState._typingChannels.emitAll(channelController.typing)
+    }
+
+    internal suspend fun storeSyncState() {
+        syncStateFlow.value?.let { syncState ->
+            val newSyncState = syncState.copy(activeChannelIds = activeEntitiesManager.activeChannelsCids())
+            repos.insertSyncState(newSyncState)
+            syncStateFlow.value = newSyncState
+        }
     }
 }
