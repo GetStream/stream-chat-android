@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ThreadController
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.observeAll
@@ -147,7 +148,7 @@ internal class MessageListViewModelTest {
 
         // TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)
         @Suppress("DEPRECATION_ERROR")
-        verify(domain).loadOlderMessages(CID, MESSAGES_LIMIT)
+        verify(client).loadOlderMessages(CID, MESSAGES_LIMIT)
     }
 
     @Test

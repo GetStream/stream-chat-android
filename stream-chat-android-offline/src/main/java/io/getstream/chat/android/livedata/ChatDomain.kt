@@ -159,26 +159,6 @@ public sealed interface ChatDomain {
     @CheckResult
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
-    // loading more
-    /**
-     * Loads older messages for the channel.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading older messages in a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "loadOlderMessages is deprecated. Use extension function ChatClient::loadOlderMessages instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
-
     /**
      * Loads newer messages for the channel.
      *

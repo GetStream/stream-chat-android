@@ -50,7 +50,6 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.shuffleGiphy
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
@@ -810,9 +809,6 @@ internal class ChatDomainImpl internal constructor(
             )
         }
     }
-
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        client.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)

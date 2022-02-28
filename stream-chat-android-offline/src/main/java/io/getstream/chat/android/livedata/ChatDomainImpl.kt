@@ -136,10 +136,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun getThread(cid: String, parentId: String): Call<ThreadController> =
         chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
 
-    @Suppress("DEPRECATION_ERROR")
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        chatDomainStateFlow.loadOlderMessages(cid, messageLimit)
-
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         chatDomainStateFlow.loadNewerMessages(cid, messageLimit)
 

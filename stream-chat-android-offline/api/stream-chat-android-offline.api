@@ -37,7 +37,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun leaveChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadMessageById (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadNewerMessages (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun loadOlderMessages (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun markAllRead ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun markRead (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun queryChannels (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
@@ -228,7 +227,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun leaveChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadMessageById (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun loadNewerMessages (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun loadOlderMessages (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun markAllRead ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun markRead (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun queryChannels (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;III)Lio/getstream/chat/android/client/call/Call;
