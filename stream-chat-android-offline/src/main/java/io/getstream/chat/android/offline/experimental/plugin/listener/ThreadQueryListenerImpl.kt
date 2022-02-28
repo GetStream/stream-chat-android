@@ -3,10 +3,8 @@ package io.getstream.chat.android.offline.experimental.plugin.listener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
-@ExperimentalStreamChatApi
 internal class ThreadQueryListenerImpl(private val logic: LogicRegistry) : ThreadQueryListener {
 
     override fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> =

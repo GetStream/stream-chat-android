@@ -2025,7 +2025,6 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    @ExperimentalStreamChatApi
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
@@ -2191,7 +2190,6 @@ public class ChatClient internal constructor(
         }
 
         @InternalStreamChatApi
-        @ExperimentalStreamChatApi
         public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
             pluginFactories.add(pluginFactory)
         }
@@ -2202,7 +2200,6 @@ public class ChatClient internal constructor(
          * @see [ErrorHandlerFactory]
          */
         @InternalStreamChatApi
-        @ExperimentalStreamChatApi
         public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
             this.errorHandlerFactories.add(errorHandlerFactory)
         }
