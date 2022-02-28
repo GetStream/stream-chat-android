@@ -13,7 +13,6 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.event.EventHandlerProvider
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
@@ -120,13 +119,18 @@ public class StreamOfflinePluginFactory(
         EventHandlerProvider.set(eventHandler)
 
         InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener(chatDomainImpl::userConnected)
+            addUserConnectedListener {
+                chatDomainImpl.userConnected(user)
+                eventHandler.startListening(scope)
+            }
 
             addUserDisconnectedListener {
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
                 MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
+                eventHandler.stopListening()
+                eventHandler.clear()
             }
         }
 
@@ -177,7 +181,6 @@ public class StreamOfflinePluginFactory(
             domainImpl = domainImpl,
             client = chatClient,
             mutableGlobalState = globalState,
-            scope = scope,
             repos = repos,
             syncManager = syncManager,
             activeEntitiesManager = activeEntitiesManager

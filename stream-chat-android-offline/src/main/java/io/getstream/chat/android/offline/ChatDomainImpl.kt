@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -17,7 +16,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -25,7 +23,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -84,7 +81,6 @@ import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -234,29 +230,9 @@ internal class ChatDomainImpl internal constructor(
         clearConnectionState()
         clearUnreadCountState()
 
-        initJob = scope.async {
-            // fetch the configs for channels
-            repos.cacheChannelConfigs()
-
-            // load the current user from the db
-            val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
-
-            // retrieve the last time the user marked all as read and handle it as an event
-            syncState.markedAllReadAt
-                ?.let { MarkAllReadEvent(user = user, createdAt = it) }
-                ?.let { eventHandler.handleEvent(it) }
-
-            syncState.also { syncStateFlow.value = it }
-
-            // Sync cached channels
-            val cachedChannelsCids = repos.selectAllCids()
-            replayEventsForChannels(cachedChannelsCids)
-        }
-
         if (client.isSocketConnected()) {
             globalState._connectionState.value = ConnectionState.CONNECTED
         }
-        startListening()
         initClean()
     }
 
@@ -314,7 +290,6 @@ internal class ChatDomainImpl internal constructor(
         stopClean()
         clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
-        eventHandler.clear()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
         logic.clear()
@@ -356,17 +331,6 @@ internal class ChatDomainImpl internal constructor(
 
     fun setTotalUnreadCount(newCount: Int) {
         globalState._totalUnreadCount.value = newCount
-    }
-
-    /**
-     * Start listening to chat events and keep the room database in sync
-     */
-    private fun startListening() {
-        if (eventSubscription.isDisposed) {
-            eventSubscription = client.subscribe {
-                eventHandler.handleEvents(listOf(it))
-            }
-        }
     }
 
     /**
@@ -455,138 +419,12 @@ internal class ChatDomainImpl internal constructor(
         client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     /**
-     * replay events for all active channels
-     * ensures that the cid you provide is active
-     *
-     * @param cid ensures that the channel with this id is active
-     */
-    internal suspend fun replayEvents(cid: String? = null): Result<List<ChatEvent>> {
-        // wait for the active channel info to load
-        initJob?.join()
-        // make a list of all channel ids
-        val cids = activeChannelMapImpl.keys().toList().toMutableList()
-        cid?.let {
-            channel(it)
-            cids.add(it)
-        }
-
-        return replayEventsForChannels(cids)
-    }
-
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
-        val now = Date()
-
-        return if (cids.isNotEmpty()) {
-            queryEvents(cids).also { resultChatEvent ->
-                if (resultChatEvent.isSuccess) {
-                    eventHandler.handleEventsInternal(resultChatEvent.data(), isFromSync = true)
-                    updateLastSyncDate(now)
-                }
-            }
-        } else {
-            Result(emptyList())
-        }
-    }
-
-    /**
      * Updates [SyncState.lastSyncedAt] exposed via [syncStateFlow] with a given date.
      *
      * @param date The new last sync date.
      */
     private fun updateLastSyncDate(date: Date) {
         syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = date) }
-    }
-
-    /**
-     * There are several scenarios in which we need to recover events
-     * - Connection is lost and comes back (everything should be considered stale, so use recover all)
-     * - App goes to the background and comes back (everything should be considered stale, so use recover all)
-     * - We run a queryChannels or channel.watch call and encounter an offline state/or API error (should recover just that query or channel)
-     * - A reaction, message or channel fails to be created. We should retry this every health check (30 seconds or so)
-     *
-     * Calling connectionRecovered triggers:
-     * - queryChannels for the active query (at most 3) that need recovery
-     * - queryChannels for any channels that need recovery
-     * - channel.watch for channels that are not returned by the server
-     * - event recovery for those channels
-     * - API calls to create local channels, messages and reactions
-     */
-// TODO: Move this to another place. Probably to ChatClient.
-    suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        // 0. ensure load is complete
-        initJob?.join()
-
-        val online = isOnline()
-
-        // 1. Retry any failed requests first (synchronous)
-        if (online) {
-            retryFailedEntities()
-        }
-
-        // 2. update the results for queries that are actively being shown right now (synchronous)
-        val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry = activeQueryMapImpl.values
-            .toList()
-            .filter { it.recoveryNeeded.value || recoverAll }
-            .take(3)
-        for (queryChannelController in queriesToRetry) {
-            val pagination = QueryChannelsPaginationRequest(
-                queryChannelController.sort,
-                INITIAL_CHANNEL_OFFSET,
-                CHANNEL_LIMIT,
-                MESSAGE_LIMIT,
-                MEMBER_LIMIT
-            )
-            val response = queryChannelController.runQueryOnline(pagination)
-            if (response.isSuccess) {
-                queryChannelController.updateOnlineChannels(response.data(), true)
-                updatedChannelIds.addAll(response.data().map { it.cid })
-            }
-        }
-        // 3. update the data for all channels that are being show right now...
-        // exclude ones we just updated
-        // (synchronous)
-        val cids: List<String> = activeChannelMapImpl
-            .entries
-            .asSequence()
-            .filter { it.value.recoveryNeeded || recoverAll }
-            .filterNot { updatedChannelIds.contains(it.key) }
-            .take(30)
-            .map { it.key }
-            .toList()
-
-        logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying ${queriesToRetry.size} queries and ${cids.size} channels")
-
-        var missingChannelIds = listOf<String>()
-        if (cids.isNotEmpty() && online) {
-            val filter = `in`("cid", cids)
-            val request = QueryChannelsRequest(filter, 0, 30)
-            val result = client.queryChannelsInternal(request).await()
-            if (result.isSuccess) {
-                val channels = result.data()
-                val foundChannelIds = channels.map { it.id }
-                for (c in channels) {
-                    val channelController = this.channel(c)
-                    channelController.updateDataFromChannel(c)
-                }
-                missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
-                storeStateForChannels(channels)
-            }
-            // create channels that are not present on the API
-            for (c in missingChannelIds) {
-                val channelController = this.channel(c)
-                channelController.watch()
-            }
-        }
-        // 4. recover missing events
-        val activeChannelCids = getActiveChannelCids()
-        if (activeChannelCids.isNotEmpty()) {
-            replayEventsForChannels(activeChannelCids)
-        } else {
-            // Last sync date is being updated after replaying events for active channels.
-            // We should also update it if we don't have active channels but sync was completed.
-            updateLastSyncDate(Date())
-        }
     }
 
     internal suspend fun retryFailedEntities() {

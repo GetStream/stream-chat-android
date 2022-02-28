@@ -84,21 +84,6 @@ public fun ChatClient.searchUsersByName(
 ): Call<List<User>> = ChatDomain.instance().searchUsersByName(querySearch, offset, userLimit, userPresence)
 
 /**
- * Adds the provided channel to the active channels and replays events for all active channels.
- *
- * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
- */
-@CheckResult
-public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
-    validateCid(cid)
-
-    val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
-        domainImpl.replayEvents(cid)
-    }
-}
-
-/**
  * Set the reply state for the channel.
  *
  * @param cid CID of the channel where reply state is being set.
