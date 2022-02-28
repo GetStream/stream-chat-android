@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -45,7 +44,6 @@ import java.util.regex.Pattern
  *
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
- * @param chatDomain The domain used to communicate to the API and store data offline.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
@@ -53,7 +51,6 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
@@ -194,20 +191,18 @@ public class MessageComposerController(
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
-        scope.launch {
-            channelState.channelConfig.onEach {
-                maxMessageLength = it.maxMessageLength
-                commands = it.commands
-            }.launchIn(scope)
+        channelState.channelConfig.onEach {
+            maxMessageLength = it.maxMessageLength
+            commands = it.commands
+        }.launchIn(scope)
 
-            channelState.members.onEach { members ->
-                users = members.map { it.user }
-            }.launchIn(scope)
+        channelState.members.onEach { members ->
+            users = members.map { it.user }
+        }.launchIn(scope)
 
-            channelState.channelData.onEach {
-                cooldownInterval = it.cooldown
-            }.launchIn(scope)
-        }
+        channelState.channelData.onEach {
+            cooldownInterval = it.cooldown
+        }.launchIn(scope)
 
         setupComposerState()
     }
@@ -606,11 +601,7 @@ public class MessageComposerController(
      * @param message [Message]
      */
     private fun getEditMessageCall(message: Message): Call<Message> {
-        return if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            chatClient.updateMessage(message)
-        } else {
-            chatDomain.editMessage(message)
-        }
+        return chatClient.updateMessage(message)
     }
 
     private companion object {

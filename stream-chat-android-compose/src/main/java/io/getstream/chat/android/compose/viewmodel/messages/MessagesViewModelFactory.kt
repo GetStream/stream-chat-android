@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
@@ -18,7 +17,6 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
  * @param chatClient The client to use for API calls.
- * @param chatDomain The domain used to fetch data.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
@@ -30,7 +28,6 @@ public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val enforceUniqueReactions: Boolean = true,
     private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -47,7 +44,6 @@ public class MessagesViewModelFactory(
             MessageComposerViewModel(
                 MessageComposerController(
                     chatClient = chatClient,
-                    chatDomain = chatDomain,
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize
@@ -57,7 +53,6 @@ public class MessagesViewModelFactory(
         MessageListViewModel::class.java to {
             MessageListViewModel(
                 chatClient = chatClient,
-                chatDomain = chatDomain,
                 channelId = channelId,
                 messageLimit = messageLimit,
                 enforceUniqueReactions = enforceUniqueReactions,

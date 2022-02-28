@@ -121,15 +121,14 @@ public class ChannelListViewModel(
      */
     init {
         viewModelScope.launch {
-            initWithOfflinePlugin()
+            init()
         }
     }
 
     /**
-     * Initializes this ViewModel with OfflinePlugin implementation. It makes the initial query to request channels
-     * and starts to observe state changes.
+     * Makes the initial query to request channels and starts observing state changes.
      */
-    private suspend fun initWithOfflinePlugin() {
+    private suspend fun init() {
         searchQuery.combine(queryConfig) { query, config -> query to config }
             .collectLatest { (query, config) ->
                 val queryChannelsRequest = QueryChannelsRequest(

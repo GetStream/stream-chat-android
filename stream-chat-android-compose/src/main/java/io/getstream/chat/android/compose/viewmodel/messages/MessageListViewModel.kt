@@ -47,7 +47,6 @@ import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorStat
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
@@ -56,7 +55,6 @@ import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientR
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -73,7 +71,6 @@ import java.util.concurrent.TimeUnit
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
  * @param chatClient Used to connect to the API.
- * @param chatDomain Used to connect to the API and fetch the domain status.
  * @param channelId The ID of the channel to load the messages for.
  * @param clipboardHandler Used to copy data from message actions to the clipboard.
  * @param messageLimit The limit of messages being fetched with each page od data.
@@ -84,7 +81,6 @@ import java.util.concurrent.TimeUnit
  */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
-    public val chatDomain: ChatDomain,
     private val channelId: String,
     private val clipboardHandler: ClipboardHandler,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
@@ -204,17 +200,13 @@ public class MessageListViewModel(
      * messages and other pieces of information.
      */
     init {
-        viewModelScope.launch {
-            observeTypingUsers()
-            observeChannel()
-        }
+        observeTypingUsers()
+        observeChannel()
     }
 
-    // TODO - update kdocs
     /**
-     * Starts observing the current channel. We observe the
-     * 'loadingOlderMessages', 'messagesState', 'user' and 'endOfOlderMessages' states from our
-     * controller, as well as build the `newMessageState` using [getNewMessageState] and combine it
+     * Starts observing the current channel. We observe the 'messagesState', 'user' and 'endOfOlderMessages'
+     * states, as well as build the `newMessageState` using [getNewMessageState] and combine it
      * into a [MessagesState] that holds all the information required for the screen.
      */
     private fun observeChannel() {
@@ -397,7 +389,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Updates the state of the last seen message. Based on if we're [isInThread] or not, it updates corresponding state.
+     * Updates the state of the last seen message. Updates corresponding state based on [isInThread].
      *
      * @param currentMessage The current message the user sees.
      */
@@ -572,10 +564,10 @@ public class MessageListViewModel(
     }
 
     /**
-     * Observes the currently active thread data, based on our [ThreadController]. In process, this
+     * Observes the currently active thread. In process, this
      * creates a [threadJob] that we can cancel once we leave the thread.
      *
-     * The data consists of the 'loadingOlderMessages', 'messages' and 'endOfOlderMessages' states,
+     * The data consists of the 'messages', 'user' and 'endOfOlderMessages' states,
      * that are combined into one [MessagesState].
      *
      * @param threadId The message id with the thread we want to observe.
@@ -692,7 +684,6 @@ public class MessageListViewModel(
      *
      * @param message Message to delete.
      */
-    // TODO Update to use ChatClient once (https://github.com/GetStream/stream-chat-android/pull/3013) gets merged
     @JvmOverloads
     public fun deleteMessage(message: Message, hard: Boolean = false) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
@@ -881,10 +872,8 @@ public class MessageListViewModel(
     public fun performGiphyAction(action: GiphyAction) {
         val message = action.message
         when (action) {
-            // TODO - sendGiphy() and shuffleGiphy() should be ported to ChatClient soon. They are currently internalized in the offline module.
-            // TODO - port this to chatClient once done
-            is SendGiphy -> chatDomain.sendGiphy(message)
-            is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
+            is SendGiphy -> chatClient.sendGiphy(message)
+            is ShuffleGiphy -> chatClient.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelMessage(message)
         }.exhaustive.enqueue()
     }
