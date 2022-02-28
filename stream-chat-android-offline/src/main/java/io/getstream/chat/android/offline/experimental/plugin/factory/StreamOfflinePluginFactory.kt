@@ -144,7 +144,7 @@ public class StreamOfflinePluginFactory(
 
         logic.activeEntitiesManager = activeEntitiesManager
 
-        chatDomainImpl.eventHandler = eventHandler
+        chatDomainImpl.activeEntitiesManager = activeEntitiesManager
         EventHandlerProvider.set(eventHandler)
 
         InitializationCoordinator.getOrCreate().run {
