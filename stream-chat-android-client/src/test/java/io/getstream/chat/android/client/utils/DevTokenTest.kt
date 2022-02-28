@@ -30,8 +30,8 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         tokenManager = FakeTokenManager(""),
         socketStateService = socketStateService,
         queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-        userStateService = userStateService,
         userCredentialStorage = mock(),
+        userStateService = userStateService,
         scope = testCoroutines.scope,
         retryPolicy = NoRetryPolicy(),
     )

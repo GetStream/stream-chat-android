@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
@@ -45,9 +46,13 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.QueryMembersErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.SendReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onQueryMembersError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
+import io.getstream.chat.android.client.experimental.interceptor.Interceptor
+import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
@@ -58,8 +63,11 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
@@ -110,6 +118,7 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -164,6 +173,8 @@ public class ChatClient internal constructor(
 
     public lateinit var plugins: List<Plugin>
 
+    private var interceptors: MutableList<Interceptor> = mutableListOf()
+
     /**
      * Error handlers for API calls.
      */
@@ -213,6 +224,11 @@ public class ChatClient internal constructor(
 
     internal fun addPlugins(plugins: List<Plugin>) {
         this.plugins = plugins
+    }
+
+    @InternalStreamChatApi
+    public fun addInterceptor(interceptor: Interceptor) {
+        this.interceptors.add(interceptor)
     }
 
     internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
@@ -447,6 +463,19 @@ public class ChatClient internal constructor(
         return api.getGuestUser(userId, userName)
     }
 
+    /**
+     * Query members and apply side effects if there are any.
+     *
+     * @param channelType The type of channel.
+     * @param channelId The id of the channel.
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members to search in distinct channels.
+     *
+     * @return [Call] with a list of members or an error.
+     */
     @CheckResult
     public fun queryMembers(
         channelType: String,
@@ -455,9 +484,26 @@ public class ChatClient internal constructor(
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member>,
-        members: List<Member>,
+        members: List<Member> = emptyList(),
     ): Call<List<Member>> {
+        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
+        val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onQueryChannelsResult(
+                        result,
+                        channelType,
+                        channelId,
+                        offset,
+                        limit,
+                        filter,
+                        sort,
+                        members
+                    )
+                }
+            }
+            .onQueryMembersError(errorHandlers, channelType, channelId, offset, limit, filter, sort, members)
     }
 
     /**
@@ -1030,6 +1076,55 @@ public class ChatClient internal constructor(
         return api.sendAction(request)
     }
 
+    /**
+     * Sends selected giphy message to the channel specified by [Message.cid].
+     * The call will be retried accordingly to [retryPolicy].
+     * @see [RetryPolicy]
+     *
+     * @param message The message to send.
+     *
+     * @return Executable async [Call] responsible for sending the Giphy.
+     */
+    public fun sendGiphy(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>()
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
+        }
+
+        return sendAction(request)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    listener.onGiphySendResult(cid = message.cid, result = result)
+                }
+            }
+    }
+
+    /**
+     * Performs Giphy shuffle operation in the channel specified by [Message.cid].
+     * Returns new "ephemeral" message with new giphy url.
+     * The call will be retried accordingly to [retryPolicy].
+     * @see [RetryPolicy]
+     *
+     * @param message The message to send.
+     *
+     * @return Executable async [Call] responsible for shuffling the Giphy.
+     */
+    public fun shuffleGiphy(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>()
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
+        }
+
+        return sendAction(request)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    listener.onShuffleGiphyResult(cid = message.cid, result = result)
+                }
+            }
+    }
+
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
@@ -1054,29 +1149,65 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel without running any side effects.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param message Message object
+     * @param message Message to send.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
-    @CheckResult
-    public fun sendMessage(
+    internal fun sendMessageInternal(
         channelType: String,
         channelId: String,
         message: Message,
     ): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
-
         return api.sendMessage(channelType, channelId, message)
-            .doOnStart(scope) { relevantPlugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach {
-                    it.onMessageSendResult(result, channelType, channelId, message)
-                }
+    }
+
+    /**
+     * Sends the message to the given channel. If [isRetrying] is set to true, the message may not be prepared again.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message Message object
+     * @param isRetrying True if this message is being retried.
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun sendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean = false,
+    ): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
+        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
+        return CoroutineCall(scope) {
+
+            // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
+            // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
+            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+                if (message.isSuccess) {
+                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
+                } else message
+            }.flatMapSuspend { newMessage ->
+                api.sendMessage(channelType, channelId, newMessage)
+                    .retry(scope, retryPolicy)
+                    .doOnResult(scope) { result ->
+                        relevantPlugins.forEach {
+                            it.onMessageSendResult(
+                                result,
+                                channelType,
+                                channelId,
+                                newMessage
+                            )
+                        }
+                    }.await()
             }
+        }
     }
 
     /**
@@ -1534,10 +1665,15 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Query users matching [query] request.
+     *
+     * @param query [QueryUsersRequest] with query parameters like filters, sort to get matching users.
+     *
+     * @return [Call] with a list of [User].
+     */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.queryUsers(query)
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
     @CheckResult
     public fun addMembers(
@@ -2201,6 +2337,10 @@ public class ChatClient internal constructor(
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        private const val KEY_MESSAGE_ACTION = "image_action"
+        private const val MESSAGE_ACTION_SEND = "send"
+        private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
 
         private var instance: ChatClient? = null
 

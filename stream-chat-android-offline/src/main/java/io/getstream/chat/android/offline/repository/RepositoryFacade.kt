@@ -160,8 +160,10 @@ internal class RepositoryFacade(
 
     internal companion object {
 
+        private var instance: RepositoryFacade? = null
+
         /**
-         * Creates a new instance of [RepositoryFacade] and doesn't populate the Singleton instance. This method should be
+         * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
          * used mainly for tests or internally by other constructor methods.
          *
          * @param factory [RepositoryFactory]
@@ -169,7 +171,11 @@ internal class RepositoryFacade(
          * @param defaultConfig [Config]
          */
         @VisibleForTesting
-        internal fun create(factory: RepositoryFactory, scope: CoroutineScope, defaultConfig: Config): RepositoryFacade {
+        internal fun create(
+            factory: RepositoryFactory,
+            scope: CoroutineScope,
+            defaultConfig: Config,
+        ): RepositoryFacade {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
                 requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
@@ -189,7 +195,17 @@ internal class RepositoryFacade(
                 attachmentRepository = factory.createAttachmentRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
-            )
+            ).also {
+                instance = it
+            }
+        }
+
+        /**
+         * Gets the current Singleton of RepositoryFacade. If the initialization is not done yet, it throws exception.
+         */
+        @Throws(IllegalArgumentException::class)
+        internal fun get(): RepositoryFacade = requireNotNull(instance) {
+            "Offline plugin must be configured in ChatClient to use RepositoryFacade."
         }
     }
 }

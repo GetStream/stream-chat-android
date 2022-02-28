@@ -15,7 +15,7 @@ internal class DeleteReactionTest : BaseConnectedIntegrationTest() {
         val channelController =
             chatDomain.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
-        val result = chatDomain.sendMessage(message1).execute()
+        val result = client.channel(data.channel1.cid).sendMessage(message1).execute()
         assertSuccess(result)
         data.reaction1.messageId = result.data().id
         val result2 = chatDomain.sendReaction(data.channel1.cid, data.reaction1, false).execute()

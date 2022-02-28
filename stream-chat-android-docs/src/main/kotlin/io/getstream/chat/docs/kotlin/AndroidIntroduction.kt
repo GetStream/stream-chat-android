@@ -96,15 +96,6 @@ class AndroidIntroduction {
                 // Handle result.error()
             }
         }
-
-        // Using the offline support library
-        chatDomain.sendMessage(message).enqueue { result ->
-            if (result.isSuccess) {
-                val message: Message = result.data()
-            } else {
-                // Handle result.error()
-            }
-        }
     }
 
     fun queryChannels(client: ChatClient, chatDomain: ChatDomain) {

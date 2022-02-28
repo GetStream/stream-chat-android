@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
@@ -380,7 +381,8 @@ public class MessageComposerController(
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
-            chatDomain.sendMessage(message)
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            chatClient.sendMessage(channelType, channelId, message)
         }
 
         dismissMessageActions()
