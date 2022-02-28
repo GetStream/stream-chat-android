@@ -76,7 +76,7 @@ internal class EventHandlerImpl(
     private val client: ChatClient,
 ) {
     private val eventBuffer = MutableSharedFlow<List<ChatEvent>>()
-    private val connectEventBuffer = MutableSharedFlow<List<ChatEvent>>(
+    private val connectEventBuffer = MutableSharedFlow<ChatEvent>(
         replay = 0,
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -88,7 +88,7 @@ internal class EventHandlerImpl(
     private var firstConnect = true
 
     internal suspend fun handleEvents(events: List<ChatEvent>) {
-        connectEventBuffer.emit(events)
+        bufferConnectEvents(events)
         eventBuffer.emit(events)
     }
 
@@ -114,54 +114,60 @@ internal class EventHandlerImpl(
     }
 
     internal fun collectConnectEvents() = domainImpl.scope.launch {
-        connectEventBuffer.collect { chatEvents ->
-            handleConnectEvents(chatEvents)
+        connectEventBuffer.collect { chatEvent ->
+            handleConnectEvents(chatEvent)
         }
     }
 
-    private fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
-        // send out the connect events
-        for (event in sortedEvents) {
-
-            // connection events are never send on the recovery endpoint, so handle them 1 by 1
-            when (event) {
-                is DisconnectedEvent -> {
-                    domainImpl.setOffline()
-                }
-                is ConnectedEvent -> {
-                    logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
-                    domainImpl.setOnline()
-                    domainImpl.setInitialized()
-                    domainImpl.scope.launch {
-                        if (domainImpl.recoveryEnabled) {
-                            // the first time we connect we should only run recovery against channels and queries that had a failure
-                            if (firstConnect) {
-                                firstConnect = false
-                                domainImpl.connectionRecovered(false)
-                            } else {
-                                // the second time (ie coming from background, or reconnecting we should recover all)
-                                domainImpl.connectionRecovered(true)
-                            }
-                        }
-                    }
-                }
-                is HealthEvent -> {
-                    domainImpl.scope.launch {
-                        domainImpl.retryFailedEntities()
-                    }
-                }
-
-                is ConnectingEvent -> {
-                    domainImpl.setConnecting()
-                }
-
-                else -> Unit // Ignore other events
+    internal suspend fun bufferConnectEvents(events: List<ChatEvent>) {
+        events.forEach { chatEvent ->
+            when (chatEvent) {
+                is DisconnectedEvent, is ConnectedEvent, is HealthEvent, is ConnectingEvent -> connectEventBuffer.emit(
+                    chatEvent
+                )
+                else -> Unit
             }
         }
     }
 
+    private fun handleConnectEvents(sortedEvent: ChatEvent) {
+        // connection events are never send on the recovery endpoint, so handle them 1 by 1
+        when (sortedEvent) {
+            is DisconnectedEvent -> {
+                domainImpl.setOffline()
+            }
+            is ConnectedEvent -> {
+                logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
+                domainImpl.setOnline()
+                domainImpl.setInitialized()
+                domainImpl.scope.launch {
+                    if (domainImpl.recoveryEnabled) {
+                        // the first time we connect we should only run recovery against channels and queries that had a failure
+                        if (firstConnect) {
+                            firstConnect = false
+                            domainImpl.connectionRecovered(false)
+                        } else {
+                            // the second time (ie coming from background, or reconnecting we should recover all)
+                            domainImpl.connectionRecovered(true)
+                        }
+                    }
+                }
+            }
+            is HealthEvent -> {
+                domainImpl.scope.launch {
+                    domainImpl.retryFailedEntities()
+                }
+            }
+
+            is ConnectingEvent -> {
+                domainImpl.setConnecting()
+            }
+
+            else -> Unit // Ignore other events
+        }
+    }
+
     internal suspend fun handleEvent(event: ChatEvent) {
-        handleConnectEvents(listOf(event))
         handleEventsInternal(listOf(event), isFromSync = false)
     }
 
