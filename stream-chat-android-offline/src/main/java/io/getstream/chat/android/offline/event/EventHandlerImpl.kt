@@ -79,7 +79,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import java.util.Date
 
-@ExperimentalStreamChatApi
 internal class EventHandlerImpl(
     private var recoveryEnabled: Boolean = true,
     private val domainImpl: ChatDomainImpl, // Todo: This needs to go away

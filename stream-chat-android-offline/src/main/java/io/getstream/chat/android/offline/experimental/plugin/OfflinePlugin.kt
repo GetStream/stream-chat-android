@@ -10,8 +10,11 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.HideChanne
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -30,7 +33,11 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param markAllReadListener [MarkAllReadListener]
  * @param deleteReactionListener [DeleteReactionListener]
  * @param sendReactionListener [SendReactionListener]
+ * @param deleteMessageListener [DeleteMessageListener]
+ * @param sendGiphyListener [SendGiphyListener]
+ * @param shuffleGiphyListener [ShuffleGiphyListener]
  * @param sendMessageListener [SendMessageListener]
+ * @param queryMembersListener [QueryMembersListener]
  */
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
@@ -46,7 +53,10 @@ internal class OfflinePlugin(
     private val deleteReactionListener: DeleteReactionListener,
     private val sendReactionListener: SendReactionListener,
     private val deleteMessageListener: DeleteMessageListener,
+    private val sendGiphyListener: SendGiphyListener,
+    private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
+    private val queryMembersListener: QueryMembersListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -59,7 +69,10 @@ internal class OfflinePlugin(
     DeleteReactionListener by deleteReactionListener,
     SendReactionListener by sendReactionListener,
     DeleteMessageListener by deleteMessageListener,
-    SendMessageListener by sendMessageListener {
+    SendGiphyListener by sendGiphyListener,
+    ShuffleGiphyListener by shuffleGiphyListener,
+    SendMessageListener by sendMessageListener,
+    QueryMembersListener by queryMembersListener {
 
     override val name: String = MODULE_NAME
 

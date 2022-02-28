@@ -5,13 +5,11 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.whenever
-import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.failedCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -60,24 +58,5 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
 
         result.isSuccess.shouldBeTrue()
         result.data().cid shouldBeEqualTo desiredCid
-    }
-
-    @Test
-    fun `when online request does NOT work, local cache is used`() = runBlockingTest {
-        val queryChannelCall = Channel(cid = data.channel1.cid).asCall()
-
-        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn queryChannelCall
-
-        // Load older messages using backend.
-        clientMock.loadOlderMessages(data.channel1.cid, 10).execute()
-
-        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn failedCall("the call failed")
-
-        // Now backend fails, so the cache request must work for a successful result.
-        // TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)
-        @Suppress("DEPRECATION_ERROR")
-        val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
-
-        result.isSuccess.shouldBeTrue()
     }
 }
