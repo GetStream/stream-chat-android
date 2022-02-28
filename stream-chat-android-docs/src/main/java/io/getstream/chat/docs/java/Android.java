@@ -51,6 +51,7 @@ import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
+import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -621,10 +622,10 @@ public class Android {
         }
 
         public void loadMoreMessages() {
-            ChatDomain chatDomain = ChatDomain.instance();
+            ChatClient chatClient = ChatClient.instance();
 
             // TODO: Review docs (https://github.com/GetStream/stream-chat-android/issues/2976)
-            chatDomain.loadOlderMessages("messaging:123", 10)
+            ChatClientExtensions.loadOlderMessages(chatClient, "messaging:123", 10)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             Channel channel = result.data();
