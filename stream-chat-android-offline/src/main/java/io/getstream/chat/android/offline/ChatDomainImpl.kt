@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
@@ -51,9 +50,6 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.extensions.sendGiphy
-import io.getstream.chat.android.offline.extensions.shuffleGiphy
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -75,9 +71,6 @@ import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
-import io.getstream.chat.android.offline.usecase.QueryMembers
-import io.getstream.chat.android.offline.usecase.SearchUsersByName
-import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
@@ -185,8 +178,19 @@ internal class ChatDomainImpl internal constructor(
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
+    private var _eventHandler: EventHandlerImpl? = null
+
     @VisibleForTesting
-    internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this, client)
+    // Todo: Move this dependency to constructor
+    internal var eventHandler: EventHandlerImpl
+        get() = _eventHandler ?: EventHandlerImpl(this, client, globalState, scope, repos)
+            .also { eventHandler ->
+                _eventHandler = eventHandler
+            }
+        set(value) {
+            _eventHandler = value
+        }
+
     private var logger = ChatLogger.get("Domain")
 
     private val cleanTask = object : Runnable {
@@ -248,7 +252,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         if (client.isSocketConnected()) {
-            setOnline()
+            globalState._connectionState.value = ConnectionState.CONNECTED
         }
         startListening()
         initClean()
@@ -284,7 +288,7 @@ internal class ChatDomainImpl internal constructor(
         repos.insertCurrentUser(me)
         globalState._mutedUsers.value = me.mutes
         globalState._channelMutes.value = me.channelMutes
-        setTotalUnreadCount(me.totalUnreadCount)
+        globalState._totalUnreadCount.value = me.totalUnreadCount
         setChannelUnreadCount(me.unreadChannels)
         setBanned(me.banned)
     }
@@ -308,7 +312,6 @@ internal class ChatDomainImpl internal constructor(
         stopClean()
         clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
-        activeChannelMapImpl.values.forEach(ChannelController::cancelJobs)
         eventHandler.clear()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
@@ -420,22 +423,6 @@ internal class ChatDomainImpl internal constructor(
         scope.launch { globalState._typingChannels.emitAll(channelController.typing) }
     }
 
-    internal fun setOffline() {
-        globalState._connectionState.value = ConnectionState.OFFLINE
-    }
-
-    internal fun setOnline() {
-        globalState._connectionState.value = ConnectionState.CONNECTED
-    }
-
-    internal fun setConnecting() {
-        globalState._connectionState.value = ConnectionState.CONNECTING
-    }
-
-    internal fun setInitialized() {
-        globalState._initialized.value = true
-    }
-
     override fun isOnline(): Boolean = globalState.isOnline()
 
     override fun isOffline(): Boolean = globalState.isOffline()
@@ -523,6 +510,7 @@ internal class ChatDomainImpl internal constructor(
      * - event recovery for those channels
      * - API calls to create local channels, messages and reactions
      */
+// TODO: Move this to another place. Probably to ChatClient.
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
         // 0. ensure load is complete
         initJob?.join()
@@ -690,7 +678,7 @@ internal class ChatDomainImpl internal constructor(
                 }
                 else -> {
                     logger.logD("Sending message: ${message.id}")
-                    val result = channelClient.sendMessage(message).await()
+                    val result = channelClient.sendMessageInternal(message).await()
 
                     if (result.isSuccess) {
                         repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
@@ -781,7 +769,7 @@ internal class ChatDomainImpl internal constructor(
     override fun getChannelConfig(channelType: String): Config =
         repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
-    // region use-case functions
+// region use-case functions
 
     override fun getChannelController(cid: String): Call<ChannelController> = GetChannelController(this).invoke(cid)
 
@@ -816,9 +804,6 @@ internal class ChatDomainImpl internal constructor(
             )
         }
     }
-
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        client.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)
@@ -901,8 +886,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun createChannel(channel: Channel): Call<Channel> = client.createChannel(channel)
 
-    override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
-
     override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
 
     /**
@@ -954,21 +937,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteChannel(cid: String): Call<Unit> = client.channel(cid).delete().toUnitCall()
 
-    override fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>> = SearchUsersByName(this).invoke(querySearch, offset, userLimit, userPresence)
-
-    override fun queryMembers(
-        cid: String,
-        offset: Int,
-        limit: Int,
-        filter: FilterObject,
-        sort: QuerySort<Member>,
-        members: List<Member>,
-    ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
 // end region
 
     companion object {

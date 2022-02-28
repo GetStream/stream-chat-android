@@ -17,6 +17,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
@@ -45,6 +47,7 @@ internal class ChatDomainImplCreateChannelTest {
     }
     private val channelMembers = listOf(randomMember(), randomMember())
     private val channelExtraData = mutableMapOf<String, Any>("extraData" to true)
+    private val globalMutableState = GlobalMutableState.create()
 
     @Test
     fun `given offline chat domain when creating channel should mark it with sync needed and store in database`(): Unit =
@@ -61,9 +64,9 @@ internal class ChatDomainImplCreateChannelTest {
             val sut = Fixture()
                 .givenUser(currentUser)
                 .givenRepositoryFacade(repositoryFacade)
-                .givenOffline()
                 .get()
 
+            globalMutableState._connectionState.value = ConnectionState.OFFLINE
             val result = sut.createChannel(channel).execute()
 
             argumentCaptor<Channel>().apply {
@@ -104,10 +107,10 @@ internal class ChatDomainImplCreateChannelTest {
             val sut = Fixture()
                 .givenUser(currentUser)
                 .givenRepositoryFacade(repositoryFacade)
-                .givenOnline()
                 .givenChatClientResult(Result(channel))
                 .get()
 
+            globalMutableState._connectionState.value = ConnectionState.CONNECTED
             val result = sut.createChannel(channel).execute()
 
             argumentCaptor<Channel>().apply {
@@ -139,10 +142,10 @@ internal class ChatDomainImplCreateChannelTest {
 
             val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
-                .givenOnline()
                 .givenChatClientResult(Result(channelMock))
                 .get()
 
+            globalMutableState._connectionState.value = ConnectionState.CONNECTED
             val result = sut.createChannel(channelMock).execute()
 
             result.isSuccess `should be equal to` true
@@ -165,10 +168,10 @@ internal class ChatDomainImplCreateChannelTest {
 
             val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
-                .givenOnline()
                 .givenChatClientResult(Result(ChatError()))
                 .get()
 
+            globalMutableState._connectionState.value = ConnectionState.CONNECTED
             val result = sut.createChannel(channelMock).execute()
 
             result.isSuccess `should be equal to` false
@@ -191,10 +194,10 @@ internal class ChatDomainImplCreateChannelTest {
 
             val sut = Fixture()
                 .givenRepositoryFacade(repositoryFacade)
-                .givenOnline()
                 .givenChatClientResult(Result(ChatNetworkError.create(code = ChatErrorCode.NETWORK_FAILED)))
                 .get()
 
+            globalMutableState._connectionState.value = ConnectionState.CONNECTED
             val result = sut.createChannel(channelMock).execute()
 
             result.isSuccess `should be equal to` false
@@ -217,7 +220,6 @@ internal class ChatDomainImplCreateChannelTest {
             on(it.retryPolicy) doReturn NoRetryPolicy()
         }
         private var user: User = randomUser()
-        private var isOnline: Boolean = true
         private var repositoryFacade: RepositoryFacade = mock()
 
         fun givenUser(user: User) = apply {
@@ -230,26 +232,20 @@ internal class ChatDomainImplCreateChannelTest {
 
         fun givenChatClientResult(result: Result<Channel>): Fixture = apply {
             whenever(chatClient.createChannel(any(), any(), any(), any())) doReturn TestCall(result)
-            whenever(chatClient.createChannel(any<String>(), any<List<String>>(), any<Map<String, Any>>())) doReturn
-                TestCall(result)
-        }
-
-        fun givenOnline(): Fixture = apply {
-            isOnline = true
-        }
-
-        fun givenOffline(): Fixture = apply {
-            isOnline = false
+            whenever(chatClient.createChannel(any(), any<List<String>>(), any())) doReturn TestCall(result)
         }
 
         fun get(): ChatDomainImpl {
-            return ChatDomain.Builder(context, chatClient).build().let { it as ChatDomainImpl }.apply {
-                setUser(this@Fixture.user)
-                userConnected(this@Fixture.user)
-                repos = repositoryFacade
-                scope = testCoroutines.scope
-                if (isOnline) setOnline() else setOffline()
-            }
+            return ChatDomain.Builder(context, chatClient)
+                .globalMutableState(globalMutableState)
+                .build()
+                .let { it as ChatDomainImpl }
+                .apply {
+                    setUser(this@Fixture.user)
+                    userConnected(this@Fixture.user)
+                    repos = repositoryFacade
+                    scope = testCoroutines.scope
+                }
         }
     }
 

@@ -109,7 +109,6 @@ internal class SendMessageOfflineTest {
                 ChannelLogic(mutableState, chatDomainImpl),
                 chatClient,
                 chatDomainImpl,
-                messageSendingServiceFactory = mock()
             )
         }
     }

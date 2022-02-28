@@ -11,6 +11,7 @@ import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.errorhandler.factory.DeleteReactionErrorHandlerFactory
+import io.getstream.chat.android.offline.experimental.errorhandler.factory.QueryMembersErrorHandlerFactory
 import io.getstream.chat.android.offline.experimental.errorhandler.factory.SendReactionErrorHandlerFactory
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
@@ -51,6 +52,7 @@ object ChatHelper {
             .withPlugin(offlinePlugin)
             .withErrorHandler(DeleteReactionErrorHandlerFactory())
             .withErrorHandler(SendReactionErrorHandlerFactory())
+            .withErrorHandler(QueryMembersErrorHandlerFactory())
             .logLevel(logLevel)
             .build()
     }

@@ -889,6 +889,10 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 	public static final fun MessageBubble-yWKOrZg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/messages/MessageContentKt {
+	public static final fun MessageContent (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageFooterKt {
 	public static final fun MessageFooter (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
 }

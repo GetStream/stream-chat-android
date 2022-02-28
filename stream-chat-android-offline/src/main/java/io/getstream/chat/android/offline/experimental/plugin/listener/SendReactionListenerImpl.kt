@@ -94,7 +94,6 @@ internal class SendReactionListenerImpl(
      * @param reaction The [Reaction] to send.
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      * @param currentUser The currently logged in user.
-     *
      * @param result The API call result.
      */
     override suspend fun onSendReactionResult(

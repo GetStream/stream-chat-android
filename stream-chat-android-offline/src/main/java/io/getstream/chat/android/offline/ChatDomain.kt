@@ -9,14 +9,12 @@ import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -25,6 +23,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -167,25 +166,6 @@ public sealed interface ChatDomain {
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
     /**
-     * Loads older messages for the channel.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading older messages in a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "loadOlderMessages is deprecated. Use extension function ChatClient::loadOlderMessages instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
-
-    /**
      * Loads newer messages for the channel.
      *
      * @param cid The full channel id i. e. messaging:123.
@@ -303,19 +283,6 @@ public sealed interface ChatDomain {
     )
     @CheckResult
     public fun createChannel(channel: Channel): Call<Channel>
-
-    /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for sending a message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun sendMessage(message: Message): Call<Message>
 
     /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.
@@ -501,47 +468,6 @@ public sealed interface ChatDomain {
     )
     public fun deleteChannel(cid: String): Call<Unit>
 
-    /**
-     * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
-     * in local database.
-     *
-     * @param querySearch Search string used as autocomplete.
-     * @param offset Offset for paginated requests.
-     * @param userLimit The page size in the request.
-     * @param userPresence Presence flag to obtain additional info such as last active date.
-     *
-     * @return Executable async [Call] querying users.
-     */
-    @CheckResult
-    public fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>>
-
-    /**
-     * Query members of a channel.
-     *
-     * @param cid CID of the Channel whose members we are querying.
-     * @param offset Indicates how many items to exclude from the start of the result.
-     * @param limit Indicates the maximum allowed number of items in the result.
-     * @param filter Applied to online queries for advanced selection criteria.
-     * @param sort The sort criteria applied to the result.
-     * @param members
-     *
-     * @return Executable async [Call] querying members.
-     */
-    @CheckResult
-    public fun queryMembers(
-        cid: String,
-        offset: Int = 0,
-        limit: Int = 0,
-        filter: FilterObject = NeutralFilterObject,
-        sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
-        members: List<Member> = emptyList(),
-    ): Call<List<Member>>
-
     public data class Builder(
         private val appContext: Context,
         private val client: ChatClient,
@@ -557,6 +483,7 @@ public sealed interface ChatDomain {
         private var backgroundSyncEnabled: Boolean = true
         private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType =
             UploadAttachmentsNetworkType.NOT_ROAMING
+        private var globalMutableState = GlobalMutableState.getOrCreate()
 
         @VisibleForTesting
         internal fun handler(handler: Handler) = apply {
@@ -603,6 +530,10 @@ public sealed interface ChatDomain {
             return this
         }
 
+        internal fun globalMutableState(globalMutableState: GlobalMutableState): Builder = apply {
+            this.globalMutableState = globalMutableState
+        }
+
         public fun build(): ChatDomain {
             instance?.run {
                 Log.e(
@@ -625,6 +556,7 @@ public sealed interface ChatDomain {
                 backgroundSyncEnabled,
                 appContext,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
+                globalState = globalMutableState
             )
         }
     }
