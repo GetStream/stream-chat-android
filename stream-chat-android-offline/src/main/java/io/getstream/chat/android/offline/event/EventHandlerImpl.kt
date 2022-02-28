@@ -145,7 +145,7 @@ internal class EventHandlerImpl(
         val syncState = syncManager.selectSyncState(user.id) ?: SyncState(user.id)
 
         // retrieve the last time the user marked all as read and handle it as an event
-        //Todo: This is not a real event and should be not handled in EventHandler
+        // Todo: This is not a real event and should be not handled in EventHandler
         syncState.markedAllReadAt
             ?.let { MarkAllReadEvent(user = user, createdAt = it) }
             ?.let { handleEvent(it) }

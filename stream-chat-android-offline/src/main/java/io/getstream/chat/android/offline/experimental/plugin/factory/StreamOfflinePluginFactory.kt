@@ -37,7 +37,6 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
-import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -116,8 +115,34 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
-        val (syncManager, eventHandler) =
-            createEventHandlerAndSyncState(chatClient, chatDomainImpl, logic, stateRegistry, scope, repos, globalState)
+        val activeEntitiesManager = ActiveEntitiesManager(
+            chatClient = chatClient,
+            logic = logic,
+            stateRegistry = stateRegistry,
+            scope = scope,
+            userPresence = true, // Todo fix that later!!
+            repos = repos,
+            globalState = globalState,
+        )
+
+        val syncManager = SyncManager(
+            chatClient = chatClient,
+            globalState = globalState,
+            repos = repos,
+            activeEntitiesManager = activeEntitiesManager
+        )
+
+        val eventHandler = EventHandlerImpl(
+            recoveryEnabled = true,
+            domainImpl = chatDomainImpl,
+            client = chatClient,
+            mutableGlobalState = globalState,
+            repos = repos,
+            syncManager = syncManager,
+            activeEntitiesManager = activeEntitiesManager
+        )
+
+        logic.activeEntitiesManager = activeEntitiesManager
 
         chatDomainImpl.eventHandler = eventHandler
         EventHandlerProvider.set(eventHandler)
@@ -155,43 +180,6 @@ public class StreamOfflinePluginFactory(
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
-        )
-    }
-
-    private fun createEventHandlerAndSyncState(
-        chatClient: ChatClient,
-        domainImpl: ChatDomainImpl,
-        logic: LogicRegistry,
-        stateRegistry: StateRegistry,
-        scope: CoroutineScope,
-        repos: RepositoryFacade,
-        globalState: GlobalMutableState,
-    ): Pair<SyncManager, EventHandlerImpl> {
-        val activeEntitiesManager = ActiveEntitiesManager(
-            chatClient = chatClient,
-            logic = logic,
-            stateRegistry = stateRegistry,
-            scope = scope,
-            userPresence = true, // Todo fix that later!!
-            repos = repos,
-            globalState = globalState,
-        )
-
-        val syncManager = SyncManager(
-            chatClient = chatClient,
-            globalState = globalState,
-            repos = repos,
-            activeEntitiesManager = activeEntitiesManager
-        )
-
-        return syncManager to EventHandlerImpl(
-            recoveryEnabled = true,
-            domainImpl = domainImpl,
-            client = chatClient,
-            mutableGlobalState = globalState,
-            repos = repos,
-            syncManager = syncManager,
-            activeEntitiesManager = activeEntitiesManager
         )
     }
 }

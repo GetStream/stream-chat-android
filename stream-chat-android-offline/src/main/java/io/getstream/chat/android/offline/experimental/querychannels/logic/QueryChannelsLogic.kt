@@ -202,6 +202,7 @@ internal class QueryChannelsLogic(
      *
      * @see [handleEvent]
      */
+    // Todo: Event handling should happen only inside EventHandlerImpl. This should not be a responsibility of QueryChannelsLogic.
     internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event, repos)
@@ -212,6 +213,7 @@ internal class QueryChannelsLogic(
      * Handles event received from the socket.
      * Responsible for synchronizing [QueryChannelsMutableState].
      */
+    // Todo: Event handling should happen only inside EventHandlerImpl. This should not be a responsibility of QueryChannelsLogic.
     internal suspend fun handleEvent(event: ChatEvent, channelRepository: ChannelRepository) {
         // update the info for that channel from the channel repo
         logger.logI("Received channel event $event")

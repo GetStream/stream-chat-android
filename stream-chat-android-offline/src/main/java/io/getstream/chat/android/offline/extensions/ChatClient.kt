@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.onErrorReturn
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
