@@ -84,8 +84,10 @@
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 - Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104), [#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
+- The SDK now relies on `OfflinePlugin` for offline capabilities instead of `ChatDomain`. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
 
 ### ❌ Removed
+- Removed all use of `ChatDomain` inside the SDK. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
