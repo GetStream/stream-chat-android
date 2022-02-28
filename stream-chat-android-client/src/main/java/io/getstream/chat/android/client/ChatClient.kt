@@ -348,6 +348,7 @@ public class ChatClient internal constructor(
         tokenProvider: CacheableTokenProvider,
     ) {
         initializationCoordinator.userSet(user)
+        initializationCoordinator.userConnected(user)
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
