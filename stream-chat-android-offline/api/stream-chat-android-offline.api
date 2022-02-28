@@ -492,6 +492,10 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/offline/experimental/sync/SyncManager {
+	public fun <init> ()V
+}
+
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun cancelMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun createChannel (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;

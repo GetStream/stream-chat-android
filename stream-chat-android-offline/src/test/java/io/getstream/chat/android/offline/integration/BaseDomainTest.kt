@@ -31,6 +31,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -63,6 +64,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
     lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
 
+    protected val globalMutableState = GlobalMutableState.create()
     private val recoveryEnabled = false
     private val backgroundSyncEnabled = false
 
@@ -199,6 +201,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
+            .globalMutableState(globalMutableState)
             .build()
 
         chatDomainImpl = chatDomain as ChatDomainImpl
