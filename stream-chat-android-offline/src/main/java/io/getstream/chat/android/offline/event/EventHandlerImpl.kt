@@ -65,19 +65,57 @@ import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class EventHandlerImpl(
     private val domainImpl: ChatDomainImpl,
     private val client: ChatClient,
 ) {
+    private val eventBuffer = MutableSharedFlow<List<ChatEvent>>()
+    private val connectEventBuffer = MutableSharedFlow<List<ChatEvent>>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    private val jobs = mutableListOf<Job>()
+
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
 
-    internal fun handleEvents(events: List<ChatEvent>) {
-        handleConnectEvents(events)
-        domainImpl.scope.launch {
-            handleEventsInternal(events, isFromSync = false)
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
+        connectEventBuffer.emit(events)
+        eventBuffer.emit(events)
+    }
+
+    init {
+        startCollectingEvents()
+    }
+
+    internal fun startCollectingEvents() {
+        with(jobs) {
+            add(collectGeneralEvents())
+            add(collectConnectEvents())
+        }
+    }
+
+    internal fun stopCollectingEvents() {
+        jobs.forEach { job -> job.cancel() }
+    }
+
+    internal fun collectGeneralEvents() = domainImpl.scope.launch {
+        eventBuffer.collect { chatEvents ->
+            handleEventsInternal(chatEvents, isFromSync = false)
+        }
+    }
+
+    internal fun collectConnectEvents() = domainImpl.scope.launch {
+        connectEventBuffer.collect { chatEvents ->
+            handleConnectEvents(chatEvents)
         }
     }
 

@@ -356,7 +356,9 @@ internal class ChatDomainImpl internal constructor(
     private fun startListening() {
         if (eventSubscription.isDisposed) {
             eventSubscription = client.subscribe {
-                eventHandler.handleEvents(listOf(it))
+                scope.launch {
+                    eventHandler.handleEvents(listOf(it))
+                }
             }
         }
     }
