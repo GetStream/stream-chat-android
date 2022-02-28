@@ -41,6 +41,7 @@ import io.getstream.chat.android.offline.repository.creation.builder.RepositoryF
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -122,8 +123,8 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
-        val eventHandler =
-            createEventHandler(chatClient, chatDomainImpl, logic, stateRegistry, scope, repos, globalState)
+        val (syncManager, eventHandler) =
+            createEventHandlerAndSyncState(chatClient, chatDomainImpl, logic, stateRegistry, scope, repos, globalState)
 
         chatDomainImpl.eventHandler = eventHandler
         EventHandlerProvider.set(eventHandler)
@@ -139,6 +140,7 @@ public class StreamOfflinePluginFactory(
                 logic.clear()
                 globalState.clearState()
                 MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
+                scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
                 eventHandler.clear()
             }
@@ -163,7 +165,7 @@ public class StreamOfflinePluginFactory(
         )
     }
 
-    private fun createEventHandler(
+    private fun createEventHandlerAndSyncState(
         chatClient: ChatClient,
         domainImpl: ChatDomainImpl,
         logic: LogicRegistry,
@@ -171,7 +173,7 @@ public class StreamOfflinePluginFactory(
         scope: CoroutineScope,
         repos: RepositoryFacade,
         globalState: GlobalMutableState,
-    ): EventHandlerImpl {
+    ): Pair<SyncManager, EventHandlerImpl> {
         val activeEntitiesManager = ActiveEntitiesManager(
             chatClient = chatClient,
             logic = logic,
@@ -189,7 +191,7 @@ public class StreamOfflinePluginFactory(
             activeEntitiesManager = activeEntitiesManager
         )
 
-        return EventHandlerImpl(
+        return syncManager to EventHandlerImpl(
             recoveryEnabled = true,
             domainImpl = domainImpl,
             client = chatClient,

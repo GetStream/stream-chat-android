@@ -201,8 +201,6 @@ internal class ChatDomainImpl internal constructor(
         globalState._connectionState.value = ConnectionState.OFFLINE
         globalState._banned.value = false
         globalState._mutedUsers.value = emptyList()
-        activeChannelMapImpl.clear()
-        activeQueryMapImpl.clear()
         latestUsers = MutableStateFlow(emptyMap())
     }
 
@@ -256,27 +254,11 @@ internal class ChatDomainImpl internal constructor(
         setBanned(me.banned)
     }
 
-    internal suspend fun storeSyncState(): SyncState? {
-        syncStateFlow.value?.let { _syncState ->
-            val newSyncState = _syncState.copy(
-                activeChannelIds = getActiveChannelCids(),
-            )
-            repos.insertSyncState(newSyncState)
-            syncStateFlow.value = newSyncState
-        }
-
-        return syncStateFlow.value
-    }
-
     override suspend fun disconnect() {
-        storeSyncState()
         job.cancelChildren()
-        stopListening()
         stopClean()
         clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
-        activeChannelMapImpl.clear()
-        activeQueryMapImpl.clear()
         logic.clear()
         state.clear()
     }
@@ -314,15 +296,8 @@ internal class ChatDomainImpl internal constructor(
         globalState._banned.value = newBanned
     }
 
-    /**
-     * Stop listening to chat events
-     */
-    private fun stopListening() {
-        eventSubscription.dispose()
-    }
-
-    internal fun channel(c: Channel): ChannelController {
-        return channel(c.type, c.id)
+    fun setTotalUnreadCount(newCount: Int) {
+        globalState._totalUnreadCount.value = newCount
     }
 
     internal fun channel(cid: String): ChannelController {

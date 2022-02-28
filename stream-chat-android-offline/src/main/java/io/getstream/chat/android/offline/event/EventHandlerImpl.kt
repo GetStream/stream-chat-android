@@ -77,8 +77,6 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import java.util.Date
 
 @ExperimentalStreamChatApi
@@ -94,7 +92,6 @@ internal class EventHandlerImpl(
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
 
-    private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var eventSubscription: Disposable = ChatDomainImpl.EMPTY_DISPOSABLE
     private var handlerEventJob: Deferred<*>? = null
 
@@ -146,7 +143,7 @@ internal class EventHandlerImpl(
         repos.cacheChannelConfigs()
 
         // load the current user from the db
-        val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
+        val syncState = syncManager.selectSyncState(user.id) ?: SyncState(user.id)
 
         // retrieve the last time the user marked all as read and handle it as an event
         //Todo: This is not a real event and should be not handled in EventHandler
@@ -154,7 +151,7 @@ internal class EventHandlerImpl(
             ?.let { MarkAllReadEvent(user = user, createdAt = it) }
             ?.let { handleEvent(it) }
 
-        syncState.also { syncStateFlow.value = it }
+        syncManager.syncStateFlow.value = syncState
 
         // Sync cached channels
         val cachedChannelsCids = repos.selectAllCids()
@@ -212,7 +209,7 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
+        client.getSyncHistory(cids, syncManager.syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
         events.sortedBy(ChatEvent::createdAt)
@@ -432,9 +429,10 @@ internal class EventHandlerImpl(
                     // only update sync state if the incoming "mark all read" date is newer
                     // this supports using event handler to restore mark all read state in setUser
                     // without redundant db writes.
-                    repos.selectSyncState(event.user.id)?.let { state ->
+
+                    syncManager.selectSyncState(event.user.id)?.let { state ->
                         if (state.markedAllReadAt == null || state.markedAllReadAt.before(event.createdAt)) {
-                            repos.insertSyncState(state.copy(markedAllReadAt = event.createdAt))
+                            syncManager.insertSyncState(state.copy(markedAllReadAt = event.createdAt))
                         }
                     }
                 }

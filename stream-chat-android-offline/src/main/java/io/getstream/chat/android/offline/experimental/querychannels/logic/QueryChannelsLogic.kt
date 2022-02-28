@@ -24,6 +24,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.model.ChannelConfig
@@ -45,6 +46,7 @@ internal class QueryChannelsLogic(
     private val client: ChatClient,
     private val repos: RepositoryFacade,
     private val globalState: GlobalMutableState,
+    private val activeEntitiesManager: ActiveEntitiesManager
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
@@ -107,7 +109,7 @@ internal class QueryChannelsLogic(
 
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
-        chatDomainImpl.channel(channel).updateDataFromChannel(channel)
+        activeEntitiesManager.channel(channel).updateDataFromChannel(channel)
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
@@ -180,7 +182,7 @@ internal class QueryChannelsLogic(
                 .let { removeChannels(it, repos) }
         }
         mutableState.channelsOffset.value += channels.size
-        channels.forEach { chatDomainImpl.channel(it).updateDataFromChannel(it) }
+        channels.forEach { activeEntitiesManager.channel(it).updateDataFromChannel(it) }
         addChannels(channels, repos)
     }
 
@@ -255,7 +257,7 @@ internal class QueryChannelsLogic(
                 if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
                     client.state.channel(channelType, channelId).toChannel()
                 } else {
-                    chatDomainImpl.channel(channelType, channelId).toChannel()
+                    activeEntitiesManager.channel(channelType, channelId).toChannel()
                 }
             }
     }
