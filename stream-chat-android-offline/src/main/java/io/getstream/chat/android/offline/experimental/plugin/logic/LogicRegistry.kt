@@ -15,6 +15,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,7 +25,9 @@ import java.util.concurrent.ConcurrentHashMap
  * 2. Query channel
  * 3. Query thread
  */
-internal class LogicRegistry internal constructor(private val stateRegistry: StateRegistry) {
+internal class LogicRegistry internal constructor(
+    private val stateRegistry: StateRegistry,
+) {
 
     private val chatDomain: ChatDomainImpl
         get() = (ChatDomain.instance as ChatDomainImpl)
@@ -34,6 +37,9 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
+    // This class should not be insert via setter
+    internal lateinit var activeEntitiesManager: ActiveEntitiesManager
+
     fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsLogic(
@@ -41,7 +47,8 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
                 chatDomain,
                 chatDomain.client,
                 chatDomain.repos,
-                GlobalMutableState.getOrCreate()
+                GlobalMutableState.getOrCreate(),
+                activeEntitiesManager
             )
         }
     }
@@ -110,7 +117,10 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
          *
          * @param stateRegistry [StateRegistry]
          */
-        internal fun getOrCreate(stateRegistry: StateRegistry): LogicRegistry {
+        internal fun getOrCreate(
+            stateRegistry: StateRegistry,
+
+        ): LogicRegistry {
             return instance ?: LogicRegistry(stateRegistry).also { logicRegistry ->
                 instance = logicRegistry
             }
