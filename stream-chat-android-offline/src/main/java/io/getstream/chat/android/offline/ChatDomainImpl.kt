@@ -50,7 +50,6 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.cancelMessage
 import io.getstream.chat.android.offline.extensions.createChannel
-import io.getstream.chat.android.offline.extensions.shuffleGiphy
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
