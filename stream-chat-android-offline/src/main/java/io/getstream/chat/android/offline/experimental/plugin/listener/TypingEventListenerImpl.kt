@@ -2,7 +2,7 @@ package io.getstream.chat.android.offline.experimental.plugin.listener
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendEventListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -12,11 +12,11 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import java.util.Date
 
 @ExperimentalStreamChatApi
-internal class SendEventListenerImpl(
+internal class TypingEventListenerImpl(
     private val state: StateRegistry,
-) : SendEventListener {
+) : TypingEventListener {
 
-    override fun onSendEventPrecondition(
+    override fun onTypingEventPrecondition(
         eventType: String,
         channelType: String,
         channelId: String,
@@ -61,7 +61,7 @@ internal class SendEventListenerImpl(
         } else Result.success(Unit)
     }
 
-    override fun onSendEventRequest(
+    override fun onTypingEventRequest(
         eventType: String,
         channelType: String,
         channelId: String,
@@ -78,7 +78,7 @@ internal class SendEventListenerImpl(
         }
     }
 
-    override fun onSendEventResult(
+    override fun onTypingEventResult(
         result: Result<ChatEvent>,
         eventType: String,
         channelType: String,

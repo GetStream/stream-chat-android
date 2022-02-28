@@ -1,12 +1,12 @@
 package io.getstream.chat.android.offline.events
 
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendEventListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.plugin.listener.SendEventListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -40,7 +40,7 @@ internal class TypingEventsTest {
                 .givenTypingEventsDisabled(channelType, channelId)
                 .get()
 
-            sut.onSendEventPrecondition(
+            sut.onTypingEventPrecondition(
                 EventType.TYPING_START,
                 channelType,
                 channelId,
@@ -58,7 +58,7 @@ internal class TypingEventsTest {
 
             Thread.sleep(3001) // Just to cool down because other tests can run before this.
             val eventTime = Date()
-            sut.onSendEventPrecondition(
+            sut.onTypingEventPrecondition(
                 EventType.TYPING_START,
                 channelType,
                 channelId,
@@ -66,10 +66,10 @@ internal class TypingEventsTest {
                 eventTime
             ).isSuccess `should be equal to` true
 
-            sut.onSendEventRequest(EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
-            sut.onSendEventResult(mock(), EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
+            sut.onTypingEventRequest(EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
+            sut.onTypingEventResult(mock(), EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
 
-            sut.onSendEventPrecondition(
+            sut.onTypingEventPrecondition(
                 EventType.TYPING_START,
                 channelType,
                 channelId,
@@ -79,7 +79,7 @@ internal class TypingEventsTest {
 
             Thread.sleep(3001)
 
-            sut.onSendEventPrecondition(
+            sut.onTypingEventPrecondition(
                 EventType.TYPING_START,
                 channelType,
                 channelId,
@@ -95,7 +95,7 @@ internal class TypingEventsTest {
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
 
-            sut.onSendEventPrecondition(
+            sut.onTypingEventPrecondition(
                 EventType.TYPING_STOP,
                 channelType,
                 channelId,
@@ -111,7 +111,7 @@ internal class TypingEventsTest {
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
 
-            sut.onSendEventRequest(
+            sut.onTypingEventRequest(
                 EventType.TYPING_START,
                 channelType,
                 channelId,
@@ -119,7 +119,7 @@ internal class TypingEventsTest {
                 Date()
             )
 
-            sut.onSendEventPrecondition(
+            sut.onTypingEventPrecondition(
                 EventType.TYPING_STOP,
                 channelType,
                 channelId,
@@ -127,7 +127,7 @@ internal class TypingEventsTest {
                 Date()
             ).isSuccess `should be equal to` true
 
-            sut.onSendEventRequest(
+            sut.onTypingEventRequest(
                 EventType.TYPING_STOP,
                 channelType,
                 channelId,
@@ -144,7 +144,7 @@ internal class TypingEventsTest {
                 .get()
 
             val eventTime = Date()
-            sut.onSendEventRequest(
+            sut.onTypingEventRequest(
                 EventType.TYPING_START,
                 channelType,
                 channelId,
@@ -181,8 +181,8 @@ internal class TypingEventsTest {
             return this
         }
 
-        fun get(): Pair<SendEventListener, StateRegistry> {
-            return SendEventListenerImpl(state = stateRegistry) to stateRegistry
+        fun get(): Pair<TypingEventListener, StateRegistry> {
+            return TypingEventListenerImpl(state = stateRegistry) to stateRegistry
         }
     }
 }

@@ -11,12 +11,12 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllRea
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendEventListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -58,7 +58,7 @@ internal class OfflinePlugin(
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val queryMembersListener: QueryMembersListener,
-    private val sendEventListener: SendEventListener,
+    private val typingEventListener: TypingEventListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -75,7 +75,7 @@ internal class OfflinePlugin(
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,
-    SendEventListener by sendEventListener {
+    TypingEventListener by typingEventListener {
 
     override val name: String = MODULE_NAME
 

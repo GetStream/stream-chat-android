@@ -64,12 +64,12 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllRea
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendEventListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -1567,29 +1567,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
-    ): Call<ChatEvent> {
-        val relevantPlugins = plugins.filterIsInstance<SendEventListener>()
-        val eventTime = Date()
-        return api.sendEvent(
-            eventType = eventType,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = extraData,
-        )
-            .doOnStart(scope) {
-                relevantPlugins.forEach { plugin ->
-                    plugin.onSendEventRequest(eventType, channelType, channelId, extraData, eventTime)
-                }
-            }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin ->
-                    plugin.onSendEventResult(result, eventType, channelType, channelId, extraData, eventTime)
-                }
-            }
-            .precondition(relevantPlugins) {
-                this.onSendEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
-            }
-    }
+    ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
 
     public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
 
@@ -2033,7 +2011,28 @@ public class ChatClient internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        return sendEvent(EventType.TYPING_START, channelType, channelId, extraData)
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
+        val eventTime = Date()
+        val eventType = EventType.TYPING_START
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
     }
 
     /**
@@ -2050,7 +2049,28 @@ public class ChatClient internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        return sendEvent(EventType.TYPING_STOP, channelType, channelId, extraData)
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
+        val eventTime = Date()
+        val eventType = EventType.TYPING_STOP
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
     }
 
     internal fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {

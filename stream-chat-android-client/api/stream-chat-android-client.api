@@ -2001,12 +2001,6 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun onQueryChannelsResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendEventListener {
-	public abstract fun onSendEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
-	public abstract fun onSendEventRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
-	public abstract fun onSendEventResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
-}
-
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendGiphyListener {
 	public abstract fun onGiphySendResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;)V
 }
@@ -2037,6 +2031,12 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener$DefaultImpls {
 	public static fun onGetRepliesMorePrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onGetRepliesPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ThreadQueryListener;Ljava/lang/String;I)Lio/getstream/chat/android/client/utils/Result;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/TypingEventListener {
+	public abstract fun onTypingEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onTypingEventRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+	public abstract fun onTypingEventResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 }
 
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
