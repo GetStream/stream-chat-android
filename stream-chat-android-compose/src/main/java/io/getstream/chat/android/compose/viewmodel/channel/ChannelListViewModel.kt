@@ -266,9 +266,8 @@ public class ChannelListViewModel(
         currentQuery?.copy(
             filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
             querySort = currentConfig.querySort
-        )?.let {
-            val call = chatClient.queryChannels(it)
-            call.enqueue()
+        )?.let { queryChannelsRequest ->
+            chatClient.queryChannels(queryChannelsRequest).enqueue()
         }
     }
 
