@@ -27,6 +27,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed updating typing users. [#3154](https://github.com/GetStream/stream-chat-android/pull/3154)
 
 ### ⬆️ Improved
 
