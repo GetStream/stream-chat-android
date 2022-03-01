@@ -4,7 +4,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.channel.QueryChannelReference
@@ -13,7 +12,6 @@ import io.getstream.chat.android.offline.experimental.querychannels.QueryChannel
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 
 @InternalStreamChatApi
-@ExperimentalStreamChatApi
 /**
  * Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
  */

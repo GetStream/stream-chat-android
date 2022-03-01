@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
@@ -115,7 +114,6 @@ private const val CHANNEL_LIMIT = 30
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
-@OptIn(ExperimentalStreamChatApi::class)
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
     @VisibleForTesting

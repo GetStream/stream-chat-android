@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.message.wasCreatedAfter
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
-@ExperimentalStreamChatApi
 internal class ChannelMutableState(
     override val channelType: String,
     override val channelId: String,
@@ -186,5 +184,4 @@ internal class ChannelMutableState(
     }
 }
 
-@ExperimentalStreamChatApi
 internal fun ChannelState.toMutableState(): ChannelMutableState = this as ChannelMutableState

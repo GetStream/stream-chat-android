@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-@ExperimentalStreamChatApi
 internal class QueryChannelsMutableState(
     override val filter: FilterObject,
     override val sort: QuerySort<Channel>,
@@ -71,5 +69,4 @@ internal class QueryChannelsMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, null)
 }
 
-@ExperimentalStreamChatApi
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState

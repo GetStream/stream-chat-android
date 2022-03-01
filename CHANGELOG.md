@@ -54,6 +54,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
 
 ### ⬆️ Improved
 

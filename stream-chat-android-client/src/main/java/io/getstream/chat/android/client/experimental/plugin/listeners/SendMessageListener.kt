@@ -3,12 +3,10 @@ package io.getstream.chat.android.client.experimental.plugin.listeners
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Listener for [ChatClient.sendMessage] requests.
  */
-@ExperimentalStreamChatApi
 public interface SendMessageListener {
 
     /**

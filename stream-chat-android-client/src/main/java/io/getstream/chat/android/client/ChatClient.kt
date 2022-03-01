@@ -139,7 +139,6 @@ import java.util.concurrent.Executor
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-@OptIn(ExperimentalStreamChatApi::class)
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
@@ -2025,7 +2024,6 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    @ExperimentalStreamChatApi
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
@@ -2191,7 +2189,6 @@ public class ChatClient internal constructor(
         }
 
         @InternalStreamChatApi
-        @ExperimentalStreamChatApi
         public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
             pluginFactories.add(pluginFactory)
         }
@@ -2202,7 +2199,6 @@ public class ChatClient internal constructor(
          * @see [ErrorHandlerFactory]
          */
         @InternalStreamChatApi
-        @ExperimentalStreamChatApi
         public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
             this.errorHandlerFactories.add(errorHandlerFactory)
         }

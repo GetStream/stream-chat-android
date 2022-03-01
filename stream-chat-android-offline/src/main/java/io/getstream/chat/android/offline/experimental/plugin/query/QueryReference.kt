@@ -1,12 +1,10 @@
 package io.getstream.chat.android.offline.experimental.plugin.query
 
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 
 @InternalStreamChatApi
-@ExperimentalStreamChatApi
 /**
  * Generic reference entity that wrap a request to ChatClient and expose offline state (see [asState]).
  * [T] is a type of requested data.
