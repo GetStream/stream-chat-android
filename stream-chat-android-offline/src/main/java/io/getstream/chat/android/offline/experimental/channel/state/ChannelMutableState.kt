@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.experimental.channel.state
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Channel
@@ -119,9 +118,7 @@ internal class ChannelMutableState(
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user ->
-                            user.id != ChatClient.instance().getCurrentUser()?.id
-                        }
+                        is TypingStartEvent -> event.user
                         else -> null
                     }
                 }
