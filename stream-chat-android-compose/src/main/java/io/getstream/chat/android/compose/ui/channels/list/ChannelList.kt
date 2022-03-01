@@ -32,7 +32,6 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Default ChannelList component, that relies on the [ChannelListViewModel] to load the data and
@@ -62,7 +61,6 @@ public fun ChannelList(
         factory =
         ChannelViewModelFactory(
             ChatClient.instance(),
-            ChatDomain.instance(),
             QuerySort.desc("last_updated"),
             Filters.and(
                 Filters.eq("type", "messaging"),
