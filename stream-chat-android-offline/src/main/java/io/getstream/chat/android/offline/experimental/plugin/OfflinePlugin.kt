@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMar
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
@@ -27,7 +26,6 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEven
  * @param threadQueryListener [ThreadQueryListener]
  * @param channelMarkReadListener [ChannelMarkReadListener]
  * @param editMessageListener [EditMessageListener]
- * @param getMessageListener [GetMessageListener]
  * @param hideChannelListener [HideChannelListener]
  * @param markAllReadListener [MarkAllReadListener]
  * @param deleteReactionListener [DeleteReactionListener]
@@ -44,7 +42,6 @@ internal class OfflinePlugin(
     private val threadQueryListener: ThreadQueryListener,
     private val channelMarkReadListener: ChannelMarkReadListener,
     private val editMessageListener: EditMessageListener,
-    private val getMessageListener: GetMessageListener,
     private val hideChannelListener: HideChannelListener,
     private val markAllReadListener: MarkAllReadListener,
     private val deleteReactionListener: DeleteReactionListener,
@@ -61,7 +58,6 @@ internal class OfflinePlugin(
     ThreadQueryListener by threadQueryListener,
     ChannelMarkReadListener by channelMarkReadListener,
     EditMessageListener by editMessageListener,
-    GetMessageListener by getMessageListener,
     HideChannelListener by hideChannelListener,
     MarkAllReadListener by markAllReadListener,
     DeleteReactionListener by deleteReactionListener,

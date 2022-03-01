@@ -53,7 +53,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.extensions.cancelMessage
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -915,7 +915,7 @@ public class MessageListViewModel(
         when (action) {
             is SendGiphy -> chatDomain.sendGiphy(message)
             is ShuffleGiphy -> chatDomain.shuffleGiphy(message)
-            is CancelGiphy -> chatClient.cancelMessage(message)
+            is CancelGiphy -> chatClient.cancelEphemeralMessage(message)
         }.exhaustive.enqueue()
     }
 

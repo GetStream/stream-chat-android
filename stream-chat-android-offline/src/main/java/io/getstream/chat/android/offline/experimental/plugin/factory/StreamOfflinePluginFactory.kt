@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
@@ -18,7 +19,6 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMar
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
-import io.getstream.chat.android.offline.experimental.plugin.listener.GetMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.HideChannelListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.MarkAllReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelListenerImpl
@@ -109,6 +109,8 @@ public class StreamOfflinePluginFactory(
             )
         )
 
+        val channelMarkReadHelper = ChannelMarkReadHelper(chatClient = chatClient, logic = logic, state = stateRegistry)
+
         chatClient.addInterceptor(defaultInterceptor)
 
         InitializationCoordinator.getOrCreate().run {
@@ -126,11 +128,10 @@ public class StreamOfflinePluginFactory(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
-            channelMarkReadListener = ChannelMarkReadListenerImpl(logic),
+            channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, globalState),
-            getMessageListener = GetMessageListenerImpl(logic),
             hideChannelListener = HideChannelListenerImpl(logic),
-            markAllReadListener = MarkAllReadListenerImpl(logic),
+            markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
             sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
             deleteMessageListener = DeleteMessageListenerImpl(logic, globalState, repos),
