@@ -5,12 +5,10 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQuer
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
-@ExperimentalStreamChatApi
 internal class ThreadLogic(private val mutableState: ThreadMutableState, private val channelLogic: ChannelLogic) :
     ThreadQueryListener {
 

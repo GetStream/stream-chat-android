@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -71,7 +70,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private lateinit var channelLogic: ChannelLogic
     private lateinit var channelMutableState: ChannelMutableState
 
-    @OptIn(ExperimentalStreamChatApi::class)
     @BeforeEach
     fun setUp() {
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->

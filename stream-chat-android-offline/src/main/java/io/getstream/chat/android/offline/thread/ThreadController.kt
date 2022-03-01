@@ -4,12 +4,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalStreamChatApi::class)
 public class ThreadController internal constructor(
     private val threadMutableState: ThreadMutableState,
     private val threadLogic: ThreadLogic,

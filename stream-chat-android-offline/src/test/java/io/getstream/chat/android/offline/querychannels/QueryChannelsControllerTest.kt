@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -425,7 +424,6 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
         initialCids.add(channel.cid)
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
     fun get(): QueryChannelsController {
         val filter = Filters.neutral()
         val mutableState =

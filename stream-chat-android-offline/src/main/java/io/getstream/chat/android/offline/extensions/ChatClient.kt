@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
@@ -199,7 +198,6 @@ internal fun ChatClient.needsMarkRead(cid: String): Boolean {
  *
  * @return Executable async [Call] responsible for loading a message.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 @CheckResult
 public fun ChatClient.loadMessageById(
     cid: String,

@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
@@ -41,7 +40,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         }
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
     suspend fun setupChatDomain(client: ChatClient): ChatDomainImpl {
         db = createRoomDB(testCoroutines.dispatcher)
 
