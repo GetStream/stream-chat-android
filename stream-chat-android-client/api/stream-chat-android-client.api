@@ -1958,16 +1958,6 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun onMessageEditResult (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener {
-	public abstract fun onGetMessageError (Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGetMessageResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener$DefaultImpls {
-	public static synthetic fun onGetMessageError$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun onGetMessageResult$default (Lio/getstream/chat/android/client/experimental/plugin/listeners/GetMessageListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-}
-
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/HideChannelListener {
 	public abstract fun onHideChannelPrecondition (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onHideChannelRequest (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;

@@ -2,14 +2,19 @@
 
 package io.getstream.chat.android.offline.extensions
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.doOnResult
-import io.getstream.chat.android.client.call.onErrorReturn
+import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -17,9 +22,13 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
+import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
+import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
-import io.getstream.chat.android.offline.usecase.DownloadAttachment
+import io.getstream.chat.android.offline.message.isEphemeral
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.validateCid
+import io.getstream.chat.android.offline.utils.validateCidWithResult
 
 /**
  * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
@@ -39,7 +48,12 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
 
     val domainImpl = domainImpl()
     return CoroutineCall(state.scope) {
-        domainImpl.replayEvents(cid)
+        val cidValidationResult = validateCidWithResult<List<ChatEvent>>(cid)
+        if (cidValidationResult.isSuccess) {
+            domainImpl.replayEvents(cid)
+        } else {
+            cidValidationResult
+        }
     }
 }
 
@@ -53,13 +67,18 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
  */
 @CheckResult
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
-    validateCid(cid)
-
-    val chatDomain = domainImpl()
-    val channelController = chatDomain.channel(cid)
     return CoroutineCall(state.scope) {
-        channelController.replyMessage(message)
-        Result(Unit)
+        val cidValidationResult = validateCidWithResult<Unit>(cid)
+
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            state.channel(channelType = channelType, channelId = channelId).toMutableState().run {
+                _repliedMessage.value = message
+            }
+            Result(Unit)
+        } else {
+            cidValidationResult
+        }
     }
 }
 
@@ -71,8 +90,28 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  * @return Executable async [Call] downloading attachment.
  */
 @CheckResult
-public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
-    DownloadAttachment(domainImpl()).invoke(attachment)
+public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
+    return CoroutineCall(state.scope) {
+        try {
+            val logger = ChatLogger.get("DownloadAttachment")
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val url = attachment.assetUrl ?: attachment.imageUrl
+            val subPath = attachment.name ?: attachment.title
+
+            logger.logD("Downloading attachment. Name: $subPath, Url: $url")
+
+            downloadManager.enqueue(
+                DownloadManager.Request(Uri.parse(url))
+                    .setTitle(subPath)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            )
+            Result.success(Unit)
+        } catch (exception: Exception) {
+            Result.error(exception)
+        }
+    }
+}
 
 /**
  * Loads older messages for the channel.
@@ -83,31 +122,47 @@ public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
  * @return The channel wrapped in [Call]. This channel contains older requested messages.
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
-    validateCid(cid)
-
-    val domainImpl = domainImpl()
-    val channelController = domainImpl.channel(cid)
     return CoroutineCall(state.scope) {
-        channelController.loadOlderMessages(messageLimit)
+        val cidValidationResult = validateCidWithResult<Channel>(cid)
+
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId)
+                .loadOlderMessages(messageLimit = messageLimit)
+        } else {
+            cidValidationResult
+        }
     }
 }
 
 /**
- *  Cancels the message of "ephemeral" type. Removes the message from local storage.
- * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+ * Cancels the message of "ephemeral" type.
+ * Removes the message from local storage and state.
  *
  * @param message The `ephemeral` message to cancel.
  *
  * @return Executable async [Call] responsible for canceling ephemeral message.
  */
-public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
-    val cid = message.cid
-    validateCid(cid)
-
-    val domainImpl = domainImpl()
-    val channelController = domainImpl.channel(cid)
+public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
     return CoroutineCall(state.scope) {
-        channelController.cancelEphemeralMessage(message)
+        val cidValidationResult = validateCidWithResult<Boolean>(message.cid)
+
+        if (cidValidationResult.isSuccess) {
+            try {
+                require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
+
+                val repos = RepositoryFacade.get()
+                val (channelType, channelId) = message.cid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
+                repos.deleteChannelMessage(message)
+
+                Result.success(true)
+            } catch (exception: Exception) {
+                Result.error(exception)
+            }
+        } else {
+            cidValidationResult
+        }
     }
 }
 
@@ -135,20 +190,6 @@ public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
 }
 
 /**
- * Checks if channel needs to be marked read.
- *
- * @param cid The full channel id i.e. "messaging:123".
- *
- * @return True if channel is needed to be marked otherwise false.
- */
-internal fun ChatClient.needsMarkRead(cid: String): Boolean {
-    validateCid(cid)
-    val channelController = domainImpl().channel(cid)
-
-    return channelController.markRead()
-}
-
-/**
  * Loads message for a given message id and channel id.
  *
  * @param cid The full channel id i. e. messaging:123.
@@ -165,20 +206,34 @@ public fun ChatClient.loadMessageById(
     olderMessagesOffset: Int,
     newerMessagesOffset: Int,
 ): Call<Message> {
-    val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
-    return this.getMessage(messageId)
-        .onErrorReturn(state.scope) {
-            relevantPlugins.first().onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
-        }
-        .doOnResult(state.scope) { result ->
-            relevantPlugins.forEach {
-                it.onGetMessageResult(
-                    result,
-                    cid,
-                    messageId,
-                    olderMessagesOffset,
-                    newerMessagesOffset
-                )
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult<Message>(cid)
+
+        if (cidValidationResult.isSuccess) {
+            val result = getMessage(messageId).await()
+
+            if (result.isSuccess) {
+                val message = result.data()
+                val (channelType, channelId) = cid.cidToTypeAndId()
+
+                logic.channel(channelType = channelType, channelId = channelId).run {
+                    storeMessageLocally(listOf(message))
+                    upsertMessages(listOf(message))
+                    loadOlderMessages(newerMessagesOffset, messageId)
+                    loadNewerMessages(messageId, olderMessagesOffset)
+                }
+                result
+            } else {
+                try {
+                    RepositoryFacade.get().selectMessage(messageId)?.let { message ->
+                        Result(message)
+                    } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+                } catch (exception: Exception) {
+                    Result.error(exception)
+                }
             }
+        } else {
+            cidValidationResult
         }
+    }
 }

@@ -32,7 +32,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.extensions.cancelMessage
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -526,7 +526,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.CANCEL -> {
-                client.cancelMessage(event.message).enqueue(
+                client.cancelEphemeralMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"

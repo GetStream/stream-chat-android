@@ -1615,18 +1615,6 @@ public class ChatClient internal constructor(
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
     }
 
-    /**
-     * Marks the specified channel as read without running a precondition.
-     *
-     * @param channelType Type of the channel.
-     * @param channelId Id of the channel.
-     */
-    @InternalStreamChatApi
-    @CheckResult
-    public fun markReadInternal(channelType: String, channelId: String): Call<Unit> {
-        return api.markRead(channelType, channelId)
-    }
-
     @CheckResult
     public fun updateUsers(users: List<User>): Call<List<User>> {
         return api.updateUsers(users)

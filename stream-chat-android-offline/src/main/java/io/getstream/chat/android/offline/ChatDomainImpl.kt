@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -47,7 +48,7 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
-import io.getstream.chat.android.offline.extensions.cancelMessage
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
@@ -68,7 +69,6 @@ import io.getstream.chat.android.offline.usecase.HideChannel
 import io.getstream.chat.android.offline.usecase.LeaveChannel
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.MarkAllRead
-import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
@@ -884,7 +884,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun createChannel(channel: Channel): Call<Channel> = client.createChannel(channel)
 
-    override fun cancelMessage(message: Message): Call<Boolean> = client.cancelMessage(message)
+    override fun cancelMessage(message: Message): Call<Boolean> = client.cancelEphemeralMessage(message)
 
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
@@ -922,7 +922,12 @@ internal class ChatDomainImpl internal constructor(
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
         client.deleteReaction(cid = cid, messageId = reaction.messageId, reactionType = reaction.type)
 
-    override fun markRead(cid: String): Call<Boolean> = MarkRead(this).invoke(cid)
+    override fun markRead(cid: String): Call<Boolean> {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return client.markRead(channelType = channelType, channelId = channelId).map {
+            true
+        }
+    }
 
     override fun markAllRead(): Call<Boolean> = MarkAllRead(this).invoke()
 

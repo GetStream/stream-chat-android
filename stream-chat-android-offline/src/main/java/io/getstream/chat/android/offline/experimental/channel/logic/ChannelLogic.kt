@@ -52,8 +52,6 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -68,13 +66,11 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
-import io.getstream.chat.android.offline.extensions.needsMarkRead
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
@@ -84,8 +80,6 @@ import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
 import io.getstream.chat.android.offline.utils.toCid
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import java.util.Date
 import kotlin.math.max
 
@@ -93,7 +87,7 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener, ChannelMarkReadListener, GetMessageListener, HideChannelListener {
+) : QueryChannelListener, HideChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -199,34 +193,6 @@ internal class ChannelLogic(
         }
     }
 
-    override suspend fun onGetMessageResult(
-        result: Result<Message>,
-        cid: String,
-        messageId: String,
-        olderMessagesOffset: Int,
-        newerMessagesOffset: Int,
-    ) {
-        if (result.isSuccess) {
-            result.data().let { message ->
-                storeMessageLocally(listOf(message))
-                upsertMessages(listOf(message))
-                loadOlderMessages(messageId, newerMessagesOffset)
-                loadNewerMessages(messageId, olderMessagesOffset)
-            }
-        }
-    }
-
-    override suspend fun onGetMessageError(
-        cid: String,
-        messageId: String,
-        olderMessagesOffset: Int,
-        newerMessagesOffset: Int,
-    ): Result<Message> {
-        return chatDomainImpl.repos.selectMessage(messageId)?.let { message ->
-            Result(message)
-        } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-    }
-
     /**
      * Loads a list of messages after the newest message in the current list.
      *
@@ -235,20 +201,20 @@ internal class ChannelLogic(
      *
      * @return [Result] of [Channel] with fetched messages.
      */
-    private suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+    internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     /**
      * Loads a list of messages before the message with particular message id.
      *
-     * @param messageId Id of message before which to fetch messages.
-     * @param limit Number of messages to fetch before this message.
+     * @param messageLimit Number of messages to fetch before this message.
+     * @param baseMessageId Id of message before which to fetch messages. Last available message will be calculated if the parameter is null.
      *
      * @return [Result] of [Channel] with fetched messages.
      */
-    private suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(olderWatchChannelRequest(limit = limit, baseMessageId = messageId))
+    internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
+        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
@@ -271,11 +237,6 @@ internal class ChannelLogic(
             else -> onlineResult
         }
     }
-
-    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
-        if (ChatClient.instance().needsMarkRead("$channelType:$channelId"))
-            Result.success(Unit)
-        else Result.error(ChatError("Can not mark channel as read with channel id: $channelId"))
 
     internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)
@@ -850,59 +811,7 @@ internal class ChannelLogic(
         }
     }
 
-    /**
-     * Marks this channel as read asynchronously.
-     *
-     * @return Non-blocking [Boolean] which is True if channel is marked as read and False otherwise.
-     */
-    fun markReadAsync(): Deferred<Boolean> {
-        return chatDomainImpl.scope.async(DispatcherProvider.Main) {
-            markReadInternal()
-        }
-    }
-
-    /**
-     * Marks this channel read synchronously.
-     *
-     * @return True if channel is marked as read otheriwse False.
-     */
-    private fun markReadInternal(): Boolean {
-        if (!mutableState._channelConfig.value.readEventsEnabled) {
-            return false
-        }
-
-        // throttle the mark read
-        val messages = mutableState.sortedMessages.value
-
-        if (messages.isEmpty()) {
-            logger.logI("No messages; nothing to mark read.")
-            return false
-        }
-
-        return messages
-            .last()
-            .let { it.createdAt ?: it.createdLocallyAt }
-            .let { lastMessageDate ->
-                val shouldUpdate =
-                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
-
-                if (!shouldUpdate) {
-                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-                    return false
-                }
-
-                lastMarkReadEvent = lastMessageDate
-
-                // update live data with new read
-                chatDomainImpl.user.value?.let { currentUser ->
-                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
-                }
-
-                shouldUpdate
-            }
-    }
-
-    public fun toChannel(): Channel = mutableState.toChannel()
+    fun toChannel(): Channel = mutableState.toChannel()
 
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
