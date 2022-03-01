@@ -330,9 +330,7 @@ public class ChannelController internal constructor(
             // cleanup your own typing state
             val now = Date()
             if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
-                keystrokeParentMessageId?.let {
-                    channelClient.stopTyping(it)
-                } ?: channelClient.stopTyping()
+                channelClient.stopTyping(keystrokeParentMessageId)
             }
 
             // Cleanup typing events that are older than 15 seconds

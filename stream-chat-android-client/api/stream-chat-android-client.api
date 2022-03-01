@@ -771,6 +771,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun show ()Lio/getstream/chat/android/client/call/Call;
 	public final fun stopTyping ()Lio/getstream/chat/android/client/call/Call;
 	public final fun stopTyping (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun stopWatching ()Lio/getstream/chat/android/client/call/Call;
 	public final fun subscribe (Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;

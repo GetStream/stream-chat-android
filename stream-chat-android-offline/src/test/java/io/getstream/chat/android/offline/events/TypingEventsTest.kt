@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-@ExperimentalStreamChatApi
 internal class TypingEventsTest {
 
     companion object {
@@ -156,7 +154,6 @@ internal class TypingEventsTest {
                 .toMutableState().lastStartTypingEvent `should be equal to` eventTime
         }
 
-    @ExperimentalStreamChatApi
     private class Fixture(scope: CoroutineScope, user: User) {
         private val stateRegistry = StateRegistry.getOrCreate(
             scope = scope,
