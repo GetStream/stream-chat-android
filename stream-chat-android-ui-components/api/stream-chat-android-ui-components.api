@@ -1692,7 +1692,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler {
-	public abstract fun onAttachmentDownload (Lio/getstream/chat/android/client/models/Attachment;)V
+	public abstract fun onAttachmentDownload (Lkotlin/jvm/functions/Function0;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler {

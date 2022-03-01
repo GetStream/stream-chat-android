@@ -130,7 +130,7 @@ public class StreamOfflinePluginFactory(
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, globalState),
-            hideChannelListener = HideChannelListenerImpl(logic),
+            hideChannelListener = HideChannelListenerImpl(logic, repos),
             markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
             sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),

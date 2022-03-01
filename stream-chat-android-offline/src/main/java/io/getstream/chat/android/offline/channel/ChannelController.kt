@@ -109,27 +109,6 @@ public class ChannelController internal constructor(
             ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
         }
 
-    internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
-        channelLogic.setHidden(true)
-        val result = channelClient.hide(clearHistory).await()
-        if (result.isSuccess) {
-            if (clearHistory) {
-                val now = Date()
-                mutableState.hideMessagesBefore = now
-                channelLogic.removeMessagesBefore(now)
-                domainImpl.repos.deleteChannelMessagesBefore(cid, now)
-                domainImpl.repos.setHiddenForChannel(cid, true, now)
-            } else {
-                domainImpl.repos.setHiddenForChannel(cid, true)
-            }
-        }
-        return result
-    }
-
-    internal suspend fun show(): Result<Unit> {
-        return channelClient.show().await()
-    }
-
     /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {
         val result = domainImpl.user.value?.let { currentUser ->

@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -48,8 +47,6 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
-import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.offline.extensions.createChannel
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -65,11 +62,8 @@ import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagi
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
-import io.getstream.chat.android.offline.usecase.HideChannel
-import io.getstream.chat.android.offline.usecase.LeaveChannel
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.QueryChannels
-import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.validateCid
@@ -351,10 +345,6 @@ internal class ChatDomainImpl internal constructor(
 
     fun setBanned(newBanned: Boolean) {
         globalState._banned.value = newBanned
-    }
-
-    fun setTotalUnreadCount(newCount: Int) {
-        globalState._totalUnreadCount.value = newCount
     }
 
     /**
@@ -881,10 +871,6 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun createChannel(channel: Channel): Call<Channel> = client.createChannel(channel)
-
-    override fun cancelMessage(message: Message): Call<Boolean> = client.cancelEphemeralMessage(message)
-
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
@@ -930,14 +916,10 @@ internal class ChatDomainImpl internal constructor(
 
     override fun markAllRead(): Call<Boolean> = client.markAllRead().map { true }
 
-    override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> =
-        HideChannel(this).invoke(cid, keepHistory)
-
-    override fun showChannel(cid: String): Call<Unit> = ShowChannel(this).invoke(cid)
-
-    override fun leaveChannel(cid: String): Call<Unit> = LeaveChannel(this).invoke(cid)
-
-    override fun deleteChannel(cid: String): Call<Unit> = client.channel(cid).delete().toUnitCall()
+    override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return client.hideChannel(channelType = channelType, channelId = channelId, clearHistory = !keepHistory)
+    }
 
 // end region
 

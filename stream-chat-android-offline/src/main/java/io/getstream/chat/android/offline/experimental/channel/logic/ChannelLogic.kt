@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -79,7 +78,6 @@ import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
-import io.getstream.chat.android.offline.utils.toCid
 import java.util.Date
 import kotlin.math.max
 
@@ -87,14 +85,12 @@ internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener, HideChannelListener {
+) : QueryChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
 
     val cid: String
         get() = mutableState.cid
-
-    private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
 
     private fun loadingStateByRequest(request: QueryChannelRequest) = when {
         request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
@@ -152,45 +148,6 @@ internal class ChannelLogic(
                 }
                 chatDomainImpl.addError(error)
             }
-    }
-
-    override suspend fun onHideChannelPrecondition(
-        channelType: String,
-        channelId: String,
-        clearHistory: Boolean,
-    ): Result<Unit> {
-        return try {
-            Pair(channelType, channelId).toCid()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.error(ChatError("CID is not valid"))
-        }
-    }
-
-    override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) =
-        setHidden(true)
-
-    override suspend fun onHideChannelResult(
-        result: Result<Unit>,
-        channelType: String,
-        channelId: String,
-        clearHistory: Boolean,
-    ) {
-        if (result.isSuccess) {
-            val cid = Pair(channelType, channelId).toCid()
-            if (clearHistory) {
-                val now = Date()
-                mutableState.hideMessagesBefore = now
-                removeMessagesBefore(now)
-                chatDomainImpl.repos.deleteChannelMessagesBefore(cid, now)
-                chatDomainImpl.repos.setHiddenForChannel(cid, true, now)
-            } else {
-                chatDomainImpl.repos.setHiddenForChannel(cid, true)
-            }
-        } else {
-            // Hides the channel if request fails.
-            setHidden(false)
-        }
     }
 
     /**
@@ -534,7 +491,6 @@ internal class ChannelLogic(
      * @param date The date used for generating result.
      * @param systemMessage The system message to display.
      */
-    // TODO: Make private after removing ChannelController
     internal fun removeMessagesBefore(
         date: Date,
         systemMessage: Message? = null,
@@ -547,6 +503,15 @@ internal class ChannelLogic(
             mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
             updateLastMessageAtByNewMessages(listOf(systemMessage))
         }
+    }
+
+    /**
+     * Hides the messages created before the given date.
+     *
+     * @param date The date used for generating result.
+     */
+    internal fun hideMessagesBefore(date: Date) {
+        mutableState.hideMessagesBefore = date
     }
 
     private fun upsertEventMessage(message: Message) {
