@@ -144,7 +144,7 @@ internal class ChatDomainImpl internal constructor(
     )
 
     private val state: StateRegistry by lazy {
-        StateRegistry.getOrCreate(scope, user, repos, repos.observeLatestUsers())
+        StateRegistry.getOrCreate(job, scope, user, repos, repos.observeLatestUsers())
     }
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
