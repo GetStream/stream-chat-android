@@ -160,6 +160,7 @@ internal class SendReactionsTests {
     private class Fixture(scope: CoroutineScope, user: User) {
 
         private val stateRegistry = StateRegistry.getOrCreate(
+            job = mock(),
             scope = scope,
             userStateFlow = MutableStateFlow(user),
             messageRepository = mock(),

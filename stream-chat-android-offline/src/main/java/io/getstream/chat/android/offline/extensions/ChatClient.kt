@@ -17,7 +17,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
-import io.getstream.chat.android.offline.experimental.extensions.logic
+import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
 
@@ -38,7 +38,7 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
     validateCid(cid)
 
     val domainImpl = domainImpl()
-    return CoroutineCall(logic.scope) {
+    return CoroutineCall(state.scope) {
         domainImpl.replayEvents(cid)
     }
 }
@@ -57,7 +57,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 
     val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
-    return CoroutineCall(logic.scope) {
+    return CoroutineCall(state.scope) {
         channelController.replyMessage(message)
         Result(Unit)
     }
@@ -87,7 +87,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
 
     val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
-    return CoroutineCall(logic.scope) {
+    return CoroutineCall(state.scope) {
         channelController.loadOlderMessages(messageLimit)
     }
 }
@@ -106,7 +106,7 @@ public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
 
     val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
-    return CoroutineCall(logic.scope) {
+    return CoroutineCall(state.scope) {
         channelController.cancelEphemeralMessage(message)
     }
 }
@@ -123,9 +123,9 @@ public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
 @CheckResult
 public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
     val domainImpl = domainImpl()
-    return CoroutineCall(logic.scope) {
+    return CoroutineCall(state.scope) {
         CreateChannelService(
-            scope = logic.scope,
+            scope = state.scope,
             client = this@createChannel,
             repositoryFacade = domainImpl.repos,
             getChannelController = domainImpl::channel,
@@ -167,10 +167,10 @@ public fun ChatClient.loadMessageById(
 ): Call<Message> {
     val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
     return this.getMessage(messageId)
-        .onErrorReturn(logic.scope) {
+        .onErrorReturn(state.scope) {
             relevantPlugins.first().onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
         }
-        .doOnResult(logic.scope) { result ->
+        .doOnResult(state.scope) { result ->
             relevantPlugins.forEach {
                 it.onGetMessageResult(
                     result,

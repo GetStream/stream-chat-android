@@ -11,15 +11,18 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * [DeleteReactionErrorHandler] implementation for [io.getstream.chat.android.offline.experimental.errorhandler.OfflineErrorHandler].
  * Checks if the change was done offline and can be synced.
  *
+ * @param scope [CoroutineScope]
  * @param logic [LogicRegistry]
  * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
  */
 internal class DeleteReactionErrorHandlerImpl(
+    private val scope: CoroutineScope,
     private val logic: LogicRegistry,
     private val globalState: GlobalState,
 ) : DeleteReactionErrorHandler {
@@ -40,7 +43,7 @@ internal class DeleteReactionErrorHandlerImpl(
         cid: String?,
         messageId: String,
     ): ReturnOnErrorCall<Message> {
-        return originalCall.onErrorReturn(logic.scope) { originalError ->
+        return originalCall.onErrorReturn(scope) { originalError ->
             if (cid == null || globalState.isOnline()) {
                 Result.error<Message>(originalError)
             }

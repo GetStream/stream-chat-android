@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
@@ -16,6 +15,8 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.QueryC
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
@@ -24,16 +25,18 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Registry of all state objects exposed in the offline plugin. This class should have only one instance for the SDK.
  *
- * @param scope [CoroutineScope]
  * @param userStateFlow The state flow that provides the user once it is set.
  * @param messageRepository [MessageRepository] Repository for all messages
  * @param latestUsers Latest users of the SDK.
+ * @param job A background job cancelled after calling [clear].
+ * @param scope A scope for new coroutines.
  */
 public class StateRegistry private constructor(
-    private val scope: CoroutineScope,
     private val userStateFlow: StateFlow<User?>,
     private val messageRepository: MessageRepository,
     private var latestUsers: StateFlow<Map<String, User>>,
+    internal val job: Job,
+    internal var scope: CoroutineScope,
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
@@ -68,6 +71,7 @@ public class StateRegistry private constructor(
 
     /** Clear state of all state objects. */
     public fun clear() {
+        job.cancelChildren()
         queryChannels.clear()
         channels.clear()
         threads.clear()
@@ -79,19 +83,25 @@ public class StateRegistry private constructor(
         /**
          * Gets the singleton of StateRegistry or creates it in the first call.
          *
-         * @param chatDomainImpl [ChatDomainImpl]
+         * @param job A background job cancelled after calling [clear].
+         * @param scope A scope for new coroutines.
+         * @param userStateFlow The state flow that provides the user once it is set.
+         * @param messageRepository [MessageRepository] Repository for all messages
+         * @param latestUsers Latest users of the SDK.
          */
         internal fun getOrCreate(
+            job: Job,
             scope: CoroutineScope,
             userStateFlow: StateFlow<User?>,
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
             return instance ?: StateRegistry(
-                scope,
-                userStateFlow,
-                messageRepository,
-                latestUsers
+                job = job,
+                scope = scope,
+                userStateFlow = userStateFlow,
+                messageRepository = messageRepository,
+                latestUsers = latestUsers,
             ).also { stateRegistry ->
                 instance = stateRegistry
             }
