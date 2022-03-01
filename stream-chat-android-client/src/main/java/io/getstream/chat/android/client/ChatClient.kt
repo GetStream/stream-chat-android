@@ -139,7 +139,6 @@ import java.util.concurrent.Executor
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-@OptIn(ExperimentalStreamChatApi::class)
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
