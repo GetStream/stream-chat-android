@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.errorhandler.factory.DeleteReactionErrorHandlerFactory
 import io.getstream.chat.android.offline.experimental.errorhandler.factory.QueryMembersErrorHandlerFactory
@@ -28,7 +27,6 @@ object ChatHelper {
     /**
      * Initializes the SDK with the given API key.
      */
-    @OptIn(ExperimentalStreamChatApi::class)
     fun initializeSdk(context: Context, apiKey: String) {
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())

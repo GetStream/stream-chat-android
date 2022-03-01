@@ -68,7 +68,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
@@ -90,7 +89,6 @@ import kotlinx.coroutines.async
 import java.util.Date
 import kotlin.math.max
 
-@ExperimentalStreamChatApi
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val chatDomainImpl: ChatDomainImpl,
@@ -99,7 +97,7 @@ internal class ChannelLogic(
 
     private val logger = ChatLogger.get("Query channel request")
 
-    public val cid: String
+    val cid: String
         get() = mutableState.cid
 
     private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent

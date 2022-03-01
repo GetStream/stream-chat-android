@@ -4,10 +4,8 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessage
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
-@ExperimentalStreamChatApi
 internal class GetMessageListenerImpl(private val logic: LogicRegistry) : GetMessageListener {
     override suspend fun onGetMessageResult(
         result: Result<Message>,

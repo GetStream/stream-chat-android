@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.message
 
 import android.content.Context
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
@@ -12,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Factory to generate and provide instances of [MessageSendingService].
  */
-@ExperimentalStreamChatApi
 internal object MessageSendingServiceFactory {
     private val messageSendingServices: ConcurrentHashMap<Pair<String, String>, MessageSendingService> =
         ConcurrentHashMap()

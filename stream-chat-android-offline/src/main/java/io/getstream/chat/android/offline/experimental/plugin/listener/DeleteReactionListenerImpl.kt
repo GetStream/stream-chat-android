@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
@@ -25,7 +24,6 @@ import java.util.Date
  * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
  * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
-@ExperimentalStreamChatApi
 internal class DeleteReactionListenerImpl(
     private val logic: LogicRegistry,
     private val globalState: GlobalState,

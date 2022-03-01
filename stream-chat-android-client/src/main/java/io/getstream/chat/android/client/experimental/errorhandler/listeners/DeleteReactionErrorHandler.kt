@@ -5,12 +5,10 @@ import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.deleteReaction] calls.
  */
-@ExperimentalStreamChatApi
 public interface DeleteReactionErrorHandler : ErrorHandler {
 
     /**
@@ -29,7 +27,6 @@ public interface DeleteReactionErrorHandler : ErrorHandler {
     ): ReturnOnErrorCall<Message>
 }
 
-@ExperimentalStreamChatApi
 internal fun Call<Message>.onMessageError(
     errorHandlers: List<DeleteReactionErrorHandler>,
     cid: String?,
