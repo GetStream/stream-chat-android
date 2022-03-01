@@ -471,10 +471,11 @@ public class MessageComposerController(
      * @param isTyping If the user is currently typing.
      */
     private fun handleTypingEvent(isTyping: Boolean) {
+        val (type, id) = channelId.cidToTypeAndId()
         if (isTyping) {
-            chatClient.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(type, id, parentMessageId)
         } else {
-            chatClient.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(type, id, parentMessageId)
         }.enqueue()
     }
 

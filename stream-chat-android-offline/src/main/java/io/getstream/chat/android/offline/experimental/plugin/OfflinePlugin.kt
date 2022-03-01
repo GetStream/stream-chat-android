@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessag
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
@@ -53,6 +54,7 @@ internal class OfflinePlugin(
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val queryMembersListener: QueryMembersListener,
+    private val typingEventListener: TypingEventListener,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
@@ -68,7 +70,8 @@ internal class OfflinePlugin(
     SendGiphyListener by sendGiphyListener,
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
-    QueryMembersListener by queryMembersListener {
+    QueryMembersListener by queryMembersListener,
+    TypingEventListener by typingEventListener {
 
     override val name: String = MODULE_NAME
 

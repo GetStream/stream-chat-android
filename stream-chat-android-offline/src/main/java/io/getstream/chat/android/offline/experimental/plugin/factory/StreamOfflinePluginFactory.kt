@@ -29,11 +29,13 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.SendMessag
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ShuffleGiphyListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -74,7 +76,8 @@ public class StreamOfflinePluginFactory(
         chatDomainImpl.setUser(user)
         chatDomainImpl.userConnected(user)
 
-        val scope = CoroutineScope(DispatcherProvider.IO)
+        val job = SupervisorJob()
+        val scope = CoroutineScope(job + DispatcherProvider.IO)
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -92,7 +95,7 @@ public class StreamOfflinePluginFactory(
         chatDomainImpl.repos = repos
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
-        val stateRegistry = StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
+        val stateRegistry = StateRegistry.getOrCreate(job, scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.getOrCreate(stateRegistry)
 
         val defaultInterceptor = DefaultInterceptor(
@@ -135,6 +138,7 @@ public class StreamOfflinePluginFactory(
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
+            typingEventListener = TypingEventListenerImpl(stateRegistry),
         )
     }
 }

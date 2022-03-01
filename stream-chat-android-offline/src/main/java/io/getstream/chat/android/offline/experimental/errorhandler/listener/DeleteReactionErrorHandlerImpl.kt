@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
  * [DeleteReactionErrorHandler] implementation for [io.getstream.chat.android.offline.experimental.errorhandler.OfflineErrorHandler].
  * Checks if the change was done offline and can be synced.
  *
+ * @param scope [CoroutineScope]
  * @param logic [LogicRegistry]
  * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
  */

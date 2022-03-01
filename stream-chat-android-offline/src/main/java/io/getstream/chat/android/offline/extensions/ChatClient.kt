@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.CreateChannelService
+import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.usecase.DownloadAttachment
 import io.getstream.chat.android.offline.utils.validateCid
 
@@ -37,7 +38,7 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
     validateCid(cid)
 
     val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
+    return CoroutineCall(state.scope) {
         domainImpl.replayEvents(cid)
     }
 }
@@ -56,7 +57,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 
     val chatDomain = domainImpl()
     val channelController = chatDomain.channel(cid)
-    return CoroutineCall(chatDomain.scope) {
+    return CoroutineCall(state.scope) {
         channelController.replyMessage(message)
         Result(Unit)
     }
@@ -74,46 +75,6 @@ public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
     DownloadAttachment(domainImpl()).invoke(attachment)
 
 /**
- * Keystroke should be called whenever a user enters text into the message input.
- * It automatically calls stopTyping when the user stops typing after 5 seconds.
- *
- * @param cid The full channel id i. e. messaging:123.
- * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
- *
- * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
- */
-@CheckResult
-public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
-    validateCid(cid)
-
-    val chatDomain = domainImpl()
-    val channelController = chatDomain.channel(cid)
-    return CoroutineCall(chatDomain.scope) {
-        channelController.keystroke(parentId)
-    }
-}
-
-/**
- * StopTyping should be called when the user submits the text and finishes typing.
- *
- * @param cid The full channel id i. e. messaging:123.
- * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
- *
- * @return Executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
- * false if it wasn't sent.
- */
-@CheckResult
-public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
-    validateCid(cid)
-
-    val chatDomain = domainImpl()
-    val channelController = chatDomain.channel(cid)
-    return CoroutineCall(chatDomain.scope) {
-        channelController.stopTyping(parentId)
-    }
-}
-
-/**
  * Loads older messages for the channel.
  *
  * @param cid The full channel id i.e. "messaging:123".
@@ -126,7 +87,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
 
     val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
-    return CoroutineCall(domainImpl.scope) {
+    return CoroutineCall(state.scope) {
         channelController.loadOlderMessages(messageLimit)
     }
 }
@@ -145,7 +106,7 @@ public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
 
     val domainImpl = domainImpl()
     val channelController = domainImpl.channel(cid)
-    return CoroutineCall(domainImpl.scope) {
+    return CoroutineCall(state.scope) {
         channelController.cancelEphemeralMessage(message)
     }
 }
@@ -162,9 +123,9 @@ public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
 @CheckResult
 public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
     val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
+    return CoroutineCall(state.scope) {
         CreateChannelService(
-            scope = domainImpl.scope,
+            scope = state.scope,
             client = this@createChannel,
             repositoryFacade = domainImpl.repos,
             getChannelController = domainImpl::channel,
@@ -206,10 +167,10 @@ public fun ChatClient.loadMessageById(
 ): Call<Message> {
     val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
     return this.getMessage(messageId)
-        .onErrorReturn(domainImpl().scope) {
+        .onErrorReturn(state.scope) {
             relevantPlugins.first().onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
         }
-        .doOnResult(domainImpl().scope) { result ->
+        .doOnResult(state.scope) { result ->
             relevantPlugins.forEach {
                 it.onGetMessageResult(
                     result,

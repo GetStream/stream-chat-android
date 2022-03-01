@@ -26,9 +26,11 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
+@Disabled("These tests are testing CreateChannelService! Should be migrated after removing createChannel extension function")
 internal class ChatDomainImplCreateChannelTest {
 
     companion object {
