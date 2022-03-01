@@ -7,13 +7,11 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import java.util.Date
 
-@ExperimentalStreamChatApi
 internal class SendMessageListenerImpl(
     private val logic: LogicRegistry,
     private val repos: RepositoryFacade,

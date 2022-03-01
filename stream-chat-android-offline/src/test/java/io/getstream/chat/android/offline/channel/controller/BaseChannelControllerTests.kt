@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -34,7 +33,6 @@ internal open class BaseChannelControllerTests {
     protected lateinit var mutableState: ChannelMutableState
     protected lateinit var scope: TestCoroutineScope
 
-    @OptIn(ExperimentalStreamChatApi::class)
     @ExperimentalCoroutinesApi
     @BeforeEach
     @CallSuper

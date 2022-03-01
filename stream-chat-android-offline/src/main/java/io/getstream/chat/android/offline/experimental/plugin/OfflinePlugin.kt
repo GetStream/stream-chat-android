@@ -17,8 +17,6 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.SendReacti
 import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
@@ -40,8 +38,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param sendMessageListener [SendMessageListener]
  * @param queryMembersListener [QueryMembersListener]
  */
-@InternalStreamChatApi
-@ExperimentalStreamChatApi
 internal class OfflinePlugin(
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,

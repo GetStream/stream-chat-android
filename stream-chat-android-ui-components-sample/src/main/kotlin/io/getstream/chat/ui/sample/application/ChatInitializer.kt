@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.experimental.errorhandler.factory.DeleteReactionErrorHandlerFactory
@@ -24,7 +23,6 @@ import io.getstream.chat.ui.sample.feature.HostActivity
 @OptIn(InternalStreamChatApi::class)
 class ChatInitializer(private val context: Context) {
 
-    @OptIn(ExperimentalStreamChatApi::class)
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         FirebaseApp.initializeApp(context)

@@ -9,12 +9,10 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.test.asCall
 import org.amshove.kluent.`should be`
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalStreamChatApi::class)
 internal class WhenMarkReadChannel : BaseChatClientTest() {
 
     @Test
@@ -59,5 +57,4 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
     }
 }
 
-@OptIn(ExperimentalStreamChatApi::class)
 private interface ChannelMarkReadListenerPlugin : Plugin, ChannelMarkReadListener

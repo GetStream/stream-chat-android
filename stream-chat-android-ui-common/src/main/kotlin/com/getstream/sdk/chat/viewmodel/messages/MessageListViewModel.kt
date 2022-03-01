@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
@@ -52,7 +51,6 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param domain Entry point for all livedata & offline operations.
  * @param client Entry point for all low-level operations.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,

@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.experimental.errorhandler.listeners.Send
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.extensions.enrichWithDataBeforeSending
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
  * @param scope [CoroutineScope]
  * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
  */
-@ExperimentalStreamChatApi
 internal class SendReactionErrorHandlerImpl(private val scope: CoroutineScope, private val globalState: GlobalState) :
     SendReactionErrorHandler {
 

@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -45,7 +44,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-@OptIn(ExperimentalStreamChatApi::class)
 public class ChannelController internal constructor(
     private val mutableState: ChannelMutableState,
     private val channelLogic: ChannelLogic,
