@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -64,7 +63,7 @@ public class ChannelController internal constructor(
     private var lastStartTypingEvent: Date? by mutableState::lastStartTypingEvent
     private val channelClient = client.channel(channelType, channelId)
 
-    private var keystrokeParentMessageId: String? = null
+    private var keystrokeParentMessageId: String? by mutableState::keystrokeParentMessageId
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
@@ -112,41 +111,6 @@ public class ChannelController internal constructor(
                 client
             ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
         }
-
-    internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
-        lastKeystrokeAt = Date()
-        if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
-            lastStartTypingEvent = lastKeystrokeAt
-
-            val channelClient = client.channel(channelType = channelType, channelId = channelId)
-            val result = if (parentId != null) {
-                channelClient.keystroke(parentId)
-            } else {
-                channelClient.keystroke()
-            }.await()
-            return result.map { true.also { keystrokeParentMessageId = parentId } }
-        }
-        return Result(false)
-    }
-
-    internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
-        if (lastStartTypingEvent != null) {
-            lastStartTypingEvent = null
-            lastKeystrokeAt = null
-
-            val channelClient = client.channel(channelType = channelType, channelId = channelId)
-            val result = if (parentId != null) {
-                channelClient.stopTyping(parentId)
-            } else {
-                channelClient.stopTyping()
-            }.await()
-
-            return result.map { true.also { keystrokeParentMessageId = null } }
-        }
-        return Result(false)
-    }
 
     /**
      * Marks the channel as read by the current user
@@ -366,7 +330,7 @@ public class ChannelController internal constructor(
             // cleanup your own typing state
             val now = Date()
             if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
-                stopTyping(keystrokeParentMessageId)
+                channelClient.stopTyping(keystrokeParentMessageId)
             }
 
             // Cleanup typing events that are older than 15 seconds
