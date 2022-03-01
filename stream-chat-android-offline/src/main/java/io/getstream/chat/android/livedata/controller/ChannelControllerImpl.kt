@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.channel.ChannelData
 import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow

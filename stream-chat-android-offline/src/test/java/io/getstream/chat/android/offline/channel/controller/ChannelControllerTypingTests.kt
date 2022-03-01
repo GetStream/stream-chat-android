@@ -78,22 +78,6 @@ internal class ChannelControllerTypingTests : SynchronizedCoroutineTest {
     }
 
     @Test
-    fun `When a user started typing Then subsequent keystroke events within a certain interval should not be sent to the server`() =
-        runBlockingTest {
-            val sut = Fixture(testCoroutines.scope, randomUser())
-                .givenTypingEventsEnabled()
-                .givenKeystrokeResult()
-                .get()
-
-            sut.keystroke(null).data() `should be equal to` true
-            sut.keystroke(null).data() `should be equal to` false
-
-            Thread.sleep(3001)
-
-            sut.keystroke(null).data() `should be equal to` true
-        }
-
-    @Test
     fun `When a message is successfully marked as read Then the second invocation should be ignored`() = coroutineTest {
         val sut = Fixture(testCoroutines.scope, randomUser())
             .givenReadEventsEnabled()

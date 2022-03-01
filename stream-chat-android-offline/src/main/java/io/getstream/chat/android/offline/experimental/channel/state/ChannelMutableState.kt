@@ -53,6 +53,7 @@ internal class ChannelMutableState(
     internal val lastMessageAt = MutableStateFlow<Date?>(null)
     internal val _repliedMessage = MutableStateFlow<Message?>(null)
     internal val _unreadCount = MutableStateFlow(0)
+
     /** Channel config data. */
     internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 
@@ -90,6 +91,7 @@ internal class ChannelMutableState(
     internal var lastMarkReadEvent: Date? = null
     internal var lastKeystrokeAt: Date? = null
     internal var lastStartTypingEvent: Date? = null
+    internal var keystrokeParentMessageId: String? = null
 
     internal val sortedMessages: StateFlow<List<Message>> = messageList.map {
         it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
