@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.experimental.channel.state
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Channel
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
@@ -112,19 +112,16 @@ internal class ChannelMutableState(
         _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
             .map { it.sortedBy(User::createdAt) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
-    override val typing: StateFlow<TypingEvent> = userFlow
-        .filterNotNull()
-        .flatMapConcat { currentUser ->
-            _typing.map { typingMap ->
-                currentUser to typingMap
-            }
-        }
-        .map { (currentUser, typingMap) ->
+
+    override val typing: StateFlow<TypingEvent> = _typing
+        .map { typingMap ->
             val userList = typingMap.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user -> user != currentUser }
+                        is TypingStartEvent -> event.user.takeIf { user ->
+                            user.id != ChatClient.instance().getCurrentUser()?.id
+                        }
                         else -> null
                     }
                 }
