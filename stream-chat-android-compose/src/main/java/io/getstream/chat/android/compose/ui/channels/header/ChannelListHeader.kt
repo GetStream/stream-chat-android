@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
@@ -171,13 +169,13 @@ internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
-            .size(40.dp)
-            .shadow(4.dp, shape = CircleShape, clip = true),
+        modifier = Modifier.size(40.dp),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },
         indication = rememberRipple(bounded = false),
         color = ChatTheme.colors.primaryAccent,
+        shape = ChatTheme.shapes.avatar,
+        elevation = 4.dp
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
