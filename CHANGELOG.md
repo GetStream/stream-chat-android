@@ -113,7 +113,7 @@
 <!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### ⬆️ Improved
-- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)[#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
 - Updated Google's Accompanist version. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
 
 ### ⚠️ Changed
