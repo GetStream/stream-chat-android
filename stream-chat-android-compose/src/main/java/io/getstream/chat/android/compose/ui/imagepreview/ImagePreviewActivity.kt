@@ -91,7 +91,6 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -106,11 +105,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * Factory used to build the screen ViewModel given the received message ID.
      */
     private val factory by lazy {
-        val chatClient = ChatClient.instance()
-
         ImagePreviewViewModelFactory(
             chatClient = ChatClient.instance(),
-            chatClient.globalState,
             messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
         )
     }
