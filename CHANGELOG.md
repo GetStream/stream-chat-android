@@ -109,8 +109,22 @@
 
 ### ❌ Removed
 
-# February 24th, 2022 - 4.29.0
+# March 2nd, 2022 - 4.30.0
 <!-- UNRELEASED START -->
+## Common changes for all artifacts
+### ⬆️ Improved
+- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- Updated Google's Accompanist version. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+
+### ⚠️ Changed
+- These version updates mean our SDK now expects the minimum of AGP 7.x.x. We recommend using 7.1+. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+
+## stream-chat-android-compose
+### ⚠️ Changed
+- Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+<!-- UNRELEASED END -->
+
+# February 24th, 2022 - 4.29.0
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed updating `ChatDomain::totalUnreadCount` and `ChatDomain::channelUnreadCount` after restoring app from the background and
@@ -153,7 +167,6 @@
 ### ❌ Removed
 - Removed ExoMedia dependency in favor of standard Android `VideoView`. [#3092](https://github.com/GetStream/stream-chat-android/pull/3092)
 - Removed `SystemBackPressHandler` in favor of `BackHandler` from the Compose framework. [#3120](https://github.com/GetStream/stream-chat-android/pull/3120)
-<!-- UNRELEASED END -->
 
 # February 17th, 2022 - 4.28.4
 ## stream-chat-android-client
