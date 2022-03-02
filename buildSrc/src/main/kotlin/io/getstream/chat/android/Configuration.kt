@@ -5,7 +5,7 @@ object Configuration {
     const val targetSdk = 31
     const val minSdk = 21
     const val majorVersion = 4
-    const val minorVersion = 29
+    const val minorVersion = 30
     const val patchVersion = 0
     const val versionName = "$majorVersion.$minorVersion.$patchVersion"
     const val snapshotVersionName = "$majorVersion.$minorVersion.${patchVersion + 1}-SNAPSHOT"
