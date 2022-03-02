@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,6 +85,8 @@ public fun FileAttachmentItem(attachment: Attachment) {
             },
         color = ChatTheme.colors.appBackground, shape = ChatTheme.shapes.attachment
     ) {
+        val context = LocalContext.current
+
         Row(
             Modifier
                 .fillMaxWidth()
@@ -125,7 +128,7 @@ public fun FileAttachmentItem(attachment: Attachment) {
                     ) {
                         ChatClient
                             .instance()
-                            .downloadAttachment(attachment)
+                            .downloadAttachment(context, attachment)
                             .enqueue()
                     },
                 painter = painterResource(id = R.drawable.stream_compose_ic_file_download),

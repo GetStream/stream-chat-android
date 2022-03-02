@@ -52,7 +52,7 @@ import io.getstream.chat.android.offline.experimental.channel.thread.state.Threa
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
-import io.getstream.chat.android.offline.extensions.cancelMessage
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.Job
@@ -874,7 +874,7 @@ public class MessageListViewModel(
         when (action) {
             is SendGiphy -> chatClient.sendGiphy(message)
             is ShuffleGiphy -> chatClient.shuffleGiphy(message)
-            is CancelGiphy -> chatClient.cancelMessage(message)
+            is CancelGiphy -> chatClient.cancelEphemeralMessage(message)
         }.exhaustive.enqueue()
     }
 

@@ -13,7 +13,6 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomLong
@@ -31,22 +30,6 @@ internal class ChatDomainImplTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
-
-    @Test
-    fun `When create a new channel without author should set current user as author and return channel with author`() =
-        testCoroutines.scope.runBlockingTest {
-            val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
-            val chatClient = mock<ChatClient> {
-                on { it.channel(any()) } doReturn mock()
-                on(it.retryPolicy) doReturn NoRetryPolicy()
-            }
-            val sut = Fixture(chatClient).get()
-
-            val result = sut.createChannel(newChannel).execute()
-
-            result.isSuccess shouldBeEqualTo true
-            result.data().createdBy shouldBeEqualTo sut.user.value
-        }
 
     @Test
     fun `Given a sync needed message with uploaded attachment Should perform retry correctly`() {

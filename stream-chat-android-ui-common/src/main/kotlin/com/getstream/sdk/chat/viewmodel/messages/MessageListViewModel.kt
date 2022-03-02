@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -32,8 +33,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.extensions.cancelMessage
-import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
@@ -376,7 +376,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.DownloadAttachment -> {
-                client.downloadAttachment(event.attachment).enqueue(
+                event.downloadAttachmentCall().enqueue(
                     onError = { chatError ->
                         logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
@@ -526,7 +526,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.CANCEL -> {
-                client.cancelMessage(event.message).enqueue(
+                client.cancelEphemeralMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
@@ -694,7 +694,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
-        public data class DownloadAttachment(val attachment: Attachment) : Event()
+        public data class DownloadAttachment(val downloadAttachmentCall: () -> Call<Unit>) : Event()
         public data class ShowMessage(val messageId: String) : Event()
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
     }

@@ -28,7 +28,6 @@ import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutab
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
-import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -58,8 +57,6 @@ public class ChannelController internal constructor(
 
     private val editJobs = mutableMapOf<String, Job>()
 
-    private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
-    private var lastKeystrokeAt: Date? by mutableState::lastKeystrokeAt
     private var lastStartTypingEvent: Date? by mutableState::lastStartTypingEvent
     private val channelClient = client.channel(channelType, channelId)
 
@@ -111,66 +108,6 @@ public class ChannelController internal constructor(
                 client
             ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
         }
-
-    /**
-     * Marks the channel as read by the current user
-     *
-     * @return whether the channel was marked as read or not
-     */
-    internal fun markRead(): Boolean {
-        if (!mutableState._channelConfig.value.readEventsEnabled) {
-            return false
-        }
-
-        // throttle the mark read
-        val messages = mutableState.sortedMessages.value
-
-        if (messages.isEmpty()) {
-            logger.logI("No messages; nothing to mark read.")
-            return false
-        }
-
-        return messages.last().createdAt
-            .let { lastMessageDate ->
-                val shouldUpdate =
-                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
-
-                if (!shouldUpdate) {
-                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-                    return false
-                }
-
-                lastMarkReadEvent = lastMessageDate
-
-                // update live data with new read
-                domainImpl.user.value?.let { currentUser ->
-                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
-                }
-
-                shouldUpdate
-            }
-    }
-
-    internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
-        channelLogic.setHidden(true)
-        val result = channelClient.hide(clearHistory).await()
-        if (result.isSuccess) {
-            if (clearHistory) {
-                val now = Date()
-                mutableState.hideMessagesBefore = now
-                channelLogic.removeMessagesBefore(now)
-                domainImpl.repos.deleteChannelMessagesBefore(cid, now)
-                domainImpl.repos.setHiddenForChannel(cid, true, now)
-            } else {
-                domainImpl.repos.setHiddenForChannel(cid, true)
-            }
-        }
-        return result
-    }
-
-    internal suspend fun show(): Result<Unit> {
-        return channelClient.show().await()
-    }
 
     /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {
@@ -294,17 +231,6 @@ public class ChannelController internal constructor(
         }
     }
 
-    /**
-     * Cancels ephemeral Message.
-     * Removes message from the offline storage and memory and notifies about update.
-     */
-    internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
-        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-        domainImpl.repos.deleteChannelMessage(message)
-        removeLocalMessage(message)
-        return Result(true)
-    }
-
     internal suspend fun sendImage(file: File): Result<String> {
         return client.sendImage(channelType, channelId, file).await()
     }
@@ -320,10 +246,6 @@ public class ChannelController internal constructor(
     }
 
     public fun getMessage(messageId: String): Message? = channelLogic.getMessage(messageId)
-
-    internal fun removeLocalMessage(message: Message) {
-        channelLogic.removeLocalMessage(message)
-    }
 
     public fun clean() {
         domainImpl.scope.launch {
@@ -356,8 +278,6 @@ public class ChannelController internal constructor(
     internal fun handleEvents(events: List<ChatEvent>) = channelLogic.handleEvents(events)
 
     internal fun handleEvent(event: ChatEvent) = channelLogic.handleEvent(event)
-
-    private fun updateRead(read: ChannelUserRead) = channelLogic.updateReads(listOf(read))
 
     internal fun updateDataFromChannel(c: Channel) = channelLogic.updateDataFromChannel(c)
 

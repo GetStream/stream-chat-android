@@ -16,7 +16,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -70,8 +69,6 @@ internal class MessageListViewModelTest {
     private val channelController: ChannelController = mock()
     private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val threadLoadMoreCall = TestCall(threadLoadMoreResult)
-    private val loadOlderMessagesResult: Result<Channel> = mock()
-    private val loadOlderMessagesCall = TestCall(loadOlderMessagesResult)
     private val deleteMessageResult: Result<Message> = mock()
     private val deletedMessage = createMessage()
     private val deleteMessageCall = TestCall(deleteMessageResult)
@@ -79,11 +76,9 @@ internal class MessageListViewModelTest {
     private val getThreadCall = TestCall(getThreadResult)
     private val threadController: ThreadController = mock()
     private val flagCall: Call<Flag> = mock()
-    private val flagResult: Call<Flag> = mock()
 
     private val messages = MutableLiveData<List<Message>>()
     private val oldMessages = MutableLiveData<List<Message>>()
-    private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<TypingEvent>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
     private val messageState = MutableLiveData<ChannelController.MessagesState>()
@@ -146,8 +141,6 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        // TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)
-        @Suppress("DEPRECATION_ERROR")
         verify(client).loadOlderMessages(CID, MESSAGES_LIMIT)
     }
 
