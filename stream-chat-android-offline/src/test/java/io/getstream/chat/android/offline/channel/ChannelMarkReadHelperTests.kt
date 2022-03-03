@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.randomMessage
@@ -112,6 +113,26 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
+    fun `Given offline user When marking channel as read Should return false`() = runBlockingTest {
+        val config = mock<Config> {
+            on { it.readEventsEnabled } doReturn true
+        }
+        val (channelType, channelId) = randomCID().cidToTypeAndId()
+        val channelMutableState = mock<ChannelMutableState> {
+            on { it.channelConfig } doReturn MutableStateFlow(config)
+            on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
+        }
+        val sut = Fixture()
+            .givenChannelState(channelType = channelType, channelId = channelId, channelMutableState)
+            .givenCurrentUser(randomUser())
+            .get()
+
+        val result = sut.markChannelReadLocallyIfNeeded(channelType = channelType, channelId = channelId)
+
+        result `should be equal to` false
+    }
+
+    @Test
     fun `When marking channel as read Should properly update last mark read date`() = runBlockingTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
@@ -126,6 +147,7 @@ internal class ChannelMarkReadHelperTests {
             .givenChannelState(channelType = channelType, channelId = channelId, channelMutableState)
             .givenChannelLogic(channelType = channelType, channelId = channelId, channelLogic)
             .givenCurrentUser(randomUser())
+            .givenOnlineUser()
             .get()
 
         sut.markChannelReadLocallyIfNeeded(channelType = channelType, channelId = channelId)
@@ -148,6 +170,7 @@ internal class ChannelMarkReadHelperTests {
             .givenChannelState(channelType = channelType, channelId = channelId, channelMutableState)
             .givenChannelLogic(channelType = channelType, channelId = channelId, channelLogic)
             .givenCurrentUser(randomUser())
+            .givenOnlineUser()
             .get()
 
         val result = sut.markChannelReadLocallyIfNeeded(channelType = channelType, channelId = channelId)
@@ -157,9 +180,10 @@ internal class ChannelMarkReadHelperTests {
 
     private class Fixture {
 
-        private var chatClient = mock<ChatClient>()
-        private var logic = mock<LogicRegistry>()
-        private var state = mock<StateRegistry>()
+        private val chatClient = mock<ChatClient>()
+        private val logic = mock<LogicRegistry>()
+        private val state = mock<StateRegistry>()
+        private val globalState = mock<GlobalState>()
 
         fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableState) = apply {
             whenever(state.channel(channelType = channelType, channelId = channelId)) doReturn channelState
@@ -173,6 +197,10 @@ internal class ChannelMarkReadHelperTests {
             whenever(chatClient.getCurrentUser()) doReturn user
         }
 
-        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(chatClient, logic, state)
+        fun givenOnlineUser() = apply {
+            whenever(globalState.isOnline()) doReturn true
+        }
+
+        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(chatClient, logic, state, globalState)
     }
 }

@@ -20,5 +20,5 @@ public interface ChannelMarkReadListener {
     public suspend fun onChannelMarkReadPrecondition(
         channelType: String,
         channelId: String,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit>
 }
