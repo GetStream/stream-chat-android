@@ -1,10 +1,5 @@
 package io.getstream.chat.android.offline.repository
 
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.randomReaction
@@ -22,6 +17,11 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ReactionRepositoryTest {
@@ -58,7 +58,7 @@ internal class ReactionRepositoryTest {
 
         coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
-        verifyZeroInteractions(reactionDao)
+        verifyNoInteractions(reactionDao)
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class ReactionRepositoryTest {
 
         coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
-        verifyZeroInteractions(reactionDao)
+        verifyNoInteractions(reactionDao)
     }
 
     @Test
@@ -76,7 +76,7 @@ internal class ReactionRepositoryTest {
 
         coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
-        verifyZeroInteractions(reactionDao)
+        verifyNoInteractions(reactionDao)
     }
 
     @Test

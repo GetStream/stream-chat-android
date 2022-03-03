@@ -1,11 +1,5 @@
 package io.getstream.chat.android.offline.usecase
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -18,6 +12,12 @@ import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class QueryChannelsTest {
@@ -58,7 +58,7 @@ internal class QueryChannelsTest {
 
         queryChannels.invoke(anyFilter, QuerySort(), limit = 0).execute()
 
-        verifyZeroInteractions(queryChannelsController)
+        verifyNoInteractions(queryChannelsController)
     }
 
     @Test

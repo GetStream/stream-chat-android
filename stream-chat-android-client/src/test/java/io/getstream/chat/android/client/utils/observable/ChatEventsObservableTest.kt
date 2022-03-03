@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils.observable
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -12,6 +11,7 @@ import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
 import java.util.Date
 
 internal class ChatEventsObservableTest {

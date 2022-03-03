@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.events
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
@@ -16,6 +15,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.mock
 import java.util.Date
 
 @ExperimentalCoroutinesApi

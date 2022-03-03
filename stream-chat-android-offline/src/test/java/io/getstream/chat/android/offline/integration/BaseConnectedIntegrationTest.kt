@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.integration
 import android.content.Context
 import android.os.Handler
 import androidx.test.core.app.ApplicationProvider
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.offline.ChatDomain
@@ -22,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
+import org.mockito.kotlin.mock
 
 internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 

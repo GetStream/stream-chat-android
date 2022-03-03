@@ -8,12 +8,6 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createCommands
 import com.getstream.sdk.chat.createMembers
 import com.getstream.sdk.chat.randomUser
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.spy
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
@@ -28,6 +22,12 @@ import io.getstream.chat.android.test.randomCID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageInputViewModelTest {

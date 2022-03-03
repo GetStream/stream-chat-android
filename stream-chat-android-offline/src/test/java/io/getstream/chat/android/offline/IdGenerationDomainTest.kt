@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
@@ -13,6 +12,7 @@ import org.amshove.kluent.shouldNotContain
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
 
 internal class IdGenerationDomainTest {
 

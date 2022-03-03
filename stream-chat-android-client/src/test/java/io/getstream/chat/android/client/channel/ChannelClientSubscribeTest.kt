@@ -1,8 +1,5 @@
 package io.getstream.chat.android.client.channel
 
-import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -16,6 +13,9 @@ import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import java.util.Date
 
 internal class ChannelClientSubscribeTest {
