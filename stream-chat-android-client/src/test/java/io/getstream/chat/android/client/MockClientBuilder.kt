@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -20,6 +18,8 @@ import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import java.util.Date
 
 /**

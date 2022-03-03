@@ -8,10 +8,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomUser
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -23,6 +19,10 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeEmpty
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date

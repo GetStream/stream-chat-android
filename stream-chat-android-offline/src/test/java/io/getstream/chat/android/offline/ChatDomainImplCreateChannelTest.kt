@@ -1,10 +1,6 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
@@ -17,6 +13,10 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 @Disabled("These tests are testing CreateChannelService! Should be migrated after removing createChannel extension function")
 internal class ChatDomainImplCreateChannelTest {

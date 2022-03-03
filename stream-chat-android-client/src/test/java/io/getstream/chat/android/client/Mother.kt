@@ -2,7 +2,6 @@ package io.getstream.chat.android.client
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -11,6 +10,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
+import org.mockito.kotlin.mock
 import java.util.UUID
 
 internal object Mother {

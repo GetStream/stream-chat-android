@@ -1,7 +1,5 @@
 package io.getstream.chat.android.offline.repository.facade
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.randomChannel
@@ -9,6 +7,8 @@ import io.getstream.chat.android.offline.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
