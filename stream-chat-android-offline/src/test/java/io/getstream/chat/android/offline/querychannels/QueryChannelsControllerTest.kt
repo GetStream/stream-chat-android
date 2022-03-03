@@ -19,28 +19,22 @@ import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedEvent
-import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.offline.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldNotContain
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -49,95 +43,6 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
     private val scope = TestCoroutineScope()
 
     override fun getTestScope(): TestCoroutineScope = scope
-
-    @Test
-    fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
-        coroutineTest {
-            val currentUser = randomUser()
-            val newChannel = randomChannel(
-                members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
-            )
-            val channelController = mock<ChannelController>()
-            val sut = Fixture(scope)
-                .givenChannelFilterResponse(listOf(newChannel))
-                .givenCurrentUser(currentUser)
-                .givenNewChannelControllerForChannel(channelController)
-                .get()
-
-            sut.updateQueryChannelCollectionByNewChannel(newChannel)
-
-            verify(channelController).updateDataFromChannel(eq(newChannel))
-        }
-
-    @Test
-    fun `when add channel if filter matches should post value to liveData with the same channel ID`() =
-        coroutineTest {
-            val currentUser = randomUser()
-            val cid = randomCID()
-            val newChannel = randomChannel(
-                cid = cid,
-                id = cid.substringAfter(":"),
-                type = cid.substringBefore(":"),
-                members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
-            )
-            val sut = Fixture(scope)
-                .givenChannelFilterResponse(listOf(newChannel))
-                .givenCurrentUser(currentUser)
-                .givenChannelType(newChannel.type)
-                .givenNewChannelControllerForChannel()
-                .get()
-
-            sut.updateQueryChannelCollectionByNewChannel(newChannel)
-
-            val result = sut.channels.value
-            result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo newChannel.cid
-        }
-
-    @Test
-    fun `when add channel twice if filter matches should post value to liveData only one value`() =
-        coroutineTest {
-            val currentUser = randomUser()
-            val cid = randomCID()
-            val newChannel = randomChannel(
-                cid = cid,
-                id = cid.substringAfter(":"),
-                type = cid.substringBefore(":"),
-                members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
-            )
-            val sut = Fixture(scope)
-                .givenChannelFilterResponse(listOf(newChannel))
-                .givenCurrentUser(currentUser)
-                .givenChannelType(newChannel.type)
-                .givenNewChannelControllerForChannel()
-                .get()
-
-            sut.updateQueryChannelCollectionByNewChannel(newChannel)
-            sut.updateQueryChannelCollectionByNewChannel(newChannel)
-
-            val result = sut.channels.value
-            result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo newChannel.cid
-        }
-
-    @Test
-    fun `Given channel without current user as member When refresh channel Should not change flow value`() =
-        runBlockingTest {
-            val cid = "channelType:channelId"
-            val sut = Fixture(scope)
-                .givenChannelFilterResponse(emptyList())
-                .givenCurrentUser(randomUser())
-                .givenNewChannelControllerForChannel()
-                .setupChatRepositories()
-                .get()
-            val channel = randomChannel(cid = cid, members = emptyList())
-            sut.updateQueryChannelCollectionByNewChannel(channel)
-
-            sut.refreshChannel(channel.cid)
-
-            val result = sut.channels.value
-            result.size shouldBeEqualTo 0
-        }
 
     @Test
     fun `When a channel updated arrives Shouldn't check if filter matches the channel`() =

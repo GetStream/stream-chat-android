@@ -588,23 +588,12 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     internal suspend fun retryChannels(): List<Channel> {
         return repos.selectChannelsSyncNeeded().onEach { channel ->
-            val result = client.createChannel(
+            client.createChannel(
                 channel.type,
                 channel.id,
                 channel.members.map(UserEntity::getUserId),
                 channel.extraData
             ).await()
-
-            when {
-                result.isSuccess -> {
-                    channel.syncStatus = SyncStatus.COMPLETED
-                    repos.insertChannel(channel)
-                }
-                result.isError && result.error().isPermanent() -> {
-                    channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                    repos.insertChannel(channel)
-                }
-            }
         }
     }
 

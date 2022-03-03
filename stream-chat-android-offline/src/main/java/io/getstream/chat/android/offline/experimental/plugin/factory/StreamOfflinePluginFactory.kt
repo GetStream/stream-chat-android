@@ -16,6 +16,7 @@ import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInt
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.CreateChannelListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
@@ -140,6 +141,7 @@ public class StreamOfflinePluginFactory(
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
+            createChannelListener = CreateChannelListenerImpl(globalState, repos),
         )
     }
 }

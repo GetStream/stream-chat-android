@@ -87,14 +87,23 @@ public class ChannelClient internal constructor(
 
     public val cid: String = "$channelType:$channelId"
 
+    /**
+     * Creates the id-based channel.
+     * @see [ChatClient.createChannel]
+     *
+     * @param memberIds The list of members' ids.
+     * @param extraData Map of key-value pairs that let you store extra data
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
     @CheckResult
-    public fun create(members: List<String>, extraData: Map<String, Any> = emptyMap()): Call<Channel> {
-        return client.createChannel(channelType, channelId, members, extraData)
-    }
-
-    @CheckResult
-    public fun create(extraData: Map<String, Any> = emptyMap()): Call<Channel> {
-        return client.createChannel(channelType, channelId, extraData)
+    public fun create(memberIds: List<String>, extraData: Map<String, Any>): Call<Channel> {
+        return client.createChannel(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            extraData = extraData,
+        )
     }
 
     public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable {

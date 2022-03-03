@@ -79,18 +79,6 @@ public class QueryChannelsController internal constructor(
         )
     }
 
-    /**
-     * Updates the collection of channels by some channel. If the channels passes filter it's added to collection,
-     * otherwise it gets removed.
-     */
-    internal suspend fun updateQueryChannelCollectionByNewChannel(channel: Channel) {
-        if (queryChannelsLogic.channelFilter(channel.cid, filter)) {
-            addChannel(channel)
-        } else {
-            removeChannel(channel.cid)
-        }
-    }
-
     internal suspend fun handleEvents(events: List<ChatEvent>) = queryChannelsLogic.handleEvents(events)
 
     /** Handles updates by WS events. Keeps synchronized data of [QueryChannelsMutableState]. */

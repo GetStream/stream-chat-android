@@ -45,9 +45,11 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.CreateChannelErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.QueryMembersErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.SendReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onCreateChannelError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onQueryMembersError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
@@ -56,6 +58,7 @@ import io.getstream.chat.android.client.experimental.interceptor.SendMessageInte
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
@@ -686,7 +689,6 @@ public class ChatClient internal constructor(
 
         return api.sendReaction(reaction, enforceUnique)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -694,7 +696,7 @@ public class ChatClient internal constructor(
                             cid = cid,
                             reaction = reaction,
                             enforceUnique = enforceUnique,
-                            currentUser = currentUser,
+                            currentUser = currentUser!!,
                         )
                     }
             }
@@ -704,11 +706,12 @@ public class ChatClient internal constructor(
                         cid = cid,
                         reaction = reaction,
                         enforceUnique = enforceUnique,
-                        currentUser = currentUser,
+                        currentUser = currentUser!!,
                         result = result,
                     )
                 }
             }
+            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .precondition(relevantPlugins) { onSendReactionPrecondition(currentUser, reaction) }
     }
     //endregion
@@ -1918,46 +1921,77 @@ public class ChatClient internal constructor(
         return channel(type, id)
     }
 
+    /**
+     * Creates the channel.
+     * You can either create an id-based channel by passing not blank [channelId] or
+     * member-based (distinct) channel by passing empty [channelId] and not empty [memberIds].
+     * Extra channel's information can be passed in the [extraData] map.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of members' ids.
+     * @param extraData Map of key-value pairs that let you store extra data
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
     @CheckResult
     public fun createChannel(
         channelType: String,
         channelId: String,
+        memberIds: List<String>,
         extraData: Map<String, Any>,
-    ): Call<Channel> =
-        createChannel(channelType, channelId, emptyList(), extraData)
+    ): Call<Channel> {
+        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
+        val currentUser = getCurrentUser()
 
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        channelId: String,
-        members: List<String>,
-    ): Call<Channel> =
-        createChannel(channelType, channelId, members, emptyMap())
-
-    @CheckResult
-    public fun createChannel(channelType: String, members: List<String>): Call<Channel> =
-        createChannel(channelType, "", members, emptyMap())
-
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> =
-        createChannel(channelType, "", members, extraData)
-
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        channelId: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> =
-        queryChannel(
-            channelType,
-            channelId,
-            QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members))
+        return queryChannelInternal(
+            channelType = channelType,
+            channelId = channelId,
+            request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds)),
         )
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onCreateChannelRequest(
+                        channelType = channelType,
+                        channelId = channelId,
+                        memberIds = memberIds,
+                        extraData = extraData,
+                        currentUser = currentUser!!,
+                    )
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onCreateChannelResult(
+                        channelType = channelType,
+                        channelId = channelId,
+                        memberIds = memberIds,
+                        result = result,
+                    )
+                }
+            }
+            .onCreateChannelError(
+                errorHandlers = relevantErrorHandlers,
+                channelType = channelType,
+                channelId = channelId,
+                memberIds = memberIds,
+                extraData = extraData,
+            )
+            .precondition(relevantPlugins) {
+                onCreateChannelPrecondition(
+                    currentUser = currentUser,
+                    channelId = channelId,
+                    memberIds = memberIds,
+                )
+            }
+    }
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
@@ -2250,13 +2284,13 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Overrides the default no-op error handler factory.
+         * Adds a list of error handler factories.
          *
          * @see [ErrorHandlerFactory]
          */
         @InternalStreamChatApi
-        public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
-            this.errorHandlerFactories.add(errorHandlerFactory)
+        public fun withErrorHandlers(errorHandlerFactories: List<ErrorHandlerFactory>): Builder = apply {
+            this.errorHandlerFactories.addAll(errorHandlerFactories)
         }
 
         /**
