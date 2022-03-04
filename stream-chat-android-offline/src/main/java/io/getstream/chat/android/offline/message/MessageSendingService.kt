@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
@@ -25,7 +24,6 @@ import java.util.UUID
 /**
  * A service that does everything required to send message i.e. preparing the message, uploading attachments, setting correct state.
  */
-@ExperimentalStreamChatApi
 internal class MessageSendingService(
     private val logic: LogicRegistry,
     private val globalState: GlobalState,

@@ -4,14 +4,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104), [#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
-- Updated Google's Accompanist version. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
 - Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- These version updates mean our SDK now expects the minimum of AGP 7.x.x. We recommend using 7.1+. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+- Updated AGP version to 7.1.2 and Gradle version to 7.4. [#3159](https://github.com/GetStream/stream-chat-android/pull/3159)
 
 ### ❌ Removed
 
@@ -55,6 +53,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
 
 ### ⬆️ Improved
 
@@ -84,9 +83,10 @@
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
-- Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104), [#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
+- The SDK now relies on `OfflinePlugin` for offline capabilities instead of `ChatDomain`. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
 
 ### ❌ Removed
+- Removed all use of `ChatDomain` inside the SDK. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -133,6 +133,19 @@
 ### ❌ Removed
 
 <!-- UNRELEASED END -->
+# March 2nd, 2022 - 4.30.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)[#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
+- Updated Google's Accompanist version. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+
+### ⚠️ Changed
+- These version updates mean our SDK now expects the minimum of AGP 7.x.x. We recommend using 7.1+. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+
+## stream-chat-android-compose
+### ⚠️ Changed
+- Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
+
 # February 24th, 2022 - 4.29.0
 ## stream-chat-android-offline
 ### 🐞 Fixed

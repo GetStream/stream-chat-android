@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.parser
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
@@ -18,6 +17,7 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
 
 internal class EventsParserTests {
 

@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.event
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateLastMessage
@@ -11,7 +10,9 @@ import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.users
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -33,7 +34,8 @@ import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
  * batch.execute()
  */
 internal class EventBatchUpdate private constructor(
-    private val domainImpl: ChatDomainImpl,
+    private val currentUser: StateFlow<User?>,
+    private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
     private val userMap: MutableMap<String, User>,
@@ -95,11 +97,11 @@ internal class EventBatchUpdate private constructor(
 
     suspend fun execute() {
         // actually insert the data
-        domainImpl.user.value?.id?.let { userMap -= it }
+        currentUser.value?.id?.let { userMap -= it }
 
         enrichChannelsWithCapabilities()
 
-        domainImpl.repos.storeStateForChannels(
+        repos.storeStateForChannels(
             users = userMap.values.toList(),
             channels = channelMap.values.updateUsers(userMap),
             messages = messageMap.values.toList().updateUsers(userMap),
@@ -116,7 +118,7 @@ internal class EventBatchUpdate private constructor(
         val channelsWithoutCapabilities = channelMap.values
             .filter { channel -> channel.ownCapabilities.isEmpty() }
             .map { channel -> channel.cid }
-        val cachedChannels = domainImpl.repos.selectChannels(channelsWithoutCapabilities)
+        val cachedChannels = repos.selectChannels(channelsWithoutCapabilities)
 
         channelMap.putAll(cachedChannels.associateBy(Channel::cid))
     }
@@ -146,15 +148,16 @@ internal class EventBatchUpdate private constructor(
             users += usersToAdd
         }
 
-        suspend fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
+        suspend fun build(repos: RepositoryFacade, currentUser: StateFlow<User?>): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
-            domainImpl.repos.insertUsers(users)
+            repos.insertUsers(users)
             val messageMap: Map<String, Message> =
-                domainImpl.repos.selectMessages(messagesToFetch.toList(), forceCache = true).associateBy(Message::id)
+                repos.selectMessages(messagesToFetch.toList(), forceCache = true).associateBy(Message::id)
             val channelMap: Map<String, Channel> =
-                domainImpl.repos.selectChannels(channelsToFetch.toList(), forceCache = true).associateBy(Channel::cid)
+                repos.selectChannels(channelsToFetch.toList(), forceCache = true).associateBy(Channel::cid)
             return EventBatchUpdate(
-                domainImpl,
+                currentUser,
+                repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),
                 users.associateBy(User::id).toMutableMap()

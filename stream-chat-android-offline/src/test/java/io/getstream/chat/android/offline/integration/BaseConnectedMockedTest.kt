@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.integration
 
+import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -14,7 +15,7 @@ internal open class BaseConnectedMockedTest : BaseDomainTest() {
         setupWorkManager()
         client = createConnectedMockClient()
         setupChatDomain(client, currentUser)
-        chatDomainImpl.setOnline()
+        globalMutableState._connectionState.value = ConnectionState.CONNECTED
     }
 
     @After

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -12,6 +11,7 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 

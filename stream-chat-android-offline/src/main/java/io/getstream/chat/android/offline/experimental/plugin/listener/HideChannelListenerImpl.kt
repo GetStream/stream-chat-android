@@ -2,20 +2,25 @@ package io.getstream.chat.android.offline.experimental.plugin.listener
 
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.utils.toCid
+import io.getstream.chat.android.offline.utils.validateCidWithResult
+import java.util.Date
 
-@ExperimentalStreamChatApi
-internal class HideChannelListenerImpl(private val logic: LogicRegistry) : HideChannelListener {
+internal class HideChannelListenerImpl(
+    private val logic: LogicRegistry,
+    private val repositoryFacade: RepositoryFacade,
+) : HideChannelListener {
+
     override suspend fun onHideChannelPrecondition(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ): Result<Unit> =
-        logic.channel(channelType, channelId).onHideChannelPrecondition(channelType, channelId, clearHistory)
+    ): Result<Unit> = validateCidWithResult(Pair(channelType, channelId).toCid())
 
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {
-        logic.channel(channelType, channelId).onHideChannelRequest(channelType, channelId, clearHistory)
+        logic.channel(channelType, channelId).setHidden(true)
     }
 
     override suspend fun onHideChannelResult(
@@ -24,6 +29,23 @@ internal class HideChannelListenerImpl(private val logic: LogicRegistry) : HideC
         channelId: String,
         clearHistory: Boolean,
     ) {
-        logic.channel(channelType, channelId).onHideChannelResult(result, channelType, channelId, clearHistory)
+        val channelLogic = logic.channel(channelType, channelId)
+        if (result.isSuccess) {
+            val cid = Pair(channelType, channelId).toCid()
+            if (clearHistory) {
+                val now = Date()
+                channelLogic.run {
+                    hideMessagesBefore(now)
+                    removeMessagesBefore(now)
+                }
+                repositoryFacade.deleteChannelMessagesBefore(cid, now)
+                repositoryFacade.setHiddenForChannel(cid, true, now)
+            } else {
+                repositoryFacade.setHiddenForChannel(cid, true)
+            }
+        } else {
+            // Hides the channel if request fails.
+            channelLogic.setHidden(false)
+        }
     }
 }

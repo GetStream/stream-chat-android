@@ -4,12 +4,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Listener for [io.getstream.chat.android.client.ChatClient.deleteReaction] calls.
  */
-@ExperimentalStreamChatApi
 public interface DeleteReactionListener {
 
     /**

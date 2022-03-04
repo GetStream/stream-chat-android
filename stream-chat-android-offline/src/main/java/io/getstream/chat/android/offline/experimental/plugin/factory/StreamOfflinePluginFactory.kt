@@ -6,10 +6,10 @@ import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
@@ -19,23 +19,25 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.ChannelMar
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.EditMessageListenerImpl
-import io.getstream.chat.android.offline.experimental.plugin.listener.GetMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.HideChannelListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.MarkAllReadListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryChannelsListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.QueryMembersListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.SendGiphyListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendMessageListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendReactionListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.ShuffleGiphyListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQueryListenerImpl
+import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@ExperimentalStreamChatApi
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
  *
@@ -74,7 +76,8 @@ public class StreamOfflinePluginFactory(
         chatDomainImpl.setUser(user)
         chatDomainImpl.userConnected(user)
 
-        val scope = CoroutineScope(DispatcherProvider.IO)
+        val job = SupervisorJob()
+        val scope = CoroutineScope(job + DispatcherProvider.IO)
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -92,7 +95,7 @@ public class StreamOfflinePluginFactory(
         chatDomainImpl.repos = repos
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
-        val stateRegistry = StateRegistry.getOrCreate(scope, userStateFlow, repos, repos.observeLatestUsers())
+        val stateRegistry = StateRegistry.getOrCreate(job, scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.getOrCreate(stateRegistry)
 
         val defaultInterceptor = DefaultInterceptor(
@@ -105,6 +108,8 @@ public class StreamOfflinePluginFactory(
                 messageSendingService = MessageSendingServiceFactory
             )
         )
+
+        val channelMarkReadHelper = ChannelMarkReadHelper(chatClient = chatClient, logic = logic, state = stateRegistry)
 
         chatClient.addInterceptor(defaultInterceptor)
 
@@ -123,16 +128,18 @@ public class StreamOfflinePluginFactory(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
-            channelMarkReadListener = ChannelMarkReadListenerImpl(logic),
+            channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, globalState),
-            getMessageListener = GetMessageListenerImpl(logic),
-            hideChannelListener = HideChannelListenerImpl(logic),
-            markAllReadListener = MarkAllReadListenerImpl(logic),
+            hideChannelListener = HideChannelListenerImpl(logic, repos),
+            markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
             sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
             deleteMessageListener = DeleteMessageListenerImpl(logic, globalState, repos),
             sendMessageListener = SendMessageListenerImpl(logic, repos),
+            sendGiphyListener = SendGiphyListenerImpl(logic),
+            shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
+            typingEventListener = TypingEventListenerImpl(stateRegistry),
         )
     }
 }

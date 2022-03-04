@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.toCid
 
@@ -15,7 +14,6 @@ import io.getstream.chat.android.offline.utils.toCid
  *
  * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
-@ExperimentalStreamChatApi
 internal class QueryMembersListenerImpl(
     private val repos: RepositoryFacade,
 ) : QueryMembersListener {

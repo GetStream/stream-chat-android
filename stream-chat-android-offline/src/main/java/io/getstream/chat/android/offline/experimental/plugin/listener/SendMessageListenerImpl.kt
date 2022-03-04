@@ -7,13 +7,11 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import java.util.Date
 
-@ExperimentalStreamChatApi
 internal class SendMessageListenerImpl(
     private val logic: LogicRegistry,
     private val repos: RepositoryFacade,
@@ -41,11 +39,11 @@ internal class SendMessageListenerImpl(
      */
     private suspend fun handleSendMessageSuccess(channel: ChannelLogic, processedMessage: Message) {
         // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = repos.selectMessage(processedMessage.id) ?: processedMessage
-        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
+        val latestUpdatedMessage = repos.selectMessage(processedMessage.id)
+        if (latestUpdatedMessage?.syncStatus == SyncStatus.COMPLETED) {
             return
         }
-        latestUpdatedMessage.enrichWithCid(channel.cid)
+        processedMessage.enrichWithCid(channel.cid)
             .copy(syncStatus = SyncStatus.COMPLETED)
             .also {
                 repos.insertMessage(it)

@@ -9,11 +9,6 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.work.Configuration
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -31,6 +26,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -50,6 +46,11 @@ import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import java.util.Date
 
 internal open class BaseDomainTest : SynchronizedCoroutineTest {
@@ -63,6 +64,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
     lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
 
+    protected val globalMutableState = GlobalMutableState.create()
     private val recoveryEnabled = false
     private val backgroundSyncEnabled = false
 
@@ -199,6 +201,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
+            .globalMutableState(globalMutableState)
             .build()
 
         chatDomainImpl = chatDomain as ChatDomainImpl

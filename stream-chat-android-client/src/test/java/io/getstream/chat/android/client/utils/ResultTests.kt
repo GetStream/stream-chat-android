@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.utils
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 internal class ResultTests {
 

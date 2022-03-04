@@ -4,7 +4,6 @@ import android.content.Context
 import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.extensions.populateMentions
@@ -16,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
  * Implementation of [SendMessageInterceptor] that upload attachments, update original message
  * with new attachments and return updated message.
  */
-@ExperimentalStreamChatApi
 internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,
