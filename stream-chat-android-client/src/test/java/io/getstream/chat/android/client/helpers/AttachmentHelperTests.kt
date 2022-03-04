@@ -1,8 +1,5 @@
 package io.getstream.chat.android.client.helpers
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.SystemTimeProvider
@@ -11,6 +8,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 internal class AttachmentHelperTests {
 

@@ -1,8 +1,8 @@
 package io.getstream.chat.android.offline.utils
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 internal fun mockDb() = mock<ChatDatabase> {
     on { userDao() } doReturn mock()

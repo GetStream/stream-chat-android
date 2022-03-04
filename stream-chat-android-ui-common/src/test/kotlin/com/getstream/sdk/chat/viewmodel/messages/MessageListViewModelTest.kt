@@ -9,11 +9,6 @@ import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
 import com.getstream.sdk.chat.createUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -35,6 +30,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.util.Date
 
@@ -51,7 +51,8 @@ private val MESSAGES = createMessageList {
     )
 }
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
-private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
+private val THREAD_PARENT_MESSAGE =
+    createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_MESSAGES = createMessageList {
     createMessage(
         createdAt = Date.from(Instant.now()),

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.chatclient
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -17,6 +16,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.mock
 
 internal open class BaseChatClientTest {
     @get:Rule

@@ -1,11 +1,11 @@
 package io.getstream.chat.android.client
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
