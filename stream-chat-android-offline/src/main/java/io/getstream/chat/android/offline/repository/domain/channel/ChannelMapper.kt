@@ -25,6 +25,8 @@ internal fun Channel.toEntity(): ChannelEntity {
     return ChannelEntity(
         type = type,
         channelId = id,
+        name = name,
+        image = image,
         cooldown = cooldown,
         frozen = frozen,
         createdAt = createdAt,
@@ -54,6 +56,8 @@ internal suspend fun ChannelEntity.toModel(
     cooldown = cooldown,
     type = type,
     id = channelId,
+    name = name,
+    image = image,
     cid = cid,
     frozen = frozen,
     createdAt = createdAt,

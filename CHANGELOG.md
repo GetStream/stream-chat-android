@@ -22,6 +22,7 @@
 - Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ### ⚠️ Changed
+- Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
 
 ### ❌ Removed
 
@@ -29,6 +30,7 @@
 ### 🐞 Fixed
 - Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
 - Exposed a public value of `channelConfig: StateFlow<Config>` that holds channel config data inside `ChannelState`. [#3127](https://github.com/GetStream/stream-chat-android/pull/3127)
+- Fixed marking the channel as read if it was opened offline previously. [#3162](https://github.com/GetStream/stream-chat-android/pull/3162)
 
 ### ⬆️ Improved
 

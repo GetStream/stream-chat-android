@@ -11,7 +11,7 @@ internal class InitialsExtensionsTests {
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.models.InitialsExtensionsTests#provideNames")
     fun `Should return initials of the user name`(name: String, initials: String) {
-        val user = User(extraData = mutableMapOf("name" to name))
+        val user = User(name = name)
 
         user.initials `should be equal to` initials
     }
@@ -20,7 +20,7 @@ internal class InitialsExtensionsTests {
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.models.InitialsExtensionsTests#provideNames")
     fun `Should return initials of the channel name`(name: String, initials: String) {
-        val channel = Channel(extraData = mutableMapOf("name" to name))
+        val channel = Channel(name = name)
 
         channel.initials `should be equal to` initials
     }

@@ -110,7 +110,12 @@ public class StreamOfflinePluginFactory(
             )
         )
 
-        val channelMarkReadHelper = ChannelMarkReadHelper(chatClient = chatClient, logic = logic, state = stateRegistry)
+        val channelMarkReadHelper = ChannelMarkReadHelper(
+            chatClient = chatClient,
+            logic = logic,
+            state = stateRegistry,
+            globalState = globalState,
+        )
 
         chatClient.addInterceptor(defaultInterceptor)
 
