@@ -58,8 +58,8 @@ internal class LoadNotificationDataWorker(
         return ForegroundInfo(
             NOTIFICATION_ID,
             createForegroundNotification(
-                notificationChannelId = context.getString(R.string.stream_chat_notification_channel_id),
-                notificationChannelName = context.getString(R.string.stream_chat_notification_channel_name),
+                notificationChannelId = context.getString(R.string.stream_chat_load_notification_channel_id),
+                notificationChannelName = context.getString(R.string.stream_chat_load_notification_channel_name),
             ),
         )
     }

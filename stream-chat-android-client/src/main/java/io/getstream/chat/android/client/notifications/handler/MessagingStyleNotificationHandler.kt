@@ -22,14 +22,24 @@ import java.util.Date
 @RequiresApi(Build.VERSION_CODES.M)
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
-    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
-        { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! }
+    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
+    notificationChannelFun: (() -> NotificationChannel)?,
 ) : NotificationHandler {
+
+    /**
+     * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
+     * Should never be null in such case.
+     * @see [NotificationHandlerFactory.getDefaultNotificationChannel]
+     */
+    private val notificationChannel: NotificationChannel by lazy {
+        notificationChannelFun!!.invoke()
+    }
+
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
     private val notificationManager: NotificationManager by lazy {
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
+        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also { notificationManager ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                it.createNotificationChannel(createNotificationChannel())
+                notificationManager.createNotificationChannel(notificationChannel)
             }
         }
     }
@@ -96,16 +106,14 @@ internal class MessagingStyleNotificationHandler(
             .setConversationTitle(channel.name)
             .setGroupConversation(channel.name.isNotBlank())
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun createNotificationChannel(): NotificationChannel {
-        return NotificationChannel(
-            getNotificationChannelId(),
-            context.getString(R.string.stream_chat_notification_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT,
-        )
+    private fun getNotificationChannelId(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel.id
+        } else {
+            ""
+        }
     }
 
-    private fun getNotificationChannelId() = context.getString(R.string.stream_chat_notification_channel_id)
     private companion object {
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_NOTIFICATIONS_SHOWN = "KEY_NOTIFICATIONS_SHOWN"

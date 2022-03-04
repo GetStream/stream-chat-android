@@ -1,8 +1,11 @@
 package io.getstream.chat.android.client.notifications.handler
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import io.getstream.chat.android.client.R
 
 /**
  * Factory for default [NotificationHandler].
@@ -10,22 +13,24 @@ import android.os.Build
  */
 public object NotificationHandlerFactory {
 
-    @Suppress("DEPRECATION_ERROR")
     /**
-     * Method that create a [NotificationHandler].
+     * Method that creates a [NotificationHandler].
      *
      * @param context The [Context] to build the [NotificationHandler] with.
      * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
+     * @param notificationChannel Lambda expression used to generate a [NotificationChannel]. Used in SDK_INT >= VERSION_CODES.O.
      */
     public fun createNotificationHandler(
         context: Context,
-        newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null
+        newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
+        notificationChannel: (() -> NotificationChannel)? = null,
     ): NotificationHandler {
-        (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let {
+        val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
+        (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                MessagingStyleNotificationHandler(context, it)
+                MessagingStyleNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
             } else {
-                ChatNotificationHandler(context, it)
+                ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
             }
         }
     }
@@ -36,4 +41,18 @@ public object NotificationHandlerFactory {
 
     private fun createDefaultNewMessageIntent(context: Context): Intent =
         context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
+
+    private fun getDefaultNotificationChannel(context: Context): (() -> NotificationChannel)? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            {
+                NotificationChannel(
+                    context.getString(R.string.stream_chat_notification_channel_id),
+                    context.getString(R.string.stream_chat_notification_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                )
+            }
+        } else {
+            null
+        }
+    }
 }
