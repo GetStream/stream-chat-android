@@ -27,7 +27,7 @@ internal class ActiveEntitiesManager(
 ) {
 
     private val activeChannelMap: MutableMap<String, ChannelController> = ConcurrentHashMap()
-    //Todo: Make it private later
+    // Todo: Make it private later
     internal val activeQueryMap: MutableMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     fun activeQueries(): List<QueryChannelsController> = activeQueryMap.values.toList()

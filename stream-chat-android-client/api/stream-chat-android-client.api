@@ -3164,7 +3164,6 @@ public final class io/getstream/chat/android/client/setup/InitializationCoordina
 	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
 	public final fun addUserConnectedListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
-	public final fun addUserSetListener (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {

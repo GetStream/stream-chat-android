@@ -323,7 +323,6 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                initializationCoordinator.userSet(user)
                 initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
@@ -347,7 +346,6 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: CacheableTokenProvider,
     ) {
-        initializationCoordinator.userSet(user)
         initializationCoordinator.userConnected(user)
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
@@ -422,7 +420,7 @@ public class ChatClient internal constructor(
             userStateService.onSetAnonymous()
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    initializationCoordinator.userSet(data.user)
+                    initializationCoordinator.userConnected(data.user)
                     listener?.onSuccess(data)
                 }
 
@@ -2227,7 +2225,7 @@ public class ChatClient internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserSetListener { user ->
+            chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)
