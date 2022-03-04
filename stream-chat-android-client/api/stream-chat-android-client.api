@@ -1938,10 +1938,6 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener$DefaultImpls {
-	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteMessageListener {
 	public abstract fun onMessageDeleteRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
