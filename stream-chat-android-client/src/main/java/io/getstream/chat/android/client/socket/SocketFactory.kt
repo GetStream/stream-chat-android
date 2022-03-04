@@ -73,6 +73,8 @@ internal class SocketFactory(
     private fun User.reduceUserDetails(): Map<String, Any> {
         val details = mutableMapOf(
             "id" to id,
+            "name" to name,
+            "image" to image,
             "role" to role,
             "banned" to banned,
             "invisible" to invisible,

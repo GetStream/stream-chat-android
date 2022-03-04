@@ -6,12 +6,10 @@ import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.sendReaction] calls.
  */
-@ExperimentalStreamChatApi
 public interface SendReactionErrorHandler : ErrorHandler {
 
     /**
@@ -32,7 +30,6 @@ public interface SendReactionErrorHandler : ErrorHandler {
     ): ReturnOnErrorCall<Reaction>
 }
 
-@ExperimentalStreamChatApi
 internal fun Call<Reaction>.onReactionError(
     errorHandlers: List<SendReactionErrorHandler>,
     reaction: Reaction,

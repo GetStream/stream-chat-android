@@ -69,6 +69,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessag
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -85,6 +86,7 @@ import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
@@ -139,7 +141,6 @@ import java.util.concurrent.Executor
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-@OptIn(ExperimentalStreamChatApi::class)
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
@@ -1564,9 +1565,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
-    ): Call<ChatEvent> {
-        return api.sendEvent(eventType, channelType, channelId, extraData)
-    }
+    ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
 
     public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
 
@@ -1578,14 +1577,6 @@ public class ChatClient internal constructor(
     ): Call<Channel> {
         return api.acceptInvite(channelType, channelId, message)
     }
-
-    /**
-     * Marks all the channel as read.
-     *
-     * @return [Result] Empty unit result.
-     */
-    @InternalStreamChatApi
-    public fun markAllReadInternal(): Call<Unit> = api.markAllRead()
 
     /**
      * Marks all the channel as read.
@@ -1613,18 +1604,6 @@ public class ChatClient internal constructor(
 
         return api.markRead(channelType, channelId)
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
-    }
-
-    /**
-     * Marks the specified channel as read without running a precondition.
-     *
-     * @param channelType Type of the channel.
-     * @param channelId Id of the channel.
-     */
-    @InternalStreamChatApi
-    @CheckResult
-    public fun markReadInternal(channelType: String, channelId: String): Call<Unit> {
-        return api.markRead(channelType, channelId)
     }
 
     @CheckResult
@@ -1996,6 +1975,82 @@ public class ChatClient internal constructor(
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
+    /**
+     * Sends a [EventType.TYPING_START] event to the backend.
+     *
+     * @param channelType The type of this channel i.e. messaging etc.
+     * @param channelId The id of this channel.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
+    @CheckResult
+    public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val extraData: Map<Any, Any> = parentId?.let {
+            mapOf(ARG_TYPING_PARENT_ID to parentId)
+        } ?: emptyMap()
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
+        val eventTime = Date()
+        val eventType = EventType.TYPING_START
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
+    }
+
+    /**
+     * Sends a [EventType.TYPING_STOP] event to the backend.
+     *
+     * @param channelType The type of this channel i.e. messaging etc.
+     * @param channelId The id of this channel.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
+    @CheckResult
+    public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val extraData: Map<Any, Any> = parentId?.let {
+            mapOf(ARG_TYPING_PARENT_ID to parentId)
+        } ?: emptyMap()
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
+        val eventTime = Date()
+        val eventType = EventType.TYPING_STOP
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
+    }
+
     internal fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
         if (connectedEvent != null) {
             val user = connectedEvent.me
@@ -2024,7 +2079,6 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    @ExperimentalStreamChatApi
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
@@ -2190,7 +2244,6 @@ public class ChatClient internal constructor(
         }
 
         @InternalStreamChatApi
-        @ExperimentalStreamChatApi
         public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
             pluginFactories.add(pluginFactory)
         }
@@ -2201,7 +2254,6 @@ public class ChatClient internal constructor(
          * @see [ErrorHandlerFactory]
          */
         @InternalStreamChatApi
-        @ExperimentalStreamChatApi
         public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
             this.errorHandlerFactories.add(errorHandlerFactory)
         }
@@ -2340,6 +2392,8 @@ public class ChatClient internal constructor(
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+
+        private const val ARG_TYPING_PARENT_ID = "parent_id"
 
         private var instance: ChatClient? = null
 

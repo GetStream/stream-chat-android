@@ -13,6 +13,8 @@ import java.util.Date
 
 internal fun createUser(
     id: String = randomString(),
+    name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     invisible: Boolean = randomBoolean(),
     banned: Boolean = randomBoolean(),
@@ -29,6 +31,8 @@ internal fun createUser(
     extraData: MutableMap<String, Any> = mutableMapOf()
 ): User = User(
     id,
+    name,
+    image,
     role,
     invisible,
     banned,

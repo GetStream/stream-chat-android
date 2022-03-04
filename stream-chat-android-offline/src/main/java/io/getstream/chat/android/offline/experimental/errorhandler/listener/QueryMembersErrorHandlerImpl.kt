@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.QueryMembersErrorHandler
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
@@ -24,7 +23,6 @@ import kotlinx.coroutines.CoroutineScope
  * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
  * @param repos [RepositoryFacade] to access datasource.
  */
-@ExperimentalStreamChatApi
 internal class QueryMembersErrorHandlerImpl(
     private val scope: CoroutineScope,
     private val globalState: GlobalState,

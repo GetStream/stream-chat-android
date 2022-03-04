@@ -1,15 +1,11 @@
 package io.getstream.chat.android.offline.reactions
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
@@ -29,9 +25,11 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-@OptIn(ExperimentalStreamChatApi::class)
 internal class SendReactionsTests {
 
     companion object {
@@ -162,6 +160,7 @@ internal class SendReactionsTests {
     private class Fixture(scope: CoroutineScope, user: User) {
 
         private val stateRegistry = StateRegistry.getOrCreate(
+            job = mock(),
             scope = scope,
             userStateFlow = MutableStateFlow(user),
             messageRepository = mock(),

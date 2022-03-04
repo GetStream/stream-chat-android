@@ -3,13 +3,12 @@ package io.getstream.chat.android.common.composer
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -19,8 +18,8 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.keystroke
-import io.getstream.chat.android.offline.extensions.stopTyping
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -43,7 +42,6 @@ import java.util.regex.Pattern
  *
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
- * @param chatDomain The domain used to communicate to the API and store data offline.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
@@ -51,15 +49,21 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
+
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
      */
     private val scope = CoroutineScope(DispatcherProvider.Main)
+
+    /**
+     * Holds information about the current state of the [Channel].
+     */
+    public val channelState: ChannelState =
+        ChatClientReferenceAdapter(chatClient).watchChannel(channelId, 0).asState(scope)
 
     /**
      * Full message composer state holding all the required information.
@@ -185,26 +189,18 @@ public class MessageComposerController(
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
-        scope.launch {
-            val result = chatDomain.watchChannel(channelId, 0).await()
+        channelState.channelConfig.onEach {
+            maxMessageLength = it.maxMessageLength
+            commands = it.commands
+        }.launchIn(scope)
 
-            if (result.isSuccess) {
-                val channelController = result.data()
+        channelState.members.onEach { members ->
+            users = members.map { it.user }
+        }.launchIn(scope)
 
-                channelController.channelConfig.onEach {
-                    maxMessageLength = it.maxMessageLength
-                    commands = it.commands
-                }.launchIn(scope)
-
-                channelController.members.onEach { members ->
-                    users = members.map { it.user }
-                }.launchIn(scope)
-
-                channelController.channelData.onEach {
-                    cooldownInterval = it.cooldown
-                }.launchIn(scope)
-            }
-        }
+        channelState.channelData.onEach {
+            cooldownInterval = it.cooldown
+        }.launchIn(scope)
 
         setupComposerState()
     }
@@ -473,10 +469,11 @@ public class MessageComposerController(
      * @param isTyping If the user is currently typing.
      */
     private fun handleTypingEvent(isTyping: Boolean) {
+        val (type, id) = channelId.cidToTypeAndId()
         if (isTyping) {
-            chatClient.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(type, id, parentMessageId)
         } else {
-            chatClient.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(type, id, parentMessageId)
         }.enqueue()
     }
 
@@ -603,11 +600,7 @@ public class MessageComposerController(
      * @param message [Message]
      */
     private fun getEditMessageCall(message: Message): Call<Message> {
-        return if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            chatClient.updateMessage(message)
-        } else {
-            chatDomain.editMessage(message)
-        }
+        return chatClient.updateMessage(message)
     }
 
     private companion object {

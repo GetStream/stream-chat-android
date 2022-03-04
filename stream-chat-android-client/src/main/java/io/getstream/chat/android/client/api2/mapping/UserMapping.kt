@@ -12,6 +12,8 @@ internal fun User.toDto(): UpstreamUserDto =
     UpstreamUserDto(
         banned = banned,
         id = id,
+        name = name,
+        image = image,
         invisible = invisible,
         role = role,
         devices = devices.map(Device::toDto),
@@ -22,6 +24,8 @@ internal fun User.toDto(): UpstreamUserDto =
 internal fun DownstreamUserDto.toDomain(): User =
     User(
         id = id,
+        name = name,
+        image = image,
         role = role,
         invisible = invisible,
         banned = banned,

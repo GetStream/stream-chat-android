@@ -21,9 +21,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -49,7 +47,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-@OptIn(ExperimentalStreamChatApi::class)
 public class ChannelController internal constructor(
     private val mutableState: ChannelMutableState,
     private val channelLogic: ChannelLogic,
@@ -67,12 +64,10 @@ public class ChannelController internal constructor(
 
     private val editJobs = mutableMapOf<String, Job>()
 
-    private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
-    private var lastKeystrokeAt: Date? by mutableState::lastKeystrokeAt
     private var lastStartTypingEvent: Date? by mutableState::lastStartTypingEvent
     private val channelClient = client.channel(channelType, channelId)
 
-    private var keystrokeParentMessageId: String? = null
+    private var keystrokeParentMessageId: String? by mutableState::keystrokeParentMessageId
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
@@ -120,101 +115,6 @@ public class ChannelController internal constructor(
                 client
             ).also { scope.launch { it.loadOlderMessages() } }
         }
-
-    internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
-        lastKeystrokeAt = Date()
-        if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
-            lastStartTypingEvent = lastKeystrokeAt
-
-            val channelClient = client.channel(channelType = channelType, channelId = channelId)
-            val result = if (parentId != null) {
-                channelClient.keystroke(parentId)
-            } else {
-                channelClient.keystroke()
-            }.await()
-            return result.map { true.also { keystrokeParentMessageId = parentId } }
-        }
-        return Result(false)
-    }
-
-    internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!mutableState._channelConfig.value.typingEventsEnabled) return Result(false)
-        if (lastStartTypingEvent != null) {
-            lastStartTypingEvent = null
-            lastKeystrokeAt = null
-
-            val channelClient = client.channel(channelType = channelType, channelId = channelId)
-            val result = if (parentId != null) {
-                channelClient.stopTyping(parentId)
-            } else {
-                channelClient.stopTyping()
-            }.await()
-
-            return result.map { true.also { keystrokeParentMessageId = null } }
-        }
-        return Result(false)
-    }
-
-    /**
-     * Marks the channel as read by the current user
-     *
-     * @return whether the channel was marked as read or not
-     */
-    internal fun markRead(): Boolean {
-        if (!mutableState._channelConfig.value.readEventsEnabled) {
-            return false
-        }
-
-        // throttle the mark read
-        val messages = mutableState.sortedMessages.value
-
-        if (messages.isEmpty()) {
-            logger.logI("No messages; nothing to mark read.")
-            return false
-        }
-
-        return messages.last().createdAt
-            .let { lastMessageDate ->
-                val shouldUpdate =
-                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
-
-                if (!shouldUpdate) {
-                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-                    return false
-                }
-
-                lastMarkReadEvent = lastMessageDate
-
-                // update live data with new read
-                globalState.user.value?.let { currentUser ->
-                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
-                }
-
-                shouldUpdate
-            }
-    }
-
-    internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
-        channelLogic.setHidden(true)
-        val result = channelClient.hide(clearHistory).await()
-        if (result.isSuccess) {
-            if (clearHistory) {
-                val now = Date()
-                mutableState.hideMessagesBefore = now
-                channelLogic.removeMessagesBefore(now)
-                repos.deleteChannelMessagesBefore(cid, now)
-                repos.setHiddenForChannel(cid, true, now)
-            } else {
-                repos.setHiddenForChannel(cid, true)
-            }
-        }
-        return result
-    }
-
-    internal suspend fun show(): Result<Unit> {
-        return channelClient.show().await()
-    }
 
     /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {
@@ -338,17 +238,6 @@ public class ChannelController internal constructor(
         }
     }
 
-    /**
-     * Cancels ephemeral Message.
-     * Removes message from the offline storage and memory and notifies about update.
-     */
-    internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
-        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-        repos.deleteChannelMessage(message)
-        removeLocalMessage(message)
-        return Result(true)
-    }
-
     internal suspend fun sendImage(file: File): Result<String> {
         return client.sendImage(channelType, channelId, file).await()
     }
@@ -365,16 +254,12 @@ public class ChannelController internal constructor(
 
     public fun getMessage(messageId: String): Message? = channelLogic.getMessage(messageId)
 
-    internal fun removeLocalMessage(message: Message) {
-        channelLogic.removeLocalMessage(message)
-    }
-
     public fun clean() {
         scope.launch {
             // cleanup your own typing state
             val now = Date()
             if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
-                stopTyping(keystrokeParentMessageId)
+                channelClient.stopTyping(keystrokeParentMessageId)
             }
 
             // Cleanup typing events that are older than 15 seconds
@@ -400,8 +285,6 @@ public class ChannelController internal constructor(
     internal fun handleEvents(events: List<ChatEvent>) = channelLogic.handleEvents(events)
 
     internal fun handleEvent(event: ChatEvent) = channelLogic.handleEvent(event)
-
-    private fun updateRead(read: ChannelUserRead) = channelLogic.updateReads(listOf(read))
 
     internal fun updateDataFromChannel(c: Channel) = channelLogic.updateDataFromChannel(c)
 

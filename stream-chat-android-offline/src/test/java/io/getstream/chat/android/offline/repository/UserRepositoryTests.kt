@@ -1,11 +1,6 @@
 package io.getstream.chat.android.offline.repository
 
 import app.cash.turbine.test
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.user.UserDao
@@ -18,6 +13,11 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
 internal class UserRepositoryTests {

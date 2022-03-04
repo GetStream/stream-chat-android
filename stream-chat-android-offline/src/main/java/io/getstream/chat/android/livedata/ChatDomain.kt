@@ -260,45 +260,6 @@ public sealed interface ChatDomain {
     public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     // updating channel data
-    /**
-     * Creates a new channel. Will retry according to the retry policy if it fails.
-     *
-     * @param channel The channel object.
-     *
-     * @return Executable async [Call] responsible for creating a channel.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @Deprecated(
-        message = "createChannel is deprecated. Use ChatClient::createChannel extension function instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().createChannel(channel)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-    )
-    @CheckResult
-    public fun createChannel(channel: Channel): Call<Channel>
-
-    /**
-     * Cancels the message of "ephemeral" type. Removes the message from local storage.
-     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for canceling ephemeral message.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    @Deprecated(
-        message = "cancelMessage is deprecated. Use extension function ChatClient::cancelMessage instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().cancelMessage(message)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
@@ -387,81 +348,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
-
-    /**
-     * Marks all messages on a channel as read.
-     *
-     * @return Executable async [Call] responsible for marking all messages as read.
-     */
-    @CheckResult
-    public fun markAllRead(): Call<Boolean>
-
-    /**
-     * Hides the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param keepHistory Boolean, if you want to keep the history of this channel or not.
-     *
-     * @return Executable async [Call] responsible for hiding a channel.
-     *
-     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
-     */
-    @CheckResult
-    public fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit>
-
-    /**
-     * Shows a channel that was previously hidden.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] responsible for hiding a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Deprecated. Use ChatClient::showChannel instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().showChannel(channelType, channelId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun showChannel(cid: String): Call<Unit>
-
-    /**
-     * Leaves the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] leaving a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "leaveChannel is deprecated. Use function ChatClient::removeMembers instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().removeMembers(channel.type, channel.id, listOf(userId))",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun leaveChannel(cid: String): Call<Unit>
-
-    /**
-     * Deletes the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] deleting a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "deleteChannel is deprecated. Use function ChannelClient::delete instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().channel(cid).delete().toUnitCall()",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun deleteChannel(cid: String): Call<Unit>
 
     // end region
 
