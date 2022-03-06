@@ -78,11 +78,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import java.util.Date
+import java.util.InputMismatchException
 
 @ExperimentalStreamChatApi
 internal class EventHandlerImpl(
     private var recoveryEnabled: Boolean = true,
-    private val domainImpl: ChatDomainImpl, // Todo: This needs to go away
     private val client: ChatClient,
     private val mutableGlobalState: GlobalMutableState,
     private val repos: RepositoryFacade,
@@ -354,10 +354,10 @@ internal class EventHandlerImpl(
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
-                    domainImpl.updateCurrentUser(event.me)
+                    updateCurrentUser(event.me)
                 }
                 is ConnectedEvent -> {
-                    domainImpl.updateCurrentUser(event.me)
+                    updateCurrentUser(event.me)
                 }
 
                 is ReactionNewEvent -> {
@@ -414,7 +414,7 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
-                    domainImpl.updateCurrentUser(event.me)
+                    updateCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
                     batch.addChannel(event.channel)
@@ -467,7 +467,9 @@ internal class EventHandlerImpl(
                 is UserUpdatedEvent -> {
                     event.user
                         .takeIf { it.id == mutableGlobalState._user.value?.id }
-                        ?.let { domainImpl.updateCurrentUser(it) }
+                        ?.let {
+                            updateCurrentUser(it)
+                        }
                 }
                 is TypingStartEvent,
                 is TypingStopEvent,
@@ -627,5 +629,19 @@ internal class EventHandlerImpl(
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
+    }
+
+    private suspend fun updateCurrentUser(me: User) {
+        val currentUser = mutableGlobalState.user.value
+        if (me.id != currentUser?.id) {
+            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser?.id}. create a new ChatDomain when connecting a different user.")
+        }
+        mutableGlobalState._user.value = me
+        repos.insertCurrentUser(me)
+        mutableGlobalState._mutedUsers.value = me.mutes
+        mutableGlobalState._channelMutes.value = me.channelMutes
+        mutableGlobalState._totalUnreadCount.value = me.totalUnreadCount
+        mutableGlobalState._channelUnreadCount.value = me.unreadChannels
+        mutableGlobalState._banned.value = me.banned
     }
 }

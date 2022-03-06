@@ -142,7 +142,6 @@ public class StreamOfflinePluginFactory(
 
         val eventHandler = EventHandlerImpl(
             recoveryEnabled = true,
-            domainImpl = chatDomainImpl,
             client = chatClient,
             mutableGlobalState = globalState,
             repos = repos,
