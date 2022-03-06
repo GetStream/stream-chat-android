@@ -29,7 +29,6 @@ import io.getstream.chat.android.offline.experimental.channel.thread.logic.Threa
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
-import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController

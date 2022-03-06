@@ -485,17 +485,12 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/experimental/sync/SyncManager {
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun cancelEphemeralMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun createChannel (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
-	public static final fun replayEventsForActiveChannels (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
