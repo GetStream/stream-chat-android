@@ -1,8 +1,5 @@
 package io.getstream.chat.android.offline.event
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-
-@ExperimentalStreamChatApi
 internal object EventHandlerProvider {
 
     private var instance: EventHandlerImpl? = null

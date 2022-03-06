@@ -376,6 +376,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+        InitializationCoordinator.getOrCreate().userSet(user)
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -419,10 +420,11 @@ public class ChatClient internal constructor(
         if (userStateService.state is UserState.NotSet) {
             socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
+
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    initializationCoordinator.userConnected(data.user)
                     listener?.onSuccess(data)
+                    initializationCoordinator.userConnected(data.user)
                 }
 
                 override fun onError(error: ChatError) {
@@ -2277,7 +2279,7 @@ public class ChatClient internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserConnectedListener { user ->
+            chatClient.initializationCoordinator.addUserSetListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)
