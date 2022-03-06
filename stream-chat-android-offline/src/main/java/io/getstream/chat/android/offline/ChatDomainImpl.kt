@@ -141,7 +141,6 @@ internal class ChatDomainImpl internal constructor(
      * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is
      * not closed by room.
      */
-
     internal lateinit var repos: RepositoryFacade
 
     override val typingUpdates: StateFlow<TypingEvent> = globalState.typingUpdates
