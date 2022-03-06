@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.event.EventHandlerProvider
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
