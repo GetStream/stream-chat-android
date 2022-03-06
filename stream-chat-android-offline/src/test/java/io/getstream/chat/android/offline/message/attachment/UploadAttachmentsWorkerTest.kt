@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -63,14 +64,20 @@ internal class UploadAttachmentsWorkerTest {
             }
 
             channelController = mock()
+
+            val activeEntitiesManager: ActiveEntitiesManager = mock {
+                on(it.channel(any(), any())) doReturn channelController
+            }
+
             chatClient = mock {
                 on(it.containsStoredCredentials()) doReturn true
             }
 
             chatDomainImpl = mock {
-                on(it.channel(defaultChannelType, defaultChannelId)) doReturn channelController
+                // on(it.channel(defaultChannelType, defaultChannelId)) doReturn channelController
                 on(it.repos) doReturn repositoryFacade
                 on(it.user) doReturn MutableStateFlow(null)
+                on(it.activeEntitiesManager) doReturn activeEntitiesManager
             }
         }
     }

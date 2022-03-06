@@ -57,7 +57,9 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             backgroundSyncEnabled,
             context,
             globalState = globalMutableState
-        )
+        ).apply {
+            activeEntitiesManager = mock()
+        }
 
         chatDomain = chatDomainImpl
 
@@ -102,11 +104,11 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
             // setup channel controller and query controllers for tests
             runBlocking { chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1)) }
-            channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-            channelControllerImpl.updateDataFromChannel(data.channel1)
+            // channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
+            // channelControllerImpl.updateDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())
 
-            queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
+            // queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
             client.isSocketConnected().shouldBeTrue()
 

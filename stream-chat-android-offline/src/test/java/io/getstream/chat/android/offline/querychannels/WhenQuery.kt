@@ -12,6 +12,7 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -148,6 +149,8 @@ internal class WhenQuery : SynchronizedCoroutineTest {
             on(it.user) doReturn MutableStateFlow(user)
         }
 
+        private val activeEntitiesManager: ActiveEntitiesManager = mock()
+
         fun givenQuerySort(querySort: QuerySort<Channel>) = apply {
             this.querySort = querySort
         }
@@ -180,7 +183,7 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                     on { toChannel() } doReturn dbChannels.first { it.cid == cid }
                 }
             }
-            whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
+            whenever(activeEntitiesManager.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
                 mock<ChannelController> {
                     on { toChannel() } doReturn channel
@@ -198,7 +201,7 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                     on { toChannel() } doReturn channels.first { it.cid == cid }
                 }
             }
-            whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
+            whenever(activeEntitiesManager.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
                 mock<ChannelController> {
                     on { toChannel() } doReturn channel
@@ -224,7 +227,8 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                 chatDomainImpl,
                 chatClient,
                 chatDomainImpl.repos,
-                GlobalMutableState.create()
+                GlobalMutableState.create(),
+                activeEntitiesManager
             )
 
             return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)

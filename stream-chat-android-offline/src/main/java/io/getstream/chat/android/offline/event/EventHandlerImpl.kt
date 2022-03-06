@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.event
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -61,11 +62,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.mergeReactions
@@ -80,10 +80,11 @@ import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
 
-@ExperimentalStreamChatApi
 internal class EventHandlerImpl(
     private var recoveryEnabled: Boolean = true,
     private val client: ChatClient,
+    private val logic: LogicRegistry,
+    private val state: StateRegistry,
     private val mutableGlobalState: GlobalMutableState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
@@ -92,7 +93,7 @@ internal class EventHandlerImpl(
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
 
-    private var eventSubscription: Disposable = ChatDomainImpl.EMPTY_DISPOSABLE
+    private var eventSubscription: Disposable = EMPTY_DISPOSABLE
     private var handlerEventJob: Deferred<*>? = null
 
     internal fun initialize(user: User, scope: CoroutineScope) {
@@ -126,7 +127,8 @@ internal class EventHandlerImpl(
         activeEntitiesManager.channel(cid)
     }
 
-    private suspend fun handleEvent(event: ChatEvent) {
+    @VisibleForTesting
+    internal suspend fun handleEvent(event: ChatEvent) {
         handleConnectEvents(listOf(event))
         handleEventsInternal(listOf(event), isFromSync = false)
     }
@@ -179,6 +181,7 @@ internal class EventHandlerImpl(
 
                     // Todo: Figure out where to put this
                     if (recoveryEnabled) {
+                        // Todo: This logic should go to syncManager
                         // the first time we connect we should only run recovery against channels and queries that had a failure
                         if (firstConnect) {
                             firstConnect = false
@@ -528,8 +531,8 @@ internal class EventHandlerImpl(
             .groupBy { it.cid }
             .forEach { (cid, eventList) ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                if (client.logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
-                    client.logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
+                if (logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
+                    logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
                 }
             }
 
@@ -547,27 +550,27 @@ internal class EventHandlerImpl(
         sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
             val event = userPresenceChanged as UserPresenceChangedEvent
 
-            client.state.getActiveChannelStates()
+            state.getActiveChannelStates()
                 .filter { channelState ->
                     channelState.members.value
                         .map { member -> member.user.id }
                         .contains(event.user.id)
                 }
                 .forEach { channelState ->
-                    client.logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
+                    logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
                         .handleEvent(userPresenceChanged)
                 }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
-        for (queryChannelsLogic in client.logic.getActiveQueryChannelsLogic()) {
+        for (queryChannelsLogic in logic.getActiveQueryChannelsLogic()) {
             queryChannelsLogic.handleEvents(events)
         }
     }
 
     private fun handleChannelControllerEvent(event: ChatEvent) {
-        client.logic.getActiveChannelsLogic().forEach { channelLogic ->
+        logic.getActiveChannelsLogic().forEach { channelLogic ->
             channelLogic.handleEvent(event)
         }
     }
@@ -643,5 +646,12 @@ internal class EventHandlerImpl(
         mutableGlobalState._totalUnreadCount.value = me.totalUnreadCount
         mutableGlobalState._channelUnreadCount.value = me.unreadChannels
         mutableGlobalState._banned.value = me.banned
+    }
+
+    companion object {
+        val EMPTY_DISPOSABLE = object : Disposable {
+            override val isDisposed: Boolean = true
+            override fun dispose() {}
+        }
     }
 }

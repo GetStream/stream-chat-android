@@ -80,21 +80,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
     }
 
     @Test
-    fun `Given user set and socket in idle state and user with the same id Should invoke pre set listeners`() {
-        val listener: (User) -> Unit = mock()
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenIdleConnectionState()
-            .givenUserSetState(Mother.randomUser { id = "userId" })
-            .givenPreSetUserListener(listener)
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
-
-        verify(listener).invoke(argThat { id == "userId" })
-    }
-
-    @Test
     fun `Given user not set Should set the user`() {
         val user = Mother.randomUser { id = "userId" }
         val sut = Fixture()
@@ -145,20 +130,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
         sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
 
         verify(api).warmUp()
-    }
-
-    @Test
-    fun `Given user not set Should invoke pre set listeners`() {
-        val listener: (User) -> Unit = mock()
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenUserNotSetState()
-            .givenPreSetUserListener(listener)
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
-
-        verify(listener).invoke(argThat { id == "userId" })
     }
 
     @Test

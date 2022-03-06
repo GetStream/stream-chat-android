@@ -84,6 +84,8 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     private lateinit var db: ChatDatabase
 
+    protected lateinit var repos: RepositoryFacade
+
     /** single threaded arch components operations */
     @get:Rule
     val testCoroutines = TestCoroutineRule()
@@ -193,11 +195,19 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
 
-        chatDomainImpl.repos = RepositoryFacade.create(
+        repos = RepositoryFacade.create(
             RepositoryFactory(db, data.user1),
             chatDomainImpl.scope,
             Config(connectEventsEnabled = true, muteEnabled = true)
         )
+
+        val channelController: ChannelController = mock()
+
+        chatDomainImpl.activeEntitiesManager = mock {
+            on(it.channel(any(), any())) doReturn channelController
+        }
+
+        chatDomainImpl.repos = repos
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error
@@ -217,13 +227,5 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
-
-        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-
-        channelControllerImpl.updateDataFromChannel(data.channel1)
-
-        query = QueryChannelsSpec(data.filter1, QuerySort())
-
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }
 }

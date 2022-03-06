@@ -82,6 +82,8 @@ internal class TotalUnreadCountTest {
     @Test
     fun `when connected event is received, current user in the domain instance should be updated`() =
         testCoroutines.scope.runBlockingTest {
+            globalMutableState._user.value = data.user1
+
             val chatDomain: ChatDomainImpl = mock()
             val sut = Fixture(chatDomain, testCoroutines.scope, data.user1, globalMutableState)
                 .givenMockedRepositories()
@@ -93,7 +95,8 @@ internal class TotalUnreadCountTest {
             sut.handleEvent(connectedEvent)
 
             // unread count are updated internally when a user is updated
-            verify(chatDomain).updateCurrentUser(userWithUnread)
+
+            globalMutableState._user.value `should be equal to` userWithUnread
         }
 
     private class Fixture(
@@ -104,7 +107,16 @@ internal class TotalUnreadCountTest {
     ) {
         private val repos: RepositoryFacade = mock()
         private val eventHandlerImpl =
-            EventHandlerImpl(chatDomainImpl, mock(), globalMutableState, scope, repos)
+            EventHandlerImpl(
+                recoveryEnabled = true,
+                client = mock(),
+                state = mock(),
+                logic = mock(),
+                mutableGlobalState = globalMutableState,
+                repos = repos,
+                syncManager = mock(),
+                activeEntitiesManager = mock()
+            )
 
         init {
             whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)

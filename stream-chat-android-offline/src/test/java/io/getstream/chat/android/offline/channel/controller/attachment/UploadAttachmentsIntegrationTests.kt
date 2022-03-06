@@ -13,6 +13,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
@@ -73,7 +74,15 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
         val mutableState =
             ChannelMutableState(channelType, channelId, testCoroutines.scope, userFlow, MutableStateFlow(emptyMap()))
         channelController =
-            ChannelController(mutableState, ChannelLogic(mutableState, domainImpl), chatClient, domainImpl)
+            ChannelController(
+                mutableState,
+                ChannelLogic(mutableState, domainImpl),
+                chatClient,
+                userPresence = true,
+                repos = repositoryFacade,
+                scope = testCoroutines.scope,
+                globalState = GlobalMutableState.create()
+            )
     }
 
     @Test

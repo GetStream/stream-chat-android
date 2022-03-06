@@ -12,12 +12,10 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -27,7 +25,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -65,9 +62,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
-import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
 
@@ -261,10 +256,6 @@ internal class ChatDomainImpl internal constructor(
         globalState._banned.value = newBanned
     }
 
-    fun setTotalUnreadCount(newCount: Int) {
-        globalState._totalUnreadCount.value = newCount
-    }
-
     internal fun channel(cid: String): ChannelController {
         val (channelType, channelId) = cid.cidToTypeAndId()
         return activeEntitiesManager.channel(channelType, channelId)
@@ -277,14 +268,8 @@ internal class ChatDomainImpl internal constructor(
         return repos.selectChannelWithoutMessages(cid)
     }
 
-    internal fun allActiveChannels(): List<ChannelController> = activeEntitiesManager.activeChannels()
-
     fun generateMessageId(): String {
         return user.value!!.id + "-" + UUID.randomUUID().toString()
-    }
-
-    private fun addTypingChannel(channelController: ChannelController) {
-        scope.launch { globalState._typingChannels.emitAll(channelController.typing) }
     }
 
     override fun isOnline(): Boolean = globalState.isOnline()
@@ -313,28 +298,6 @@ internal class ChatDomainImpl internal constructor(
             val logic = logic.queryChannels(filter, sort)
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
-
-    private suspend fun markMessageAsFailed(message: Message) =
-        repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
-
-    @VisibleForTesting
-    internal suspend fun retryReactions(): List<Reaction> {
-        return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
-            val result = if (reaction.deletedAt != null) {
-                client.deleteReaction(reaction.messageId, reaction.type).await()
-            } else {
-                client.sendReaction(reaction, reaction.enforceUnique).await()
-            }
-
-            if (result.isSuccess) {
-                reaction.syncStatus = SyncStatus.COMPLETED
-                repos.insertReaction(reaction)
-            } else if (result.error().isPermanent()) {
-                reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                repos.insertReaction(reaction)
-            }
-        }
-    }
 
     suspend fun storeStateForChannel(channel: Channel) {
         return storeStateForChannels(listOf(channel))
@@ -555,11 +518,4 @@ internal class ChatDomainImpl internal constructor(
     }
 
 // end region
-
-    companion object {
-        val EMPTY_DISPOSABLE = object : Disposable {
-            override val isDisposed: Boolean = true
-            override fun dispose() {}
-        }
-    }
 }

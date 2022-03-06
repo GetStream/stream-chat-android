@@ -50,7 +50,7 @@ internal class ChatEventsObservable(
     fun subscribe(
         filter: (ChatEvent) -> Boolean = { true },
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
+    ): EventSubscription {
         return addSubscription(SubscriptionImpl(filter, listener))
     }
 
@@ -65,7 +65,7 @@ internal class ChatEventsObservable(
         )
     }
 
-    private fun addSubscription(subscription: EventSubscription): Disposable {
+    private fun addSubscription(subscription: EventSubscription): EventSubscription {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
             socket.addListener(eventsMapper)

@@ -9,6 +9,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
@@ -184,12 +185,14 @@ internal class WhenUploadAttachmentsTests {
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
         }
+        private lateinit var repos: RepositoryFacade
 
         fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) = apply {
             uploader = attachmentUploader
         }
 
         fun givenRepository(repository: RepositoryFacade) = apply {
+            repos = repository
             whenever(chatDomainImpl.repos) doReturn repository
         }
 
@@ -205,8 +208,11 @@ internal class WhenUploadAttachmentsTests {
                 mutableState = mutableState,
                 channelLogic = ChannelLogic(mutableState, chatDomainImpl),
                 client = chatClient,
-                domainImpl = chatDomainImpl,
-                attachmentUploader = uploader
+                userPresence = true,
+                attachmentUploader = uploader,
+                repos = repos,
+                scope = scope,
+                globalState = GlobalMutableState.create()
             )
         }
     }

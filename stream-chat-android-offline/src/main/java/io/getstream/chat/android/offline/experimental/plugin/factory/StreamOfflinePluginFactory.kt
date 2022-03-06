@@ -143,6 +143,8 @@ public class StreamOfflinePluginFactory(
         val eventHandler = EventHandlerImpl(
             recoveryEnabled = true,
             client = chatClient,
+            logic = logic,
+            state = stateRegistry,
             mutableGlobalState = globalState,
             repos = repos,
             syncManager = syncManager,
@@ -157,6 +159,7 @@ public class StreamOfflinePluginFactory(
         InitializationCoordinator.getOrCreate().run {
             addUserConnectedListener {
                 chatDomainImpl.userConnected(user)
+                // chatClient.
                 eventHandler.startListening(scope)
             }
 

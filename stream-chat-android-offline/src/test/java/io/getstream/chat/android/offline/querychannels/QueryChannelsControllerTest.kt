@@ -15,6 +15,7 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
+import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
@@ -369,6 +370,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
 private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
+    private val activeEntitiesManager: ActiveEntitiesManager = mock()
     private var querySort: QuerySort<Channel> = QuerySort()
 
     private var currentUser: User? = null
@@ -391,9 +393,9 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
         whenever(chatDomainImpl.job) doReturn Job()
         whenever(chatDomainImpl.scope) doReturn testCoroutineScope
         whenever(chatDomainImpl.repos) doReturn mock()
-        whenever(chatDomainImpl.channel(any<Channel>())) doReturn mock()
-        whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
-            mock<ChannelController> {
+        whenever(chatDomainImpl.channel(any())) doReturn mock()
+        whenever(chatDomainImpl.channel(any())) doAnswer { invocation ->
+            mock {
                 on { toChannel() } doReturn randomChannel(
                     cid = invocation.arguments[0] as String,
                     type = channelType,
@@ -408,8 +410,10 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
     }
 
     fun givenNewChannelControllerForChannel(channelController: ChannelController = mock()): Fixture = apply {
-        whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelController
-        whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
+        whenever(chatDomainImpl.channel(any())) doReturn channelController
+        whenever(activeEntitiesManager.channel(any<Channel>())) doReturn channelController
+        whenever(activeEntitiesManager.channel(any<String>())) doReturn channelController
+        whenever(activeEntitiesManager.channel(any(), any())) doReturn channelController
     }
 
     fun givenChannelType(channelType: String) = apply {
@@ -434,7 +438,8 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
             chatDomainImpl,
             chatClient,
             chatDomainImpl.repos,
-            GlobalMutableState.create()
+            GlobalMutableState.create(),
+            activeEntitiesManager = activeEntitiesManager
         )
         return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)
             .apply {

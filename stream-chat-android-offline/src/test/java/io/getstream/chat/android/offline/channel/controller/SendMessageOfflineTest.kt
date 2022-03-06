@@ -10,6 +10,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
@@ -46,7 +47,9 @@ internal class SendMessageOfflineTest {
     @Test
     @Disabled("Need to mock MessageSendingService for this to work")
     fun `when calling watch, local messages should not be lost`() = testCoroutines.scope.runBlockingTest {
-        val sut = Fixture(testCoroutines.scope, randomUser())
+        val repos = mock<RepositoryFacade>()
+
+        val sut = Fixture(testCoroutines.scope, randomUser(), repos)
             .givenChannelWithoutMessages(randomChannel(cid = "channelType:channelId"))
             .givenMockedRepositories()
             .givenIsOffline()
@@ -63,14 +66,13 @@ internal class SendMessageOfflineTest {
         result.size `should be equal to` 1
         result.first().id `should be equal to` message.id
 
-        verify(sut.domainImpl.repos).insertMessage(
+        verify(repos).insertMessage(
             message = argThat { id == message.id },
             cache = eq(false)
         )
     }
 
-    private class Fixture(private val scope: CoroutineScope, user: User) {
-        private val repos: RepositoryFacade = mock()
+    private class Fixture(private val scope: CoroutineScope, user: User, private val repos: RepositoryFacade) {
         private val chatClient: ChatClient = mock()
         private val channelClient: ChannelClient = mock()
         private val chatDomainImpl: ChatDomainImpl = mock()
@@ -108,7 +110,10 @@ internal class SendMessageOfflineTest {
                 mutableState,
                 ChannelLogic(mutableState, chatDomainImpl),
                 chatClient,
-                chatDomainImpl,
+                true,
+                repos = repos,
+                scope = scope,
+                globalState = GlobalMutableState.get(),
             )
         }
     }

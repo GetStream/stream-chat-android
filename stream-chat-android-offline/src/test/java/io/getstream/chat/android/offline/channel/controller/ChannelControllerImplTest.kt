@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
@@ -47,7 +48,10 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
                 mutableState,
                 ChannelLogic(mutableState, chatDomainImpl),
                 clientMock,
-                chatDomainImpl
+                true,
+                repos = this.repos,
+                scope = chatDomainImpl.scope,
+                globalState = GlobalMutableState.get()
             )
     }
 

@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.users
@@ -38,7 +37,6 @@ private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 private const val QUERIES_TO_RETRY = 3
 
-@ExperimentalStreamChatApi
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary, when connection
  * is reestabilished or when a health check even happens.
