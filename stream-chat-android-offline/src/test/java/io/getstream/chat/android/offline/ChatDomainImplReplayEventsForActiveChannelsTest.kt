@@ -1,6 +1,6 @@
 package io.getstream.chat.android.offline
 
-//Todo: Move these tests to proper class
+// Todo: Move these tests to proper class
 // @ExperimentalCoroutinesApi
 // internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 //

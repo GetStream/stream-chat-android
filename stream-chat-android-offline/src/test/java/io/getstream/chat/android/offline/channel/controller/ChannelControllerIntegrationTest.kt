@@ -1,22 +1,5 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import androidx.recyclerview.widget.DiffUtil
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
-import io.getstream.chat.android.offline.utils.DiffUtilOperationCounter
-import io.getstream.chat.android.offline.utils.MessageDiffCallback
-import io.getstream.chat.android.offline.utils.UpdateOperationCounts
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Test
-import org.junit.runner.RunWith
-
 // Todo: Move those tests to correct class
 // @RunWith(AndroidJUnit4::class)
 // internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {

@@ -1,26 +1,16 @@
 package io.getstream.chat.android.offline.querychannels
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
-import io.getstream.chat.android.test.TestCall
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
-import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTest() {
 
     @Test
     fun `Given some channels When received new message event Should return the same channels with proper orderings`() {
-        //Todo: Move this test to correct place
+        // Todo: Move this test to correct place
         // coroutineTest {
         //     val queryChannelsController =
         //         chatDomainImpl.queryChannels(data.filter1, QuerySort.desc(Channel::lastMessageAt))

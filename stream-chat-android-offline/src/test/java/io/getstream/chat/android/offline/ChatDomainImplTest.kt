@@ -1,29 +1,7 @@
 package io.getstream.chat.android.offline
 
-import android.os.Handler
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.positiveRandomLong
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-
 // @ExperimentalCoroutinesApi
-//Todo: Move those tests to proper class
+// Todo: Move those tests to proper class
 
 // internal class ChatDomainImplTest {
 //

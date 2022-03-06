@@ -1,19 +1,5 @@
 package io.getstream.chat.android.offline.integration
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.test.TestCall
-import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldContain
-import org.amshove.kluent.shouldNotBeNull
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
-
 // Todo: Move those tests to correct place
 // @RunWith(AndroidJUnit4::class)
 // internal class ConnectedRecoveryTest : BaseDomainTest2() {
