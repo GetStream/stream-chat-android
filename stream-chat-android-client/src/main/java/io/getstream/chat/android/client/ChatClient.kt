@@ -324,7 +324,6 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                initializationCoordinator.userSet(user)
                 initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
@@ -348,7 +347,6 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: CacheableTokenProvider,
     ) {
-        initializationCoordinator.userSet(user)
         initializationCoordinator.userConnected(user)
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
@@ -378,6 +376,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+        InitializationCoordinator.getOrCreate().userSet(user)
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -423,7 +422,7 @@ public class ChatClient internal constructor(
             userStateService.onSetAnonymous()
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    initializationCoordinator.userSet(data.user)
+                    initializationCoordinator.userConnected(data.user)
                     listener?.onSuccess(data)
                 }
 
@@ -446,11 +445,14 @@ public class ChatClient internal constructor(
     }
 
     private fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
-        getGuestToken(userId, username).enqueue {
-            if (it.isSuccess) {
-                setUser(it.data().user, ConstantTokenProvider(it.data().token), listener)
+        getGuestToken(userId, username).enqueue { result ->
+            val guestUser = result.data()
+            initializationCoordinator.userSet(guestUser.user)
+
+            if (result.isSuccess) {
+                setUser(guestUser.user, ConstantTokenProvider(guestUser.token), listener)
             } else {
-                listener?.onError(it.error())
+                listener?.onError(result.error())
             }
         }
     }
