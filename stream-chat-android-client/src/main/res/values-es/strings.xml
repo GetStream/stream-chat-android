@@ -4,6 +4,7 @@
   <string name="stream_chat_error_notification_group_summary_title">"Mensajes de Chat"</string>
   <string name="stream_chat_load_notification_data_title">"Obteniendo datos de la notificación"</string>
   <string name="stream_chat_notification_channel_name">"Nuevo Mensaje"</string>
+  <string name="stream_chat_other_notifications_channel_name">"Otras notificaciones"</string>
   <string name="stream_chat_notification_content">"Has recibido un nuevo mensaje"</string>
   <string name="stream_chat_notification_empty_username">"Usuario sin nombre"</string>
   <string name="stream_chat_notification_group_summary_content_text">"Has recibido un nuevo mensaje"</string>
