@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -23,8 +22,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
@@ -51,11 +48,6 @@ import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 internal class ChatDomainImpl internal constructor(internal val chatDomainStateFlow: ChatDomainStateFlow) :
     ChatDomain {
 
-    override var offlineEnabled: Boolean
-        get() = chatDomainStateFlow.offlineEnabled
-        set(value) {
-            chatDomainStateFlow.offlineEnabled = value
-        }
     override var userPresence: Boolean
         get() = chatDomainStateFlow.userPresence
         set(value) {
@@ -110,9 +102,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override val errorEvents: LiveData<Event<ChatError>> = chatDomainStateFlow.errorEvents.map(::Event).asLiveData()
     override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlow.typingUpdates.asLiveData()
 
-    /** The retry policy for retrying failed requests */
-    override val retryPolicy: RetryPolicy = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
-
     override fun getVersion(): String = chatDomainStateFlow.getVersion()
 
     override fun isOnline(): Boolean = chatDomainStateFlow.isOnline()
@@ -146,10 +135,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun getThread(cid: String, parentId: String): Call<ThreadController> =
         chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        chatDomainStateFlow.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         chatDomainStateFlow.loadNewerMessages(cid, messageLimit)
@@ -190,12 +175,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
         chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)
 
-    override fun createChannel(channel: Channel): Call<Channel> = chatDomainStateFlow.createChannel(channel)
-
-    override fun sendMessage(message: Message): Call<Message> = chatDomainStateFlow.sendMessage(message)
-
-    override fun cancelMessage(message: Message): Call<Boolean> = chatDomainStateFlow.cancelMessage(message)
-
     override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlow.shuffleGiphy(message)
 
     override fun sendGiphy(message: Message): Call<Message> = chatDomainStateFlow.sendGiphy(message)
@@ -210,12 +189,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     )
     override fun editMessage(message: Message): Call<Message> = chatDomainStateFlow.editMessage(message)
 
-    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
-        chatDomainStateFlow.deleteMessage(message, hard)
-
-    override fun deleteMessage(message: Message): Call<Message> =
-        chatDomainStateFlow.deleteMessage(message, false)
-
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         chatDomainStateFlow.sendReaction(cid, reaction, enforceUnique)
 
@@ -223,33 +196,5 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         chatDomainStateFlow.deleteReaction(cid, reaction)
 
     override fun markRead(cid: String): Call<Boolean> = chatDomainStateFlow.markRead(cid)
-
-    override fun markAllRead(): Call<Boolean> = chatDomainStateFlow.markAllRead()
-
-    override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> =
-        chatDomainStateFlow.hideChannel(cid, keepHistory)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun showChannel(cid: String): Call<Unit> = chatDomainStateFlow.showChannel(cid)
-
-    override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlow.leaveChannel(cid)
-
-    override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
-
-    override fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>> = chatDomainStateFlow.searchUsersByName(querySearch, offset, userLimit, userPresence)
-
-    override fun queryMembers(
-        cid: String,
-        offset: Int,
-        limit: Int,
-        filter: FilterObject,
-        sort: QuerySort<Member>,
-        members: List<Member>,
-    ): Call<List<Member>> = chatDomainStateFlow.queryMembers(cid, offset, limit, filter, sort, members)
     // end region
 }

@@ -6,35 +6,39 @@ import androidx.room.PrimaryKey
 import java.util.Date
 
 /**
- * The UserEntity, id is a required field
- * All other fields are optional and can be null
+ * The UserEntity, id is a required field.
  *
- * You can convert a User object from the low level client to a UserEntity like this
+ * You can convert a User object from the low level client to a UserEntity like this:
  * val userEntity = UserEntity(user)
  * and back:
  * userEntity.toUser()
+ *
+ * @param id The unique id of the user. This field if required.
+ * @param originalId Used for storing the current user.
+ * @param name User's name.
+ * @param image User's image.
+ * @param role Determines the set of user permissions.
+ * @param createdAt Date/time of creation.
+ * @param updatedAt Date/time of the last update.
+ * @param lastActive Date of last activity.
+ * @param invisible Determines if the user should share its online status. Can only be changed while connecting the user.
+ * @param banned Whether a user is banned or not.
+ * @param mutes A list of users muted by the current user.
+ * @param extraData A map of custom fields for the user.
  */
 @Entity(tableName = "stream_chat_user")
 internal data class UserEntity(
     @PrimaryKey val id: String,
-    /** used for storing the current user */
     val originalId: String = "",
     @ColumnInfo(index = true)
     val name: String,
-    /** the user's role */
+    val image: String,
     val role: String = "",
-    /** when the user was created */
     val createdAt: Date? = null,
-    /** when the user was updated */
     val updatedAt: Date? = null,
-    /** last active date */
     val lastActive: Date? = null,
-    /** only provided for the current user, invisible marks the user as offline for other users */
     val invisible: Boolean = false,
-    /** if the current user id banned */
     val banned: Boolean = false,
-    /** only provided for the current user, list of users you've muted */
     val mutes: List<String> = emptyList(),
-    /** all the custom data provided for this user */
     val extraData: Map<String, Any> = emptyMap()
 )

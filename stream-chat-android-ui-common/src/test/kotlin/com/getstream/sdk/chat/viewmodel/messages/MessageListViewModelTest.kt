@@ -9,14 +9,8 @@ import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
 import com.getstream.sdk.chat.createUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -25,6 +19,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ThreadController
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.observeAll
@@ -35,6 +30,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.util.Date
 
@@ -51,7 +51,8 @@ private val MESSAGES = createMessageList {
     )
 }
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
-private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
+private val THREAD_PARENT_MESSAGE =
+    createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_MESSAGES = createMessageList {
     createMessage(
         createdAt = Date.from(Instant.now()),
@@ -69,8 +70,6 @@ internal class MessageListViewModelTest {
     private val channelController: ChannelController = mock()
     private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val threadLoadMoreCall = TestCall(threadLoadMoreResult)
-    private val loadOlderMessagesResult: Result<Channel> = mock()
-    private val loadOlderMessagesCall = TestCall(loadOlderMessagesResult)
     private val deleteMessageResult: Result<Message> = mock()
     private val deletedMessage = createMessage()
     private val deleteMessageCall = TestCall(deleteMessageResult)
@@ -78,11 +77,9 @@ internal class MessageListViewModelTest {
     private val getThreadCall = TestCall(getThreadResult)
     private val threadController: ThreadController = mock()
     private val flagCall: Call<Flag> = mock()
-    private val flagResult: Call<Flag> = mock()
 
     private val messages = MutableLiveData<List<Message>>()
     private val oldMessages = MutableLiveData<List<Message>>()
-    private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<TypingEvent>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
     private val messageState = MutableLiveData<ChannelController.MessagesState>()
@@ -104,7 +101,7 @@ internal class MessageListViewModelTest {
         whenever(domain.threadLoadMore(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
-        whenever(domain.deleteMessage(any(), any())) doReturn deleteMessageCall
+        whenever(client.deleteMessage(any(), any())) doReturn deleteMessageCall
         whenever(domain.getThread(any(), any())) doReturn getThreadCall
         whenever(getThreadResult.isSuccess) doReturn true
         whenever(getThreadResult.data()) doReturn threadController
@@ -145,9 +142,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        // TODO: Review this test (https://github.com/GetStream/stream-chat-android/issues/2976)
-        @Suppress("DEPRECATION_ERROR")
-        verify(domain).loadOlderMessages(CID, MESSAGES_LIMIT)
+        verify(client).loadOlderMessages(CID, MESSAGES_LIMIT)
     }
 
     @Test
@@ -157,7 +152,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = false))
 
-        verify(domain).deleteMessage(MESSAGE, false)
+        verify(client).deleteMessage(MESSAGE.id, false)
     }
 
     @Test
@@ -167,7 +162,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true))
 
-        verify(domain).deleteMessage(MESSAGE, true)
+        verify(client).deleteMessage(MESSAGE.id, true)
     }
 
     @Test

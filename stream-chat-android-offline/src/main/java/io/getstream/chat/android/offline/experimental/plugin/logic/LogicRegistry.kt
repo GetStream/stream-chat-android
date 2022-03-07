@@ -5,20 +5,19 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
-@ExperimentalStreamChatApi
 /**
  * Registry-container for logic objects related to:
  * 1. Query channels
@@ -41,6 +40,8 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 chatDomain,
                 chatDomain.client,
+                chatDomain.repos,
+                GlobalMutableState.getOrCreate()
             )
         }
     }
@@ -99,5 +100,29 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         queryChannels.clear()
         channels.clear()
         threads.clear()
+    }
+
+    internal companion object {
+        private var instance: LogicRegistry? = null
+
+        /**
+         * Gets the singleton of LogicRegistry or creates it in the first call
+         *
+         * @param stateRegistry [StateRegistry]
+         */
+        internal fun getOrCreate(stateRegistry: StateRegistry): LogicRegistry {
+            return instance ?: LogicRegistry(stateRegistry).also { logicRegistry ->
+                instance = logicRegistry
+            }
+        }
+
+        /**
+         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it returns null.
+         */
+        @Throws(IllegalArgumentException::class)
+        internal fun get(): LogicRegistry = requireNotNull(instance) {
+            "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
+                "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
+        }
     }
 }

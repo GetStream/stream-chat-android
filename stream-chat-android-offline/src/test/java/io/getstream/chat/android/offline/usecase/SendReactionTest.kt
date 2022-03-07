@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
+import io.getstream.chat.android.offline.model.ConnectionState
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldNotBe
@@ -15,11 +16,11 @@ internal class SendReactionTest : BaseConnectedIntegrationTest() {
     fun reactionUseCase(): Unit = coroutineTest {
         val channelState = chatDomain.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
-        val result = chatDomain.sendMessage(message1).execute()
+        val result = client.channel(data.channel1.cid).sendMessage(message1).execute()
         assertSuccess(result)
         data.reaction1.messageId = result.data().id
         // go offline, reaction should still update state
-        chatDomainImpl.setOffline()
+        globalMutableState._connectionState.value = ConnectionState.OFFLINE
         val oldMsg = channelState.getMessage(message1.id)
         val oldReactionCounts = oldMsg!!.reactionCounts
         val result2 = chatDomain.sendReaction(data.channel1.cid, data.reaction1, false).execute()

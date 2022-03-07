@@ -1,17 +1,13 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
+import io.getstream.chat.android.offline.utils.mockDb
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +16,13 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ChatDomainImplReplayEventsForActiveChannelsTest {
@@ -109,6 +112,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
             return ChatDomain.Builder(context, chatClient).build()
                 .let { it as ChatDomainImpl }
                 .apply {
+                    repos = RepositoryFacade.create(RepositoryFactory(mockDb(), randomUser()), mock(), mock())
                     scope = coroutineScope
                     eventHandler = eventHandlerImpl
                 }

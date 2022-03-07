@@ -22,6 +22,7 @@ import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOpt
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 /**
  * Represents the options user can take after selecting a message.
@@ -48,7 +49,7 @@ public fun SelectedMessageMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
@@ -89,7 +90,7 @@ public fun SelectedMessageMenu(
 @Composable
 internal fun DefaultSelectedMessageReactionOptions(
     message: Message,
-    reactionTypes: Map<String, Int>,
+    reactionTypes: Map<String, ReactionIcon>,
     @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
     showMoreReactionsIcon: () -> Unit,

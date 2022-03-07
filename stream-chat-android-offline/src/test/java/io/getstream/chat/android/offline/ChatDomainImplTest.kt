@@ -1,17 +1,13 @@
 package io.getstream.chat.android.offline
 
-import android.content.Context
 import android.os.Handler
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -21,6 +17,10 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 @ExperimentalCoroutinesApi
 internal class ChatDomainImplTest {
@@ -30,18 +30,6 @@ internal class ChatDomainImplTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
-
-    @Test
-    fun `When create a new channel without author should set current user as author and return channel with author`() =
-        testCoroutines.scope.runBlockingTest {
-            val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
-            val sut = Fixture().get()
-
-            val result = sut.createChannel(newChannel).execute()
-
-            result.isSuccess shouldBeEqualTo true
-            result.data().createdBy shouldBeEqualTo sut.user.value
-        }
 
     @Test
     fun `Given a sync needed message with uploaded attachment Should perform retry correctly`() {
@@ -60,8 +48,8 @@ internal class ChatDomainImplTest {
                 }
             }
             val repositoryFacade = mock<RepositoryFacade> {
-                onBlocking { selectMessagesSyncNeeded() } doReturn listOf(syncNeededMessageWithSuccessAttachment)
-                onBlocking { selectMessagesWaitForAttachments() } doReturn emptyList()
+                onBlocking { selectMessageBySyncState(SyncStatus.SYNC_NEEDED) } doReturn listOf(syncNeededMessageWithSuccessAttachment)
+                onBlocking { selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS) } doReturn emptyList()
             }
             val sut = Fixture(client)
                 .withRepositoryFacade(repositoryFacade)
@@ -81,13 +69,18 @@ internal class ChatDomainImplTest {
             val awaitingAttachmentsMessage = randomMessage(
                 syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
                 attachments = mutableListOf(
-                    randomAttachment { uploadState = Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20) },
+                    randomAttachment {
+                        uploadState =
+                            Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20)
+                    },
                     randomAttachment { uploadState = Attachment.UploadState.Success },
                 ),
             )
             val repositoryFacade = mock<RepositoryFacade> {
-                onBlocking { selectMessagesSyncNeeded() } doReturn emptyList()
-                onBlocking { selectMessagesWaitForAttachments() } doReturn listOf(awaitingAttachmentsMessage)
+                onBlocking { selectMessageBySyncState(SyncStatus.SYNC_NEEDED) } doReturn emptyList()
+                onBlocking {
+                    selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
+                } doReturn listOf(awaitingAttachmentsMessage)
             }
             val sut = Fixture()
                 .withRepositoryFacade(repositoryFacade)
@@ -115,8 +108,8 @@ internal class ChatDomainImplTest {
                 }
             }
             val repositoryFacade = mock<RepositoryFacade> {
-                onBlocking { selectMessagesSyncNeeded() } doReturn listOf(message)
-                onBlocking { selectMessagesWaitForAttachments() } doReturn emptyList()
+                onBlocking { selectMessageBySyncState(SyncStatus.SYNC_NEEDED) } doReturn listOf(message)
+                onBlocking { selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS) } doReturn emptyList()
             }
             val sut = Fixture(client)
                 .withRepositoryFacade(repositoryFacade)
@@ -146,16 +139,17 @@ internal class ChatDomainImplTest {
         private val userPresence = true
         private val recoveryEnabled = true
 
-        private val chatDomainImpl = ChatDomain.Builder(mock<Context>(), client)
-            .database(db)
+        private val chatDomainImpl = ChatDomain.Builder(mock(), client)
             .handler(handler)
-            .offlineEnabled()
             .userPresenceEnabled()
             .recoveryEnabled()
             .build()
             .let { it as ChatDomainImpl }
             .also {
-                it.setUser(randomUser())
+                val user = randomUser()
+                it.repos = RepositoryFacade.create(RepositoryFactory(db, user), mock(), mock())
+                it.setUser(user)
+                it.userConnected(user)
             }
 
         fun withRepositoryFacade(repositoryFacade: RepositoryFacade) = apply {

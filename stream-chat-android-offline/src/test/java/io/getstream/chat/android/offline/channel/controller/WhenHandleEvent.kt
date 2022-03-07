@@ -1,16 +1,10 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -44,6 +38,11 @@ import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 @ExperimentalCoroutinesApi
@@ -71,7 +70,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private lateinit var channelLogic: ChannelLogic
     private lateinit var channelMutableState: ChannelMutableState
 
-    @OptIn(ExperimentalStreamChatApi::class)
     @BeforeEach
     fun setUp() {
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->

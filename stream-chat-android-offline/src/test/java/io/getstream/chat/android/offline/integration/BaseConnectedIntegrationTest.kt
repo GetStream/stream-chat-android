@@ -3,18 +3,15 @@ package io.getstream.chat.android.offline.integration
 import android.content.Context
 import android.os.Handler
 import androidx.test.core.app.ApplicationProvider
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.utils.NoRetryPolicy
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
 import io.getstream.chat.android.offline.utils.waitForSetUser
@@ -24,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
+import org.mockito.kotlin.mock
 
 internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
@@ -42,39 +40,33 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         }
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
     suspend fun setupChatDomain(client: ChatClient): ChatDomainImpl {
         db = createRoomDB(testCoroutines.dispatcher)
 
         val context = ApplicationProvider.getApplicationContext() as Context
         val handler: Handler = mock()
-        val offlineEnabled = true
         val userPresence = true
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
 
-        val plugin = OfflinePlugin(
-            Config(
-                backgroundSyncEnabled = backgroundSyncEnabled,
-                userPresence = userPresence,
-                persistenceEnabled = offlineEnabled,
-                retryPolicy = NoRetryPolicy(),
-            )
-        )
-
         chatDomainImpl = ChatDomainImpl(
             client,
-            db,
             handler,
-            offlineEnabled,
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
             context,
-            offlinePlugin = plugin,
+            globalState = globalMutableState
         )
-        plugin.initState(chatDomainImpl, client)
+
         chatDomain = chatDomainImpl
+
+        chatDomainImpl.repos =
+            RepositoryFacade.create(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
+
+        chatDomainImpl.setUser(data.user1)
+        chatDomainImpl.userConnected(data.user1)
+
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
@@ -105,6 +97,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             client = Companion.client!!
             // start from a clean db everytime
             chatDomainImpl = setupChatDomain(client)
+
             println("setup")
 
             // setup channel controller and query controllers for tests

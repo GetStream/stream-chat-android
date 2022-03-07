@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -90,7 +91,6 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -107,7 +107,6 @@ public class ImagePreviewActivity : AppCompatActivity() {
     private val factory by lazy {
         ImagePreviewViewModelFactory(
             chatClient = ChatClient.instance(),
-            chatDomain = ChatDomain.instance(),
             messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
         )
     }
@@ -353,6 +352,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
         imagePreviewOption: ImagePreviewOption,
         pagerState: PagerState,
     ) {
+        val context = LocalContext.current
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -362,7 +363,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     onClick = {
                         imagePreviewViewModel.toggleImageOptions(isShowingOptions = false)
-                        handleImageAction(imagePreviewOption.action, pagerState.currentPage)
+                        handleImageAction(imagePreviewOption.action, pagerState.currentPage, context)
                     }
                 )
                 .padding(8.dp),
@@ -398,6 +399,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
     private fun handleImageAction(
         imagePreviewAction: ImagePreviewAction,
         currentPage: Int,
+        context: Context,
     ) {
         val message = imagePreviewAction.message
 
@@ -417,7 +419,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
             is SaveImage -> {
                 ChatClient
                     .instance()
-                    .downloadAttachment(message.attachments[currentPage])
+                    .downloadAttachment(context, message.attachments[currentPage])
                     .enqueue()
             }
         }

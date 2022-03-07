@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -27,14 +28,12 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.extensions.cancelMessage
-import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
@@ -52,7 +51,6 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param domain Entry point for all livedata & offline operations.
  * @param client Entry point for all low-level operations.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
@@ -290,11 +288,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                domain.deleteMessage(event.message, event.hard)
+                client.deleteMessage(event.message.id, event.hard)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE("Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}")
-                            _errorEvents.postValue(EventWrapper(ErrorEvent.DeleteMessageError(chatError)))
+                            logger.logE(
+                                "Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}. " +
+                                    "If you're using OfflinePlugin, the message should be deleted in the database and " +
+                                    "it will be deleted in the backend when the SDK sync its information."
+                            )
                         }
                     )
             }
@@ -327,11 +328,13 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onGiphyActionSelected(event)
             }
             is Event.RetryMessage -> {
-                domain.sendMessage(event.message).enqueue(
-                    onError = { chatError ->
-                        logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
-                    }
-                )
+                val (channelType, channelId) = event.message.cid.cidToTypeAndId()
+                client.sendMessage(channelType, channelId, event.message)
+                    .enqueue(
+                        onError = { chatError ->
+                            logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        }
+                    )
             }
             is Event.MessageReaction -> {
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
@@ -373,7 +376,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.DownloadAttachment -> {
-                client.downloadAttachment(event.attachment).enqueue(
+                event.downloadAttachmentCall().enqueue(
                     onError = { chatError ->
                         logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
@@ -523,7 +526,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.CANCEL -> {
-                client.cancelMessage(event.message).enqueue(
+                client.cancelEphemeralMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
@@ -691,7 +694,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
-        public data class DownloadAttachment(val attachment: Attachment) : Event()
+        public data class DownloadAttachment(val downloadAttachmentCall: () -> Call<Unit>) : Event()
         public data class ShowMessage(val messageId: String) : Event()
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
     }
@@ -708,7 +711,6 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
         public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-        public data class DeleteMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
     public fun interface DateSeparatorHandler {

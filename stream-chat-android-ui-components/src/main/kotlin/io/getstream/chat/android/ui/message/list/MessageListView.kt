@@ -26,6 +26,8 @@ import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
@@ -34,13 +36,15 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isDeleted
@@ -263,7 +267,6 @@ public class MessageListView : ConstraintLayout {
             is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
             is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
             is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
-            is MessageListViewModel.ErrorEvent.DeleteMessageError -> R.string.stream_ui_message_list_error_delete_message
         }.let(::showToast)
     }
 
@@ -388,38 +391,49 @@ public class MessageListView : ConstraintLayout {
                 return@AttachmentClickListener
             }
 
-            val destination = when {
-                message.attachments.all(Attachment::isMedia) -> {
-                    val filteredAttachments = message.attachments
-                        .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
-                    val attachmentGalleryItems = filteredAttachments.map {
-                        AttachmentGalleryItem(
-                            attachment = it,
-                            user = message.user,
-                            createdAt = message.getCreatedAtOrThrow(),
-                            messageId = message.id,
-                            cid = message.cid,
-                            isMine = message.user.isCurrentUser()
-                        )
-                    }
-                    val attachmentIndex = filteredAttachments.indexOf(attachment)
+            if (attachment.isGiphy()) {
+                val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
 
-                    attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
-                    attachmentGalleryDestination
+                if (url != null) {
+                    ChatUI.navigator.navigate(WebLinkDestination(context, url))
                 }
-                else -> AttachmentDestination(message, attachment, context)
+            } else {
+                val destination = when {
+                    message.attachments.all(Attachment::isImage) -> {
+                        val filteredAttachments = message.attachments
+                            .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                        val attachmentGalleryItems = filteredAttachments.map {
+                            AttachmentGalleryItem(
+                                attachment = it,
+                                user = message.user,
+                                createdAt = message.getCreatedAtOrThrow(),
+                                messageId = message.id,
+                                cid = message.cid,
+                                isMine = message.user.isCurrentUser()
+                            )
+                        }
+                        val attachmentIndex = filteredAttachments.indexOf(attachment)
+
+                        attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                        attachmentGalleryDestination
+                    }
+                    else -> AttachmentDestination(message, attachment, context)
+                }
+
+                ChatUI.navigator.navigate(destination)
             }
-            ChatUI.navigator.navigate(destination)
         }
 
     private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
         AttachmentDownloadClickListener { attachment ->
-            attachmentDownloadHandler.onAttachmentDownload(attachment)
-            Toast.makeText(
-                context,
-                context.getString(R.string.stream_ui_message_list_download_started),
-                Toast.LENGTH_SHORT
-            ).show()
+            attachmentDownloadHandler.onAttachmentDownload {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.stream_ui_message_list_download_started),
+                    Toast.LENGTH_SHORT
+                ).show()
+                ChatClient.instance().downloadAttachment(context, attachment)
+            }
         }
     private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
         ReactionViewClickListener { message: Message ->
@@ -685,6 +699,7 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
+        messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(requireStyle().replyMessageStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
@@ -1544,7 +1559,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface AttachmentDownloadHandler {
-        public fun onAttachmentDownload(attachment: Attachment)
+        public fun onAttachmentDownload(attachmentDownloadCall: () -> Call<Unit>)
     }
 
     public fun interface ErrorEventHandler {

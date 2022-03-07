@@ -2,10 +2,14 @@ package com.getstream.sdk.chat.images
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.widget.ImageView
+import coil.drawable.MovieDrawable
+import coil.drawable.ScaleDrawable
 import coil.fetch.VideoFrameUriFetcher
 import coil.loadAny
 import coil.request.ImageRequest
@@ -80,6 +84,55 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             )
             applyTransformation(transformation)
         }
+    }
+
+    /**
+     * Loads an image into a drawable and then applies the drawable to the container, resizing it based on the scale types
+     * and the given configuration.
+     *
+     * @param target The target to load the image into.
+     * @param data The data to load.
+     * @param placeholderDrawable Drawable that's shown while the image is loading.
+     * @param transformation The transformation for the image before applying to the target.
+     * @param onStart The callback when the load has started.
+     * @param onComplete The callback when the load has finished.
+     */
+    override suspend fun loadAndResize(
+        target: ImageView,
+        data: Any?,
+        placeholderDrawable: Drawable?,
+        transformation: StreamImageLoader.ImageTransformation,
+        onStart: () -> Unit,
+        onComplete: () -> Unit,
+    ) {
+        val context = target.context
+
+        val drawable = withContext(DispatcherProvider.IO) {
+            val result = context.streamImageLoader.execute(
+                ImageRequest.Builder(context)
+                    .headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+                    .placeholder(placeholderDrawable)
+                    .data(data)
+                    .listener(
+                        onStart = { onStart() },
+                        onCancel = { onComplete() },
+                        onError = { _, _ -> onComplete() },
+                        onSuccess = { _, _ -> onComplete() },
+                    )
+                    .applyTransformation(transformation)
+                    .build()
+            )
+
+            result.drawable
+        } ?: return
+
+        if (drawable is ScaleDrawable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable) {
+            (drawable.child as AnimatedImageDrawable).start()
+        } else if (drawable is MovieDrawable) {
+            drawable.start()
+        }
+
+        target.setImageDrawable(drawable)
     }
 
     override fun loadVideoThumbnail(

@@ -11,7 +11,11 @@ import io.getstream.chat.android.ui.common.extensions.internal.getPinnedText
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawableWithSize
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
@@ -21,8 +25,48 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
  * shows a caption indicating that the message was pinned by a particular user.
  */
 internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
+
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
+    }
+
+    /**
+     * Decorates the pin indicator of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateGiphyAttachmentMessage(
+        viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
+    }
+
+    /**
+     * Decorates the pin indicator of the message containing file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
+    }
+
+    /**
+     * Decorates the pin indicator of the image attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateImageAttachmentMessage(
+        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         setupPinIndicator(root, pinIndicatorTextView, data)
@@ -44,6 +88,19 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    /**
+     * Decorates the pin indicator of the link attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
+    }
 
     private fun setupPinIndicator(
         root: ConstraintLayout,

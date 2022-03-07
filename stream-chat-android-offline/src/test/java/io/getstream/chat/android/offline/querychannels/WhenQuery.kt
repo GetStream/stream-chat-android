@@ -1,11 +1,5 @@
 package io.getstream.chat.android.offline.querychannels
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
@@ -15,6 +9,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
@@ -28,6 +23,12 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 @ExperimentalCoroutinesApi
@@ -218,11 +219,15 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                 )
             )
 
-            return QueryChannelsController(
-                chatDomainImpl,
+            val queryChannelsLogic = QueryChannelsLogic(
                 mutableState,
-                QueryChannelsLogic(mutableState, chatDomainImpl, chatClient),
+                chatDomainImpl,
+                chatClient,
+                chatDomainImpl.repos,
+                GlobalMutableState.create()
             )
+
+            return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)
         }
     }
 }

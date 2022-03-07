@@ -1,16 +1,18 @@
 package io.getstream.chat.android.offline.channel
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.utils.CallRetryService
+import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 
 /**
@@ -19,14 +21,13 @@ import java.util.Date
  * @param client Instance of [ChatClient] to perform request.
  * @param repositoryFacade [RepositoryFacade] to cache intermediate data and final result.
  * @param getChannelController Function that returns an instance of [ChannelController] by cid.
- * @param callRetryService Instance of [CallRetryService] to retries failing requests.
  * @param activeQueries Collection of active [QueryChannelsController].
  */
 internal class CreateChannelService(
+    private val scope: CoroutineScope,
     private val client: ChatClient,
     private val repositoryFacade: RepositoryFacade,
     private val getChannelController: (cid: String) -> ChannelController,
-    private val callRetryService: CallRetryService,
     private val activeQueries: Collection<QueryChannelsController>,
 ) {
 
@@ -66,11 +67,13 @@ internal class CreateChannelService(
 
             // make the API call and follow retry policy
             if (isOnline) {
-                val runnable = {
-                    val members = channel.members.map(Member::getUserId)
-                    client.createChannel(channel.type, channel.id, members, channel.extraData)
-                }
-                val result = callRetryService.runAndRetry(runnable)
+                val members = channel.members.map(Member::getUserId)
+                // TODO: Remove after migrating ChatDomain
+                val result = client
+                    .createChannel(channel.type, channel.id, members, channel.extraData)
+                    .retry(scope, client.retryPolicy)
+                    .await()
+
                 if (result.isSuccess) {
                     channel.syncStatus = SyncStatus.COMPLETED
                     repositoryFacade.insertChannel(channel)

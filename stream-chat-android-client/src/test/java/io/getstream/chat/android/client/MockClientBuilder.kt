@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -17,8 +15,11 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import java.util.Date
 
 /**
@@ -79,17 +80,19 @@ internal class MockClientBuilder(
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtil,
-            appContext = mock(),
             scope = testCoroutineScope,
+            retryPolicy = NoRetryPolicy(),
         )
 
         client.connectUser(user, token).enqueue()
 
         socket.sendEvent(connectedEvent)
 
-        return client
+        return client.apply {
+            plugins = mutableListOf()
+        }
     }
 }

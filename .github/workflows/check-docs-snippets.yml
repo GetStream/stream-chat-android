@@ -1,8 +1,10 @@
 name: Check documentation snippets
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Publish API docs"]
+    types:
+      - completed
     
 
 jobs:

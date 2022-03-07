@@ -1,10 +1,5 @@
 package io.getstream.chat.android.client.api
 
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
@@ -24,12 +19,18 @@ import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class ClientConnectionTests {
@@ -99,11 +100,11 @@ internal class ClientConnectionTests {
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = testCoroutines.scope,
+            retryPolicy = NoRetryPolicy(),
         )
     }
 

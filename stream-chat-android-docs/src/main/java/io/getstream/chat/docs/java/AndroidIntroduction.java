@@ -36,7 +36,6 @@ public class AndroidIntroduction {
         // Step 2 - Set up the domain for offline storage
         ChatDomain domain = new ChatDomain.Builder(applicationContext, client)
                 // Enable offline support
-                .offlineEnabled()
                 .build();
 
         // Step 2 - Authenticate and connect the user
@@ -92,16 +91,7 @@ public class AndroidIntroduction {
         message.putExtraValue("customField", "123");
 
         // Using the low level client
-        channelClient.sendMessage(message).enqueue(result -> {
-            if (result.isSuccess()) {
-                Message sentMessage = result.data();
-            } else {
-                // Handle result.error()
-            }
-        });
-
-        // Using the offline support library
-        chatDomain.sendMessage(message).enqueue(result -> {
+        channelClient.sendMessage(message, false).enqueue(result -> {
             if (result.isSuccess()) {
                 Message sentMessage = result.data();
             } else {

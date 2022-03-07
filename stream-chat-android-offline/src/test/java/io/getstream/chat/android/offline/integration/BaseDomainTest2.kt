@@ -7,11 +7,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -20,12 +15,12 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
@@ -33,8 +28,9 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
@@ -49,13 +45,17 @@ import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 import java.util.concurrent.Executors
 
 /**
  * Sets up a ChatDomain object with a mocked ChatClient.
  */
-@ExperimentalStreamChatApi
 internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     /** a realistic set of chat data, please only add to this, don't update */
@@ -126,7 +126,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         }
     }
 
-    internal fun createClientMock(isConnected: Boolean = true): ChatClient {
+    private fun createClientMock(isConnected: Boolean = true): ChatClient {
         val connectedEvent = if (isConnected) {
             ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
         } else {
@@ -160,7 +160,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
+            on { sendReaction(any(), any(), any()) } doReturn TestCall(
                 Result(data.reaction1)
             )
         }
@@ -186,16 +186,18 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             .build()
     }
 
-    internal fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
-
+    private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client)
-            .database(db)
-            .offlineEnabled()
             .userPresenceEnabled()
-            .retryPolicy(NoRetryPolicy())
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
+
+        chatDomainImpl.repos = RepositoryFacade.create(
+            RepositoryFactory(db, data.user1),
+            chatDomainImpl.scope,
+            Config(connectEventsEnabled = true, muteEnabled = true)
+        )
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error
@@ -205,6 +207,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         ).enqueue()
         // manually configure the user since client is mocked
         chatDomainImpl.setUser(data.user1)
+        chatDomainImpl.userConnected(data.user1)
 
         chatDomain = chatDomainImpl
 

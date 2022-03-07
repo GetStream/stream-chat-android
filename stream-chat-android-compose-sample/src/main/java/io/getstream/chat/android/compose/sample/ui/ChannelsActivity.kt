@@ -54,7 +54,7 @@ class ChannelsActivity : AppCompatActivity() {
 
     private val factory by lazy {
         ChannelViewModelFactory(
-            ChatClient.instance(), ChatDomain.instance(),
+            ChatClient.instance(),
             QuerySort.desc("last_updated"),
             Filters.and(
                 Filters.eq("type", "messaging"),
@@ -166,7 +166,7 @@ class ChannelsActivity : AppCompatActivity() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel by listViewModel.selectedChannel
+        val delegatedSelectedChannel by listViewModel.selectedChannel
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -197,7 +197,7 @@ class ChannelsActivity : AppCompatActivity() {
                 )
             }
 
-            val selectedChannel = selectedChannel
+            val selectedChannel = delegatedSelectedChannel
             if (selectedChannel != null) {
                 SelectedChannelMenu(
                     modifier = Modifier

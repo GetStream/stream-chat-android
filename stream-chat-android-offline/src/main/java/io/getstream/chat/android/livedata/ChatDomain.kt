@@ -6,14 +6,12 @@ import androidx.annotation.CheckResult
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -23,7 +21,6 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
@@ -36,9 +33,6 @@ public sealed interface ChatDomain {
 
     /** The current user on the chatDomain object */
     public val user: LiveData<User?>
-
-    /** if offline is enabled */
-    public var offlineEnabled: Boolean
 
     /** if we want to track user presence */
     public var userPresence: Boolean
@@ -87,9 +81,6 @@ public sealed interface ChatDomain {
      * if the current user is banned or not
      */
     public val banned: LiveData<Boolean>
-
-    /** The retry policy for retrying failed requests */
-    public val retryPolicy: RetryPolicy
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
@@ -167,26 +158,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
-
-    // loading more
-    /**
-     * Loads older messages for the channel.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading older messages in a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "loadOlderMessages is deprecated. Use extension function ChatClient::loadOlderMessages instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
      * Loads newer messages for the channel.
@@ -289,58 +260,6 @@ public sealed interface ChatDomain {
     public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     // updating channel data
-    /**
-     * Creates a new channel. Will retry according to the retry policy if it fails.
-     *
-     * @param channel The channel object.
-     *
-     * @return Executable async [Call] responsible for creating a channel.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @Deprecated(
-        message = "createChannel is deprecated. Use ChatClient::createChannel extension function instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().createChannel(channel)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-    )
-    @CheckResult
-    public fun createChannel(channel: Channel): Call<Channel>
-
-    /**
-     * Sends the message. Immediately adds the message to local storage.
-     * API call to send the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for sending a message.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun sendMessage(message: Message): Call<Message>
-
-    /**
-     * Cancels the message of "ephemeral" type. Removes the message from local storage.
-     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for canceling ephemeral message.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    @Deprecated(
-        message = "cancelMessage is deprecated. Use extension function ChatClient::cancelMessage instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().cancelMessage(message)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
@@ -392,21 +311,6 @@ public sealed interface ChatDomain {
     public fun editMessage(message: Message): Call<Message>
 
     /**
-     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to mark as deleted.
-     *
-     * @return Executable async [Call] responsible for deleting a message.
-     * @param hard Use to hard delete the message (delete in backend). CAN'T BE UNDONE.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun deleteMessage(message: Message, hard: Boolean = false): Call<Message>
-
-    public fun deleteMessage(message: Message): Call<Message>
-
-    /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
      * API call to send the reaction is retried according to the retry policy specified on the chatDomain.
      *
@@ -422,19 +326,6 @@ public sealed interface ChatDomain {
     public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
-     * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param cid The full channel id, ie messaging:123.
-     * @param reaction The reaction to mark as deleted.
-     *
-     * @return Executable async [Call] responsible for deleting reaction.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
-
-    /**
      * Marks all messages of the specified channel as read.
      *
      * @param cid The full channel id i. e. messaging:123.
@@ -446,120 +337,17 @@ public sealed interface ChatDomain {
     public fun markRead(cid: String): Call<Boolean>
 
     /**
-     * Marks all messages on a channel as read.
+     * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain.
      *
-     * @return Executable async [Call] responsible for marking all messages as read.
+     * @param cid The full channel id, ie messaging:123.
+     * @param reaction The reaction to mark as deleted.
+     *
+     * @return Executable async [Call] responsible for deleting reaction.
+     *
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public fun markAllRead(): Call<Boolean>
-
-    /**
-     * Hides the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param keepHistory Boolean, if you want to keep the history of this channel or not.
-     *
-     * @return Executable async [Call] responsible for hiding a channel.
-     *
-     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
-     */
-    @CheckResult
-    public fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit>
-
-    /**
-     * Shows a channel that was previously hidden.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] responsible for hiding a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Deprecated. Use ChatClient::showChannel instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().showChannel(channelType, channelId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun showChannel(cid: String): Call<Unit>
-
-    /**
-     * Leaves the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] leaving a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "leaveChannel is deprecated. Use function ChatClient::removeMembers instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().removeMembers(channel.type, channel.id, listOf(userId))",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun leaveChannel(cid: String): Call<Unit>
-
-    /**
-     * Deletes the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] deleting a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "deleteChannel is deprecated. Use function ChannelClient::delete instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().channel(cid).delete().toUnitCall()",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun deleteChannel(cid: String): Call<Unit>
-
-    /**
-     * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
-     * in local database.
-     *
-     * @param querySearch Search string used as autocomplete.
-     * @param offset Offset for paginated requests.
-     * @param userLimit The page size in the request.
-     * @param userPresence Presence flag to obtain additional info such as last active date.
-     *
-     * @return Executable async [Call] querying users.
-     */
-    @CheckResult
-    public fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>>
-
-    /**
-     * Query members of a channel.
-     *
-     * @param cid CID of the Channel whose members we are querying.
-     * @param offset Indicates how many items to exclude from the start of the result.
-     * @param limit Indicates the maximum allowed number of items in the result.
-     * @param filter Filter applied to online queries for advanced selection criteria.
-     * @param sort The sort criteria applied to the result.
-     * @param members
-     *
-     * @return Executable async [Call] querying members.
-     */
-    @CheckResult
-    public fun queryMembers(
-        cid: String,
-        offset: Int = 0,
-        limit: Int = 0,
-        filter: FilterObject = NeutralFilterObject,
-        sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
-        members: List<Member> = emptyList(),
-    ): Call<List<Member>>
+    public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     // end region
 
@@ -578,14 +366,6 @@ public sealed interface ChatDomain {
 
         public fun disableBackgroundSync(): Builder = apply {
             offlineChatDomainBuilder.disableBackgroundSync()
-        }
-
-        public fun offlineEnabled(): Builder = apply {
-            offlineChatDomainBuilder.offlineEnabled()
-        }
-
-        public fun offlineDisabled(): Builder = apply {
-            offlineChatDomainBuilder.offlineDisabled()
         }
 
         public fun recoveryEnabled(): Builder = apply {
@@ -608,10 +388,6 @@ public sealed interface ChatDomain {
             offlineChatDomainBuilder.uploadAttachmentsWorkerNetworkType(networkType)
         }
 
-        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
-            offlineChatDomainBuilder.retryPolicy(retryPolicy)
-        }
-
         public fun build(): ChatDomain {
             instance?.run {
                 Log.e(
@@ -621,6 +397,7 @@ public sealed interface ChatDomain {
             }
             val offlineChatDomain = offlineChatDomainBuilder.build()
             instance = buildImpl(offlineChatDomain)
+
             return instance()
         }
 

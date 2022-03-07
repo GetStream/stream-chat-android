@@ -2,10 +2,9 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldNotBeEmpty
 import org.amshove.kluent.shouldNotBeNull
@@ -13,6 +12,7 @@ import org.amshove.kluent.shouldNotContain
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
 
 internal class IdGenerationDomainTest {
 
@@ -29,10 +29,9 @@ internal class IdGenerationDomainTest {
             client = clientMock,
             handler = handlerFake,
             backgroundSyncEnabled = true,
-            offlineEnabled = true,
             recoveryEnabled = false,
             userPresence = true,
-            offlinePlugin = OfflinePlugin()
+            globalState = GlobalMutableState.create()
         )
         currentUserFake = randomUser()
     }
@@ -65,8 +64,8 @@ internal class IdGenerationDomainTest {
     }
 
     private fun setCurrentUser() {
-        chatDomainImpl.offlineEnabled = false
         chatDomainImpl.setUser(currentUserFake)
+        chatDomainImpl.userConnected(currentUserFake)
         chatDomainImpl.user.value.shouldNotBeNull()
     }
 }

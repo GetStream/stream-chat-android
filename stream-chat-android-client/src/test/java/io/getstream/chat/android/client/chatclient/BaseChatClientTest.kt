@@ -1,23 +1,23 @@
 package io.getstream.chat.android.client.chatclient
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.mock
 
-@OptIn(ExperimentalStreamChatApi::class)
 internal open class BaseChatClientTest {
     @get:Rule
     val coroutineRule = TestCoroutineRule()
@@ -42,6 +42,8 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var api: ChatApi
 
+    protected val initializationCoordinator = InitializationCoordinator.create()
+
     protected lateinit var chatClient: ChatClient
     internal val tokenUtils: TokenUtils = mock()
 
@@ -57,12 +59,12 @@ internal open class BaseChatClientTest {
             tokenManager = tokenManager,
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtils,
-            appContext = mock(),
             scope = coroutineRule.scope,
-            plugins = plugins,
+            retryPolicy = NoRetryPolicy(),
+            initializationCoordinator = initializationCoordinator
         )
     }
 }

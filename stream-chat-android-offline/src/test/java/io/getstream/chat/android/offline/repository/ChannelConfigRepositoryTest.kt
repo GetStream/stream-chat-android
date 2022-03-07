@@ -2,11 +2,6 @@ package io.getstream.chat.android.offline.repository
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.offline.randomChannelConfig
 import io.getstream.chat.android.offline.randomConfig
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigDao
@@ -20,6 +15,11 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ChannelConfigRepositoryTest {

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.integration
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.EventHandlingResult
 import io.getstream.chat.android.offline.randomChannel
@@ -24,7 +23,6 @@ import org.junit.runner.RunWith
 /**
  * Verify that all events correctly update state in room.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
@@ -123,15 +121,6 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             messages.shouldBeEmpty()
             channelData.deletedAt shouldBeEqualTo data.channelDeletedEvent.createdAt
         }
-
-    @Test
-    fun `the current user information should be stored using users insertMe`(): Unit = runBlocking {
-        data.user1.extraData = mutableMapOf("snack" to "icecream")
-        chatDomainImpl.repos.insertCurrentUser(data.user1)
-        val me = chatDomainImpl.repos.selectCurrentUser()
-        me.shouldNotBeNull()
-        me?.id shouldBeEqualTo "broad-lake-3"
-    }
 
     @Ignore
     @Test
