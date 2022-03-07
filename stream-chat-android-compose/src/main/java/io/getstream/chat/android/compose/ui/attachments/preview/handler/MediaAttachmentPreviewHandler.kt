@@ -1,9 +1,9 @@
-package io.getstream.chat.android.compose.ui.filepreview
+package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.compose.ui.mediapreview.MediaPreviewActivity
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaPreviewActivity
 
 /**
  * Shows a preview for the audio/video stream in the attachment using Exoplayer library.

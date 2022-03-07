@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.filepreview.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter

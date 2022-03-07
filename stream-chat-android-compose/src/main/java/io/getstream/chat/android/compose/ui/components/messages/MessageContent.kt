@@ -122,7 +122,10 @@ internal fun DefaultMessageContent(
         )
 
         if (message.text.isNotEmpty()) {
-            DefaultMessageTextContent(message = message)
+            DefaultMessageTextContent(
+                message = message,
+                onLongItemClick = onLongItemClick
+            )
         }
     }
 }
