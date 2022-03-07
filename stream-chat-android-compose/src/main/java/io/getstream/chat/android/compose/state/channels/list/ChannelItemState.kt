@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.channel.list
+package io.getstream.chat.android.compose.state.channels.list
 
 import io.getstream.chat.android.client.models.Channel
 

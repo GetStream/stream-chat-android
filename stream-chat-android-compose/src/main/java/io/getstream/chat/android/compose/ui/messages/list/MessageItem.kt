@@ -399,19 +399,27 @@ internal fun DefaultMessageItemCenterContent(
  * The default text message content. It holds the quoted message in case there is one.
  *
  * @param message The message to show.
+ * @param onLongItemClick Handler when the item is long clicked.
  */
 @Composable
-internal fun DefaultMessageTextContent(message: Message) {
+internal fun DefaultMessageTextContent(
+    message: Message,
+    onLongItemClick: (Message) -> Unit,
+) {
     val quotedMessage = message.replyTo
 
     Column {
         if (quotedMessage != null) {
             QuotedMessage(
                 modifier = Modifier.padding(8.dp),
-                message = quotedMessage
+                message = quotedMessage,
+                onLongItemClick = onLongItemClick
             )
         }
-        MessageText(message = message)
+        MessageText(
+            message = message,
+            onLongItemClick = onLongItemClick
+        )
     }
 }
 

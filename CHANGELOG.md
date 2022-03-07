@@ -20,8 +20,13 @@
 
 ### ✅ Added
 - Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
+- Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
+  You can use it to customize notifications priority, channel name, etc. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ⚠️ Changed
+- Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
+- `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
+  You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ❌ Removed
 
@@ -29,6 +34,7 @@
 ### 🐞 Fixed
 - Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
 - Exposed a public value of `channelConfig: StateFlow<Config>` that holds channel config data inside `ChannelState`. [#3127](https://github.com/GetStream/stream-chat-android/pull/3127)
+- Fixed marking the channel as read if it was opened offline previously. [#3162](https://github.com/GetStream/stream-chat-android/pull/3162)
 
 ### ⬆️ Improved
 
@@ -53,6 +59,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
+- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
 
 ### ⬆️ Improved
 
@@ -75,14 +82,21 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ⬆️ Improved
+- Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
+- `MessageText` now requires the parameter `onLongItemClick: (Message) -> Unit`. This was done in order to mitigate `ClickableText` consuming all pointer events. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 - The SDK now relies on `OfflinePlugin` for offline capabilities instead of `ChatDomain`. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
+- Renamed the `state.channel` package to `state.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Renamed the `viewmodel.channel` package to `viewmodel.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Moved the contents of the `ui.imagepreview` and `ui.mediapreview` packages to `ui.attachments.preview`. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Moved the preview handlers from the `ui.filepreview` package to `ui.attachments.preview.handler` [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 
 ### ❌ Removed
 - Removed all use of `ChatDomain` inside the SDK. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)

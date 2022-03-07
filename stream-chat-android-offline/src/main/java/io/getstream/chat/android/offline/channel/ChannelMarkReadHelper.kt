@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
@@ -13,11 +14,13 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
  * @param chatClient [ChatClient]
  * @param logic [LogicRegistry]
  * @param state [StateRegistry]
+ * @param globalState [GlobalState]
  */
 internal class ChannelMarkReadHelper(
     private val chatClient: ChatClient,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
+    private val globalState: GlobalState,
 ) {
 
     private val logger = ChatLogger.get("ChannelMarkReadHelper")
@@ -61,6 +64,11 @@ internal class ChannelMarkReadHelper(
 
                 if (currentUser == null) {
                     logger.logI("Cannot mark read because user is not set!")
+                    return false
+                }
+
+                if (!globalState.isOnline()) {
+                    logger.logI("Cannot mark read because user is offline!")
                     return false
                 }
 

@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
-import io.getstream.chat.android.compose.state.channel.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
 
 /**
