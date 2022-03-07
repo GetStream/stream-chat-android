@@ -27,7 +27,7 @@ import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
@@ -174,7 +174,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         viewHolder = viewHolderFactory
             .createViewHolder(
                 binding.messageContainer,
-                MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactories)
+                MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactoryManager)
             ).also { viewHolder ->
                 viewHolder.itemView.setOnClickListener {
                     dismiss()
@@ -390,7 +390,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         var messageArg: Message? = null
         var messageViewHolderFactory: MessageListItemViewHolderFactory? = null
-        var attachmentFactories: AttachmentFactories = AttachmentFactories()
+        var attachmentFactoryManager: AttachmentFactoryManager = AttachmentFactoryManager()
 
         fun newReactionOptionsInstance(
             message: Message,
@@ -398,7 +398,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactories: AttachmentFactories,
+            attachmentFactoryManager: AttachmentFactoryManager,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.REACTION_OPTIONS,
@@ -407,7 +407,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 style,
                 messageViewHolderFactory,
                 messageBackgroundFactory,
-                attachmentFactories,
+                attachmentFactoryManager,
             )
         }
 
@@ -417,7 +417,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactories: AttachmentFactories,
+            attachmentFactoryManager: AttachmentFactoryManager,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.MESSAGE_OPTIONS,
@@ -426,7 +426,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 style,
                 messageViewHolderFactory,
                 messageBackgroundFactory,
-                attachmentFactories,
+                attachmentFactoryManager,
             )
         }
 
@@ -437,10 +437,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactories: AttachmentFactories,
+            attachmentFactoryManager: AttachmentFactoryManager,
         ): MessageOptionsDialogFragment {
             this.messageListViewStyle = style
-            this.attachmentFactories = attachmentFactories
+            this.attachmentFactoryManager = attachmentFactoryManager
             this.messageViewHolderFactory =
                 messageViewHolderFactory.clone()
                     .apply {

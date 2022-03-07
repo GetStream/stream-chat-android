@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories;
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager;
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory;
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder;
 import io.getstream.chat.docs.java.helpers.MyFileUploader;
@@ -487,8 +487,8 @@ public class Messages {
 
         public void setAttachmentFactory() {
             AttachmentFactory customAttachmentFactory = new CustomAttachmentFactory();
-            AttachmentFactories attachmentFactories = new AttachmentFactories(Collections.singletonList(customAttachmentFactory));
-            messageListView.setAttachmentFactories(attachmentFactories);
+            AttachmentFactoryManager attachmentFactoryManager = new AttachmentFactoryManager(Collections.singletonList(customAttachmentFactory));
+            messageListView.setAttachmentFactoryManager(attachmentFactoryManager);
         }
     }
 }

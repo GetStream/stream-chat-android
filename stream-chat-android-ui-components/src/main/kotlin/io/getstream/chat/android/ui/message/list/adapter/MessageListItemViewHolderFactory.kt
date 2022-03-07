@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
@@ -51,9 +51,9 @@ public open class MessageListItemViewHolderFactory {
     internal lateinit var decoratorProvider: DecoratorProvider
 
     /**
-     * A list of factories for custom attachments.
+     * A manager for the registered custom attachment factories.
      */
-    protected lateinit var attachmentFactories: AttachmentFactories
+    protected lateinit var attachmentFactoryManager: AttachmentFactoryManager
         private set
 
     /**
@@ -86,10 +86,10 @@ public open class MessageListItemViewHolderFactory {
     }
 
     /**
-     * Setter for [attachmentFactories].
+     * Setter for [attachmentFactoryManager].
      */
-    internal fun setAttachmentFactories(attachmentFactories: AttachmentFactories) {
-        this.attachmentFactories = attachmentFactories
+    internal fun setAttachmentFactoryManager(attachmentFactoryManager: AttachmentFactoryManager) {
+        this.attachmentFactoryManager = attachmentFactoryManager
     }
 
     /**
@@ -128,8 +128,8 @@ public open class MessageListItemViewHolderFactory {
         if (::decoratorProvider.isInitialized) {
             newFactory.decoratorProvider = decoratorProvider
         }
-        if (::attachmentFactories.isInitialized) {
-            newFactory.attachmentFactories = attachmentFactories
+        if (::attachmentFactoryManager.isInitialized) {
+            newFactory.attachmentFactoryManager = attachmentFactoryManager
         }
         if (::style.isInitialized) {
             newFactory.style = style
@@ -153,7 +153,7 @@ public open class MessageListItemViewHolderFactory {
      * For built-in view types, see [MessageListItemViewType] and its constants.
      */
     public open fun getItemViewType(item: MessageListItem): Int {
-        return MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactories)
+        return MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactoryManager)
     }
 
     /**
@@ -198,7 +198,7 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             textTransformer,
-            attachmentFactories,
+            attachmentFactoryManager,
         )
     }
 

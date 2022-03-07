@@ -7,7 +7,7 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
-	public final fun getAttachmentFactories ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactories;
+	public final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
 	public final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
 	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
@@ -20,7 +20,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
-	public final fun setAttachmentFactories (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactories;)V
+	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/ChannelNameFormatter;)V
 	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
@@ -1620,7 +1620,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentDeleteOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)V
 	public final fun setAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadClickListener;)V
 	public final fun setAttachmentDownloadHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler;)V
-	public final fun setAttachmentFactories (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactories;)V
+	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setBlockUserEnabled (Z)V
@@ -2044,7 +2044,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemVi
 	protected final fun createSystemMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
-	protected final fun getAttachmentFactories ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactories;
+	protected final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public fun getItemViewType (Lcom/getstream/sdk/chat/adapter/MessageListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;
 }
@@ -2119,17 +2119,17 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/intern
 	public static synthetic fun showGiphy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;ILjava/lang/Object;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactories {
+public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public abstract fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
 	public final fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder;
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
-	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public abstract fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder;
 }
 
 public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder {

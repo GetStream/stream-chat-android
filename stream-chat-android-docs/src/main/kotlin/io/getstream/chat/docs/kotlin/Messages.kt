@@ -18,8 +18,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder
 import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
 import java.io.File
@@ -506,8 +506,8 @@ class Messages(
 
         fun setAttachmentFactory() {
             val customAttachmentFactory = CustomAttachmentFactory()
-            val attachmentFactories = AttachmentFactories(listOf(customAttachmentFactory))
-            messageListView.setAttachmentFactories(attachmentFactories)
+            val attachmentFactoryManager = AttachmentFactoryManager(listOf(customAttachmentFactory))
+            messageListView.setAttachmentFactoryManager(attachmentFactoryManager)
         }
     }
 }

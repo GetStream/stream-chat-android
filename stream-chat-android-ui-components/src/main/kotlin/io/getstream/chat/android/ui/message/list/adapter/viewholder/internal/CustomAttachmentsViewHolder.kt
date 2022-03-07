@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCustomAttachmentsBin
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactories
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
  * @param decorators List of decorators applied to the ViewHolder.
  * @param listeners Listeners used by the ViewHolder.
  * @param messageTextTransformer Formats strings and sets them on the respective TextView.
+ * @param attachmentFactoryManager A manager for the registered custom attachment factories.
  * @param binding Binding generated for the layout.
  */
 internal class CustomAttachmentsViewHolder(
@@ -30,7 +31,7 @@ internal class CustomAttachmentsViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
     private val messageTextTransformer: ChatMessageTextTransformer,
-    private val attachmentFactories: AttachmentFactories,
+    private val attachmentFactoryManager: AttachmentFactoryManager,
     internal val binding: StreamUiItemCustomAttachmentsBinding = StreamUiItemCustomAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -80,7 +81,7 @@ internal class CustomAttachmentsViewHolder(
      * Updates the custom attachments section of the message.
      */
     private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
-        this.attachmentViewHolder = attachmentFactories.createViewHolder(data.message, listeners, binding.root)
+        this.attachmentViewHolder = attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
             .also { attachmentViewHolder ->
                 attachmentViewHolder.onBindViewHolder(data.message)
                 binding.attachmentsContainer.removeAllViews()
