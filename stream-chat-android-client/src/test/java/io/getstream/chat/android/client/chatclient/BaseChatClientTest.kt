@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.chatclient
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -12,14 +11,13 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.mock
 
-@OptIn(ExperimentalStreamChatApi::class)
 internal open class BaseChatClientTest {
     @get:Rule
     val coroutineRule = TestCoroutineRule()

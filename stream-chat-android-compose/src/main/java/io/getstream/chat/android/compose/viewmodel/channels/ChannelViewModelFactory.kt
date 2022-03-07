@@ -6,14 +6,12 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Builds the factory that contains all the dependencies required for the Channels Screen.
  * It currently provides the [ChannelListViewModel] using those dependencies.
  *
  * @param chatClient The client used to fetch data.
- * @param chatDomain The domain used to fetch and persist data.
  * @param querySort The sorting order for channels.
  * @param filters The base filters used to filter out channels.
  * @param channelLimit How many channels we fetch per page.
@@ -22,7 +20,6 @@ import io.getstream.chat.android.offline.ChatDomain
  */
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient,
-    private val chatDomain: ChatDomain,
     private val querySort: QuerySort<Channel>,
     private val filters: FilterObject,
     private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
@@ -34,7 +31,6 @@ public class ChannelViewModelFactory(
         ChannelListViewModel::class.java to {
             ChannelListViewModel(
                 chatClient = chatClient,
-                chatDomain = chatDomain,
                 initialSort = querySort,
                 initialFilters = filters,
                 channelLimit = channelLimit,

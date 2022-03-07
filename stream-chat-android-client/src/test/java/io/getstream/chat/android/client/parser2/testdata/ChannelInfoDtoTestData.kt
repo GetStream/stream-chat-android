@@ -11,7 +11,8 @@ internal object ChannelInfoDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
-          "name": "name"
+          "name": "name",
+          "image": "image"
         }
         """.withoutWhitespace()
     val channelInfoDtoWithoutMemberCount = ChannelInfoDto(
@@ -19,6 +20,7 @@ internal object ChannelInfoDtoTestData {
         id = "channelId",
         type = "channelType",
         member_count = 0,
-        name = "name"
+        name = "name",
+        image = "image",
     )
 }

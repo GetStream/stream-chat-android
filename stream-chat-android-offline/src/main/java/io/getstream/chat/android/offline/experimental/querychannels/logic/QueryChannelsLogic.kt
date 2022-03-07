@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.state
@@ -40,7 +39,6 @@ import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@ExperimentalStreamChatApi
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val chatDomainImpl: ChatDomainImpl,

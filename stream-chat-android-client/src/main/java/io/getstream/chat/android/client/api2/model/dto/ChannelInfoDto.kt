@@ -9,4 +9,5 @@ internal data class ChannelInfoDto(
     val member_count: Int = 0,
     val name: String?,
     val type: String?,
+    val image: String?,
 )

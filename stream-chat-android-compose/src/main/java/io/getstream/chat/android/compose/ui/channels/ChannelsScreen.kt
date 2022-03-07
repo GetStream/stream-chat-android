@@ -46,7 +46,6 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Default root Channel screen component, that provides the necessary ViewModel.
@@ -91,7 +90,6 @@ public fun ChannelsScreen(
         ChannelListViewModel::class.java,
         factory = ChannelViewModelFactory(
             chatClient = ChatClient.instance(),
-            chatDomain = ChatDomain.instance(),
             querySort = querySort,
             filters = filters,
             channelLimit = channelLimit,

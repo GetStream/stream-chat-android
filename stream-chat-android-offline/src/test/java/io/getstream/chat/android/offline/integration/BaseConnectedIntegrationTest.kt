@@ -3,10 +3,8 @@ package io.getstream.chat.android.offline.integration
 import android.content.Context
 import android.os.Handler
 import androidx.test.core.app.ApplicationProvider
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
@@ -23,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
+import org.mockito.kotlin.mock
 
 internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
@@ -41,7 +40,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         }
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
     suspend fun setupChatDomain(client: ChatClient): ChatDomainImpl {
         db = createRoomDB(testCoroutines.dispatcher)
 
@@ -58,6 +56,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             recoveryEnabled,
             backgroundSyncEnabled,
             context,
+            globalState = globalMutableState
         )
 
         chatDomain = chatDomainImpl

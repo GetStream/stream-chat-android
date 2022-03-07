@@ -5,9 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
-@ExperimentalStreamChatApi
 /**
  * Listener of [ChatClient.queryMembers] requests.
  */

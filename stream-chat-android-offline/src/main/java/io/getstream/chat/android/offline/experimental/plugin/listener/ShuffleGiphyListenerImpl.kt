@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
 /**
@@ -14,7 +13,6 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
  *
  * @param logic [LogicRegistry]
  */
-@ExperimentalStreamChatApi
 internal class ShuffleGiphyListenerImpl(private val logic: LogicRegistry) : ShuffleGiphyListener {
 
     /**

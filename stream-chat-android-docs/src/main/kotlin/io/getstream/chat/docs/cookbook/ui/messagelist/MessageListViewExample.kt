@@ -60,7 +60,7 @@ class MessageListViewExample {
         messageListView.setMessageReplyHandler { cid: String, message: Message ->
             // Handle when message is going to be replied in the channel with cid
         }
-        messageListView.setAttachmentDownloadHandler { attachment: Attachment ->
+        messageListView.setAttachmentDownloadHandler { downloadAttachmentCall ->
             // Handle when attachment is going to be downloaded
         }
     }
