@@ -71,7 +71,6 @@ import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -94,7 +93,10 @@ internal class EventHandlerImpl(
     private var handlerEventJob: Deferred<*>? = null
 
     internal fun initialize(user: User, scope: CoroutineScope) {
-        handlerEventJob = scope.async { replayEvensForAllChannels(user) }
+        handlerEventJob = scope.async {
+            syncManager.loadSyncStateForUser(user.id)
+            replayEvensForAllChannels(user)
+        }
     }
 
     /**
@@ -137,17 +139,6 @@ internal class EventHandlerImpl(
     private suspend fun replayEvensForAllChannels(user: User) {
         repos.cacheChannelConfigs()
 
-        // load the current user from the db
-        val syncState = syncManager.selectSyncState(user.id) ?: SyncState(user.id)
-
-        // retrieve the last time the user marked all as read and handle it as an event
-        // Todo: This is not a real event and should be not handled in EventHandler
-        syncState.markedAllReadAt
-            ?.let { MarkAllReadEvent(user = user, createdAt = it) }
-            ?.let { handleEvent(it) }
-
-        syncManager.syncStateFlow.value = syncState
-
         // Sync cached channels
         val cachedChannelsCids = repos.selectAllCids()
         replayEventsForChannels(cachedChannelsCids)
@@ -160,8 +151,7 @@ internal class EventHandlerImpl(
 
     private suspend fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
         // send out the connect events
-        for (event in sortedEvents) {
-
+        sortedEvents.forEach { event ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
@@ -169,8 +159,6 @@ internal class EventHandlerImpl(
                 }
                 is ConnectedEvent -> {
                     logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
-                    mutableGlobalState._initialized.value = true
                     updateCurrentUser(event.me)
 
                     syncManager.connectionRecovered()
@@ -413,11 +401,7 @@ internal class EventHandlerImpl(
                     // this supports using event handler to restore mark all read state in setUser
                     // without redundant db writes.
 
-                    syncManager.selectSyncState(event.user.id)?.let { state ->
-                        if (state.markedAllReadAt == null || state.markedAllReadAt.before(event.createdAt)) {
-                            syncManager.insertSyncState(state.copy(markedAllReadAt = event.createdAt))
-                        }
-                    }
+                    syncManager.updateAllReadStateForDate(event.user.id, event.createdAt)
                 }
 
                 // get the channel, update reads, write the channel
@@ -620,13 +604,17 @@ internal class EventHandlerImpl(
         if (me.id != currentUser?.id) {
             throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser?.id}. create a new ChatDomain when connecting a different user.")
         }
-        mutableGlobalState._user.value = me
+
+        mutableGlobalState.run {
+            _user.value = me
+            _mutedUsers.value = me.mutes
+            _channelMutes.value = me.channelMutes
+            _totalUnreadCount.value = me.totalUnreadCount
+            _channelUnreadCount.value = me.unreadChannels
+            _banned.value = me.banned
+        }
+
         repos.insertCurrentUser(me)
-        mutableGlobalState._mutedUsers.value = me.mutes
-        mutableGlobalState._channelMutes.value = me.channelMutes
-        mutableGlobalState._totalUnreadCount.value = me.totalUnreadCount
-        mutableGlobalState._channelUnreadCount.value = me.unreadChannels
-        mutableGlobalState._banned.value = me.banned
     }
 
     companion object {

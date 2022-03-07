@@ -21,6 +21,7 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.domain.syncState.SyncStateRepository
@@ -46,7 +47,7 @@ internal class SyncManager(
     private val globalState: GlobalMutableState,
     private val repos: RepositoryFacade,
     private val activeEntitiesManager: ActiveEntitiesManager,
-) : SyncStateRepository by repos {
+) {
 
     private val entitiesRetryMutex = Mutex()
     private var logger = ChatLogger.get("SyncManager")
@@ -54,12 +55,49 @@ internal class SyncManager(
     private var firstConnect = true
 
     internal suspend fun connectionRecovered() {
+        globalState._connectionState.value = ConnectionState.CONNECTED
+        globalState._initialized.value = true
+
         if (firstConnect) {
             firstConnect = false
             connectionRecovered(false)
         } else {
             // the second time (ie coming from background, or reconnecting we should recover all)
             connectionRecovered(true)
+        }
+    }
+
+    internal suspend fun storeSyncState() {
+        syncStateFlow.value?.let { syncState ->
+            val newSyncState = syncState.copy(activeChannelIds = activeEntitiesManager.activeChannelsCids())
+            repos.insertSyncState(newSyncState)
+            syncStateFlow.value = newSyncState
+        }
+    }
+
+    internal suspend fun updateAllReadStateForDate(userId: String, currentDate: Date) {
+        val selectedState = repos.selectSyncState(userId)
+
+        selectedState?.let { state ->
+            if (state.markedAllReadAt == null || state.markedAllReadAt.before(currentDate)) {
+                repos.insertSyncState(state.copy(markedAllReadAt = currentDate))
+            }
+        }
+
+        syncStateFlow.value = selectedState ?: SyncState(userId)
+    }
+
+    internal suspend fun loadSyncStateForUser(userId: String) {
+        syncStateFlow.value = repos.selectSyncState(userId) ?: SyncState(userId)
+    }
+
+    internal suspend fun retryFailedEntities() {
+        entitiesRetryMutex.withLock {
+            // retry channels, messages and reactions in that order..
+            val channels = retryChannels()
+            val messages = retryMessages()
+            val reactions = retryReactions()
+            logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
         }
     }
 
@@ -139,17 +177,6 @@ internal class SyncManager(
         }
     }
 
-    internal suspend fun retryFailedEntities() {
-        entitiesRetryMutex.withLock {
-            // retry channels, messages and reactions in that order..
-            val channels = retryChannels()
-            val messages = retryMessages()
-            val reactions = retryReactions()
-            logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
-        }
-    }
-
-    @VisibleForTesting
     private suspend fun retryChannels(): List<Channel> {
         return repos.selectChannelsSyncNeeded().onEach { channel ->
             val result = chatClient.createChannel(
@@ -294,13 +321,5 @@ internal class SyncManager(
 
     private suspend fun addTypingChannel(channelController: ChannelController) {
         globalState._typingChannels.emitAll(channelController.typing)
-    }
-
-    internal suspend fun storeSyncState() {
-        syncStateFlow.value?.let { syncState ->
-            val newSyncState = syncState.copy(activeChannelIds = activeEntitiesManager.activeChannelsCids())
-            repos.insertSyncState(newSyncState)
-            syncStateFlow.value = newSyncState
-        }
     }
 }
