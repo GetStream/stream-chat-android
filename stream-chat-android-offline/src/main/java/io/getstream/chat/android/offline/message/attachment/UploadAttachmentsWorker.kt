@@ -16,12 +16,14 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 internal class UploadAttachmentsWorker(
     private val logic: LogicRegistry,
     private val repos: RepositoryFacade,
+    private val chatClient: ChatClient,
+    private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
+
     suspend fun uploadAttachmentsForMessage(
         channelType: String,
         channelId: String,
         messageId: String,
-        chatClient: ChatClient,
     ): Result<Unit> {
         return try {
             chatClient.apply {
@@ -48,12 +50,8 @@ internal class UploadAttachmentsWorker(
                     return Result.success(Unit)
                 }
 
-                val channel = logic.channel(channelType, channelId)
                 val attachments = uploadAttachments(
                     message,
-                    repos,
-                    channel,
-                    AttachmentUploader(ChatClient.instance()),
                     channelType,
                     channelId
                 )
@@ -71,9 +69,6 @@ internal class UploadAttachmentsWorker(
 
     private suspend fun uploadAttachments(
         message: Message,
-        repos: RepositoryFacade,
-        channel: ChannelLogic,
-        attachmentUploader: AttachmentUploader,
         channelType: String,
         channelId: String,
     ): List<Attachment> {
@@ -97,6 +92,7 @@ internal class UploadAttachmentsWorker(
                 }
             }.toMutableList()
         } catch (e: Exception) {
+            e.printStackTrace()
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
@@ -113,11 +109,11 @@ internal class UploadAttachmentsWorker(
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
             repos.deleteChannelMessage(message)
             repos.insertMessage(message)
-            channel.upsertMessage(message)
+            logic.channel(channelType, channelId).upsertMessage(message)
         }
     }
 
-    internal inner class ProgressCallbackImpl(
+    private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
         private val channel: ChannelLogic,
