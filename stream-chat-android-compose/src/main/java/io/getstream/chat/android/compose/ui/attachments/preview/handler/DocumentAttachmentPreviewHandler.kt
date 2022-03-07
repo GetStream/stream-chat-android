@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.filepreview
+package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
 import com.getstream.sdk.chat.model.ModelType
