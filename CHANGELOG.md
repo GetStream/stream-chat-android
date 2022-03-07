@@ -46,6 +46,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
+- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
 
 ### ⬆️ Improved
 
