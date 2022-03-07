@@ -78,13 +78,16 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ⬆️ Improved
+- Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
+- `MessageText` now requires the parameter `onLongItemClick: (Message) -> Unit`. This was done in order to mitigate `ClickableText` consuming all pointer events. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 - The SDK now relies on `OfflinePlugin` for offline capabilities instead of `ChatDomain`. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
 
 ### ❌ Removed
