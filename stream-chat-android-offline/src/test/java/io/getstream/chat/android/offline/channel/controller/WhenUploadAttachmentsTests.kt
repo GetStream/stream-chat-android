@@ -3,20 +3,20 @@ package io.getstream.chat.android.offline.channel.controller
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
-import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.TestCoroutineScope
+import io.getstream.chat.android.test.positiveRandomLong
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.`should be`
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
@@ -28,7 +28,94 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@ExperimentalCoroutinesApi
 internal class WhenUploadAttachmentsTests {
+
+    private val channelType = "channelType"
+    private val channelId = "channelId"
+
+    private val attachmentsSent = mutableListOf(
+        randomAttachment {
+            this.uploadState = Attachment.UploadState.Success
+        }
+    )
+
+    private val attachmentsPending = mutableListOf(
+        randomAttachment {
+            this.uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30)
+        }
+    )
+
+    private val defaultMessageSentAttachments = randomMessage(
+        attachments = attachmentsSent
+    )
+
+    private val defaultMessagePendingAttachments = randomMessage(
+        attachments = attachmentsPending
+    )
+
+    @Test
+    fun `when there's no attachment with pending status, there's no need to try to send attachments`() =
+        runBlockingTest {
+            val repositoryFacade = mock<RepositoryFacade> {
+                on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
+                on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
+            }
+
+            val sut = Fixture().givenRepository(repositoryFacade).get()
+            val result = sut.uploadAttachmentsForMessage(
+                channelType,
+                channelId,
+                defaultMessageSentAttachments.id,
+            )
+
+            result.isSuccess `should be` true
+        }
+
+    @Test
+    fun `when there's a pending attachment, it should be uploaded`() = runBlockingTest {
+        val repositoryFacade = mock<RepositoryFacade> {
+            on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
+            on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
+        }
+
+        val sut = Fixture().givenRepository(repositoryFacade).get()
+        val result = sut.uploadAttachmentsForMessage(
+            channelType,
+            channelId,
+            defaultMessagePendingAttachments.id,
+        )
+
+        // verify(sut).uploadAttachments(any())
+    }
+
+    @Test
+    fun `when not all attachments have state as success, it should return error`() = runBlockingTest {
+        val repositoryFacade = mock<RepositoryFacade> {
+            on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
+            on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
+        }
+        val result = Fixture().givenRepository(repositoryFacade).get()
+            .uploadAttachmentsForMessage(
+                channelType,
+                channelId,
+                defaultMessagePendingAttachments.id,
+            )
+
+        result.isError.shouldBeTrue()
+    }
+
+    @Test
+    fun `when user can not be set, it should return an error`() = runBlockingTest {
+        val result = Fixture().givenChatClientNoStoredCredentials().get()
+            .uploadAttachmentsForMessage(
+                channelType,
+                channelId,
+                defaultMessagePendingAttachments.id,
+            )
+
+        result.isError.shouldBeTrue()
+    }
 
     @Test
     fun `Given exception when upload Should insert message with failed sync status to repo`() = runBlockingTest {
@@ -45,9 +132,11 @@ internal class WhenUploadAttachmentsTests {
                 }
             )
         )
-        val sut = Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).get()
+        val sut =
+            Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                .get()
 
-        sut.uploadAttachments(message)
+        sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
 
         verify(repository).insertMessage(
             argThat { id == "messageId123" && syncStatus == SyncStatus.FAILED_PERMANENTLY },
@@ -75,9 +164,11 @@ internal class WhenUploadAttachmentsTests {
                     }
                 )
             )
-            val sut = Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).get()
+            val sut =
+                Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                    .get()
 
-            sut.uploadAttachments(message)
+            sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
 
             verify(repository).insertMessage(
                 argThat {
@@ -118,9 +209,11 @@ internal class WhenUploadAttachmentsTests {
                     }
                 )
             )
-            val sut = Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).get()
+            val sut =
+                Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                    .get()
 
-            sut.uploadAttachments(message)
+            sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
 
             verify(repository).insertMessage(
                 argThat {
@@ -157,9 +250,11 @@ internal class WhenUploadAttachmentsTests {
                     }
                 )
             )
-            val sut = Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).get()
+            val sut =
+                Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                    .get()
 
-            sut.uploadAttachments(message)
+            sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
 
             verify(repository).insertMessage(
                 argThat {
@@ -174,15 +269,15 @@ internal class WhenUploadAttachmentsTests {
         }
 
     private class Fixture {
-
-        private val scope = TestCoroutineScope()
         private var uploader: AttachmentUploader = mock()
-        private val chatDomainImpl = mock<ChatDomainImpl> {
-            on { it.scope } doReturn scope
-            on { it.appContext } doReturn mock()
+        private var repos: RepositoryFacade = mock()
+        private var logicRegistry: LogicRegistry = mock() {
+            on(it.channel(any(), any())) doReturn mock()
         }
+
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
+            whenever(it.containsStoredCredentials()) doReturn true
         }
 
         fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) = apply {
@@ -190,22 +285,22 @@ internal class WhenUploadAttachmentsTests {
         }
 
         fun givenRepository(repository: RepositoryFacade) = apply {
-            whenever(chatDomainImpl.repos) doReturn repository
+            repos = repository
         }
 
-        fun get(): ChannelController {
-            val mutableState = ChannelMutableState(
-                "channelType",
-                "channelId",
-                scope,
-                MutableStateFlow(randomUser()),
-                MutableStateFlow(emptyMap())
-            )
-            return ChannelController(
-                mutableState = mutableState,
-                channelLogic = ChannelLogic(mutableState, chatDomainImpl),
-                client = chatClient,
-                domainImpl = chatDomainImpl,
+        suspend fun givenMessage(message: Message) = apply {
+            whenever(repos.selectMessage(any())) doReturn message
+        }
+
+        fun givenChatClientNoStoredCredentials() = apply {
+            whenever(chatClient.containsStoredCredentials()) doReturn false
+        }
+
+        fun get(): UploadAttachmentsWorker {
+            return UploadAttachmentsWorker(
+                logic = logicRegistry,
+                repos = repos,
+                chatClient = chatClient,
                 attachmentUploader = uploader
             )
         }

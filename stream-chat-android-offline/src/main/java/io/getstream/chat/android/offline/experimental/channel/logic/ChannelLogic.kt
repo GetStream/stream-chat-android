@@ -54,7 +54,9 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -780,6 +782,23 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
+    }
+
+    internal fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
+        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
+        if (message != null) {
+            val newAttachments = message.attachments.map { attachment ->
+                if (attachment.uploadId == uploadId) {
+                    attachment.copy(uploadState = newState)
+                } else {
+                    attachment
+                }
+            }
+            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
+            val newMessages =
+                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
+            mutableState._messages.value = newMessages
+        }
     }
 
     private companion object {
