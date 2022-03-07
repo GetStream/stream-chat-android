@@ -454,17 +454,6 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$FlagMessageError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
 	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
@@ -555,12 +544,12 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
-	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Attachment;
-	public final fun copy (Lio/getstream/chat/android/client/models/Attachment;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;Lio/getstream/chat/android/client/models/Attachment;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
+	public fun <init> (Lkotlin/jvm/functions/Function0;)V
+	public final fun component1 ()Lkotlin/jvm/functions/Function0;
+	public final fun copy (Lkotlin/jvm/functions/Function0;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun getDownloadAttachmentCall ()Lkotlin/jvm/functions/Function0;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

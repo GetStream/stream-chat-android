@@ -2,13 +2,6 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.same
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -32,6 +25,13 @@ import org.amshove.kluent.shouldBeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.same
+import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import java.io.File
 
@@ -39,7 +39,7 @@ import java.io.File
 internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrationTest() {
 
     private val channelClient: ChannelClient = mock {
-        on(it.sendMessage(any())) doReturn TestCall(Result(Message()))
+        on(it.sendMessage(any(), any())) doReturn TestCall(Result(Message()))
     }
 
     private val chatClient: ChatClient = mock {

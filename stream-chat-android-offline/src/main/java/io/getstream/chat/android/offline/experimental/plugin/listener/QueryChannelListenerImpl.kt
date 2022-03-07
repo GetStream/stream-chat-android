@@ -4,10 +4,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 
-@ExperimentalStreamChatApi
 internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : QueryChannelListener {
 
     override suspend fun onQueryChannelPrecondition(

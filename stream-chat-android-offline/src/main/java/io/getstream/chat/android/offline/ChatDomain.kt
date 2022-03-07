@@ -9,22 +9,20 @@ import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -167,25 +165,6 @@ public sealed interface ChatDomain {
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
     /**
-     * Loads older messages for the channel.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading older messages in a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "loadOlderMessages is deprecated. Use extension function ChatClient::loadOlderMessages instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().loadOlderMessages(cid, messageLimit)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
-
-    /**
      * Loads newer messages for the channel.
      *
      * @param cid The full channel id i. e. messaging:123.
@@ -286,59 +265,6 @@ public sealed interface ChatDomain {
     public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     /**
-     * Creates a new channel. Will retry according to the retry policy if it fails.
-     *
-     * @param channel The channel object.
-     *
-     * @return Executable async [Call] responsible for creating a channel.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @Deprecated(
-        message = "createChannel is deprecated. Use ChatClient::createChannel extension function  instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().createChannel(channel)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-    )
-    @CheckResult
-    public fun createChannel(channel: Channel): Call<Channel>
-
-    /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for sending a message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun sendMessage(message: Message): Call<Message>
-
-    /**
-     * Cancels the message of "ephemeral" type. Removes the message from local storage.
-     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to send.
-     *
-     * @return Executable async [Call] responsible for canceling ephemeral message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    @Deprecated(
-        message = "cancelMessage is deprecated. Use extension function ChatClient::cancelMessage instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().cancelMessage(message)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun cancelMessage(message: Message): Call<Boolean>
-
-    /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
@@ -386,21 +312,6 @@ public sealed interface ChatDomain {
         level = DeprecationLevel.WARNING
     )
     public fun editMessage(message: Message): Call<Message>
-
-    /**
-     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to mark as deleted.
-     * @param hard Use to hard delete the message (delete in backend). CAN'T BE UNDONE.
-     *
-     * @return Executable async [Call] responsible for deleting a message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    public fun deleteMessage(message: Message, hard: Boolean = false): Call<Message>
-
-    public fun deleteMessage(message: Message): Call<Message>
 
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
@@ -462,101 +373,6 @@ public sealed interface ChatDomain {
     @CheckResult
     public fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit>
 
-    /**
-     * Shows a channel that was previously hidden.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] responsible for hiding a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Deprecated. Use ChatClient::showChannel instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().showChannel(channelType, channelId)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.ERROR
-    )
-    public fun showChannel(cid: String): Call<Unit>
-
-    /**
-     * Leaves the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] leaving a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "leaveChannel is deprecated. Use function ChatClient::removeMembers instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().removeMembers(channel.type, channel.id, listOf(userId))",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun leaveChannel(cid: String): Call<Unit>
-
-    /**
-     * Deletes the channel with the specified id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     *
-     * @return Executable async [Call] deleting a channel.
-     */
-    @CheckResult
-    @Deprecated(
-        message = "deleteChannel is deprecated. Use function ChannelClient::delete instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().channel(cid).delete().toUnitCall()",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun deleteChannel(cid: String): Call<Unit>
-
-    /**
-     * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
-     * in local database.
-     *
-     * @param querySearch Search string used as autocomplete.
-     * @param offset Offset for paginated requests.
-     * @param userLimit The page size in the request.
-     * @param userPresence Presence flag to obtain additional info such as last active date.
-     *
-     * @return Executable async [Call] querying users.
-     */
-    @CheckResult
-    public fun searchUsersByName(
-        querySearch: String,
-        offset: Int,
-        userLimit: Int,
-        userPresence: Boolean,
-    ): Call<List<User>>
-
-    /**
-     * Query members of a channel.
-     *
-     * @param cid CID of the Channel whose members we are querying.
-     * @param offset Indicates how many items to exclude from the start of the result.
-     * @param limit Indicates the maximum allowed number of items in the result.
-     * @param filter Applied to online queries for advanced selection criteria.
-     * @param sort The sort criteria applied to the result.
-     * @param members
-     *
-     * @return Executable async [Call] querying members.
-     */
-    @CheckResult
-    public fun queryMembers(
-        cid: String,
-        offset: Int = 0,
-        limit: Int = 0,
-        filter: FilterObject = NeutralFilterObject,
-        sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
-        members: List<Member> = emptyList(),
-    ): Call<List<Member>>
-
     public data class Builder(
         private val appContext: Context,
         private val client: ChatClient,
@@ -572,6 +388,7 @@ public sealed interface ChatDomain {
         private var backgroundSyncEnabled: Boolean = true
         private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType =
             UploadAttachmentsNetworkType.NOT_ROAMING
+        private var globalMutableState = GlobalMutableState.getOrCreate()
 
         @VisibleForTesting
         internal fun handler(handler: Handler) = apply {
@@ -618,6 +435,10 @@ public sealed interface ChatDomain {
             return this
         }
 
+        internal fun globalMutableState(globalMutableState: GlobalMutableState): Builder = apply {
+            this.globalMutableState = globalMutableState
+        }
+
         public fun build(): ChatDomain {
             instance?.run {
                 Log.e(
@@ -630,7 +451,6 @@ public sealed interface ChatDomain {
         }
 
         @SuppressLint("VisibleForTests")
-        @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
             return ChatDomainImpl(
                 client,
@@ -640,6 +460,7 @@ public sealed interface ChatDomain {
                 backgroundSyncEnabled,
                 appContext,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
+                globalState = globalMutableState
             )
         }
     }

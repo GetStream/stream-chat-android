@@ -68,6 +68,7 @@ internal class UserRepositoryImpl(
         UserEntity(
             id = id,
             name = name,
+            image = image,
             originalId = id,
             role = role,
             createdAt = createdAt,
@@ -82,6 +83,8 @@ internal class UserRepositoryImpl(
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
         User(id = this.originalId).also { user ->
+            user.name = name
+            user.image = image
             user.role = role
             user.createdAt = createdAt
             user.updatedAt = updatedAt

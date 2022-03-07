@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon

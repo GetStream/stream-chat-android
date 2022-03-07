@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.extensions.uploadId
@@ -22,18 +21,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
-import io.getstream.chat.android.offline.message.MessageSendingService
-import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
-import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -49,7 +43,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-@OptIn(ExperimentalStreamChatApi::class)
 public class ChannelController internal constructor(
     private val mutableState: ChannelMutableState,
     private val channelLogic: ChannelLogic,
@@ -57,7 +50,6 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
-    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId
@@ -65,19 +57,14 @@ public class ChannelController internal constructor(
 
     private val editJobs = mutableMapOf<String, Job>()
 
-    private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
-    private var lastKeystrokeAt: Date? by mutableState::lastKeystrokeAt
     private var lastStartTypingEvent: Date? by mutableState::lastStartTypingEvent
     private val channelClient = client.channel(channelType, channelId)
 
-    private var keystrokeParentMessageId: String? = null
+    private var keystrokeParentMessageId: String? by mutableState::keystrokeParentMessageId
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
-
-    private val messageSendingService: MessageSendingService =
-        messageSendingServiceFactory.create(domainImpl, this, client, client.channel(cid))
 
     internal val unfilteredMessages by mutableState::messageList
     internal val hideMessagesBefore by mutableState::hideMessagesBefore
@@ -110,7 +97,7 @@ public class ChannelController internal constructor(
     public val loadingNewerMessages: StateFlow<Boolean> by mutableState::loadingNewerMessages
     public val endOfOlderMessages: StateFlow<Boolean> by mutableState::endOfOlderMessages
     public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
-    public val channelConfig: StateFlow<Config> by mutableState::channelConfig
+    public val channelConfig: StateFlow<Config> by mutableState::_channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
@@ -121,101 +108,6 @@ public class ChannelController internal constructor(
                 client
             ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
         }
-
-    internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
-        lastKeystrokeAt = Date()
-        if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
-            lastStartTypingEvent = lastKeystrokeAt
-
-            val channelClient = client.channel(channelType = channelType, channelId = channelId)
-            val result = if (parentId != null) {
-                channelClient.keystroke(parentId)
-            } else {
-                channelClient.keystroke()
-            }.await()
-            return result.map { true.also { keystrokeParentMessageId = parentId } }
-        }
-        return Result(false)
-    }
-
-    internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
-        if (lastStartTypingEvent != null) {
-            lastStartTypingEvent = null
-            lastKeystrokeAt = null
-
-            val channelClient = client.channel(channelType = channelType, channelId = channelId)
-            val result = if (parentId != null) {
-                channelClient.stopTyping(parentId)
-            } else {
-                channelClient.stopTyping()
-            }.await()
-
-            return result.map { true.also { keystrokeParentMessageId = null } }
-        }
-        return Result(false)
-    }
-
-    /**
-     * Marks the channel as read by the current user
-     *
-     * @return whether the channel was marked as read or not
-     */
-    internal fun markRead(): Boolean {
-        if (!mutableState.channelConfig.value.readEventsEnabled) {
-            return false
-        }
-
-        // throttle the mark read
-        val messages = mutableState.sortedMessages.value
-
-        if (messages.isEmpty()) {
-            logger.logI("No messages; nothing to mark read.")
-            return false
-        }
-
-        return messages.last().createdAt
-            .let { lastMessageDate ->
-                val shouldUpdate =
-                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
-
-                if (!shouldUpdate) {
-                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-                    return false
-                }
-
-                lastMarkReadEvent = lastMessageDate
-
-                // update live data with new read
-                domainImpl.user.value?.let { currentUser ->
-                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
-                }
-
-                shouldUpdate
-            }
-    }
-
-    internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
-        channelLogic.setHidden(true)
-        val result = channelClient.hide(clearHistory).await()
-        if (result.isSuccess) {
-            if (clearHistory) {
-                val now = Date()
-                mutableState.hideMessagesBefore = now
-                channelLogic.removeMessagesBefore(now)
-                domainImpl.repos.deleteChannelMessagesBefore(cid, now)
-                domainImpl.repos.setHiddenForChannel(cid, true, now)
-            } else {
-                domainImpl.repos.setHiddenForChannel(cid, true)
-            }
-        }
-        return result
-    }
-
-    internal suspend fun show(): Result<Unit> {
-        return channelClient.show().await()
-    }
 
     /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {
@@ -278,10 +170,10 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal suspend fun sendMessage(message: Message): Result<Message> = messageSendingService.sendNewMessage(message)
+    internal suspend fun sendMessage(message: Message): Result<Message> = channelClient.sendMessage(message).await()
 
     internal suspend fun retrySendMessage(message: Message): Result<Message> =
-        messageSendingService.sendMessage(message)
+        channelClient.sendMessage(message, true).await()
 
     internal suspend fun uploadAttachments(
         message: Message,
@@ -339,43 +231,6 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        return processedMessage
-            .let { message -> message.enrichWithCid(cid) }
-            .copy(syncStatus = SyncStatus.COMPLETED)
-            .also { domainImpl.repos.insertMessage(it) }
-            .also { upsertMessage(it) }
-    }
-
-    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
-        logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: $error",
-            error
-        )
-
-        return message.copy(
-            syncStatus = if (error.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-            updatedLocallyAt = Date(),
-        )
-            .also { domainImpl.repos.insertMessage(it) }
-            .also { upsertMessage(it) }
-    }
-
-    /**
-     * Cancels ephemeral Message.
-     * Removes message from the offline storage and memory and notifies about update.
-     */
-    internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
-        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-        domainImpl.repos.deleteChannelMessage(message)
-        removeLocalMessage(message)
-        return Result(true)
-    }
-
     internal suspend fun sendImage(file: File): Result<String> {
         return client.sendImage(channelType, channelId, file).await()
     }
@@ -392,16 +247,12 @@ public class ChannelController internal constructor(
 
     public fun getMessage(messageId: String): Message? = channelLogic.getMessage(messageId)
 
-    internal fun removeLocalMessage(message: Message) {
-        channelLogic.removeLocalMessage(message)
-    }
-
     public fun clean() {
         domainImpl.scope.launch {
             // cleanup your own typing state
             val now = Date()
             if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
-                stopTyping(keystrokeParentMessageId)
+                channelClient.stopTyping(keystrokeParentMessageId)
             }
 
             // Cleanup typing events that are older than 15 seconds
@@ -427,8 +278,6 @@ public class ChannelController internal constructor(
     internal fun handleEvents(events: List<ChatEvent>) = channelLogic.handleEvents(events)
 
     internal fun handleEvent(event: ChatEvent) = channelLogic.handleEvent(event)
-
-    private fun updateRead(read: ChannelUserRead) = channelLogic.updateReads(listOf(read))
 
     internal fun updateDataFromChannel(c: Channel) = channelLogic.updateDataFromChannel(c)
 
@@ -469,7 +318,9 @@ public class ChannelController internal constructor(
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
             // TODO: Will be removed after migrating ChatDomain
-            val job = domainImpl.scope.async { client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await() }
+            val job = domainImpl.scope.async {
+                client.updateMessageInternal(messageToBeEdited).retry(domainImpl.scope, client.retryPolicy).await()
+            }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
@@ -497,42 +348,6 @@ public class ChannelController internal constructor(
         return Result(messageToBeEdited)
     }
 
-    internal suspend fun deleteMessage(message: Message, hard: Boolean = false): Result<Message> {
-        val online = domainImpl.isOnline()
-        val messageToBeDeleted = message.copy(deletedAt = Date())
-        messageToBeDeleted.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
-
-        // Update flow
-        upsertMessage(messageToBeDeleted)
-
-        // Update Room State
-        domainImpl.repos.insertMessage(messageToBeDeleted)
-
-        if (online) {
-            // TODO: Will be removed after migrating ChatDomain
-            val result = client.deleteMessage(messageToBeDeleted.id, hard).retry(domainImpl.scope, client.retryPolicy).await()
-            if (result.isSuccess) {
-                val deletedMessage = result.data()
-                deletedMessage.syncStatus = SyncStatus.COMPLETED
-                upsertMessage(deletedMessage)
-                domainImpl.repos.insertMessage(deletedMessage)
-                return Result(deletedMessage)
-            } else {
-                val failureMessage = messageToBeDeleted.copy(
-                    syncStatus = if (result.error().isPermanent()) {
-                        SyncStatus.FAILED_PERMANENTLY
-                    } else {
-                        SyncStatus.SYNC_NEEDED
-                    }
-                )
-                upsertMessage(failureMessage)
-                domainImpl.repos.insertMessage(failureMessage)
-                return Result(result.error())
-            }
-        }
-        return Result(messageToBeDeleted)
-    }
-
     public fun toChannel(): Channel = mutableState.toChannel()
 
     internal suspend fun loadMessageById(
@@ -555,8 +370,6 @@ public class ChannelController internal constructor(
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
     }
-
-    internal fun cancelJobs() = messageSendingService.cancelJobs()
 
     public sealed class MessagesState {
         /** The ChannelController is initialized but no query is currently running.

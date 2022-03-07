@@ -62,10 +62,8 @@ The next step is connecting the user. This requires a valid Stream Chat token. A
 ```kotlin
 val user = User(
     id = "bender",
-    extraData = mutableMapOf(
-        "name" to "Bender",
-        "image" to "https://bit.ly/321RmWb",
-    ),
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
 )
 
 ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token

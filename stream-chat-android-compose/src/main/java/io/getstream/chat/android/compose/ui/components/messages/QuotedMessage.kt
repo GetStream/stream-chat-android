@@ -20,11 +20,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the item is long clicked.
  */
 @Composable
 public fun QuotedMessage(
     message: Message,
     modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit,
 ) {
     val user = message.user
 
@@ -48,7 +50,10 @@ public fun QuotedMessage(
                     )
 
                     if (message.text.isNotEmpty()) {
-                        MessageText(message = message)
+                        MessageText(
+                            message = message,
+                            onLongItemClick = onLongItemClick
+                        )
                     }
                 }
             }

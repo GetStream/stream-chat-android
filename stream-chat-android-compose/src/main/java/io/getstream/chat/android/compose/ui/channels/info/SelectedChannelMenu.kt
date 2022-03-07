@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.ChannelAction
+import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions

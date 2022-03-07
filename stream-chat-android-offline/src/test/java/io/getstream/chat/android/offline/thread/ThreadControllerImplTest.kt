@@ -2,11 +2,7 @@ package io.getstream.chat.android.offline.thread
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
@@ -20,9 +16,11 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
 @RunWith(AndroidJUnit4::class)
-@OptIn(ExperimentalStreamChatApi::class)
 internal class ThreadControllerImplTest : BaseDomainTest2() {
     private val threadId = randomString()
     lateinit var threadMessage: Message

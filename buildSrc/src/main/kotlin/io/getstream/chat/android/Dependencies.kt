@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.1.0"
+    internal const val ANDROID_GRADLE_PLUGIN = "7.1.2"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.7.1.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.4.0"
@@ -25,7 +25,7 @@ object Versions {
     internal const val COMPOSE_ACCOMPANIST = "0.23.0"
     internal const val COMPOSE_ACTIVITY = "1.4.0"
     internal const val COMPOSE_VIEW_MODEL = "2.4.1"
-    public const val COMPOSE = "1.1.0"
+    public const val COMPOSE = "1.1.1"
     internal const val CONSTRAINT_LAYOUT = "2.1.2"
     internal const val COROUTINES = "1.5.2"
     internal const val DEXTER = "6.2.3"
@@ -59,8 +59,8 @@ object Versions {
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.4.0"
     internal const val MARKWON = "4.6.2"
-    internal const val MOCKITO_KOTLIN = "2.2.0"
-    internal const val MOCKITO = "3.11.2"
+    internal const val MOCKITO_KOTLIN = "4.0.0"
+    internal const val MOCKITO = "4.3.1"
     internal const val MOSHI = "1.13.0"
     internal const val NAVIGATION = "2.3.5"
     internal const val OK2CURL = "0.7.0"
@@ -169,7 +169,7 @@ object Dependencies {
     const val markwonextStrikethrough = "io.noties.markwon:ext-strikethrough:${Versions.MARKWON}"
     const val markwonImage = "io.noties.markwon:image:${Versions.MARKWON}"
     const val mockito = "org.mockito:mockito-core:${Versions.MOCKITO}"
-    const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.MOCKITO_KOTLIN}"
+    const val mockitoKotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO_KOTLIN}"
     const val moshi = "com.squareup.moshi:moshi:${Versions.MOSHI}"
     const val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
     const val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"

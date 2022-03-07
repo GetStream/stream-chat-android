@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
@@ -706,11 +707,11 @@ class Android {
         }
 
         fun loadMoreMessages() {
-            val chatDomain = ChatDomain.instance()
+            val chatClient = ChatClient.instance()
 
             // TODO: Review docs (https://github.com/GetStream/stream-chat-android/issues/2976)
             @Suppress("DEPRECATION_ERROR")
-            chatDomain.loadOlderMessages("messaging:123", 10)
+            chatClient.loadOlderMessages("messaging:123", 10)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val channel = result.data()
@@ -719,10 +720,10 @@ class Android {
         }
 
         fun sendMessage() {
-            val chatDomain = ChatDomain.instance()
+            val chatClient = ChatClient.instance()
             val message = Message(text = "Hello world")
 
-            chatDomain.sendMessage(message)
+            chatClient.sendMessage("messaging", "1234", message)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()

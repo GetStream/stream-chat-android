@@ -1,10 +1,5 @@
 package io.getstream.chat.android.client.api
 
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
@@ -31,6 +26,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class ClientConnectionTests {
@@ -100,8 +100,8 @@ internal class ClientConnectionTests {
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),

@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -74,6 +75,7 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
@@ -246,7 +248,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        return client.updateMessageInternal(message)
+        return client.updateMessage(message)
     }
 
     @CheckResult
@@ -256,15 +258,30 @@ public class ChannelClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel with side effects if there is any plugin added in the client.
      *
-     * @param message Message object
+     * @param message Message to send.
+     * @param isRetrying True if this message is being retried.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
-    public fun sendMessage(message: Message): Call<Message> {
-        return client.sendMessage(channelType, channelId, message)
+    @JvmOverloads
+    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
+        return client.sendMessage(channelType, channelId, message, isRetrying)
+    }
+
+    /**
+     * Sends the message to the given channel without running any side effects.
+     *
+     * @param message Message to send.
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
+    @InternalStreamChatApi
+    @CheckResult
+    public fun sendMessageInternal(message: Message): Call<Message> {
+        return client.sendMessageInternal(channelType, channelId, message)
     }
 
     @CheckResult
@@ -636,34 +653,30 @@ public class ChannelClient internal constructor(
         return client.unmuteCurrentUser()
     }
 
+    /**
+     * Sends a start typing event [EventType.TYPING_START] in this channel to the server.
+     *
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
     @CheckResult
-    public fun keystroke(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_START, channelType, channelId)
+    @JvmOverloads
+    public fun keystroke(parentId: String? = null): Call<ChatEvent> {
+        return client.keystroke(channelType, channelId, parentId)
     }
 
+    /**
+     * Sends a stop typing event [EventType.TYPING_STOP] in this channel to the server.
+     *
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
     @CheckResult
-    public fun keystroke(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_START,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
-    }
-
-    @CheckResult
-    public fun stopTyping(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
-    }
-
-    @CheckResult
-    public fun stopTyping(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_STOP,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
+    @JvmOverloads
+    public fun stopTyping(parentId: String? = null): Call<ChatEvent> {
+        return client.stopTyping(channelType, channelId, parentId)
     }
 
     /**
@@ -682,12 +695,23 @@ public class ChannelClient internal constructor(
         return client.sendEvent(eventType, channelType, channelId, extraData)
     }
 
+    /**
+     * Queries members for this channel.
+     *
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members to search in distinct channels.
+     *
+     * @return [Call] with a list of members or an error.
+     */
     @CheckResult
     public fun queryMembers(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member> = QuerySort(),
+        sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)

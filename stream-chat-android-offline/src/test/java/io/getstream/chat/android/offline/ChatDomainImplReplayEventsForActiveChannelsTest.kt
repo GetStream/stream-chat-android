@@ -1,13 +1,6 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
@@ -23,6 +16,13 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ChatDomainImplReplayEventsForActiveChannelsTest {
@@ -80,7 +80,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 
             sut.replayEvents(cid)
 
-            verify(eventHandlerImpl).handleEventsInternal(events)
+            verify(eventHandlerImpl).handleEventsInternal(events, isFromSync = true)
         }
 
     private class Fixture(private val coroutineScope: CoroutineScope) {
