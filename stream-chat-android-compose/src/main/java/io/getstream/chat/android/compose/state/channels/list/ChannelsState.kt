@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.channel.list
+package io.getstream.chat.android.compose.state.channels.list
 
 /**
  * Represents the Channels screen state, used to render the required UI.

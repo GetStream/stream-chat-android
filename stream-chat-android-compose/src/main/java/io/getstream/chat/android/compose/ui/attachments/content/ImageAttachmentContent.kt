@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia

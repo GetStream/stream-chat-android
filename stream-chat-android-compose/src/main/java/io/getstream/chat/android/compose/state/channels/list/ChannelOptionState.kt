@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.channel.list
+package io.getstream.chat.android.compose.state.channels.list
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter

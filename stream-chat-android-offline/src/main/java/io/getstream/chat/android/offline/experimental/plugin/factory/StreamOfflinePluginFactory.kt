@@ -36,7 +36,6 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
-import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -103,15 +102,16 @@ public class StreamOfflinePluginFactory(
         val stateRegistry = StateRegistry.getOrCreate(job, scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.getOrCreate(stateRegistry)
 
+        val sendMessageInterceptor = SendMessageInterceptorImpl(
+            context = appContext,
+            logic = logic,
+            globalState = globalState,
+            repos = repos,
+            scope = scope,
+            networkType = config.uploadAttachmentsNetworkType
+        )
         val defaultInterceptor = DefaultInterceptor(
-            sendMessageInterceptor = SendMessageInterceptorImpl(
-                context = appContext,
-                logic = logic,
-                globalState = globalState,
-                scope = scope,
-                repos = repos,
-                messageSendingService = MessageSendingServiceFactory
-            )
+            sendMessageInterceptor = sendMessageInterceptor
         )
 
         val channelMarkReadHelper = ChannelMarkReadHelper(
@@ -164,10 +164,10 @@ public class StreamOfflinePluginFactory(
             }
 
             addUserDisconnectedListener {
+                sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
-                MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
                 eventHandler.clear()

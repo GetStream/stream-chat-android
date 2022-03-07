@@ -8,9 +8,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.retry
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -18,10 +16,8 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -180,62 +176,6 @@ public class ChannelController internal constructor(
 
     internal suspend fun retrySendMessage(message: Message): Result<Message> =
         channelClient.sendMessage(message, true).await()
-
-    internal suspend fun uploadAttachments(
-        message: Message,
-    ): List<Attachment> {
-        return try {
-            message.attachments.map { attachment ->
-                if (attachment.uploadState != Attachment.UploadState.Success) {
-                    attachmentUploader.uploadAttachment(
-                        channelType,
-                        channelId,
-                        attachment,
-                        ProgressCallbackImpl(message.id, attachment.uploadId!!)
-                    )
-                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
-                        .data()
-                } else {
-                    attachment
-                }
-            }.toMutableList()
-        } catch (e: Exception) {
-            message.attachments.map {
-                if (it.uploadState != Attachment.UploadState.Success) {
-                    it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
-                }
-                it
-            }.toMutableList()
-        }.also { attachments ->
-            message.attachments = attachments
-            // TODO refactor this place. A lot of side effects happening here.
-            //  We should extract it to entity that will handle logic of uploading only.
-            if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
-                message.syncStatus = SyncStatus.FAILED_PERMANENTLY
-            }
-            // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
-            repos.deleteChannelMessage(message)
-            repos.insertMessage(message)
-            upsertMessage(message)
-        }
-    }
-
-    private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
-        if (message != null) {
-            val newAttachments = message.attachments.map { attachment ->
-                if (attachment.uploadId == uploadId) {
-                    attachment.copy(uploadState = newState)
-                } else {
-                    attachment
-                }
-            }
-            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages =
-                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
-            mutableState._messages.value = newMessages
-        }
-    }
 
     internal suspend fun sendImage(file: File): Result<String> {
         return client.sendImage(channelType, channelId, file).await()
@@ -401,24 +341,5 @@ public class ChannelController internal constructor(
          * @see ChatDomainImpl.connectionState
          */
         public data class Result(val messages: List<Message>) : MessagesState()
-    }
-
-    internal inner class ProgressCallbackImpl(private val messageId: String, private val uploadId: String) :
-        ProgressCallback {
-        override fun onSuccess(url: String?) {
-            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
-        }
-
-        override fun onError(error: ChatError) {
-            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
-        }
-
-        override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
-            updateAttachmentUploadState(
-                messageId,
-                uploadId,
-                Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
-            )
-        }
     }
 }
