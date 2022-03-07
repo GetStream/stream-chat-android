@@ -62,7 +62,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -81,7 +80,6 @@ import java.util.Date
 import java.util.InputMismatchException
 
 internal class EventHandlerImpl(
-    private var recoveryEnabled: Boolean = true,
     private val client: ChatClient,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
@@ -91,7 +89,6 @@ internal class EventHandlerImpl(
     private val activeEntitiesManager: ActiveEntitiesManager,
 ) {
     private var logger = ChatLogger.get("EventHandler")
-    private var firstConnect = true
 
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
     private var handlerEventJob: Deferred<*>? = null
@@ -113,10 +110,6 @@ internal class EventHandlerImpl(
 
     internal fun stopListening() {
         eventSubscription.dispose()
-    }
-
-    internal fun clear() {
-        firstConnect = true
     }
 
     internal suspend fun replyEventsForActiveChannels(): Result<List<ChatEvent>> {
@@ -178,19 +171,9 @@ internal class EventHandlerImpl(
                     logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
                     mutableGlobalState._initialized.value = true
+                    updateCurrentUser(event.me)
 
-                    // Todo: Figure out where to put this
-                    if (recoveryEnabled) {
-                        // Todo: This logic should go to syncManager
-                        // the first time we connect we should only run recovery against channels and queries that had a failure
-                        if (firstConnect) {
-                            firstConnect = false
-                            syncManager.connectionRecovered(false)
-                        } else {
-                            // the second time (ie coming from background, or reconnecting we should recover all)
-                            syncManager.connectionRecovered(true)
-                        }
-                    }
+                    syncManager.connectionRecovered()
 
                     // 4. recover missing events
                     val activeChannelCids = activeEntitiesManager.activeChannelsCids()
@@ -359,9 +342,6 @@ internal class EventHandlerImpl(
                 is NotificationMutesUpdatedEvent -> {
                     updateCurrentUser(event.me)
                 }
-                is ConnectedEvent -> {
-                    updateCurrentUser(event.me)
-                }
 
                 is ReactionNewEvent -> {
                     event.message.enrichWithCid(event.cid)
@@ -487,6 +467,7 @@ internal class EventHandlerImpl(
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
                 is UserPresenceChangedEvent,
+                is ConnectedEvent,
                 -> Unit
             }
         }
