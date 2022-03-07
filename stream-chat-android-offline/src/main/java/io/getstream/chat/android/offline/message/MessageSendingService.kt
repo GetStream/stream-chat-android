@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.message
 
+import android.content.Context
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadId
@@ -10,7 +11,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +33,8 @@ internal class MessageSendingService(
     private val channelId: String,
     private val scope: CoroutineScope,
     private val repos: RepositoryFacade,
-    private val uploadAttachmentsWorker: UploadAttachmentsWorker,
+    private val context: Context,
+    private val networkType: UploadAttachmentsNetworkType
 ) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -198,7 +201,7 @@ internal class MessageSendingService(
      * Enqueues attachment upload work.
      */
     private fun enqueueAttachmentUpload(message: Message) {
-        uploadAttachmentsWorker.enqueueJob(channelType, channelId, message.id)
+        UploadAttachmentsAndroidWorker.start(context, channelType, channelId, message.id, networkType)
     }
 
     /**

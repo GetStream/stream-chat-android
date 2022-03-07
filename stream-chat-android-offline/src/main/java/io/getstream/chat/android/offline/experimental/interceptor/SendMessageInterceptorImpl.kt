@@ -4,12 +4,9 @@ import android.content.Context
 import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.extensions.populateMentions
 import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
-import io.getstream.chat.android.offline.repository.RepositoryFacade
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * Implementation of [SendMessageInterceptor] that upload attachments, update original message
@@ -18,9 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
-    private val scope: CoroutineScope,
-    private val repos: RepositoryFacade,
     private val messageSendingService: MessageSendingServiceFactory,
 ) : SendMessageInterceptor {
 
@@ -37,15 +31,7 @@ internal class SendMessageInterceptorImpl(
             channel.replyMessage(null)
         }
 
-        val messageSendingService = messageSendingService.getOrCreateService(
-            logic,
-            globalState,
-            channelType,
-            channelId,
-            scope,
-            repos,
-            context,
-        )
+        val messageSendingService = messageSendingService.getOrCreateService(context, channelType, channelId)
         return if (!isRetrying) messageSendingService.prepareNewMessageWithAttachments(message)
         else messageSendingService.retryMessage(message)
     }

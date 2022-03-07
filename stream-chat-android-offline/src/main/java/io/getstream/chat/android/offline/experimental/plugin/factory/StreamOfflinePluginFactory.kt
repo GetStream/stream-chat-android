@@ -98,14 +98,19 @@ public class StreamOfflinePluginFactory(
         val stateRegistry = StateRegistry.getOrCreate(job, scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.getOrCreate(stateRegistry)
 
+        val messageSendingServiceFactory = MessageSendingServiceFactory.getOrCreate(
+            logic,
+            globalState,
+            scope,
+            repos,
+            config.uploadAttachmentsNetworkType
+        )
+
         val defaultInterceptor = DefaultInterceptor(
             sendMessageInterceptor = SendMessageInterceptorImpl(
                 context = appContext,
                 logic = logic,
-                globalState = globalState,
-                scope = scope,
-                repos = repos,
-                messageSendingService = MessageSendingServiceFactory
+                messageSendingService = messageSendingServiceFactory
             )
         )
 
@@ -125,7 +130,7 @@ public class StreamOfflinePluginFactory(
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
-                MessageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
+                messageSendingServiceFactory.getAllServices().forEach { it.cancelJobs() }
             }
         }
 
