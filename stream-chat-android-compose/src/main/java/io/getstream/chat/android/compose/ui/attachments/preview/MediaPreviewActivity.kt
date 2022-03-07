@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.mediapreview
+package io.getstream.chat.android.compose.ui.attachments.preview
 
 import android.content.Context
 import android.content.Intent

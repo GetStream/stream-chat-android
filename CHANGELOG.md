@@ -55,6 +55,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
+- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
 
 ### ⬆️ Improved
 
@@ -77,14 +78,21 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ⬆️ Improved
+- Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
+- `MessageText` now requires the parameter `onLongItemClick: (Message) -> Unit`. This was done in order to mitigate `ClickableText` consuming all pointer events. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 - The SDK now relies on `OfflinePlugin` for offline capabilities instead of `ChatDomain`. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
+- Renamed the `state.channel` package to `state.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Renamed the `viewmodel.channel` package to `viewmodel.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Moved the contents of the `ui.imagepreview` and `ui.mediapreview` packages to `ui.attachments.preview`. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
+- Moved the preview handlers from the `ui.filepreview` package to `ui.attachments.preview.handler` [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 
 ### ❌ Removed
 - Removed all use of `ChatDomain` inside the SDK. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)

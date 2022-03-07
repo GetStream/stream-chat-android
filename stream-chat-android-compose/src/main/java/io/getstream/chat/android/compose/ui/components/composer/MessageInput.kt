@@ -57,7 +57,8 @@ public fun MessageInput(
                 if (activeAction is Reply) {
                     QuotedMessage(
                         modifier = Modifier.padding(horizontal = 4.dp),
-                        message = activeAction.message
+                        message = activeAction.message,
+                        onLongItemClick = {}
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))
