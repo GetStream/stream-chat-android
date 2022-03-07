@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,5 +99,4 @@ internal class GlobalMutableState private constructor() : GlobalState {
     }
 }
 
-@ExperimentalStreamChatApi
 internal fun GlobalState.toMutableState(): GlobalMutableState = this as GlobalMutableState

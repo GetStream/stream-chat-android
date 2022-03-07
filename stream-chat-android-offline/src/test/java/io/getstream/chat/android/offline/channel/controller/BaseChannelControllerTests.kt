@@ -1,12 +1,8 @@
 package io.getstream.chat.android.offline.channel.controller
 
 import androidx.annotation.CallSuper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -19,6 +15,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 internal open class BaseChannelControllerTests {
     protected val channelType = "channelType"
@@ -34,7 +33,6 @@ internal open class BaseChannelControllerTests {
     protected lateinit var mutableState: ChannelMutableState
     protected lateinit var scope: TestCoroutineScope
 
-    @OptIn(ExperimentalStreamChatApi::class)
     @ExperimentalCoroutinesApi
     @BeforeEach
     @CallSuper

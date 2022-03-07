@@ -2,9 +2,6 @@
 
 package io.getstream.chat.android.client.models
 
-internal const val EXTRA_IMAGE = "image"
-internal const val EXTRA_NAME = "name"
-
 public val Channel.initials: String
     get() = name.initials()
 

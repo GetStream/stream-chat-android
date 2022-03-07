@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -18,16 +16,16 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import java.util.Date
 
 /**
  * Used for integrations tests.
  * Initialises mock internals of [ChatClient]
  */
-@ExperimentalStreamChatApi
 internal class MockClientBuilder(
     private val testCoroutineScope: TestCoroutineScope,
 ) {

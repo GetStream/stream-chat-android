@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.annotation.CallSuper
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
@@ -14,6 +13,7 @@ import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.jupiter.api.BeforeEach
+import org.mockito.kotlin.mock
 
 @ExperimentalCoroutinesApi
 internal open class BaseRepositoryFacadeTest {

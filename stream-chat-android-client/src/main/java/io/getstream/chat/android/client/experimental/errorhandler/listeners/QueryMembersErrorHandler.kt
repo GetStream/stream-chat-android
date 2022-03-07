@@ -7,12 +7,10 @@ import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.queryMembers] calls.
  */
-@ExperimentalStreamChatApi
 public interface QueryMembersErrorHandler : ErrorHandler {
 
     /**
@@ -36,7 +34,6 @@ public interface QueryMembersErrorHandler : ErrorHandler {
     ): ReturnOnErrorCall<List<Member>>
 }
 
-@ExperimentalStreamChatApi
 internal fun Call<List<Member>>.onQueryMembersError(
     errorHandlers: List<QueryMembersErrorHandler>,
     channelType: String,

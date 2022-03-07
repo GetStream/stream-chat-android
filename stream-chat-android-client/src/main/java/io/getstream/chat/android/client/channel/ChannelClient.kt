@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -652,34 +653,30 @@ public class ChannelClient internal constructor(
         return client.unmuteCurrentUser()
     }
 
+    /**
+     * Sends a start typing event [EventType.TYPING_START] in this channel to the server.
+     *
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
     @CheckResult
-    public fun keystroke(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_START, channelType, channelId)
+    @JvmOverloads
+    public fun keystroke(parentId: String? = null): Call<ChatEvent> {
+        return client.keystroke(channelType, channelId, parentId)
     }
 
+    /**
+     * Sends a stop typing event [EventType.TYPING_STOP] in this channel to the server.
+     *
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
     @CheckResult
-    public fun keystroke(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_START,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
-    }
-
-    @CheckResult
-    public fun stopTyping(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
-    }
-
-    @CheckResult
-    public fun stopTyping(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_STOP,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
+    @JvmOverloads
+    public fun stopTyping(parentId: String? = null): Call<ChatEvent> {
+        return client.stopTyping(channelType, channelId, parentId)
     }
 
     /**

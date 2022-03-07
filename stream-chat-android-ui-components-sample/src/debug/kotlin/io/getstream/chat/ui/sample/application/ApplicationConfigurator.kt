@@ -8,10 +8,8 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.soloader.SoLoader
 import io.getstream.chat.android.client.di.networkFlipper
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-@OptIn(ExperimentalStreamChatApi::class)
 object ApplicationConfigurator {
 
     const val HUAWEI_APP_ID = "104598359"

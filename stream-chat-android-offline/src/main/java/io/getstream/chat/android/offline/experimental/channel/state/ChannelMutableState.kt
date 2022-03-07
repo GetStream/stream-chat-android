@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.message.wasCreatedAfter
@@ -20,12 +19,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
-@ExperimentalStreamChatApi
 internal class ChannelMutableState(
     override val channelType: String,
     override val channelId: String,
@@ -55,6 +52,7 @@ internal class ChannelMutableState(
     internal val lastMessageAt = MutableStateFlow<Date?>(null)
     internal val _repliedMessage = MutableStateFlow<Message?>(null)
     internal val _unreadCount = MutableStateFlow(0)
+
     /** Channel config data. */
     internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 
@@ -92,6 +90,7 @@ internal class ChannelMutableState(
     internal var lastMarkReadEvent: Date? = null
     internal var lastKeystrokeAt: Date? = null
     internal var lastStartTypingEvent: Date? = null
+    internal var keystrokeParentMessageId: String? = null
 
     internal val sortedMessages: StateFlow<List<Message>> = messageList.map {
         it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
@@ -112,19 +111,14 @@ internal class ChannelMutableState(
         _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
             .map { it.sortedBy(User::createdAt) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
-    override val typing: StateFlow<TypingEvent> = userFlow
-        .filterNotNull()
-        .flatMapConcat { currentUser ->
-            _typing.map { typingMap ->
-                currentUser to typingMap
-            }
-        }
-        .map { (currentUser, typingMap) ->
+
+    override val typing: StateFlow<TypingEvent> = _typing
+        .map { typingMap ->
             val userList = typingMap.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user -> user != currentUser }
+                        is TypingStartEvent -> event.user
                         else -> null
                     }
                 }
@@ -186,5 +180,4 @@ internal class ChannelMutableState(
     }
 }
 
-@ExperimentalStreamChatApi
 internal fun ChannelState.toMutableState(): ChannelMutableState = this as ChannelMutableState
