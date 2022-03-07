@@ -141,7 +141,7 @@ public class StreamOfflinePluginFactory(
         )
 
         val eventHandler = EventHandlerImpl(
-            recoveryEnabled = true,
+            recoveryEnabled = config.recoveryEnabled,
             client = chatClient,
             logic = logic,
             state = stateRegistry,
