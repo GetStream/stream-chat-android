@@ -20,9 +20,13 @@
 
 ### ✅ Added
 - Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
+- Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
+  You can use it to customize notifications priority, channel name, etc. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ⚠️ Changed
 - Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
+- `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
+  You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ❌ Removed
 
