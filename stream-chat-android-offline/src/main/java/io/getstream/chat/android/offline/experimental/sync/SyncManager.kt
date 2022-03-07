@@ -24,7 +24,6 @@ import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.domain.syncState.SyncStateRepository
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll

@@ -170,7 +170,6 @@ public class StreamOfflinePluginFactory(
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
-                eventHandler.clear()
             }
         }
 

@@ -79,6 +79,7 @@ import java.util.Date
 import java.util.InputMismatchException
 
 internal class EventHandlerImpl(
+    private val recoveryEnabled: Boolean,
     private val client: ChatClient,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
@@ -161,7 +162,9 @@ internal class EventHandlerImpl(
                     logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
                     updateCurrentUser(event.me)
 
-                    syncManager.connectionRecovered()
+                    if (recoveryEnabled) {
+                        syncManager.connectionRecovered()
+                    }
 
                     // 4. recover missing events
                     val activeChannelCids = activeEntitiesManager.activeChannelsCids()
