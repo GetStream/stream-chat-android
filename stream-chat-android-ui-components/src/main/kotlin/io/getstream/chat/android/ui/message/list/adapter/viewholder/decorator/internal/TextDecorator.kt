@@ -2,19 +2,26 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import android.widget.TextView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class TextDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 
-    override fun decorateTextAndAttachmentsMessage(
-        viewHolder: TextAndAttachmentsViewHolder,
+    /**
+     * Decorates the text of the message containing custom attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateCustomAttachmentsMessage(
+        viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupTextView(viewHolder.binding.messageText, data)
 
@@ -41,21 +48,30 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
     ) = setupTextView(viewHolder.binding.messageText, data)
 
     /**
-     * Decorates the text of the image attachment message.
+     * Decorates the text of the message containing image attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.
      */
-    override fun decorateImageAttachmentMessage(
+    override fun decorateImageAttachmentsMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupTextView(viewHolder.binding.messageText, data)
 
+    /**
+     * Decorates the text of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupTextView(viewHolder.binding.messageText, data)
 
+    /**
+     * Does nothing for the ephemeral Giphy message as it can't contain text.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
@@ -73,11 +89,8 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
     ) = setupTextView(viewHolder.binding.messageText, data)
 
     private fun setupTextView(textView: TextView, data: MessageListItem.MessageItem) {
-        if (data.isMine) {
-            style.textStyleMine.apply(textView)
-        } else {
-            style.textStyleTheirs.apply(textView)
-        }
+        val textStyle = if (data.isMine) style.textStyleMine else style.textStyleTheirs
+        textView.setTextStyle(textStyle)
 
         style.getStyleLinkTextColor(data.isMine)?.let { linkTextColor ->
             textView.setLinkTextColor(linkTextColor)
