@@ -18,21 +18,13 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
 /**
  * Class responsible for handling chat notifications.
+ * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
 internal class ChatNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
-    private val notificationChannelFun: (() -> NotificationChannel)?,
+    private val notificationChannel: (() -> NotificationChannel),
 ) : NotificationHandler {
-
-    /**
-     * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
-     * Should never be null in such case.
-     * @see [NotificationHandlerFactory.getDefaultNotificationChannel]
-     */
-    private val notificationChannel: NotificationChannel by lazy {
-        notificationChannelFun!!.invoke()
-    }
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(
@@ -43,14 +35,14 @@ internal class ChatNotificationHandler(
     private val notificationManager: NotificationManager by lazy {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                it.createNotificationChannel(notificationChannel)
+                it.createNotificationChannel(notificationChannel())
             }
         }
     }
 
     private fun getNotificationChannelId(): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel.id
+            notificationChannel().id
         } else {
             ""
         }

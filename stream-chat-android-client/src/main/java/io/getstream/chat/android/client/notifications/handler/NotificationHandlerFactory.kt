@@ -1,10 +1,12 @@
 package io.getstream.chat.android.client.notifications.handler
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.annotation.RequiresApi
 import io.getstream.chat.android.client.R
 
 /**
@@ -20,6 +22,7 @@ public object NotificationHandlerFactory {
      * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
      * @param notificationChannel Lambda expression used to generate a [NotificationChannel]. Used in SDK_INT >= VERSION_CODES.O.
      */
+    @SuppressLint("NewApi")
     public fun createNotificationHandler(
         context: Context,
         newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
@@ -42,17 +45,14 @@ public object NotificationHandlerFactory {
     private fun createDefaultNewMessageIntent(context: Context): Intent =
         context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
 
-    private fun getDefaultNotificationChannel(context: Context): (() -> NotificationChannel)? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            {
-                NotificationChannel(
-                    context.getString(R.string.stream_chat_notification_channel_id),
-                    context.getString(R.string.stream_chat_notification_channel_name),
-                    NotificationManager.IMPORTANCE_DEFAULT,
-                )
-            }
-        } else {
-            null
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getDefaultNotificationChannel(context: Context): (() -> NotificationChannel) {
+        return {
+            NotificationChannel(
+                context.getString(R.string.stream_chat_notification_channel_id),
+                context.getString(R.string.stream_chat_notification_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
         }
     }
 }

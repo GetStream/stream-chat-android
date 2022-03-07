@@ -19,27 +19,22 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import java.util.Date
 
+/**
+ * Class responsible for displaying chat notifications using [NotificationCompat.MessagingStyle].
+ * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
+ */
 @RequiresApi(Build.VERSION_CODES.M)
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
-    notificationChannelFun: (() -> NotificationChannel)?,
+    private val notificationChannel: (() -> NotificationChannel),
 ) : NotificationHandler {
-
-    /**
-     * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
-     * Should never be null in such case.
-     * @see [NotificationHandlerFactory.getDefaultNotificationChannel]
-     */
-    private val notificationChannel: NotificationChannel by lazy {
-        notificationChannelFun!!.invoke()
-    }
 
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
     private val notificationManager: NotificationManager by lazy {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also { notificationManager ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationManager.createNotificationChannel(notificationChannel)
+                notificationManager.createNotificationChannel(notificationChannel())
             }
         }
     }
@@ -108,7 +103,7 @@ internal class MessagingStyleNotificationHandler(
 
     private fun getNotificationChannelId(): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel.id
+            notificationChannel().id
         } else {
             ""
         }
