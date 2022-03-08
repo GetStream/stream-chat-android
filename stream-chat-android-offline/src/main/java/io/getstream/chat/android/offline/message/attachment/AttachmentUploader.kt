@@ -26,9 +26,11 @@ internal class AttachmentUploader(
         val attachmentType = mimeType.toAttachmentType()
 
         val result = if (attachmentType == AttachmentType.IMAGE) {
-            client.sendImage(channelType, channelId, file, progressCallback).await()
+            val call = client.sendImage(channelType, channelId, file, progressCallback)
+            call.await()
         } else {
-            client.sendFile(channelType, channelId, file, progressCallback).await()
+            val call = client.sendFile(channelType, channelId, file, progressCallback)
+            call.await()
         }
         return if (result.isSuccess) {
             val augmentedAttachment = attachment.augmentAttachmentOnSuccess(

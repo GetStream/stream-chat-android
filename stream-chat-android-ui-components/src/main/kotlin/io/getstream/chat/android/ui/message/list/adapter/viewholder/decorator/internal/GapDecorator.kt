@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
@@ -9,20 +10,17 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Ima
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class GapDecorator : BaseDecorator() {
 
-    private fun setupGapView(gapView: GapView, data: MessageListItem.MessageItem) {
-        if (data.positions.contains(MessageListItem.Position.TOP)) {
-            gapView.showBigGap()
-        } else {
-            gapView.showSmallGap()
-        }
-    }
-
-    override fun decorateTextAndAttachmentsMessage(
-        viewHolder: TextAndAttachmentsViewHolder,
+    /**
+     * Decorates the gap of the message containing custom attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateCustomAttachmentsMessage(
+        viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
 
@@ -49,12 +47,12 @@ internal class GapDecorator : BaseDecorator() {
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     /**
-     * Decorates the gap of the image attachment message.
+     * Decorates the gap of the message containing image attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.
      */
-    override fun decorateImageAttachmentMessage(
+    override fun decorateImageAttachmentsMessage(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
@@ -84,4 +82,12 @@ internal class GapDecorator : BaseDecorator() {
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupGapView(viewHolder.binding.gapView, data)
+
+    private fun setupGapView(gapView: GapView, data: MessageListItem.MessageItem) {
+        if (data.positions.contains(MessageListItem.Position.TOP)) {
+            gapView.showBigGap()
+        } else {
+            gapView.showSmallGap()
+        }
+    }
 }

@@ -96,7 +96,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
@@ -322,7 +322,8 @@ public class MessageListView : ConstraintLayout {
                         ),
                         viewStyle,
                         messageListItemViewHolderFactory,
-                        messageBackgroundFactory
+                        messageBackgroundFactory,
+                        attachmentFactoryManager,
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -448,7 +449,8 @@ public class MessageListView : ConstraintLayout {
                     ),
                     requireStyle(),
                     messageListItemViewHolderFactory,
-                    messageBackgroundFactory
+                    messageBackgroundFactory,
+                    attachmentFactoryManager,
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -492,7 +494,7 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
-    private lateinit var attachmentViewFactory: AttachmentViewFactory
+    private lateinit var attachmentFactoryManager: AttachmentFactoryManager
     private lateinit var messageBackgroundFactory: MessageBackgroundFactory
 
     public constructor(context: Context) : this(context, null, 0)
@@ -673,8 +675,8 @@ public class MessageListView : ConstraintLayout {
             messageDateFormatter = ChatUI.dateFormatter
         }
 
-        if (::attachmentViewFactory.isInitialized.not()) {
-            attachmentViewFactory = AttachmentViewFactory()
+        if (::attachmentFactoryManager.isInitialized.not()) {
+            attachmentFactoryManager = ChatUI.attachmentFactoryManager
         }
 
         // Create default ViewHolderFactory if needed
@@ -696,7 +698,7 @@ public class MessageListView : ConstraintLayout {
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
-        messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
+        messageListItemViewHolderFactory.setAttachmentFactoryManager(this.attachmentFactoryManager)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
         messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(requireStyle().replyMessageStyle)
@@ -985,16 +987,17 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Allows clients to set a custom implementation of [AttachmentViewFactory]. Use this
-     * method to create a custom content view for the message attachments.
-     *§
-     * @param attachmentViewFactory The custom view factory for attachments.
+     * Allows clients to set an instance of [AttachmentFactoryManager] that holds
+     * a list of custom attachment factories. Use this method to create a custom
+     * content view for the message attachments.
+     *
+     * @param attachmentFactoryManager Hold the list of factories for custom attachments.
      */
-    public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
+    public fun setAttachmentFactoryManager(attachmentFactoryManager: AttachmentFactoryManager) {
         check(::adapter.isInitialized.not()) {
-            "Adapter was already initialized, please set AttachmentViewFactory first"
+            "Adapter was already initialized, please set attachment factories first"
         }
-        this.attachmentViewFactory = attachmentViewFactory
+        this.attachmentFactoryManager = attachmentFactoryManager
     }
 
     public fun handleFlagMessageResult(result: Result<Flag>) {
