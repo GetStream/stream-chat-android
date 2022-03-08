@@ -604,6 +604,8 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public static fun getFilter$delegate (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;)Ljava/lang/Object;
 	public final fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
+	public static fun getRecoveryNeeded$delegate (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;)Ljava/lang/Object;
 	public final fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	public static fun getSort$delegate (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;)Ljava/lang/Object;
 	public final fun query (IIILkotlin/coroutines/Continuation;)Ljava/lang/Object;
