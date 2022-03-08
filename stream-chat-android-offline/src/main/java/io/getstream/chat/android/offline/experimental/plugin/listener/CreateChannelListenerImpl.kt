@@ -54,7 +54,10 @@ internal class CreateChannelListenerImpl(
             createdAt = Date(),
             createdBy = currentUser,
             syncStatus = if (globalState.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-        )
+        ).apply {
+            name = getExtraValue("name", "")
+            image = getExtraValue("image", "")
+        }
 
         repositoryFacade.insertChannel(channel)
     }
