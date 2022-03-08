@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -74,8 +74,8 @@ private fun getOnlineStateSubtitle(context: Context, members: List<Member>): Str
 }
 
 private fun List<User>.filterCurrentUser(): List<User> {
-    return if (ChatDomain.isInitialized) {
-        val currentUser = ChatDomain.instance().user.value
+    return if (ChatClient.isInitialized) {
+        val currentUser = ChatClient.instance().globalState.user.value
         filter { it.id != currentUser?.id }
     } else {
         this
