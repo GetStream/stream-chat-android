@@ -301,6 +301,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun hasChannels ()Z
 	public final fun hideLoadingMore ()V
 	public final fun hideLoadingView ()V
+	public final fun isAdapterInitialized ()Z
 	public final fun setChannelDeleteClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelInfoClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
@@ -1614,6 +1615,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun isAdapterInitialized ()Z
 	public final fun requireStyle ()Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener;)V
