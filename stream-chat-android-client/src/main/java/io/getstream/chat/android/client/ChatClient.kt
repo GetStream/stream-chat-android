@@ -1924,8 +1924,9 @@ public class ChatClient internal constructor(
     /**
      * Creates the channel.
      * You can either create an id-based channel by passing not blank [channelId] or
-     * member-based (distinct) channel by passing empty [channelId] and not empty [memberIds].
-     * Extra channel's information can be passed in the [extraData] map.
+     * member-based (distinct) channel by leaving [channelId] empty.
+     * Use [memberIds] list to create a channel together with members. Make sure the list is not empty in case of creating member-based channel!
+     * Extra channel's information, for example name, can be passed in the [extraData] map.
      *
      * The call will be retried accordingly to [retryPolicy].
      *
@@ -1935,7 +1936,7 @@ public class ChatClient internal constructor(
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of members' ids.
-     * @param extraData Map of key-value pairs that let you store extra data
+     * @param extraData Map of key-value pairs that let you store extra data.
      *
      * @return Executable async [Call] responsible for creating the channel.
      */
