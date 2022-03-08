@@ -2,7 +2,9 @@ package io.getstream.chat.docs.java;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,9 +61,10 @@ public class AndroidIntroduction {
 
         Map<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Awesome channel about traveling");
+        List<String> memberIds = new LinkedList<>();
 
         // Creating a channel with the low level client
-        channelClient.create(extraData).enqueue(result -> {
+        channelClient.create(memberIds, extraData).enqueue(result -> {
             if (result.isSuccess()) {
                 Channel channel = result.data();
                 // Use channel by calling methods on channelClient

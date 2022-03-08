@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.CreateChannelService
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
@@ -141,29 +140,6 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
         } else {
             cidValidationResult
         }
-    }
-}
-
-/**
- * Creates a new channel. Will retry according to the retry policy if it fails.
- *
- * @param channel The channel object.
- *
- * @return Executable async [Call] responsible for creating a channel.
- *
- * @see io.getstream.chat.android.offline.utils.RetryPolicy
- */
-@CheckResult
-public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
-    val domainImpl = domainImpl()
-    return CoroutineCall(state.scope) {
-        CreateChannelService(
-            scope = state.scope,
-            client = this@createChannel,
-            repositoryFacade = domainImpl.repos,
-            getChannelController = domainImpl::channel,
-            activeQueries = domainImpl.getActiveQueries(),
-        ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
     }
 }
 

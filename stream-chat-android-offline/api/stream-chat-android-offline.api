@@ -419,19 +419,9 @@ public abstract interface class io/getstream/chat/android/offline/experimental/c
 	public abstract fun getParentId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/experimental/errorhandler/factory/DeleteReactionErrorHandlerFactory : io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
-	public fun <init> ()V
-	public fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
-}
-
-public final class io/getstream/chat/android/offline/experimental/errorhandler/factory/QueryMembersErrorHandlerFactory : io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
-	public fun <init> ()V
-	public fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
-}
-
-public final class io/getstream/chat/android/offline/experimental/errorhandler/factory/SendReactionErrorHandlerFactory : io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
-	public fun <init> ()V
-	public fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
+public final class io/getstream/chat/android/offline/experimental/errorhandler/factory/OfflineErrorHandlerFactoriesProvider {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/experimental/errorhandler/factory/OfflineErrorHandlerFactoriesProvider;
+	public final fun createErrorHandlerFactories ()Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
@@ -507,7 +497,6 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun cancelEphemeralMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public static final fun createChannel (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
