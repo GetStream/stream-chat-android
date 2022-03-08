@@ -24,7 +24,6 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -167,10 +166,6 @@ internal class SyncManager(
                         val channelLogic = logicRegistry.channel(channel.type, channel.id)
                         addTypingChannel(channelLogic)
                         channelLogic.updateDataFromChannel(channel)
-
-                        // val channelController = activeEntitiesManager.channel(channel)
-                        // addTypingChannel(channelController)
-                        // channelController.updateDataFromChannel(channel)
                     }
 
                     missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }

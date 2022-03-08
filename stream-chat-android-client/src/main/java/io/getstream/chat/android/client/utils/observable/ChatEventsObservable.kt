@@ -50,7 +50,7 @@ internal class ChatEventsObservable(
     fun subscribe(
         filter: (ChatEvent) -> Boolean = { true },
         listener: ChatEventListener<ChatEvent>,
-    ): EventSubscription {
+    ): Disposable {
         return addSubscription(SubscriptionImpl(filter, listener))
     }
 
