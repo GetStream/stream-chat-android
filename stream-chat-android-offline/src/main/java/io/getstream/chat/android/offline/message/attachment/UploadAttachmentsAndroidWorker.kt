@@ -9,8 +9,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 
 internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
@@ -22,13 +22,11 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        return UploadAttachmentsWorker(applicationContext)
+        return UploadAttachmentsWorker(LogicRegistry.get(), RepositoryFacade.get(), ChatClient.instance())
             .uploadAttachmentsForMessage(
                 channelType,
                 channelId,
-                messageId,
-                ChatDomain.instance() as ChatDomainImpl,
-                ChatClient.instance()
+                messageId
             )
             .run { if (isSuccess) Result.success() else Result.failure() }
     }
@@ -43,10 +41,10 @@ internal class UploadAttachmentsAndroidWorker(
             channelType: String,
             channelId: String,
             messageId: String,
+            networkType: UploadAttachmentsNetworkType,
         ) {
-            val networkType = (ChatDomain.instance() as ChatDomainImpl).uploadAttachmentsNetworkType.toNetworkType()
             val uploadAttachmentsWorRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
-                .setConstraints(Constraints.Builder().setRequiredNetworkType(networkType).build())
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(networkType.toNetworkType()).build())
                 .setInputData(
                     workDataOf(
                         DATA_CHANNEL_ID to channelId,

@@ -13,6 +13,7 @@ import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.lazyVar
@@ -102,4 +103,9 @@ public object ChatUI {
      * Allows formatting date-time objects as strings.
      */
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
+
+    /**
+     * Allows adding support for custom attachments in the message list.
+     */
+    public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
 }
