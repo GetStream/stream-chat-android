@@ -32,7 +32,8 @@ class ChatPreviewViewModel(
             chatDomain.user.filterNotNull().collect { user ->
                 val result = chatClient.createChannel(
                     channelType = "messaging",
-                    members = listOf(memberId, user.id),
+                    channelId = "",
+                    memberIds = listOf(memberId, user.id),
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
                 ).await()
 

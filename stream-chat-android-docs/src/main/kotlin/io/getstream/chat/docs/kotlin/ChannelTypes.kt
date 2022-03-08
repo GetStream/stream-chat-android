@@ -17,6 +17,7 @@ class ChannelTypes(val client: ChatClient) {
             client.createChannel(
                 channelType = "messaging",
                 channelId = "red-general",
+                memberIds = emptyList(),
                 extraData = mapOf("team" to "red")
             ).enqueue { result ->
                 if (result.isSuccess) {

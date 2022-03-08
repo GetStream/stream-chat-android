@@ -22,11 +22,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun connectGuestUser (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun connectUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;)Lio/getstream/chat/android/client/call/Call;
 	public final fun connectUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun createChannel (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun createChannel (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
-	public final fun createChannel (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
-	public final fun createChannel (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public final fun createChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -699,9 +695,6 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun addMembers ([Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
 	public final fun create (Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
-	public final fun create (Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun create$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun create$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun delete ()Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteFile (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteImage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -1902,6 +1895,14 @@ public abstract interface class io/getstream/chat/android/client/experimental/er
 	public abstract fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/CreateChannelErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
+	public abstract fun onCreateChannelError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/CreateChannelErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/CreateChannelErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
 	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
 }
@@ -1936,6 +1937,12 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/ChannelMarkReadListener {
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/CreateChannelListener {
+	public abstract fun onCreateChannelPrecondition (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onCreateChannelRequest (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onCreateChannelResult (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/DeleteMessageListener {

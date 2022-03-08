@@ -147,8 +147,9 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
             on {
                 createChannel(
                     any(),
-                    any<String>(),
-                    any<Map<String, Any>>()
+                    any(),
+                    any(),
+                    any(),
                 )
             } doReturn TestCall(Result(data.channel1))
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(

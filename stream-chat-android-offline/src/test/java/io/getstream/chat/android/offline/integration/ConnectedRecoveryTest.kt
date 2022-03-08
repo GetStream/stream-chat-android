@@ -53,9 +53,5 @@ internal class ConnectedRecoveryTest : BaseDomainTest2() {
         whenever(clientMock.createChannel(any(), any(), any(), any())) doReturn TestCall(Result(data.channel1))
         channels = chatDomainImpl.retryChannels()
         channels.size shouldBeEqualTo 1
-        channels.first().syncStatus shouldBeEqualTo SyncStatus.COMPLETED
-
-        channels = chatDomainImpl.repos.selectChannelsSyncNeeded()
-        channels.size shouldBeEqualTo 0
     }
 }

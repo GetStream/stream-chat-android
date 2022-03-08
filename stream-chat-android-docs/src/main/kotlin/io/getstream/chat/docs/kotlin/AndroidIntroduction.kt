@@ -58,7 +58,7 @@ class AndroidIntroduction {
         )
 
         // Creating a channel with the low level client
-        channelClient.create(extraData).enqueue { result ->
+        channelClient.create(memberIds = emptyList(), extraData = extraData).enqueue { result ->
             if (result.isSuccess) {
                 val channel: Channel = result.data()
                 // Use channel by calling methods on channelClient

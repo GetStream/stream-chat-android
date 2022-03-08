@@ -34,7 +34,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             val channelClient = client.channel(channelType = "messaging", channelId = "general")
             channelClient
                 .create(
-                    members = listOf("thierry", "tommaso"),
+                    memberIds = listOf("thierry", "tommaso"),
                     extraData = mapOf(
                         "name" to "Founder Chat",
                         "image" to "https://bit.ly/2O35mws",
@@ -57,7 +57,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
         fun createAChannel() {
             val channelClient = client.channel(channelType = "messaging", channelId = "general")
 
-            channelClient.create().enqueue { result ->
+            channelClient.create(memberIds = emptyList(), extraData = emptyMap()).enqueue { result ->
                 if (result.isSuccess) {
                     val newChannel: Channel = result.data()
                 } else {
@@ -291,7 +291,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             val channelClient = client.channel(channelType = "messaging", channelId = "general")
 
             channelClient.create(
-                members = listOf("thierry", "tomasso"),
+                memberIds = listOf("thierry", "tomasso"),
                 extraData = mapOf(
                     "source" to "user",
                     "source_detail" to mapOf("user_id" to 123),
@@ -381,7 +381,9 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
         fun creatingConversation() {
             client.createChannel(
                 channelType = "messaging",
-                members = listOf("thierry", "tomasso")
+                channelId = "",
+                memberIds = listOf("thierry", "tomasso"),
+                extraData = emptyMap(),
             ).enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
@@ -402,12 +404,9 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
          */
         fun invitingUsers() {
             val channelClient = client.channel("messaging", "general")
-            val data = mapOf(
-                "members" to listOf("thierry", "tommaso"),
-                "invites" to listOf("nick")
-            )
+            val data = mapOf("invites" to listOf("nick"))
 
-            channelClient.create(data).enqueue { result ->
+            channelClient.create(memberIds = listOf("thierry", "tommaso"), extraData = data).enqueue { result ->
                 if (result.isSuccess) {
                     val channel = result.data()
                 } else {
