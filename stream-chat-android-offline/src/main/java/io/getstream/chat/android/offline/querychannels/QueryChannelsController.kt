@@ -19,6 +19,7 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.QueryC
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.toQueryChannelsRequest
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -34,6 +35,8 @@ public class QueryChannelsController internal constructor(
     private val mutableState: QueryChannelsMutableState,
     private val queryChannelsLogic: QueryChannelsLogic,
 ) {
+    public val recoveryNeeded: StateFlow<Boolean> by mutableState::recoveryNeeded
+
     public val filter: FilterObject by mutableState::filter
     public val sort: QuerySort<Channel> by mutableState::sort
 

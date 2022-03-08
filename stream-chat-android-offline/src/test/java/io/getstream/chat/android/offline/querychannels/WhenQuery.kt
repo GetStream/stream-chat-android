@@ -203,7 +203,7 @@ internal class WhenQuery : SynchronizedCoroutineTest {
             }
             whenever(activeEntitiesManager.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
-                mock<ChannelController> {
+                mock {
                     on { toChannel() } doReturn channel
                 }
             }
@@ -228,7 +228,7 @@ internal class WhenQuery : SynchronizedCoroutineTest {
                 chatClient,
                 chatDomainImpl.repos,
                 GlobalMutableState.create(),
-                activeEntitiesManager
+                mock()
             )
 
             return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)

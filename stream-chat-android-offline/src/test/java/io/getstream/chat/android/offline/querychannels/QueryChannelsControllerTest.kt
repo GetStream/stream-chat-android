@@ -12,10 +12,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
-import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
@@ -163,6 +164,9 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
+            val channelLogic: ChannelLogic = mock {
+                on(it.toChannel()) doReturn channel
+            }
             val queryController = Fixture(scope)
                 .givenChatEventHandler { event, _, _ ->
                     when (event) {
@@ -171,6 +175,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                     }
                 }
                 .givenNewChannelControllerForChannel(channelController)
+                .givenNewChannelLogicForChannel(channelLogic)
                 .get()
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
@@ -202,6 +207,9 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
+            val channelLogic: ChannelLogic = mock {
+                on(it.toChannel()) doReturn channel
+            }
             val queryController = Fixture(scope)
                 .givenChatEventHandler { event, _, _ ->
                     when (event) {
@@ -211,6 +219,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                 }
                 .givenChannelFilterResponse(listOf(channel))
                 .givenNewChannelControllerForChannel(channelController)
+                .givenNewChannelLogicForChannel(channelLogic)
                 .get()
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
@@ -350,6 +359,9 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
+            val channelLogic: ChannelLogic = mock {
+                on(it.toChannel()) doReturn channel
+            }
             val queryController = Fixture(scope)
                 .givenChatEventHandler { event, _, _ ->
                     when (event) {
@@ -358,6 +370,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                     }
                 }
                 .givenNewChannelControllerForChannel(channelController)
+                .givenNewChannelLogicForChannel(channelLogic)
                 .get()
 
             queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
@@ -370,7 +383,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
 private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
-    private val activeEntitiesManager: ActiveEntitiesManager = mock()
+    private val logicRegistry: LogicRegistry = mock()
     private var querySort: QuerySort<Channel> = QuerySort()
 
     private var currentUser: User? = null
@@ -411,9 +424,10 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
 
     fun givenNewChannelControllerForChannel(channelController: ChannelController = mock()): Fixture = apply {
         whenever(chatDomainImpl.channel(any())) doReturn channelController
-        whenever(activeEntitiesManager.channel(any<Channel>())) doReturn channelController
-        whenever(activeEntitiesManager.channel(any<String>())) doReturn channelController
-        whenever(activeEntitiesManager.channel(any(), any())) doReturn channelController
+    }
+
+    fun givenNewChannelLogicForChannel(channelLogic: ChannelLogic = mock()): Fixture = apply {
+        whenever(logicRegistry.channel(any(), any())) doReturn channelLogic
     }
 
     fun givenChannelType(channelType: String) = apply {
@@ -439,7 +453,7 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
             chatClient,
             chatDomainImpl.repos,
             GlobalMutableState.create(),
-            activeEntitiesManager = activeEntitiesManager
+            logicRegistry
         )
         return QueryChannelsController(chatDomainImpl, mutableState, queryChannelsLogic)
             .apply {

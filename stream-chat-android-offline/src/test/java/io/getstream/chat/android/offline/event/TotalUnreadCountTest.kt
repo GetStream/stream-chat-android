@@ -114,7 +114,6 @@ internal class TotalUnreadCountTest {
                 mutableGlobalState = globalMutableState,
                 repos = repos,
                 syncManager = mock(),
-                activeEntitiesManager = mock()
             )
 
         init {
