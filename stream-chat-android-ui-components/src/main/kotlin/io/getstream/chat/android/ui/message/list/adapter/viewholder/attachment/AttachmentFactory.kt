@@ -31,5 +31,5 @@ public interface AttachmentFactory {
         message: Message,
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
-    ): AttachmentViewHolder
+    ): InnerAttachmentViewHolder
 }
