@@ -82,6 +82,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
     /**
      * Emits true if the message is a direct message between two users.
+     *
+     * Combining channel data with user information is necessary in order
+     * to avoid crashes for users who initialize components before setting
+     * the user.
      */
     public val isDirectMessage: LiveData<Boolean> =
         Transformations.map(channelState.channelData.combine(chatClient.globalState.user) { _, _ -> }.asLiveData()) {
