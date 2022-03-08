@@ -202,7 +202,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureLastMessageLabelAndTimestamp(lastMessage)
                 }
 
-                if (readStateChanged) {
+                if (readStateChanged || lastMessageChanged) {
                     configureCurrentUserLastMessageStatus(lastMessage)
                 }
 
@@ -267,13 +267,18 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // pending - if the sync status says it's pending
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().user.value?.id
+        if (!currentUserSentLastMessage) {
+            messageStatusImageView.setImageDrawable(null)
+            return
+        }
+
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
         when {
-            !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {
+            lastMessageByCurrentUserWasRead -> {
                 messageStatusImageView.setImageDrawable(style.indicatorReadIcon)
             }
 
-            currentUserSentLastMessage && !lastMessageByCurrentUserWasRead -> {
+            !lastMessageByCurrentUserWasRead -> {
                 messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
             }
 
