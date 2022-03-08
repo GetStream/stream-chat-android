@@ -68,6 +68,7 @@
 - Added a separate `FileAttachmentsViewHolder` for handling messages containing file attachments of different types or file attachments not handled by one of the other `ViewHolder`s. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
 - Introduced `AttachmentFactory` as a factory for custom attachment views. [#3116](https://github.com/GetStream/stream-chat-android/pull/3116)
 - Introduced `AttachmentFactoryManager` as a manager for the list of registered attachment factories. The class is exposed via `ChatUI`. [#3116](https://github.com/GetStream/stream-chat-android/pull/3116)
+- Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
