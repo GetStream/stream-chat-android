@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
  */
 @JvmName("bind")
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
-    channelState.observe(lifecycle) { channel ->
+    channel.observe(lifecycle) { channel ->
         val channelName = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
             currentUser = ChatClient.instance().getCurrentUser()
