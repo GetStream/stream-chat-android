@@ -123,12 +123,12 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
-        val activeEntitiesManager = ActiveEntitiesManager(
+        chatDomainImpl.activeEntitiesManager = ActiveEntitiesManager(
             chatClient = chatClient,
             logic = logic,
             stateRegistry = stateRegistry,
             scope = scope,
-            userPresence = true, // Todo fix that later!!
+            userPresence = config.userPresence,
             repos = repos,
             globalState = globalState,
         )
@@ -137,7 +137,9 @@ public class StreamOfflinePluginFactory(
             chatClient = chatClient,
             globalState = globalState,
             repos = repos,
-            activeEntitiesManager = activeEntitiesManager
+            logicRegistry = logic,
+            stateRegistry = stateRegistry,
+            userPresence = config.userPresence,
         )
 
         val eventHandler = EventHandlerImpl(
@@ -148,18 +150,13 @@ public class StreamOfflinePluginFactory(
             mutableGlobalState = globalState,
             repos = repos,
             syncManager = syncManager,
-            activeEntitiesManager = activeEntitiesManager
-        )
-
-        logic.activeEntitiesManager = activeEntitiesManager
-
-        chatDomainImpl.activeEntitiesManager = activeEntitiesManager
-        EventHandlerProvider.set(eventHandler)
+        ).also { eventHandler ->
+            EventHandlerProvider.set(eventHandler)
+        }
 
         InitializationCoordinator.getOrCreate().run {
             addUserConnectedListener {
                 chatDomainImpl.userConnected(user)
-                // chatClient.
                 eventHandler.startListening(scope)
             }
 

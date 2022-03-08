@@ -32,12 +32,6 @@ internal class ActiveEntitiesManager(
 
     fun activeQueries(): List<QueryChannelsController> = activeQueryMap.values.toList()
 
-    fun activeChannelsMap(): Map<String, ChannelController> = activeChannelMap
-
-    fun activeChannels(): List<ChannelController> = activeChannelMap.values.toList()
-
-    fun activeChannelsCids(): List<String> = activeChannelMap.keys.toList()
-
     internal fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
     }

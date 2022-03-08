@@ -15,7 +15,6 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
-import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
@@ -37,9 +36,6 @@ internal class LogicRegistry internal constructor(
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    // This class should not be insert via setter
-    internal lateinit var activeEntitiesManager: ActiveEntitiesManager
-
     fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsLogic(
@@ -48,7 +44,7 @@ internal class LogicRegistry internal constructor(
                 chatDomain.client,
                 chatDomain.repos,
                 GlobalMutableState.getOrCreate(),
-                activeEntitiesManager
+                this
             )
         }
     }

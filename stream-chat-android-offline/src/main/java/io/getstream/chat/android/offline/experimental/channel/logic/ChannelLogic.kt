@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.message.NEVER
@@ -150,6 +151,10 @@ internal class ChannelLogic(
                 }
                 chatDomainImpl.addError(error)
             }
+    }
+
+    internal fun state(): ChannelState {
+        return mutableState
     }
 
     /**
@@ -289,7 +294,7 @@ internal class ChannelLogic(
 
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
-    internal fun setWatcherCount(watcherCount: Int) {
+    private fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
             mutableState._watcherCount.value = watcherCount
         }
@@ -776,6 +781,15 @@ internal class ChannelLogic(
             is UserDeletedEvent,
             -> Unit // Ignore these events
         }
+    }
+
+    suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+        // Otherwise it's too easy for devs to create UI bugs which DDOS our API
+        if (mutableState._loading.value) {
+            logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
+            return
+        }
+        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     fun toChannel(): Channel = mutableState.toChannel()

@@ -30,4 +30,6 @@ public interface QueryChannelsState {
     public val channelsStateData: StateFlow<ChannelsStateData>
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
     public var chatEventHandler: ChatEventHandler?
+
+    public val recoveryNeeded: StateFlow<Boolean>
 }

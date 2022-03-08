@@ -23,8 +23,9 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
-import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.model.ChannelConfig
@@ -46,7 +47,7 @@ internal class QueryChannelsLogic(
     private val client: ChatClient,
     private val repos: RepositoryFacade,
     private val globalState: GlobalMutableState,
-    private val activeEntitiesManager: ActiveEntitiesManager
+    private val logicRegistry: LogicRegistry
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
@@ -75,6 +76,10 @@ internal class QueryChannelsLogic(
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         mutableState._currentRequest.value = request
         queryOffline(request.toPagination())
+    }
+
+    internal fun state(): QueryChannelsState {
+        return mutableState
     }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest): Result<List<Channel>> {
@@ -109,7 +114,7 @@ internal class QueryChannelsLogic(
 
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
-        activeEntitiesManager.channel(channel).updateDataFromChannel(channel)
+        logicRegistry.channel(channel.type, channel.id).updateDataFromChannel(channel)
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
@@ -140,7 +145,7 @@ internal class QueryChannelsLogic(
         chatDomainImpl: ChatDomainImpl,
     ) {
         if (result.isSuccess) {
-            mutableState.recoveryNeeded.value = false
+            mutableState._recoveryNeeded.value = false
 
             // store the results in the database
             val channelsResponse = result.data().toSet()
@@ -154,12 +159,12 @@ internal class QueryChannelsLogic(
             chatDomainImpl.storeStateForChannels(channelsResponse)
         } else {
             logger.logI("Query with filter ${request.filter} failed, marking it as recovery needed")
-            mutableState.recoveryNeeded.value = true
+            mutableState._recoveryNeeded.value = true
             globalState._errorEvent.value = Event(result.error())
         }
     }
 
-    internal fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
+    private fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
         return mutableState._currentRequest.value?.isFirstPage?.let { isFirstPage ->
             if (isFirstPage) mutableState._loading else mutableState._loadingMore
         } ?: mutableState._loading
@@ -182,8 +187,7 @@ internal class QueryChannelsLogic(
                 .let { removeChannels(it, repos) }
         }
         mutableState.channelsOffset.value += channels.size
-        channels.forEach { activeEntitiesManager.channel(it).updateDataFromChannel(it) }
-        addChannels(channels, repos)
+        channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
     }
 
     internal suspend fun removeChannel(cid: String) =
@@ -259,7 +263,7 @@ internal class QueryChannelsLogic(
                 if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
                     client.state.channel(channelType, channelId).toChannel()
                 } else {
-                    activeEntitiesManager.channel(channelType, channelId).toChannel()
+                    logicRegistry.channel(channelType, channelId).toChannel()
                 }
             }
     }

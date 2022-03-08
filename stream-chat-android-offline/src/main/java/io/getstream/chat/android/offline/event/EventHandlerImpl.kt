@@ -65,7 +65,6 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.experimental.sync.ActiveEntitiesManager
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
@@ -86,7 +85,6 @@ internal class EventHandlerImpl(
     private val mutableGlobalState: GlobalMutableState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
-    private val activeEntitiesManager: ActiveEntitiesManager,
 ) {
     private var logger = ChatLogger.get("EventHandler")
 
@@ -116,11 +114,12 @@ internal class EventHandlerImpl(
     }
 
     internal suspend fun replyEventsForActiveChannels(): Result<List<ChatEvent>> {
-        return replayEventsForChannels(activeEntitiesManager.activeChannelsCids())
+        return replayEventsForChannels(activeChannelsCid())
     }
 
     internal fun addNewChannelToReplayEvents(cid: String) {
-        activeEntitiesManager.channel(cid)
+        val (type, id) = cid.cidToTypeAndId()
+        logic.channel(type, id)
     }
 
     @VisibleForTesting
@@ -129,12 +128,15 @@ internal class EventHandlerImpl(
         handleEventsInternal(listOf(event), isFromSync = false)
     }
 
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
-        val resultChatEvent = queryEvents(cids)
+    private fun activeChannelsCid(): List<String> {
+        return logic.getActiveChannelsLogic().map { it.cid }
+    }
 
-        return resultChatEvent.onSuccessSuspend { eventList ->
-            handleEventsInternal(eventList, isFromSync = true)
-        }
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+        return queryEvents(cids)
+            .onSuccessSuspend { eventList ->
+                handleEventsInternal(eventList, isFromSync = true)
+            }
     }
 
     private suspend fun replayEvensForAllChannels(user: User) {
@@ -167,7 +169,7 @@ internal class EventHandlerImpl(
                     }
 
                     // 4. recover missing events
-                    val activeChannelCids = activeEntitiesManager.activeChannelsCids()
+                    val activeChannelCids = activeChannelsCid()
                     if (activeChannelCids.isNotEmpty()) {
                         replayEventsForChannels(activeChannelCids)
                     }

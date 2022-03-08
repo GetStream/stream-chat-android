@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -16,15 +17,16 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.sync.Mutex
@@ -45,7 +47,9 @@ internal class SyncManager(
     private val chatClient: ChatClient,
     private val globalState: GlobalMutableState,
     private val repos: RepositoryFacade,
-    private val activeEntitiesManager: ActiveEntitiesManager,
+    private val logicRegistry: LogicRegistry,
+    private val stateRegistry: StateRegistry,
+    private val userPresence: Boolean
 ) {
 
     private val entitiesRetryMutex = Mutex()
@@ -68,7 +72,7 @@ internal class SyncManager(
 
     internal suspend fun storeSyncState() {
         syncStateFlow.value?.let { syncState ->
-            val newSyncState = syncState.copy(activeChannelIds = activeEntitiesManager.activeChannelsCids())
+            val newSyncState = syncState.copy(activeChannelIds = logicRegistry.getActiveChannelsLogic().map { it.cid })
             repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
         }
@@ -114,38 +118,40 @@ internal class SyncManager(
 
         // 2. update the results for queries that are actively being shown right now (synchronous)
         val updatedChannelIds = mutableSetOf<String>()
-        activeEntitiesManager.activeQueries()
-            .filter { it.recoveryNeeded.value || recoverAll }
+
+        logicRegistry.getActiveQueryChannelsLogic()
+            .filter { queryChannelsLogic -> queryChannelsLogic.state().recoveryNeeded.value || recoverAll }
             .take(QUERIES_TO_RETRY)
-            .also { controllerList ->
-                queriesToRetry = controllerList.size
+            .also { queryChannelStateList ->
+                queriesToRetry = queryChannelStateList.size
             }
-            .forEach { queryChannelController ->
-                val pagination = QueryChannelsPaginationRequest(
-                    queryChannelController.sort,
-                    INITIAL_CHANNEL_OFFSET,
-                    CHANNEL_LIMIT,
-                    MESSAGE_LIMIT,
-                    MEMBER_LIMIT
+            .forEach { queryLogic ->
+                // val
+                val request = QueryChannelsRequest(
+                    filter = queryLogic.state().filter,
+                    offset = INITIAL_CHANNEL_OFFSET,
+                    limit = CHANNEL_LIMIT,
+                    querySort = queryLogic.state().sort,
+                    messageLimit = MESSAGE_LIMIT,
+                    memberLimit = MEMBER_LIMIT,
                 )
 
-                val response = queryChannelController.runQueryOnline(pagination)
-                if (response.isSuccess) {
-                    queryChannelController.updateOnlineChannels(response.data(), true)
-                    updatedChannelIds.addAll(response.data().map { it.cid })
-                }
+                queryLogic.runQueryOnline(request)
+                    .onSuccessSuspend { channels ->
+                        queryLogic.updateOnlineChannels(channels, true)
+                        updatedChannelIds.addAll(channels.map { it.cid })
+                    }
             }
 
         // 3. update the data for all channels that are being show right now...
         // exclude ones we just updated
         // (synchronous)
-        val cids: List<String> = activeEntitiesManager.activeChannelsMap()
-            .entries
+
+        val cids: List<String> = stateRegistry.getActiveChannelStates()
             .asSequence()
-            .filter { it.value.recoveryNeeded || recoverAll }
-            .filterNot { updatedChannelIds.contains(it.key) }
+            .filter { (it.recoveryNeeded || recoverAll) && !updatedChannelIds.contains(it.cid) }
             .take(30)
-            .map { it.key }
+            .map { it.cid }
             .toList()
 
         logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying $queriesToRetry queries and ${cids.size} channels")
@@ -159,20 +165,28 @@ internal class SyncManager(
                 .await()
                 .onSuccessSuspend { channels ->
                     val foundChannelIds = channels.map { it.id }
-                    for (c in channels) {
-                        val channelController = activeEntitiesManager.channel(c)
-                        addTypingChannel(channelController)
-                        channelController.updateDataFromChannel(c)
+
+                    channels.forEach { channel ->
+                        val channelLogic = logicRegistry.channel(channel.type, channel.id)
+                        addTypingChannel(channelLogic)
+                        channelLogic.updateDataFromChannel(channel)
+
+                        // val channelController = activeEntitiesManager.channel(channel)
+                        // addTypingChannel(channelController)
+                        // channelController.updateDataFromChannel(channel)
                     }
+
                     missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
                     storeStateForChannels(channels)
                 }
 
             // create channels that are not present on the API
-            missingChannelIds.map(activeEntitiesManager::channel)
-                .forEach { channelController ->
-                    channelController.watch()
-                }
+            missingChannelIds.map { cid ->
+                val (type, id) = cid.cidToTypeAndId()
+                logicRegistry.channel(type, id)
+            }.forEach { channelLogic ->
+                channelLogic.watch(userPresence = userPresence)
+            }
         }
     }
 
@@ -278,10 +292,9 @@ internal class SyncManager(
 
         failedMessages.forEach { markMessageAsFailed(it) }
 
-        needToBeSync.map { message ->
-            message to activeEntitiesManager.channel(message.cid)
-        }.forEach { (messageId, channel) ->
-            channel.retrySendMessage(messageId)
+        needToBeSync.forEach { message ->
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            chatClient.sendMessage(channelType, channelId, message, true).await()
         }
 
         return retriedMessages
@@ -318,7 +331,7 @@ internal class SyncManager(
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    private suspend fun addTypingChannel(channelController: ChannelController) {
-        globalState._typingChannels.emitAll(channelController.typing)
+    private suspend fun addTypingChannel(channelLogic: ChannelLogic) {
+        globalState._typingChannels.emitAll(channelLogic.state().typing)
     }
 }

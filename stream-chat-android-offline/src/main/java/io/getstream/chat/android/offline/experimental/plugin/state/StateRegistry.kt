@@ -69,6 +69,8 @@ public class StateRegistry private constructor(
 
     internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
 
+    internal fun getActiveQueryStates(): List<QueryChannelsState> = queryChannels.values.toList()
+
     /** Clear state of all state objects. */
     public fun clear() {
         job.cancelChildren()
