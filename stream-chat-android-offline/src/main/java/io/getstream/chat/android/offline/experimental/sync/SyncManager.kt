@@ -58,9 +58,6 @@ internal class SyncManager(
     private var firstConnect = true
 
     internal suspend fun connectionRecovered() {
-        globalState._connectionState.value = ConnectionState.CONNECTED
-        globalState._initialized.value = true
-
         if (firstConnect) {
             firstConnect = false
             connectionRecovered(false)
@@ -217,7 +214,6 @@ internal class SyncManager(
         return retryMessagesWithSyncedAttachments() + retryMessagesWithPendingAttachments()
     }
 
-    @VisibleForTesting
     private suspend fun retryReactions(): List<Reaction> {
         return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
             val result = if (reaction.deletedAt != null) {

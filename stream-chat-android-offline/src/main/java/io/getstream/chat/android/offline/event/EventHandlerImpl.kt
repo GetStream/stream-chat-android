@@ -164,6 +164,9 @@ internal class EventHandlerImpl(
                     logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
                     updateCurrentUser(event.me)
 
+                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
+                    mutableGlobalState._initialized.value = true
+
                     if (recoveryEnabled) {
                         syncManager.connectionRecovered()
                     }
@@ -534,7 +537,7 @@ internal class EventHandlerImpl(
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
-        for (queryChannelsLogic in logic.getActiveQueryChannelsLogic()) {
+        logic.getActiveQueryChannelsLogic().forEach { queryChannelsLogic ->
             queryChannelsLogic.handleEvents(events)
         }
     }
