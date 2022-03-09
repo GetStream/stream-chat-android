@@ -60,6 +60,7 @@
 ### 🐞 Fixed
 - Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
 - A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
+- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
 
 ### ⬆️ Improved
 
@@ -87,6 +88,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
+- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
 
 ### ⬆️ Improved
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
