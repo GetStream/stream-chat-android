@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadD
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
@@ -42,7 +42,7 @@ internal class CustomAttachmentsViewHolder(
     /**
      * The inner ViewHolder with custom attachments.
      */
-    private var attachmentViewHolder: AttachmentViewHolder? = null
+    private var innerAttachmentViewHolder: InnerAttachmentViewHolder? = null
 
     /**
      * Initializes the ViewHolder class.
@@ -81,7 +81,7 @@ internal class CustomAttachmentsViewHolder(
      * Updates the custom attachments section of the message.
      */
     private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
-        this.attachmentViewHolder = attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
+        this.innerAttachmentViewHolder = attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
             .also { attachmentViewHolder ->
                 attachmentViewHolder.onBindViewHolder(data.message)
                 binding.attachmentsContainer.removeAllViews()
@@ -138,7 +138,7 @@ internal class CustomAttachmentsViewHolder(
      * Called when a view in this ViewHolder has been recycled.
      */
     override fun unbind() {
-        attachmentViewHolder?.onUnbindViewHolder()
+        innerAttachmentViewHolder?.onUnbindViewHolder()
         super.unbind()
     }
 
@@ -146,13 +146,13 @@ internal class CustomAttachmentsViewHolder(
      * Called when a view in this ViewHolder has been attached to a window.
      */
     override fun onDetachedFromWindow() {
-        attachmentViewHolder?.onViewDetachedFromWindow()
+        innerAttachmentViewHolder?.onViewDetachedFromWindow()
     }
 
     /**
      * Called when a view in this ViewHolder has been detached from its window.
      */
     override fun onAttachedToWindow() {
-        attachmentViewHolder?.onViewAttachedToWindow()
+        innerAttachmentViewHolder?.onViewAttachedToWindow()
     }
 }
