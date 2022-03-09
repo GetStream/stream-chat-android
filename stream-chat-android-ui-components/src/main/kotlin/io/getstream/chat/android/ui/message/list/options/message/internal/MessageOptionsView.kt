@@ -112,7 +112,7 @@ internal class MessageOptionsView : FrameLayout {
                     style.retryIcon,
                 )
 
-                binding.retryTV.isVisible = true
+                binding.retryTV.isVisible = style.retryMessageEnabled
                 binding.threadReplyTV.isVisible = false
             }
             SyncStatus.COMPLETED -> {
@@ -236,6 +236,7 @@ internal class MessageOptionsView : FrameLayout {
         val pinMessageEnabled: Boolean,
         val muteEnabled: Boolean,
         val blockEnabled: Boolean,
+        val retryMessageEnabled: Boolean,
     ) : Serializable {
         internal companion object {
             operator fun invoke(
@@ -256,6 +257,7 @@ internal class MessageOptionsView : FrameLayout {
                     pinMessageEnabled = viewStyle.pinMessageEnabled,
                     muteEnabled = viewStyle.muteEnabled,
                     blockEnabled = viewStyle.blockEnabled,
+                    retryMessageEnabled = viewStyle.retryMessageEnabled,
                 )
         }
     }
