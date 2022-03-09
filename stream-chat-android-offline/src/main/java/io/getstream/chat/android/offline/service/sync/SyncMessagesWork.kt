@@ -11,8 +11,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.event.EventHandlerProvider
 import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.utils.validateCidBoolean
 
@@ -27,8 +26,9 @@ internal class SyncMessagesWork(
 
         return if (validateCidBoolean(cid)) {
             val (type, id) = cid.cidToTypeAndId()
+
             client.logic.channel(type, id) //Adds this channel to logic - Now it is an active channel
-            (ChatDomain.instance as ChatDomainImpl).eventHandler.replayEventsForActiveChannels()
+            EventHandlerProvider.eventHandler.replayEventsForActiveChannels()
 
             Result.success()
         } else {
