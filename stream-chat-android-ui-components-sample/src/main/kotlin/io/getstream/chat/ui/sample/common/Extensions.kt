@@ -110,7 +110,7 @@ val ChannelData.name: String
     get() = (extraData["name"] as? String) ?: ""
 
 val Member.isOwner: Boolean
-    get() = role == "owner"
+    get() = channelRole == "owner"
 
 const val CHANNEL_ARG_DRAFT = "draft"
 

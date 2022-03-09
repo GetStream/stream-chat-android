@@ -98,7 +98,7 @@ public fun buildDefaultChannelOptionsState(
 ): List<ChannelOptionState> {
     val canLeaveChannel = !selectedChannel.isDistinct()
     val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
-        ?.role
+        ?.channelRole
         ?.let { it == "admin" || it == "owner" }
         ?: false
 
