@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Message
  *
  * @param itemView The view that this ViewHolder controls.
  */
-public abstract class AttachmentViewHolder(public val itemView: View) {
+public abstract class InnerAttachmentViewHolder(public val itemView: View) {
     public val context: Context = itemView.context
 
     /**

@@ -33,7 +33,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager;
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory;
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder;
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder;
 import io.getstream.chat.docs.java.helpers.MyFileUploader;
 
 public class Messages {
@@ -450,20 +450,20 @@ public class Messages {
 
             @NonNull
             @Override
-            public AttachmentViewHolder createViewHolder(@NonNull Message message,
-                                                         @Nullable MessageListListenerContainer listeners,
-                                                         @NonNull ViewGroup parent) {
+            public InnerAttachmentViewHolder createViewHolder(@NonNull Message message,
+                                                              @Nullable MessageListListenerContainer listeners,
+                                                              @NonNull ViewGroup parent) {
                 // put your custom attachment view creation here
-                return new CustomAttachmentsViewHolder(new TextView(parent.getContext()), listeners);
+                return new CustomInnerAttachmentsViewHolder(new TextView(parent.getContext()), listeners);
             }
         }
 
-        private class CustomAttachmentsViewHolder extends AttachmentViewHolder {
+        private class CustomInnerAttachmentsViewHolder extends InnerAttachmentViewHolder {
 
             private Message message;
             private TextView textView;
 
-            public CustomAttachmentsViewHolder(@NonNull TextView textView,
+            public CustomInnerAttachmentsViewHolder(@NonNull TextView textView,
                                                MessageListListenerContainer listeners) {
                 super(textView);
                 this.textView = textView;
