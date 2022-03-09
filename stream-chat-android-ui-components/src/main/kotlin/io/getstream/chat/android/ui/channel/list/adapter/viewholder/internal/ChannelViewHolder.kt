@@ -202,7 +202,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureLastMessageLabelAndTimestamp(lastMessage)
                 }
 
-                if (readStateChanged) {
+                if (readStateChanged || lastMessageChanged) {
                     configureCurrentUserLastMessageStatus(lastMessage)
                 }
 
@@ -267,34 +267,26 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // pending - if the sync status says it's pending
 
         val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().user.value?.id
-        val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
-        when {
-            !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageDrawable(style.indicatorReadIcon)
-            }
-
-            currentUserSentLastMessage && !lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
-            }
-
-            else -> determineLastMessageSyncStatus(lastMessage)
+        if (!currentUserSentLastMessage) {
+            messageStatusImageView.setImageDrawable(null)
+            return
         }
-    }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message) {
-        when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> {
-                messageStatusImageView.setImageDrawable(style.indicatorPendingSyncIcon)
-            }
+        val messageRequiresSync = lastMessage.syncStatus in setOf(
+            SyncStatus.IN_PROGRESS,
+            SyncStatus.SYNC_NEEDED,
+            SyncStatus.AWAITING_ATTACHMENTS
+        )
 
-            SyncStatus.COMPLETED -> {
-                messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
-            }
+        val messageStatusIndicatorIcon = if (messageRequiresSync) {
+            style.indicatorPendingSyncIcon
+        } else {
+            val lastMessageWasRead = channel.isMessageRead(lastMessage)
 
-            SyncStatus.FAILED_PERMANENTLY -> {
-                // no direction on this yet
-            }
+            if (lastMessageWasRead) style.indicatorReadIcon else style.indicatorSentIcon
         }
+
+        messageStatusImageView.setImageDrawable(messageStatusIndicatorIcon)
     }
 
     private fun StreamUiChannelListItemBackgroundViewBinding.applyStyle(style: ChannelListViewStyle) {

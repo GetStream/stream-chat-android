@@ -234,15 +234,19 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 )
             }
 
+            val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                MessageReadStatusIcon(
-                    channel = channel,
-                    lastMessage = lastMessage,
-                    currentUser = currentUser,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(16.dp)
-                )
+                if (isLastMessageFromCurrentUser) {
+                    MessageReadStatusIcon(
+                        channel = channel,
+                        lastMessage = lastMessage,
+                        currentUser = currentUser,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(16.dp)
+                    )
+                }
 
                 Timestamp(date = channel.lastUpdated)
             }
