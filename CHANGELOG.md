@@ -27,6 +27,7 @@
 - Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
 - `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
   You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
+- Deprecated `Member:role` in favor of `Member:channelRole` [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ### ❌ Removed
 
@@ -55,6 +56,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed ChatMarkdown in favor of ChatMessageTextTransformer [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
