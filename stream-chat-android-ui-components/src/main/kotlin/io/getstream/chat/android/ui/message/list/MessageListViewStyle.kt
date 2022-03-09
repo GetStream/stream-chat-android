@@ -49,6 +49,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property deleteIcon Icon for delete message option. Default value is [R.drawable.stream_ui_ic_delete].
  * @property deleteMessageEnabled Enables/disables delete message feature. Enabled by default.
  * @property copyTextEnabled Enables/disables copy text feature. Enabled by default.
+ * @property retryMessageEnabled Enables/disables retry failed message feature. Enabled by default.
  * @property deleteConfirmationEnabled Enables/disables showing confirmation dialog before deleting message. Enabled by default.
  * @property flagMessageConfirmationEnabled Enables/disables showing confirmation dialog before flagging message. Disabled by default.
  * @property messageOptionsText Text appearance of message option items.
@@ -91,6 +92,7 @@ public data class MessageListViewStyle(
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
+    val retryMessageEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
     val messageOptionsText: TextStyle,
@@ -270,6 +272,9 @@ public data class MessageListViewStyle(
                 val copyTextEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
+                val retryMessageEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiRetryMessageActionEnabled, true)
+
                 val deleteConfirmationEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
@@ -398,6 +403,7 @@ public data class MessageListViewStyle(
                     blockEnabled = blockEnabled,
                     deleteIcon = deleteIcon,
                     copyTextEnabled = copyTextEnabled,
+                    retryMessageEnabled = retryMessageEnabled,
                     deleteConfirmationEnabled = deleteConfirmationEnabled,
                     flagMessageConfirmationEnabled = flagMessageConfirmationEnabled,
                     deleteMessageEnabled = deleteMessageEnabled,

@@ -69,6 +69,7 @@
 - Introduced `InnerAttachmentViewHolder` as an inner ViewHolder for custom attachments. [#3183](https://github.com/GetStream/stream-chat-android/pull/3183)
 - Introduced `AttachmentFactory` as a factory for custom attachment ViewHolders. [#3116](https://github.com/GetStream/stream-chat-android/pull/3116)
 - Introduced `AttachmentFactoryManager` as a manager for the list of registered attachment factories. The class is exposed via `ChatUI`. [#3116](https://github.com/GetStream/stream-chat-android/pull/3116)
+- Added `streamUiRetryMessageActionEnabled` attribute to `MessageListView` that allows to show/hide retry action in message's overlay. []()
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)

@@ -252,6 +252,7 @@
         <attr name="streamUiReplyOptionIcon" format="reference" />
         <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
+        <attr name="streamUiRetryMessageActionEnabled" format="boolean" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
         <attr name="streamUiEditOptionIcon" format="reference" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />
