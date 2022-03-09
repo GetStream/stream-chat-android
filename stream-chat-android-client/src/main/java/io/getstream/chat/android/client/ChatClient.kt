@@ -461,7 +461,6 @@ public class ChatClient internal constructor(
             } else {
                 listener?.onError(result.error())
             }
-
         }
     }
 

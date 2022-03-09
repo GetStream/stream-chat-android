@@ -27,7 +27,7 @@ internal class SyncMessagesWork(
         return if (validateCidBoolean(cid)) {
             val (type, id) = cid.cidToTypeAndId()
 
-            client.logic.channel(type, id) //Adds this channel to logic - Now it is an active channel
+            client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
             EventHandlerProvider.eventHandler.replayEventsForActiveChannels()
 
             Result.success()

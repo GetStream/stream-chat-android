@@ -1,6 +1,6 @@
 package io.getstream.chat.android.offline.event
 
-internal object  EventHandlerProvider {
+internal object EventHandlerProvider {
 
     private var _eventHandler: EventHandlerImpl? = null
 
