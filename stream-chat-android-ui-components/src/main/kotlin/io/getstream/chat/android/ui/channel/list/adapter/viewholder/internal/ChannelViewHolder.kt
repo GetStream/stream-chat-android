@@ -272,34 +272,21 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             return
         }
 
-        val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
-        when {
-            lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageDrawable(style.indicatorReadIcon)
-            }
+        val messageRequiresSync = lastMessage.syncStatus in setOf(
+            SyncStatus.IN_PROGRESS,
+            SyncStatus.SYNC_NEEDED,
+            SyncStatus.AWAITING_ATTACHMENTS
+        )
 
-            !lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
-            }
+        val messageStatusIndicatorIcon = if (messageRequiresSync) {
+            style.indicatorPendingSyncIcon
+        } else {
+            val lastMessageWasRead = channel.isMessageRead(lastMessage)
 
-            else -> determineLastMessageSyncStatus(lastMessage)
+            if (lastMessageWasRead) style.indicatorReadIcon else style.indicatorSentIcon
         }
-    }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message) {
-        when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> {
-                messageStatusImageView.setImageDrawable(style.indicatorPendingSyncIcon)
-            }
-
-            SyncStatus.COMPLETED -> {
-                messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
-            }
-
-            SyncStatus.FAILED_PERMANENTLY -> {
-                // no direction on this yet
-            }
-        }
+        messageStatusImageView.setImageDrawable(messageStatusIndicatorIcon)
     }
 
     private fun StreamUiChannelListItemBackgroundViewBinding.applyStyle(style: ChannelListViewStyle) {
