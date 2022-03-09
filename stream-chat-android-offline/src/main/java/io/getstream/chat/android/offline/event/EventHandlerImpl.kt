@@ -128,7 +128,7 @@ internal class EventHandlerImpl(
         return logic.getActiveChannelsLogic().map { it.cid }
     }
 
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+    internal suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
                 handleEventsInternal(eventList, isFromSync = true)

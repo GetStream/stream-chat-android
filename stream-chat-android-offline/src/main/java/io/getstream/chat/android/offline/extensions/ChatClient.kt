@@ -47,11 +47,11 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
     validateCid(cid)
 
     val domainImpl = domainImpl()
+
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<List<ChatEvent>>(cid)
         if (cidValidationResult.isSuccess) {
-            cidValidationResult
-            // domainImpl.replayEvents(cid)
+            domainImpl.eventHandler.replayEventsForChannels(listOf(cid))
         } else {
             cidValidationResult
         }
