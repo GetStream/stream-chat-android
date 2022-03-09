@@ -101,12 +101,16 @@ public class ChannelListViewModel(
      */
     private val logger: TaggedLogger = ChatLogger.get("ChannelListViewModel")
 
-    // TODO comment
+    /**
+     * Filters the requested channels.
+     */
     private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatClient.globalState.user.map(Filters::defaultChannelListFilter)
             .asLiveData()
 
-    // TODO comment
+    /**
+     * Represents the current state of the channels query.
+     */
     private var queryChannelsState: QueryChannelsState? = null
 
     init {
@@ -315,7 +319,9 @@ public class ChannelListViewModel(
         }
     }
 
-    // TODO comment
+    /**
+     * Clones the given map while changing the given key-value pair.
+     */
     private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
         val originalMap = this
 
@@ -348,16 +354,40 @@ public class ChannelListViewModel(
      * Describes the actions that were taken.
      */
     public sealed class ErrorEvent(public open val chatError: ChatError) {
+
+        /**
+         * Event for errors upon leaving a channel.
+         *
+         * @param chatError Contains error data such as a [Throwable] and a message.
+         */
         public data class LeaveChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * Event for errors upon deleting a channel.
+         *
+         * @param chatError Contains error data such as a [Throwable] and a message.
+         */
         public data class DeleteChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * Event for errors upon hiding a channel.
+         *
+         * @param chatError Contains error data such as a [Throwable] and a message.
+         */
         public data class HideChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
-    // TODO comment
     public companion object {
+
+        /**
+         * The default sorting option for queries.
+         */
         @JvmField
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
 
+        /**
+         *  The initial state.
+         */
         private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
     }
 }
