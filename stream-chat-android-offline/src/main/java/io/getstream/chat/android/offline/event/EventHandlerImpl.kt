@@ -77,7 +77,7 @@ import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
 
-internal class EventHandlerImpl private constructor(
+internal class EventHandlerImpl(
     private val recoveryEnabled: Boolean,
     private val client: ChatClient,
     private val logic: LogicRegistry,
