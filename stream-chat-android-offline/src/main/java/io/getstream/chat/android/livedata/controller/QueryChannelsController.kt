@@ -33,11 +33,6 @@ public sealed interface QueryChannelsController {
     public var chatEventHandler: ChatEventHandler?
 
     /**
-     * If the API call failed and we need to rerun this query
-     */
-    public val recoveryNeeded: Boolean
-
-    /**
      * If we've reached the end of the channels
      */
     public val endOfChannels: LiveData<Boolean>

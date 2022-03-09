@@ -42,6 +42,7 @@ private fun domainImpl(): ChatDomainImpl {
  * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
  */
 @CheckResult
+//Todo: fix this!!
 public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
     validateCid(cid)
 
@@ -49,7 +50,8 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<List<ChatEvent>>(cid)
         if (cidValidationResult.isSuccess) {
-            domainImpl.replayEvents(cid)
+            cidValidationResult
+            // domainImpl.replayEvents(cid)
         } else {
             cidValidationResult
         }

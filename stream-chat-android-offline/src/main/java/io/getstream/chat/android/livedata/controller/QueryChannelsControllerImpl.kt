@@ -17,7 +17,6 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
     override val filter: FilterObject by queryChannels::filter
 
     override val sort: QuerySort<Channel> by queryChannels::sort
-    override var recoveryNeeded: Boolean by queryChannels.recoveryNeeded::value
 
     val queryChannelsSpec: QueryChannelsSpec by queryChannels::queryChannelsSpec
 

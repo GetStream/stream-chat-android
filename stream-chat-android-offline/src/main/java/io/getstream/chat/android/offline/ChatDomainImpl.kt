@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -17,23 +16,17 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -70,14 +63,11 @@ import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -141,9 +131,6 @@ internal class ChatDomainImpl internal constructor(
     }
     private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
 
-    // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
-    private val entitiesRetryMutex = Mutex()
-
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
@@ -160,7 +147,7 @@ internal class ChatDomainImpl internal constructor(
     internal lateinit var repos: RepositoryFacade
 
     /** the event subscription */
-    private var eventSubscription: Disposable = EMPTY_DISPOSABLE
+    // private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
     /** stores the mapping from cid to ChannelController */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
@@ -174,10 +161,7 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     // Todo: Move this dependency to constructor
     internal var eventHandler: EventHandlerImpl
-        get() = _eventHandler ?: EventHandlerImpl(this, client, globalState, scope, repos)
-            .also { eventHandler ->
-                _eventHandler = eventHandler
-            }
+        get() = _eventHandler ?: throw IllegalStateException("You need to provide eventHandler!!")
         set(value) {
             _eventHandler = value
         }
@@ -223,29 +207,9 @@ internal class ChatDomainImpl internal constructor(
         clearConnectionState()
         clearUnreadCountState()
 
-        initJob = scope.async {
-            // fetch the configs for channels
-            repos.cacheChannelConfigs()
-
-            // load the current user from the db
-            val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
-
-            // retrieve the last time the user marked all as read and handle it as an event
-            syncState.markedAllReadAt
-                ?.let { MarkAllReadEvent(user = user, createdAt = it) }
-                ?.let { eventHandler.handleEvent(it) }
-
-            syncState.also { syncStateFlow.value = it }
-
-            // Sync cached channels
-            val cachedChannelsCids = repos.selectAllCids()
-            replayEventsForChannels(cachedChannelsCids)
-        }
-
         if (client.isSocketConnected()) {
             globalState._connectionState.value = ConnectionState.CONNECTED
         }
-        startListening()
         initClean()
     }
 
@@ -299,11 +263,9 @@ internal class ChatDomainImpl internal constructor(
     override suspend fun disconnect() {
         storeSyncState()
         job.cancelChildren()
-        stopListening()
         stopClean()
         clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
-        eventHandler.clear()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
         logic.clear()
@@ -350,20 +312,20 @@ internal class ChatDomainImpl internal constructor(
     /**
      * Start listening to chat events and keep the room database in sync
      */
-    private fun startListening() {
-        if (eventSubscription.isDisposed) {
-            eventSubscription = client.subscribe {
-                eventHandler.handleEvents(listOf(it))
-            }
-        }
-    }
+    // private fun startListening() {
+    //     if (eventSubscription.isDisposed) {
+    //         eventSubscription = client.subscribe {
+    //             eventHandler.handleEvents(listOf(it))
+    //         }
+    //     }
+    // }
 
     /**
      * Stop listening to chat events
      */
-    private fun stopListening() {
-        eventSubscription.dispose()
-    }
+    // private fun stopListening() {
+    //     eventSubscription.dispose()
+    // }
 
     internal fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
@@ -418,10 +380,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun isInitialized(): Boolean = globalState.isInitialized()
 
-    override fun getActiveQueries(): List<QueryChannelsController> {
-        return activeQueryMapImpl.values.toList()
-    }
-
     /**
      * queryChannels
      * - first read the current results from Room
@@ -439,256 +397,6 @@ internal class ChatDomainImpl internal constructor(
 
     private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
         client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
-
-    /**
-     * replay events for all active channels
-     * ensures that the cid you provide is active
-     *
-     * @param cid ensures that the channel with this id is active
-     */
-    internal suspend fun replayEvents(cid: String? = null): Result<List<ChatEvent>> {
-        // wait for the active channel info to load
-        initJob?.join()
-        // make a list of all channel ids
-        val cids = activeChannelMapImpl.keys().toList().toMutableList()
-        cid?.let {
-            channel(it)
-            cids.add(it)
-        }
-
-        return replayEventsForChannels(cids)
-    }
-
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
-        val now = Date()
-
-        return if (cids.isNotEmpty()) {
-            queryEvents(cids).also { resultChatEvent ->
-                if (resultChatEvent.isSuccess) {
-                    eventHandler.handleEventsInternal(resultChatEvent.data(), isFromSync = true)
-                    updateLastSyncDate(now)
-                }
-            }
-        } else {
-            Result(emptyList())
-        }
-    }
-
-    /**
-     * Updates [SyncState.lastSyncedAt] exposed via [syncStateFlow] with a given date.
-     *
-     * @param date The new last sync date.
-     */
-    private fun updateLastSyncDate(date: Date) {
-        syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = date) }
-    }
-
-    /**
-     * There are several scenarios in which we need to recover events
-     * - Connection is lost and comes back (everything should be considered stale, so use recover all)
-     * - App goes to the background and comes back (everything should be considered stale, so use recover all)
-     * - We run a queryChannels or channel.watch call and encounter an offline state/or API error (should recover just that query or channel)
-     * - A reaction, message or channel fails to be created. We should retry this every health check (30 seconds or so)
-     *
-     * Calling connectionRecovered triggers:
-     * - queryChannels for the active query (at most 3) that need recovery
-     * - queryChannels for any channels that need recovery
-     * - channel.watch for channels that are not returned by the server
-     * - event recovery for those channels
-     * - API calls to create local channels, messages and reactions
-     */
-// TODO: Move this to another place. Probably to ChatClient.
-    suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        // 0. ensure load is complete
-        initJob?.join()
-
-        val online = isOnline()
-
-        // 1. Retry any failed requests first (synchronous)
-        if (online) {
-            retryFailedEntities()
-        }
-
-        // 2. update the results for queries that are actively being shown right now (synchronous)
-        val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry = activeQueryMapImpl.values
-            .toList()
-            .filter { it.recoveryNeeded.value || recoverAll }
-            .take(3)
-        for (queryChannelController in queriesToRetry) {
-            val pagination = QueryChannelsPaginationRequest(
-                queryChannelController.sort,
-                INITIAL_CHANNEL_OFFSET,
-                CHANNEL_LIMIT,
-                MESSAGE_LIMIT,
-                MEMBER_LIMIT
-            )
-            val response = queryChannelController.runQueryOnline(pagination)
-            if (response.isSuccess) {
-                queryChannelController.updateOnlineChannels(response.data(), true)
-                updatedChannelIds.addAll(response.data().map { it.cid })
-            }
-        }
-        // 3. update the data for all channels that are being show right now...
-        // exclude ones we just updated
-        // (synchronous)
-        val cids: List<String> = activeChannelMapImpl
-            .entries
-            .asSequence()
-            .filter { it.value.recoveryNeeded || recoverAll }
-            .filterNot { updatedChannelIds.contains(it.key) }
-            .take(30)
-            .map { it.key }
-            .toList()
-
-        logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying ${queriesToRetry.size} queries and ${cids.size} channels")
-
-        var missingChannelIds = listOf<String>()
-        if (cids.isNotEmpty() && online) {
-            val filter = `in`("cid", cids)
-            val request = QueryChannelsRequest(filter, 0, 30)
-            val result = client.queryChannelsInternal(request).await()
-            if (result.isSuccess) {
-                val channels = result.data()
-                val foundChannelIds = channels.map { it.id }
-                for (c in channels) {
-                    val channelController = this.channel(c)
-                    channelController.updateDataFromChannel(c)
-                }
-                missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
-                storeStateForChannels(channels)
-            }
-            // create channels that are not present on the API
-            for (c in missingChannelIds) {
-                val channelController = this.channel(c)
-                channelController.watch()
-            }
-        }
-        // 4. recover missing events
-        val activeChannelCids = getActiveChannelCids()
-        if (activeChannelCids.isNotEmpty()) {
-            replayEventsForChannels(activeChannelCids)
-        } else {
-            // Last sync date is being updated after replaying events for active channels.
-            // We should also update it if we don't have active channels but sync was completed.
-            updateLastSyncDate(Date())
-        }
-    }
-
-    internal suspend fun retryFailedEntities() {
-        entitiesRetryMutex.withLock {
-            // retry channels, messages and reactions in that order..
-            val channels = retryChannels()
-            val messages = retryMessages()
-            val reactions = retryReactions()
-            logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
-        }
-    }
-
-    @VisibleForTesting
-    internal suspend fun retryChannels(): List<Channel> {
-        return repos.selectChannelsSyncNeeded().onEach { channel ->
-            client.createChannel(
-                channel.type,
-                channel.id,
-                channel.members.map(UserEntity::getUserId),
-                channel.extraData
-            ).await()
-        }
-    }
-
-    @VisibleForTesting
-    internal suspend fun retryMessages(): List<Message> {
-        return retryMessagesWithSyncedAttachments() + retryMessagesWithPendingAttachments()
-    }
-
-    /**
-     * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
-     */
-    private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
-        val retriedMessages = repos.selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
-
-        val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
-            message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
-        }
-
-        failedMessages.forEach { markMessageAsFailed(it) }
-
-        needToBeSync.forEach { message -> channel(message.cid).retrySendMessage(message) }
-
-        return retriedMessages
-    }
-
-    /**
-     * Retries messages with [SyncStatus.SYNC_NEEDED] status.
-     * Messages to retry should have all attachments synchronized or don't have them at all.
-     *
-     * @throws IllegalArgumentException when message contains non-synchronized attachments
-     */
-    private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val (messages, nonCorrectStateMessages) = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED).partition {
-            it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
-        }
-        if (nonCorrectStateMessages.isNotEmpty()) {
-            val message = nonCorrectStateMessages.first()
-            val attachmentUploadState =
-                message.attachments.firstOrNull { it.uploadState != Attachment.UploadState.Success }
-                    ?: Attachment.UploadState.Success
-            logger.logE(
-                "Logical error. Messages with non-synchronized attachments should have another sync status!" +
-                    "\nMessage has ${message.syncStatus} syncStatus, while attachment has $attachmentUploadState upload state"
-            )
-        }
-
-        messages.forEach { message ->
-            val channelClient = client.channel(message.cid)
-
-            when {
-                message.deletedAt != null -> {
-                    logger.logD("Deleting message: ${message.id}")
-                    channelClient.deleteMessage(message.id).await()
-                }
-                message.updatedLocallyAt != null -> {
-                    logger.logD("Updating message: ${message.id}")
-                    client.updateMessage(message).await()
-                }
-                else -> {
-                    logger.logD("Sending message: ${message.id}")
-                    val result = channelClient.sendMessageInternal(message).await()
-
-                    if (result.isSuccess) {
-                        repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-                    } else if (result.isError && result.error().isPermanent()) {
-                        markMessageAsFailed(message)
-                    }
-                }
-            }
-        }
-
-        return messages
-    }
-
-    private suspend fun markMessageAsFailed(message: Message) =
-        repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
-
-    @VisibleForTesting
-    internal suspend fun retryReactions(): List<Reaction> {
-        return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
-            val result = if (reaction.deletedAt != null) {
-                client.deleteReaction(reaction.messageId, reaction.type).await()
-            } else {
-                client.sendReaction(reaction, reaction.enforceUnique).await()
-            }
-
-            if (result.isSuccess) {
-                reaction.syncStatus = SyncStatus.COMPLETED
-                repos.insertReaction(reaction)
-            } else if (result.error().isPermanent()) {
-                reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                repos.insertReaction(reaction)
-            }
-        }
-    }
 
     suspend fun storeStateForChannel(channel: Channel) {
         return storeStateForChannels(listOf(channel))

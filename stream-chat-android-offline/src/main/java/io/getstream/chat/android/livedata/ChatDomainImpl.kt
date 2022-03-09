@@ -110,9 +110,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun isInitialized(): Boolean = chatDomainStateFlow.isInitialized()
 
-    override fun getActiveQueries(): List<QueryChannelsControllerImpl> =
-        chatDomainStateFlow.getActiveQueries().map(::QueryChannelsControllerImpl)
-
     override fun clean() = chatDomainStateFlow.clean()
 
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)

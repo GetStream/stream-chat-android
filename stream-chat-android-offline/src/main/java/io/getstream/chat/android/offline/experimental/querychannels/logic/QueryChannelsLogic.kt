@@ -21,9 +21,11 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.model.ChannelConfig
@@ -90,6 +92,10 @@ internal class QueryChannelsLogic(
             .let { Result.success(it) }
     }
 
+    internal fun state(): QueryChannelsState {
+        return mutableState
+    }
+
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsRepository: QueryChannelsRepository,
@@ -107,7 +113,8 @@ internal class QueryChannelsLogic(
 
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
-        chatDomainImpl.channel(channel).updateDataFromChannel(channel)
+        val (type, id) = channel.cid.cidToTypeAndId()
+        client.logic.channel(type, id).updateDataFromChannel(channel)
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
@@ -138,7 +145,7 @@ internal class QueryChannelsLogic(
         chatDomainImpl: ChatDomainImpl,
     ) {
         if (result.isSuccess) {
-            mutableState.recoveryNeeded.value = false
+            mutableState._recoveryNeeded.value = false
 
             // store the results in the database
             val channelsResponse = result.data().toSet()
@@ -152,7 +159,7 @@ internal class QueryChannelsLogic(
             chatDomainImpl.storeStateForChannels(channelsResponse)
         } else {
             logger.logI("Query with filter ${request.filter} failed, marking it as recovery needed")
-            mutableState.recoveryNeeded.value = true
+            mutableState._recoveryNeeded.value = true
             globalState._errorEvent.value = Event(result.error())
         }
     }
@@ -180,7 +187,10 @@ internal class QueryChannelsLogic(
                 .let { removeChannels(it, repos) }
         }
         mutableState.channelsOffset.value += channels.size
-        channels.forEach { chatDomainImpl.channel(it).updateDataFromChannel(it) }
+        channels.forEach { channel ->
+            val (type, id) = channel.cid.cidToTypeAndId()
+            client.logic.channel(type, id)
+        }
         addChannels(channels, repos)
     }
 

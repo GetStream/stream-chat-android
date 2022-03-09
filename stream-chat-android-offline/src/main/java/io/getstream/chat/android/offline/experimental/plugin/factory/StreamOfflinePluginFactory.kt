@@ -10,6 +10,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
+import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
@@ -33,10 +34,12 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQuer
 import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -119,14 +122,40 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
+        val syncManager = SyncManager(
+            chatClient = chatClient,
+            globalState = globalState,
+            repos = repos,
+            logicRegistry = logic,
+            stateRegistry = stateRegistry,
+            userPresence = config.userPresence,
+        )
+
+        val eventHandler = EventHandlerImpl(
+            recoveryEnabled = true,
+            client = chatClient,
+            logic = logic,
+            state = stateRegistry,
+            mutableGlobalState = globalState,
+            repos = repos,
+            syncManager = syncManager,
+        ).also { eventHandler ->
+            chatDomainImpl.eventHandler = eventHandler
+            eventHandler.startListening(scope)
+        }
+
         InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener(chatDomainImpl::userConnected)
+            addUserConnectedListener { user ->
+                chatDomainImpl.userConnected(user)
+            }
 
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
+                scope.launch { syncManager.storeSyncState() }
+                eventHandler.stopListening()
             }
         }
 
