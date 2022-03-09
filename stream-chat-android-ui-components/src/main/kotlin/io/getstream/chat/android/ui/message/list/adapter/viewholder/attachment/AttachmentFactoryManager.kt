@@ -33,7 +33,7 @@ public class AttachmentFactoryManager(
         message: Message,
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
-    ): AttachmentViewHolder {
+    ): InnerAttachmentViewHolder {
         val factory = attachmentFactories.first { it.canHandle(message) }
         return factory.createViewHolder(message, listeners, parent)
     }

@@ -2123,7 +2123,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/intern
 
 public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
 	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public abstract fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder;
+	public abstract fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager {
@@ -2131,10 +2131,10 @@ public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/
 	public fun <init> (Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public final fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder;
+	public final fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
-public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolder {
+public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
 	public fun <init> (Landroid/view/View;)V
 	public final fun getContext ()Landroid/content/Context;
 	public final fun getItemView ()Landroid/view/View;
