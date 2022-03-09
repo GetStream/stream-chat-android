@@ -56,6 +56,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
 
 ### ⚠️ Changed
 
