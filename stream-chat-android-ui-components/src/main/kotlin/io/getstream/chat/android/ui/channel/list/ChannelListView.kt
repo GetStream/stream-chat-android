@@ -17,6 +17,7 @@ import io.getstream.chat.android.ui.channel.actions.internal.ChannelActionsDialo
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelListItemPredicate
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelLongClickListener
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ErrorEventHandler
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -95,6 +96,13 @@ public class ChannelListView : FrameLayout {
         }
 
         configureDefaultMoreOptionsListener(context)
+    }
+
+    /**
+     * @return if the list and its adapter are initialized.
+     */
+    public fun isAdapterInitialized(): Boolean {
+        return ::simpleChannelListView.isInitialized && simpleChannelListView.isAdapterInitialized()
     }
 
     /**

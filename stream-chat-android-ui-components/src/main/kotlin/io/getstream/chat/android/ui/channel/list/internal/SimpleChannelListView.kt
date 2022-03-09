@@ -179,6 +179,13 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         return requireAdapter().itemCount > 0
     }
 
+    /**
+     * @return if the adapter is initialized.
+     */
+    fun isAdapterInitialized(): Boolean {
+        return ::adapter.isInitialized
+    }
+
     internal fun getChannel(cid: String): Channel = adapter.getChannel(cid)
 
     override fun onVisibilityChanged(view: View, visibility: Int) {

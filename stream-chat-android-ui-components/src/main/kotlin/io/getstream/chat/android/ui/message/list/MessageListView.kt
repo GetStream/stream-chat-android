@@ -583,7 +583,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
-        if (this::adapter.isInitialized) {
+        if (isAdapterInitialized()) {
             adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         }
         attachmentGalleryDestination.unregister()
@@ -882,7 +882,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageListItemViewHolderFactory The custom factory to be used when generating item ViewHolders.
      */
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageViewHolderFactory first"
         }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
@@ -895,7 +895,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageBackgroundFactory The custom factory that provides drawables to be used in the messages background
      */
     public fun setMessageBackgroundFactory(messageBackgroundFactory: MessageBackgroundFactory) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageBackgroundFactory first"
         }
         this.messageBackgroundFactory = messageBackgroundFactory
@@ -907,7 +907,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageDateFormatter The formatter that is used to format the message date.
      */
     public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
+        check(isAdapterInitialized().not()) { "Adapter was already initialized; please set DateFormatter first" }
         this.messageDateFormatter = messageDateFormatter
     }
 
@@ -917,7 +917,7 @@ public class MessageListView : ConstraintLayout {
      * @param showAvatarPredicate The predicate that checks if the avatar should be shown.
      */
     public fun setShowAvatarPredicate(showAvatarPredicate: ShowAvatarPredicate) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized; please set ShowAvatarPredicate first"
         }
         this.showAvatarPredicate = showAvatarPredicate
@@ -939,7 +939,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageListItemPredicate The predicate used to filter the list of [MessageListItem].
      */
     public fun setMessageListItemPredicate(messageListItemPredicate: MessageListItemPredicate) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageListItemPredicate first"
         }
         this.messageListItemPredicate = messageListItemPredicate
@@ -963,7 +963,7 @@ public class MessageListView : ConstraintLayout {
      * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
      */
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageListItemPredicate first"
         }
         this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
@@ -976,7 +976,7 @@ public class MessageListView : ConstraintLayout {
      * @param attachmentViewFactory The custom view factory for attachments.
      */
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set AttachmentViewFactory first"
         }
         this.attachmentViewFactory = attachmentViewFactory
@@ -1065,6 +1065,13 @@ public class MessageListView : ConstraintLayout {
                 messagesRV.overScrollMode = View.OVER_SCROLL_ALWAYS
             }
         }
+    }
+
+    /**
+     * @return if the adapter has been initialized or not.
+     */
+    public fun isAdapterInitialized(): Boolean {
+        return ::adapter.isInitialized
     }
 
     //region Listener setters
