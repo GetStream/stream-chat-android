@@ -114,7 +114,12 @@ internal class QueryChannelsLogic(
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
         val (type, id) = channel.cid.cidToTypeAndId()
-        client.logic.channel(type, id).updateDataFromChannel(channel)
+
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            client.logic.channel(type, id).updateDataFromChannel(channel)
+        } else {
+            chatDomainImpl.channel(channel).updateDataFromChannel(channel)
+        }
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {

@@ -21,7 +21,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -34,7 +33,9 @@ internal class TotalUnreadCountTest {
     }
 
     private val data = TestDataHelper()
-    private val globalMutableState = GlobalMutableState.create()
+    private val globalMutableState = GlobalMutableState.create().apply {
+        _user.value = data.user1
+    }
 
     @Test
     fun `When new message event is received for channel with read capability Should properly update total unread counts`() =
@@ -80,7 +81,7 @@ internal class TotalUnreadCountTest {
         }
 
     @Test
-    fun `when connected event is received, current user in the domain instance should be updated`() =
+    fun `when connected event is received, current user should be updated`() =
         testCoroutines.scope.runBlockingTest {
             val chatDomain: ChatDomainImpl = mock()
             val sut = Fixture(chatDomain, testCoroutines.scope, data.user1, globalMutableState)
@@ -93,7 +94,7 @@ internal class TotalUnreadCountTest {
             sut.handleEvent(connectedEvent)
 
             // unread count are updated internally when a user is updated
-            verify(chatDomain).updateCurrentUser(userWithUnread)
+            globalMutableState._user.value `should be equal to` userWithUnread
         }
 
     private class Fixture(
@@ -104,7 +105,15 @@ internal class TotalUnreadCountTest {
     ) {
         private val repos: RepositoryFacade = mock()
         private val eventHandlerImpl =
-            EventHandlerImpl(chatDomainImpl, mock(), globalMutableState, scope, repos)
+            EventHandlerImpl(
+                recoveryEnabled= true,
+                client=  mock(),
+                logic = mock(),
+                state=  mock(),
+                mutableGlobalState = globalMutableState,
+                repos = repos,
+                syncManager = mock()
+            )
 
         init {
             whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
