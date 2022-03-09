@@ -77,7 +77,7 @@ import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
 
-internal class EventHandlerImpl(
+internal class EventHandlerImpl private constructor(
     private val recoveryEnabled: Boolean,
     private val client: ChatClient,
     private val logic: LogicRegistry,
@@ -96,7 +96,7 @@ internal class EventHandlerImpl(
             logic.clear()
             syncManager.updateAllReadStateForDate(user.id, Date())
             syncManager.loadSyncStateForUser(user.id)
-            replayEvensForAllChannels(user)
+            replayEventsForAllChannels(user)
         }
     }
 
@@ -124,18 +124,22 @@ internal class EventHandlerImpl(
         handleEventsInternal(listOf(event), isFromSync = false)
     }
 
+    internal suspend fun replayEventsForActiveChannels() {
+        replayEventsForChannels(activeChannelsCid())
+    }
+
     private fun activeChannelsCid(): List<String> {
         return logic.getActiveChannelsLogic().map { it.cid }
     }
 
-    internal suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
                 handleEventsInternal(eventList, isFromSync = true)
             }
     }
 
-    private suspend fun replayEvensForAllChannels(user: User) {
+    private suspend fun replayEventsForAllChannels(user: User) {
         repos.cacheChannelConfigs()
 
         // Sync cached channels

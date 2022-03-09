@@ -309,24 +309,6 @@ internal class ChatDomainImpl internal constructor(
         globalState._banned.value = newBanned
     }
 
-    /**
-     * Start listening to chat events and keep the room database in sync
-     */
-    // private fun startListening() {
-    //     if (eventSubscription.isDisposed) {
-    //         eventSubscription = client.subscribe {
-    //             eventHandler.handleEvents(listOf(it))
-    //         }
-    //     }
-    // }
-
-    /**
-     * Stop listening to chat events
-     */
-    // private fun stopListening() {
-    //     eventSubscription.dispose()
-    // }
-
     internal fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
     }
@@ -619,11 +601,4 @@ internal class ChatDomainImpl internal constructor(
     }
 
 // end region
-
-    companion object {
-        val EMPTY_DISPOSABLE = object : Disposable {
-            override val isDisposed: Boolean = true
-            override fun dispose() {}
-        }
-    }
 }

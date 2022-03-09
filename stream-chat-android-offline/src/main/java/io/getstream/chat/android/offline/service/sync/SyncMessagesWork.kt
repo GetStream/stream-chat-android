@@ -2,36 +2,37 @@ package io.getstream.chat.android.offline.service.sync
 
 import android.content.Context
 import androidx.work.Constraints
+import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.offline.extensions.replayEventsForActiveChannels
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.extensions.logic
+import io.getstream.chat.android.offline.utils.validateCidBoolean
 
 internal class SyncMessagesWork(
     appContext: Context,
     workerParams: WorkerParameters,
-) : Worker(appContext, workerParams) {
+) : CoroutineWorker(appContext, workerParams) {
 
-    private val logger = ChatLogger.get("SyncMessagesWork")
-
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val cid = inputData.getString(DATA_CID)!!
-        val result = ChatClient.instance().replayEventsForActiveChannels(cid).execute()
+        val client = ChatClient.instance()
 
-        return if (result.isSuccess) {
-            logger.logD("Sync success.")
+        return if (validateCidBoolean(cid)) {
+            val (type, id) = cid.cidToTypeAndId()
+            client.logic.channel(type, id) //Adds this channel to logic - Now it is an active channel
+            (ChatDomain.instance as ChatDomainImpl).eventHandler.replayEventsForActiveChannels()
 
             Result.success()
         } else {
-            logger.logD("Sync failed.")
-
-            Result.retry()
+            Result.failure()
         }
     }
 
