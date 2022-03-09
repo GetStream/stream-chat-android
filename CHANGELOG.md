@@ -81,6 +81,7 @@
 - Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder`. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 - Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
+- Updated the structure of UI components documentation. [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/). [#3186](https://github.com/GetStream/stream-chat-android/pull/3186)
 
 ### ❌ Removed
 
