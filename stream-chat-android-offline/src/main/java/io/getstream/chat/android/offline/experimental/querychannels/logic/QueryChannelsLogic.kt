@@ -189,7 +189,7 @@ internal class QueryChannelsLogic(
         mutableState.channelsOffset.value += channels.size
         channels.forEach { channel ->
             val (type, id) = channel.cid.cidToTypeAndId()
-            client.logic.channel(type, id)
+            client.logic.channel(type, id).updateDataFromChannel(channel)
         }
         addChannels(channels, repos)
     }
