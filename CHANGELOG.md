@@ -16,18 +16,13 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
-  You can use it to customize notifications priority, channel name, etc. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ⚠️ Changed
-- `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
-  You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed updating typing users. [#3154](https://github.com/GetStream/stream-chat-android/pull/3154)
 
 ### ⬆️ Improved
 
@@ -50,15 +45,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
-- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
-- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
-- Added `streamUiRetryMessageEnabled` attribute to `MessageListView` that allows to show/hide retry action in message's overlay. [#3185](https://github.com/GetStream/stream-chat-android/pull/3185)
 
 ### ⚠️ Changed
 
@@ -66,7 +56,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
 
 ### ⬆️ Improved
 
@@ -120,8 +109,37 @@
 
 ### ❌ Removed
 
-# March 2nd, 2022 - 4.30.0
+# March 9th, 2022 - 4.30.1
 <!-- UNRELEASED START -->
+## stream-chat-android-client
+### ✅ Added
+- Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
+  You can use it to customize notifications priority, channel name, etc. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
+
+### ⚠️ Changed
+- `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
+  You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed updating typing users. [#3154](https://github.com/GetStream/stream-chat-android/pull/3154)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
+- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
+- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
+
+### ✅ Added
+- Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
+- Added `streamUiRetryMessageEnabled` attribute to `MessageListView` that allows to show/hide retry action in message's overlay. [#3185](https://github.com/GetStream/stream-chat-android/pull/3185)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
+<!-- UNRELEASED END -->
+
+# March 2nd, 2022 - 4.30.0
 ## Common changes for all artifacts
 ### ⬆️ Improved
 - We upgraded our Kotlin version to 1.6, Moshi to 1.13 and Compose to 1.1.1. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)[#3123](https://github.com/GetStream/stream-chat-android/pull/3123)
@@ -133,7 +151,6 @@
 ## stream-chat-android-compose
 ### ⚠️ Changed
 - Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
-<!-- UNRELEASED END -->
 
 # February 24th, 2022 - 4.29.0
 ## stream-chat-android-offline
