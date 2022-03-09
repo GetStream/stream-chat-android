@@ -12,11 +12,13 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -37,7 +39,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val currentUser: LiveData<User?> = ChatDomain.instance().user
+    private val currentUser: LiveData<User?> = ChatClient.instance().globalState.user.asLiveData()
 
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
@@ -57,7 +59,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         MessageListItem.MessageItem(
             message,
             positions = listOf(MessageListItem.Position.BOTTOM),
-            isMine = message.user.id == currentUser.value?.id
+            isMine = message.user.id == ChatClient.instance().globalState.user.value?.id
         )
     }
 

@@ -14,11 +14,13 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
+// TODO needs kdocs
 class AddChannelViewModel : ViewModel() {
 
     private val chatDomain = ChatDomain.instance()
@@ -112,7 +114,7 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUserId = chatDomain.user.value?.id ?: error("User must be set before create new channel!")
+            val currentUserId = chatClient.globalState.user.value?.id ?: error("User must be set before create new channel!")
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
                 members = members.map(User::id) + currentUserId,

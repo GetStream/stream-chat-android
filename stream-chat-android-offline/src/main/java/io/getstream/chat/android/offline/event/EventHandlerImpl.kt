@@ -57,7 +57,6 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
@@ -75,7 +74,7 @@ internal class EventHandlerImpl(
     private val client: ChatClient,
     private val mutableGlobalState: GlobalMutableState,
     private val scope: CoroutineScope,
-    private val repos: RepositoryFacade
+    private val repos: RepositoryFacade,
 ) {
     private var logger = ChatLogger.get("EventHandler")
     private var firstConnect = true
@@ -449,15 +448,9 @@ internal class EventHandlerImpl(
             .groupBy { it.cid }
             .forEach {
                 val (cid, eventList) = it
-                if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                    val (channelType, channelId) = cid.cidToTypeAndId()
-                    if (client.logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
-                        client.logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
-                    }
-                } else {
-                    if (domainImpl.isActiveChannel(cid)) {
-                        domainImpl.channel(cid).handleEvents(eventList)
-                    }
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                if (client.logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
+                    client.logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
                 }
             }
 
@@ -475,52 +468,28 @@ internal class EventHandlerImpl(
         sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
             val event = userPresenceChanged as UserPresenceChangedEvent
 
-            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                client.state.getActiveChannelStates()
-                    .filter { channelState ->
-                        channelState.members.value
-                            .map { member -> member.user.id }
-                            .contains(event.user.id)
-                    }
-                    .forEach { channelState ->
-                        client.logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
-                            .handleEvent(userPresenceChanged)
-                    }
-            } else {
-                domainImpl.allActiveChannels()
-                    .filter { channelControllerImpl ->
-                        channelControllerImpl.members.value
-                            .map { member -> member.user.id }
-                            .contains(event.user.id)
-                    }
-                    .forEach { channelController ->
-                        channelController.handleEvent(userPresenceChanged)
-                    }
-            }
+            client.state.getActiveChannelStates()
+                .filter { channelState ->
+                    channelState.members.value
+                        .map { member -> member.user.id }
+                        .contains(event.user.id)
+                }
+                .forEach { channelState ->
+                    client.logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
+                        .handleEvent(userPresenceChanged)
+                }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            for (queryChannelsLogic in client.logic.getActiveQueryChannelsLogic()) {
-                queryChannelsLogic.handleEvents(events)
-            }
-        } else {
-            for (queryChannelsController in domainImpl.getActiveQueries()) {
-                queryChannelsController.handleEvents(sortedEvents)
-            }
+        for (queryChannelsLogic in client.logic.getActiveQueryChannelsLogic()) {
+            queryChannelsLogic.handleEvents(events)
         }
     }
 
     private fun handleChannelControllerEvent(event: ChatEvent) {
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            client.logic.getActiveChannelsLogic().forEach { channelLogic ->
-                channelLogic.handleEvent(event)
-            }
-        } else {
-            domainImpl.allActiveChannels().forEach { channelController ->
-                channelController.handleEvent(event)
-            }
+        client.logic.getActiveChannelsLogic().forEach { channelLogic ->
+            channelLogic.handleEvent(event)
         }
     }
 
