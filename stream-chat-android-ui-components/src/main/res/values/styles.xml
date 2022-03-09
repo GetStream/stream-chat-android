@@ -411,7 +411,7 @@
         <item name="streamUiReplyOptionIcon">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
         <item name="streamUiReplyEnabled">true</item>
         <item name="streamUiCopyMessageActionEnabled">true</item>
-        <item name="streamUiRetryMessageActionEnabled">true</item>
+        <item name="streamUiRetryMessageEnabled">true</item>
         <item name="streamUiCopyOptionIcon">@drawable/stream_ui_ic_copy</item>
         <item name="streamUiEditOptionIcon">@drawable/stream_ui_ic_edit</item>
         <item name="streamUiEditMessageEnabled">true</item>

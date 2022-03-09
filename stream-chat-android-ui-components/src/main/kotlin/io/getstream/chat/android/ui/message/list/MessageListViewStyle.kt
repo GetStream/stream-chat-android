@@ -273,7 +273,7 @@ public data class MessageListViewStyle(
                     attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
                 val retryMessageEnabled =
-                    attributes.getBoolean(R.styleable.MessageListView_streamUiRetryMessageActionEnabled, true)
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiRetryMessageEnabled, true)
 
                 val deleteConfirmationEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
