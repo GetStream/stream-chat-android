@@ -106,10 +106,10 @@ internal class TotalUnreadCountTest {
         private val repos: RepositoryFacade = mock()
         private val eventHandlerImpl =
             EventHandlerImpl(
-                recoveryEnabled= true,
-                client=  mock(),
+                recoveryEnabled = true,
+                client = mock(),
                 logic = mock(),
-                state=  mock(),
+                state = mock(),
                 mutableGlobalState = globalMutableState,
                 repos = repos,
                 syncManager = mock()
