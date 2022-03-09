@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
 import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
@@ -476,16 +476,16 @@ class Messages(
                 message: Message,
                 listeners: MessageListListenerContainer?,
                 parent: ViewGroup,
-            ): AttachmentViewHolder {
+            ): InnerAttachmentViewHolder {
                 // put your custom attachment view creation here
-                return CustomAttachmentViewHolder(TextView(parent.context), listeners)
+                return CustomInnerAttachmentViewHolder(TextView(parent.context), listeners)
             }
         }
 
-        private inner class CustomAttachmentViewHolder(
+        private inner class CustomInnerAttachmentViewHolder(
             private val textView: TextView,
             listeners: MessageListListenerContainer?,
-        ) : AttachmentViewHolder(textView) {
+        ) : InnerAttachmentViewHolder(textView) {
 
             private lateinit var message: Message
 
