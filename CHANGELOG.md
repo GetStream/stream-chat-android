@@ -58,6 +58,7 @@
 
 ### ✅ Added
 - Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
+- Added `streamUiRetryMessageEnabled` attribute to `MessageListView` that allows to show/hide retry action in message's overlay. [#3185](https://github.com/GetStream/stream-chat-android/pull/3185)
 
 ### ⚠️ Changed
 
