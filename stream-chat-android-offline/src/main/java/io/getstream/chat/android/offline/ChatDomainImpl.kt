@@ -314,7 +314,6 @@ internal class ChatDomainImpl internal constructor(
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
 
-
     suspend fun storeStateForChannel(channel: Channel) {
         return storeStateForChannels(listOf(channel))
     }

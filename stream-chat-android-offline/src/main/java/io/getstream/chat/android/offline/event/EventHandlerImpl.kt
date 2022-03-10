@@ -610,7 +610,7 @@ internal class EventHandlerImpl(
     private suspend fun updateCurrentUser(me: User) {
         val currentUser = mutableGlobalState.user.value
         if (me.id != currentUser?.id) {
-            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser?.id}. create a new ChatDomain when connecting a different user.")
+            throw InputMismatchException("received connect event for user with id ${me.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")
         }
 
         mutableGlobalState.run {
