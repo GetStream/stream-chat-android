@@ -12,10 +12,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -44,7 +42,6 @@ import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNet
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
@@ -60,15 +57,12 @@ import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
-import java.util.Date
-import java.util.InputMismatchException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -142,11 +136,7 @@ internal class ChatDomainImpl internal constructor(
      * replaced with the real database. This creates a resource leak because, when the second database is created, the first one is
      * not closed by room.
      */
-
     internal lateinit var repos: RepositoryFacade
-
-    /** the event subscription */
-    // private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
     /** stores the mapping from cid to ChannelController */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
@@ -173,8 +163,6 @@ internal class ChatDomainImpl internal constructor(
             mainHandler.postDelayed(this, 1000)
         }
     }
-    private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    internal var initJob: Deferred<*>? = null
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
@@ -234,33 +222,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    internal suspend fun updateCurrentUser(me: User) {
-        if (me.id != user.value?.id) {
-            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${user.value?.id}. create a new ChatDomain when connecting a different user.")
-        }
-        globalState._user.value = me
-        repos.insertCurrentUser(me)
-        globalState._mutedUsers.value = me.mutes
-        globalState._channelMutes.value = me.channelMutes
-        globalState._totalUnreadCount.value = me.totalUnreadCount
-        setChannelUnreadCount(me.unreadChannels)
-        setBanned(me.banned)
-    }
-
-    internal suspend fun storeSyncState(): SyncState? {
-        syncStateFlow.value?.let { _syncState ->
-            val newSyncState = _syncState.copy(
-                activeChannelIds = getActiveChannelCids(),
-            )
-            repos.insertSyncState(newSyncState)
-            syncStateFlow.value = newSyncState
-        }
-
-        return syncStateFlow.value
-    }
-
     override suspend fun disconnect() {
-        storeSyncState()
         job.cancelChildren()
         stopClean()
         clearConnectionState()
@@ -285,27 +247,6 @@ internal class ChatDomainImpl internal constructor(
 
     fun addError(error: ChatError) {
         globalState._errorEvent.value = Event(error)
-    }
-
-    fun isActiveChannel(cid: String): Boolean {
-        return activeChannelMapImpl.containsKey(cid)
-    }
-
-    fun getActiveChannelCids(): List<String> {
-        return activeChannelMapImpl.keys().toList()
-    }
-
-    @VisibleForTesting
-    fun addActiveChannel(cid: String, channelController: ChannelController) {
-        activeChannelMapImpl[cid] = channelController
-    }
-
-    fun setChannelUnreadCount(newCount: Int) {
-        globalState._channelUnreadCount.value = newCount
-    }
-
-    fun setBanned(newBanned: Boolean) {
-        globalState._banned.value = newBanned
     }
 
     internal fun channel(c: Channel): ChannelController {
@@ -342,9 +283,6 @@ internal class ChatDomainImpl internal constructor(
         return activeChannelMapImpl.getValue(cid)
     }
 
-    internal fun allActiveChannels(): List<ChannelController> =
-        activeChannelMapImpl.values.toList()
-
     fun generateMessageId(): String {
         return user.value!!.id + "-" + UUID.randomUUID().toString()
     }
@@ -376,8 +314,6 @@ internal class ChatDomainImpl internal constructor(
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
 
-    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     suspend fun storeStateForChannel(channel: Channel) {
         return storeStateForChannels(listOf(channel))
