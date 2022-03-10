@@ -34,7 +34,7 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid, MessageListViewModel.MESSAGES_LIMIT).asState(viewModelScope)
+        chatClient.asReferenced().watchChannel(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
 
     /**
      * The current [Channel] created from [ChannelState]. It emits new data either when

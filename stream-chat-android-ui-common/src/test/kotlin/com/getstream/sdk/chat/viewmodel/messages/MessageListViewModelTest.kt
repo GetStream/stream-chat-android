@@ -8,7 +8,7 @@ import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
 import com.getstream.sdk.chat.createUser
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.DEFAULT_MESSAGES_LIMIT
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -142,7 +142,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        verify(client).loadOlderMessages(CID, MESSAGES_LIMIT)
+        verify(client).loadOlderMessages(CID, DEFAULT_MESSAGES_LIMIT)
     }
 
     @Test

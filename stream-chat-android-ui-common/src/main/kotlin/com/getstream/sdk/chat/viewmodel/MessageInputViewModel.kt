@@ -43,7 +43,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid, MessageListViewModel.MESSAGES_LIMIT).asState(viewModelScope)
+        chatClient.asReferenced().watchChannel(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
 
     /**
      * A list of [Channel] members.
@@ -122,7 +122,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     /**
      * Sets thread mode.
      *
-     * @param message The original message on which the thread is based on.
+     * @param parentMessage The original message on which the thread is based on.
      */
     public fun setActiveThread(parentMessage: Message) {
         activeThread.postValue(parentMessage)
