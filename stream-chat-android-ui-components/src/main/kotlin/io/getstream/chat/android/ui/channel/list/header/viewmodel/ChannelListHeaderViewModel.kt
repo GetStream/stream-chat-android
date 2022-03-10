@@ -13,12 +13,19 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * Responsible for updating current user information.
  * Can be bound to the view using [ChannelListHeaderViewModel.bindView] function.
  *
- * @param chatDomain Entry point for offline operations.
+ * @param chatClient The main entry point for all low-level chat operations.
  */
-// TODO update kdocs
 public class ChannelListHeaderViewModel @JvmOverloads constructor(
-    private val chatClient: ChatClient = ChatClient.instance(),
+    chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    /**
+     * The user who is currently logged in.
+     */
     public val currentUser: LiveData<User?> = chatClient.globalState.user.asLiveData()
+
+    /**
+     * The state of the connection for the user currently logged in.
+     */
     public val connectionState: LiveData<ConnectionState> = chatClient.globalState.connectionState.asLiveData()
 }
