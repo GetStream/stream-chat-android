@@ -384,7 +384,6 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        InitializationCoordinator.getOrCreate().userSet(user)
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -430,7 +429,7 @@ public class ChatClient internal constructor(
             userStateService.onSetAnonymous()
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    initializationCoordinator.userSet(data.user)
+                    initializationCoordinator.userConnected(data.user)
                     listener?.onSuccess(data)
                 }
 
@@ -456,7 +455,6 @@ public class ChatClient internal constructor(
         getGuestToken(userId, username).enqueue { result ->
             if (result.isSuccess) {
                 val guestUser = result.data()
-                InitializationCoordinator.getOrCreate().userSet(guestUser.user)
                 setUser(guestUser.user, ConstantTokenProvider(guestUser.token), listener)
             } else {
                 listener?.onError(result.error())
@@ -2339,7 +2337,7 @@ public class ChatClient internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserSetListener { user ->
+            chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)
