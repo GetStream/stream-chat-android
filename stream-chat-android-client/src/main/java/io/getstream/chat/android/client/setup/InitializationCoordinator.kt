@@ -13,14 +13,14 @@ public class InitializationCoordinator private constructor() {
     private val userConnectedListeners: MutableList<(User) -> Unit> = mutableListOf()
 
     /**
-     * Adds a listener to user connection
+     * Adds a listener to user connection.
      */
     public fun addUserConnectedListener(listener: (User) -> Unit) {
         userConnectedListeners.add(listener)
     }
 
     /**
-     * Adds a listener to user disconnection
+     * Adds a listener to user disconnection.
      */
     public fun addUserDisconnectedListener(listener: (User?) -> Unit) {
         userDisconnectedListeners.add(listener)
@@ -44,7 +44,7 @@ public class InitializationCoordinator private constructor() {
         private var instance: InitializationCoordinator? = null
 
         /**
-         * Gets the initialization coordinator or creates it if necessary
+         * Gets the initialization coordinator or creates it if necessary.
          */
         public fun getOrCreate(): InitializationCoordinator =
             instance ?: create().also { instance = it }

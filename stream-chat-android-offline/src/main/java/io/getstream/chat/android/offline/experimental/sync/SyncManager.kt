@@ -58,7 +58,7 @@ internal class SyncManager(
     private var firstConnect = true
 
     /**
-     * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data...
+     * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.
      */
     internal suspend fun connectionRecovered() {
         if (firstConnect) {
@@ -71,7 +71,7 @@ internal class SyncManager(
     }
 
     /**
-     * Clears the data of SDK. Total unread count, connection state...
+     * Clears the data of SDK. Total unread count, connection state, etc
      */
     internal fun clearState() {
         globalState.run {
@@ -85,7 +85,7 @@ internal class SyncManager(
     }
 
     /**
-     * Store the state to be request in a later moment. Should be used when SDK is disconnecting
+     * Store the state to be request in a later moment. Should be used when SDK is disconnecting.
      */
     internal suspend fun storeSyncState() {
         syncStateFlow.value?.let { syncState ->
@@ -115,14 +115,14 @@ internal class SyncManager(
     }
 
     /**
-     * Loads te sync state for the user from the database
+     * Loads te sync state for the user from the database.
      */
     internal suspend fun loadSyncStateForUser(userId: String) {
         syncStateFlow.value = repos.selectSyncState(userId) ?: SyncState(userId)
     }
 
     /**
-     * Retry all entities that have failed. Channels, messages, reactions...
+     * Retry all entities that have failed. Channels, messages, reactions, etc.
      */
     internal suspend fun retryFailedEntities() {
         entitiesRetryMutex.withLock {

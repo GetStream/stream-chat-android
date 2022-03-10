@@ -117,7 +117,7 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Adds a new channel to the query
+     * Adds a new channel to the query.
      *
      * @param channel [Channel]
      */

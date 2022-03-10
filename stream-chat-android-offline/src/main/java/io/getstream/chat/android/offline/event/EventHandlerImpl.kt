@@ -101,7 +101,7 @@ internal class EventHandlerImpl(
     }
 
     /**
-     * Start listening to chat events
+     * Start listening to chat events.
      */
     internal fun startListening(scope: CoroutineScope) {
         if (eventSubscription.isDisposed) {
@@ -115,7 +115,7 @@ internal class EventHandlerImpl(
     }
 
     /**
-     * Stop listening for events
+     * Stop listening for events.
      */
     internal fun stopListening() {
         eventSubscription.dispose()
