@@ -23,6 +23,7 @@
 
 ### ⚠️ Changed
 - Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
+- Deprecated `Member:role` in favor of `Member:channelRole` [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ### ❌ Removed
 
@@ -51,6 +52,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed ChatMarkdown in favor of ChatMessageTextTransformer [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -184,7 +186,6 @@
 ## stream-chat-android-compose
 ### ⚠️ Changed
 - Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
-<!-- UNRELEASED END -->
 
 # February 24th, 2022 - 4.29.0
 ## stream-chat-android-offline

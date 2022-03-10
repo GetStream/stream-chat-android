@@ -15,7 +15,7 @@ public data class Member(
      * The user's role.
      */
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "Use channelRole instead."
     )
     var role: String? = null,
