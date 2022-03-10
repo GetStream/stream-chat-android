@@ -235,6 +235,11 @@ public class ChatClient internal constructor(
         this.interceptors.add(interceptor)
     }
 
+    @InternalStreamChatApi
+    public fun removeAllInterceptors() {
+        this.interceptors.clear()
+    }
+
     internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
         this.errorHandlers = errorHandlers.sorted()
     }
