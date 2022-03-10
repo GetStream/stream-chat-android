@@ -30,14 +30,14 @@ ChatTheme {
 }
 ```
 
-Adding the `ReactionsPicker` component is very simple, all you need to do is make sure that it is displayed when the `selectedMessageState` is `SelectedMessageReactionsPickerState` and pass in the selected `Message`. The reactions are drawn from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) and the rest is done for you.
+Adding the `ReactionsPicker` component is very simple, all you need to do is make sure that it is displayed when the `selectedMessageState` is `SelectedMessageReactionsPickerState` and pass in the selected `Message`. The reactions are drawn from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) and the rest is done for you.
 
 The code above will render the following UI:
 
 ![Default ReactionsPicker Component](../../assets/compose_default_reactions_picker_component.png)
 
 :::note
-`MessagesScreen` will give you the ability to display `ReactionsPicker` only if you have defined more than 5 reactions inside of [`ChatTheme`](../02-general-customization/01-chat-theme.mdx).
+`MessagesScreen` will give you the ability to display `ReactionsPicker` only if you have defined more than 5 reactions inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
 :::
 
 The menu overlay has a darker background and tapping it will dismiss the component, as will pressing the system back button.
@@ -92,7 +92,7 @@ public fun ReactionsPicker(
 )
 ```
 
-* `reactionTypes`: Allows you customize which reactions are shown. By default it uses `reactionTypes` inside of [`ChatTheme`](../02-general-customization/01-chat-theme.mdx).
+* `reactionTypes`: Allows you customize which reactions are shown. By default it uses `reactionTypes` inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
 
 You can customize these either by overriding `ChatTheme.reactionTypes` or passing in your own `Map` of reactions.
 
