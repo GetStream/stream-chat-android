@@ -218,7 +218,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
         }
 
         if (user != null) {
-            chatDomainImpl.setUser(user)
+            globalMutableState._user.value = user
             chatDomainImpl.userConnected(user)
         }
 
