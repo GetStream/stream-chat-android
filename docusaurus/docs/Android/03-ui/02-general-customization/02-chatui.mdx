@@ -32,7 +32,7 @@ The full list of `ChatUI` properties you can override include:
 
 As shown below, by default the SDK provides 5 built-in reactions.
 
-![Default reactions](../assets/chatui_default_reactions.png)
+![Default reactions](../../assets/chatui_default_reactions.png)
 
 You can override the default set of reactions. In order to define a custom set of reactions for your app, you need to pass the the following data to the `ChatUI.supportedReactions` property:
 
@@ -49,7 +49,7 @@ As a result, there will only be a _love_ reaction available in the chat, and whe
 
 | Normal state - available reactions | Active state - reaction selected |
 | --- | --- |
-|![Light_mode](../assets/chat_ui_custom_reaction.png)|![Dark_mode](../assets/chat_ui_custom_reaction_active.png)|
+|![Light_mode](../../assets/chat_ui_custom_reaction.png)|![Dark_mode](../../assets/chat_ui_custom_reaction_active.png)|
 
 ### Custom MIME Type Icons
 
@@ -83,17 +83,17 @@ The `AvatarView` is used in the lists of channels, users, and messages. The avat
 
 The image in the `AvatarView` is being displayed based on `image` property, present in both `Channel` and `User` objects:
 
-![Default avatar](../assets/default_channel.png)
+![Default avatar](../../assets/default_channel.png)
 
 The `AvatarView` will use default gradient color with initials if the `image` property cannot be loaded:
 
-![Default avatar](../assets/default_avatar.png)
+![Default avatar](../../assets/default_avatar.png)
 
 
 #### Customizing Avatar Using Styles
 You can configure avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android/src/main/java/com/getstream/sdk/chat/view/messages/AvatarStyle.kt). You can create this kind of avatar by changing the shape and border-radius: 
 
-![Light_mode](../assets/square_avatar.png)
+![Light_mode](../../assets/square_avatar.png)
 
 You can also change the background and the picture using `AvatarBitmapFactory`.
 
@@ -124,7 +124,7 @@ public open suspend fun createUserBitmap(
 
 The default color set includes a variety of colors: 
 
-![Colorful avatars](../assets/colorful_avatars.png)
+![Colorful avatars](../../assets/colorful_avatars.png)
 
 The set can be overridden in the `color.xml` file - you can expand or reduce the number of supported colors, like in the example below:
 
@@ -136,7 +136,7 @@ The set can be overridden in the `color.xml` file - you can expand or reduce the
 
 Which creates:
 
-![White avatars](../assets/white_avatars.png)
+![White avatars](../../assets/white_avatars.png)
 
 
 If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
@@ -168,7 +168,7 @@ This example uses the [Coil](https://github.com/coil-kt/coil) library for loadin
 
 This results in avatars rendered like this:
 
-![Blurred images for offline users](../assets/blurred_images.png)
+![Blurred images for offline users](../../assets/blurred_images.png)
 
 ### Adding Extra Headers to Image Requests
 
@@ -228,7 +228,7 @@ If you use `MarkdownTextTransformer`, don't use `android:autoLink` attribute bec
 
 Then the SDK will parse Markdown automatically:
 
-![Markdown messages](../assets/markdown_support.png)
+![Markdown messages](../../assets/markdown_support.png)
 
 ### Navigator
 

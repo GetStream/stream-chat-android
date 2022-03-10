@@ -20,13 +20,9 @@
 
 ### ✅ Added
 - Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
-- Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
-  You can use it to customize notifications priority, channel name, etc. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 
 ### ⚠️ Changed
 - Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
-- `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
-  You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
 - Deprecated `Member:role` in favor of `Member:channelRole` [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ### ❌ Removed
@@ -60,9 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
-- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
-- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
 
 ### ⬆️ Improved
 
@@ -72,8 +65,6 @@
 - Introduced `InnerAttachmentViewHolder` as an inner ViewHolder for custom attachments. [#3183](https://github.com/GetStream/stream-chat-android/pull/3183)
 - Introduced `AttachmentFactory` as a factory for custom attachment ViewHolders. [#3116](https://github.com/GetStream/stream-chat-android/pull/3116)
 - Introduced `AttachmentFactoryManager` as a manager for the list of registered attachment factories. The class is exposed via `ChatUI`. [#3116](https://github.com/GetStream/stream-chat-android/pull/3116)
-- Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
-- Added `streamUiRetryMessageEnabled` attribute to `MessageListView` that allows to show/hide retry action in message's overlay. [#3185](https://github.com/GetStream/stream-chat-android/pull/3185)
 
 ### ⚠️ Changed
 - Separated the Giphy attachments and content to a GiphyAttachmentViewHolder. [#2932](https://github.com/GetStream/stream-chat-android/pull/2932)
@@ -85,13 +76,13 @@
 - Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder`. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 - Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
+- Updated the structure of UI components documentation. [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/). [#3186](https://github.com/GetStream/stream-chat-android/pull/3186)
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
-- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
 
 ### ⬆️ Improved
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
@@ -153,8 +144,36 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
 <!-- UNRELEASED END -->
+
+# March 9th, 2022 - 4.30.1
+## stream-chat-android-client
+### ✅ Added
+- Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
+  You can use it to customize notifications priority, channel name, etc. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
+
+### ⚠️ Changed
+- `LoadNotificationDataWorker` is now using a separate `NotificationChannel` with `NotificationCompat.PRIORITY_LOW`.
+  You can customize its name by overriding `stream_chat_other_notifications_channel_name` string. [#3167](https://github.com/GetStream/stream-chat-android/pull/3167)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed updating typing users. [#3154](https://github.com/GetStream/stream-chat-android/pull/3154)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed displaying long usernames in message's footnote within `MessageListView`. [#3149](https://github.com/GetStream/stream-chat-android/pull/3149)
+- A bug that made `ScrollButtonView` in `MessageListView` permanently visible. [#3170](https://github.com/GetStream/stream-chat-android/pull/3170)
+- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
+
+### ✅ Added
+- Added a way to check if the adapters and message/channel lists have been initialized or not. [#3182](https://github.com/GetStream/stream-chat-android/pull/3182)
+- Added `streamUiRetryMessageEnabled` attribute to `MessageListView` that allows to show/hide retry action in message's overlay. [#3185](https://github.com/GetStream/stream-chat-android/pull/3185)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
+
 # March 2nd, 2022 - 4.30.0
 ## Common changes for all artifacts
 ### ⬆️ Improved
