@@ -65,8 +65,10 @@ public class StreamOfflinePluginFactory(
      */
     private fun createOfflinePlugin(user: User): OfflinePlugin {
         val chatClient = ChatClient.instance()
-        val globalState = GlobalMutableState.getOrCreate()
-        globalState.clearState()
+        val globalState = GlobalMutableState.getOrCreate().apply {
+            clearState()
+            _user.value = user
+        }
 
         if (!ChatDomain.isInitialized) {
             ChatDomain.Builder(appContext, chatClient).apply {
@@ -77,7 +79,6 @@ public class StreamOfflinePluginFactory(
         }
 
         val chatDomainImpl = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
-        chatDomainImpl.setUser(user)
         chatDomainImpl.userConnected(user)
 
         val job = SupervisorJob()
@@ -130,7 +131,9 @@ public class StreamOfflinePluginFactory(
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
-        )
+        ).also { syncManager ->
+            syncManager.clearState()
+        }
 
         val eventHandler = EventHandlerImpl(
             recoveryEnabled = true,

@@ -170,44 +170,20 @@ internal class ChatDomainImpl internal constructor(
     internal var latestUsers: StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
         private set
 
-    private fun clearUnreadCountState() {
-        globalState._totalUnreadCount.value = 0
-        globalState._channelUnreadCount.value = 0
-    }
-
     private fun clearConnectionState() {
-        globalState._initialized.value = false
-        globalState._connectionState.value = ConnectionState.OFFLINE
-        globalState._banned.value = false
-        globalState._mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
         latestUsers = MutableStateFlow(emptyMap())
     }
 
-    internal fun setUser(user: User) {
-        globalState._user.value = user
-        // load channel configs from Room into memory
-    }
-
     internal fun userConnected(user: User) {
         clearConnectionState()
-        clearUnreadCountState()
 
-        if (client.isSocketConnected()) {
-            globalState._connectionState.value = ConnectionState.CONNECTED
-        }
         initClean()
     }
 
     init {
         logger.logI("Initializing ChatDomain with version " + getVersion())
-
-        // if the user is already defined, just call setUser ourselves
-        val current = client.getCurrentUser()
-        if (current != null) {
-            setUser(current)
-        }
 
         if (backgroundSyncEnabled) {
             client.setPushNotificationReceivedListener { channelType, channelId ->

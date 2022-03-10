@@ -24,6 +24,7 @@ import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,6 +64,17 @@ internal class SyncManager(
         } else {
             // the second time (ie coming from background, or reconnecting we should recover all)
             connectionRecovered(true)
+        }
+    }
+
+    internal fun clearState() {
+        globalState.run {
+            _totalUnreadCount.value = 0
+            _channelUnreadCount.value = 0
+            _initialized.value = false
+            _connectionState.value = ConnectionState.OFFLINE
+            _banned.value = false
+            _mutedUsers.value = emptyList()
         }
     }
 
