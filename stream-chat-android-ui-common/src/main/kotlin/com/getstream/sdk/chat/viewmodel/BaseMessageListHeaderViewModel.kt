@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,18 +15,23 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 /**
  * The ViewModel used by [MessageListHeaderView].
  *
  * @param cid The CID of the current channel.
  * @param chatClient An instance of the low level chat client.
+ * @param globalState Global state of OfflinePlugin. Contains information
+ * such as the current user, connection state, unread counts etc.
  */
 public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi constructor(
     cid: String,
     chatClient: ChatClient = ChatClient.instance(),
+    globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -44,17 +48,17 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
      * channel events being received.
      */
     public val channel: LiveData<Channel> =
-        Transformations.map(channelState.channelData.combine(channelState.members) { _, _ -> }.asLiveData()) {
+        channelState.channelData.combine(channelState.members) { _, _ ->
             channelState.toChannel()
-        }
+        }.asLiveData()
 
     /**
      * A list of users who are currently typing.
      */
     public val typingUsers: LiveData<List<User>> =
-        Transformations.map(channelState.typing.asLiveData()) { typingEvent ->
+        channelState.typing.map { typingEvent ->
             typingEvent.users
-        }
+        }.asLiveData()
 
     /**
      * A list of [Channel] members.
@@ -64,7 +68,7 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
     /**
      * Current user's online status.
      */
-    public val online: LiveData<ConnectionState> = chatClient.globalState.connectionState.asLiveData()
+    public val online: LiveData<ConnectionState> = globalState.connectionState.asLiveData()
 
     /**
      * Signals that we are currently in thread mode if the value is non-null.

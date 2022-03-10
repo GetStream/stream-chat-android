@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
@@ -13,19 +14,20 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * Responsible for updating current user information.
  * Can be bound to the view using [ChannelListHeaderViewModel.bindView] function.
  *
- * @param chatClient The main entry point for all low-level chat operations.
+ * @param globalState Global state of OfflinePlugin. Contains information
+ * such as the current user, connection state, unread counts etc.
  */
 public class ChannelListHeaderViewModel @JvmOverloads constructor(
-    chatClient: ChatClient = ChatClient.instance(),
+    globalState: GlobalState = ChatClient.instance().globalState,
 ) : ViewModel() {
 
     /**
      * The user who is currently logged in.
      */
-    public val currentUser: LiveData<User?> = chatClient.globalState.user.asLiveData()
+    public val currentUser: LiveData<User?> = globalState.user.asLiveData()
 
     /**
      * The state of the connection for the user currently logged in.
      */
-    public val connectionState: LiveData<ConnectionState> = chatClient.globalState.connectionState.asLiveData()
+    public val connectionState: LiveData<ConnectionState> = globalState.connectionState.asLiveData()
 }

@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.experimental.channel.state.MessagesStat
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -44,12 +45,15 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
  * @param cid The full channel id, i.e. "messaging:123"
- * @param client Entry point for all low-level operations.
+ * @param chatClient Entry point for all low-level operations.
+ * @param globalState Global state of OfflinePlugin. Contains information
+ * such as the current user, connection state, unread counts etc.
  */
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
-    private val client: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState
 ) : ViewModel() {
 
     /**
@@ -155,7 +159,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     /**
      * The currently logged in user.
      */
-    public val user: LiveData<User?> = client.globalState.user.asLiveData()
+    public val user: LiveData<User?> = globalState.user.asLiveData()
 
     /**
      * The logger used to print to errors, warnings, information
@@ -198,7 +202,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
-        val channelState = client.asReferenced().watchChannel(cid, DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
+        val channelState = chatClient.asReferenced().watchChannel(cid, DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
 
         ChatClient.dismissChannelNotifications(
             channelType = channelState.channelType,
@@ -298,7 +302,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.LastMessageRead -> {
                 cid.cidToTypeAndId().let { (channelType, channelId) ->
-                    client.markRead(channelType, channelId).enqueue(
+                    chatClient.markRead(channelType, channelId).enqueue(
                         onError = { chatError ->
                             logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
                         }
@@ -312,7 +316,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                client.deleteMessage(event.message.id, event.hard)
+                chatClient.deleteMessage(event.message.id, event.hard)
                     .enqueue(
                         onError = { chatError ->
                             logger.logE(
@@ -324,7 +328,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     )
             }
             is Event.FlagMessage -> {
-                client.flagMessage(event.message.id).enqueue { result ->
+                chatClient.flagMessage(event.message.id).enqueue { result ->
                     event.resultHandler(result)
                     if (result.isError) {
                         logger.logE("Could not flag message: ${result.error().message}")
@@ -333,7 +337,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 }
             }
             is Event.PinMessage -> {
-                client.pinMessage(Message(id = event.message.id)).enqueue(
+                chatClient.pinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
                         logger.logE("Could not flag message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
@@ -341,7 +345,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.UnpinMessage -> {
-                client.unpinMessage(Message(id = event.message.id)).enqueue(
+                chatClient.unpinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
                         logger.logE("Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(chatError)))
@@ -353,7 +357,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.RetryMessage -> {
                 val (channelType, channelId) = event.message.cid.cidToTypeAndId()
-                client.sendMessage(channelType, channelId, event.message)
+                chatClient.sendMessage(channelType, channelId, event.message)
                     .enqueue(
                         onError = { chatError ->
                             logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")
@@ -364,7 +368,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
             }
             is Event.MuteUser -> {
-                client.muteUser(event.user.id).enqueue(
+                chatClient.muteUser(event.user.id).enqueue(
                     onError = { chatError ->
                         logger.logE("Could not mute user: ${chatError.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(chatError)))
@@ -372,7 +376,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.UnmuteUser -> {
-                client.unmuteUser(event.user.id).enqueue(
+                chatClient.unmuteUser(event.user.id).enqueue(
                     onError = { chatError ->
                         logger.logE("Could not unmute user: ${chatError.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(chatError)))
@@ -380,7 +384,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.BlockUser -> {
-                val channelClient = client.channel(cid)
+                val channelClient = chatClient.channel(cid)
                 channelClient.shadowBanUser(
                     targetId = event.user.id,
                     reason = null,
@@ -393,7 +397,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             is Event.ReplyMessage -> {
-                client.setMessageForReply(event.cid, event.repliedMessage).enqueue(
+                chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
                     onError = { chatError ->
                         logger.logE("Could not reply message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                     }
@@ -417,7 +421,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 if (message != null) {
                     _targetMessage.value = message!!
                 } else {
-                    client.loadMessageById(
+                    chatClient.loadMessageById(
                         cid,
                         event.messageId,
                         DEFAULT_MESSAGES_LIMIT,
@@ -434,7 +438,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.RemoveAttachment -> {
                 val attachmentToBeDeleted = event.attachment
-                client.loadMessageById(
+                chatClient.loadMessageById(
                     cid,
                     event.messageId,
                     DEFAULT_MESSAGES_LIMIT,
@@ -450,7 +454,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                             }
                         }
 
-                        client.updateMessage(message).enqueue(
+                        chatClient.updateMessage(message).enqueue(
                             onError = { chatError ->
                                 logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")
                             }
@@ -463,7 +467,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.ReplyAttachment -> {
                 val messageId = event.repliedMessageId
                 val cid = event.cid
-                client.loadMessageById(
+                chatClient.loadMessageById(
                     cid,
                     messageId,
                     DEFAULT_MESSAGES_LIMIT,
@@ -509,7 +513,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
         when (event.action) {
             GiphyAction.SEND -> {
-                client.sendGiphy(event.message).enqueue(
+                chatClient.sendGiphy(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
@@ -518,7 +522,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.SHUFFLE -> {
-                client.shuffleGiphy(event.message).enqueue(
+                chatClient.shuffleGiphy(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
@@ -527,7 +531,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 )
             }
             GiphyAction.CANCEL -> {
-                client.cancelEphemeralMessage(event.message).enqueue(
+                chatClient.cancelEphemeralMessage(event.message).enqueue(
                     onError = { chatError ->
                         logger.logE(
                             "Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
@@ -547,7 +551,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             when (this) {
                 is Mode.Normal -> {
                     messageListData?.loadingMoreChanged(true)
-                    client.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
+                    chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
                         messageListData?.loadingMoreChanged(false)
                     }
                 }
@@ -564,7 +568,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun threadLoadMore(threadMode: Mode.Thread) {
         threadListData?.loadingMoreChanged(true)
         if (threadMode.threadState != null) {
-            client.getRepliesMore(
+            chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = DEFAULT_MESSAGES_LIMIT,
@@ -611,7 +615,7 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        val state = client.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        val state = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }
@@ -630,7 +634,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             score = 1
         }
         if (message.ownReactions.any { it.type == reactionType }) {
-            client.deleteReaction(
+            chatClient.deleteReaction(
                 messageId = message.id,
                 reactionType = reaction.type,
                 cid = cid
@@ -642,7 +646,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 }
             )
         } else {
-            client.sendReaction(
+            chatClient.sendReaction(
                 enforceUnique = enforceUnique,
                 reaction = reaction,
                 cid = cid

@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -23,8 +22,10 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import java.io.File
 
 /**
@@ -33,10 +34,13 @@ import java.io.File
  *
  * @param cid The full channel id, i.e. "messaging:123".
  * @param chatClient Entry point for most of the chat SDK
+ * @param globalState Global state of OfflinePlugin. Contains information
+ * such as the current user, connection state, unread counts etc.
  */
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
+    globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -54,25 +58,25 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * List of available commands.
      */
     public val commands: LiveData<List<Command>> =
-        Transformations.map(channelState.channelConfig.asLiveData()) { config ->
+        channelState.channelConfig.map { config ->
             config.commands
-        }
+        }.asLiveData()
 
     /**
      * The cooldown interval for the given channel.
      */
     public val cooldownInterval: LiveData<Int> =
-        Transformations.map(channelState.channelData.asLiveData()) { channelData ->
+        channelState.channelData.map { channelData ->
             channelData.cooldown
-        }
+        }.asLiveData()
 
     /**
      * The maximum length of a message that can be typed in the message input.
      */
     public val maxMessageLength: LiveData<Int> =
-        Transformations.map(channelState.channelConfig.asLiveData()) { config ->
+        channelState.channelConfig.map { config ->
             config.maxMessageLength
-        }
+        }.asLiveData()
 
     /**
      * Holds the message the user is currently replying to,
@@ -88,9 +92,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * the user.
      */
     public val isDirectMessage: LiveData<Boolean> =
-        Transformations.map(channelState.channelData.combine(chatClient.globalState.user) { _, _ -> }.asLiveData()) {
+        channelState.channelData.combine(globalState.user) { _, _ ->
             channelState.toChannel().isDirectMessaging()
-        }
+        }.asLiveData()
 
     /**
      * Signals that we are currently in thread mode if the value is non-null.

@@ -552,8 +552,8 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/header
 
 public final class io/getstream/chat/android/ui/channel/list/header/viewmodel/ChannelListHeaderViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/offline/experimental/global/GlobalState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/offline/experimental/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getConnectionState ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Landroidx/lifecycle/LiveData;
 }
@@ -566,8 +566,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;

@@ -24,11 +24,11 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
-import io.getstream.chat.android.ui.channel.actions.internal.ChannelActionsViewModel.State
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.map
@@ -45,6 +45,9 @@ import kotlinx.coroutines.launch
  * @param messageLimit The number of messages to fetch for each channel.
  * @param memberLimit The number of members to fetch per channel.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
+ * @param chatClient Entry point for all low-level operations.
+ * @param globalState Global state of OfflinePlugin. Contains information
+ * such as the current user, connection state, unread counts etc.
  */
 public class ChannelListViewModel(
     private val filter: FilterObject? = null,
@@ -54,6 +57,7 @@ public class ChannelListViewModel(
     private val memberLimit: Int = 30,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState
 ) : ViewModel() {
 
     /**
@@ -71,7 +75,7 @@ public class ChannelListViewModel(
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
     public val typingEvents: LiveData<TypingEvent>
-        get() = chatClient.globalState.typingUpdates.asLiveData()
+        get() = globalState.typingUpdates.asLiveData()
 
     /**
      * Represents the current pagination state that is a product
@@ -105,7 +109,7 @@ public class ChannelListViewModel(
      * Filters the requested channels.
      */
     private val filterLiveData: LiveData<FilterObject?> =
-        filter?.let(::MutableLiveData) ?: chatClient.globalState.user.map(Filters::defaultChannelListFilter)
+        filter?.let(::MutableLiveData) ?: globalState.user.map(Filters::defaultChannelListFilter)
             .asLiveData()
 
     /**
@@ -146,9 +150,9 @@ public class ChannelListViewModel(
         queryChannelsState?.let { queryChannelsState ->
             queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
             stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
-                stateMerger.value = handleChannelStateNews(channelsState, chatClient.globalState.channelMutes.value)
+                stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
             }
-            stateMerger.addSource(chatClient.globalState.channelMutes.asLiveData()) { channelMutes ->
+            stateMerger.addSource(globalState.channelMutes.asLiveData()) { channelMutes ->
                 val state = stateMerger.value
 
                 if (state?.channels?.isNotEmpty() == true) {

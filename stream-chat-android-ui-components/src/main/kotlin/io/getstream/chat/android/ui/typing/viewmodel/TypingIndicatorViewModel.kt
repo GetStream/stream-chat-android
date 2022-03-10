@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.typing.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,6 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import kotlinx.coroutines.flow.map
 
 /**
  * ViewModel used by [io.getstream.chat.android.ui.typing.TypingIndicatorView].
@@ -32,7 +32,7 @@ public class TypingIndicatorViewModel(
      * A list of users who are currently typing.
      */
     public val typingUsers: LiveData<List<User>> =
-        Transformations.map(channelState.typing.asLiveData()) { typingEvent ->
+        channelState.typing.map { typingEvent ->
             typingEvent.users
-        }
+        }.asLiveData()
 }
