@@ -99,7 +99,7 @@ public fun buildDefaultChannelOptionsState(
     val canLeaveChannel = !selectedChannel.isDistinct()
     val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
         ?.channelRole
-        ?.let { it == "admin" || it == "owner" }
+        ?.let { it == "channel_moderator" }
         ?: false
 
     return listOfNotNull(

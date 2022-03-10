@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
  * @return if the member is the owner or an admin of a channel.
  */
 public val Member.isOwnerOrAdmin: Boolean
-    get() = channelRole == "owner" || channelRole == "admin"
+    get() = channelRole == "channel_moderator"
 
 /**
  * @return if the current user is an owner or an admin of a channel.
