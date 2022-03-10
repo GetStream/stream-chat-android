@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui.common.extensions
 
 import io.getstream.chat.android.client.models.Member
@@ -7,7 +9,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
  * @return if the member is the owner or an admin of a channel.
  */
 public val Member.isOwnerOrAdmin: Boolean
-    get() = channelRole == "channel_moderator"
+    get() = role == "owner" || role == "admin"
 
 /**
  * @return if the current user is an owner or an admin of a channel.

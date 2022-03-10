@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.foundation.background
@@ -98,8 +100,8 @@ public fun buildDefaultChannelOptionsState(
 ): List<ChannelOptionState> {
     val canLeaveChannel = !selectedChannel.isDistinct()
     val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
-        ?.channelRole
-        ?.let { it == "channel_moderator" }
+        ?.role
+        ?.let { it == "admin" || it == "owner" }
         ?: false
 
     return listOfNotNull(

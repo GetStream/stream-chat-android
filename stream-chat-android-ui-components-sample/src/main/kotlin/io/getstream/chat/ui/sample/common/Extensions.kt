@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.ui.sample.common
 
 import android.app.Activity
@@ -110,7 +112,7 @@ val ChannelData.name: String
     get() = (extraData["name"] as? String) ?: ""
 
 val Member.isOwner: Boolean
-    get() = channelRole == "channel_moderator"
+    get() = role == "owner"
 
 const val CHANNEL_ARG_DRAFT = "draft"
 
