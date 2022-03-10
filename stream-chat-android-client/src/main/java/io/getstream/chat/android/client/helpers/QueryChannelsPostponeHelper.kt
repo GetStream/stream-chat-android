@@ -1,8 +1,6 @@
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
@@ -14,16 +12,33 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
+/**
+ * Class responsible for postponing query channels request until the socket connection is established.
+ * The request will be retried [attemptsCount] times with a [delayDuration] ms delay between each request.
+ *
+ * @param socketStateService Service responsible for providing current socket state
+ * @param coroutineScope Coroutine scope where the call should be run.
+ * @param delayDuration The delay duration between each query channels request. Default: [DELAY_DURATION].
+ * @param attemptsCount Maximum number of attempts to be performed. Default: [MAX_ATTEMPTS_COUNT].
+ */
 internal class QueryChannelsPostponeHelper(
-    private val api: ChatApi,
     private val socketStateService: SocketStateService,
     private val coroutineScope: CoroutineScope,
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT,
 ) {
 
-    internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = CoroutineCall(coroutineScope) {
-        doSafeJob { api.queryChannels(request) }.await()
+    /**
+     * Postpones query channels call.
+     *
+     * @param queryChannelsCall A query channels call to be run when the socket connection is established.
+     *
+     * @return Executable async [Call] responsible for querying channels
+     */
+    internal fun postponeQueryChannels(queryChannelsCall: () -> Call<List<Channel>>): Call<List<Channel>> {
+        return CoroutineCall(coroutineScope) {
+            doSafeJob { queryChannelsCall() }.await()
+        }
     }
 
     private suspend fun <T : Any> doSafeJob(job: () -> Call<T>): Call<T> =
@@ -38,7 +53,7 @@ internal class QueryChannelsPostponeHelper(
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         }
         return when (socketStateService.state) {
-            is SocketState.Connected, -> job()
+            is SocketState.Connected -> job()
             is SocketState.Idle, SocketState.Pending, SocketState.Disconnected -> {
                 delay(delayDuration)
                 doJob(attemptCount - 1, job)
