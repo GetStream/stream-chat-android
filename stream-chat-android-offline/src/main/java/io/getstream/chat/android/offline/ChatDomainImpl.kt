@@ -41,7 +41,6 @@ import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest

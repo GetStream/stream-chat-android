@@ -332,7 +332,6 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                initializationCoordinator.userSet(user)
                 initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
@@ -457,6 +456,7 @@ public class ChatClient internal constructor(
         getGuestToken(userId, username).enqueue { result ->
             if (result.isSuccess) {
                 val guestUser = result.data()
+                InitializationCoordinator.getOrCreate().userSet(guestUser.user)
                 setUser(guestUser.user, ConstantTokenProvider(guestUser.token), listener)
             } else {
                 listener?.onError(result.error())
