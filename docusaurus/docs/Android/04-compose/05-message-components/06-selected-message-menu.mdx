@@ -37,13 +37,13 @@ if (selectedMessageState is SelectedMessageOptionsState) {
 }
 ```
 
-As you can see, showing the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageOptionsState`, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
+As you can see, showing the menu is very simple. If the `selectedMessageState` is an instance of `SelectedMessageOptionsState`, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care of internally.
 
 The small snippet of code above produces the following UI:
 
 ![Default SelectedMessageMenu component](../../assets/compose_default_selected_message_menu.png)
 
-The component shows reactions from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) on the top, followed by the message actions you passed in.
+The component shows reactions from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) on the top, followed by the message actions you passed in.
 
 The menu overlay has a darker background and tapping it will dismiss the component, as will pressing the system back button.
 
@@ -105,9 +105,9 @@ fun SelectedMessageMenu(
 * `modifier`: Modifier for the dialog component.
 * `overlayColor`: Allows you to customize the color of the overlay.
 * `shape`: Allows you to customize the shape of the dialog.
-* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component.
+* `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
 
-If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
+If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 
 By default `SelectedMessageMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 

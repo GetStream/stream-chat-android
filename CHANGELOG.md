@@ -23,6 +23,7 @@
 
 ### ⚠️ Changed
 - Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
+- Deprecated `Member:role` in favor of `Member:channelRole` [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ### ❌ Removed
 
@@ -51,6 +52,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed ChatMarkdown in favor of ChatMessageTextTransformer [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -74,6 +76,7 @@
 - Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder`. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 - Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
+- Updated the structure of UI components documentation. [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/). [#3186](https://github.com/GetStream/stream-chat-android/pull/3186)
 
 ### ❌ Removed
 
@@ -183,7 +186,6 @@
 ## stream-chat-android-compose
 ### ⚠️ Changed
 - Since we're using Compose 1.1.1 for our SDK, we recommend upgrading to avoid conflicts. [#3104](https://github.com/GetStream/stream-chat-android/pull/3104)
-<!-- UNRELEASED END -->
 
 # February 24th, 2022 - 4.29.0
 ## stream-chat-android-offline
