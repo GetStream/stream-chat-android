@@ -92,6 +92,11 @@ internal class QueryChannelsLogic(
             .let { Result.success(it) }
     }
 
+    /**
+     * Returns the state of Channel. Useful to check how it the state of the channel of the [QueryChannelsLogic]
+     *
+     * @return [QueryChannelsState]
+     */
     internal fun state(): QueryChannelsState {
         return mutableState
     }
@@ -111,6 +116,11 @@ internal class QueryChannelsLogic(
             .also { addChannels(it, repos) }
     }
 
+    /**
+     * Adds a new channel to the query
+     *
+     * @param channel [Channel]
+     */
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
         val (type, id) = channel.cid.cidToTypeAndId()

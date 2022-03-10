@@ -16,6 +16,13 @@ internal fun validateCid(cid: String): String = cid.apply {
     require(':' in cid) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
 }
 
+/**
+ * Validates a cid returning a boolean. It logs the problem if the cid is not valid.
+ *
+ * @param cid The full channel id. ie messaging:123.
+ *
+ * @return positive Boolean if is valid, negative if not.
+ */
 internal fun validateCidBoolean(cid: String): Boolean {
     return when {
         cid.isEmpty() || cid.isBlank() -> {

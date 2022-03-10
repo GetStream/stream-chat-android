@@ -153,10 +153,21 @@ internal class ChannelLogic(
             }
     }
 
+    /**
+     * Returns the state of Channel. Useful to check how it the state of the channel of the [ChannelLogic]
+     *
+     * @return [ChannelState]
+     */
     internal fun state(): ChannelState {
         return mutableState
     }
 
+    /**
+     * Starts to watch this channel
+     *
+     * @param messagesLimit The limit of messages inside the channel that should be requested
+     * @param userPresence The presence of the user
+     */
     internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState._loading.value) {

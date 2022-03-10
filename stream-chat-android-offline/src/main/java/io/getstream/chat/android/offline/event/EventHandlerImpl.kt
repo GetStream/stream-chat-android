@@ -114,16 +114,25 @@ internal class EventHandlerImpl(
         }
     }
 
+    /**
+     * Stop listening for events
+     */
     internal fun stopListening() {
         eventSubscription.dispose()
     }
 
+    /**
+     * Handle events from the SDK. Don't use this directly as this only be called then new events arrive from the SDK.
+     */
     @VisibleForTesting
     internal suspend fun handleEvent(event: ChatEvent) {
         handleConnectEvents(listOf(event))
         handleEventsInternal(listOf(event), isFromSync = false)
     }
 
+    /**
+     * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
+     */
     internal suspend fun replayEventsForActiveChannels() {
         replayEventsForChannels(activeChannelsCid())
     }
