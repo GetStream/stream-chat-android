@@ -150,7 +150,7 @@ public class StreamOfflinePluginFactory(
         }
 
         InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener { user ->
+            addUserSetListener { user ->
                 chatDomainImpl.userConnected(user)
             }
 
