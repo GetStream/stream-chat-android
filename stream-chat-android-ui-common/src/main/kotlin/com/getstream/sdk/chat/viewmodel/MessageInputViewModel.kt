@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
@@ -259,12 +258,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public fun editMessage(message: Message) {
         val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
-
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            chatClient.updateMessage(updatedMessage)
-        } else {
-            chatClient.updateMessage(updatedMessage)
-        }.enqueue(
+        chatClient.updateMessage(updatedMessage).enqueue(
             onError = { chatError ->
                 logger.logE("Could not edit message with cid: ${updatedMessage.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }
