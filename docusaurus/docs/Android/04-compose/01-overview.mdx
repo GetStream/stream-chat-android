@@ -68,8 +68,7 @@ val factory by lazy {
     MessagesViewModelFactory(
         context = this,
         chatClient = ChatClient.instance(),
-        chatDomain = ChatDomain.instance(),
-        channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+        channelId = "messaging:123",
         enforceUniqueReactions = true,
         messageLimit = 30
     )

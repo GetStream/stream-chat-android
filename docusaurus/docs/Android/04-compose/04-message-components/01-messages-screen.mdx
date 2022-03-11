@@ -19,7 +19,7 @@ The benefit of a screen component solution is easy integration. All you need to 
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     // Load the ID of the channel you've opened
-    val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
+    val channelId = "messaging:123"
 
     setContent {
         ChatTheme {
