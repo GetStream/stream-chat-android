@@ -1,3 +1,5 @@
+// ktlint-disable filename
+
 package io.getstream.chat.docs.kotlin.compose.messages
 
 import android.os.Bundle
@@ -68,8 +70,7 @@ private object SelectedReactionsMenuUsageSnippet {
                                 onDismiss = {
                                     // Handle dismiss
                                 },
-
-                                )
+                            )
                         }
                     }
                 }
@@ -188,8 +189,10 @@ private object SelectedReactionsMenuCustomizationSnippet {
                                     Text(
                                         modifier = Modifier
                                             .padding(horizontal = 16.dp, vertical = 8.dp)
-                                            .background(shape = ChatTheme.shapes.avatar,
-                                                color = ChatTheme.colors.infoAccent)
+                                            .background(
+                                                shape = ChatTheme.shapes.avatar,
+                                                color = ChatTheme.colors.infoAccent
+                                            )
                                             .padding(horizontal = 8.dp),
                                         style = ChatTheme.typography.body,
                                         color = ChatTheme.colors.textHighEmphasis,

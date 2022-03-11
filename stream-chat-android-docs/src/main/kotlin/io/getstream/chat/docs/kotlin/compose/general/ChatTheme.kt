@@ -1,3 +1,5 @@
+// ktlint-disable filename
+
 package io.getstream.chat.docs.kotlin.compose.general
 
 import android.os.Bundle

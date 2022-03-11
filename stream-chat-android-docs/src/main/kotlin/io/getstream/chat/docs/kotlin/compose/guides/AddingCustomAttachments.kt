@@ -1,3 +1,5 @@
+// ktlint-disable filename
+
 package io.getstream.chat.docs.kotlin.compose.guides
 
 import android.content.Context

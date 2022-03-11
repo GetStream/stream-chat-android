@@ -1,3 +1,5 @@
+// ktlint-disable filename
+
 package io.getstream.chat.docs.kotlin.compose.channels
 
 import android.os.Bundle
@@ -192,9 +194,11 @@ private object ChannelListCustomizationSnippet {
             ChannelList(
                 // Set up state
                 itemContent = { // Customize the channel items
-                    Card(modifier = Modifier
-                        .padding(2.dp)
-                        .fillMaxWidth()) {
+                    Card(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                    ) {
                         Row(
                             modifier = Modifier
                                 .padding(8.dp)
