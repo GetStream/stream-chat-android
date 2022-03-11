@@ -8,7 +8,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
-import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
