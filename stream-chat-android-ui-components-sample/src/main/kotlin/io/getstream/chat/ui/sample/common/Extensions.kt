@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.ui.sample.common
 
 import android.app.Activity
