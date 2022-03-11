@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.experimental.plugin.query
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import kotlinx.coroutines.CoroutineScope
 
 @InternalStreamChatApi
 /**
@@ -19,5 +18,5 @@ public interface QueryReference<T : Any, S : Any> {
      *
      * @param scope Coroutine scope where initial data filling action is being invoked.
      */
-    public fun asState(scope: CoroutineScope): S
+    public fun asState(): S
 }

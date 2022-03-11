@@ -18,7 +18,7 @@ import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -62,7 +62,7 @@ public class MessageComposerController(
      * Holds information about the current state of the [Channel].
      */
     public val channelState: ChannelState =
-        ChatClientReferenceAdapter(chatClient).watchChannel(channelId, 0).asState(scope)
+        chatClient.asReferenced().watchChannel(channelId, 0).asState()
 
     /**
      * Full message composer state holding all the required information.
