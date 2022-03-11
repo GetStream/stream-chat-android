@@ -175,7 +175,12 @@ public class ChatClient internal constructor(
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
 
-    public lateinit var plugins: List<Plugin>
+    /**
+     * The list of plugins added once user is connected.
+     *
+     * @see [Plugin]
+     */
+    internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
 
@@ -1326,10 +1331,17 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Gets the channels without running any side effects.
+     *
+     * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.queryChannels(request)
+        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1357,18 +1369,30 @@ public class ChatClient internal constructor(
             .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
     }
 
+    /**
+     * Gets the channels from the server based on parameters from [QueryChannelsRequest].
+     * The call requires active socket connection and will be automatically postponed and retried until
+     * the connection is established or the maximum number of attempts is reached.
+     * @see [QueryChannelsPostponeHelper]
+     *
+     * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        return queryChannelsPostponeHelper.postponeQueryChannels {
+            val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
 
-        return queryChannelsPostponeHelper.queryChannels(request)
-            .doOnStart(scope) {
-                relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
-            }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
-            }
-            .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+            api.queryChannels(request)
+                .doOnStart(scope) {
+                    relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+                }
+                .doOnResult(scope) { result ->
+                    relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
+                }
+                .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+        }
     }
 
     @CheckResult

@@ -79,7 +79,6 @@ internal open class BaseChatModule(
     val userStateService: UserStateService = UserStateService()
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
         QueryChannelsPostponeHelper(
-            api(),
             socketStateService,
             networkScope,
         )
