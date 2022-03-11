@@ -9,6 +9,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
@@ -64,7 +65,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         chatDomainImpl.repos =
             RepositoryFacade.create(RepositoryFactory(db, data.user1), chatDomainImpl.scope, mock())
 
-        chatDomainImpl.setUser(data.user1)
+        globalMutableState._user.value = data.user1
+        globalMutableState._connectionState.value = ConnectionState.CONNECTED
         chatDomainImpl.userConnected(data.user1)
 
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
