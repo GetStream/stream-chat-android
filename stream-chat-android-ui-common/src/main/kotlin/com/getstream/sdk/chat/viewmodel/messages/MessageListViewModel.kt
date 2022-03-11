@@ -7,7 +7,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -120,7 +119,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
-        val channelState = client.asReferenced().watchChannel(cid, MESSAGES_LIMIT).asState(viewModelScope)
+        val channelState = client.asReferenced().watchChannel(cid, MESSAGES_LIMIT).asState()
 
         ChatClient.dismissChannelNotifications(
             channelType = channelState.channelType,
@@ -612,7 +611,7 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        val state = client.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        val state = client.asReferenced().getReplies(parentMessage.id).asState()
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }

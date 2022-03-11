@@ -386,6 +386,11 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/offline/experimental/CallsKt {
+	public static final fun queryChannelsState (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/offline/experimental/querychannels/state/QueryChannelsState;
+	public static final fun threadState (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;)Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;
+}
+
 public final class io/getstream/chat/android/offline/experimental/channel/state/MessagesState$Loading : io/getstream/chat/android/offline/experimental/channel/state/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/experimental/channel/state/MessagesState$Loading;
 }

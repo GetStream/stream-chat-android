@@ -106,7 +106,7 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState()
         queryChannelsState?.let { queryChannelsState ->
             queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
             stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->

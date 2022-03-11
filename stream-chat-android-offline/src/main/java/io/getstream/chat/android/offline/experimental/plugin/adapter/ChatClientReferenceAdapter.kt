@@ -21,7 +21,7 @@ public class ChatClientReferenceAdapter(private val chatClient: ChatClient) {
         QueryChannelsReference(request, chatClient)
 
     /** Reference request of the channel query. */
-    public fun queryChannel(
+    private fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
