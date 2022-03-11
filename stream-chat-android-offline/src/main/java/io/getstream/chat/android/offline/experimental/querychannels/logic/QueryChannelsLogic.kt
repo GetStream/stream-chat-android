@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
@@ -124,7 +125,11 @@ internal class QueryChannelsLogic(
         addChannels(listOf(channel), repos)
         val (type, id) = channel.cid.cidToTypeAndId()
 
-        client.logic.channel(type, id).updateDataFromChannel(channel)
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+            client.logic.channel(type, id).updateDataFromChannel(channel)
+        } else {
+            chatDomainImpl.channel(channel).updateDataFromChannel(channel)
+        }
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
