@@ -53,8 +53,11 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Removed `ChatDomain` from all `ViewModels`. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
+- Removed all uses of `ChatDomain` from all `Views` and functions that relied on it. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190) 
 
 ### ❌ Removed
+- All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -77,8 +80,11 @@
 - Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder`. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 - Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
+- Removed `ChatDomain` from all `ViewModels`. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
+- Removed all uses of `ChatDomain` from all `Views` and functions that relied on it. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 
 ### ❌ Removed
+- All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
