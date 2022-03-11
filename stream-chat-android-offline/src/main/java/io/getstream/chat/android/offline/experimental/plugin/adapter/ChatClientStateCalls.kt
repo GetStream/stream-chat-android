@@ -21,7 +21,7 @@ public class ChatClientStateCalls(private val chatClient: ChatClient, private va
     /** Reference request of the channels query. */
     public fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
         chatClient.queryChannels(request).enqueue()
-        return chatClient.state.queryChannels(request.filter, request.querySort)
+        return state.queryChannels(request.filter, request.querySort)
     }
 
     /** Reference request of the channel query. */
