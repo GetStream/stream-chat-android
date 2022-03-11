@@ -54,7 +54,9 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -68,6 +70,7 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.message.NEVER
@@ -148,6 +151,30 @@ internal class ChannelLogic(
                 }
                 chatDomainImpl.addError(error)
             }
+    }
+
+    /**
+     * Returns the state of Channel. Useful to check how it the state of the channel of the [ChannelLogic]
+     *
+     * @return [ChannelState]
+     */
+    internal fun state(): ChannelState {
+        return mutableState
+    }
+
+    /**
+     * Starts to watch this channel.
+     *
+     * @param messagesLimit The limit of messages inside the channel that should be requested.
+     * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
+     */
+    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+        // Otherwise it's too easy for devs to create UI bugs which DDOS our API
+        if (mutableState._loading.value) {
+            logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
+            return
+        }
+        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     /**
@@ -780,6 +807,23 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
+    }
+
+    internal fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
+        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
+        if (message != null) {
+            val newAttachments = message.attachments.map { attachment ->
+                if (attachment.uploadId == uploadId) {
+                    attachment.copy(uploadState = newState)
+                } else {
+                    attachment
+                }
+            }
+            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
+            val newMessages =
+                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
+            mutableState._messages.value = newMessages
+        }
     }
 
     private companion object {

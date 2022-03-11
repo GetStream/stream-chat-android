@@ -145,7 +145,7 @@ internal class TypingEventListenerImpl(
             when (eventType) {
                 EventType.TYPING_START ->
                     channelState.keystrokeParentMessageId =
-                        extraData.getOrDefault(ARG_TYPING_PARENT_ID, null)?.toString()
+                        extraData[ARG_TYPING_PARENT_ID] as? String
                 EventType.TYPING_STOP -> channelState.keystrokeParentMessageId = null
             }
         }

@@ -212,7 +212,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
-            initializationCoordinator.addUserSetListener(listener)
+            initializationCoordinator.addUserConnectedListener(listener)
         }
 
         fun givenUserAndToken(user: User, token: String) = apply {

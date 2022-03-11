@@ -21,7 +21,7 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
 
     private val socketStateService = SocketStateService()
     private val userStateService: UserStateService = UserStateService()
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
+    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
     private val client = ChatClient(
         config = mock(),
         api = mock(),

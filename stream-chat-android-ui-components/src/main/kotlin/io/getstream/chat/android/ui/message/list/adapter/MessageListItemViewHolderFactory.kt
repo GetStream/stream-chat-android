@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.CUSTOM_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
@@ -18,13 +19,13 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
@@ -35,7 +36,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Lin
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
@@ -50,7 +50,10 @@ public open class MessageListItemViewHolderFactory {
      */
     internal lateinit var decoratorProvider: DecoratorProvider
 
-    protected lateinit var attachmentViewFactory: AttachmentViewFactory
+    /**
+     * A manager for the registered custom attachment factories.
+     */
+    protected lateinit var attachmentFactoryManager: AttachmentFactoryManager
         private set
 
     /**
@@ -83,10 +86,10 @@ public open class MessageListItemViewHolderFactory {
     }
 
     /**
-     * Setter for [attachmentViewFactory].
+     * Setter for [attachmentFactoryManager].
      */
-    internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
-        this.attachmentViewFactory = attachmentViewFactory
+    internal fun setAttachmentFactoryManager(attachmentFactoryManager: AttachmentFactoryManager) {
+        this.attachmentFactoryManager = attachmentFactoryManager
     }
 
     /**
@@ -125,8 +128,8 @@ public open class MessageListItemViewHolderFactory {
         if (::decoratorProvider.isInitialized) {
             newFactory.decoratorProvider = decoratorProvider
         }
-        if (::attachmentViewFactory.isInitialized) {
-            newFactory.attachmentViewFactory = attachmentViewFactory
+        if (::attachmentFactoryManager.isInitialized) {
+            newFactory.attachmentFactoryManager = attachmentFactoryManager
         }
         if (::style.isInitialized) {
             newFactory.style = style
@@ -150,7 +153,7 @@ public open class MessageListItemViewHolderFactory {
      * For built-in view types, see [MessageListItemViewType] and its constants.
      */
     public open fun getItemViewType(item: MessageListItem): Int {
-        return MessageListItemViewTypeMapper.getViewTypeValue(item)
+        return MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactoryManager)
     }
 
     /**
@@ -165,7 +168,7 @@ public open class MessageListItemViewHolderFactory {
             DATE_DIVIDER -> createDateDividerViewHolder(parentView)
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            TEXT_AND_ATTACHMENTS -> createTextAndAttachmentViewHolder(parentView)
+            CUSTOM_ATTACHMENTS -> createCustomAttachmentsViewHolder(parentView)
             LOADING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
@@ -176,25 +179,26 @@ public open class MessageListItemViewHolderFactory {
             LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
             FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
-            IMAGE_ATTACHMENT -> createImageAttachmentViewHolder(parentView)
+            IMAGE_ATTACHMENT -> createImageAttachmentsViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
 
     /**
-     * Creates the text and attachment view holder, that holds various types of attachments and the text at the bottom.
+     * Creates the custom attachments view holder.
      *
      * @param parentView The parent container.
-     * @return The [BaseMessageItemViewHolder] that can hold attachments and text.
+     * @return The [BaseMessageItemViewHolder] that displays messages with custom attachments.
      */
-    protected fun createTextAndAttachmentViewHolder(parentView: ViewGroup): BaseMessageItemViewHolder<out MessageListItem> {
-        return TextAndAttachmentsViewHolder(
+    protected fun createCustomAttachmentsViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return CustomAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
             textTransformer,
-            attachmentViewFactory,
-            style
+            attachmentFactoryManager,
         )
     }
 
@@ -222,7 +226,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that displays messages with image attachments.
      */
-    protected fun createImageAttachmentViewHolder(
+    protected fun createImageAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
         return ImageAttachmentViewHolder(

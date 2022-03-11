@@ -6,6 +6,7 @@ import android.os.Looper;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,8 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             Map<String, Object> extraData = new HashMap<>();
-            channelClient.create(extraData)
+            List<String> memberIds = new LinkedList<>();
+            channelClient.create(memberIds, extraData)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             Channel newChannel = result.data();
@@ -399,9 +401,11 @@ public class Channels {
          * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=java#creating-conversations">Creating Conversations</a>
          */
         public void creatingConversation() {
+            String emptyChannelId = "";
             String channelType = "messaging";
             List<String> members = Arrays.asList("thierry", "tomasso");
-            client.createChannel(channelType, members).enqueue(result -> {
+            Map<String, Object> channelData = new HashMap<>();
+            client.createChannel(channelType, emptyChannelId, members, channelData).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -422,11 +426,11 @@ public class Channels {
         public void invitingUsers() {
             ChannelClient channelClient = client.channel("messaging", "general");
 
+            List<String> memberIds = Arrays.asList("thierry", "tommaso");
             Map<String, Object> data = new HashMap<>();
-            data.put("members", Arrays.asList("thierry", "tommaso"));
             data.put("invites", Arrays.asList("nick"));
 
-            channelClient.create(data).enqueue(result -> {
+            channelClient.create(memberIds, data).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {

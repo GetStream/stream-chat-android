@@ -113,7 +113,8 @@ class AddChannelViewModel : ViewModel() {
             val currentUserId = chatClient.getCurrentUser()?.id ?: error("User must be set before create new channel!")
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
-                members = members.map(User::id) + currentUserId,
+                channelId = "",
+                memberIds = members.map(User::id) + currentUserId,
                 extraData = mapOf(CHANNEL_ARG_DRAFT to true)
             ).await()
             if (result.isSuccess) {

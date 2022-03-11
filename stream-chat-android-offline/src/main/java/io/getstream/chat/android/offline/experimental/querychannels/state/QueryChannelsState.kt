@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
 public interface QueryChannelsState {
+
+    public val recoveryNeeded: StateFlow<Boolean>
     /** The filter is associated with this query channels state. */
     public val filter: FilterObject
     /** The sort object which requested for this query channels state. */

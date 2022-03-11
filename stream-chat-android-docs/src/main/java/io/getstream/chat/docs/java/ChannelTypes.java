@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +22,9 @@ public class ChannelTypes {
         public void createTeamChannel() {
             // Creates the red-general channel for the red team
             Map<String, Object> extraData = new HashMap<>();
+            List<String> memberIds = new LinkedList<>();
             extraData.put("team", "red");
-            client.createChannel("messaging", "red-general", extraData).enqueue(result -> {
+            client.createChannel("messaging", "red-general", memberIds, extraData).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {

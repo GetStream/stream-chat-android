@@ -35,7 +35,7 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
                 .createChannel(
                     channelType = CHANNEL_TYPE_MESSAGING,
                     channelId = UUID.randomUUID().toString(),
-                    members = members.map(User::id) + currentUserId,
+                    memberIds = members.map(User::id) + currentUserId,
                     extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name)
                 ).await()
             if (result.isSuccess) {

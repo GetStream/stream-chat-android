@@ -45,9 +45,11 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.CreateChannelErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.QueryMembersErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.SendReactionErrorHandler
+import io.getstream.chat.android.client.experimental.errorhandler.listeners.onCreateChannelError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onMessageError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onQueryMembersError
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.onReactionError
@@ -56,6 +58,7 @@ import io.getstream.chat.android.client.experimental.interceptor.SendMessageInte
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.experimental.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
@@ -172,7 +175,12 @@ public class ChatClient internal constructor(
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
 
-    public lateinit var plugins: List<Plugin>
+    /**
+     * The list of plugins added once user is connected.
+     *
+     * @see [Plugin]
+     */
+    internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
 
@@ -230,6 +238,11 @@ public class ChatClient internal constructor(
     @InternalStreamChatApi
     public fun addInterceptor(interceptor: Interceptor) {
         this.interceptors.add(interceptor)
+    }
+
+    @InternalStreamChatApi
+    public fun removeAllInterceptors() {
+        this.interceptors.clear()
     }
 
     internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
@@ -324,7 +337,6 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                initializationCoordinator.userSet(user)
                 initializationCoordinator.userConnected(user)
             }
             userState is UserState.NotSet -> {
@@ -348,7 +360,7 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: CacheableTokenProvider,
     ) {
-        initializationCoordinator.userSet(user)
+        initializationCoordinator.userConnected(user)
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
@@ -377,6 +389,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+        initializationCoordinator.userSet(user)
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -423,6 +436,7 @@ public class ChatClient internal constructor(
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
                     initializationCoordinator.userSet(data.user)
+                    initializationCoordinator.userConnected(data.user)
                     listener?.onSuccess(data)
                 }
 
@@ -445,11 +459,13 @@ public class ChatClient internal constructor(
     }
 
     private fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
-        getGuestToken(userId, username).enqueue {
-            if (it.isSuccess) {
-                setUser(it.data().user, ConstantTokenProvider(it.data().token), listener)
+        getGuestToken(userId, username).enqueue { result ->
+            if (result.isSuccess) {
+                val guestUser = result.data()
+                initializationCoordinator.userSet(guestUser.user)
+                setUser(guestUser.user, ConstantTokenProvider(guestUser.token), listener)
             } else {
-                listener?.onError(it.error())
+                listener?.onError(result.error())
             }
         }
     }
@@ -686,7 +702,6 @@ public class ChatClient internal constructor(
 
         return api.sendReaction(reaction, enforceUnique)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -694,7 +709,7 @@ public class ChatClient internal constructor(
                             cid = cid,
                             reaction = reaction,
                             enforceUnique = enforceUnique,
-                            currentUser = currentUser,
+                            currentUser = currentUser!!,
                         )
                     }
             }
@@ -704,11 +719,12 @@ public class ChatClient internal constructor(
                         cid = cid,
                         reaction = reaction,
                         enforceUnique = enforceUnique,
-                        currentUser = currentUser,
+                        currentUser = currentUser!!,
                         result = result,
                     )
                 }
             }
+            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .precondition(relevantPlugins) { onSendReactionPrecondition(currentUser, reaction) }
     }
     //endregion
@@ -1318,10 +1334,17 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Gets the channels without running any side effects.
+     *
+     * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.queryChannels(request)
+        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1349,18 +1372,30 @@ public class ChatClient internal constructor(
             .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
     }
 
+    /**
+     * Gets the channels from the server based on parameters from [QueryChannelsRequest].
+     * The call requires active socket connection and will be automatically postponed and retried until
+     * the connection is established or the maximum number of attempts is reached.
+     * @see [QueryChannelsPostponeHelper]
+     *
+     * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        return queryChannelsPostponeHelper.postponeQueryChannels {
+            val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
 
-        return queryChannelsPostponeHelper.queryChannels(request)
-            .doOnStart(scope) {
-                relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
-            }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
-            }
-            .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+            api.queryChannels(request)
+                .doOnStart(scope) {
+                    relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+                }
+                .doOnResult(scope) { result ->
+                    relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
+                }
+                .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+        }
     }
 
     @CheckResult
@@ -1918,46 +1953,78 @@ public class ChatClient internal constructor(
         return channel(type, id)
     }
 
+    /**
+     * Creates the channel.
+     * You can either create an id-based channel by passing not blank [channelId] or
+     * member-based (distinct) channel by leaving [channelId] empty.
+     * Use [memberIds] list to create a channel together with members. Make sure the list is not empty in case of creating member-based channel!
+     * Extra channel's information, for example name, can be passed in the [extraData] map.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of members' ids.
+     * @param extraData Map of key-value pairs that let you store extra data.
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
     @CheckResult
     public fun createChannel(
         channelType: String,
         channelId: String,
+        memberIds: List<String>,
         extraData: Map<String, Any>,
-    ): Call<Channel> =
-        createChannel(channelType, channelId, emptyList(), extraData)
+    ): Call<Channel> {
+        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>()
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
+        val currentUser = getCurrentUser()
 
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        channelId: String,
-        members: List<String>,
-    ): Call<Channel> =
-        createChannel(channelType, channelId, members, emptyMap())
-
-    @CheckResult
-    public fun createChannel(channelType: String, members: List<String>): Call<Channel> =
-        createChannel(channelType, "", members, emptyMap())
-
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> =
-        createChannel(channelType, "", members, extraData)
-
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        channelId: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> =
-        queryChannel(
-            channelType,
-            channelId,
-            QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members))
+        return queryChannelInternal(
+            channelType = channelType,
+            channelId = channelId,
+            request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds)),
         )
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    plugin.onCreateChannelRequest(
+                        channelType = channelType,
+                        channelId = channelId,
+                        memberIds = memberIds,
+                        extraData = extraData,
+                        currentUser = currentUser!!,
+                    )
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    plugin.onCreateChannelResult(
+                        channelType = channelType,
+                        channelId = channelId,
+                        memberIds = memberIds,
+                        result = result,
+                    )
+                }
+            }
+            .onCreateChannelError(
+                errorHandlers = relevantErrorHandlers,
+                channelType = channelType,
+                channelId = channelId,
+                memberIds = memberIds,
+                extraData = extraData,
+            )
+            .precondition(relevantPlugins) {
+                onCreateChannelPrecondition(
+                    currentUser = currentUser,
+                    channelId = channelId,
+                    memberIds = memberIds,
+                )
+            }
+    }
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
@@ -2250,13 +2317,13 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Overrides the default no-op error handler factory.
+         * Adds a list of error handler factories.
          *
          * @see [ErrorHandlerFactory]
          */
         @InternalStreamChatApi
-        public fun withErrorHandler(errorHandlerFactory: ErrorHandlerFactory): Builder = apply {
-            this.errorHandlerFactories.add(errorHandlerFactory)
+        public fun withErrorHandlers(errorHandlerFactories: List<ErrorHandlerFactory>): Builder = apply {
+            this.errorHandlerFactories.addAll(errorHandlerFactories)
         }
 
         /**
@@ -2278,7 +2345,7 @@ public class ChatClient internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserSetListener { user ->
+            chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)

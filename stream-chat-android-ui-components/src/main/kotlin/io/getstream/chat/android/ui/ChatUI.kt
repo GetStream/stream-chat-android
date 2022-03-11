@@ -8,11 +8,11 @@ import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.lazyVar
@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.utils.lazyVar
 /**
  * ChatUI handles any configuration for the Chat UI elements.
  *
- * @see ChatMarkdown
+ * @see ChatMessageTextTransformer
  * @see ChatFonts
  * @see ImageHeadersProvider
  */
@@ -46,24 +46,6 @@ public object ChatUI {
     public var fonts: ChatFonts by lazyVar { ChatFontsImpl(style, appContext) }
 
     /**
-     * Allows customizing the markdown parsing behaviour, e.g. useful if you want
-     * to use more markdown modules.
-     */
-    @Deprecated(
-        message = "ChatUI.markdown is deprecated. Markdown support is extracted into another module. " +
-            "See docs for more reference",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith(
-            expression = "ChatUI.messageTextTransformer"
-        )
-    )
-    public var markdown: ChatMarkdown by lazyVar {
-        ChatMarkdown { textView, message ->
-            textView.text = message
-        }
-    }
-
-    /**
      * Allows customising the message text's format or style.
      *
      * For example, it can be used to provide markdown support in chat or it can be used
@@ -71,8 +53,7 @@ public object ChatUI {
      */
     public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
-            // Bypass to markdown by default for backwards compatibility.
-            markdown.setText(textView, messageItem.message.text)
+            // Customize the transformer if needed
         }
     }
 
@@ -102,4 +83,9 @@ public object ChatUI {
      * Allows formatting date-time objects as strings.
      */
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
+
+    /**
+     * Allows adding support for custom attachments in the message list.
+     */
+    public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
 }
