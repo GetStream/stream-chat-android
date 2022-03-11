@@ -1,30 +1,8 @@
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
-import androidx.lifecycle.Observer
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
-import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.TestObserver
-import io.getstream.chat.android.ui.createUser
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeInstanceOf
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 
+/*
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelListViewModelTest {
 
@@ -136,3 +114,4 @@ private class Fixture {
 
     fun please() = ChannelListViewModel(chatDomain = chatDomain, chatClient = chatClient)
 }
+ */
