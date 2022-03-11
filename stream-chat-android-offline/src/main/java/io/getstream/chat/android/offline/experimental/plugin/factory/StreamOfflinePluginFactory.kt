@@ -124,6 +124,7 @@ public class StreamOfflinePluginFactory(
 
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
+                chatClient.removeAllInterceptors()
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
