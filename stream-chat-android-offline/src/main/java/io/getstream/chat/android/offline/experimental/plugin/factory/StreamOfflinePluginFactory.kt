@@ -146,6 +146,7 @@ public class StreamOfflinePluginFactory(
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
             chatDomainImpl.eventHandler = eventHandler
+            eventHandler.initialize(user, scope)
             eventHandler.startListening(scope)
         }
 
