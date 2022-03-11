@@ -20,7 +20,7 @@ import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.requestsAsState
 import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
@@ -138,8 +138,7 @@ public class ChannelListViewModel(
                     messageLimit = messageLimit,
                     memberLimit = memberLimit,
                 )
-                queryChannelsState =
-                    chatClient.asReferenced().queryChannels(queryChannelsRequest).asState()
+                queryChannelsState = chatClient.requestsAsState().queryChannels(queryChannelsRequest)
                 queryChannelsState?.let {
                     observeChannels(it, searchQuery = query)
                 }

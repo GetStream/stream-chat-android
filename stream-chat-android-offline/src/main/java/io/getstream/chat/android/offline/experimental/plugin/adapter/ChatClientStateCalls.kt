@@ -6,29 +6,36 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.experimental.channel.QueryChannelReference
-import io.getstream.chat.android.offline.experimental.channel.thread.RepliesQueryReference
-import io.getstream.chat.android.offline.experimental.querychannels.QueryChannelsReference
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
+import io.getstream.chat.android.offline.experimental.extensions.state
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 
 @InternalStreamChatApi
 /**
  * Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
  */
-public class ChatClientReferenceAdapter(private val chatClient: ChatClient) {
+public class ChatClientStateCalls(private val chatClient: ChatClient, private val state: StateRegistry) {
     /** Reference request of the channels query. */
-    public fun queryChannels(request: QueryChannelsRequest): QueryChannelsReference =
-        QueryChannelsReference(request, chatClient)
+    public fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
+        chatClient.queryChannels(request).enqueue()
+        return chatClient.state.queryChannels(request.filter, request.querySort)
+    }
 
     /** Reference request of the channel query. */
     private fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): QueryChannelReference = QueryChannelReference(channelType, channelId, request, chatClient)
+    ): ChannelState {
+        chatClient.queryChannel(channelType, channelId, request).enqueue()
+        return state.channel(channelType, channelId)
+    }
 
     /** Reference request of the watch channel query. */
-    public fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): QueryChannelReference {
+    public fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = runCatching { ChatDomain.instance().userPresence }.getOrDefault(false)
         val request = QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence)
@@ -36,8 +43,10 @@ public class ChatClientReferenceAdapter(private val chatClient: ChatClient) {
     }
 
     /** Reference request of the get thread replies query. */
-    public fun getReplies(messageId: String, limit: Int = DEFAULT_MESSAGE_LIMIT): RepliesQueryReference =
-        RepliesQueryReference(messageId, limit, chatClient)
+    public fun getReplies(messageId: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ThreadState {
+        chatClient.getReplies(messageId, limit).enqueue()
+        return state.thread(messageId)
+    }
 
     private companion object {
         private const val DEFAULT_MESSAGE_LIMIT = 30
