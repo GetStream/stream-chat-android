@@ -49,7 +49,7 @@ internal class SyncManager(
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
-    private val userPresence: Boolean
+    private val userPresence: Boolean,
 ) {
 
     private val entitiesRetryMutex = Mutex()
@@ -144,7 +144,7 @@ internal class SyncManager(
             retryFailedEntities()
         }
 
-        var queriesToRetry = 0
+        var queriesToRetry: Int
 
         // 2. update the results for queries that are actively being shown right now (synchronous)
         val updatedChannelIds = mutableSetOf<String>()
@@ -218,23 +218,12 @@ internal class SyncManager(
 
     private suspend fun retryChannels(): List<Channel> {
         return repos.selectChannelsSyncNeeded().onEach { channel ->
-            val result = chatClient.createChannel(
+            chatClient.createChannel(
                 channel.type,
                 channel.id,
                 channel.members.map(UserEntity::getUserId),
                 channel.extraData
             ).await()
-
-            when {
-                result.isSuccess -> {
-                    channel.syncStatus = SyncStatus.COMPLETED
-                    repos.insertChannel(channel)
-                }
-                result.isError && result.error().isPermanent() -> {
-                    channel.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                    repos.insertChannel(channel)
-                }
-            }
         }
     }
 
@@ -245,19 +234,11 @@ internal class SyncManager(
 
     private suspend fun retryReactions(): List<Reaction> {
         return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
-            val result = if (reaction.deletedAt != null) {
+            if (reaction.deletedAt != null) {
                 chatClient.deleteReaction(reaction.messageId, reaction.type)
             } else {
                 chatClient.sendReaction(reaction, reaction.enforceUnique)
             }.await()
-
-            if (result.isSuccess) {
-                reaction.syncStatus = SyncStatus.COMPLETED
-            } else if (result.error().isPermanent()) {
-                reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
-            }
-
-            repos.insertReaction(reaction)
         }
     }
 
