@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -62,12 +63,30 @@ android {
 
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.COMPOSE
     }
 }
 
 dependencies {
     implementation project(":stream-chat-android-ui-components")
+    implementation project(":stream-chat-android-compose")
     implementation project(":stream-chat-android-pushprovider-firebase")
+
+    // Compose
+    implementation Dependencies.composeCompiler
+    implementation Dependencies.composeUi
+    implementation Dependencies.composeUiTooling
+    implementation Dependencies.composeFoundation
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeActivity
+    implementation Dependencies.composeViewModel
+    implementation Dependencies.composeAccompanistPermissions
+    implementation Dependencies.composeAccompanistPager
+
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.materialComponents

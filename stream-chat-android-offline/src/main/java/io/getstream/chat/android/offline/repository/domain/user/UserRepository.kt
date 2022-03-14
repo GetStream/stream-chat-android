@@ -10,6 +10,11 @@ internal interface UserRepository {
     suspend fun insertUser(user: User)
     suspend fun insertCurrentUser(user: User)
     suspend fun selectUser(userId: String): User?
+
+    /**
+     * @return The list of users stored in the cache.
+     */
+    suspend fun selectUsers(ids: List<String>): List<User>
     suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
     suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 
@@ -62,6 +67,13 @@ internal class UserRepositoryImpl(
 
     override suspend fun selectUser(userId: String): User? {
         return userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
+    }
+
+    override suspend fun selectUsers(ids: List<String>): List<User> {
+        val cachedUsers = ids.mapNotNullTo(mutableListOf(), userCache::get)
+        val missingUserIds = ids.minus(cachedUsers.map(User::id))
+
+        return cachedUsers + userDao.select(missingUserIds).map(::toModel).also { cacheUsers(it) }
     }
 
     private fun toEntity(user: User): UserEntity = with(user) {
