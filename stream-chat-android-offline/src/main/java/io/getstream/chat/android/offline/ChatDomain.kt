@@ -22,7 +22,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
 
@@ -122,19 +121,6 @@ public sealed interface ChatDomain {
     public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
 
     /**
-     * Returns a thread controller for the given channel and message id.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     * @param parentId The message id for the parent of this thread.
-     *
-     * @return Executable async [Call] responsible for obtaining [ThreadController].
-     *
-     * @see io.getstream.chat.android.offline.thread.ThreadController
-     */
-    @CheckResult
-    public fun getThread(cid: String, parentId: String): Call<ThreadController>
-
-    /**
      * Loads newer messages for the channel.
      *
      * @param cid The full channel id i. e. messaging:123.
@@ -162,18 +148,6 @@ public sealed interface ChatDomain {
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
     ): Call<Message>
-
-    /**
-     * Loads more messages for the specified thread.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId The parentId of the thread.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading more messages in a thread.
-     */
-    @CheckResult
-    public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.

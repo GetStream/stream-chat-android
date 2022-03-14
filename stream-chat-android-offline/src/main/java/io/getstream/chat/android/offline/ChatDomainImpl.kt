@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
-import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
@@ -26,7 +25,6 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
@@ -36,7 +34,6 @@ import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
-import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
@@ -278,27 +275,6 @@ internal class ChatDomainImpl internal constructor(
     override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
         WatchChannel(this).invoke(cid, messageLimit)
 
-    /**
-     * Returns a thread controller for the given channel and message id.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     * @param parentId The message id for the parent of this thread.
-     *
-     * @see io.getstream.chat.android.offline.thread.ThreadController
-     */
-    @CheckResult
-    override fun getThread(cid: String, parentId: String): Call<ThreadController> {
-        validateCid(cid)
-        return CoroutineCall(scope) {
-            Result.success(
-                channel(cid).getThread(
-                    state.thread(parentId).toMutableState(),
-                    logic.thread(parentId)
-                )
-            )
-        }
-    }
-
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         LoadNewerMessages(this).invoke(cid, messageLimit)
 
@@ -316,23 +292,6 @@ internal class ChatDomainImpl internal constructor(
             } catch (e: IllegalArgumentException) {
                 Result(ChatError(e.message))
             }
-        }
-    }
-
-    /**
-     * Loads more messages for the specified thread.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId The parentId of the thread.
-     * @param messageLimit How many new messages to load.
-     */
-    override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {
-        validateCid(cid)
-        require(parentId.isNotEmpty()) { "parentId can't be empty" }
-
-        return CoroutineCall(scope) {
-            val threadController = getThread(cid, parentId).execute().data()
-            threadController.loadOlderMessages(messageLimit)
         }
     }
 

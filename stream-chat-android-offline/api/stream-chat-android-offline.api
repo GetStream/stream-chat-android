@@ -19,7 +19,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public abstract fun getInitialized ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
-	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Landroidx/lifecycle/LiveData;
 	public abstract fun getTypingUpdates ()Landroidx/lifecycle/LiveData;
 	public abstract fun getUser ()Landroidx/lifecycle/LiveData;
@@ -36,7 +35,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setUserPresence (Z)V
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun threadLoadMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watchChannel (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 
@@ -117,14 +115,6 @@ public final class io/getstream/chat/android/livedata/controller/ChannelControll
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/livedata/controller/ThreadController {
-	public abstract fun getEndOfOlderMessages ()Landroidx/lifecycle/LiveData;
-	public abstract fun getLoadingOlderMessages ()Landroidx/lifecycle/LiveData;
-	public abstract fun getMessages ()Landroidx/lifecycle/LiveData;
-	public abstract fun getMessagesSorted ()Ljava/util/List;
-	public abstract fun getThreadId ()Ljava/lang/String;
-}
-
 public class io/getstream/chat/android/livedata/utils/Event {
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun getContentIfNotHandled ()Ljava/lang/Object;
@@ -152,7 +142,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getThread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
@@ -172,7 +161,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setUserPresence (Z)V
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun threadLoadMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watchChannel (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 
@@ -618,18 +606,6 @@ public final class io/getstream/chat/android/offline/repository/domain/user/User
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectAllUser (II)Ljava/util/List;
 	public fun selectUsersLikeName (Ljava/lang/String;II)Ljava/util/List;
-}
-
-public final class io/getstream/chat/android/offline/thread/ThreadController {
-	public final fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
-	public static fun getEndOfOlderMessages$delegate (Lio/getstream/chat/android/offline/thread/ThreadController;)Ljava/lang/Object;
-	public final fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
-	public static fun getLoadingOlderMessages$delegate (Lio/getstream/chat/android/offline/thread/ThreadController;)Ljava/lang/Object;
-	public final fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
-	public static fun getMessages$delegate (Lio/getstream/chat/android/offline/thread/ThreadController;)Ljava/lang/Object;
-	public final fun getMessagesSorted ()Ljava/util/List;
-	public final fun getThreadId ()Ljava/lang/String;
-	public static fun getThreadId$delegate (Lio/getstream/chat/android/offline/thread/ThreadController;)Ljava/lang/Object;
 }
 
 public class io/getstream/chat/android/offline/utils/Event {

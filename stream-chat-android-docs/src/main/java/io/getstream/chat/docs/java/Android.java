@@ -49,7 +49,6 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
-import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
@@ -677,26 +676,21 @@ public class Android {
         }
 
         public void messagesFromThread() {
-            ChatDomain chatDomain = ChatDomain.instance();
+            ChatClient chatClient = ChatClient.instance();
 
-            chatDomain.getThread("cid", "parentId")
+            chatClient.getReplies("messageId", 30)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
-                            final ThreadController threadController = result.data();
-
-                            // LiveData objects to observe
-                            threadController.getMessages();
-                            threadController.getLoadingOlderMessages();
-                            threadController.getEndOfOlderMessages();
+                            final List<Message> data = result.data();
                         }
                     });
         }
 
         public void loadMoreFromThread() {
-            ChatDomain chatDomain = ChatDomain.instance();
+            ChatClient chatClient = ChatClient.instance();
             int messageLimit = 1;
 
-            chatDomain.threadLoadMore("cid", "parentId", messageLimit)
+            chatClient.getRepliesMore("parentId", "firstId", messageLimit)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final List<Message> messages = result.data();

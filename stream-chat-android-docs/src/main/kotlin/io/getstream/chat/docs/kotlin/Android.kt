@@ -758,24 +758,20 @@ class Android {
         }
 
         fun messagesFromThread() {
-            val chatDomain = ChatDomain.instance()
+            val chatClient = ChatClient.instance()
 
-            chatDomain.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
+            chatClient.getReplies(messageId = "messageId", limit = 30).enqueue { result ->
                 if (result.isSuccess) {
-                    val threadController = result.data()
-
-                    // LiveData objects to observe
-                    threadController.messages
-                    threadController.loadingOlderMessages
-                    threadController.endOfOlderMessages
+                    val data = result.data()
                 }
             }
         }
 
         fun loadMoreFromThread() {
-            val chatDomain = ChatDomain.instance()
+            val chatClient = ChatClient.instance()
+            val messageLimit = 1
 
-            chatDomain.threadLoadMore(cid = "cid", parentId = "parentId", messageLimit = 1)
+            chatClient.getRepliesMore("parentId", "firstId", messageLimit)
                 .enqueue { result ->
                     if (result.isSuccess) {
                         val messages: List<Message> = result.data()
