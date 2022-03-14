@@ -690,21 +690,21 @@ class Android {
         //         .build()
         // }
 
-        fun watchChannel() {
-            val chatDomain = ChatDomain.instance()
-
-            chatDomain.watchChannel(cid = "messaging:123", messageLimit = 0)
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        val channelController = result.data()
-
-                        // LiveData objects to observe
-                        channelController.messages
-                        channelController.reads
-                        channelController.typing
-                    }
-                }
-        }
+        // fun watchChannel() {
+        //     val chatDomain = ChatDomain.instance()
+        //
+        //     chatDomain.watchChannel(cid = "messaging:123", messageLimit = 0)
+        //         .enqueue { result ->
+        //             if (result.isSuccess) {
+        //                 val channelController = result.data()
+        //
+        //                 // LiveData objects to observe
+        //                 channelController.messages
+        //                 channelController.reads
+        //                 channelController.typing
+        //             }
+        //         }
+        // }
 
         fun loadMoreMessages() {
             val chatClient = ChatClient.instance()
@@ -845,17 +845,17 @@ class Android {
             val readState: List<ChannelUserRead> = channel.read
         }
 
-        fun unreadCountInfoChatDomain() {
-            // Get channel
-            val channel = ChatDomain.instance()
-                .watchChannel(cid = "messaging:123", messageLimit = 0)
-                .execute()
-                .data()
-                .toChannel()
-
-            // readState is the list of read states for each user on the channel
-            val readState: List<ChannelUserRead> = channel.read
-        }
+        // fun unreadCountInfoChatDomain() {
+        //     // Get channel
+        //     val channel = ChatDomain.instance()
+        //         .watchChannel(cid = "messaging:123", messageLimit = 0)
+        //         .execute()
+        //         .data()
+        //         .toChannel()
+        //
+        //     // readState is the list of read states for each user on the channel
+        //     val readState: List<ChannelUserRead> = channel.read
+        // }
 
         fun unreadCountForCurrentUser() {
             // Get channel

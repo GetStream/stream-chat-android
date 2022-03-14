@@ -605,20 +605,20 @@ public class Android {
 //                    .build();
 //        }
 
-        public void watchChannel() {
-            ChatDomain chatDomain = ChatDomain.instance();
-
-            chatDomain.watchChannel("messaging:123", 0)
-                    .enqueue(result -> {
-                        if (result.isSuccess()) {
-                            ChannelController channelController = result.data();
-
-                            // LiveData objects to observe
-                            channelController.getMessages();
-                            channelController.getReads();
-                            channelController.getTyping();
-                        }
-                    });
+//        public void watchChannel() {
+//            ChatDomain chatDomain = ChatDomain.instance();
+//
+//            chatDomain.watchChannel("messaging:123", 0)
+//                    .enqueue(result -> {
+//                        if (result.isSuccess()) {
+//                            ChannelController channelController = result.data();
+//
+//                            // LiveData objects to observe
+//                            channelController.getMessages();
+//                            channelController.getReads();
+//                            channelController.getTyping();
+//                        }
+//                    });
         }
 
         public void loadMoreMessages() {
@@ -776,17 +776,17 @@ public class Android {
             List<ChannelUserRead> readState = channel.getRead();
         }
 
-        public void getUnreadCountInfoChatDomain() {
-            // Get channel
-            Channel channel = ChatDomain.instance()
-                    .watchChannel("messaging:123", 0)
-                    .execute()
-                    .data()
-                    .toChannel();
-
-            // readState is the list of read states for each user on the channel
-            List<ChannelUserRead> userReadList = channel.getRead();
-        }
+//        public void getUnreadCountInfoChatDomain() {
+//            // Get channel
+//            Channel channel = ChatDomain.instance()
+//                    .watchChannel("messaging:123", 0)
+//                    .execute()
+//                    .data()
+//                    .toChannel();
+//
+//            // readState is the list of read states for each user on the channel
+//            List<ChannelUserRead> userReadList = channel.getRead();
+//        }
 
         public void getUnreadCountForCurrentUser() {
             // Get channel
@@ -804,16 +804,16 @@ public class Android {
             int unreadCount = channel.getUnreadCount();
         }
 
-        public void getUnreadCountForCurrentUserChatDomain() {
-            // Get channel controller
-            ChannelController channelController = ChatDomain.instance()
-                    .watchChannel("messaging:123", 0)
-                    .execute()
-                    .data();
-
-            //Unread count for current user
-            LiveData<Integer> unreadCount = channelController.getUnreadCount();
-        }
+//        public void getUnreadCountForCurrentUserChatDomain() {
+//            // Get channel controller
+//            ChannelController channelController = ChatDomain.instance()
+//                    .watchChannel("messaging:123", 0)
+//                    .execute()
+//                    .data();
+//
+//            //Unread count for current user
+//            LiveData<Integer> unreadCount = channelController.getUnreadCount();
+//        }
 
         public void markAllRead() {
             ChatClient.instance().markAllRead().enqueue(result -> {

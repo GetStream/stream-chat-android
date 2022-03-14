@@ -60,9 +60,6 @@ public class ChannelController internal constructor(
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
-    internal val unfilteredMessages by mutableState::messageList
-    internal val hideMessagesBefore by mutableState::hideMessagesBefore
-
     public val messages: StateFlow<List<Message>> = mutableState.messages
     public val repliedMessage: StateFlow<Message?> = mutableState.repliedMessage
     public val messagesState: StateFlow<MessagesState> = mutableState.messagesState.map {
