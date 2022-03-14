@@ -35,16 +35,39 @@ internal val ChatClient.logic: LogicRegistry
 public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.getOrCreate()
 
+/**
+ * Intermediate class to request ChatClient class as states
+ *
+ * @return [ChatClientStateCalls]
+ */
 internal fun ChatClient.requestsAsState(): ChatClientStateCalls = ChatClientStateCalls(this, state)
 
+/**
+ * Same class of ChatClient.queryChannels, but provides the result as [QueryChannelsState]
+ *
+ * @param request [QueryChannelsRequest]
+ * @return [QueryChannelsRequest]
+ */
 public fun ChatClient.queryChannelsAsState(request: QueryChannelsRequest): QueryChannelsState {
     return requestsAsState().queryChannels(request)
 }
 
+/**
+ * Same class of ChatClient.queryChannel, but provides the result as [ChannelState]
+ *
+ * @param cid
+ * @return [ChannelState]
+ */
 public fun ChatClient.watchChannelAsState(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
     return requestsAsState().watchChannel(cid, limit)
 }
 
+/**
+ * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
+ *
+ * @param cid
+ * @return [ThreadState]
+ */
 public fun ChatClient.getRepliesAsState(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ThreadState {
     return requestsAsState().getReplies(cid, limit)
 }
