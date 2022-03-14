@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.utils
 
+import android.util.Log
 import io.getstream.chat.android.client.utils.Result
 
 /**
@@ -13,6 +14,29 @@ import io.getstream.chat.android.client.utils.Result
 internal fun validateCid(cid: String): String = cid.apply {
     require(cid.isNotEmpty()) { "cid can not be empty" }
     require(':' in cid) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
+}
+
+/**
+ * Validates a cid returning a boolean. It logs the problem if the cid is not valid.
+ *
+ * @param cid The full channel id. ie messaging:123.
+ *
+ * @return positive Boolean if is valid, negative if not.
+ */
+internal fun validateCidBoolean(cid: String): Boolean {
+    return when {
+        cid.isEmpty() || cid.isBlank() -> {
+            Log.d("Validation", "cid can not be empty or blank")
+            false
+        }
+
+        cid.contains(":") -> {
+            Log.d("Validation", "cid needs to be in the format channelType:channelId. For example, messaging:123")
+            false
+        }
+
+        else -> true
+    }
 }
 
 /**

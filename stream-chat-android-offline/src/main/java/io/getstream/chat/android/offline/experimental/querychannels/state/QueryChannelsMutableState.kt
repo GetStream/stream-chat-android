@@ -36,11 +36,13 @@ internal class QueryChannelsMutableState(
             .map { it.sortedWith(sort.comparator) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
-    internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    internal val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null
+
+    override val recoveryNeeded: StateFlow<Boolean> = _recoveryNeeded
 
     /**
      * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns

@@ -96,7 +96,6 @@ public sealed interface ChatDomain {
     public fun isOffline(): Boolean
     public fun isConnecting(): Boolean
     public fun isInitialized(): Boolean
-    public fun getActiveQueries(): List<QueryChannelsController>
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
