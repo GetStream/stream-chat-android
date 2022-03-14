@@ -15,8 +15,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
@@ -118,9 +116,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
         chatDomainStateFlow.watchChannel(cid, messageLimit).map(::ChannelControllerImpl)
 
-    override fun getThread(cid: String, parentId: String): Call<ThreadController> =
-        chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
-
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
         chatDomainStateFlow.loadNewerMessages(cid, messageLimit)
 
@@ -130,9 +125,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
     ): Call<Message> = chatDomainStateFlow.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
-
-    override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
-        chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)
 
     override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlow.shuffleGiphy(message)
 
