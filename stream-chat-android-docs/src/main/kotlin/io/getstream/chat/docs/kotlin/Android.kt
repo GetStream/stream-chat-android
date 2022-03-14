@@ -110,7 +110,7 @@ class Android {
                 ChannelListViewModelFactory(
                     filter = Filters.and(
                         Filters.eq("type", "messaging"),
-                        Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)),
+                        Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
                     ),
                     sort = ChannelListViewModel.DEFAULT_SORT,
                     limit = 30,
@@ -748,13 +748,13 @@ class Android {
                 }
         }
 
-        fun unreadCount() {
-            val chatDomain = ChatDomain.instance()
-
-            // LiveData objects to observe
-            val totalUnreadCount = chatDomain.totalUnreadCount
-            val unreadChannelCount = chatDomain.channelUnreadCount
-        }
+        // fun unreadCount() {
+        //     val chatDomain = ChatDomain.instance()
+        //
+        //     // LiveData objects to observe
+        //     val totalUnreadCount = chatDomain.totalUnreadCount
+        //     val unreadChannelCount = chatDomain.channelUnreadCount
+        // }
 
         fun messagesFromThread() {
             val chatClient = ChatClient.instance()

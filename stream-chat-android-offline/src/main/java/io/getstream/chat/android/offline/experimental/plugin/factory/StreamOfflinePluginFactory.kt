@@ -7,8 +7,6 @@ import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactor
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.event.EventHandlerProvider
@@ -70,17 +68,6 @@ public class StreamOfflinePluginFactory(
             _user.value = user
         }
 
-        if (!ChatDomain.isInitialized) {
-            ChatDomain.Builder(appContext, chatClient).apply {
-                if (config.backgroundSyncEnabled) enableBackgroundSync() else disableBackgroundSync()
-                if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
-                recoveryEnabled()
-            }.build()
-        }
-
-        val chatDomainImpl = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
-        chatDomainImpl.userConnected(user)
-
         val job = SupervisorJob()
         val scope = CoroutineScope(job + DispatcherProvider.IO)
 
@@ -96,8 +83,6 @@ public class StreamOfflinePluginFactory(
             currentUser(user)
             setOfflineEnabled(config.persistenceEnabled)
         }.build()
-
-        chatDomainImpl.repos = repos
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
         val stateRegistry = StateRegistry.getOrCreate(job, scope, userStateFlow, repos, repos.observeLatestUsers())
@@ -145,16 +130,11 @@ public class StreamOfflinePluginFactory(
             syncManager = syncManager,
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
-            chatDomainImpl.eventHandler = eventHandler
             eventHandler.initialize(user, scope)
             eventHandler.startListening(scope)
         }
 
         InitializationCoordinator.getOrCreate().run {
-            addUserSetListener { user ->
-                chatDomainImpl.userConnected(user)
-            }
-
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
                 chatClient.removeAllInterceptors()
@@ -165,6 +145,12 @@ public class StreamOfflinePluginFactory(
                 eventHandler.stopListening()
             }
         }
+
+        // if (backgroundSyncEnabled) {
+        //     chatClient.setPushNotificationReceivedListener { channelType, channelId ->
+        //         offlineSyncFirebaseMessagingHandler.syncMessages(appContext, "$channelType:$channelId")
+        //     }
+        // }
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),

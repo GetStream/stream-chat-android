@@ -117,7 +117,7 @@ public class Android {
             // Get ViewModel
             FilterObject filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.in("members", singletonList(ChatDomain.instance().getUser().getValue().getId()))
+                    Filters.in("members", singletonList(ChatClient.instance().getCurrentUser().getId()))
             );
             int limit = 30;
 
@@ -666,13 +666,13 @@ public class Android {
                     });
         }
 
-        public void unreadCount() {
-            ChatDomain chatDomain = ChatDomain.instance();
-
-            // LiveData objects to observe
-            LiveData<Integer> totalUnreadCount = chatDomain.getTotalUnreadCount();
-            LiveData<Integer> unreadChannelCount = chatDomain.getChannelUnreadCount();
-        }
+//        public void unreadCount() {
+//            ChatDomain chatDomain = ChatDomain.instance();
+//
+//            // LiveData objects to observe
+//            LiveData<Integer> totalUnreadCount = chatDomain.getTotalUnreadCount();
+//            LiveData<Integer> unreadChannelCount = chatDomain.getChannelUnreadCount();
+//        }
 
 //        public void messagesFromThread() {
 //            ChatClient chatClient = ChatClient.instance();
