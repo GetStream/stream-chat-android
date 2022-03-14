@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -69,9 +68,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     /** the mock for the chat client */
     lateinit var clientMock: ChatClient
-
-    /** a channel controller for data.channel1 */
-    lateinit var channelControllerImpl: ChannelController
 
     /** the query used for the default queryController */
     lateinit var query: QueryChannelsSpec
