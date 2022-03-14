@@ -2,8 +2,6 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
@@ -17,8 +15,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
@@ -122,14 +118,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
         chatDomainStateFlow.watchChannel(cid, messageLimit).map(::ChannelControllerImpl)
 
-    override fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-    ): Call<QueryChannelsController> =
-        chatDomainStateFlow.queryChannels(filter, sort, limit, messageLimit).map(::QueryChannelsControllerImpl)
-
     override fun getThread(cid: String, parentId: String): Call<ThreadController> =
         chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
 
@@ -142,32 +130,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
     ): Call<Message> = chatDomainStateFlow.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-        memberLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(
-        filter = filter,
-        sort = sort,
-        limit = limit,
-        messageLimit = messageLimit,
-        memberLimit = memberLimit,
-    )
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        messageLimit: Int,
-    ): Call<List<Channel>> =
-        chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort, messageLimit = messageLimit)
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort)
 
     override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
         chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)

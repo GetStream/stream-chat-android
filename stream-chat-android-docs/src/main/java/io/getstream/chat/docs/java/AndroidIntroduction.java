@@ -2,7 +2,6 @@ package io.getstream.chat.docs.java;
 
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +19,6 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
-import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 
 public class AndroidIntroduction {
 
@@ -123,20 +121,5 @@ public class AndroidIntroduction {
                 // Handle result.error()
             }
         });
-
-        // Using the offline library to query channels
-        chatDomain.queryChannels(filter, sort, limit, messageLimit)
-                .enqueue(result -> {
-                    if (result.isSuccess()) {
-                        QueryChannelsController queryChannelsController = result.data();
-
-                        // LiveData objects to observe
-                        queryChannelsController.getChannels();
-                        queryChannelsController.getLoading();
-                        queryChannelsController.getEndOfChannels();
-                    } else {
-                        // Handle result.error()
-                    }
-                });
     }
 }

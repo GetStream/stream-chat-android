@@ -7,8 +7,6 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
@@ -24,7 +22,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
@@ -34,18 +31,15 @@ import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.EditMessage
 import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
-import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.WatchChannel
 import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
@@ -117,8 +111,6 @@ internal class ChatDomainImpl internal constructor(
 
     override val typingUpdates: StateFlow<TypingEvent> = globalState.typingUpdates
 
-    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
-
     private var _eventHandler: EventHandlerImpl? = null
 
     @VisibleForTesting
@@ -146,7 +138,6 @@ internal class ChatDomainImpl internal constructor(
 
     private fun clearConnectionState() {
         activeChannelMapImpl.clear()
-        activeQueryMapImpl.clear()
         latestUsers = MutableStateFlow(emptyMap())
     }
 
@@ -178,7 +169,6 @@ internal class ChatDomainImpl internal constructor(
         clearConnectionState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
         activeChannelMapImpl.clear()
-        activeQueryMapImpl.clear()
         logic.clear()
         state.clear()
     }
@@ -245,21 +235,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun isInitialized(): Boolean = globalState.isInitialized()
 
-    /**
-     * queryChannels
-     * - first read the current results from Room
-     * - if we are online make the API call to update results
-     */
-    fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-    ): QueryChannelsController =
-        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
-            val mutableState = state.queryChannels(filter, sort).toMutableState()
-            val logic = logic.queryChannels(filter, sort)
-            QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
-        }
-
     suspend fun storeStateForChannels(channelsResponse: Collection<Channel>) {
         val users = mutableMapOf<String, User>()
         val configs: MutableCollection<ChannelConfig> = mutableSetOf()
@@ -303,14 +278,6 @@ internal class ChatDomainImpl internal constructor(
     override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
         WatchChannel(this).invoke(cid, messageLimit)
 
-    override fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-        memberLimit: Int,
-    ): Call<QueryChannelsController> = QueryChannels(this).invoke(filter, sort, limit, messageLimit, memberLimit)
-
     /**
      * Returns a thread controller for the given channel and message id.
      *
@@ -351,48 +318,6 @@ internal class ChatDomainImpl internal constructor(
             }
         }
     }
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-        memberLimit: Int,
-    ): Call<List<Channel>> {
-        return CoroutineCall(scope) {
-            val queryChannelsController = queryChannels(filter, sort)
-            val oldChannels = queryChannelsController.channels.value
-            val pagination = queryChannelsController.loadMoreRequest(
-                channelLimit = limit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            )
-            queryChannelsController.runQuery(pagination).map { it - oldChannels.toSet() }
-        }
-    }
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        messageLimit: Int,
-    ): Call<List<Channel>> = queryChannelsLoadMore(
-        filter = filter,
-        sort = sort,
-        limit = CHANNEL_LIMIT,
-        messageLimit = messageLimit,
-        memberLimit = MEMBER_LIMIT,
-    )
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = queryChannelsLoadMore(
-        filter = filter,
-        sort = sort,
-        limit = CHANNEL_LIMIT,
-        messageLimit = MESSAGE_LIMIT,
-        memberLimit = MEMBER_LIMIT,
-    )
 
     /**
      * Loads more messages for the specified thread.
