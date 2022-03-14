@@ -5,7 +5,6 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message

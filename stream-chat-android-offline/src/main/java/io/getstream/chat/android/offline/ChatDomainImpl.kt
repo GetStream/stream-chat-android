@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -19,11 +18,9 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.EventHandlerImpl
-import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
@@ -40,7 +37,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 
 private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30

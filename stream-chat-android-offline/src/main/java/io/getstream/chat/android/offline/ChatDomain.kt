@@ -92,7 +92,6 @@ public sealed interface ChatDomain {
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
-
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
