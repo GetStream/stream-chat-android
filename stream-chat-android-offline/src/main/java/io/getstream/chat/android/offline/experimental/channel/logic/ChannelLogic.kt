@@ -91,6 +91,15 @@ import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
 import java.util.Date
 import kotlin.math.max
 
+/**
+ * This class contains all the logic to manipulate and modify the state of the corresponding channel.
+ *
+ * @property mutableState [ChannelMutableState] Mutable state instance of the channel.
+ * @property globalMutableState [GlobalMutableState] Global state of the SDK.
+ * @property repos [RepositoryFacade] that interact with data sources.
+ * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
+ * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
+ */
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: GlobalMutableState,

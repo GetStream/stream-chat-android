@@ -116,7 +116,11 @@ internal class LogicRegistry internal constructor(
         /**
          * Gets the singleton of LogicRegistry or creates it in the first call
          *
-         * @param stateRegistry [StateRegistry]
+         * @param stateRegistry [StateRegistry].
+         * @param globalState [GlobalMutableState] state of the SDK.
+         * @param userPresence True if userPresence should be enabled, false otherwise.
+         * @param repos [RepositoryFacade] to interact with local data sources.
+         * @param client An instance of [ChatClient].
          */
         internal fun getOrCreate(
             stateRegistry: StateRegistry,
