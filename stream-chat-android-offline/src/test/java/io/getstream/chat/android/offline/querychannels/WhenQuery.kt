@@ -23,7 +23,6 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -168,36 +167,11 @@ internal class WhenQuery : SynchronizedCoroutineTest {
         }
 
         suspend fun givenDBChannels(dbChannels: List<Channel>) = apply {
-            whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
-                val cid = invocationOnMock.arguments[0] as String
-                mock {
-                    on { toChannel() } doReturn dbChannels.first { it.cid == cid }
-                }
-            }
-            whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
-                val channel = invocationOnMock.arguments[0] as Channel
-                mock {
-                    on { toChannel() } doReturn channel
-                }
-            }
             whenever(repositories.selectChannels(any(), any(), any())) doReturn dbChannels
         }
 
         fun givenNetworkChannels(channels: List<Channel>) = apply {
             whenever(chatClient.queryChannelsInternal(any())) doReturn channels.asCall()
-
-            whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
-                val cid = invocationOnMock.arguments[0] as String
-                mock {
-                    on { toChannel() } doReturn channels.first { it.cid == cid }
-                }
-            }
-            whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
-                val channel = invocationOnMock.arguments[0] as Channel
-                mock {
-                    on { toChannel() } doReturn channel
-                }
-            }
         }
 
         fun get(): QueryChannelsController {

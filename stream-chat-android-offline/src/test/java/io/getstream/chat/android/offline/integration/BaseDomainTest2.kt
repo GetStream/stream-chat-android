@@ -219,10 +219,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
 
-        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-
-        channelControllerImpl.updateDataFromChannel(data.channel1)
-
         query = QueryChannelsSpec(data.filter1, QuerySort())
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
