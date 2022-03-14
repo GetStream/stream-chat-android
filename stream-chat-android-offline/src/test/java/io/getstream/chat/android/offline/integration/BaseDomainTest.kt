@@ -35,8 +35,7 @@ import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeFalse
@@ -63,6 +62,8 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
     protected val globalMutableState = GlobalMutableState.create()
     private val recoveryEnabled = false
     private val backgroundSyncEnabled = false
+    protected lateinit var repos: RepositoryFacade
+    protected lateinit var scope: CoroutineScope
 
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
@@ -108,7 +109,6 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
 
     @After
     open fun tearDown() = runBlocking {
-        chatDomainImpl.disconnect()
         db.close()
     }
 
@@ -203,23 +203,16 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
 
         chatDomainImpl = chatDomain as ChatDomainImpl
 
-        chatDomainImpl.repos = RepositoryFacade.create(RepositoryFactory(db, user), chatDomainImpl.scope, mock())
+        repos = RepositoryFacade.create(RepositoryFactory(db, user), scope, mock())
 
-        chatDomainImpl.scope = testCoroutines.scope
-
-        chatDomainImpl.scope.launch {
-            chatDomainImpl.errorEvents.collect {
-                println("error event$it")
-            }
-        }
+        scope = testCoroutines.scope
 
         if (user != null) {
             globalMutableState._user.value = user
-            chatDomainImpl.userConnected(user)
         }
 
-        chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
-        chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
+        repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        repos.insertUsers(data.userMap.values.toList())
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
     }
