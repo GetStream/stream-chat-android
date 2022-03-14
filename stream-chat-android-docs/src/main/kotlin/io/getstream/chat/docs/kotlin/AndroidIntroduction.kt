@@ -119,20 +119,5 @@ class AndroidIntroduction {
                 // Handle result.error()
             }
         }
-
-        // Using the offline library to query channels
-        chatDomain.queryChannels(filter, sort)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    val queryChannelsController = result.data()
-
-                    // LiveData objects to observe
-                    queryChannelsController.channels
-                    queryChannelsController.loading
-                    queryChannelsController.endOfChannels
-                } else {
-                    // Handle result.error()
-                }
-            }
     }
 }

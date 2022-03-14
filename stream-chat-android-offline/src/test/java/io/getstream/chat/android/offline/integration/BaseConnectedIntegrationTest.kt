@@ -107,8 +107,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
             query = QueryChannelsSpec(data.filter1, QuerySort())
 
-            queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
-
             client.isSocketConnected().shouldBeTrue()
 
             chatDomainImpl.isOnline().shouldBeTrue()

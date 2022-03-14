@@ -2,8 +2,6 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
@@ -15,8 +13,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
@@ -109,40 +105,6 @@ internal class ChatDomainImpl internal constructor(private val chatDomainStateFl
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
-
-    override fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-    ): Call<QueryChannelsController> =
-        chatDomainStateFlow.queryChannels(filter, sort, limit, messageLimit).map(::QueryChannelsControllerImpl)
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-        memberLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(
-        filter = filter,
-        sort = sort,
-        limit = limit,
-        messageLimit = messageLimit,
-        memberLimit = memberLimit,
-    )
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        messageLimit: Int,
-    ): Call<List<Channel>> =
-        chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort, messageLimit = messageLimit)
-
-    override fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort)
 
     override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlow.shuffleGiphy(message)
 

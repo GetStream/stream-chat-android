@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
@@ -731,7 +732,7 @@ class Android {
         }
 
         fun queryChannels() {
-            val chatDomain = ChatDomain.instance()
+            val chatClient = ChatClient.instance()
             val members = listOf("thierry")
             val filter = Filters.and(
                 Filters.eq("type", "messaging"),
@@ -739,32 +740,10 @@ class Android {
             )
             val sort = QuerySort<Channel>()
 
-            chatDomain.queryChannels(filter, sort)
+            chatClient.queryChannels(QueryChannelsRequest(filter = filter, querySort = sort, limit = 30))
                 .enqueue { result ->
                     if (result.isSuccess) {
-                        val queryChannelsController = result.data()
-
-                        // LiveData objects to observe
-                        queryChannelsController.channels
-                        queryChannelsController.loading
-                        queryChannelsController.endOfChannels
-                    }
-                }
-        }
-
-        fun loadMoreFromChannel() {
-            val chatDomain = ChatDomain.instance()
-            val members = listOf("thierry")
-            val filter = Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", members),
-            )
-            val sort = QuerySort<Channel>()
-
-            chatDomain.queryChannelsLoadMore(filter, sort)
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        val channels: List<Channel> = result.data()
+                        val channels = result.data()
                     }
                 }
         }
@@ -777,31 +756,27 @@ class Android {
             val unreadChannelCount = chatDomain.channelUnreadCount
         }
 
-        // fun messagesFromThread() {
-        //     val chatDomain = ChatDomain.instance()
-        //
-        //     chatDomain.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
-        //         if (result.isSuccess) {
-        //             val threadController = result.data()
-        //
-        //             // LiveData objects to observe
-        //             threadController.messages
-        //             threadController.loadingOlderMessages
-        //             threadController.endOfOlderMessages
-        //         }
-        //     }
-        // }
+        fun messagesFromThread() {
+            val chatClient = ChatClient.instance()
 
-        // fun loadMoreFromThread() {
-        //     val chatDomain = ChatDomain.instance()
-        //
-        //     chatDomain.threadLoadMore(cid = "cid", parentId = "parentId", messageLimit = 1)
-        //         .enqueue { result ->
-        //             if (result.isSuccess) {
-        //                 val messages: List<Message> = result.data()
-        //             }
-        //         }
-        // }
+            chatClient.getReplies(messageId = "messageId", limit = 30).enqueue { result ->
+                if (result.isSuccess) {
+                    val data = result.data()
+                }
+            }
+        }
+
+        fun loadMoreFromThread() {
+            val chatClient = ChatClient.instance()
+            val messageLimit = 1
+
+            chatClient.getRepliesMore("parentId", "firstId", messageLimit)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        val messages: List<Message> = result.data()
+                    }
+                }
+        }
     }
 
     /**

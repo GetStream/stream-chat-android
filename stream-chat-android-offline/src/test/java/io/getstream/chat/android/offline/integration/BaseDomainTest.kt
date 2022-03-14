@@ -28,7 +28,6 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
@@ -61,7 +60,6 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
     lateinit var client: ChatClient
     lateinit var channelControllerImpl: ChannelController
     lateinit var db: ChatDatabase
-    lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
 
     protected val globalMutableState = GlobalMutableState.create()
@@ -226,7 +224,5 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
-
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }
 }

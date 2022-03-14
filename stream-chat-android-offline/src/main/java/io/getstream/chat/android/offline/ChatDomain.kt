@@ -8,8 +8,6 @@ import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
@@ -96,89 +94,6 @@ public sealed interface ChatDomain {
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
-    /**
-     * Queries offline storage and the API for channels matching the filter.
-     *
-     * @param filter The filter object.
-     * @param sort How to sort the channels (default is last_message_at).
-     * @param limit The number of channels to retrieve.
-     * @param messageLimit How many messages to retrieve per channel.
-     * @param memberLimit The number of members per channel.
-     *
-     * @return Executable async [Call] responsible for obtaining [QueryChannelsController].
-     *
-     * @see io.getstream.chat.android.offline.querychannels.QueryChannelsController
-     * @see io.getstream.chat.android.client.utils.FilterObject
-     * @see io.getstream.chat.android.client.api.models.QuerySort
-     * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
-     */
-    @CheckResult
-    public fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int = 30,
-        messageLimit: Int = 1,
-        memberLimit: Int = 30,
-    ): Call<QueryChannelsController>
-
-    /**
-     * Load more channels for this query.
-     *
-     * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
-     * @param sort The sort for the channels, by default will sort on last_message_at.
-     * @param limit The number of channels to retrieve.
-     * @param messageLimit How many messages to fetch per channel.
-     * @param memberLimit The number of members per channel.
-     *
-     * @return Executable async [Call] responsible for loading more channels.
-     *
-     * @see io.getstream.chat.android.client.api.models.FilterObject
-     * @see io.getstream.chat.android.client.api.models.QuerySort
-     * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
-     */
-    @CheckResult
-    public fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
-        memberLimit: Int,
-    ): Call<List<Channel>>
-
-    /**
-     * Load more channels for this query.
-     *
-     * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
-     * @param sort The sort for the channels, by default will sort on last_message_at.
-     * @param messageLimit How many messages to fetch per channel.
-     *
-     * @return Executable async [Call] responsible for loading more channels.
-     *
-     * @see io.getstream.chat.android.client.api.models.FilterObject
-     * @see io.getstream.chat.android.client.api.models.QuerySort
-     * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
-     */
-    @CheckResult
-    public fun queryChannelsLoadMore(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        messageLimit: Int,
-    ): Call<List<Channel>>
-
-    /**
-     * Load more channels for this query.
-     *
-     * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
-     * @param sort The sort for the channels, by default will sort on last_message_at.
-     *
-     * @return Executable async [Call] responsible for loading more channels.
-     *
-     * @see io.getstream.chat.android.client.api.models.FilterObject
-     * @see io.getstream.chat.android.client.api.models.QuerySort
-     * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
-     */
-    @CheckResult
-    public fun queryChannelsLoadMore(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
 
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.

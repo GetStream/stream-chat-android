@@ -21,10 +21,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
-import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
-import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
@@ -36,7 +33,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Calendar
 import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
 
 public class ChannelController internal constructor(
     private val mutableState: ChannelMutableState,
@@ -58,7 +54,7 @@ public class ChannelController internal constructor(
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-    private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
+    internal val hideMessagesBefore by mutableState::hideMessagesBefore
 
     public val messages: StateFlow<List<Message>> = mutableState.messages
     public val repliedMessage: StateFlow<Message?> = mutableState.repliedMessage
@@ -90,15 +86,6 @@ public class ChannelController internal constructor(
     public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
     public val channelConfig: StateFlow<Config> by mutableState::_channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
-
-    internal fun getThread(threadState: ThreadMutableState, threadLogic: ThreadLogic): ThreadController =
-        threadControllerMap.getOrPut(threadState.parentId) {
-            ThreadController(
-                threadState,
-                threadLogic,
-                client
-            ).also { domainImpl.scope.launch { it.loadOlderMessages() } }
-        }
 
     /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {

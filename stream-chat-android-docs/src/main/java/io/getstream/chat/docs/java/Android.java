@@ -39,8 +39,8 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
-import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
@@ -48,8 +48,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
-import io.getstream.chat.android.livedata.controller.QueryChannelsController;
-import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
@@ -646,7 +644,7 @@ public class Android {
         }
 
         public void queryChannels() {
-            ChatDomain chatDomain = ChatDomain.instance();
+            ChatClient chatClient = ChatClient.instance();
 
             List<String> members = new ArrayList<>();
             members.add("thierry");
@@ -660,35 +658,7 @@ public class Android {
             int limit = 10;
             int messageLimit = 1;
 
-            chatDomain.queryChannels(filter, sort, limit, messageLimit)
-                    .enqueue(result -> {
-                        if (result.isSuccess()) {
-                            final QueryChannelsController controller = result.data();
-
-                            // LiveData objects to observe
-                            controller.getChannels();
-                            controller.getLoading();
-                            controller.getEndOfChannels();
-                        }
-                    });
-        }
-
-        public void loadMoreFromChannel() {
-            ChatDomain chatDomain = ChatDomain.instance();
-
-            List<String> members = new ArrayList<>();
-            members.add("thierry");
-
-            FilterObject filter = Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.in("members", members)
-            );
-            QuerySort<Channel> sort = new QuerySort<>();
-            int limit = 10;
-            int messageLimit = 1;
-            int memberLimit = 30;
-
-            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit, memberLimit)
+            chatClient.queryChannels(new QueryChannelsRequest(filter, 0, limit, sort, messageLimit, 1))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final List<Channel> channels = result.data();
@@ -705,26 +675,21 @@ public class Android {
         }
 
 //        public void messagesFromThread() {
-//            ChatDomain chatDomain = ChatDomain.instance();
+//            ChatClient chatClient = ChatClient.instance();
 //
-//            chatDomain.getThread("cid", "parentId")
+//            chatClient.getReplies("messageId", 30)
 //                    .enqueue(result -> {
 //                        if (result.isSuccess()) {
-//                            final ThreadController threadController = result.data();
-//
-//                            // LiveData objects to observe
-//                            threadController.getMessages();
-//                            threadController.getLoadingOlderMessages();
-//                            threadController.getEndOfOlderMessages();
+//                            final List<Message> data = result.data();
 //                        }
 //                    });
 //        }
-
+//
 //        public void loadMoreFromThread() {
-//            ChatDomain chatDomain = ChatDomain.instance();
+//            ChatClient chatClient = ChatClient.instance();
 //            int messageLimit = 1;
 //
-//            chatDomain.threadLoadMore("cid", "parentId", messageLimit)
+//            chatClient.getRepliesMore("parentId", "firstId", messageLimit)
 //                    .enqueue(result -> {
 //                        if (result.isSuccess()) {
 //                            final List<Message> messages = result.data();
