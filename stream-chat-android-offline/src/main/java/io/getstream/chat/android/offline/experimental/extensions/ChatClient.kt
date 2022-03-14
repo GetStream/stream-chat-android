@@ -72,4 +72,7 @@ public fun ChatClient.getRepliesAsState(cid: String, limit: Int = DEFAULT_MESSAG
     return requestsAsState().getReplies(cid, limit)
 }
 
+/**
+ * Default limit of messages in requests
+ */
 public const val DEFAULT_MESSAGE_LIMIT: Int = 30
