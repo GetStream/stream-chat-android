@@ -1,15 +1,14 @@
 package io.getstream.chat.android.offline.reactions
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.listener.SendReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -166,14 +165,11 @@ internal class SendReactionsTests {
             messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
-        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry)
+        private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()
-        private val globalState = mock<GlobalState>()
-
-        init {
-            ChatDomain.instance = mock<ChatDomainImpl>()
-        }
+        private val globalState = mock<GlobalMutableState>()
+        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, globalState, false, repos, client)
 
         suspend fun givenMessageWithReactions(message: Message): Fixture = apply {
             whenever(repos.selectMessage(message.id)) doReturn message

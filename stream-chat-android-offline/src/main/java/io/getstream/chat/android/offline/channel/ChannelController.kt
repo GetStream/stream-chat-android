@@ -23,7 +23,6 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
-import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -45,7 +44,6 @@ public class ChannelController internal constructor(
     private val client: ChatClient,
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
-    private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
 ) {
     public val channelType: String by mutableState::channelType
     public val channelId: String by mutableState::channelId

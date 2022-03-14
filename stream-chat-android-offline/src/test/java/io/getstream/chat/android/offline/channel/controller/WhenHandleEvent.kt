@@ -1,14 +1,12 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
@@ -24,6 +22,7 @@ import io.getstream.chat.android.offline.randomReactionNewEvent
 import io.getstream.chat.android.offline.randomTypingStartEvent
 import io.getstream.chat.android.offline.randomTypingStopEvent
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
@@ -56,19 +55,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
-    private val chatClient: ChatClient = mock {
-        on(it.channel(any())) doReturn mock()
-    }
-    private val chatDomain: ChatDomainImpl = mock {
-        on(it.appContext) doReturn mock()
-        on(it.scope) doReturn testCoroutines.scope
-        on(it.user) doReturn userFlow
-        on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
-    }
+    private val repos: RepositoryFacade = mock()
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
     private lateinit var channelMutableState: ChannelMutableState
+    private val globalMutableState = mock<GlobalMutableState> {
+        on(it.user) doReturn userFlow
+    }
 
     @BeforeEach
     fun setUp() {
@@ -85,7 +79,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic = ChannelLogic(
             channelMutableState,
-            chatDomain,
+            globalMutableState,
+            repos,
+            false,
             attachmentUrlValidator
         )
     }

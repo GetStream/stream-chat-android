@@ -21,7 +21,7 @@ public interface QueryChannelsListener {
      */
     public suspend fun onQueryChannelsPrecondition(
         request: QueryChannelsRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit>
 
     /**
      * Runs side effect before the request is launched.

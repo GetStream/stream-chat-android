@@ -36,7 +36,7 @@ import org.mockito.kotlin.whenever
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `Given initialized SDK When request channels Should not crash`(): Unit = runBlocking {
+    fun `Given initialized SDK When request channels Should not crash`(): Unit = coroutineTest {
         val queryChannelsController =
             Fixture(chatDomainImpl, data.filter1).givenChannelsInOfflineStorage(data.channel1).get()
 

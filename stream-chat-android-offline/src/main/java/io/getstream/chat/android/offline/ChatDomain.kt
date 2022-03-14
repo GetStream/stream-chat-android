@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -385,8 +384,6 @@ public sealed interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-        private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType =
-            UploadAttachmentsNetworkType.NOT_ROAMING
         private var globalMutableState = GlobalMutableState.getOrCreate()
 
         @VisibleForTesting
@@ -429,11 +426,6 @@ public sealed interface ChatDomain {
             return this
         }
 
-        public fun uploadAttachmentsWorkerNetworkType(networkType: UploadAttachmentsNetworkType): Builder {
-            this.uploadAttachmentsNetworkType = networkType
-            return this
-        }
-
         internal fun globalMutableState(globalMutableState: GlobalMutableState): Builder = apply {
             this.globalMutableState = globalMutableState
         }
@@ -458,7 +450,6 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
                 globalState = globalMutableState
             )
         }

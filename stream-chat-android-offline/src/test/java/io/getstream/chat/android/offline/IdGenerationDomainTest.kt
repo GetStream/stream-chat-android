@@ -30,7 +30,7 @@ internal class IdGenerationDomainTest {
         chatDomainImpl = ChatDomainImpl(
             appContext = contextMock,
             client = clientMock,
-            handler = handlerFake,
+            mainHandler = handlerFake,
             backgroundSyncEnabled = true,
             recoveryEnabled = false,
             userPresence = true,

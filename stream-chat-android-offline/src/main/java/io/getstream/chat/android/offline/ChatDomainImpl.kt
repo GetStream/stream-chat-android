@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -36,16 +35,11 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
-import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.EditMessage
@@ -53,7 +47,6 @@ import io.getstream.chat.android.offline.usecase.GetChannelController
 import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.offline.usecase.WatchChannel
-import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -97,31 +90,13 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
-    internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
     private val globalState: GlobalMutableState = GlobalMutableState.getOrCreate(),
 ) : ChatDomain, GlobalState by globalState {
-    internal constructor(
-        client: ChatClient,
-        handler: Handler,
-        recoveryEnabled: Boolean,
-        userPresence: Boolean,
-        backgroundSyncEnabled: Boolean,
-        appContext: Context,
-        globalState: GlobalMutableState = GlobalMutableState.getOrCreate(),
-    ) : this(
-        client = client,
-        mainHandler = handler,
-        recoveryEnabled = recoveryEnabled,
-        userPresence = userPresence,
-        backgroundSyncEnabled = backgroundSyncEnabled,
-        appContext = appContext,
-        globalState = globalState,
-    )
 
     private val state: StateRegistry by lazy {
         StateRegistry.getOrCreate(job, scope, user, repos, repos.observeLatestUsers())
     }
-    private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state) }
+    private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state, globalState, userPresence, repos, client) }
 
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
@@ -220,10 +195,6 @@ internal class ChatDomainImpl internal constructor(
         mainHandler.postDelayed(cleanTask, 5000)
     }
 
-    fun addError(error: ChatError) {
-        globalState._errorEvent.value = Event(error)
-    }
-
     internal fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
     }
@@ -289,10 +260,6 @@ internal class ChatDomainImpl internal constructor(
             QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
 
-    suspend fun storeStateForChannel(channel: Channel) {
-        return storeStateForChannels(listOf(channel))
-    }
-
     suspend fun storeStateForChannels(channelsResponse: Collection<Channel>) {
         val users = mutableMapOf<String, User>()
         val configs: MutableCollection<ChannelConfig> = mutableSetOf()
@@ -319,21 +286,6 @@ internal class ChatDomainImpl internal constructor(
 
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
-
-    suspend fun selectAndEnrichChannel(
-        channelId: String,
-        pagination: QueryChannelRequest,
-    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-
-    suspend fun selectAndEnrichChannels(
-        channelIds: List<String>,
-        pagination: QueryChannelsPaginationRequest,
-    ): List<Channel> = selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
-
-    private suspend fun selectAndEnrichChannels(
-        channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest,
-    ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     override fun clean() {
         for (channelController in activeChannelMapImpl.values.toList()) {

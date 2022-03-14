@@ -10,6 +10,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
@@ -106,7 +107,7 @@ internal class SendMessageOfflineTest {
                 ChannelMutableState("channelType", "channelId", scope, userFlow, MutableStateFlow(emptyMap()))
             return ChannelController(
                 mutableState,
-                ChannelLogic(mutableState, chatDomainImpl),
+                ChannelLogic(mutableState, GlobalMutableState.getOrCreate(), chatDomainImpl.repos, false),
                 chatClient,
                 chatDomainImpl,
             )
