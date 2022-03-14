@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -662,17 +661,6 @@ class Android {
      * @see <a href="https://getstream.io/chat/docs/android/android_offline/?language=kotlin">Android Offline</a>
      */
     class AndroidOffline : Fragment() {
-
-        fun initializeChatDomain() {
-            val chatClient = ChatClient.Builder("apiKey", requireContext()).build()
-            val chatDomain = ChatDomain.Builder(requireContext(), chatClient)
-                .userPresenceEnabled()
-                .build()
-        }
-
-        fun getChatDomainInstance() {
-            val chatDomain = ChatDomain.instance()
-        }
 
         // TODO: ChatDomain docs will be removed in scope of https://github.com/GetStream/stream-chat-android/issues/3034
         // fun initializeChatDomainWithCustomRetryPolicy() {

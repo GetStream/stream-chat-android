@@ -35,6 +35,7 @@ import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
+import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -146,11 +147,11 @@ public class StreamOfflinePluginFactory(
             }
         }
 
-        // if (backgroundSyncEnabled) {
-        //     chatClient.setPushNotificationReceivedListener { channelType, channelId ->
-        //         offlineSyncFirebaseMessagingHandler.syncMessages(appContext, "$channelType:$channelId")
-        //     }
-        // }
+        if (config.backgroundSyncEnabled) {
+            chatClient.setPushNotificationReceivedListener { channelType, channelId ->
+                OfflineSyncFirebaseMessagingHandler().syncMessages(appContext, "$channelType:$channelId")
+            }
+        }
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),

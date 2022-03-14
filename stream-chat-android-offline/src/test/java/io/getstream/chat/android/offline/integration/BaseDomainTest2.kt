@@ -21,8 +21,6 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
@@ -59,12 +57,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     /** a realistic set of chat data, please only add to this, don't update */
     var data = TestDataHelper()
-
-    /** the chat domain impl */
-    lateinit var chatDomainImpl: ChatDomainImpl
-
-    /** the chat domain interface */
-    lateinit var chatDomain: ChatDomain
 
     /** the mock for the chat client */
     lateinit var clientMock: ChatClient
@@ -182,10 +174,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client)
-            .userPresenceEnabled()
-            .buildImpl()
-        ChatDomain.instance = chatDomainImpl
 
         repos = RepositoryFacade.create(
             RepositoryFactory(db, data.user1),
@@ -199,8 +187,9 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             data.user1,
             data.user1Token
         ).enqueue()
+
         // manually configure the user since client is mocked
-        GlobalMutableState.get()._user.value = data.user1
+        GlobalMutableState.getOrCreate()._user.value = data.user1
 
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         repos.insertUsers(data.userMap.values.toList())

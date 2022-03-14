@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
@@ -568,20 +567,20 @@ public class Android {
      */
     public class AndroidOffline extends Fragment {
 
-        public void initializeChatDomain() {
-            ChatClient chatClient =
-                    new ChatClient.Builder("apiKey", requireContext()).build();
-            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
-                    .userPresenceEnabled()
-                    .build();
-        }
-
-        public void getChatDomainInstance() {
-            ChatDomain chatDomain = ChatDomain.instance();
-
-            ChatClient chatClient = ChatClient.instance();
-            chatClient.disconnect();
-        }
+//        public void initializeChatDomain() {
+//            ChatClient chatClient =
+//                    new ChatClient.Builder("apiKey", requireContext()).build();
+//            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
+//                    .userPresenceEnabled()
+//                    .build();
+//        }
+//
+//        public void getChatDomainInstance() {
+//            ChatDomain chatDomain = ChatDomain.instance();
+//
+//            ChatClient chatClient = ChatClient.instance();
+//            chatClient.disconnect();
+//        }
 
         // TODO: ChatDomain docs will be removed in scope of https://github.com/GetStream/stream-chat-android/issues/3034
 //        public void initializeChatDomainWithCustomRetryPolicy() {
