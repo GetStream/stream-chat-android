@@ -147,6 +147,7 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.androidxPreferences
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx

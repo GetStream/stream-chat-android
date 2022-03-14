@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +20,6 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 class AddChannelViewModel : ViewModel() {
 
-    private val chatDomain = ChatDomain.instance()
     private val chatClient = ChatClient.instance()
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _paginationState: MutableLiveData<PaginationState> = MutableLiveData()
@@ -112,7 +110,7 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUserId = chatDomain.user.value?.id ?: error("User must be set before create new channel!")
+            val currentUserId = chatClient.getCurrentUser()?.id ?: error("User must be set before create new channel!")
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
                 channelId = "",
