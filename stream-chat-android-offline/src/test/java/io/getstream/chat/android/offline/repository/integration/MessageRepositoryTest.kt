@@ -7,8 +7,8 @@ import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.coInvoking
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldNotThrow
 import org.junit.Test
 import org.junit.runner.RunWith

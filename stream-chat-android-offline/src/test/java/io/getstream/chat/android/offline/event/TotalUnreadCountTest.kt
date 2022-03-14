@@ -113,7 +113,6 @@ internal class TotalUnreadCountTest {
                 syncManager = mock()
             )
 
-
         fun givenMockedRepositories(): Fixture {
             runBlocking {
                 whenever(repos.selectMessages(any(), any())) doReturn emptyList()
