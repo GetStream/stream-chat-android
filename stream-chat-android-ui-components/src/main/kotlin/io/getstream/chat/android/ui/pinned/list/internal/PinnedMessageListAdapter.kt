@@ -4,8 +4,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -15,7 +17,7 @@ import io.getstream.chat.android.ui.pinned.list.PinnedMessageListView.PinnedMess
 import io.getstream.chat.android.ui.pinned.list.internal.PinnedMessageListAdapter.MessagePreviewViewHolder
 
 internal class PinnedMessageListAdapter(
-    private val chatDomain: ChatDomain,
+    private val globalState: GlobalState = ChatClient.instance().globalState
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
@@ -53,7 +55,7 @@ internal class PinnedMessageListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            binding.root.setMessage(message, chatDomain.user.value?.asMention(context))
+            binding.root.setMessage(message, globalState.user.value?.asMention(context))
         }
     }
 

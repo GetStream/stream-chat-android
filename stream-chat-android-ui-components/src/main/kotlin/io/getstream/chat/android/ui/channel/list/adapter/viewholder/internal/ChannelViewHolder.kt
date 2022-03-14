@@ -12,7 +12,8 @@ import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -49,8 +50,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         parent,
         false
     ),
+    private val globalState: GlobalState = ChatClient.instance().globalState,
 ) : SwipeViewHolder(binding.root) {
-    private val currentUser = ChatDomain.instance().user
+    private val currentUser = globalState.user
 
     private var optionsCount = 1
 
@@ -266,7 +268,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().user.value?.id
+        val currentUserSentLastMessage = lastMessage.user.id == globalState.user.value?.id
         if (!currentUserSentLastMessage) {
             messageStatusImageView.setImageDrawable(null)
             return
