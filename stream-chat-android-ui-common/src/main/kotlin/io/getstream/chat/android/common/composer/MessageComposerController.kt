@@ -17,7 +17,6 @@ import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -366,7 +365,7 @@ public class MessageComposerController(
 
     /**
      * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using the [ChatDomain].
+     * message, or we send a new message, using [ChatClient].
      *
      * It also dismisses any current message actions.
      *
@@ -595,7 +594,7 @@ public class MessageComposerController(
     }
 
     /**
-     * Gets the edit message call accordingly with feature toggle, using either chatDomain or chatClient.
+     * Gets the edit message call using [ChatClient].
      *
      * @param message [Message]
      */

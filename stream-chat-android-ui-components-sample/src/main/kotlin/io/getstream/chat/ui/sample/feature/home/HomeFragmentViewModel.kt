@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.ui.sample.application.App
 
 class HomeFragmentViewModel : ViewModel() {
 
-    private val chatDomain: ChatDomain = ChatDomain.instance()
     private val _state: MediatorLiveData<State> = MediatorLiveData()
     private val _events: MutableLiveData<Event<UiEvent>> = MutableLiveData()
 
@@ -24,7 +24,7 @@ class HomeFragmentViewModel : ViewModel() {
             user = ChatClient.instance().getCurrentUser() ?: unauthorizedUser,
         )
 
-        val totalUnreadCount = chatDomain.totalUnreadCount
+        val totalUnreadCount = ChatClient.instance().globalState.totalUnreadCount.asLiveData()
         _state.addSource(totalUnreadCount) { count ->
             setState { copy(totalUnreadCount = count) }
         }

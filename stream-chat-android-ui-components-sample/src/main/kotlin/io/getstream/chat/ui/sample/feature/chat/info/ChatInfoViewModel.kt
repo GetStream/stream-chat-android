@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -13,17 +14,29 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
+@OptIn(InternalStreamChatApi::class)
 class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    @OptIn(InternalStreamChatApi::class)
+    private val channelState: ChannelState =
+        chatClient.asReferenced().watchChannel(cid ?: "").asState(viewModelScope)
 
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()
@@ -39,17 +52,13 @@ class ChatInfoViewModel(
             _state.value = State()
             viewModelScope.launch {
                 // Update channel mute status
-                chatDomain.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+                globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
-                val channelControllerResult = chatDomain.getChannelController(cid).await()
-                if (channelControllerResult.isSuccess) {
-                    val channelController = channelControllerResult.data()
-                    _state.addSource(channelController.members) { memberList ->
-                        // Updates only if the user state is already set
-                        _state.value = _state.value!!.copy(canDeleteChannel = memberList.isCurrentUserOwnerOrAdmin())
-                        memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->
-                            _state.value = _state.value?.copy(member = member)
-                        }
+                _state.addSource(channelState.members.asLiveData()) { memberList ->
+                    // Updates only if the user state is already set
+                    _state.value = _state.value!!.copy(canDeleteChannel = memberList.isCurrentUserOwnerOrAdmin())
+                    memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->
+                        _state.value = _state.value?.copy(member = member)
                     }
                 }
                 // Currently, we don't receive any event when channel member is banned/shadow banned, so
@@ -58,7 +67,7 @@ class ChatInfoViewModel(
                     channelClient.queryMembers(
                         offset = 0,
                         limit = 1,
-                        filter = chatDomain.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
+                        filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
                         sort = QuerySort()
                     ).await()
 

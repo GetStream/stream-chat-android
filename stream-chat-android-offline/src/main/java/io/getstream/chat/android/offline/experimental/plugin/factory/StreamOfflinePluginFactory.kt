@@ -10,6 +10,8 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
+import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.event.EventHandlerProvider
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
@@ -33,10 +35,12 @@ import io.getstream.chat.android.offline.experimental.plugin.listener.ThreadQuer
 import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.repository.creation.builder.RepositoryFacadeBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -61,8 +65,10 @@ public class StreamOfflinePluginFactory(
      */
     private fun createOfflinePlugin(user: User): OfflinePlugin {
         val chatClient = ChatClient.instance()
-        val globalState = GlobalMutableState.getOrCreate()
-        globalState.clearState()
+        val globalState = GlobalMutableState.getOrCreate().apply {
+            clearState()
+            _user.value = user
+        }
 
         if (!ChatDomain.isInitialized) {
             ChatDomain.Builder(appContext, chatClient).apply {
@@ -73,7 +79,6 @@ public class StreamOfflinePluginFactory(
         }
 
         val chatDomainImpl = (io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl)
-        chatDomainImpl.setUser(user)
         chatDomainImpl.userConnected(user)
 
         val job = SupervisorJob()
@@ -119,8 +124,36 @@ public class StreamOfflinePluginFactory(
 
         chatClient.addInterceptor(defaultInterceptor)
 
+        val syncManager = SyncManager(
+            chatClient = chatClient,
+            globalState = globalState,
+            repos = repos,
+            logicRegistry = logic,
+            stateRegistry = stateRegistry,
+            userPresence = config.userPresence,
+        ).also { syncManager ->
+            syncManager.clearState()
+        }
+
+        val eventHandler = EventHandlerImpl(
+            recoveryEnabled = true,
+            client = chatClient,
+            logic = logic,
+            state = stateRegistry,
+            mutableGlobalState = globalState,
+            repos = repos,
+            syncManager = syncManager,
+        ).also { eventHandler ->
+            EventHandlerProvider.eventHandler = eventHandler
+            chatDomainImpl.eventHandler = eventHandler
+            eventHandler.initialize(user, scope)
+            eventHandler.startListening(scope)
+        }
+
         InitializationCoordinator.getOrCreate().run {
-            addUserConnectedListener(chatDomainImpl::userConnected)
+            addUserSetListener { user ->
+                chatDomainImpl.userConnected(user)
+            }
 
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
@@ -128,6 +161,8 @@ public class StreamOfflinePluginFactory(
                 stateRegistry.clear()
                 logic.clear()
                 globalState.clearState()
+                scope.launch { syncManager.storeSyncState() }
+                eventHandler.stopListening()
             }
         }
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
@@ -11,16 +12,23 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import kotlinx.coroutines.launch
 
 class GroupChatInfoAddUsersViewModel(
     cid: String,
-    chatDomain: ChatDomain = ChatDomain.instance(),
     chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    @OptIn(InternalStreamChatApi::class)
+    private val channelState: ChannelState =
+        chatClient.asReferenced().watchChannel(cid).asState(viewModelScope)
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()
@@ -31,25 +39,21 @@ class GroupChatInfoAddUsersViewModel(
     val state: LiveData<State> = _state
     val userAddedState: LiveData<Boolean> = _userAddedState
     val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
-    private var channelController: ChannelController? = null
+
+    @OptIn(InternalStreamChatApi::class)
+    private val membersLiveData: LiveData<List<Member>> = channelState.members.asLiveData()
 
     private val observer = Observer<List<Member>> { members = it }
 
     init {
+        membersLiveData.observeForever(observer)
         viewModelScope.launch {
-            val result = chatDomain.getChannelController(cid).await()
-            if (result.isSuccess) {
-                channelController = result.data()
-                channelController?.members?.observeForever(observer)
-                viewModelScope.launch {
-                    fetchUsers()
-                }
-            }
+            fetchUsers()
         }
     }
 
     override fun onCleared() {
-        channelController?.members?.removeObserver(observer)
+        membersLiveData.removeObserver(observer)
         super.onCleared()
     }
 
