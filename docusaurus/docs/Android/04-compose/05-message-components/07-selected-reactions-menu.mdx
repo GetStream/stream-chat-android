@@ -26,6 +26,9 @@ if (selectedMessageState is SelectedMessageReactionsState) {
         onMessageAction = { action ->
             // Handle message action
         },
+        onShowMoreReactionsSelected = {
+            // Handle show more reactions button click
+        },
         onDismiss = { 
             // Handle dismiss
         }
@@ -53,11 +56,13 @@ Here are the actions exposed by the `SelectedReactionsMenu` component:
 fun SelectedReactionsMenu(
     ..., // State
     onMessageAction: (MessageAction) -> Unit,
+    onShowMoreReactionsSelected: () -> Unit,
     onDismiss: () -> Unit = {},
 )
 ```
 
 * `onMessageAction`: Handler used when the user performs an action such as leaving a reaction.
+* `onShowMoreReactionsSelected`: Handler that propagates clicks on the show more reactions button.
 * `onDismiss`: Handler used when the menu is dismissed by clicking outside of the dialog area or by pressing the system back button.
 
 To handle these actions, you can override them like so:
@@ -69,6 +74,9 @@ if (selectedMessageState is SelectedMessageReactionsState) {
         onMessageAction = { action ->
             composerViewModel.onMessageAction(action)
             listViewModel.onMessageAction(action)
+        },
+        onShowMoreReactionsSelected = {
+            listViewModel.selectExtendedReactions(selectedMessage)
         },
         onDismiss = { listViewModel.removeOverlay() }
     )

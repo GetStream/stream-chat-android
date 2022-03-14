@@ -27,7 +27,7 @@ To use the `ChatTheme`, simply wrap your UI content with it, like in the followi
 ```kotlin {6,13}
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
+    val channelId = "messaging:123"
 
     setContent {
         ChatTheme {
@@ -69,7 +69,7 @@ setContent {
         )
     ) {
         MessagesScreen(
-            channelId = channelId,
+            channelId = "messaging:123",
             messageLimit = 30,
             onBackPressed = { finish() },
             onHeaderActionClick = {}

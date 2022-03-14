@@ -94,6 +94,7 @@
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ✅ Added
+- Added code snippets from the Compose documentation to the `stream-chat-android-docs` module. [3197](https://github.com/GetStream/stream-chat-android/pull/3197)
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
