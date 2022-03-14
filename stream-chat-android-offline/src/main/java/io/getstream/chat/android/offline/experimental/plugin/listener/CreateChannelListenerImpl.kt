@@ -49,7 +49,7 @@ internal class CreateChannelListenerImpl(
             id = generatedChannelId,
             type = channelType,
             cid = "$channelType:$generatedChannelId",
-            members = memberIds.map { id -> Member(user = User(id = id)) },
+            members = getMembers(memberIds),
             extraData = extraData.toMutableMap(),
             createdAt = Date(),
             createdBy = currentUser,
@@ -60,6 +60,19 @@ internal class CreateChannelListenerImpl(
         }
 
         repositoryFacade.insertChannel(channel)
+    }
+
+    /**
+     * Converts member's id to [Member] object.
+     * Tries to fetch users from cache and fallbacks to the empty [User] object with an [User.id] if the user wasn't cached yet.
+     *
+     * @return The list of members.
+     */
+    private suspend fun getMembers(memberIds: List<String>): List<Member> {
+        val cachedUsers = repositoryFacade.selectUsers(memberIds)
+        val missingUserIds = memberIds.minus(cachedUsers.map(User::id))
+
+        return (cachedUsers + missingUserIds.map(::User)).map(::Member)
     }
 
     /**
