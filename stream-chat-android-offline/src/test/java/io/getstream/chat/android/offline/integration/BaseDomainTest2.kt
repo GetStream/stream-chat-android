@@ -27,7 +27,6 @@ import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
@@ -73,9 +72,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     /** a channel controller for data.channel1 */
     lateinit var channelControllerImpl: ChannelController
-
-    /** a queryControllerImpl for the query */
-    lateinit var queryControllerImpl: QueryChannelsController
 
     /** the query used for the default queryController */
     lateinit var query: QueryChannelsSpec
@@ -224,7 +220,5 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         channelControllerImpl.updateDataFromChannel(data.channel1)
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
-
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }
 }
