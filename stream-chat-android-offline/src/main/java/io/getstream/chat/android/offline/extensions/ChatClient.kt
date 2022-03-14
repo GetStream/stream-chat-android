@@ -12,49 +12,18 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.utils.validateCid
 import io.getstream.chat.android.offline.utils.validateCidWithResult
-
-/**
- * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
- */
-private fun domainImpl(): ChatDomainImpl {
-    return ChatDomain.instance as ChatDomainImpl
-}
-
-/**
- * Adds the provided channel to the active channels and replays events for all active channels.
- *
- * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
- */
-@CheckResult
-public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
-    validateCid(cid)
-
-    val domainImpl = domainImpl()
-    return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<List<ChatEvent>>(cid)
-        if (cidValidationResult.isSuccess) {
-            domainImpl.replayEvents(cid)
-        } else {
-            cidValidationResult
-        }
-    }
-}
 
 /**
  * Set the reply state for the channel.

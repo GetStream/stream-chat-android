@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.channel
 
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.experimental.global.GlobalState
@@ -34,7 +35,10 @@ internal class CreateChannelTests {
     @Test
     fun `Given offline user When creating channel Should mark it with sync needed and store in database`(): Unit =
         runBlockingTest {
-            val repos = mock<RepositoryFacade>()
+            val members = listOf(randomMember())
+            val repos = mock<RepositoryFacade> {
+                on(it.selectUsers(members.map(Member::getUserId))) doReturn members.map(Member::user)
+            }
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOfflineState()
@@ -42,13 +46,12 @@ internal class CreateChannelTests {
 
             val channelType = "channelType"
             val channelId = "channelId"
-            val memberIds = listOf(randomMember().getUserId())
             val currentUser = randomUser()
 
             sut.onCreateChannelRequest(
                 channelType = channelType,
                 channelId = channelId,
-                memberIds = memberIds,
+                memberIds = members.map(Member::getUserId),
                 extraData = emptyMap(),
                 currentUser = currentUser,
             )
@@ -57,7 +60,7 @@ internal class CreateChannelTests {
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
-                        this.members.map { it.getUserId() }.containsAll(memberIds) &&
+                        this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.SYNC_NEEDED
                 }
@@ -67,7 +70,10 @@ internal class CreateChannelTests {
     @Test
     fun `Given online user When creating channel Should mark it with in progress and store in database`(): Unit =
         runBlockingTest {
-            val repos = mock<RepositoryFacade>()
+            val members = listOf(randomMember())
+            val repos = mock<RepositoryFacade> {
+                on(it.selectUsers(members.map(Member::getUserId))) doReturn members.map(Member::user)
+            }
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -75,13 +81,12 @@ internal class CreateChannelTests {
 
             val channelType = "channelType"
             val channelId = "channelId"
-            val memberIds = listOf(randomMember().getUserId())
             val currentUser = randomUser()
 
             sut.onCreateChannelRequest(
                 channelType = channelType,
                 channelId = channelId,
-                memberIds = memberIds,
+                memberIds = members.map(Member::getUserId),
                 extraData = emptyMap(),
                 currentUser = currentUser,
             )
@@ -90,7 +95,7 @@ internal class CreateChannelTests {
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
-                        this.members.map { it.getUserId() }.containsAll(memberIds) &&
+                        this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.IN_PROGRESS
                 }
