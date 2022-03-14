@@ -16,9 +16,9 @@ import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 /**
  * Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
  */
-public class ChatClientStateCalls(private val chatClient: ChatClient, private val state: StateRegistry) {
+internal class ChatClientStateCalls(private val chatClient: ChatClient, private val state: StateRegistry) {
     /** Reference request of the channels query. */
-    public fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
+    internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
         chatClient.queryChannels(request).enqueue()
         return state.queryChannels(request.filter, request.querySort)
     }
@@ -34,7 +34,7 @@ public class ChatClientStateCalls(private val chatClient: ChatClient, private va
     }
 
     /** Reference request of the watch channel query. */
-    public fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
+    internal fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = runCatching { ChatDomain.instance().userPresence }.getOrDefault(false)
         val request = QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence)
@@ -42,7 +42,7 @@ public class ChatClientStateCalls(private val chatClient: ChatClient, private va
     }
 
     /** Reference request of the get thread replies query. */
-    public fun getReplies(messageId: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ThreadState {
+    internal fun getReplies(messageId: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ThreadState {
         chatClient.getReplies(messageId, limit).enqueue()
         return state.thread(messageId)
     }

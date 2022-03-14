@@ -49,8 +49,9 @@ import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
-import io.getstream.chat.android.offline.experimental.extensions.requestsAsState
+import io.getstream.chat.android.offline.experimental.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.ConnectionState
@@ -92,7 +93,7 @@ public class MessageListViewModel(
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: ChannelState = chatClient.requestsAsState().watchChannel(channelId, messageLimit)
+    public val channelState: ChannelState = chatClient.watchChannelAsState(channelId, messageLimit)
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
@@ -556,7 +557,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val threadState = chatClient.requestsAsState().getReplies(parentMessage.id)
+        val threadState = chatClient.getRepliesAsState(parentMessage.id)
         messageMode = MessageMode.MessageThread(parentMessage, threadState)
         observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
     }
