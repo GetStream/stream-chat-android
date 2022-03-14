@@ -96,7 +96,7 @@ internal class ChatDomainImpl internal constructor(
     private val state: StateRegistry by lazy {
         StateRegistry.getOrCreate(job, scope, user, repos, repos.observeLatestUsers())
     }
-    private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state, userPresence, repos, client) }
+    private val logic: LogicRegistry by lazy { LogicRegistry.getOrCreate(state, globalState, userPresence, repos, client) }
 
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)

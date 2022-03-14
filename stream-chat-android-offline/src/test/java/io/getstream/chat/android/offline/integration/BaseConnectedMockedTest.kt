@@ -21,9 +21,9 @@ internal open class BaseConnectedMockedTest : BaseDomainTest() {
     @After
     override fun tearDown() {
         runBlocking {
+            db.close()
             chatDomainImpl.disconnect()
             chatDomainImpl.scope.coroutineContext.cancelChildren()
-            db.close()
         }
     }
 }

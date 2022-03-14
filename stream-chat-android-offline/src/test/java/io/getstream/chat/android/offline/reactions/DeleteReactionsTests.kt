@@ -9,10 +9,8 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
@@ -215,12 +213,8 @@ internal class DeleteReactionsTests {
         private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()
-        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, false, repos, client)
-        private val globalState = mock<GlobalState>()
-
-        init {
-            ChatDomain.instance = mock<ChatDomainImpl>()
-        }
+        private val globalState = mock<GlobalMutableState>()
+        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, globalState, false, repos, client)
 
         fun givenMockedRepos(repos: RepositoryFacade): Fixture = apply {
             this.repos = repos

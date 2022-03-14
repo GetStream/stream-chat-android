@@ -13,6 +13,8 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
@@ -22,6 +24,7 @@ import io.getstream.chat.android.offline.randomChannelUpdatedEvent
 import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.offline.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -62,12 +65,13 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
 
     @Test
     fun `When a channel updated arrives Should add the channel when handle result add and it wasn't added yet`() =
-        runBlockingTest {
+        coroutineTest {
             val channel = randomChannel()
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture(scope)
+                .givenCurrentUser(randomUser())
                 .givenChatEventHandler { event, _, _ ->
                     when (event) {
                         is ChannelUpdatedEvent -> EventHandlingResult.Add(event.channel)
@@ -101,7 +105,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
 
     @Test
     fun `When a channel updated by user arrives Should add the channel when handling result add and it wasn't added yet`() =
-        runBlockingTest {
+        coroutineTest {
             val channel = randomChannel()
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
@@ -113,6 +117,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
                         else -> EventHandlingResult.Skip
                     }
                 }
+                .givenCurrentUser(randomUser())
                 .givenChannelFilterResponse(listOf(channel))
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -249,7 +254,7 @@ internal class QueryChannelsControllerTest : SynchronizedCoroutineTest {
 
     @Test
     fun `When a notification added to channel arrives Given handling result add Should add the channel`() =
-        runBlockingTest {
+        coroutineTest {
             val channel = randomChannel()
             val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
@@ -292,13 +297,25 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
         }
     }
 
+    private val stateRegistry = StateRegistry.getOrCreate(
+        job = mock(),
+        scope = testCoroutineScope,
+        userStateFlow = MutableStateFlow(mock()),
+        messageRepository = mock(),
+        latestUsers = MutableStateFlow(emptyMap()),
+    )
+
+    private var repos = mock<RepositoryFacade>()
+    private val globalState = mock<GlobalMutableState>()
+    private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, globalState, false, repos, chatClient)
+
     init {
         whenever(chatDomainImpl.job) doReturn Job()
         whenever(chatDomainImpl.scope) doReturn testCoroutineScope
         whenever(chatDomainImpl.repos) doReturn mock()
         whenever(chatDomainImpl.channel(any<Channel>())) doReturn mock()
         whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
-            mock<ChannelController> {
+            mock {
                 on { toChannel() } doReturn randomChannel(
                     cid = invocation.arguments[0] as String,
                     type = channelType,
@@ -309,20 +326,12 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
 
     fun givenCurrentUser(user: User) = apply {
         currentUser = user
-        whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
+        whenever(globalState.user) doReturn MutableStateFlow(currentUser)
     }
 
     fun givenNewChannelControllerForChannel(channelController: ChannelController = mock()): Fixture = apply {
         whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelController
         whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
-    }
-
-    fun givenChannelType(channelType: String) = apply {
-        this.channelType = channelType
-    }
-
-    fun setupChatRepositories(): Fixture = apply {
-        whenever(chatDomainImpl.repos) doReturn mock()
     }
 
     fun addInitialChannel(channel: Channel) = apply {

@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
+    private val globalState: GlobalMutableState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -57,8 +58,8 @@ internal class LogicRegistry internal constructor(
         return channels.getOrPut(channelType to channelId) {
             ChannelLogic(
                 mutableState = stateRegistry.channel(channelType, channelId).toMutableState(),
-                globalMutableState = GlobalMutableState.get().toMutableState(),
-                repos = RepositoryFacade.get(),
+                globalMutableState = globalState,
+                repos = repos,
                 userPresence = userPresence
             )
         }
@@ -119,11 +120,12 @@ internal class LogicRegistry internal constructor(
          */
         internal fun getOrCreate(
             stateRegistry: StateRegistry,
+            globalState: GlobalMutableState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
-            return instance ?: LogicRegistry(stateRegistry, userPresence, repos, client).also { logicRegistry ->
+            return instance ?: LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
                 instance = logicRegistry
             }
         }

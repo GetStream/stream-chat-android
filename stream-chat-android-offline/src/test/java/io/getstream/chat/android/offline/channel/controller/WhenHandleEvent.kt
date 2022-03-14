@@ -1,11 +1,8 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -58,21 +55,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
 
-    private val chatClient: ChatClient = mock {
-        on(it.channel(any())) doReturn mock()
-    }
     private val repos: RepositoryFacade = mock()
-    private val chatDomain: ChatDomainImpl = mock {
-        on(it.appContext) doReturn mock()
-        on(it.scope) doReturn testCoroutines.scope
-        on(it.user) doReturn userFlow
-        on(it.repos) doReturn repos
-        on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
-    }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
     private lateinit var channelMutableState: ChannelMutableState
+    private val globalMutableState = mock<GlobalMutableState> {
+        on(it.user) doReturn userFlow
+    }
 
     @BeforeEach
     fun setUp() {
@@ -89,8 +79,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic = ChannelLogic(
             channelMutableState,
-            GlobalMutableState.getOrCreate(),
-            chatDomain.repos,
+            globalMutableState,
+            repos,
             false,
             attachmentUrlValidator
         )
