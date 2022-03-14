@@ -17,7 +17,7 @@ public interface QueryChannelListener {
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit>
 
     /**
      * Runs side effect before the request is launched.

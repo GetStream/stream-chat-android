@@ -1,20 +1,21 @@
 package io.getstream.chat.android.offline.experimental.plugin.logic
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.toMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.global.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,10 +25,12 @@ import java.util.concurrent.ConcurrentHashMap
  * 2. Query channel
  * 3. Query thread
  */
-internal class LogicRegistry internal constructor(private val stateRegistry: StateRegistry) {
-
-    private val chatDomain: ChatDomainImpl
-        get() = (ChatDomain.instance as ChatDomainImpl)
+internal class LogicRegistry internal constructor(
+    private val stateRegistry: StateRegistry,
+    private val userPresence: Boolean,
+    private val repos: RepositoryFacade,
+    private val client: ChatClient,
+) {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
@@ -38,10 +41,9 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
-                chatDomain,
-                chatDomain.client,
-                chatDomain.repos,
-                GlobalMutableState.getOrCreate()
+                client,
+                repos,
+                GlobalMutableState.get().toMutableState()
             )
         }
     }
@@ -53,7 +55,12 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
-            ChannelLogic(stateRegistry.channel(channelType, channelId).toMutableState(), chatDomain)
+            ChannelLogic(
+                mutableState = stateRegistry.channel(channelType, channelId).toMutableState(),
+                globalMutableState = GlobalMutableState.get().toMutableState(),
+                repos = RepositoryFacade.get(),
+                userPresence = userPresence
+            )
         }
     }
 
@@ -61,7 +68,7 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     fun thread(messageId: String): ThreadLogic {
         return threads.getOrPut(messageId) {
             val (channelType, channelId) = runBlocking {
-                chatDomain.repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
+                repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
                     ?: error("There is not such message with messageId = $messageId")
             }
             ThreadLogic(stateRegistry.thread(messageId).toMutableState(), channel(channelType, channelId))
@@ -110,8 +117,13 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
          *
          * @param stateRegistry [StateRegistry]
          */
-        internal fun getOrCreate(stateRegistry: StateRegistry): LogicRegistry {
-            return instance ?: LogicRegistry(stateRegistry).also { logicRegistry ->
+        internal fun getOrCreate(
+            stateRegistry: StateRegistry,
+            userPresence: Boolean,
+            repos: RepositoryFacade,
+            client: ChatClient,
+        ): LogicRegistry {
+            return instance ?: LogicRegistry(stateRegistry, userPresence, repos, client).also { logicRegistry ->
                 instance = logicRegistry
             }
         }

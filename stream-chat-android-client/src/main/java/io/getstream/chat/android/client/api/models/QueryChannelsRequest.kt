@@ -8,7 +8,7 @@ public data class QueryChannelsRequest(
     public var limit: Int,
     public val querySort: QuerySort<Channel> = QuerySort(),
     public var messageLimit: Int = 0,
-    public var memberLimit: Int = 0
+    public var memberLimit: Int = 0,
 ) : ChannelRequest<QueryChannelsRequest> {
 
     override var state: Boolean = true
@@ -31,4 +31,7 @@ public data class QueryChannelsRequest(
         this.offset = offset
         return this
     }
+
+    public val isFirstPage: Boolean
+        get() = offset == 0
 }

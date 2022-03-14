@@ -7,6 +7,7 @@ import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.thread.logic.ThreadLogic
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
@@ -49,7 +50,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
             }
         setMessages(channelMessages)
 
-        val channelLogic = ChannelLogic(channelMutableState, chatDomainImpl)
+        val channelLogic = ChannelLogic(channelMutableState, GlobalMutableState.getOrCreate(), chatDomainImpl.repos, false)
         threadMutableState = ThreadMutableState(threadId, channelMutableState, chatDomainImpl.scope)
         val threadLogic = ThreadLogic(threadMutableState, channelLogic)
         threadController = ThreadController(threadMutableState, threadLogic, clientMock)

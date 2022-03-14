@@ -9,6 +9,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
@@ -24,6 +25,7 @@ import io.getstream.chat.android.offline.randomReactionNewEvent
 import io.getstream.chat.android.offline.randomTypingStartEvent
 import io.getstream.chat.android.offline.randomTypingStopEvent
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
@@ -59,10 +61,12 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val chatClient: ChatClient = mock {
         on(it.channel(any())) doReturn mock()
     }
+    private val repos: RepositoryFacade = mock()
     private val chatDomain: ChatDomainImpl = mock {
         on(it.appContext) doReturn mock()
         on(it.scope) doReturn testCoroutines.scope
         on(it.user) doReturn userFlow
+        on(it.repos) doReturn repos
         on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
     }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
@@ -85,7 +89,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic = ChannelLogic(
             channelMutableState,
-            chatDomain,
+            GlobalMutableState.getOrCreate(),
+            chatDomain.repos,
+            false,
             attachmentUrlValidator
         )
     }

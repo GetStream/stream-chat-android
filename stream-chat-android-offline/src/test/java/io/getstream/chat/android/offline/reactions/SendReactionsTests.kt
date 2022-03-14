@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.reactions
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
@@ -166,9 +167,10 @@ internal class SendReactionsTests {
             messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
-        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry)
+        private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()
+        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, false, repos, client)
         private val globalState = mock<GlobalState>()
 
         init {

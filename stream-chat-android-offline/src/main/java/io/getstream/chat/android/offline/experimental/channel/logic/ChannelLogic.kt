@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -67,25 +68,33 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.inOffsetWith
+import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.message.wasCreatedAfter
 import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
+import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.isChannelMutedForCurrentUser
 import java.util.Date
 import kotlin.math.max
 
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
-    private val chatDomainImpl: ChatDomainImpl,
+    private val globalMutableState: GlobalMutableState,
+    private val repos: RepositoryFacade,
+    private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : QueryChannelListener {
 
@@ -126,8 +135,8 @@ internal class ChannelLogic(
     ) {
         result.onSuccessSuspend { channel ->
             // first thing here needs to be updating configs otherwise we have a race with receiving events
-            chatDomainImpl.repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
-            chatDomainImpl.storeStateForChannel(channel)
+            repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
+            storeStateForChannel(channel)
         }
             .onSuccess { channel ->
                 mutableState.recoveryNeeded = false
@@ -148,8 +157,23 @@ internal class ChannelLogic(
                     logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
                     mutableState.recoveryNeeded = true
                 }
-                chatDomainImpl.addError(error)
+                globalMutableState._errorEvent.value = Event(error)
             }
+    }
+
+    private suspend fun storeStateForChannel(channel: Channel) {
+        val users = channel.users().associateBy { it.id }.toMutableMap()
+        val configs: MutableCollection<ChannelConfig> = mutableSetOf(ChannelConfig(channel.type, channel.config))
+        channel.messages.forEach { message ->
+            message.enrichWithCid(channel.cid)
+            users.putAll(message.users().associateBy { it.id })
+        }
+        repos.storeStateForChannels(
+            configs = configs,
+            users = users.values.toList(),
+            channels = listOf(channel),
+            messages = channel.messages
+        )
     }
 
     /**
@@ -200,7 +224,7 @@ internal class ChannelLogic(
     internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)
         loader.value = true
-        return chatDomainImpl.selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
+        return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
@@ -222,6 +246,16 @@ internal class ChannelLogic(
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)
     }
+
+    private suspend fun selectAndEnrichChannel(
+        channelId: String,
+        pagination: QueryChannelRequest,
+    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
+
+    private suspend fun selectAndEnrichChannels(
+        channelIds: List<String>,
+        pagination: AnyChannelPaginationRequest,
+    ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     internal fun setHidden(hidden: Boolean) {
         mutableState._hidden.value = hidden
@@ -284,7 +318,7 @@ internal class ChannelLogic(
      * @param messages The messages to be stored. Check [Message].
      */
     internal suspend fun storeMessageLocally(messages: List<Message>) {
-        chatDomainImpl.repos.insertMessages(messages)
+        repos.insertMessages(messages)
     }
 
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
@@ -336,7 +370,7 @@ internal class ChannelLogic(
     }
 
     internal fun updateReads(reads: List<ChannelUserRead>) {
-        chatDomainImpl.user.value?.let { currentUser ->
+        globalMutableState.user.value?.let { currentUser ->
             val currentUserId = currentUser.id
             val previousUserIdToReadMap = mutableState._reads.value
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
@@ -457,7 +491,7 @@ internal class ChannelLogic(
                 messageFilterDirection = pagination
                 messageFilterValue = it
             }
-        }.toWatchChannelRequest(chatDomainImpl.userPresence)
+        }.toWatchChannelRequest(userPresence)
     }
 
     /**
@@ -628,7 +662,7 @@ internal class ChannelLogic(
         } else {
             copy[userId] = event
         }
-        chatDomainImpl.user.value?.id.let(copy::remove)
+        globalMutableState.user.value?.id.let(copy::remove)
         mutableState._typing.value = copy.toMap()
     }
 

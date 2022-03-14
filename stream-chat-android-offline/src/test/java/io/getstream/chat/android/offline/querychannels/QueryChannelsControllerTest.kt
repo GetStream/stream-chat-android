@@ -336,7 +336,6 @@ private class Fixture constructor(testCoroutineScope: TestCoroutineScope) {
 
         val queryChannelsLogic = QueryChannelsLogic(
             mutableState,
-            chatDomainImpl,
             chatClient,
             chatDomainImpl.repos,
             GlobalMutableState.create()

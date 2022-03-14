@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -156,10 +155,6 @@ internal class WhenQuery : SynchronizedCoroutineTest {
             repositories = repositoryFacade
         }
 
-        fun givenChatDomain(chatDomainImpl: ChatDomainImpl) = apply {
-            this.chatDomainImpl = chatDomainImpl
-        }
-
         fun givenChatClient(chatClient: ChatClient) = apply {
             this.chatClient = chatClient
         }
@@ -170,19 +165,18 @@ internal class WhenQuery : SynchronizedCoroutineTest {
 
         suspend fun givenQueryChannelsSpec(queryChannelsSpec: QueryChannelsSpec) = apply {
             whenever(repositories.selectBy(any(), any())) doReturn queryChannelsSpec
-            whenever(chatDomainImpl.selectAndEnrichChannels(any(), any())) doReturn emptyList()
         }
 
         suspend fun givenDBChannels(dbChannels: List<Channel>) = apply {
             whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
                 val cid = invocationOnMock.arguments[0] as String
-                mock<ChannelController> {
+                mock {
                     on { toChannel() } doReturn dbChannels.first { it.cid == cid }
                 }
             }
             whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
-                mock<ChannelController> {
+                mock {
                     on { toChannel() } doReturn channel
                 }
             }
@@ -194,13 +188,13 @@ internal class WhenQuery : SynchronizedCoroutineTest {
 
             whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
                 val cid = invocationOnMock.arguments[0] as String
-                mock<ChannelController> {
+                mock {
                     on { toChannel() } doReturn channels.first { it.cid == cid }
                 }
             }
             whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
-                mock<ChannelController> {
+                mock {
                     on { toChannel() } doReturn channel
                 }
             }
@@ -221,7 +215,6 @@ internal class WhenQuery : SynchronizedCoroutineTest {
 
             val queryChannelsLogic = QueryChannelsLogic(
                 mutableState,
-                chatDomainImpl,
                 chatClient,
                 chatDomainImpl.repos,
                 GlobalMutableState.create()

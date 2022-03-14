@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.reactions
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -210,9 +211,11 @@ internal class DeleteReactionsTests {
             messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
-        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry)
+
+        private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()
+        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, false, repos, client)
         private val globalState = mock<GlobalState>()
 
         init {
