@@ -58,7 +58,7 @@ public fun ChatClient.queryChannelsAsState(request: QueryChannelsRequest): Query
  * @param cid
  * @return [ChannelState]
  */
-public fun ChatClient.watchChannelAsState(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
+public fun ChatClient.watchChannelAsState(cid: String, limit: Int): ChannelState {
     return requestsAsState().watchChannel(cid, limit)
 }
 
@@ -68,11 +68,6 @@ public fun ChatClient.watchChannelAsState(cid: String, limit: Int = DEFAULT_MESS
  * @param cid
  * @return [ThreadState]
  */
-public fun ChatClient.getRepliesAsState(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ThreadState {
+public fun ChatClient.getRepliesAsState(cid: String, limit: Int): ThreadState {
     return requestsAsState().getReplies(cid, limit)
 }
-
-/**
- * Default limit of messages in requests
- */
-public const val DEFAULT_MESSAGE_LIMIT: Int = 30
