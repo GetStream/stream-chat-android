@@ -2,6 +2,16 @@ package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.client.models.Channel
 
+/**
+ * Request body class for querying channels.
+ *
+ * @property filter [FilterObject] conditions used by backend to filter queries response.
+ * @property offset Pagination offset.
+ * @property limit Number of channels to be returned by this query channels request.
+ * @property querySort [QuerySort] Sort specification for api queries.
+ * @property messageLimit Number of messages in the response.
+ * @property memberLimit Number of members in the response.
+ */
 public data class QueryChannelsRequest(
     public val filter: FilterObject,
     public var offset: Int = 0,
@@ -15,23 +25,50 @@ public data class QueryChannelsRequest(
     override var watch: Boolean = true
     override var presence: Boolean = false
 
+    /**
+     * List of sort specifications.
+     */
     public val sort: List<Map<String, Any>> = querySort.toDto()
 
+    /**
+     * Sets the limit of number of messages to be returned by this backend.
+     *
+     * @param limit Number of messages to limit.
+     *
+     * @return [QueryChannelsRequest] with updated limit.
+     */
     public fun withMessages(limit: Int): QueryChannelsRequest {
         messageLimit = limit
         return this
     }
 
+    /**
+     * Sets the number of channels to be returned by this backend.
+     *
+     * @param limit Number of channels to limit.
+     *
+     * @return [QueryChannelsRequest] with updated limit.
+     */
     public fun withLimit(limit: Int): QueryChannelsRequest {
         this.limit = limit
         return this
     }
 
+    /**
+     * Sets the offset to this request.
+     *
+     * @param offset The offset value to set.
+     *
+     * @return [QueryChannelsRequest] with updated offset.
+     */
     public fun withOffset(offset: Int): QueryChannelsRequest {
         this.offset = offset
         return this
     }
 
+    /**
+     * True if this request is querying the first page, otherwise False.
+     */
     public val isFirstPage: Boolean
         get() = offset == 0
 }
