@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.flow.launchIn
@@ -31,7 +31,7 @@ internal class ChannelActionsViewModel(
      * Holds information about the current channel and is actively updated.
      */
     val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid).asState(viewModelScope)
+        chatClient.watchChannelAsState(cid)
 
     /**
      * The initial empty state.

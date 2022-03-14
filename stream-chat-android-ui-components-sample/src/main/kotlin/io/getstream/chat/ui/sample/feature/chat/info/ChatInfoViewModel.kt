@@ -17,8 +17,8 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
@@ -35,8 +35,7 @@ class ChatInfoViewModel(
      * Holds information about the current channel and is actively updated.
      */
     @OptIn(InternalStreamChatApi::class)
-    private val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid ?: "").asState(viewModelScope)
+    private val channelState: ChannelState = chatClient.watchChannelAsState(cid ?: "")
 
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()

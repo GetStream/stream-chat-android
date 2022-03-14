@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import kotlinx.coroutines.launch
 
 class GroupChatInfoAddUsersViewModel(
@@ -27,8 +27,7 @@ class GroupChatInfoAddUsersViewModel(
      * Holds information about the current channel and is actively updated.
      */
     @OptIn(InternalStreamChatApi::class)
-    private val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid).asState(viewModelScope)
+    private val channelState: ChannelState = chatClient.watchChannelAsState(cid)
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()
