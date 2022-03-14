@@ -1,11 +1,12 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.utils.extensions.combineWith
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -16,84 +17,126 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import java.io.File
 
 /**
  * ViewModel class for MessageInputView. Responsible for sending and updating chat messages.
  * Can be bound to the view using the MessageInputViewModel.bindView function.
+ *
  * @param cid The full channel id, i.e. "messaging:123".
- * @param chatDomain Entry point for all livedata & offline operations.
  * @param chatClient Entry point for most of the chat SDK
+ * @param globalState Global state of OfflinePlugin. Contains information
+ * such as the current user, connection state, unread counts etc.
  */
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
-    private var activeThread = MutableLiveData<Message?>()
-    private val _maxMessageLength = MediatorLiveData<Int>()
-    private val _commands = MediatorLiveData<List<Command>>()
-    private val _members = MediatorLiveData<List<Member>>()
-    public val maxMessageLength: LiveData<Int> = _maxMessageLength
-    private val _cooldownInterval = MediatorLiveData<Int>()
-    public val cooldownInterval: LiveData<Int> = _cooldownInterval
-    public val commands: LiveData<List<Command>> = _commands
-    public val members: LiveData<List<Member>> = _members
-    private val _messageToEdit: MutableLiveData<Message?> = MutableLiveData()
-    public val messageToEdit: LiveData<Message?> = _messageToEdit
-    private val _repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
-    public val repliedMessage: LiveData<Message?> = _repliedMessage
-    private val _isDirectMessage: MediatorLiveData<Boolean> = MediatorLiveData()
-    public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
-    private val _channel = MediatorLiveData<Channel>()
-    private val selectedMentions = mutableSetOf<User>()
-
-    private val logger = ChatLogger.get("MessageInputViewModel")
-
-    init {
-        _maxMessageLength.value = Int.MAX_VALUE
-        _commands.value = emptyList()
-        chatDomain.watchChannel(cid, 0).enqueue { channelControllerResult ->
-            if (channelControllerResult.isSuccess) {
-                val channelController = channelControllerResult.data()
-                _channel.addSource(channelController.offlineChannelData) {
-                    _channel.value = channelController.toChannel()
-                }
-                _maxMessageLength.addSource(_channel) { _maxMessageLength.value = it.config.maxMessageLength }
-                _cooldownInterval.addSource(_channel) { _cooldownInterval.value = it.cooldown }
-                _commands.addSource(_channel) { _commands.value = it.config.commands }
-                _isDirectMessage.addSource(
-                    _channel.combineWith(chatDomain.user) { channel, _ ->
-                        channel?.isDirectMessaging() ?: true
-                    }
-                ) { _isDirectMessage.value = it }
-
-                _members.addSource(channelController.members) { _members.value = it }
-                _repliedMessage.addSource(channelController.repliedMessage) { _repliedMessage.value = it }
-            } else {
-                val error = channelControllerResult.error()
-                logger.logE("Could not watch channel with cid: $cid. Error message: ${error.message}. Cause message: ${error.cause?.message}")
-            }
-        }
-    }
 
     /**
-     * Sets and informs about new active thread.
+     * Holds information about the current channel and is actively updated.
+     */
+    public val channelState: ChannelState =
+        chatClient.asReferenced().watchChannel(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
+
+    /**
+     * A list of [Channel] members.
+     */
+    public val members: LiveData<List<Member>> = channelState.members.asLiveData()
+
+    /**
+     * List of available commands.
+     */
+    public val commands: LiveData<List<Command>> =
+        channelState.channelConfig.map { config ->
+            config.commands
+        }.asLiveData()
+
+    /**
+     * The cooldown interval for the given channel.
+     */
+    public val cooldownInterval: LiveData<Int> =
+        channelState.channelData.map { channelData ->
+            channelData.cooldown
+        }.asLiveData()
+
+    /**
+     * The maximum length of a message that can be typed in the message input.
+     */
+    public val maxMessageLength: LiveData<Int> =
+        channelState.channelConfig.map { config ->
+            config.maxMessageLength
+        }.asLiveData()
+
+    /**
+     * Holds the message the user is currently replying to,
+     * if the user is replying to a message.
+     */
+    public val repliedMessage: LiveData<Message?> = channelState.repliedMessage.asLiveData()
+
+    /**
+     * Emits true if the message is a direct message between two users.
+     *
+     * Combining channel data with user information is necessary in order
+     * to avoid crashes for users who initialize components before setting
+     * the user.
+     */
+    public val isDirectMessage: LiveData<Boolean> =
+        channelState.channelData.combine(globalState.user) { _, _ ->
+            channelState.toChannel().isDirectMessaging()
+        }.asLiveData()
+
+    /**
+     * Signals that we are currently in thread mode if the value is non-null.
+     * If the value is null we are in normal mode.
+     */
+    private var activeThread = MutableLiveData<Message?>()
+
+    /**
+     * The message to be edited.
+     */
+    private val _messageToEdit: MutableLiveData<Message?> = MutableLiveData()
+
+    /**
+     * The message to be edited.
+     */
+    public val messageToEdit: LiveData<Message?> = _messageToEdit
+
+    /**
+     * A list of selected mentions.
+     */
+    private val selectedMentions = mutableSetOf<User>()
+
+    /**
+     * The logger used to print to errors, warnings, information
+     * and other things to log.
+     */
+    private val logger = ChatLogger.get("MessageInputViewModel")
+
+    /**
+     * Sets thread mode.
+     *
+     * @param parentMessage The original message on which the thread is based on.
      */
     public fun setActiveThread(parentMessage: Message) {
         activeThread.postValue(parentMessage)
     }
 
+    /**
+     * Gets the currently active thread.
+     */
     public fun getActiveThread(): LiveData<Message?> {
         return activeThread
     }
-
-    private val isThread: Boolean
-        get() = activeThread.value != null
 
     /**
      * Resets currently active thread.
@@ -215,12 +258,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public fun editMessage(message: Message) {
         val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
-
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            chatClient.updateMessage(updatedMessage)
-        } else {
-            chatDomain.editMessage(updatedMessage)
-        }.enqueue(
+        chatClient.updateMessage(updatedMessage).enqueue(
             onError = { chatError ->
                 logger.logE("Could not edit message with cid: ${updatedMessage.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
             }
@@ -264,6 +302,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
         )
     }
 
+    /**
+     * Cancels the reply.
+     */
     public fun dismissReply() {
         if (repliedMessage.value != null) {
             ChatClient.instance().setMessageForReply(cid, null).enqueue()

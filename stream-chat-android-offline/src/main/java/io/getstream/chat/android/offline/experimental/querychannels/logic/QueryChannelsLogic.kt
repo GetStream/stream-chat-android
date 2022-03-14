@@ -277,11 +277,7 @@ internal class QueryChannelsLogic(
             .intersect(cidList)
             .associateWith { cid ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                    client.state.channel(channelType, channelId).toChannel()
-                } else {
-                    chatDomainImpl.channel(channelType, channelId).toChannel()
-                }
+                client.state.channel(channelType, channelId).toChannel()
             }
     }
 

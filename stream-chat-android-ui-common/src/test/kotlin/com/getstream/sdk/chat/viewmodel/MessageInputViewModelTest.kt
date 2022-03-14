@@ -2,33 +2,7 @@
 
 package com.getstream.sdk.chat.viewmodel
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import com.getstream.sdk.chat.createChannel
-import com.getstream.sdk.chat.createCommands
-import com.getstream.sdk.chat.createMembers
-import com.getstream.sdk.chat.randomUser
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
-import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.randomCID
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.spy
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-
+/*
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageInputViewModelTest {
 
@@ -72,4 +46,4 @@ internal class MessageInputViewModelTest {
 
         verify(mockObserver).onChanged(eq(commands))
     }
-}
+}*/
