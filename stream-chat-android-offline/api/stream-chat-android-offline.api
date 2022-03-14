@@ -10,7 +10,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun clean ()V
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Landroidx/lifecycle/LiveData;
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
 	public abstract fun getChannelController (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -134,7 +133,6 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Qu
 	public abstract fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public abstract fun getLoading ()Landroidx/lifecycle/LiveData;
 	public abstract fun getLoadingMore ()Landroidx/lifecycle/LiveData;
-	public abstract fun getRecoveryNeeded ()Z
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	public abstract fun setChatEventHandler (Lio/getstream/chat/android/offline/querychannels/ChatEventHandler;)V
 }
@@ -191,7 +189,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun clean ()V
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun getActiveQueries ()Ljava/util/List;
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
 	public abstract fun getChannelController (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -473,16 +470,11 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/experimental/sync/SyncManager {
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun cancelEphemeralMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
-	public static final fun replayEventsForActiveChannels (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
@@ -587,8 +579,6 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public static fun getFilter$delegate (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;)Ljava/lang/Object;
 	public final fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/MutableStateFlow;
-	public static fun getRecoveryNeeded$delegate (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;)Ljava/lang/Object;
 	public final fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	public static fun getSort$delegate (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;)Ljava/lang/Object;
 	public final fun query (IIILkotlin/coroutines/Continuation;)Ljava/lang/Object;

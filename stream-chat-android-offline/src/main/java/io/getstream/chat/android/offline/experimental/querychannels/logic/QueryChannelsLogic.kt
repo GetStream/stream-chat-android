@@ -24,6 +24,7 @@ import io.getstream.chat.android.offline.experimental.extensions.logic
 import io.getstream.chat.android.offline.experimental.extensions.state
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
@@ -72,6 +73,15 @@ internal class QueryChannelsLogic(
             .let { Result.success(it) }
     }
 
+    /**
+     * Returns the state of Channel. Useful to check how it the state of the channel of the [QueryChannelsLogic]
+     *
+     * @return [QueryChannelsState]
+     */
+    internal fun state(): QueryChannelsState {
+        return mutableState
+    }
+
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsRepository: QueryChannelsRepository,
@@ -87,6 +97,11 @@ internal class QueryChannelsLogic(
             .also { addChannels(it, repos) }
     }
 
+    /**
+     * Adds a new channel to the query.
+     *
+     * @param channel [Channel]
+     */
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
         client.logic.channel(channel.type, channel.id).updateDataFromChannel(channel)
@@ -119,7 +134,7 @@ internal class QueryChannelsLogic(
         globalState: GlobalMutableState,
     ) {
         if (result.isSuccess) {
-            mutableState.recoveryNeeded.value = false
+            mutableState._recoveryNeeded.value = false
 
             // store the results in the database
             val channelsResponse = result.data().toSet()
@@ -133,7 +148,7 @@ internal class QueryChannelsLogic(
             storeStateForChannels(channelsResponse)
         } else {
             logger.logI("Query with filter ${request.filter} failed, marking it as recovery needed")
-            mutableState.recoveryNeeded.value = true
+            mutableState._recoveryNeeded.value = true
             globalState._errorEvent.value = Event(result.error())
         }
     }

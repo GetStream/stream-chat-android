@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.inOffsetWith
@@ -174,6 +175,30 @@ internal class ChannelLogic(
             channels = listOf(channel),
             messages = channel.messages
         )
+    }
+
+    /**
+     * Returns the state of Channel. Useful to check how it the state of the channel of the [ChannelLogic]
+     *
+     * @return [ChannelState]
+     */
+    internal fun state(): ChannelState {
+        return mutableState
+    }
+
+    /**
+     * Starts to watch this channel.
+     *
+     * @param messagesLimit The limit of messages inside the channel that should be requested.
+     * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
+     */
+    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+        // Otherwise it's too easy for devs to create UI bugs which DDOS our API
+        if (mutableState._loading.value) {
+            logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
+            return
+        }
+        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     /**

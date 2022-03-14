@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -206,7 +207,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             data.user1Token
         ).enqueue()
         // manually configure the user since client is mocked
-        chatDomainImpl.setUser(data.user1)
+        GlobalMutableState.get()._user.value = data.user1
         chatDomainImpl.userConnected(data.user1)
 
         chatDomain = chatDomainImpl

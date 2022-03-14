@@ -18,12 +18,15 @@ internal class IdGenerationDomainTest {
 
     private lateinit var chatDomainImpl: ChatDomainImpl
     private lateinit var currentUserFake: User
+    private lateinit var globalMutableState: GlobalMutableState
 
     @BeforeEach
     fun init() {
         val contextMock = mock<Context>()
         val clientMock = mock<ChatClient>()
         val handlerFake = Handler()
+        globalMutableState = GlobalMutableState.create()
+
         chatDomainImpl = ChatDomainImpl(
             appContext = contextMock,
             client = clientMock,
@@ -31,7 +34,7 @@ internal class IdGenerationDomainTest {
             backgroundSyncEnabled = true,
             recoveryEnabled = false,
             userPresence = true,
-            globalState = GlobalMutableState.create()
+            globalState = globalMutableState
         )
         currentUserFake = randomUser()
     }
@@ -56,7 +59,7 @@ internal class IdGenerationDomainTest {
         setCurrentUser()
 
         val idMap = sortedSetOf<String>()
-        (0..1000000).forEach {
+        repeat(1000000) {
             val messageId = chatDomainImpl.generateMessageId()
             idMap shouldNotContain messageId
             idMap.add(messageId)
@@ -64,7 +67,7 @@ internal class IdGenerationDomainTest {
     }
 
     private fun setCurrentUser() {
-        chatDomainImpl.setUser(currentUserFake)
+        globalMutableState._user.value = currentUserFake
         chatDomainImpl.userConnected(currentUserFake)
         chatDomainImpl.user.value.shouldNotBeNull()
     }
