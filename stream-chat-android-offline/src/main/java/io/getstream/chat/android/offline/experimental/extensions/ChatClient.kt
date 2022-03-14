@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.experimental.extensions
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
@@ -36,7 +35,6 @@ internal val ChatClient.logic: LogicRegistry
 public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.getOrCreate()
 
-@InternalStreamChatApi
 internal fun ChatClient.requestsAsState(): ChatClientStateCalls = ChatClientStateCalls(this, state)
 
 public fun ChatClient.queryChannelsAsState(request: QueryChannelsRequest): QueryChannelsState {
