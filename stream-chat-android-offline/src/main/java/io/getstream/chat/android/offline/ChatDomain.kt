@@ -21,11 +21,9 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
 
@@ -95,34 +93,8 @@ public sealed interface ChatDomain {
     public fun isOffline(): Boolean
     public fun isConnecting(): Boolean
     public fun isInitialized(): Boolean
-    public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
-
-    /**
-     * Returns a ChannelController for given cid.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     *
-     * @return Executable async [Call] responsible for obtaining [ChannelController].
-     *
-     * @see io.getstream.chat.android.offline.channel.ChannelController
-     */
-    @CheckResult
-    public fun getChannelController(cid: String): Call<ChannelController>
-
-    /**
-     * Watches the given channel and returns a ChannelController.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     * @param messageLimit How many messages to load on the first request.
-     *
-     * @return Executable async [Call] responsible for obtaining [ChannelController].
-     *
-     * @see io.getstream.chat.android.offline.channel.ChannelController
-     */
-    @CheckResult
-    public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
 
     /**
      * Queries offline storage and the API for channels matching the filter.
@@ -148,48 +120,6 @@ public sealed interface ChatDomain {
         messageLimit: Int = 1,
         memberLimit: Int = 30,
     ): Call<QueryChannelsController>
-
-    /**
-     * Returns a thread controller for the given channel and message id.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     * @param parentId The message id for the parent of this thread.
-     *
-     * @return Executable async [Call] responsible for obtaining [ThreadController].
-     *
-     * @see io.getstream.chat.android.offline.thread.ThreadController
-     */
-    @CheckResult
-    public fun getThread(cid: String, parentId: String): Call<ThreadController>
-
-    /**
-     * Loads newer messages for the channel.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading new messages in a channel.
-     */
-    @CheckResult
-    public fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel>
-
-    /**
-     * Loads message for a given message id and channel id.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageId The id of the message.
-     * @param olderMessagesOffset How many new messages to load before the requested message.
-     * @param newerMessagesOffset How many new messages to load after the requested message.
-     *
-     * @return Executable async [Call] responsible for loading a message.
-     */
-    @CheckResult
-    public fun loadMessageById(
-        cid: String,
-        messageId: String,
-        olderMessagesOffset: Int,
-        newerMessagesOffset: Int,
-    ): Call<Message>
 
     /**
      * Load more channels for this query.
@@ -251,18 +181,6 @@ public sealed interface ChatDomain {
     public fun queryChannelsLoadMore(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
 
     /**
-     * Loads more messages for the specified thread.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param parentId The parentId of the thread.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading more messages in a thread.
-     */
-    @CheckResult
-    public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
-
-    /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
@@ -289,27 +207,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun sendGiphy(message: Message): Call<Message>
-
-    /**
-     * Edits the specified message. Local storage is updated immediately.
-     * The API request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to edit.
-     *
-     * @return Executable async [Call] responsible for editing a message.
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @CheckResult
-    @Deprecated(
-        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().updateMessage(message)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun editMessage(message: Message): Call<Message>
 
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.

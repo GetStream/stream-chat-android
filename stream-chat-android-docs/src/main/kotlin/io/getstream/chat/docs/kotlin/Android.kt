@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
@@ -778,31 +777,31 @@ class Android {
             val unreadChannelCount = chatDomain.channelUnreadCount
         }
 
-        fun messagesFromThread() {
-            val chatDomain = ChatDomain.instance()
+        // fun messagesFromThread() {
+        //     val chatDomain = ChatDomain.instance()
+        //
+        //     chatDomain.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
+        //         if (result.isSuccess) {
+        //             val threadController = result.data()
+        //
+        //             // LiveData objects to observe
+        //             threadController.messages
+        //             threadController.loadingOlderMessages
+        //             threadController.endOfOlderMessages
+        //         }
+        //     }
+        // }
 
-            chatDomain.getThread(cid = "cid", parentId = "parentId").enqueue { result ->
-                if (result.isSuccess) {
-                    val threadController = result.data()
-
-                    // LiveData objects to observe
-                    threadController.messages
-                    threadController.loadingOlderMessages
-                    threadController.endOfOlderMessages
-                }
-            }
-        }
-
-        fun loadMoreFromThread() {
-            val chatDomain = ChatDomain.instance()
-
-            chatDomain.threadLoadMore(cid = "cid", parentId = "parentId", messageLimit = 1)
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        val messages: List<Message> = result.data()
-                    }
-                }
-        }
+        // fun loadMoreFromThread() {
+        //     val chatDomain = ChatDomain.instance()
+        //
+        //     chatDomain.threadLoadMore(cid = "cid", parentId = "parentId", messageLimit = 1)
+        //         .enqueue { result ->
+        //             if (result.isSuccess) {
+        //                 val messages: List<Message> = result.data()
+        //             }
+        //         }
+        // }
     }
 
     /**
@@ -873,16 +872,16 @@ class Android {
             val unreadCount: Int? = channel.unreadCount
         }
 
-        fun unreadCountForCurrentUserChatDomain() {
-            // Get channel controller
-            val channelController = ChatDomain.instance()
-                .watchChannel(cid = "messaging:123", messageLimit = 0)
-                .execute()
-                .data()
-
-            // Unread count for current user
-            val unreadCount: LiveData<Int?> = channelController.unreadCount
-        }
+        // fun unreadCountForCurrentUserChatDomain() {
+        //     // Get channel controller
+        //     val channelController = ChatDomain.instance()
+        //         .watchChannel(cid = "messaging:123", messageLimit = 0)
+        //         .execute()
+        //         .data()
+        //
+        //     // Unread count for current user
+        //     val unreadCount: LiveData<Int?> = channelController.unreadCount
+        // }
 
         fun markAllRead() {
             ChatClient.instance().markAllRead().enqueue { result ->

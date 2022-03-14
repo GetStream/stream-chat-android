@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
-import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
@@ -619,7 +618,7 @@ public class Android {
 //                            channelController.getTyping();
 //                        }
 //                    });
-        }
+//        }
 
         public void loadMoreMessages() {
             ChatClient chatClient = ChatClient.instance();
@@ -705,33 +704,33 @@ public class Android {
             LiveData<Integer> unreadChannelCount = chatDomain.getChannelUnreadCount();
         }
 
-        public void messagesFromThread() {
-            ChatDomain chatDomain = ChatDomain.instance();
+//        public void messagesFromThread() {
+//            ChatDomain chatDomain = ChatDomain.instance();
+//
+//            chatDomain.getThread("cid", "parentId")
+//                    .enqueue(result -> {
+//                        if (result.isSuccess()) {
+//                            final ThreadController threadController = result.data();
+//
+//                            // LiveData objects to observe
+//                            threadController.getMessages();
+//                            threadController.getLoadingOlderMessages();
+//                            threadController.getEndOfOlderMessages();
+//                        }
+//                    });
+//        }
 
-            chatDomain.getThread("cid", "parentId")
-                    .enqueue(result -> {
-                        if (result.isSuccess()) {
-                            final ThreadController threadController = result.data();
-
-                            // LiveData objects to observe
-                            threadController.getMessages();
-                            threadController.getLoadingOlderMessages();
-                            threadController.getEndOfOlderMessages();
-                        }
-                    });
-        }
-
-        public void loadMoreFromThread() {
-            ChatDomain chatDomain = ChatDomain.instance();
-            int messageLimit = 1;
-
-            chatDomain.threadLoadMore("cid", "parentId", messageLimit)
-                    .enqueue(result -> {
-                        if (result.isSuccess()) {
-                            final List<Message> messages = result.data();
-                        }
-                    });
-        }
+//        public void loadMoreFromThread() {
+//            ChatDomain chatDomain = ChatDomain.instance();
+//            int messageLimit = 1;
+//
+//            chatDomain.threadLoadMore("cid", "parentId", messageLimit)
+//                    .enqueue(result -> {
+//                        if (result.isSuccess()) {
+//                            final List<Message> messages = result.data();
+//                        }
+//                    });
+//        }
     }
 
     /**

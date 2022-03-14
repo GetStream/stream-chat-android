@@ -15,12 +15,8 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
@@ -45,7 +41,7 @@ import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
-internal class ChatDomainImpl internal constructor(internal val chatDomainStateFlow: ChatDomainStateFlow) :
+internal class ChatDomainImpl internal constructor(private val chatDomainStateFlow: ChatDomainStateFlow) :
     ChatDomain {
 
     override var userPresence: Boolean
@@ -110,17 +106,9 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun isInitialized(): Boolean = chatDomainStateFlow.isInitialized()
 
-    override fun clean() = chatDomainStateFlow.clean()
-
     override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
-
-    override fun getChannelController(cid: String): Call<ChannelController> =
-        chatDomainStateFlow.getChannelController(cid).map(::ChannelControllerImpl)
-
-    override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
-        chatDomainStateFlow.watchChannel(cid, messageLimit).map(::ChannelControllerImpl)
 
     override fun queryChannels(
         filter: FilterObject,
@@ -129,19 +117,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         messageLimit: Int,
     ): Call<QueryChannelsController> =
         chatDomainStateFlow.queryChannels(filter, sort, limit, messageLimit).map(::QueryChannelsControllerImpl)
-
-    override fun getThread(cid: String, parentId: String): Call<ThreadController> =
-        chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
-
-    override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
-        chatDomainStateFlow.loadNewerMessages(cid, messageLimit)
-
-    override fun loadMessageById(
-        cid: String,
-        messageId: String,
-        olderMessagesOffset: Int,
-        newerMessagesOffset: Int,
-    ): Call<Message> = chatDomainStateFlow.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
@@ -169,9 +144,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         sort: QuerySort<Channel>,
     ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter = filter, sort = sort)
 
-    override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
-        chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)
-
     override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlow.shuffleGiphy(message)
 
     override fun sendGiphy(message: Message): Call<Message> = chatDomainStateFlow.sendGiphy(message)
@@ -184,7 +156,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         ),
         level = DeprecationLevel.WARNING
     )
-    override fun editMessage(message: Message): Call<Message> = chatDomainStateFlow.editMessage(message)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         chatDomainStateFlow.sendReaction(cid, reaction, enforceUnique)
