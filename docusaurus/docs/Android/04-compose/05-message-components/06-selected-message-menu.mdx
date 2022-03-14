@@ -30,6 +30,9 @@ if (selectedMessageState is SelectedMessageOptionsState) {
         onMessageAction = { action ->
             // Handle message action
         },
+        onShowMoreReactionsSelected = {
+            // Handle show more reactions button click
+        },
         onDismiss = {
             // Handle dismiss
         }
@@ -56,11 +59,13 @@ The menu overlay has a darker background and tapping it will dismiss the compone
 fun SelectedMessageMenu(
     ..., // State and options
     onMessageAction: (MessageAction) -> Unit,
+    onShowMoreReactionsSelected: () -> Unit,
     onDismiss: () -> Unit = {},
 )
 ```
 
 * `onMessageAction`: Handler for the user triggering any message actions, such as **reply**, **edit**, **delete**, **react** and others.
+* `onShowMoreReactionsSelected`: Handler that propagates clicks on the show more reactions button.
 * `onDismiss`: Handler for when the component is dismissed by clicking outside of the component UI or pressing the system back button.
 
 To handle these actions, you can override them like so:
@@ -70,8 +75,11 @@ if (selectedMessageState is SelectedMessageOptionsState) {
     SelectedMessageMenu(
         ..., // State and options
         onMessageAction = { action ->
-            composerViewModel.onMessageAction(action)
-            listViewModel.onMessageAction(action)
+            composerViewModel.performMessageAction(action)
+            listViewModel.performMessageAction(action)
+        },
+        onShowMoreReactionsSelected = {
+            listViewModel.selectExtendedReactions(selectedMessage)
         },
         onDismiss = { listViewModel.removeOverlay() }
     )
@@ -123,6 +131,9 @@ if (selectedMessageState is SelectedMessageOptionsState) {
         shape = ChatTheme.shapes.attachment,
         onMessageAction = { action ->
             // Handle message action
+        },
+        onShowMoreReactionsSelected = {
+            // Handle show more reactions button click
         },
         onDismiss = {
             // Handle dismiss

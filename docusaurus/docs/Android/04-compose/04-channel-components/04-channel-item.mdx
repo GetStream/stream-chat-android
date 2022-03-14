@@ -75,7 +75,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                         channelItem = channelItem,
                         currentUser = user,
                         onChannelLongClick = {
-                            viewModel.selectChannel(it)
+                            listViewModel.selectChannel(it)
                         },
                         onChannelClick = {
                             // Start the MessagesScreen
