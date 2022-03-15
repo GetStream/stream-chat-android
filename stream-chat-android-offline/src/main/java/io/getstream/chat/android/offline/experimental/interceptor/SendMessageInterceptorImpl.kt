@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.extensions.populateMentions
@@ -19,7 +18,6 @@ import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNet
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import io.getstream.chat.android.offline.message.getMessageType
 import io.getstream.chat.android.offline.message.hasPendingAttachments
-import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -58,8 +56,11 @@ internal class SendMessageInterceptorImpl(
             channel.replyMessage(null)
         }
 
-        return if (!isRetrying) prepareNewMessageWithAttachments(message, channelType, channelId)
-        else retryMessage(message, channelType, channelId)
+        return if (!isRetrying) {
+            prepareNewMessageWithAttachments(message, channelType, channelId)
+        } else {
+            retryMessage(message, channelType, channelId)
+        }
     }
 
     /**
@@ -155,7 +156,9 @@ internal class SendMessageInterceptorImpl(
             globalState.isOnline() ->
                 if (message.hasPendingAttachments()) {
                     waitForAttachmentsToBeSent(message, channelType, channelId)
-                } else Result.success(message.copy(type = Message.TYPE_REGULAR))
+                } else {
+                    Result.success(message.copy(type = Message.TYPE_REGULAR))
+                }
 
             message.hasPendingAttachments() -> {
                 // We enqueue attachments upload here if user is offline but an error is returned so message is not sent right away.
@@ -185,15 +188,11 @@ internal class SendMessageInterceptorImpl(
         var messageToBeSent = newMessage
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
-                val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
                 repos.observeAttachmentsForMessage(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                ephemeralUploadStatusMessage?.let {
-                                    cancelEphemeralMessage(logic.channel(channelType, channelId), it)
-                                }
                                 messageToBeSent = repos.selectMessage(newMessage.id) ?: newMessage.copy(
                                     attachments = attachments.toMutableList()
                                 )
@@ -212,20 +211,9 @@ internal class SendMessageInterceptorImpl(
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
             Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
-        } else Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
-    }
-
-    /**
-     * Cancels ephemeral Message.
-     * Removes message from the offline storage and memory and notifies about update.
-     *
-     * @param message [Message] to be cancelled.
-     */
-    private suspend fun cancelEphemeralMessage(channel: ChannelLogic, message: Message): Result<Boolean> {
-        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-        repos.deleteChannelMessage(message)
-        channel.removeLocalMessage(message)
-        return Result(true)
+        } else {
+            Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
+        }
     }
 
     /**
