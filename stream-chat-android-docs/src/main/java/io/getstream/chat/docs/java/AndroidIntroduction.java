@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.livedata.ChatDomain;
 
 public class AndroidIntroduction {
 

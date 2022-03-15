@@ -82,6 +82,7 @@
 - Removed `ChatDomain` from all `ViewModels`. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 - Removed all uses of `ChatDomain` from all `Views` and functions that relied on it. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 - Updated the structure of UI components documentation. [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/). [#3186](https://github.com/GetStream/stream-chat-android/pull/3186)
+- Updated the code snippets from the UI Components documentation in the `stream-chat-android-docs` module. [3205](https://github.com/GetStream/stream-chat-android/pull/3205)
 
 ### ❌ Removed
 - All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
