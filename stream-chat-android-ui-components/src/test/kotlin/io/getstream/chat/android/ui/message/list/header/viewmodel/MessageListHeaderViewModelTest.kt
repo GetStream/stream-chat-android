@@ -1,34 +1,12 @@
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.spy
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
-import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.ui.createMember
-import io.getstream.chat.android.ui.createMembers
 import io.getstream.chat.android.ui.createUser
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.times
 
 private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
 
+/*
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageListHeaderViewModelTest {
 
@@ -68,7 +46,7 @@ internal class MessageListHeaderViewModelTest {
         verify(mockObserver).onChanged(eq(members))
     }
 
-    /** [createAnyOtherUserOnlineInput] */
+    *//** [createAnyOtherUserOnlineInput] *//*
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelTest#createAnyOtherUserOnlineInput")
     fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
@@ -120,3 +98,4 @@ internal class MessageListHeaderViewModelTest {
         )
     }
 }
+*/

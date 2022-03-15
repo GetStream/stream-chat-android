@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.foundation.background
@@ -23,14 +25,14 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewMembersData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.Cancel
-import io.getstream.chat.android.compose.state.channel.list.ChannelAction
-import io.getstream.chat.android.compose.state.channel.list.ChannelOptionState
-import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
-import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
-import io.getstream.chat.android.compose.state.channel.list.MuteChannel
-import io.getstream.chat.android.compose.state.channel.list.UnmuteChannel
-import io.getstream.chat.android.compose.state.channel.list.ViewInfo
+import io.getstream.chat.android.compose.state.channels.list.Cancel
+import io.getstream.chat.android.compose.state.channels.list.ChannelAction
+import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
+import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
+import io.getstream.chat.android.compose.state.channels.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channels.list.MuteChannel
+import io.getstream.chat.android.compose.state.channels.list.UnmuteChannel
+import io.getstream.chat.android.compose.state.channels.list.ViewInfo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isDistinct
 

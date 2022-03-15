@@ -1,11 +1,16 @@
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,14 +25,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
-import io.getstream.chat.android.compose.state.channel.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 
 /**
  * Default ChannelList component, that relies on the [ChannelListViewModel] to load the data and
@@ -36,12 +40,15 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param modifier Modifier for styling.
  * @param viewModel The ViewModel that loads all the data and connects it to the UI. We provide a
  * factory that builds the default ViewModel in case the user doesn't want to provide their own.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
  * @param onLastItemReached Handler for pagination, when the user reaches the last item in the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
+ * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -54,7 +61,6 @@ public fun ChannelList(
         factory =
         ChannelViewModelFactory(
             ChatClient.instance(),
-            ChatDomain.instance(),
             QuerySort.desc("last_updated"),
             Filters.and(
                 Filters.eq("type", "messaging"),
@@ -62,6 +68,7 @@ public fun ChannelList(
             )
         )
     ),
+    lazyListState: LazyListState = rememberLazyListState(),
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
@@ -73,26 +80,35 @@ public fun ChannelList(
             modifier = modifier
         )
     },
+    helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
+        val user by viewModel.user.collectAsState()
+
         DefaultChannelItem(
             channelItem = channelItem,
-            currentUser = viewModel.user.value,
+            currentUser = user,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
+    val user by viewModel.user.collectAsState()
+
     ChannelList(
         modifier = modifier,
         channelsState = viewModel.channelsState,
-        currentUser = viewModel.user.value,
+        currentUser = user,
+        lazyListState = lazyListState,
         onLastItemReached = onLastItemReached,
         onChannelClick = onChannelClick,
         onChannelLongClick = onChannelLongClick,
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         emptySearchContent = emptySearchContent,
+        helperContent = helperContent,
+        loadingMoreContent = loadingMoreContent,
         itemContent = itemContent,
         divider = divider
     )
@@ -113,12 +129,15 @@ public fun ChannelList(
  * @param channelsState Current state of the Channel list, represented by [ChannelsState].
  * @param currentUser The data of the current user, used various states.
  * @param modifier Modifier for styling.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
  * @param onLastItemReached Handler for pagination, when the user reaches the end of the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
+ * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -129,6 +148,7 @@ public fun ChannelList(
     channelsState: ChannelsState,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    lazyListState: LazyListState = rememberLazyListState(),
     onLastItemReached: () -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
@@ -140,6 +160,8 @@ public fun ChannelList(
             modifier = modifier
         )
     },
+    helperContent: @Composable BoxScope.() -> Unit = {},
+    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
         DefaultChannelItem(
             channelItem = channelItem,
@@ -157,7 +179,10 @@ public fun ChannelList(
         !isLoading && channels.isNotEmpty() -> Channels(
             modifier = modifier,
             channelsState = channelsState,
+            lazyListState = lazyListState,
             onLastItemReached = onLastItemReached,
+            helperContent = helperContent,
+            loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
             divider = divider
         )

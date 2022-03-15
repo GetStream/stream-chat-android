@@ -5,51 +5,94 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
+/**
+ * Used by [ChannelActionsDialogFragment] to provide the correct state
+ * containing information about the channel.
+ *
+ * @param isGroup True if the Channel is a group channel, false otherwise.
+ * @param chatClient The main entry point for all low-level chat operations.
+ */
 internal class ChannelActionsViewModel(
     cid: String,
     private val isGroup: Boolean,
-    chatDomain: ChatDomain = ChatDomain.instance(),
+    chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    val channelState: ChannelState =
+        chatClient.asReferenced().watchChannel(cid).asState(viewModelScope)
+
+    /**
+     * The initial empty state.
+     */
     private val initialState = State()
+
+    /**
+     * The current state containing channel information.
+     */
     private var currentState = initialState
+
+    /**
+     * The state containing channel information wrapped in MutableLiveData.
+     */
     private val _state = MediatorLiveData<State>()
+
+    /**
+     * The state containing channel information wrapped in LiveData.
+     */
     val state: LiveData<State> = Transformations.distinctUntilChanged(_state)
 
     init {
         _state.postValue(currentState)
 
-        viewModelScope.launch {
-            chatDomain
-                .watchChannel(cid, 0)
-                .await()
-                .data()
-                .let { channelController ->
-                    _state.addSource(channelController.members) { members ->
-                        onAction(Action.UpdateMembers(members))
-                    }
-                }
-        }
+        channelState.members.onEach { members ->
+            onAction(Action.UpdateMembers(members))
+        }.launchIn(viewModelScope)
     }
 
+    /**
+     * Processes actions and updates the state accordingly.
+     *
+     * @param action The action to process. Results in a state update as a side-effect.
+     */
     fun onAction(action: Action) {
         currentState = reduce(action)
         _state.postValue(currentState)
     }
 
+    /**
+     * Checks against available actions and produces state accordingly.
+     *
+     * @param action The action to process.
+     *
+     * @return Returns the updated [State].
+     */
     private fun reduce(action: Action): State {
         return when (action) {
             is Action.UpdateMembers -> updateMembers(action.members)
         }
     }
 
+    /**
+     * Returns the updated state containing all current members.
+     * Filters out the current user if the channel is not a group
+     * channel.
+     *
+     * @param members List of all members belonging to the channel.
+     *
+     * @return Returns the updated [State].
+     */
     private fun updateMembers(members: List<Member>): State {
         val canDeleteChannel = members.isCurrentUserOwnerOrAdmin()
         return currentState.copy(
@@ -58,11 +101,21 @@ internal class ChannelActionsViewModel(
         )
     }
 
+    /**
+     * Holds information about the channel.
+     *
+     * @param members List of members belonging to the channel.
+     * @param canDeleteChannel If the current user has the ability to delete the channel.
+     */
     data class State(
         val members: List<Member> = listOf(),
         val canDeleteChannel: Boolean = false,
     )
 
+    /**
+     * Describes actions that are meant to be taken and result in a state
+     * update.
+     */
     sealed class Action {
         data class UpdateMembers(val members: List<Member>) : Action()
     }

@@ -3,6 +3,7 @@ package io.getstream.chat.docs.java;
 import android.content.Context;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +18,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
-import io.getstream.chat.android.livedata.controller.ChannelController;
-import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 
 public class AndroidIntroduction {
 
@@ -36,7 +35,6 @@ public class AndroidIntroduction {
         // Step 2 - Set up the domain for offline storage
         ChatDomain domain = new ChatDomain.Builder(applicationContext, client)
                 // Enable offline support
-                .offlineEnabled()
                 .build();
 
         // Step 2 - Authenticate and connect the user
@@ -60,9 +58,10 @@ public class AndroidIntroduction {
 
         Map<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Awesome channel about traveling");
+        List<String> memberIds = new LinkedList<>();
 
         // Creating a channel with the low level client
-        channelClient.create(extraData).enqueue(result -> {
+        channelClient.create(memberIds, extraData).enqueue(result -> {
             if (result.isSuccess()) {
                 Channel channel = result.data();
                 // Use channel by calling methods on channelClient
@@ -72,17 +71,17 @@ public class AndroidIntroduction {
         });
 
         // Watching a channel's state using the offline library
-        chatDomain.watchChannel("messaging:travel", 10)
-                .enqueue(result -> {
-                    if (result.isSuccess()) {
-                        ChannelController channelController = result.data();
-
-                        // LiveData objects to observe
-                        channelController.getMessages();
-                        channelController.getReads();
-                        channelController.getTyping();
-                    }
-                });
+//        chatDomain.watchChannel("messaging:travel", 10)
+//                .enqueue(result -> {
+//                    if (result.isSuccess()) {
+//                        ChannelController channelController = result.data();
+//
+//                        // LiveData objects to observe
+//                        channelController.getMessages();
+//                        channelController.getReads();
+//                        channelController.getTyping();
+//                    }
+//                });
     }
 
     public void sendFirstMessage(ChannelClient channelClient, ChatDomain chatDomain) {
@@ -92,16 +91,7 @@ public class AndroidIntroduction {
         message.putExtraValue("customField", "123");
 
         // Using the low level client
-        channelClient.sendMessage(message).enqueue(result -> {
-            if (result.isSuccess()) {
-                Message sentMessage = result.data();
-            } else {
-                // Handle result.error()
-            }
-        });
-
-        // Using the offline support library
-        chatDomain.sendMessage(message).enqueue(result -> {
+        channelClient.sendMessage(message, false).enqueue(result -> {
             if (result.isSuccess()) {
                 Message sentMessage = result.data();
             } else {
@@ -130,20 +120,5 @@ public class AndroidIntroduction {
                 // Handle result.error()
             }
         });
-
-        // Using the offline library to query channels
-        chatDomain.queryChannels(filter, sort, limit, messageLimit)
-                .enqueue(result -> {
-                    if (result.isSuccess()) {
-                        QueryChannelsController queryChannelsController = result.data();
-
-                        // LiveData objects to observe
-                        queryChannelsController.getChannels();
-                        queryChannelsController.getLoading();
-                        queryChannelsController.getEndOfChannels();
-                    } else {
-                        // Handle result.error()
-                    }
-                });
     }
 }

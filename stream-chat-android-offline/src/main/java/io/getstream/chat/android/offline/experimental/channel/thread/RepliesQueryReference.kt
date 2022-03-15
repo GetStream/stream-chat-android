@@ -4,15 +4,13 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.extensions.state
-import io.getstream.chat.android.offline.experimental.plugin.QueryReference
+import io.getstream.chat.android.offline.experimental.plugin.query.QueryReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@ExperimentalStreamChatApi
 @InternalStreamChatApi
 /** Reference for the [ChatClient.getReplies] request. */
 public class RepliesQueryReference(

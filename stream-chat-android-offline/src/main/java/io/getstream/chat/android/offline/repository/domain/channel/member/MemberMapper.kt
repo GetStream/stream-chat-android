@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.offline.repository.domain.channel.member
 
 import io.getstream.chat.android.client.models.Member

@@ -9,17 +9,17 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatDomain#leaveChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient.removeMembers` instead. |
 | `ChatDomain#createChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use extension function `ChatClient.createChannel` instead |
 | `ChatDomain#cancelMessage` | 2021.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient#cancelMessage` instead |
-| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.11<br/>⌛ | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
-| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | Use `ChatUI.messageTextTransformer` instead. |
-| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>⌛ | 2022.03.08 ⌛ | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
+| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.11<br/>5.0.0 | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
+| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.08<br/>5.0.0 | Use `ChatUI.messageTextTransformer` instead. |
+| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.08<br/>5.0.0 | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
 | `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | Use `ChatClient#showChannel` instead |
 | `ChatDomain#loadOlderMessages` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0  | 2022.02.22 ⌛ | Use `ChatClient#loadOlderMessages` instead |
-| `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#stopTyping` instead |
-| `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#keystroke` instead |
+| `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#stopTyping` instead |
+| `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 |  2022.02.08<br/>4.28.0 | Use `ChatClient#keystroke` instead |
 | `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.09<br/>4.24.0 | 2022.01.11<br/>4.26.0 | Use ChatDomain.mutedChannels instead |
-| `ChatDomain#downloadAttachment` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#downloadAttachment` instead |
-| `ChatDomain#setMessageForReply` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#setMessageForReply` instead |
-| `ChatDomain#replayEventsForActiveChannels` | 2021.11.24<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08 ⌛ | Use `ChatClient#replayEventsForActiveChannels` instead |
+| `ChatDomain#downloadAttachment` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#downloadAttachment` instead |
+| `ChatDomain#setMessageForReply` | 2021.11.23<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#setMessageForReply` instead |
+| `ChatDomain#replayEventsForActiveChannels` | 2021.11.24<br/>4.23.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#replayEventsForActiveChannels` instead |
 | `ChatDomain#online` | 2021.10.26<br/>4.21.0 | 2021.11.24<br/>4.23.0 | 2022.01.11<br/>4.26.0 | Use ChatDomain#connectionState instead |
 | `QueryChannelsController#newChannelEventFilter` | 2021.10.12<br/>4.20.0 | 2021.11.08<br/>4.22 | 2021.11.08<br/>4.22 | Use QueryChannelsController::chatEventHandler instead |
 | `QueryChannelsController#checkFilterOnChannelUpdatedEvent` | 2021.10.12<br/>4.20.0 | 2021.11.08<br/>4.22 | 2021.11.08<br/>4.22 | Use QueryChannelsController::chatEventHandler instead |
@@ -68,7 +68,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatNotificationHandler#getFirebaseChannelTypeKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use the `NotificationsConfig.firebaseChannelTypeKey` instead |
 | Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.06.30<br/>4.13.0 | 2021.09.15<br/>4.18.0 | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
-| `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `ChannelController::offlineChannelData` instead
+| `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `ChannelController::offlineChannelData` instead|
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
 | `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Subscribe to `ChatDomain::user` and handle nullable state |
 | `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Setting external SuggestionListView is no longer necessary |
@@ -77,7 +77,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChannelListView's empty state methods` <br/>*ui-components* | 2021.04.05 | 2021.04.21<br/>4.9.0 | 2021.05.05<br/>4.10.0 | These methods no longer need to be called directly, `setChannel` handles empty state changes automatically |
 | `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
 | `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use MessageListItemStyle::textStyleMine::colorOrNull() instead |
-| `com.getstream.sdk.chat.ChatUI`<br/>*ui-components* | 2021.03.19<br/>4.8.0 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use the new ChatUI implementation `io.getstream.chat.android.ui.ChatUI`
+| `com.getstream.sdk.chat.ChatUI`<br/>*ui-components* | 2021.03.19<br/>4.8.0 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use the new ChatUI implementation `io.getstream.chat.android.ui.ChatUI`|
 | `GetTotalUnreadCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use ChatDomain::totalUnreadCount instead |
 | `GetUnreadChannelCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use ChatDomain::channelUnreadCount instead |
 | `ChatClient#unMuteChannel`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use the `unmuteChannel` method instead |

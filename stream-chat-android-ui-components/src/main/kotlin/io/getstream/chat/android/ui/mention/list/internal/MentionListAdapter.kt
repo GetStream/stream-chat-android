@@ -1,13 +1,13 @@
 package io.getstream.chat.android.ui.mention.list.internal
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.DateFormatter
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -18,12 +18,10 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.message.preview.internal.MessagePreviewView
 
 internal class MentionListAdapter(
-    context: Context,
-    private val chatDomain: ChatDomain,
+    private val globalState: GlobalState = ChatClient.instance().globalState,
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var mentionSelectedListener: MentionSelectedListener? = null
-    private var dateFormatter = DateFormatter.from(context)
 
     var previewStyle: MessagePreviewStyle? = null
 
@@ -32,7 +30,6 @@ internal class MentionListAdapter(
             .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
                 previewStyle?.let(binding.root::styleView)
-                binding.root.dateFormatter = dateFormatter
                 MessagePreviewViewHolder(binding.root)
             }
     }
@@ -59,7 +56,7 @@ internal class MentionListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            view.setMessage(message, chatDomain.user.value?.asMention(context))
+            view.setMessage(message, globalState.user.value?.asMention(context))
         }
     }
 

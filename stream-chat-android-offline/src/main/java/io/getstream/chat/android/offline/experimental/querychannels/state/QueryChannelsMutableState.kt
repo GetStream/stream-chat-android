@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-@ExperimentalStreamChatApi
 internal class QueryChannelsMutableState(
     override val filter: FilterObject,
     override val sort: QuerySort<Channel>,
@@ -31,16 +29,20 @@ internal class QueryChannelsMutableState(
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
     internal val _endOfChannels = MutableStateFlow(false)
-    internal val _sortedChannels =
+    private val _sortedChannels =
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap.values.updateUsers(userMap)
-        }.map { it.sortedWith(sort.comparator) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+        }
+            .map { it.sortedWith(sort.comparator) }
+            .stateIn(scope, SharingStarted.Eagerly, emptyList())
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
-    internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    internal val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null
+
+    override val recoveryNeeded: StateFlow<Boolean> = _recoveryNeeded
 
     /**
      * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
@@ -69,5 +71,4 @@ internal class QueryChannelsMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, null)
 }
 
-@ExperimentalStreamChatApi
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState

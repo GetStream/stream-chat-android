@@ -2,8 +2,10 @@ package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -15,9 +17,8 @@ import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.keystroke
-import io.getstream.chat.android.offline.extensions.stopTyping
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -40,7 +41,6 @@ import java.util.regex.Pattern
  *
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
- * @param chatDomain The domain used to communicate to the API and store data offline.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
@@ -48,15 +48,21 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
+
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
      */
     private val scope = CoroutineScope(DispatcherProvider.Main)
+
+    /**
+     * Holds information about the current state of the [Channel].
+     */
+    public val channelState: ChannelState =
+        ChatClientReferenceAdapter(chatClient).watchChannel(channelId, 0).asState(scope)
 
     /**
      * Full message composer state holding all the required information.
@@ -174,29 +180,26 @@ public class MessageComposerController(
         get() = messageMode.value is MessageMode.MessageThread
 
     /**
+     * Represents the selected mentions based on the message suggestion list.
+     */
+    private val selectedMentions: MutableSet<User> = mutableSetOf()
+
+    /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
-        scope.launch {
-            val result = chatDomain.watchChannel(channelId, 0).await()
+        channelState.channelConfig.onEach {
+            maxMessageLength = it.maxMessageLength
+            commands = it.commands
+        }.launchIn(scope)
 
-            if (result.isSuccess) {
-                val channelController = result.data()
+        channelState.members.onEach { members ->
+            users = members.map { it.user }
+        }.launchIn(scope)
 
-                channelController.channelConfig.onEach {
-                    maxMessageLength = it.maxMessageLength
-                    commands = it.commands
-                }.launchIn(scope)
-
-                channelController.members.onEach { members ->
-                    users = members.map { it.user }
-                }.launchIn(scope)
-
-                channelController.channelData.onEach {
-                    cooldownInterval = it.cooldown
-                }.launchIn(scope)
-            }
-        }
+        channelState.channelData.onEach {
+            cooldownInterval = it.cooldown
+        }.launchIn(scope)
 
         setupComposerState()
     }
@@ -353,7 +356,7 @@ public class MessageComposerController(
      * Clears all the data from the input - both the current [input] value and the
      * [selectedAttachments].
      */
-    private fun clearData() {
+    public fun clearData() {
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
@@ -362,7 +365,7 @@ public class MessageComposerController(
 
     /**
      * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using the [ChatDomain].
+     * message, or we send a new message, using [ChatClient].
      *
      * It also dismisses any current message actions.
      *
@@ -370,10 +373,11 @@ public class MessageComposerController(
      */
     public fun sendMessage(message: Message) {
         val sendMessageCall = if (isInEditMode) {
-            chatClient.updateMessage(message)
+            getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
-            chatDomain.sendMessage(message)
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            chatClient.sendMessage(channelType, channelId, message)
         }
 
         dismissMessageActions()
@@ -403,11 +407,13 @@ public class MessageComposerController(
 
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
+        val mentions = filterMentions(selectedMentions, message)
 
         return if (isInEditMode) {
             actionMessage.copy(
                 text = message,
-                attachments = attachments.toMutableList()
+                attachments = attachments.toMutableList(),
+                mentionedUsersIds = mentions
             )
         } else {
             Message(
@@ -415,9 +421,30 @@ public class MessageComposerController(
                 text = message,
                 parentId = parentMessageId,
                 replyMessageId = replyMessageId,
-                attachments = attachments.toMutableList()
+                attachments = attachments.toMutableList(),
+                mentionedUsersIds = mentions
             )
         }
+    }
+
+    /**
+     * Filters the current input and the mentions the user selected from the suggestion list. Removes any mentions which
+     * are selected but no longer present in the input.
+     *
+     * @param selectedMentions The set of selected users from the suggestion list.
+     * @param message The current message input.
+     *
+     * @return [MutableList] of user IDs of mentioned users.
+     */
+    private fun filterMentions(selectedMentions: Set<User>, message: String): MutableList<String> {
+        val text = message.lowercase()
+
+        val remainingMentions = selectedMentions.filter {
+            text.contains("@${it.name.lowercase()}")
+        }.map { it.id }
+
+        this.selectedMentions.clear()
+        return remainingMentions.toMutableList()
     }
 
     /**
@@ -441,10 +468,11 @@ public class MessageComposerController(
      * @param isTyping If the user is currently typing.
      */
     private fun handleTypingEvent(isTyping: Boolean) {
+        val (type, id) = channelId.cidToTypeAndId()
         if (isTyping) {
-            chatClient.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(type, id, parentMessageId)
         } else {
-            chatClient.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(type, id, parentMessageId)
         }.enqueue()
     }
 
@@ -502,6 +530,7 @@ public class MessageComposerController(
         val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
 
         setMessageInput(augmentedMessageText)
+        selectedMentions += user
     }
 
     /**
@@ -562,6 +591,15 @@ public class MessageComposerController(
                 }
             }
         }
+    }
+
+    /**
+     * Gets the edit message call using [ChatClient].
+     *
+     * @param message [Message]
+     */
+    private fun getEditMessageCall(message: Message): Call<Message> {
+        return chatClient.updateMessage(message)
     }
 
     private companion object {

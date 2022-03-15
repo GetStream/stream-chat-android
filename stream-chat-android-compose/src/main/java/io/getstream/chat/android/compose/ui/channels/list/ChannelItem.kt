@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
@@ -234,15 +234,19 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 )
             }
 
+            val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                MessageReadStatusIcon(
-                    channel = channel,
-                    lastMessage = lastMessage,
-                    currentUser = currentUser,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(16.dp)
-                )
+                if (isLastMessageFromCurrentUser) {
+                    MessageReadStatusIcon(
+                        channel = channel,
+                        lastMessage = lastMessage,
+                        currentUser = currentUser,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(16.dp)
+                    )
+                }
 
                 Timestamp(date = channel.lastUpdated)
             }

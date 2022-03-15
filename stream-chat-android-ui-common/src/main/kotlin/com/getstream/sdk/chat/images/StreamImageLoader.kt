@@ -36,6 +36,15 @@ public sealed interface StreamImageLoader {
         onComplete: () -> Unit = {},
     ): Disposable
 
+    public suspend fun loadAndResize(
+        target: ImageView,
+        data: Any?,
+        placeholderDrawable: Drawable? = null,
+        transformation: ImageTransformation = ImageTransformation.None,
+        onStart: () -> Unit = {},
+        onComplete: () -> Unit = {},
+    )
+
     public fun loadVideoThumbnail(
         target: ImageView,
         uri: Uri?,

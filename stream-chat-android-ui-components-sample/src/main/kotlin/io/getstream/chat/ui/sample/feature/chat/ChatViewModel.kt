@@ -1,41 +1,43 @@
 package io.getstream.chat.ui.sample.feature.chat
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
 
-class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
+class ChatViewModel(
+    private val cid: String,
+    chatClient: ChatClient = ChatClient.instance(),
+) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    @OptIn(InternalStreamChatApi::class)
+    private val channelState: ChannelState =
+        chatClient.asReferenced().watchChannel(cid).asState(viewModelScope)
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
-    private var channelController: ChannelController? = null
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
-    private val _members: MediatorLiveData<List<Member>> = MediatorLiveData()
-    val members: LiveData<List<Member>> = _members
 
-    init {
-        chatDomain.getChannelController(cid).enqueue { result ->
-            if (result.isSuccess) {
-                channelController = result.data().also {
-                    _members.addSource(it.members) { members -> _members.value = members }
-                }
-            }
-        }
-    }
+    @OptIn(InternalStreamChatApi::class)
+    val members: LiveData<List<Member>> = channelState.members.asLiveData()
 
+    @OptIn(InternalStreamChatApi::class)
     fun onAction(action: Action) {
         when (action) {
             is Action.HeaderClicked -> {
-                val controller = requireNotNull(channelController)
+                val channelData = requireNotNull(channelState.channelData.value)
                 _navigationEvent.value = Event(
-                    if (action.members.size > 2 ||
-                        controller.offlineChannelData.value?.isAnonymousChannel() == false
-                    ) {
+                    if (action.members.size > 2 || !channelData.isAnonymousChannel()) {
                         NavigationEvent.NavigateToGroupChatInfo(cid)
                     } else {
                         NavigationEvent.NavigateToChatInfo(cid)

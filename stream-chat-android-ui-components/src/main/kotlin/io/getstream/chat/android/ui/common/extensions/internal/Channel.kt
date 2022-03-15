@@ -3,10 +3,11 @@ package io.getstream.chat.android.ui.common.extensions.internal
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
@@ -26,7 +27,7 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
 }
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
-    val currentUser = ChatDomain.instance().user.value
+    val currentUser = ChatClient.instance().getCurrentUser()
     return read.filter { it.user.id != currentUser?.id }
         .mapNotNull { it.lastRead }
         .any { it.time >= message.getCreatedAtOrThrow().time }
@@ -44,7 +45,7 @@ internal fun Channel.getLastMessagePreviewText(
             val sender = message.getSenderDisplayName(context, isDirectMessaging)
 
             // bold mentions of the current user
-            val currentUserMention = ChatDomain.instance().user.value?.asMention(context)
+            val currentUserMention = ChatClient.instance().globalState.user.value?.asMention(context)
             val previewText: SpannableString =
                 message.text.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
 

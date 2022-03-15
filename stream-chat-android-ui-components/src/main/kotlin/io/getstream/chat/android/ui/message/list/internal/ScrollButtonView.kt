@@ -41,7 +41,7 @@ internal class ScrollButtonView : FrameLayout {
     }
 
     fun setUnreadCount(unreadCount: Int) {
-        if (scrollButtonViewStyle.scrollButtonUnreadEnabled) {
+        if (scrollButtonViewStyle.scrollButtonEnabled && scrollButtonViewStyle.scrollButtonUnreadEnabled) {
             setUnreadCountValue(unreadCount)
             setUnreadCountTextViewVisible(unreadCount > 0)
         } else {

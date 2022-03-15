@@ -2,16 +2,15 @@ package io.getstream.chat.android.offline.experimental.channel.state
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelData
 import kotlinx.coroutines.flow.StateFlow
 
-@ExperimentalStreamChatApi
 @InternalStreamChatApi
 /** State container with reactive data of a channel.*/
 public interface ChannelState {
@@ -83,6 +82,9 @@ public interface ChannelState {
 
     /** If we need to recover state when connection established again. */
     public val recoveryNeeded: Boolean
+
+    /** Channel config data */
+    public val channelConfig: StateFlow<Config>
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel

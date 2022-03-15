@@ -28,7 +28,6 @@ class AndroidIntroduction {
         // Step 2 - Set up the domain for offline storage
         val domain = ChatDomain.Builder(applicationContext, client)
             // Enable offline support
-            .offlineEnabled()
             .build()
 
         // Step 2 - Authenticate and connect the user
@@ -59,7 +58,7 @@ class AndroidIntroduction {
         )
 
         // Creating a channel with the low level client
-        channelClient.create(extraData).enqueue { result ->
+        channelClient.create(memberIds = emptyList(), extraData = extraData).enqueue { result ->
             if (result.isSuccess) {
                 val channel: Channel = result.data()
                 // Use channel by calling methods on channelClient
@@ -69,17 +68,17 @@ class AndroidIntroduction {
         }
 
         // Watching a channel's state using the offline library
-        chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    val channelController = result.data()
-
-                    // LiveData objects to observe
-                    channelController.messages
-                    channelController.reads
-                    channelController.typing
-                }
-            }
+        // chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
+        //     .enqueue { result ->
+        //         if (result.isSuccess) {
+        //             val channelController = result.data()
+        //
+        //             // LiveData objects to observe
+        //             channelController.messages
+        //             channelController.reads
+        //             channelController.typing
+        //         }
+        //     }
     }
 
     fun sendFirstMessage(channelClient: ChannelClient, chatDomain: ChatDomain) {
@@ -91,15 +90,6 @@ class AndroidIntroduction {
 
         // Using the low level client
         channelClient.sendMessage(message).enqueue { result ->
-            if (result.isSuccess) {
-                val message: Message = result.data()
-            } else {
-                // Handle result.error()
-            }
-        }
-
-        // Using the offline support library
-        chatDomain.sendMessage(message).enqueue { result ->
             if (result.isSuccess) {
                 val message: Message = result.data()
             } else {
@@ -129,20 +119,5 @@ class AndroidIntroduction {
                 // Handle result.error()
             }
         }
-
-        // Using the offline library to query channels
-        chatDomain.queryChannels(filter, sort)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    val queryChannelsController = result.data()
-
-                    // LiveData objects to observe
-                    queryChannelsController.channels
-                    queryChannelsController.loading
-                    queryChannelsController.endOfChannels
-                } else {
-                    // Handle result.error()
-                }
-            }
     }
 }

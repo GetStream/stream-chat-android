@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -16,14 +16,13 @@ import kotlinx.coroutines.flow.StateFlow
  */
 public class ImagePreviewViewModel(
     private val chatClient: ChatClient,
-    private val chatDomain: ChatDomain,
-    private val messageId: String,
+    messageId: String,
 ) : ViewModel() {
 
     /**
      * The currently logged in user.
      */
-    public val user: StateFlow<User?> = chatDomain.user
+    public val user: StateFlow<User?> = chatClient.globalState.user
 
     /**
      * Represents the message that we observe to show the UI data.
@@ -93,7 +92,7 @@ public class ImagePreviewViewModel(
 
             chatClient.updateMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
-            chatDomain.deleteMessage(message).enqueue { result ->
+            chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result.isSuccess) {
                     message = result.data()
                 }

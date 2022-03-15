@@ -1,13 +1,13 @@
 package io.getstream.chat.android.ui.pinned.list.internal
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.DateFormatter
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -17,12 +17,10 @@ import io.getstream.chat.android.ui.pinned.list.PinnedMessageListView.PinnedMess
 import io.getstream.chat.android.ui.pinned.list.internal.PinnedMessageListAdapter.MessagePreviewViewHolder
 
 internal class PinnedMessageListAdapter(
-    context: Context,
-    private val chatDomain: ChatDomain,
+    private val globalState: GlobalState = ChatClient.instance().globalState
 ) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
-    private var dateFormatter = DateFormatter.from(context)
 
     var messagePreviewStyle: MessagePreviewStyle? = null
 
@@ -31,8 +29,6 @@ internal class PinnedMessageListAdapter(
             .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
                 messagePreviewStyle?.let(binding.root::styleView)
-                binding.root.dateFormatter = dateFormatter
-
                 MessagePreviewViewHolder(binding)
             }
     }
@@ -59,7 +55,7 @@ internal class PinnedMessageListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            binding.root.setMessage(message, chatDomain.user.value?.asMention(context))
+            binding.root.setMessage(message, globalState.user.value?.asMention(context))
         }
     }
 

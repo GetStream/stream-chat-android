@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/stream_ui_spacing_small"
     android:background="@drawable/stream_ui_white_shape_8dp_corners"
+    android:paddingBottom="@dimen/stream_ui_spacing_small"
     >
 
     <FrameLayout
@@ -42,7 +41,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/stream_ui_attachment_link_label_background"
-        android:paddingHorizontal="8dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="7dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/linkPreviewContainer"
         app:layout_constraintStart_toStartOf="@id/linkPreviewContainer"
@@ -83,10 +83,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
+        android:ellipsize="end"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textColor="@color/stream_ui_text_color_secondary"
         android:visibility="gone"
-        android:ellipsize="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"

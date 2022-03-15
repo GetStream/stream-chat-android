@@ -336,6 +336,8 @@ internal fun randomAttachmentsWithFile(
 
 internal fun randomUser(
     id: String = randomString(),
+    name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     invisible: Boolean = randomBoolean(),
     banned: Boolean = randomBoolean(),
@@ -353,6 +355,8 @@ internal fun randomUser(
 ): User = User(
     id,
     role,
+    name,
+    image,
     invisible,
     banned,
     devices,
@@ -372,6 +376,7 @@ internal fun randomUserEntity(
     id: String = randomString(),
     originalId: String = randomString(),
     name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     createdAt: Date? = null,
     updatedAt: Date? = null,
@@ -381,7 +386,7 @@ internal fun randomUserEntity(
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
 ): UserEntity =
-    UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
+    UserEntity(id, originalId, name, role, image, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 internal fun randomMessage(
     id: String = randomString(),
@@ -837,5 +842,6 @@ internal fun randomMemberRemovedEvent(cid: String = randomString()): MemberRemov
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
+        member = randomMember()
     )
 }

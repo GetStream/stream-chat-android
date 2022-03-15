@@ -14,15 +14,13 @@ internal object PreviewUserReactionData {
     fun user1Reaction() = UserReactionItemState(
         user = PreviewUserData.user1,
         painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-        isMine = true,
         type = "like"
     )
 
     @Composable
     fun user2Reaction() = UserReactionItemState(
         user = PreviewUserData.user2,
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_love),
-        isMine = false,
+        painter = painterResource(R.drawable.stream_compose_ic_reaction_love_selected),
         type = "love",
     )
 
@@ -30,15 +28,13 @@ internal object PreviewUserReactionData {
     fun user3Reaction() = UserReactionItemState(
         user = PreviewUserData.user3,
         painter = painterResource(R.drawable.stream_compose_ic_reaction_wut),
-        isMine = false,
         type = "wow",
     )
 
     @Composable
     fun user4Reaction() = UserReactionItemState(
         user = PreviewUserData.user4,
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_down),
-        isMine = false,
+        painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_down_selected),
         type = "sad",
     )
 

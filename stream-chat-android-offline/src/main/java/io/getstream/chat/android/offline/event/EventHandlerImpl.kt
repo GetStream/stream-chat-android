@@ -1,6 +1,8 @@
 package io.getstream.chat.android.offline.event
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -53,67 +55,143 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.experimental.extensions.logic
-import io.getstream.chat.android.offline.experimental.extensions.state
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.sync.SyncManager
 import io.getstream.chat.android.offline.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
-import kotlinx.coroutines.launch
+import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import java.util.Date
+import java.util.InputMismatchException
 
 internal class EventHandlerImpl(
-    private val domainImpl: ChatDomainImpl,
+    private val recoveryEnabled: Boolean,
     private val client: ChatClient,
+    private val logic: LogicRegistry,
+    private val state: StateRegistry,
+    private val mutableGlobalState: GlobalMutableState,
+    private val repos: RepositoryFacade,
+    private val syncManager: SyncManager,
 ) {
     private var logger = ChatLogger.get("EventHandler")
-    private var firstConnect = true
 
-    internal fun handleEvents(events: List<ChatEvent>) {
-        handleConnectEvents(events)
-        domainImpl.scope.launch {
-            handleEventsInternal(events)
+    private var eventSubscription: Disposable = EMPTY_DISPOSABLE
+    private var initJob: Deferred<*>? = null
+
+    internal fun initialize(user: User, scope: CoroutineScope) {
+        initJob = scope.async {
+            logic.clear()
+            syncManager.updateAllReadStateForDate(user.id, Date())
+            syncManager.loadSyncStateForUser(user.id)
+            replayEventsForAllChannels(user)
         }
     }
 
-    internal fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
-        // send out the connect events
-        for (event in sortedEvents) {
+    /**
+     * Start listening to chat events.
+     */
+    internal fun startListening(scope: CoroutineScope) {
+        if (eventSubscription.isDisposed) {
+            eventSubscription = client.subscribe {
+                scope.async {
+                    initJob?.join()
+                    handleEvents(listOf(it))
+                }
+            }
+        }
+    }
 
+    /**
+     * Stop listening for events.
+     */
+    internal fun stopListening() {
+        eventSubscription.dispose()
+    }
+
+    /**
+     * Handle events from the SDK. Don't use this directly as this only be called then new events arrive from the SDK.
+     */
+    @VisibleForTesting
+    internal suspend fun handleEvent(event: ChatEvent) {
+        handleConnectEvents(listOf(event))
+        handleEventsInternal(listOf(event), isFromSync = false)
+    }
+
+    /**
+     * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
+     */
+    internal suspend fun replayEventsForActiveChannels() {
+        replayEventsForChannels(activeChannelsCid())
+    }
+
+    private fun activeChannelsCid(): List<String> {
+        return logic.getActiveChannelsLogic().map { it.cid }
+    }
+
+    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+        return queryEvents(cids)
+            .onSuccessSuspend { eventList ->
+                handleEventsInternal(eventList, isFromSync = true)
+            }
+    }
+
+    private suspend fun replayEventsForAllChannels(user: User) {
+        repos.cacheChannelConfigs()
+
+        // Sync cached channels
+        val cachedChannelsCids = repos.selectAllCids()
+        replayEventsForChannels(cachedChannelsCids)
+    }
+
+    private suspend fun handleEvents(events: List<ChatEvent>) {
+        handleConnectEvents(events)
+        handleEventsInternal(events, isFromSync = false)
+    }
+
+    private suspend fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
+        // send out the connect events
+        sortedEvents.forEach { event ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
-                    domainImpl.setOffline()
+                    mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
                 }
                 is ConnectedEvent -> {
                     logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
-                    domainImpl.setOnline()
-                    domainImpl.setInitialized()
-                    domainImpl.scope.launch {
-                        if (domainImpl.recoveryEnabled) {
-                            // the first time we connect we should only run recovery against channels and queries that had a failure
-                            if (firstConnect) {
-                                firstConnect = false
-                                domainImpl.connectionRecovered(false)
-                            } else {
-                                // the second time (ie coming from background, or reconnecting we should recover all)
-                                domainImpl.connectionRecovered(true)
-                            }
-                        }
+                    updateCurrentUser(event.me)
+
+                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
+                    mutableGlobalState._initialized.value = true
+
+                    if (recoveryEnabled) {
+                        syncManager.connectionRecovered()
+                    }
+
+                    // 4. recover missing events
+                    val activeChannelCids = activeChannelsCid()
+                    if (activeChannelCids.isNotEmpty()) {
+                        replayEventsForChannels(activeChannelCids)
                     }
                 }
                 is HealthEvent -> {
-                    domainImpl.scope.launch {
-                        domainImpl.retryFailedEntities()
-                    }
+                    syncManager.retryFailedEntities()
                 }
 
                 is ConnectingEvent -> {
-                    domainImpl.setConnecting()
+                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
                 }
 
                 else -> Unit // Ignore other events
@@ -121,18 +199,16 @@ internal class EventHandlerImpl(
         }
     }
 
-    internal suspend fun handleEvent(event: ChatEvent) {
-        handleConnectEvents(listOf(event))
-        handleEventsInternal(listOf(event))
-    }
+    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
+        client.getSyncHistory(cids, syncManager.syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
-    internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
+    private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
         events.sortedBy(ChatEvent::createdAt)
 
         val batchBuilder = EventBatchUpdate.Builder()
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
-        val users: List<User> = events.filterIsInstance<UserEvent>().mapNotNull { it.user } +
+        val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
             events.filterIsInstance<HasOwnUser>().map { it.me }
 
         // For some reason backend is not sending us the user instance into some events that they should
@@ -195,7 +271,7 @@ internal class EventHandlerImpl(
             }
         }
         // actually fetch the data
-        val batch = batchBuilder.build(domainImpl)
+        val batch = batchBuilder.build(repos, mutableGlobalState._user)
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
@@ -206,10 +282,14 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    updateTotalUnreadCountsIfNeeded(
+                        totalUnreadCount = event.totalUnreadCount,
+                        channelUnreadCount = event.unreadChannels,
+                        isFromSync = isFromSync,
+                        cid = event.cid,
+                    )
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
-                    domainImpl.repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
+                    repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
                         ?.let(batch::addChannel)
                 }
                 is MessageDeletedEvent -> {
@@ -224,8 +304,12 @@ internal class EventHandlerImpl(
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    updateTotalUnreadCountsIfNeeded(
+                        totalUnreadCount = event.totalUnreadCount,
+                        channelUnreadCount = event.unreadChannels,
+                        isFromSync = isFromSync,
+                        cid = event.cid,
+                    )
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
@@ -261,10 +345,7 @@ internal class EventHandlerImpl(
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
-                    domainImpl.updateCurrentUser(event.me)
-                }
-                is ConnectedEvent -> {
-                    domainImpl.updateCurrentUser(event.me)
+                    updateCurrentUser(event.me)
                 }
 
                 is ReactionNewEvent -> {
@@ -321,7 +402,7 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
-                    domainImpl.updateCurrentUser(event.me)
+                    updateCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
                     batch.addChannel(event.channel)
@@ -330,17 +411,14 @@ internal class EventHandlerImpl(
                 // we use syncState to store the last markAllRead date for a given
                 // user since it makes more sense to write to the database once instead of N times.
                 is MarkAllReadEvent -> {
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
+                    mutableGlobalState._channelUnreadCount.value = event.unreadChannels
 
                     // only update sync state if the incoming "mark all read" date is newer
                     // this supports using event handler to restore mark all read state in setUser
                     // without redundant db writes.
-                    domainImpl.repos.selectSyncState(event.user.id)?.let { state ->
-                        if (state.markedAllReadAt == null || state.markedAllReadAt.before(event.createdAt)) {
-                            domainImpl.repos.insertSyncState(state.copy(markedAllReadAt = event.createdAt))
-                        }
-                    }
+
+                    syncManager.updateAllReadStateForDate(event.user.id, event.createdAt)
                 }
 
                 // get the channel, update reads, write the channel
@@ -352,8 +430,12 @@ internal class EventHandlerImpl(
                         ?.let(batch::addChannel)
 
                 is NotificationMarkReadEvent -> {
-                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
-                    domainImpl.setChannelUnreadCount(event.unreadChannels)
+                    updateTotalUnreadCountsIfNeeded(
+                        totalUnreadCount = event.totalUnreadCount,
+                        channelUnreadCount = event.unreadChannels,
+                        isFromSync = isFromSync,
+                        cid = event.cid,
+                    )
                     batch.getCurrentChannel(event.cid)
                         ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
@@ -368,8 +450,10 @@ internal class EventHandlerImpl(
                 }
                 is UserUpdatedEvent -> {
                     event.user
-                        .takeIf { it.id == domainImpl.user.value?.id }
-                        ?.let { domainImpl.updateCurrentUser(it) }
+                        .takeIf { it.id == mutableGlobalState._user.value?.id }
+                        ?.let {
+                            updateCurrentUser(it)
+                        }
                 }
                 is TypingStartEvent,
                 is TypingStopEvent,
@@ -384,6 +468,7 @@ internal class EventHandlerImpl(
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
                 is UserPresenceChangedEvent,
+                is ConnectedEvent,
                 -> Unit
             }
         }
@@ -395,19 +480,19 @@ internal class EventHandlerImpl(
         for (event in events) {
             when (event) {
                 is NotificationChannelTruncatedEvent -> {
-                    domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                 }
                 is ChannelTruncatedEvent -> {
-                    domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                 }
                 is ChannelDeletedEvent -> {
-                    domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
-                    domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
+                    repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
                 is MessageDeletedEvent -> {
                     if (event.hardDelete) {
-                        domainImpl.repos.deleteChannelMessage(event.message)
-                        domainImpl.repos.evictChannel(event.cid)
+                        repos.deleteChannelMessage(event.message)
+                        repos.evictChannel(event.cid)
                     }
                 }
                 else -> Unit // Ignore other events
@@ -415,29 +500,21 @@ internal class EventHandlerImpl(
         }
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
-    internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+    private suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
             logger.logD("Received event: $chatEvent")
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }
-        updateOfflineStorageFromEvents(sortedEvents)
+        updateOfflineStorageFromEvents(sortedEvents, isFromSync)
 
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
-            .forEach {
-                val (cid, eventList) = it
-                if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                    val (channelType, channelId) = cid.cidToTypeAndId()
-                    if (client.logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
-                        client.logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
-                    }
-                } else {
-                    if (domainImpl.isActiveChannel(cid)) {
-                        domainImpl.channel(cid).handleEvents(eventList)
-                    }
+            .forEach { (cid, eventList) ->
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                if (logic.isActiveChannel(channelType = channelType, channelId = channelId)) {
+                    logic.channel(channelType = channelType, channelId = channelId).handleEvents(eventList)
                 }
             }
 
@@ -455,68 +532,112 @@ internal class EventHandlerImpl(
         sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
             val event = userPresenceChanged as UserPresenceChangedEvent
 
-            if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-                client.state.getActiveChannelStates()
-                    .filter { channelState ->
-                        channelState.members.value
-                            .map { member -> member.user.id }
-                            .contains(event.user.id)
-                    }
-                    .forEach { channelState ->
-                        client.logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
-                            .handleEvent(userPresenceChanged)
-                    }
-            } else {
-                domainImpl.allActiveChannels()
-                    .filter { channelControllerImpl ->
-                        channelControllerImpl.members.value
-                            .map { member -> member.user.id }
-                            .contains(event.user.id)
-                    }
-                    .forEach { channelController ->
-                        channelController.handleEvent(userPresenceChanged)
-                    }
-            }
+            state.getActiveChannelStates()
+                .filter { channelState ->
+                    channelState.members.value
+                        .map { member -> member.user.id }
+                        .contains(event.user.id)
+                }
+                .forEach { channelState ->
+                    logic.channel(channelType = channelState.channelType, channelId = channelState.channelId)
+                        .handleEvent(userPresenceChanged)
+                }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            for (queryChannelsLogic in client.logic.getActiveQueryChannelsLogic()) {
-                queryChannelsLogic.handleEvents(events)
-            }
-        } else {
-            for (queryChannelsController in domainImpl.getActiveQueries()) {
-                queryChannelsController.handleEvents(sortedEvents)
-            }
+        logic.getActiveQueryChannelsLogic().forEach { queryChannelsLogic ->
+            queryChannelsLogic.handleEvents(events)
         }
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
     private fun handleChannelControllerEvent(event: ChatEvent) {
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            client.logic.getActiveChannelsLogic().forEach { channelLogic ->
-                channelLogic.handleEvent(event)
-            }
-        } else {
-            domainImpl.allActiveChannels().forEach { channelController ->
-                channelController.handleEvent(event)
+        logic.getActiveChannelsLogic().forEach { channelLogic ->
+            channelLogic.handleEvent(event)
+        }
+    }
+
+    /**
+     * Updates total unread count and channels unread count if channel has [ChannelCapabilities.READ_EVENTS] and event doesn't
+     * come from sync endpoint.
+     * @see [shouldUpdateTotalUnreadCounts]
+     *
+     * @param totalUnreadCount The new total unread messages count.
+     * @param channelUnreadCount The new total channels unread count.
+     * @param isFromSync Flag to determine if event comes from sync endpoint
+     * @param cid CID of the channel.
+     */
+    private suspend fun updateTotalUnreadCountsIfNeeded(
+        totalUnreadCount: Int,
+        channelUnreadCount: Int,
+        isFromSync: Boolean,
+        cid: String,
+    ) {
+        if (shouldUpdateTotalUnreadCounts(isFromSync, cid)) {
+            mutableGlobalState._totalUnreadCount.value = totalUnreadCount
+            mutableGlobalState._channelUnreadCount.value = channelUnreadCount
+        }
+    }
+
+    /**
+     * Checks if unread counts should be updated for particular channel.
+     * The unread counts shouldn't be updated if the event comes from the sync endpoint, because those ones are not
+     * enriched with unread info, or if channel in the DB doesn't contain [ChannelCapabilities.READ_EVENTS] capability.
+     *
+     * @param isFromSync Flag to determine if event comes from sync endpoint
+     * @param cid CID of the channel.
+     *
+     * @return True if unread counts should be updated
+     */
+    private suspend fun shouldUpdateTotalUnreadCounts(isFromSync: Boolean, cid: String): Boolean {
+        if (isFromSync) {
+            return false
+        }
+
+        return repos.selectChannels(listOf(cid)).let { channels ->
+            val channel = channels.firstOrNull()
+            if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
+                true
+            } else {
+                logger.logD("Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing.")
+                false
             }
         }
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        ownReactions = if (user != null && domainImpl.user.value?.id != user.id) {
+        ownReactions = if (user != null && mutableGlobalState._user.value?.id != user.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == domainImpl.user.value?.id ?: "" },
+                latestReactions.filter { it.userId == mutableGlobalState._user.value?.id ?: "" },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
     }
 
-    internal fun clear() {
-        firstConnect = true
+    private suspend fun updateCurrentUser(me: User) {
+        val currentUser = mutableGlobalState.user.value
+        if (me.id != currentUser?.id) {
+            throw InputMismatchException("received connect event for user with id ${me.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")
+        }
+
+        mutableGlobalState.run {
+            _user.value = me
+            _mutedUsers.value = me.mutes
+            _channelMutes.value = me.channelMutes
+            _totalUnreadCount.value = me.totalUnreadCount
+            _channelUnreadCount.value = me.unreadChannels
+            _banned.value = me.banned
+        }
+
+        repos.insertCurrentUser(me)
+    }
+
+    companion object {
+        val EMPTY_DISPOSABLE = object : Disposable {
+            override val isDisposed: Boolean = true
+            override fun dispose() {}
+        }
     }
 }

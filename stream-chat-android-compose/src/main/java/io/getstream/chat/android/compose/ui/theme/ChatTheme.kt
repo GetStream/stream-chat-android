@@ -6,6 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -13,11 +14,11 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.filepreview.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
-import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
+import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 
 /**
@@ -41,8 +42,8 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> {
-    error("No reactions provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
+    error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -68,7 +69,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
- * @param reactionTypes The reaction types supported in the Messaging screen.
+ * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
@@ -84,7 +85,7 @@ public fun ChatTheme(
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
-    reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
+    reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
@@ -106,7 +107,7 @@ public fun ChatTheme(
         LocalShapes provides shapes,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
-        LocalReactionTypes provides reactionTypes,
+        LocalReactionIconFactory provides reactionIconFactory,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
@@ -171,12 +172,12 @@ public object ChatTheme {
         get() = LocalAttachmentPreviewHandlers.current
 
     /**
-     * Retrieves the current reactions at the call site's position in the hierarchy.
+     * Retrieves the current reaction icon factory at the call site's position in the hierarchy.
      */
-    public val reactionTypes: Map<String, Int>
+    public val reactionIconFactory: ReactionIconFactory
         @Composable
         @ReadOnlyComposable
-        get() = LocalReactionTypes.current
+        get() = LocalReactionIconFactory.current
 
     /**
      * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.

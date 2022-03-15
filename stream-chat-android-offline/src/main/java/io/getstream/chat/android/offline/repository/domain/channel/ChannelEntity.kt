@@ -9,51 +9,62 @@ import io.getstream.chat.android.offline.repository.domain.channel.userread.Chan
 import java.util.Date
 
 /**
- * ChannelEntity stores both the channel information as well as references
- * to all of the channel's state.
+ * ChannelEntity stores both the channel information as well as references to all of the channel's state.
  * Messages are stored on their own table for easier pagination and updates.
+ *
+ * @param type Type of the channel.
+ * @param channelId Channel's unique ID.
+ * @param name Channel's name.
+ * @param image Channel's image.
+ * @param cooldown Cooldown period after sending each message in seconds.
+ * @param createdByUserId Id of the user who created the channel.
+ * @param frozen If the channel is frozen or not (new messages wont be allowed).
+ * @param hidden If the channel is hidden (new messages changes this field to false).
+ * @param hideMessagesBefore Messages before this date are hidden from the user.
+ * @param members The list of channel's members.
+ * @param memberCount Number of members in the channel.
+ * @param watcherIds The list of watchers` ids.
+ * @param watcherCount Number of watchers in the channel.
+ * @param reads The list of read states.
+ * @param lastMessageAt Date of the last message sent.
+ * @param lastMessageId The id of the last message.
+ * @param createdAt Date/time of creation.
+ * @param updatedAt Date/time of the last update.
+ * @param deletedAt Date/time of deletion.
+ * @param extraData A map of custom fields for the channel.
+ * @param syncStatus If the channel has been synced.
+ * @param team Team the channel belongs to (multi-tenant only).
+ * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
  */
 @Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
     val type: String,
     val channelId: String,
+    val name: String,
+    val image: String,
     val cooldown: Int,
-    /** created by user id */
     val createdByUserId: String,
-    /** if the channel is frozen or not (new messages wont be allowed) */
     val frozen: Boolean,
-    /** if the channel is hidden (new messages will cause to reappear) */
     val hidden: Boolean?,
-    /** hide messages before this date */
     val hideMessagesBefore: Date?,
-    /** till when the channel is muted */
     val members: Map<String, MemberEntity>,
-    /** Count of members for this channel. */
     val memberCount: Int,
-    /** Id of watchers */
     val watcherIds: List<String>,
-    /** Count of watchers */
     val watcherCount: Int,
-    /** list of how far each user has read */
     val reads: Map<String, ChannelUserReadEntity>,
-    /** denormalize the last message date so we can sort on it */
     val lastMessageAt: Date?,
     val lastMessageId: String?,
-    /** when the channel was created */
     val createdAt: Date?,
-    /** when the channel was updated */
     val updatedAt: Date?,
-    /** when the channel was deleted */
     val deletedAt: Date?,
-    /** all the custom data provided for this channel */
     val extraData: Map<String, Any>,
-    /** if the channel has been synced to the servers */
     val syncStatus: SyncStatus,
-    /** channel's team */
     val team: String,
-    /** Channel's capabilities available for the current user. */
     val ownCapabilities: Set<String>,
 ) {
+    /**
+     * The channel id in the format messaging:123.
+     */
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
 }

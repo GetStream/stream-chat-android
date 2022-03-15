@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.messages
 
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
@@ -36,7 +37,6 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -122,7 +123,7 @@ public fun MessagesScreen(
         }
     }
 
-    SystemBackPressedHandler(isEnabled = true, onBackPressed = backAction)
+    BackHandler(enabled = true, onBack = backAction)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -164,6 +165,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
+                lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)

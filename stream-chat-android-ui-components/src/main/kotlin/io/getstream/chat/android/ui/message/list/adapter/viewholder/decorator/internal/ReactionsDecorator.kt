@@ -13,21 +13,76 @@ import io.getstream.chat.android.ui.common.extensions.hasReactions
 import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
 
 internal class ReactionsDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 
-    override fun decorateTextAndAttachmentsMessage(
-        viewHolder: TextAndAttachmentsViewHolder,
+    /**
+     * Decorates the reactions section of the message containing custom attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateCustomAttachmentsMessage(
+        viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
     }
 
+    /**
+     * Decorates the reactions section of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateGiphyAttachmentMessage(
+        viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+    }
+
+    /**
+     * Decorates the reactions section of the message containing file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+    }
+
+    /**
+     * Decorates the reactions section of the message containing image attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateImageAttachmentsMessage(
+        viewHolder: ImageAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+    }
+
+    /**
+     * Decorates the reactions section of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
@@ -37,15 +92,42 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
         }
     }
 
+    /**
+     * Does nothing for the deleted message as it can't contain reactions.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    /**
+     * Does nothing for the ephemeral Giphy message it can't contain reactions.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) = Unit
+
+    /**
+     * Decorates the reactions section of the link attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        with(viewHolder.binding) {
+            setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+        }
+    }
 
     private fun setupReactionsView(
         rootConstraintLayout: ConstraintLayout,

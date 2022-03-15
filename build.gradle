@@ -38,6 +38,7 @@ buildscript {
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
         classpath Dependencies.spotlessGradlePlugin
+        classpath Dependencies.ksp
     }
 }
 
@@ -53,10 +54,6 @@ allprojects {
             url "https://jitpack.io"
             content {
                 includeModule("com.github.chrisbanes", "PhotoView")
-                includeModule("com.github.duanhong169", "drawabletoolbox")
-
-                // https://github.com/brianwernick/ExoMedia/issues/723
-                includeModule("com.github.brianwernick", "ExoMedia")
 
                 // https://github.com/stfalcon-studio/StfalconImageViewer/issues/69
                 includeModule("com.github.stfalcon-studio", "StfalconImageViewer")

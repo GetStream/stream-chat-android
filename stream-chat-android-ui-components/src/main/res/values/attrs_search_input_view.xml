@@ -10,5 +10,6 @@
         <attr name="streamUiSearchInputViewTextColor" format="color|reference" />
         <attr name="streamUiSearchInputViewHintColor" format="color|reference" />
         <attr name="streamUiSearchInputViewTextSize" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewHeight" format="dimension|reference" />
     </declare-styleable>
 </resources>

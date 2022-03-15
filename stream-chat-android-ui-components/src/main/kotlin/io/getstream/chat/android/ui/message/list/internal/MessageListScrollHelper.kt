@@ -58,7 +58,9 @@ internal class MessageListScrollHelper(
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (!scrollToBottomButtonEnabled || currentList.isEmpty()) return
+                    if (!scrollToBottomButtonEnabled || currentList.isEmpty()) {
+                        return
+                    }
 
                     val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                     val lastPotentiallyVisibleItemPosition = currentList.indexOfLast { it.isValid() }
@@ -132,7 +134,7 @@ internal class MessageListScrollHelper(
     }
 
     internal fun onMessageListChanged(isThreadStart: Boolean, hasNewMessages: Boolean, isInitialList: Boolean) {
-        if (!hasNewMessages || adapter.currentList.isEmpty()) {
+        if (!scrollToBottomButtonEnabled || (!hasNewMessages || adapter.currentList.isEmpty())) {
             return
         }
 

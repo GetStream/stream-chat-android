@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
@@ -16,8 +17,8 @@ import kotlinx.coroutines.launch
 
 class ChatPreviewViewModel(
     private val memberId: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     private var cid: String? = null
@@ -29,10 +30,11 @@ class ChatPreviewViewModel(
     init {
         _state.value = State(cid = null)
         viewModelScope.launch {
-            chatDomain.user.filterNotNull().collect { user ->
+            globalState.user.filterNotNull().collect { user ->
                 val result = chatClient.createChannel(
                     channelType = "messaging",
-                    members = listOf(memberId, user.id),
+                    channelId = "",
+                    memberIds = listOf(memberId, user.id),
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
                 ).await()
 

@@ -8,8 +8,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.navArgs
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.offline.experimental.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
@@ -91,9 +93,8 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun bindViewModel() {
-        ChatDomain.instance().user
         Transformations.switchMap(viewModel.state) { state ->
-            Transformations.map(ChatDomain.instance().user) { user ->
+            Transformations.map(ChatClient.instance().globalState.user.asLiveData()) { user ->
                 user to state
             }
         }.observe(viewLifecycleOwner) { (user, state) ->

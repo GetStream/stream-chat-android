@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.extensions.updateUsers
 import io.getstream.chat.android.offline.message.wasCreatedAfter
@@ -20,12 +19,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
-@ExperimentalStreamChatApi
 internal class ChannelMutableState(
     override val channelType: String,
     override val channelId: String,
@@ -56,6 +53,9 @@ internal class ChannelMutableState(
     internal val _repliedMessage = MutableStateFlow<Message?>(null)
     internal val _unreadCount = MutableStateFlow(0)
 
+    /** Channel config data. */
+    internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
+
     internal var hideMessagesBefore: Date? = null
 
     /** The raw message list updated by recent users value. */
@@ -77,10 +77,10 @@ internal class ChannelMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
 
     private fun messagesTransformation(messages: Flow<Collection<Message>>): StateFlow<List<Message>> {
-        return messages.map { messageCollection ->
+        return messages.combine(userFlow) { messageCollection, user ->
             messageCollection.asSequence()
                 .filter { it.parentId == null || it.showInChannel }
-                .filter { it.user.id == userFlow.value?.id || !it.shadowed }
+                .filter { it.user.id == user?.id || !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
@@ -90,15 +90,17 @@ internal class ChannelMutableState(
     internal var lastMarkReadEvent: Date? = null
     internal var lastKeystrokeAt: Date? = null
     internal var lastStartTypingEvent: Date? = null
+    internal var keystrokeParentMessageId: String? = null
 
     internal val sortedMessages: StateFlow<List<Message>> = messageList.map {
         it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
             .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    /** Channel configuration data. */
-    internal val channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
     override val repliedMessage: StateFlow<Message?> = _repliedMessage
+
+    /** Channel config data */
+    override val channelConfig: StateFlow<Config> = _channelConfig
 
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
@@ -109,19 +111,14 @@ internal class ChannelMutableState(
         _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
             .map { it.sortedBy(User::createdAt) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
-    override val typing: StateFlow<TypingEvent> = userFlow
-        .filterNotNull()
-        .flatMapConcat { currentUser ->
-            _typing.map { typingMap ->
-                currentUser to typingMap
-            }
-        }
-        .map { (currentUser, typingMap) ->
+
+    override val typing: StateFlow<TypingEvent> = _typing
+        .map { typingMap ->
             val userList = typingMap.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user -> user != currentUser }
+                        is TypingStartEvent -> event.user
                         else -> null
                     }
                 }
@@ -173,7 +170,7 @@ internal class ChannelMutableState(
         val watcherCount = _watcherCount.value
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
-        channel.config = channelConfig.value
+        channel.config = _channelConfig.value
         channel.unreadCount = _unreadCount.value
         channel.lastMessageAt =
             lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
@@ -183,5 +180,4 @@ internal class ChannelMutableState(
     }
 }
 
-@ExperimentalStreamChatApi
 internal fun ChannelState.toMutableState(): ChannelMutableState = this as ChannelMutableState

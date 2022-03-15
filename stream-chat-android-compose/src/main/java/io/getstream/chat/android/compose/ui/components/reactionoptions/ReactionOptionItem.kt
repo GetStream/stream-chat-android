@@ -1,6 +1,6 @@
 package io.getstream.chat.android.compose.ui.components.reactionoptions
 
-import androidx.compose.material.Icon
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,11 +19,10 @@ public fun ReactionOptionItem(
     option: ReactionOptionItemState,
     modifier: Modifier = Modifier,
 ) {
-    Icon(
+    Image(
         modifier = modifier,
         painter = option.painter,
         contentDescription = option.type,
-        tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
     )
 }
 
@@ -34,7 +33,7 @@ public fun ReactionOptionItem(
 @Composable
 private fun ReactionOptionItemNotSelectedPreview() {
     ChatTheme {
-        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1().copy(isSelected = false))
+        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1())
     }
 }
 
@@ -45,6 +44,6 @@ private fun ReactionOptionItemNotSelectedPreview() {
 @Composable
 private fun ReactionOptionItemSelectedPreview() {
     ChatTheme {
-        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1().copy(isSelected = true))
+        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption2())
     }
 }

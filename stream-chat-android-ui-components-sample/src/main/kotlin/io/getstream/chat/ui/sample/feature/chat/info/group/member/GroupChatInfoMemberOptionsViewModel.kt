@@ -7,14 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.ui.sample.common.isDraft
+import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.global.GlobalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
@@ -22,11 +25,12 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@OptIn(InternalStreamChatApi::class)
 class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
@@ -38,23 +42,27 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            chatDomain.user
+            globalState.user
                 .filterNotNull()
                 .map { user ->
-                    chatDomain.queryChannels(
-                        filter = Filters.and(
-                            Filters.eq("type", "messaging"),
-                            Filters.distinct(listOf(memberId, user.id)),
-                        ),
-                        sort = QuerySort.desc(Channel::lastUpdated),
-                        messageLimit = 0,
-                        limit = 1,
+                    chatClient.queryChannels(
+                        request = QueryChannelsRequest(
+                            filter = Filters.and(
+                                Filters.eq("type", "messaging"),
+                                Filters.distinct(listOf(memberId, user.id)),
+                            ),
+                            querySort = QuerySort.desc(Channel::lastUpdated),
+                            messageLimit = 0,
+                            limit = 1,
+                        )
                     ).await()
                 }.flatMapConcat { result ->
                     if (result.isSuccess) {
-                        result.data()
-                            .channelsState
-                            .map(this@GroupChatInfoMemberOptionsViewModel::mapChannelState)
+                        val cid = result.data().firstOrNull()?.cid ?: ""
+
+                        chatClient.asReferenced().watchChannel(cid, 30).asState(viewModelScope)
+                            .messagesState
+                            .map { mapChannelState(it, cid) }
                     } else {
                         MutableStateFlow(null)
                     }
@@ -66,20 +74,18 @@ class GroupChatInfoMemberOptionsViewModel(
         }
     }
 
-    private fun mapChannelState(channelState: QueryChannelsController.ChannelsState): State {
-        return when (channelState) {
-            is QueryChannelsController.ChannelsState.Result -> {
+    private fun mapChannelState(messagesState: MessagesState, cid: String): State {
+        return when (messagesState) {
+            is MessagesState.Result -> {
                 State(
-                    directChannelCid = channelState.channels.filterNot { channel ->
-                        channel.isDraft
-                    }.firstOrNull()?.cid,
+                    directChannelCid = cid,
                     loading = false,
                 )
             }
-            QueryChannelsController.ChannelsState.NoQueryActive,
-            QueryChannelsController.ChannelsState.Loading,
+            MessagesState.NoQueryActive,
+            MessagesState.Loading,
             -> State(directChannelCid = null, loading = true)
-            QueryChannelsController.ChannelsState.OfflineNoResults -> State(
+            MessagesState.OfflineNoResults -> State(
                 directChannelCid = null,
                 loading = false,
             )
