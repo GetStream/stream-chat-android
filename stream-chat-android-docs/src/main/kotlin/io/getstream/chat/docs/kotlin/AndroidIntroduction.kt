@@ -68,17 +68,17 @@ class AndroidIntroduction {
         }
 
         // Watching a channel's state using the offline library
-        chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    val channelController = result.data()
-
-                    // LiveData objects to observe
-                    channelController.messages
-                    channelController.reads
-                    channelController.typing
-                }
-            }
+        // chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
+        //     .enqueue { result ->
+        //         if (result.isSuccess) {
+        //             val channelController = result.data()
+        //
+        //             // LiveData objects to observe
+        //             channelController.messages
+        //             channelController.reads
+        //             channelController.typing
+        //         }
+        //     }
     }
 
     fun sendFirstMessage(channelClient: ChannelClient, chatDomain: ChatDomain) {

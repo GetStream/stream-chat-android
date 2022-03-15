@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
@@ -15,7 +14,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
@@ -85,66 +83,10 @@ public sealed interface ChatDomain {
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
     public fun isInitialized(): Boolean
-    public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
     // region use-case functions
-
-    // getting controllers
-    /**
-     * Returns a ChannelController for given cid.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     *
-     * @return Executable async [Call] responsible for obtaining [ChannelController].
-     *
-     * @see io.getstream.chat.android.livedata.controller.ChannelController
-     */
-    @CheckResult
-    public fun getChannelController(cid: String): Call<ChannelController>
-
-    /**
-     * Watches the given channel and returns a ChannelController.
-     *
-     * @param cid The full channel id. ie messaging:123.
-     * @param messageLimit How many messages to load on the first request.
-     *
-     * @return Executable async [Call] responsible for obtaining [ChannelController].
-     *
-     * @see io.getstream.chat.android.livedata.controller.ChannelController
-     */
-    @CheckResult
-    public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
-
-    /**
-     * Loads newer messages for the channel.
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageLimit How many new messages to load.
-     *
-     * @return Executable async [Call] responsible for loading new messages in a channel.
-     */
-    @CheckResult
-    public fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel>
-
-    /**
-     * Loads message for a given message id and channel id
-     *
-     * @param cid The full channel id i. e. messaging:123.
-     * @param messageId The id of the message.
-     * @param olderMessagesOffset How many new messages to load before the requested message.
-     * @param newerMessagesOffset How many new messages to load after the requested message.
-     *
-     * @return Executable async [Call] responsible for loading a message.
-     */
-    @CheckResult
-    public fun loadMessageById(
-        cid: String,
-        messageId: String,
-        olderMessagesOffset: Int,
-        newerMessagesOffset: Int,
-    ): Call<Message>
 
     // updating channel data
 
@@ -175,27 +117,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun sendGiphy(message: Message): Call<Message>
-
-    /**
-     * Edits the specified message. Local storage is updated immediately.
-     * The API request is retried according to the retry policy specified on the chatDomain.
-     *
-     * @param message The message to edit.
-     *
-     * @return Executable async [Call] responsible for editing a message.
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @CheckResult
-    @Deprecated(
-        message = "ChatDomain.editMessage is deprecated. Use function ChatClient::updateMessage instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().updateMessage(message)",
-            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun editMessage(message: Message): Call<Message>
 
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
