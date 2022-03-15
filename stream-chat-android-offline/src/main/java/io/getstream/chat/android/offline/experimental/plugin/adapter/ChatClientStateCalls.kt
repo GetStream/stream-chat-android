@@ -3,21 +3,26 @@ package io.getstream.chat.android.offline.experimental.plugin.adapter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.call.launch
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
  */
-internal class ChatClientStateCalls(private val chatClient: ChatClient, private val state: StateRegistry) {
+internal class ChatClientStateCalls(
+    private val chatClient: ChatClient,
+    private val state: StateRegistry,
+    private val scope: CoroutineScope
+) {
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
-        chatClient.queryChannels(request).enqueue()
+        chatClient.queryChannels(request).launch(scope)
         return state.queryChannels(request.filter, request.querySort)
     }
 
@@ -27,12 +32,12 @@ internal class ChatClientStateCalls(private val chatClient: ChatClient, private 
         channelId: String,
         request: QueryChannelRequest,
     ): ChannelState {
-        chatClient.queryChannel(channelType, channelId, request).enqueue()
+        chatClient.queryChannel(channelType, channelId, request).launch(scope)
         return state.channel(channelType, channelId)
     }
 
     /** Reference request of the watch channel query. */
-    internal fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
+    internal fun watchChannel(cid: String, limit: Int): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence)
@@ -40,12 +45,8 @@ internal class ChatClientStateCalls(private val chatClient: ChatClient, private 
     }
 
     /** Reference request of the get thread replies query. */
-    internal fun getReplies(messageId: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ThreadState {
-        chatClient.getReplies(messageId, limit).enqueue()
+    internal fun getReplies(messageId: String, limit: Int): ThreadState {
+        chatClient.getReplies(messageId, limit).launch(scope)
         return state.thread(messageId)
-    }
-
-    private companion object {
-        private const val DEFAULT_MESSAGE_LIMIT = 30
     }
 }

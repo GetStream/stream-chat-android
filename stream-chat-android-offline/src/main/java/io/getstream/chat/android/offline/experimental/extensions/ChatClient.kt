@@ -10,6 +10,7 @@ import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientS
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * [StateRegistry] instance that contains all state objects exposed in offline plugin.
@@ -40,7 +41,8 @@ public val ChatClient.globalState: GlobalState
  *
  * @return [ChatClientStateCalls]
  */
-internal fun ChatClient.requestsAsState(): ChatClientStateCalls = ChatClientStateCalls(this, state)
+internal fun ChatClient.requestsAsState(scope: CoroutineScope): ChatClientStateCalls =
+    ChatClientStateCalls(this, state, scope)
 
 /**
  * Same class of ChatClient.queryChannels, but provides the result as [QueryChannelsState]
@@ -48,8 +50,11 @@ internal fun ChatClient.requestsAsState(): ChatClientStateCalls = ChatClientStat
  * @param request [QueryChannelsRequest]
  * @return [QueryChannelsRequest]
  */
-public fun ChatClient.queryChannelsAsState(request: QueryChannelsRequest): QueryChannelsState {
-    return requestsAsState().queryChannels(request)
+public fun ChatClient.queryChannelsAsState(
+    request: QueryChannelsRequest,
+    coroutineScope: CoroutineScope = state.scope,
+): QueryChannelsState {
+    return requestsAsState(coroutineScope).queryChannels(request)
 }
 
 /**
@@ -58,8 +63,12 @@ public fun ChatClient.queryChannelsAsState(request: QueryChannelsRequest): Query
  * @param cid
  * @return [ChannelState]
  */
-public fun ChatClient.watchChannelAsState(cid: String, limit: Int): ChannelState {
-    return requestsAsState().watchChannel(cid, limit)
+public fun ChatClient.watchChannelAsState(
+    cid: String,
+    limit: Int,
+    coroutineScope: CoroutineScope = state.scope,
+): ChannelState {
+    return requestsAsState(coroutineScope).watchChannel(cid, limit)
 }
 
 /**
@@ -68,6 +77,10 @@ public fun ChatClient.watchChannelAsState(cid: String, limit: Int): ChannelState
  * @param cid
  * @return [ThreadState]
  */
-public fun ChatClient.getRepliesAsState(cid: String, limit: Int): ThreadState {
-    return requestsAsState().getReplies(cid, limit)
+public fun ChatClient.getRepliesAsState(
+    cid: String,
+    limit: Int,
+    coroutineScope: CoroutineScope = state.scope,
+): ThreadState {
+    return requestsAsState(coroutineScope).getReplies(cid, limit)
 }

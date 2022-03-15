@@ -27,7 +27,7 @@ class GroupChatInfoAddUsersViewModel(
      * Holds information about the current channel and is actively updated.
      */
     @OptIn(InternalStreamChatApi::class)
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid)
+    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, MESSAGE_LIMIT)
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()
@@ -156,6 +156,7 @@ class GroupChatInfoAddUsersViewModel(
 
     companion object {
         private const val QUERY_LIMIT = 20
+        private const val MESSAGE_LIMIT = 30
         private val INITIAL_STATE = State(query = "", canLoadMore = true, results = emptyList(), isLoading = true)
     }
 }
