@@ -5,9 +5,6 @@ public final class io/getstream/chat/android/livedata/BuildConfig {
 	public fun <init> ()V
 }
 
-public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
-}
-
 public class io/getstream/chat/android/livedata/utils/Event {
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun getContentIfNotHandled ()Ljava/lang/Object;
