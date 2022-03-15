@@ -1,12 +1,10 @@
 package io.getstream.chat.docs.kotlin
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.livedata.ChatDomain
 import java.util.Date
 
 class Android {
@@ -51,18 +49,6 @@ class Android {
             val readState: List<ChannelUserRead> = channel.read
         }
 
-        fun unreadCountInfoChatDomain() {
-            // Get channel
-            val channel = ChatDomain.instance()
-                .watchChannel(cid = "messaging:123", messageLimit = 0)
-                .execute()
-                .data()
-                .toChannel()
-
-            // readState is the list of read states for each user on the channel
-            val readState: List<ChannelUserRead> = channel.read
-        }
-
         fun unreadCountForCurrentUser() {
             // Get channel
             val queryChannelRequest = QueryChannelRequest().withState()
@@ -77,17 +63,6 @@ class Android {
 
             // Unread count for current user
             val unreadCount: Int? = channel.unreadCount
-        }
-
-        fun unreadCountForCurrentUserChatDomain() {
-            // Get channel controller
-            val channelController = ChatDomain.instance()
-                .watchChannel(cid = "messaging:123", messageLimit = 0)
-                .execute()
-                .data()
-
-            // Unread count for current user
-            val unreadCount: LiveData<Int?> = channelController.unreadCount
         }
 
         fun markAllRead() {

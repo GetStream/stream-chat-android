@@ -2,7 +2,6 @@ package io.getstream.chat.docs.java;
 
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,8 +12,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.livedata.ChatDomain;
-import io.getstream.chat.android.livedata.controller.ChannelController;
 
 public class Android {
 
@@ -60,18 +57,6 @@ public class Android {
             List<ChannelUserRead> readState = channel.getRead();
         }
 
-        public void getUnreadCountInfoChatDomain() {
-            // Get channel
-            Channel channel = ChatDomain.instance()
-                    .watchChannel("messaging:123", 0)
-                    .execute()
-                    .data()
-                    .toChannel();
-
-            // readState is the list of read states for each user on the channel
-            List<ChannelUserRead> userReadList = channel.getRead();
-        }
-
         public void getUnreadCountForCurrentUser() {
             // Get channel
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
@@ -86,17 +71,6 @@ public class Android {
 
             // Unread count for current user
             int unreadCount = channel.getUnreadCount();
-        }
-
-        public void getUnreadCountForCurrentUserChatDomain() {
-            // Get channel controller
-            ChannelController channelController = ChatDomain.instance()
-                    .watchChannel("messaging:123", 0)
-                    .execute()
-                    .data();
-
-            //Unread count for current user
-            LiveData<Integer> unreadCount = channelController.getUnreadCount();
         }
 
         public void markAllRead() {
