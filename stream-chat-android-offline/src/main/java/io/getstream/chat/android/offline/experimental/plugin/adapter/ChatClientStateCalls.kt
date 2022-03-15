@@ -5,14 +5,12 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 
-@InternalStreamChatApi
 /**
  * Adapter for [ChatClient] that wraps some of it's request with [io.getstream.chat.android.offline.experimental.plugin.QueryReference].
  */
@@ -36,7 +34,7 @@ internal class ChatClientStateCalls(private val chatClient: ChatClient, private 
     /** Reference request of the watch channel query. */
     internal fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
-        val userPresence = runCatching { ChatDomain.instance().userPresence }.getOrDefault(false)
+        val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence)
         return queryChannel(channelType, channelId, request)
     }

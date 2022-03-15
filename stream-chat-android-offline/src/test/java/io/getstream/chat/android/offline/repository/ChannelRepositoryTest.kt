@@ -10,7 +10,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ChannelRepositoryTest : BaseDomainTest2() {
-    private val helper by lazy { chatDomainImpl.repos }
+    private val helper by lazy { repos }
 
     @Test
     fun `inserting a channel and reading it should be equal`(): Unit = runBlocking {

@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.livedata.ChatDomain;
 
 public class AndroidIntroduction {
 
@@ -33,9 +32,9 @@ public class AndroidIntroduction {
                 .logLevel(ChatLogLevel.ALL)
                 .build();
         // Step 2 - Set up the domain for offline storage
-        ChatDomain domain = new ChatDomain.Builder(applicationContext, client)
-                // Enable offline support
-                .build();
+//        ChatDomain domain = new ChatDomain.Builder(applicationContext, client)
+//                // Enable offline support
+//                .build();
 
         // Step 2 - Authenticate and connect the user
         User user = new User();
@@ -53,7 +52,7 @@ public class AndroidIntroduction {
         });
     }
 
-    public void watchingAChannel(ChatClient client, ChatDomain chatDomain) {
+    public void watchingAChannel(ChatClient client) {
         ChannelClient channelClient = client.channel("messaging", "travel");
 
         Map<String, Object> extraData = new HashMap<>();
@@ -84,7 +83,7 @@ public class AndroidIntroduction {
 //                });
     }
 
-    public void sendFirstMessage(ChannelClient channelClient, ChatDomain chatDomain) {
+    public void sendFirstMessage(ChannelClient channelClient) {
         Message message = new Message();
         message.setText("Hello world");
         message.setCid("messaging:travel");
@@ -100,7 +99,7 @@ public class AndroidIntroduction {
         });
     }
 
-    public void queryChannels(ChatClient client, ChatDomain chatDomain) {
+    public void queryChannels(ChatClient client) {
         FilterObject filter = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.in("members", "john")

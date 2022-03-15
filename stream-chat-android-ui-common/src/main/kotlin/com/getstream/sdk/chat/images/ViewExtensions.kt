@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import com.getstream.sdk.chat.disposable.Disposable
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -14,8 +15,8 @@ public fun ImageView.load(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-) {
-    StreamImageLoader.instance().load(
+): Disposable {
+    return StreamImageLoader.instance().load(
         target = this,
         data = data,
         placeholderResId = placeholderResId,
@@ -32,8 +33,8 @@ public fun ImageView.load(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-) {
-    StreamImageLoader.instance().load(
+): Disposable {
+    return StreamImageLoader.instance().load(
         target = this,
         data = data,
         placeholderDrawable = placeholderDrawable,
@@ -78,8 +79,8 @@ public fun ImageView.loadVideoThumbnail(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-) {
-    StreamImageLoader.instance().loadVideoThumbnail(
+): Disposable {
+    return StreamImageLoader.instance().loadVideoThumbnail(
         target = this,
         uri = uri,
         placeholderResId = placeholderResId,
