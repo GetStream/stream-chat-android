@@ -25,7 +25,6 @@ import io.getstream.chat.android.offline.experimental.extensions.queryChannelsAs
 import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -62,7 +61,7 @@ public class ChannelListViewModel(
 
     /**
      * The current state of the search input. When changed, it emits a new value in a flow, which
-     * queries for a new [QueryChannelsController] and loads new data.
+     * queries and loads new data.
      */
     private val searchQuery = MutableStateFlow("")
 

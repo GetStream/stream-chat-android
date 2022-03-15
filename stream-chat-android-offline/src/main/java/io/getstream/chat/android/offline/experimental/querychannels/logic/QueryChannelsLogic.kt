@@ -268,8 +268,7 @@ internal class QueryChannelsLogic(
      *
      * @param cidList The channels to refresh.
      */
-    // TODO: Make private after removing QueryChannelsController
-    internal fun refreshChannels(cidList: Collection<String>) {
+    private fun refreshChannels(cidList: Collection<String>) {
         mutableState._channels.value += mutableState.queryChannelsSpec.cids
             .intersect(cidList)
             .associateWith { cid ->
@@ -282,8 +281,7 @@ internal class QueryChannelsLogic(
      * Refreshes all channels returned in this query.
      * Supports use cases like marking all channels as read.
      */
-    // TODO: Make private after removing QueryChannelsController
-    internal fun refreshAllChannels() {
+    private fun refreshAllChannels() {
         refreshChannels(mutableState.queryChannelsSpec.cids)
     }
 
@@ -303,8 +301,7 @@ internal class QueryChannelsLogic(
      *
      * @param newUser The user to refresh.
      */
-    // TODO: Make private after removing QueryChannelsController
-    internal fun refreshMembersStateForUser(newUser: User) {
+    private fun refreshMembersStateForUser(newUser: User) {
         val userId = newUser.id
 
         val affectedChannels = mutableState._channels.value

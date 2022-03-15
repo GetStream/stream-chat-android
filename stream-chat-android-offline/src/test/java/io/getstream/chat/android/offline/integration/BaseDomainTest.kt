@@ -24,11 +24,9 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.creation.factory.RepositoryFactory
@@ -59,9 +57,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
     lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain
     lateinit var client: ChatClient
-    lateinit var channelControllerImpl: ChannelController
     lateinit var db: ChatDatabase
-    lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
 
     protected val globalMutableState = GlobalMutableState.create()
@@ -224,11 +220,7 @@ internal open class BaseDomainTest : SynchronizedCoroutineTest {
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
-        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-        channelControllerImpl.updateDataFromChannel(data.channel1)
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
-
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }
 }
