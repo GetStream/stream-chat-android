@@ -78,7 +78,6 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -139,7 +138,6 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
-
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
@@ -151,7 +149,6 @@ public class ChatClient internal constructor(
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
-    private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -1340,8 +1337,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> = api.queryChannels(request)
 
     @CheckResult
     @InternalStreamChatApi
@@ -1373,7 +1369,6 @@ public class ChatClient internal constructor(
      * Gets the channels from the server based on parameters from [QueryChannelsRequest].
      * The call requires active socket connection and will be automatically postponed and retried until
      * the connection is established or the maximum number of attempts is reached.
-     * @see [QueryChannelsPostponeHelper]
      *
      * @param request The request's parameters combined into [QueryChannelsRequest] class.
      *
@@ -1381,18 +1376,16 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return queryChannelsPostponeHelper.postponeQueryChannels {
-            val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
 
-            api.queryChannels(request)
-                .doOnStart(scope) {
-                    relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
-                }
-                .doOnResult(scope) { result ->
-                    relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
-                }
-                .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
-        }
+        return api.queryChannels(request)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
+            }
+            .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
     }
 
     @CheckResult
@@ -2408,7 +2401,6 @@ public class ChatClient internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.socketStateService,
-                module.queryChannelsPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,

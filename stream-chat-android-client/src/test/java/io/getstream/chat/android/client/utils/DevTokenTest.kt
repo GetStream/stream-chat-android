@@ -3,7 +3,6 @@ package io.getstream.chat.android.client.utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -21,7 +20,6 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
 
     private val socketStateService = SocketStateService()
     private val userStateService: UserStateService = UserStateService()
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
     private val client = ChatClient(
         config = mock(),
         api = mock(),
@@ -29,7 +27,6 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         notifications = mock(),
         tokenManager = FakeTokenManager(""),
         socketStateService = socketStateService,
-        queryChannelsPostponeHelper = queryChannelsPostponeHelper,
         userCredentialStorage = mock(),
         userStateService = userStateService,
         scope = testCoroutines.scope,
