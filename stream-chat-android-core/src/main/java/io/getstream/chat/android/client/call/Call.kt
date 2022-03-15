@@ -76,6 +76,7 @@ public suspend fun <T : Any> Call<T>.await(): Result<T> {
 /**
  * Runs a call using coroutines scope
  */
+@InternalStreamChatApi
 public fun <T : Any> Call<T>.launch(scope: CoroutineScope) {
     scope.launch {
         this@launch.await()
