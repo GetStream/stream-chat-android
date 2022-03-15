@@ -1,8 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
 import android.content.Context
-import android.view.ViewGroup
-import android.widget.TextView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -16,11 +14,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.ui.message.list.MessageListView
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
 import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
@@ -461,53 +454,6 @@ class Messages(
                     // Handle result.error()
                 }
             }
-        }
-    }
-
-    inner class CustomAttachment() {
-        private inner class CustomAttachmentFactory : AttachmentFactory {
-            private val MY_URL_ADDRESS = "https://myurl.com"
-
-            override fun canHandle(message: Message): Boolean {
-                return message.attachments.any { it.imageUrl?.contains(MY_URL_ADDRESS) == true }
-            }
-
-            override fun createViewHolder(
-                message: Message,
-                listeners: MessageListListenerContainer?,
-                parent: ViewGroup,
-            ): InnerAttachmentViewHolder {
-                // put your custom attachment view creation here
-                return CustomInnerAttachmentViewHolder(TextView(parent.context), listeners)
-            }
-        }
-
-        private inner class CustomInnerAttachmentViewHolder(
-            private val textView: TextView,
-            listeners: MessageListListenerContainer?,
-        ) : InnerAttachmentViewHolder(textView) {
-
-            private lateinit var message: Message
-
-            init {
-                textView.setOnClickListener {
-                    listeners?.attachmentClickListener?.onAttachmentClick(message, message.attachments.first())
-                }
-            }
-
-            override fun onBindViewHolder(message: Message) {
-                this.message = message
-
-                textView.text = "Image URL: ${message.attachments.first().imageUrl}"
-            }
-        }
-
-        private lateinit var messageListView: MessageListView
-
-        fun setAttachmentFactory() {
-            val customAttachmentFactory = CustomAttachmentFactory()
-            val attachmentFactoryManager = AttachmentFactoryManager(listOf(customAttachmentFactory))
-            messageListView.setAttachmentFactoryManager(attachmentFactoryManager)
         }
     }
 }

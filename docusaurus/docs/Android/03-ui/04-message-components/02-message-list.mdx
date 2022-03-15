@@ -115,7 +115,7 @@ messageListView.setUserBlockHandler { user: User, cid: String ->
 messageListView.setMessageReplyHandler { cid: String, message: Message ->
     // Handle when message is going to be replied in the channel with cid
 }
-messageListView.setAttachmentDownloadHandler { downloadAttachmentCall ->
+messageListView.setAttachmentDownloadHandler {
     // Handle when attachment is going to be downloaded
 }
 ``` 
@@ -140,7 +140,7 @@ messageListView.setEnterThreadListener { message: Message ->
 messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
     // Listen to events when download click for an attachment happens
 }
-setUserReactionClickListener{ message: Message, user: User, reaction: Reaction ->
+messageListView.setUserReactionClickListener{ message: Message, user: User, reaction: Reaction ->
     // Listen to clicks on user reactions on the message options overlay
 }
 ```
