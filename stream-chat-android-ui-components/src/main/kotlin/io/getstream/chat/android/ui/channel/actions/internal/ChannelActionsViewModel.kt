@@ -31,7 +31,7 @@ internal class ChannelActionsViewModel(
      * Holds information about the current channel and is actively updated.
      */
     val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT)
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     /**
      * The initial empty state.

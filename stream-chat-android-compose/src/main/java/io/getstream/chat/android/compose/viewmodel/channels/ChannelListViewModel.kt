@@ -138,7 +138,7 @@ public class ChannelListViewModel(
                     memberLimit = memberLimit,
                 )
 
-                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest)
+                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
                 queryChannelsState?.let {
                     observeChannels(it, searchQuery = query)
                 }

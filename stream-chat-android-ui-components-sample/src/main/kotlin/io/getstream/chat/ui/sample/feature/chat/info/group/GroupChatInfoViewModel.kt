@@ -31,7 +31,7 @@ class GroupChatInfoViewModel(
      * Holds information about the current channel and is actively updated.
      */
     @OptIn(InternalStreamChatApi::class)
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT)
+    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()

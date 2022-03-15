@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.typing.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
@@ -25,7 +26,7 @@ public class TypingIndicatorViewModel(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT)
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     /**
      * A list of users who are currently typing.

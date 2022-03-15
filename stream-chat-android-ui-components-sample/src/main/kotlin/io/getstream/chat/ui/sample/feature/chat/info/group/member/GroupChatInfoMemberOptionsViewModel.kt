@@ -60,7 +60,7 @@ class GroupChatInfoMemberOptionsViewModel(
                     if (result.isSuccess) {
                         val cid = result.data().firstOrNull()?.cid ?: ""
 
-                        chatClient.watchChannelAsState(cid, 30)
+                        chatClient.watchChannelAsState(cid, 30, viewModelScope)
                             .messagesState
                             .map { mapChannelState(it, cid) }
                     } else {

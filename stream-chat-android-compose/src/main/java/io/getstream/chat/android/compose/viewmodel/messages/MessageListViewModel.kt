@@ -93,7 +93,7 @@ public class MessageListViewModel(
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: ChannelState = chatClient.watchChannelAsState(channelId, messageLimit)
+    public val channelState: ChannelState = chatClient.watchChannelAsState(channelId, messageLimit, viewModelScope)
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.

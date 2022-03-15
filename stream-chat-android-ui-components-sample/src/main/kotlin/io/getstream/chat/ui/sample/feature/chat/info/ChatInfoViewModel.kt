@@ -35,7 +35,8 @@ class ChatInfoViewModel(
      * Holds information about the current channel and is actively updated.
      */
     @OptIn(InternalStreamChatApi::class)
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT)
+    private val channelState: ChannelState =
+        chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()

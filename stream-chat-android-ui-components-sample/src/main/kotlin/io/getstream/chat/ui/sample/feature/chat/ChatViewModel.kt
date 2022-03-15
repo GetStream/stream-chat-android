@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -21,7 +22,7 @@ class ChatViewModel(
      * Holds information about the current channel and is actively updated.
      */
     @OptIn(InternalStreamChatApi::class)
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT)
+    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent

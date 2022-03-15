@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -202,7 +203,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
-        val channelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGES_LIMIT)
+        val channelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGES_LIMIT, viewModelScope)
 
         ChatClient.dismissChannelNotifications(
             channelType = channelState.channelType,
