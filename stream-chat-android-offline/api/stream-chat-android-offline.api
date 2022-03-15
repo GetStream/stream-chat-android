@@ -5,55 +5,6 @@ public final class io/getstream/chat/android/livedata/BuildConfig {
 	public fun <init> ()V
 }
 
-public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
-	public static final field Companion Lio/getstream/chat/android/livedata/ChatDomain$Companion;
-	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun getBanned ()Landroidx/lifecycle/LiveData;
-	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
-	public abstract fun getChannelMutes ()Landroidx/lifecycle/LiveData;
-	public abstract fun getChannelUnreadCount ()Landroidx/lifecycle/LiveData;
-	public abstract fun getConnectionState ()Landroidx/lifecycle/LiveData;
-	public abstract fun getErrorEvents ()Landroidx/lifecycle/LiveData;
-	public abstract fun getInitialized ()Landroidx/lifecycle/LiveData;
-	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
-	public abstract fun getTotalUnreadCount ()Landroidx/lifecycle/LiveData;
-	public abstract fun getTypingUpdates ()Landroidx/lifecycle/LiveData;
-	public abstract fun getUser ()Landroidx/lifecycle/LiveData;
-	public abstract fun getUserPresence ()Z
-	public abstract fun getVersion ()Ljava/lang/String;
-	public static fun instance ()Lio/getstream/chat/android/livedata/ChatDomain;
-	public abstract fun isInitialized ()Z
-	public abstract fun isOffline ()Z
-	public abstract fun isOnline ()Z
-	public abstract fun markRead (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun sendGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setUserPresence (Z)V
-	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
-	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;)V
-	public final fun build ()Lio/getstream/chat/android/livedata/ChatDomain;
-	public final fun copy (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/livedata/ChatDomain$Builder;Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;ILjava/lang/Object;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public final fun disableBackgroundSync ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public final fun enableBackgroundSync ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public final fun recoveryEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public fun toString ()Ljava/lang/String;
-	public final fun userPresenceDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-	public final fun userPresenceEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
-}
-
-public final class io/getstream/chat/android/livedata/ChatDomain$Companion {
-	public final fun instance ()Lio/getstream/chat/android/livedata/ChatDomain;
-	public final fun isInitialized ()Z
-}
-
 public class io/getstream/chat/android/livedata/utils/Event {
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun getContentIfNotHandled ()Ljava/lang/Object;
@@ -65,59 +16,6 @@ public final class io/getstream/chat/android/livedata/utils/EventObserver : andr
 	public fun <init> (Lkotlin/jvm/functions/Function1;)V
 	public fun onChanged (Lio/getstream/chat/android/livedata/utils/Event;)V
 	public synthetic fun onChanged (Ljava/lang/Object;)V
-}
-
-public abstract interface class io/getstream/chat/android/offline/ChatDomain {
-	public static final field Companion Lio/getstream/chat/android/offline/ChatDomain$Companion;
-	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
-	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getUserPresence ()Z
-	public abstract fun getVersion ()Ljava/lang/String;
-	public abstract fun hideChannel (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
-	public static fun instance ()Lio/getstream/chat/android/offline/ChatDomain;
-	public abstract fun isConnecting ()Z
-	public abstract fun isInitialized ()Z
-	public abstract fun isOffline ()Z
-	public abstract fun isOnline ()Z
-	public abstract fun markAllRead ()Lio/getstream/chat/android/client/call/Call;
-	public abstract fun markRead (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun sendGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setUserPresence (Z)V
-	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/ChatDomain$Builder {
-	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;)V
-	public final fun build ()Lio/getstream/chat/android/offline/ChatDomain;
-	public final fun copy (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/ChatDomain$Builder;Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;ILjava/lang/Object;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun disableBackgroundSync ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun enableBackgroundSync ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public final fun offlineDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun recoveryDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun recoveryEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public fun toString ()Ljava/lang/String;
-	public final fun userPresenceDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-	public final fun userPresenceEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
-}
-
-public final class io/getstream/chat/android/offline/ChatDomain$Companion {
-	public final fun instance ()Lio/getstream/chat/android/offline/ChatDomain;
-	public final fun isInitialized ()Z
 }
 
 public final class io/getstream/chat/android/offline/channel/ChannelData {
