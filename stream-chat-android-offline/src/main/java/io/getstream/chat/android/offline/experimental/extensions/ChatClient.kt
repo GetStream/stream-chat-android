@@ -50,6 +50,7 @@ internal fun ChatClient.requestsAsState(scope: CoroutineScope): ChatClientStateC
  * @param request [QueryChannelsRequest]
  * @return [QueryChannelsRequest]
  */
+@JvmOverloads
 public fun ChatClient.queryChannelsAsState(
     request: QueryChannelsRequest,
     coroutineScope: CoroutineScope = state.scope,
@@ -63,6 +64,7 @@ public fun ChatClient.queryChannelsAsState(
  * @param cid
  * @return [ChannelState]
  */
+@JvmOverloads
 public fun ChatClient.watchChannelAsState(
     cid: String,
     limit: Int,
@@ -77,6 +79,7 @@ public fun ChatClient.watchChannelAsState(
  * @param cid
  * @return [ThreadState]
  */
+@JvmOverloads
 public fun ChatClient.getRepliesAsState(
     cid: String,
     limit: Int,
