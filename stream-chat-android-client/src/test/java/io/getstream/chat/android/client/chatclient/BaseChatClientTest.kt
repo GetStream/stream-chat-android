@@ -58,7 +58,6 @@ internal open class BaseChatClientTest {
             notifications = mock(),
             tokenManager = tokenManager,
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = mock(),
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,

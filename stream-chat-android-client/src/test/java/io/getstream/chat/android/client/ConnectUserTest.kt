@@ -19,7 +19,6 @@ internal class ConnectUserTest {
         notifications = mock(),
         tokenManager = mock(),
         socketStateService = mock(),
-        queryChannelsPostponeHelper = mock(),
         userCredentialStorage = mock(),
         scope = mock(),
         retryPolicy = mock(),
