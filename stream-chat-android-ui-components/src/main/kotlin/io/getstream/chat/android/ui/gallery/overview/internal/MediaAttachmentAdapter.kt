@@ -37,7 +37,7 @@ internal class MediaAttachmentAdapter(
 
         init {
             binding.mediaContainer.setOnClickListener {
-                mediaAttachmentClickListener?.onMediaAttachmentClick(bindingAdapterPosition)
+                mediaAttachmentClickListener.onMediaAttachmentClick(bindingAdapterPosition)
             }
         }
 
@@ -48,7 +48,7 @@ internal class MediaAttachmentAdapter(
             )
 
             val user = attachmentGalleryItem.user
-            if (user != null && showUserAvatars) {
+            if (showUserAvatars) {
                 binding.avatarView.isVisible = true
                 binding.avatarView.setUserData(user)
             } else {

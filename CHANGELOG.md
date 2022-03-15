@@ -2,6 +2,7 @@
 <!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fixed memory leaks related to image loading. [#2979](https://github.com/GetStream/stream-chat-android/pull/2979)
 
 ### ⬆️ Improved
 - Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
