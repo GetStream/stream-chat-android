@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.experimental.channel.QueryChannelReference
 import io.getstream.chat.android.offline.experimental.channel.thread.RepliesQueryReference
 import io.getstream.chat.android.offline.experimental.querychannels.QueryChannelsReference
@@ -30,7 +29,7 @@ public class ChatClientReferenceAdapter(private val chatClient: ChatClient) {
     /** Reference request of the watch channel query. */
     public fun watchChannel(cid: String, limit: Int = DEFAULT_MESSAGE_LIMIT): QueryChannelReference {
         val (channelType, channelId) = cid.cidToTypeAndId()
-        val userPresence = runCatching { ChatDomain.instance().userPresence }.getOrDefault(false)
+        val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence)
         return queryChannel(channelType, channelId, request)
     }

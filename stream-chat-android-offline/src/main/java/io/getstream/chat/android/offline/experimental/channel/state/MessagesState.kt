@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.experimental.channel.state
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomainImpl
 
 /**
  * Represents of possible state of messages for [ChannelState].
@@ -32,7 +31,6 @@ public sealed class MessagesState {
     /**
      * The list of messages, loaded either from offline storage or an API call.
      * Observe chatDomain.online to know if results are currently up to date
-     * @see ChatDomainImpl.online
      *
      * @param messages Message collection of this channel.
      */

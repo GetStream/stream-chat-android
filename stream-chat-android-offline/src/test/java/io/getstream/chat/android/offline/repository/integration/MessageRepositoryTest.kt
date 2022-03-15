@@ -23,15 +23,15 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
             val attachment2 = randomAttachment { url = "url2" }
             val attachment3 = randomAttachment { url = "url3" }
             val message = randomMessage(attachments = mutableListOf(attachment1, attachment2, attachment3))
-            chatDomainImpl.repos.insertMessage(message)
+            repos.insertMessage(message)
 
             val newAttachment1 = attachment1.copy(url = "newUrl1")
             val newAttachment2 = attachment2.copy(url = "newUrl2")
             val newAttachment3 = attachment3.copy(url = "newUrl3")
             message.attachments = mutableListOf(newAttachment1, newAttachment2, newAttachment3)
-            chatDomainImpl.repos.insertMessage(message)
+            repos.insertMessage(message)
 
-            val messageFromDb = requireNotNull(chatDomainImpl.repos.selectMessage(message.id))
+            val messageFromDb = requireNotNull(repos.selectMessage(message.id))
 
             messageFromDb.attachments.size `should be equal to` 3
             messageFromDb.attachments[0].url `should be equal to` "newUrl1"
@@ -41,11 +41,11 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `When selecting more than 999 messages Should not throw SQLiteException`(): Unit = runBlocking {
-        coInvoking { chatDomainImpl.repos.selectMessages(List(1000) { randomString() }) } shouldNotThrow (SQLiteException::class)
+        coInvoking { repos.selectMessages(List(1000) { randomString() }) } shouldNotThrow (SQLiteException::class)
     }
 
     @Test
     fun `When inserting more than 999 messages Should not throw SQLiteException`(): Unit = runBlocking {
-        coInvoking { chatDomainImpl.repos.insertMessages(List(1000) { randomMessage() }) } shouldNotThrow (SQLiteException::class)
+        coInvoking { repos.insertMessages(List(1000) { randomMessage() }) } shouldNotThrow (SQLiteException::class)
     }
 }
