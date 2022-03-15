@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
-import io.getstream.chat.android.livedata.controller.ChannelController;
 
 public class AndroidIntroduction {
 
@@ -72,17 +71,17 @@ public class AndroidIntroduction {
         });
 
         // Watching a channel's state using the offline library
-        chatDomain.watchChannel("messaging:travel", 10)
-                .enqueue(result -> {
-                    if (result.isSuccess()) {
-                        ChannelController channelController = result.data();
-
-                        // LiveData objects to observe
-                        channelController.getMessages();
-                        channelController.getReads();
-                        channelController.getTyping();
-                    }
-                });
+//        chatDomain.watchChannel("messaging:travel", 10)
+//                .enqueue(result -> {
+//                    if (result.isSuccess()) {
+//                        ChannelController channelController = result.data();
+//
+//                        // LiveData objects to observe
+//                        channelController.getMessages();
+//                        channelController.getReads();
+//                        channelController.getTyping();
+//                    }
+//                });
     }
 
     public void sendFirstMessage(ChannelClient channelClient, ChatDomain chatDomain) {
