@@ -1,7 +1,3 @@
-public abstract interface class com/getstream/sdk/chat/ChatMarkdown {
-	public abstract fun setText (Landroid/widget/TextView;Ljava/lang/String;)V
-}
-
 public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/content/FileProvider {
 	public fun <init> ()V
 }
@@ -129,6 +125,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 public final class com/getstream/sdk/chat/images/StreamImageLoader$DefaultImpls {
 	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
+	public static synthetic fun loadAndResize$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadAsBitmap$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/content/Context;Ljava/lang/String;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadVideoThumbnail$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 }
@@ -152,6 +149,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
 	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
+	public static synthetic fun loadAndResize$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 }
 
@@ -381,9 +379,10 @@ public final class com/getstream/sdk/chat/view/messages/MessageListItemWrapper {
 }
 
 public abstract class com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderViewModel : androidx/lifecycle/ViewModel {
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
-	public final fun getAnyOtherUsersOnline ()Landroidx/lifecycle/LiveData;
-	public final fun getChannelState ()Landroidx/lifecycle/LiveData;
+	public final fun getChannel ()Landroidx/lifecycle/LiveData;
+	public final fun getChannelState ()Lio/getstream/chat/android/offline/experimental/channel/state/ChannelState;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
 	public final fun getOnline ()Landroidx/lifecycle/LiveData;
 	public final fun getTypingUsers ()Landroidx/lifecycle/LiveData;
@@ -393,12 +392,13 @@ public abstract class com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderView
 
 public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;)V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun dismissReply ()V
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
+	public final fun getChannelState ()Lio/getstream/chat/android/offline/experimental/channel/state/ChannelState;
 	public final fun getCommands ()Landroidx/lifecycle/LiveData;
 	public final fun getCooldownInterval ()Landroidx/lifecycle/LiveData;
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
@@ -409,6 +409,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun keystroke ()V
 	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun resetThread ()V
+	public final fun selectMention (Lio/getstream/chat/android/client/models/User;)V
 	public final fun sendMessage (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessage$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
@@ -424,12 +425,12 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLive
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
-	public static final field MESSAGES_LIMIT I
+	public static final field DEFAULT_MESSAGES_LIMIT I
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/experimental/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
@@ -456,17 +457,6 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
 	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError;
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$DeleteMessageError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
 	public fun hashCode ()I
@@ -563,12 +553,12 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
-	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Attachment;
-	public final fun copy (Lio/getstream/chat/android/client/models/Attachment;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;Lio/getstream/chat/android/client/models/Attachment;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
+	public fun <init> (Lkotlin/jvm/functions/Function0;)V
+	public final fun component1 ()Lkotlin/jvm/functions/Function0;
+	public final fun copy (Lkotlin/jvm/functions/Function0;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DownloadAttachment;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun getDownloadAttachmentCall ()Lkotlin/jvm/functions/Function0;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
