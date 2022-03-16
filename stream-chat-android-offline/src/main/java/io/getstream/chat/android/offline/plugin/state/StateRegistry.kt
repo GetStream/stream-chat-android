@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.plugin.state
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -100,8 +101,10 @@ public class StateRegistry private constructor(
         threads.clear()
     }
 
-    internal companion object {
-        private var instance: StateRegistry? = null
+    @VisibleForTesting
+    public companion object {
+        @VisibleForTesting
+        public var instance: StateRegistry? = null
 
         /**
          * Gets the singleton of StateRegistry or creates it in the first call.

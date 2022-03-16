@@ -115,6 +115,7 @@ public final class io/getstream/chat/android/offline/extensions/internal/PairKt 
 }
 
 public final class io/getstream/chat/android/offline/model/channel/ChannelData {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -208,12 +209,18 @@ public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflin
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/StateRegistry {
+	public static final field Companion Lio/getstream/chat/android/offline/plugin/state/StateRegistry$Companion;
 	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageRepository;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/offline/plugin/state/channel/ChannelState;
 	public final fun clear ()V
 	public final fun getScope ()Lkotlinx/coroutines/CoroutineScope;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState;
 	public final fun thread (Ljava/lang/String;)Lio/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState;
+}
+
+public final class io/getstream/chat/android/offline/plugin/state/StateRegistry$Companion {
+	public final fun getInstance ()Lio/getstream/chat/android/offline/plugin/state/StateRegistry;
+	public final fun setInstance (Lio/getstream/chat/android/offline/plugin/state/StateRegistry;)V
 }
 
 public abstract interface class io/getstream/chat/android/offline/plugin/state/channel/ChannelState {

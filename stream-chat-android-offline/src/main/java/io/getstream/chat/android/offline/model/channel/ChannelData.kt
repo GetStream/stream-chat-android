@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.model.channel
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -47,7 +48,8 @@ public data class ChannelData(
      *
      * @param channel The [Channel] object to convert
      */
-    internal constructor(channel: Channel) : this(
+    @VisibleForTesting
+    public constructor(channel: Channel) : this(
         type = channel.type,
         channelId = channel.id,
         name = channel.name,
