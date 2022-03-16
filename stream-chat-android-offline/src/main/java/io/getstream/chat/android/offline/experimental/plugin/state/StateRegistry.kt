@@ -36,7 +36,7 @@ public class StateRegistry private constructor(
     private val messageRepository: MessageRepository,
     private var latestUsers: StateFlow<Map<String, User>>,
     internal val job: Job,
-    internal var scope: CoroutineScope,
+    public val scope: CoroutineScope,
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()

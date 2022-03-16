@@ -1,12 +1,16 @@
 package io.getstream.chat.android.offline.experimental.extensions
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
-import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientReferenceAdapter
+import io.getstream.chat.android.offline.experimental.plugin.adapter.ChatClientStateCalls
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * [StateRegistry] instance that contains all state objects exposed in offline plugin.
@@ -32,5 +36,54 @@ internal val ChatClient.logic: LogicRegistry
 public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.getOrCreate()
 
-@InternalStreamChatApi
-public fun ChatClient.asReferenced(): ChatClientReferenceAdapter = ChatClientReferenceAdapter(this)
+/**
+ * Intermediate class to request ChatClient class as states
+ *
+ * @return [ChatClientStateCalls]
+ */
+internal fun ChatClient.requestsAsState(scope: CoroutineScope): ChatClientStateCalls =
+    ChatClientStateCalls(this, state, scope)
+
+/**
+ * Same class of ChatClient.queryChannels, but provides the result as [QueryChannelsState]
+ *
+ * @param request [QueryChannelsRequest]
+ * @return [QueryChannelsRequest]
+ */
+@JvmOverloads
+public fun ChatClient.queryChannelsAsState(
+    request: QueryChannelsRequest,
+    coroutineScope: CoroutineScope = state.scope,
+): QueryChannelsState {
+    return requestsAsState(coroutineScope).queryChannels(request)
+}
+
+/**
+ * Same class of ChatClient.queryChannel, but provides the result as [ChannelState]
+ *
+ * @param cid
+ * @return [ChannelState]
+ */
+@JvmOverloads
+public fun ChatClient.watchChannelAsState(
+    cid: String,
+    limit: Int,
+    coroutineScope: CoroutineScope = state.scope,
+): ChannelState {
+    return requestsAsState(coroutineScope).watchChannel(cid, limit)
+}
+
+/**
+ * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
+ *
+ * @param cid
+ * @return [ThreadState]
+ */
+@JvmOverloads
+public fun ChatClient.getRepliesAsState(
+    cid: String,
+    limit: Int,
+    coroutineScope: CoroutineScope = state.scope,
+): ThreadState {
+    return requestsAsState(coroutineScope).getReplies(cid, limit)
+}

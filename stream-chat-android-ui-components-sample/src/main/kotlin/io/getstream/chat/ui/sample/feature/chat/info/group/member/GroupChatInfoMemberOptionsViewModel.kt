@@ -15,8 +15,8 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -60,7 +60,7 @@ class GroupChatInfoMemberOptionsViewModel(
                     if (result.isSuccess) {
                         val cid = result.data().firstOrNull()?.cid ?: ""
 
-                        chatClient.asReferenced().watchChannel(cid, 30).asState(viewModelScope)
+                        chatClient.watchChannelAsState(cid, 30, viewModelScope)
                             .messagesState
                             .map { mapChannelState(it, cid) }
                     } else {

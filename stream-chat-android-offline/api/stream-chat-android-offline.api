@@ -108,6 +108,15 @@ public final class io/getstream/chat/android/offline/experimental/errorhandler/f
 
 public final class io/getstream/chat/android/offline/experimental/extensions/ChatClientKt {
 	public static final fun getGlobalState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/experimental/global/GlobalState;
+	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;
+	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;
+	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lio/getstream/chat/android/offline/experimental/channel/thread/state/ThreadState;
+	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/offline/experimental/querychannels/state/QueryChannelsState;
+	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/experimental/querychannels/state/QueryChannelsState;
+	public static synthetic fun queryChannelsAsState$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lio/getstream/chat/android/offline/experimental/querychannels/state/QueryChannelsState;
+	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/offline/experimental/channel/state/ChannelState;
+	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/experimental/channel/state/ChannelState;
+	public static synthetic fun watchChannelAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lio/getstream/chat/android/offline/experimental/channel/state/ChannelState;
 }
 
 public abstract interface class io/getstream/chat/android/offline/experimental/global/GlobalState {
