@@ -10,6 +10,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.channel.ChannelMarkReadHelper
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.event.EventHandlerProvider
+import io.getstream.chat.android.offline.experimental.errorhandler.factory.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.experimental.interceptor.DefaultInterceptor
 import io.getstream.chat.android.offline.experimental.interceptor.SendMessageInterceptorImpl
@@ -108,7 +109,13 @@ public class StreamOfflinePluginFactory(
             globalState = globalState,
         )
 
-        chatClient.addInterceptor(defaultInterceptor)
+        chatClient.apply {
+            addInterceptor(defaultInterceptor)
+            addErrorHandlers(
+                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories()
+                    .map { factory -> factory.create() }
+            )
+        }
 
         val syncManager = SyncManager(
             chatClient = chatClient,
