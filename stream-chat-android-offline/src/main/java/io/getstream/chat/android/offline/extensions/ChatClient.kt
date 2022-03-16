@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Environment
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
@@ -18,12 +19,78 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.extensions.logic
-import io.getstream.chat.android.offline.experimental.extensions.state
-import io.getstream.chat.android.offline.message.isEphemeral
-import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.utils.validateCidWithResult
+import io.getstream.chat.android.offline.extensions.internal.isEphemeral
+import io.getstream.chat.android.offline.extensions.internal.logic
+import io.getstream.chat.android.offline.extensions.internal.requestsAsState
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.offline.utils.internal.validateCidWithResult
+import kotlinx.coroutines.CoroutineScope
+
+/**
+ * [StateRegistry] instance that contains all state objects exposed in offline plugin.
+ */
+public val ChatClient.state: StateRegistry
+    get() = requireNotNull(StateRegistry.get()) {
+        "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
+            "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
+    }
+
+/**
+ * [GlobalState] instance that contains information about the current user, unreads, etc.
+ */
+public val ChatClient.globalState: GlobalState
+    get() = GlobalMutableState.getOrCreate()
+
+/**
+ * Same class of ChatClient.queryChannels, but provides the result as [QueryChannelsState]
+ *
+ * @param request [QueryChannelsRequest]
+ * @return [QueryChannelsRequest]
+ */
+@JvmOverloads
+public fun ChatClient.queryChannelsAsState(
+    request: QueryChannelsRequest,
+    coroutineScope: CoroutineScope = state.scope,
+): QueryChannelsState {
+    return requestsAsState(coroutineScope).queryChannels(request)
+}
+
+/**
+ * Same class of ChatClient.queryChannel, but provides the result as [ChannelState]
+ *
+ * @param cid
+ * @return [ChannelState]
+ */
+@JvmOverloads
+public fun ChatClient.watchChannelAsState(
+    cid: String,
+    limit: Int,
+    coroutineScope: CoroutineScope = state.scope,
+): ChannelState {
+    return requestsAsState(coroutineScope).watchChannel(cid, limit)
+}
+
+/**
+ * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
+ *
+ * @param cid
+ * @return [ThreadState]
+ */
+@JvmOverloads
+public fun ChatClient.getRepliesAsState(
+    cid: String,
+    limit: Int,
+    coroutineScope: CoroutineScope = state.scope,
+): ThreadState {
+    return requestsAsState(coroutineScope).getReplies(cid, limit)
+}
 
 /**
  * Set the reply state for the channel.

@@ -5,12 +5,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.experimental.global.GlobalState
-import io.getstream.chat.android.offline.experimental.plugin.listener.CreateChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest

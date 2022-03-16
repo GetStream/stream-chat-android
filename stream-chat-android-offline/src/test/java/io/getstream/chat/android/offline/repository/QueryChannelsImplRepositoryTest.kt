@@ -6,8 +6,8 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.randomQueryChannelsSpec
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepositoryImpl
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf

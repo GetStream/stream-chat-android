@@ -3,9 +3,9 @@ package io.getstream.chat.android.offline.events
 import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.plugin.listener.TypingEventListenerImpl
-import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerImpl
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope

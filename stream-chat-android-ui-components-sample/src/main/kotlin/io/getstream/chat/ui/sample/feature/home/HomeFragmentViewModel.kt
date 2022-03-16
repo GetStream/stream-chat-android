@@ -8,7 +8,7 @@ import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.ui.sample.application.App
 
 class HomeFragmentViewModel : ViewModel() {

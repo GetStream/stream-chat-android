@@ -1,7 +1,8 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
-import io.getstream.chat.android.offline.repository.domain.channel.member.MemberEntity
-import io.getstream.chat.android.offline.repository.domain.channel.userread.ChannelUserReadEntity
+import io.getstream.chat.android.offline.repository.database.converter.internal.MapConverter
+import io.getstream.chat.android.offline.repository.domain.channel.member.internal.MemberEntity
+import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test

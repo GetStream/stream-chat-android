@@ -20,11 +20,11 @@ import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.extensions.queryChannelsAsState
-import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
-import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.queryChannelsAsState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
