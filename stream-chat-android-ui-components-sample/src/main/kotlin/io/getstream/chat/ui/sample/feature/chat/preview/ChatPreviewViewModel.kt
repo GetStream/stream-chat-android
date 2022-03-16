@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.plugin.extensions.globalState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull

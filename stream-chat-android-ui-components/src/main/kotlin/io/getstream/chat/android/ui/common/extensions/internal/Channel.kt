@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.plugin.extensions.globalState
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getLastMessage

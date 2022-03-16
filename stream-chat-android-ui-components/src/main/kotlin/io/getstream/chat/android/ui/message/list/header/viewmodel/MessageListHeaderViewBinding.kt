@@ -7,8 +7,8 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.offline.plugin.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText

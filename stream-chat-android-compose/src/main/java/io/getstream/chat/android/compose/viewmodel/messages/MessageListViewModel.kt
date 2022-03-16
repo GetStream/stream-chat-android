@@ -47,14 +47,14 @@ import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorStat
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
-import io.getstream.chat.android.offline.experimental.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.offline.plugin.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.plugin.extensions.getRepliesAsState
+import io.getstream.chat.android.offline.plugin.extensions.globalState
+import io.getstream.chat.android.offline.plugin.extensions.loadOlderMessages
+import io.getstream.chat.android.offline.plugin.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -213,14 +213,14 @@ public class MessageListViewModel(
             channelState.messagesState
                 .combine(user) { state, user ->
                     when (state) {
-                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.NoQueryActive,
-                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.Loading,
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.OfflineNoResults -> messagesState.copy(
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
                             isLoading = false,
                             messageItems = emptyList()
                         )
-                        is io.getstream.chat.android.offline.experimental.channel.state.MessagesState.Result -> {
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(

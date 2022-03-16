@@ -91,7 +91,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.plugin.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
 

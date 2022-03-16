@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.

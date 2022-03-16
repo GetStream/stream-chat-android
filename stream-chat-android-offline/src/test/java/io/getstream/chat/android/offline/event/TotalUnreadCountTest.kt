@@ -2,8 +2,9 @@ package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
+import io.getstream.chat.android.offline.internal.repository.RepositoryFacade
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi

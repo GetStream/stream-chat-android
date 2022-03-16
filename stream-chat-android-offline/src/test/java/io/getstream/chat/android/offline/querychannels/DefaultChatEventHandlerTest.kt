@@ -1,6 +1,8 @@
 package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.offline.event.handler.DefaultChatEventHandler
+import io.getstream.chat.android.offline.event.handler.EventHandlingResult
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.offline.randomNotificationMessageNewEvent

@@ -17,8 +17,8 @@ import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel

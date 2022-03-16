@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.plugin.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**

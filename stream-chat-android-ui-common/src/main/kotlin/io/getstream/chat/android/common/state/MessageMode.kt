@@ -1,7 +1,7 @@
 package io.getstream.chat.android.common.state
 
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
+import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 
 /**
  * Represents the message mode that's currently active.

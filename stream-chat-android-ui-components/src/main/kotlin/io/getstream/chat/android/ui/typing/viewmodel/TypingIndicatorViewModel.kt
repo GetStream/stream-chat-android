@@ -6,8 +6,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import kotlinx.coroutines.flow.map
 
 /**

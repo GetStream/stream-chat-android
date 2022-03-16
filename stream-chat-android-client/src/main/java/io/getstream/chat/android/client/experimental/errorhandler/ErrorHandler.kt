@@ -1,10 +1,13 @@
 package io.getstream.chat.android.client.experimental.errorhandler
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 /**
  * Extension for [io.getstream.chat.android.client.ChatClient] that allows handling plugins' errors.
  *
  * @see [io.getstream.chat.android.client.experimental.plugin.Plugin]
  */
+@InternalStreamChatApi
 public interface ErrorHandler : Comparable<ErrorHandler> {
 
     /**

@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
+import io.getstream.chat.android.offline.internal.message.attachments.AttachmentUploader
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
