@@ -3,7 +3,7 @@
 package io.getstream.chat.android.ui.channel.list.header.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 
 /**

@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.client.channel
 
 import androidx.annotation.CheckResult
@@ -75,7 +73,6 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.util.Date
 
@@ -280,19 +277,6 @@ public class ChannelClient internal constructor(
         return client.sendMessage(channelType, channelId, message, isRetrying)
     }
 
-    /**
-     * Sends the message to the given channel without running any side effects.
-     *
-     * @param message Message to send.
-     *
-     * @return Executable async [Call] responsible for sending a message.
-     */
-    @InternalStreamChatApi
-    @CheckResult
-    public fun sendMessageInternal(message: Message): Call<Message> {
-        return client.sendMessageInternal(channelType, channelId, message)
-    }
-
     @CheckResult
     public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
         return client.banUser(
@@ -378,9 +362,17 @@ public class ChannelClient internal constructor(
         return client.showChannel(channelType, channelId)
     }
 
+    /**
+     * Hides the channel.
+     * @see [ChatClient.hideChannel]
+     *
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     */
     @CheckResult
     public fun hide(clearHistory: Boolean = false): Call<Unit> {
-        return client.hideChannelInternal(channelType, channelId, clearHistory)
+        return client.hideChannel(channelType, channelId, clearHistory)
     }
 
     /**
@@ -793,8 +785,4 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
-
-    private companion object {
-        private const val ARG_TYPING_PARENT_ID = "parent_id"
-    }
 }
