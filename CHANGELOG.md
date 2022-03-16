@@ -100,6 +100,7 @@
 
 ### ✅ Added
 - Added code snippets from the Compose documentation to the `stream-chat-android-docs` module. [3197](https://github.com/GetStream/stream-chat-android/pull/3197)
+- Added support for delivery indicator in the message list. [#3218](https://github.com/GetStream/stream-chat-android/pull/3218)
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
