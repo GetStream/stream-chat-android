@@ -14,14 +14,14 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 /**
  * Provides all offline support related error handler factories.
  */
-public object OfflineErrorHandlerFactoriesProvider {
+internal object OfflineErrorHandlerFactoriesProvider {
 
     /**
      * Creates a list of available offline support related error handler factories.
      *
      * @return A List of [ErrorHandlerFactory].
      */
-    public fun createErrorHandlerFactories(): List<ErrorHandlerFactory> = listOf(
+    fun createErrorHandlerFactories(): List<ErrorHandlerFactory> = listOf(
         DeleteReactionErrorHandlerFactory(),
         SendReactionErrorHandlerFactory(),
         QueryMembersErrorHandlerFactory(),

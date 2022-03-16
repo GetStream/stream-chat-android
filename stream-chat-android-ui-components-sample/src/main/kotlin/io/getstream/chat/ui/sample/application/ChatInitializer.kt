@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
-import io.getstream.chat.android.offline.experimental.errorhandler.factory.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.experimental.plugin.configuration.Config
 import io.getstream.chat.android.offline.experimental.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -55,7 +54,6 @@ class ChatInitializer(private val context: Context) {
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
-            .withErrorHandlers(OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories())
             .build()
 
         // Using markdown as text transformer

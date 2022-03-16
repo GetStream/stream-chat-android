@@ -28,8 +28,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.experimental.extensions.globalState
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.loadMessageById
@@ -202,7 +203,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
-        val channelState = chatClient.asReferenced().watchChannel(cid, DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
+        val channelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGES_LIMIT, viewModelScope)
 
         ChatClient.dismissChannelNotifications(
             channelType = channelState.channelType,
@@ -615,7 +616,7 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        val state = chatClient.asReferenced().getReplies(parentMessage.id).asState(viewModelScope)
+        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }

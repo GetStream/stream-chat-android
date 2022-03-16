@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.extensions.watchChannelAsState
 import kotlinx.coroutines.flow.map
 
 /**
@@ -26,7 +26,7 @@ public class TypingIndicatorViewModel(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid).asState(viewModelScope)
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     /**
      * A list of users who are currently typing.
@@ -35,4 +35,12 @@ public class TypingIndicatorViewModel(
         channelState.typing.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
+
+    private companion object {
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
+    }
 }

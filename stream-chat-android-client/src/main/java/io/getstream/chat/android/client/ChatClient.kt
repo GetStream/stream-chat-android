@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.CreateChannelErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.listeners.QueryMembersErrorHandler
@@ -129,7 +128,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
@@ -156,8 +154,7 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     internal val scope: CoroutineScope,
-    // TODO: Make private/internal after migrating ChatDomain
-    public val retryPolicy: RetryPolicy,
+    internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
 ) {
     private var connectionListener: InitConnectionListener? = null
@@ -245,7 +242,14 @@ public class ChatClient internal constructor(
         this.interceptors.clear()
     }
 
-    internal fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
+    /**
+     * Adds a list of error handlers.
+     * @see [ErrorHandler]
+     *
+     * @param errorHandlers A list of handlers to add.
+     */
+    @InternalStreamChatApi
+    public fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
         this.errorHandlers = errorHandlers.sorted()
     }
 
@@ -389,7 +393,6 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        initializationCoordinator.userSet(user)
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -435,7 +438,6 @@ public class ChatClient internal constructor(
             userStateService.onSetAnonymous()
             connectionListener = object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    initializationCoordinator.userSet(data.user)
                     initializationCoordinator.userConnected(data.user)
                     listener?.onSuccess(data)
                 }
@@ -462,7 +464,6 @@ public class ChatClient internal constructor(
         getGuestToken(userId, username).enqueue { result ->
             if (result.isSuccess) {
                 val guestUser = result.data()
-                initializationCoordinator.userSet(guestUser.user)
                 setUser(guestUser.user, ConstantTokenProvider(guestUser.token), listener)
             } else {
                 listener?.onError(result.error())
@@ -1045,20 +1046,6 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
-    @InternalStreamChatApi
-    @ExperimentalStreamChatApi
-    public fun getRepliesInternal(messageId: String, limit: Int): Call<List<Message>> = api.getReplies(messageId, limit)
-
-    @CheckResult
-    @InternalStreamChatApi
-    @ExperimentalStreamChatApi
-    public fun getRepliesMoreInternal(
-        messageId: String,
-        firstId: String,
-        limit: Int,
-    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
-
-    @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
@@ -1166,23 +1153,6 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel without running any side effects.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param message Message to send.
-     *
-     * @return Executable async [Call] responsible for sending a message.
-     */
-    internal fun sendMessageInternal(
-        channelType: String,
-        channelId: String,
-        message: Message,
-    ): Call<Message> {
-        return api.sendMessage(channelType, channelId, message)
-    }
-
-    /**
      * Sends the message to the given channel. If [isRetrying] is set to true, the message may not be prepared again.
      *
      * @param channelType The channel type. ie messaging.
@@ -1245,15 +1215,6 @@ public class ChatClient internal constructor(
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin -> plugin.onMessageEditResult(message, result) }
             }
-    }
-
-    /**
-     * Updates the message in the API without causing any side effect in the local data of the SDK.
-     *
-     * @param message [Message] The message to be updated in the API
-     */
-    public fun updateMessageInternal(message: Message): Call<Message> {
-        return api.updateMessage(message)
     }
 
     /**
@@ -1418,23 +1379,6 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Hides the specified channel.
-     *
-     * @param channelType The type of the channel.
-     * @param channelId Id of the channel.
-     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
-     *
-     * @return Executable async [Call] responsible for hiding a channel.
-     *
-     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
-     */
-    internal fun hideChannelInternal(
-        channelType: String,
-        channelId: String,
-        clearHistory: Boolean = false,
-    ): Call<Unit> = api.hideChannel(channelType, channelId, clearHistory)
-
-    /**
      * Hides the specified channel with side effects.
      *
      * @param channelType The type of the channel.
@@ -1452,7 +1396,7 @@ public class ChatClient internal constructor(
         clearHistory: Boolean = false,
     ): Call<Unit> {
         val relevantPlugins = plugins.filterIsInstance<HideChannelListener>()
-        return hideChannelInternal(channelType, channelId, clearHistory)
+        return api.hideChannel(channelType, channelId, clearHistory)
             .doOnStart(scope) {
                 relevantPlugins.forEach { it.onHideChannelRequest(channelType, channelId, clearHistory) }
             }
@@ -2311,19 +2255,14 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        @InternalStreamChatApi
+        /**
+         * Adds a plugin factory to be used by the client.
+         * @see [PluginFactory]
+         *
+         * @param pluginFactory The factory to be added.
+         */
         public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
             pluginFactories.add(pluginFactory)
-        }
-
-        /**
-         * Adds a list of error handler factories.
-         *
-         * @see [ErrorHandlerFactory]
-         */
-        @InternalStreamChatApi
-        public fun withErrorHandlers(errorHandlerFactories: List<ErrorHandlerFactory>): Builder = apply {
-            this.errorHandlerFactories.addAll(errorHandlerFactories)
         }
 
         /**
@@ -2349,12 +2288,6 @@ public class ChatClient internal constructor(
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)
-                    }
-                )
-
-                chatClient.addErrorHandlers(
-                    errorHandlerFactories.map { factory ->
-                        factory.create()
                     }
                 )
             }
@@ -2430,14 +2363,6 @@ public class ChatClient internal constructor(
          * @see [PluginFactory]
          */
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
-
-        /**
-         * Factories of error handlers that will be added to the SDK.
-         *
-         * @see [Plugin]
-         * @see [PluginFactory]
-         */
-        protected val errorHandlerFactories: MutableList<ErrorHandlerFactory> = mutableListOf()
 
         /**
          * Create a [ChatClient] instance based on the current configuration

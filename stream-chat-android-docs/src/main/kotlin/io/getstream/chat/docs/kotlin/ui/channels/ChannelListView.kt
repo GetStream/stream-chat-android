@@ -11,8 +11,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
@@ -41,7 +41,7 @@ private class ChannelListViewSnippets() : Fragment() {
             ChannelListViewModelFactory(
                 filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)),
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
                 ),
                 sort = ChannelListViewModel.DEFAULT_SORT,
                 limit = 30,

@@ -2,6 +2,7 @@
 <!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fixed memory leaks related to image loading. [#2979](https://github.com/GetStream/stream-chat-android/pull/2979)
 
 ### ⬆️ Improved
 - Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
@@ -59,6 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
 
 ### ⬆️ Improved
 
@@ -90,6 +92,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
+- Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
 
 ### ⬆️ Improved
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)

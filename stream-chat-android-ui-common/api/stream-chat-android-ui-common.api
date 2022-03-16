@@ -86,6 +86,17 @@ public final class com/getstream/sdk/chat/coil/StreamImageLoaderFactory : coil/I
 	public fun newImageLoader ()Lcoil/ImageLoader;
 }
 
+public final class com/getstream/sdk/chat/disposable/CoilDisposable : com/getstream/sdk/chat/disposable/Disposable {
+	public fun <init> (Lcoil/request/Disposable;)V
+	public fun dispose ()V
+	public fun isDisposed ()Z
+}
+
+public abstract interface class com/getstream/sdk/chat/disposable/Disposable {
+	public abstract fun dispose ()V
+	public abstract fun isDisposed ()Z
+}
+
 public final class com/getstream/sdk/chat/enums/GiphyAction : java/lang/Enum {
 	public static final field CANCEL Lcom/getstream/sdk/chat/enums/GiphyAction;
 	public static final field SEND Lcom/getstream/sdk/chat/enums/GiphyAction;
@@ -112,11 +123,11 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 }
 
 public final class com/getstream/sdk/chat/images/StreamImageLoader$DefaultImpls {
-	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
-	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
+	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 	public static synthetic fun loadAndResize$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadAsBitmap$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/content/Context;Ljava/lang/String;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun loadVideoThumbnail$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun loadVideoThumbnail$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 }
 
 public abstract class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation {
@@ -136,10 +147,10 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 }
 
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
-	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
-	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
+	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 	public static synthetic fun loadAndResize$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 }
 
 public final class com/getstream/sdk/chat/model/AttachmentMetaData {

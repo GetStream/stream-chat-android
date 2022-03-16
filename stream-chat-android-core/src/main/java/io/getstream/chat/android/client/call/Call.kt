@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -69,6 +70,16 @@ public suspend fun <T : Any> Call<T>.await(): Result<T> {
         continuation.invokeOnCancellation {
             this.cancel()
         }
+    }
+}
+
+/**
+ * Runs a call using coroutines scope
+ */
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.launch(scope: CoroutineScope) {
+    scope.launch {
+        this@launch.await()
     }
 }
 

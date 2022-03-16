@@ -65,6 +65,17 @@ class Android {
             val unreadCount: Int? = channel.unreadCount
         }
 
+        // fun unreadCountForCurrentUserChatDomain() {
+        //     // Get channel controller
+        //     val channelController = ChatDomain.instance()
+        //         .watchChannel(cid = "messaging:123", messageLimit = 0)
+        //         .execute()
+        //         .data()
+        //
+        //     // Unread count for current user
+        //     val unreadCount: LiveData<Int?> = channelController.unreadCount
+        // }
+
         fun markAllRead() {
             ChatClient.instance().markAllRead().enqueue { result ->
                 if (result.isSuccess) {

@@ -21,8 +21,6 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
 import io.getstream.chat.android.offline.model.ChannelConfig
@@ -34,9 +32,8 @@ import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeFalse
@@ -55,16 +52,11 @@ import java.util.concurrent.Executors
 /**
  * Sets up a ChatDomain object with a mocked ChatClient.
  */
+@ExperimentalCoroutinesApi
 internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     /** a realistic set of chat data, please only add to this, don't update */
     var data = TestDataHelper()
-
-    /** the chat domain impl */
-    lateinit var chatDomainImpl: ChatDomainImpl
-
-    /** the chat domain interface */
-    lateinit var chatDomain: ChatDomain
 
     /** the mock for the chat client */
     lateinit var clientMock: ChatClient
@@ -76,6 +68,8 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     lateinit var channelClientMock: ChannelClient
 
     private lateinit var db: ChatDatabase
+
+    protected lateinit var repos: RepositoryFacade
 
     /** single threaded arch components operations */
     @get:Rule
@@ -97,7 +91,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     @After
     open fun tearDown() = runBlocking {
-        chatDomainImpl.disconnect()
         db.close()
     }
 
@@ -181,14 +174,10 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
     private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client)
-            .userPresenceEnabled()
-            .buildImpl()
-        ChatDomain.instance = chatDomainImpl
 
-        chatDomainImpl.repos = RepositoryFacade.create(
+        repos = RepositoryFacade.create(
             RepositoryFactory(db, data.user1),
-            chatDomainImpl.scope,
+            getTestScope(),
             Config(connectEventsEnabled = true, muteEnabled = true)
         )
 
@@ -198,18 +187,12 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             data.user1,
             data.user1Token
         ).enqueue()
+
         // manually configure the user since client is mocked
-        GlobalMutableState.get()._user.value = data.user1
-        chatDomainImpl.userConnected(data.user1)
+        GlobalMutableState.getOrCreate()._user.value = data.user1
 
-        chatDomain = chatDomainImpl
-
-        chatDomainImpl.scope.launch {
-            chatDomainImpl.errorEvents.collect { println("error event$it") }
-        }
-
-        chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
-        chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
+        repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
+        repos.insertUsers(data.userMap.values.toList())
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
     }

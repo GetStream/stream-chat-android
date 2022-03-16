@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.experimental.querychannels.state
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomainImpl
 
 @InternalStreamChatApi
 public sealed class ChannelsStateData {
@@ -25,7 +24,6 @@ public sealed class ChannelsStateData {
 
     /** The list of channels, loaded either from offline storage or an API call.
      * Observe chatDomain.online to know if results are currently up to date
-     * @see ChatDomainImpl.connectionState
      */
     public data class Result(val channels: List<Channel>) : ChannelsStateData()
 }
