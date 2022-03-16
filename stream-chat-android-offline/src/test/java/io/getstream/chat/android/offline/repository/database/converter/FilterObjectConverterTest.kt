@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.repository.database.converter
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.offline.repository.database.converter.internal.FilterObjectConverter
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt

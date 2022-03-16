@@ -6,9 +6,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall

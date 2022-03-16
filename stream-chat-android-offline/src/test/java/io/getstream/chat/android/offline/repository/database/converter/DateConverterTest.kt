@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
+import io.getstream.chat.android.offline.repository.database.converter.internal.DateConverter
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.Test
