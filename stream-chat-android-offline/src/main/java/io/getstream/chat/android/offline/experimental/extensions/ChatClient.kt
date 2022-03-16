@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * [StateRegistry] instance that contains all state objects exposed in offline plugin.
  */
-internal val ChatClient.state: StateRegistry
+public val ChatClient.state: StateRegistry
     get() = requireNotNull(StateRegistry.get()) {
         "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
             "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"

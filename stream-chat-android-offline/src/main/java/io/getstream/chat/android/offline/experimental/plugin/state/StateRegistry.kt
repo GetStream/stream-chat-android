@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
-@InternalStreamChatApi
 /**
  * Registry of all state objects exposed in the offline plugin. This class should have only one instance for the SDK.
  *
@@ -36,26 +35,48 @@ public class StateRegistry private constructor(
     private val messageRepository: MessageRepository,
     private var latestUsers: StateFlow<Map<String, User>>,
     internal val job: Job,
-    public val scope: CoroutineScope,
+    @property:InternalStreamChatApi public val scope: CoroutineScope,
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
+    /**
+     * Returns [QueryChannelsState] associated with particular [filter] and [sort].
+     *
+     * @param filter Filter used to query channels.
+     * @param sort Sort specification used to query channels.
+     *
+     * @return [QueryChannelsState] object.
+     */
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsMutableState(filter, sort, scope, latestUsers)
         }
     }
 
+    /**
+     * Returns [ChannelState] that represents a state of particular channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     *
+     * @return [ChannelState] object.
+     */
     public fun channel(channelType: String, channelId: String): ChannelState {
         return channels.getOrPut(channelType to channelId) {
             ChannelMutableState(channelType, channelId, scope, userStateFlow, latestUsers)
         }
     }
 
-    /** Returns [ThreadState] of thread replies with parent message that has id equal to [messageId]. */
+    /**
+     * Returns [ThreadState] of thread replies with parent message that has id equal to [messageId].
+     *
+     * @param messageId Thread's parent message id.
+     *
+     * @return [ThreadState] object.
+     */
     public fun thread(messageId: String): ThreadState {
         return threads.getOrPut(messageId) {
             val (channelType, channelId) = runBlocking {
@@ -69,7 +90,9 @@ public class StateRegistry private constructor(
 
     internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
 
-    /** Clear state of all state objects. */
+    /**
+     * Clear state of all state objects.
+     */
     public fun clear() {
         job.cancelChildren()
         queryChannels.clear()
