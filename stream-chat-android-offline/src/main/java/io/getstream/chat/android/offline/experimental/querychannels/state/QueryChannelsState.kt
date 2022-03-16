@@ -4,13 +4,14 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import kotlinx.coroutines.flow.StateFlow
 
-@InternalStreamChatApi
+/**
+ * Contains a state related to a single query channels request.
+ */
 public interface QueryChannelsState {
-
+    /** If the channels need to be synced. */
     public val recoveryNeeded: StateFlow<Boolean>
     /** The filter is associated with this query channels state. */
     public val filter: FilterObject

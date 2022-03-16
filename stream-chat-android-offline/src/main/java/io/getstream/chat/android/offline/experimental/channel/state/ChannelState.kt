@@ -7,11 +7,9 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelData
 import kotlinx.coroutines.flow.StateFlow
 
-@InternalStreamChatApi
 /** State container with reactive data of a channel.*/
 public interface ChannelState {
     /** Type of this channel.*/
