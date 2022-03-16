@@ -50,11 +50,11 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param globalState Global state of OfflinePlugin. Contains information
  * such as the current user, connection state, unread counts etc.
  */
-public class MessageListViewModel @JvmOverloads constructor(
+public class MessageListViewModel constructor(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**

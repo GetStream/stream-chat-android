@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
@@ -25,7 +24,7 @@ import kotlinx.coroutines.flow.map
  * @param globalState Global state of OfflinePlugin. Contains information
  * such as the current user, connection state, unread counts etc.
  */
-public class MessageListHeaderViewModel @InternalStreamChatApi constructor(
+public class MessageListHeaderViewModel(
     cid: String,
     chatClient: ChatClient = ChatClient.instance(),
     globalState: GlobalState = chatClient.globalState,
