@@ -1,6 +1,8 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +69,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
+ * @param rippleTheme Defines the appearance for ripples.
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
@@ -83,6 +86,7 @@ public fun ChatTheme(
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
     shapes: StreamShapes = StreamShapes.defaultShapes(),
+    rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
@@ -105,6 +109,7 @@ public fun ChatTheme(
         LocalDimens provides dimens,
         LocalTypography provides typography,
         LocalShapes provides shapes,
+        LocalRippleTheme provides rippleTheme,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalReactionIconFactory provides reactionIconFactory,
@@ -112,7 +117,7 @@ public fun ChatTheme(
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current),
-        LocalMessageAlignmentProvider provides messageAlignmentProvider
+        LocalMessageAlignmentProvider provides messageAlignmentProvider,
     ) {
         content()
     }
