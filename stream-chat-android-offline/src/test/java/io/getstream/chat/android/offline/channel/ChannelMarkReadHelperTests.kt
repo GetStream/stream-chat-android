@@ -4,14 +4,14 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.internal.utils.ChannelMarkReadHelper
-import io.getstream.chat.android.offline.plugin.internal.logic.LogicRegistry
-import io.getstream.chat.android.offline.plugin.internal.logic.channel.ChannelLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi

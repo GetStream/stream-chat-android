@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.internal.extensions
 
+import io.getstream.chat.android.offline.extensions.internal.mergeReactions
 import io.getstream.chat.android.offline.randomReaction
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`

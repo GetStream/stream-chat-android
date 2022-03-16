@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.plugin.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import kotlinx.coroutines.launch
 

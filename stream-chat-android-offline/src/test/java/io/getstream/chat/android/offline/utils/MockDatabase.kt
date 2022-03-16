@@ -1,6 +1,6 @@
 package io.getstream.chat.android.offline.utils
 
-import io.getstream.chat.android.offline.internal.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 

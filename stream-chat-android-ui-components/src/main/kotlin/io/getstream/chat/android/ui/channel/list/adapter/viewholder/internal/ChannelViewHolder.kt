@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.extensions.globalState
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R

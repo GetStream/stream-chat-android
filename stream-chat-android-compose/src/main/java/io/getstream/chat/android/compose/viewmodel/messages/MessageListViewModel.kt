@@ -47,12 +47,12 @@ import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorStat
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
+import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.extensions.getRepliesAsState
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
-import io.getstream.chat.android.offline.plugin.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.offline.plugin.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.plugin.extensions.globalState
-import io.getstream.chat.android.offline.plugin.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.plugin.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job

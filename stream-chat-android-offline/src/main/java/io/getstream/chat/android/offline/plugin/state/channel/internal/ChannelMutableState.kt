@@ -9,8 +9,8 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.internal.extensions.updateUsers
-import io.getstream.chat.android.offline.internal.extensions.wasCreatedAfter
+import io.getstream.chat.android.offline.extensions.internal.updateUsers
+import io.getstream.chat.android.offline.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState

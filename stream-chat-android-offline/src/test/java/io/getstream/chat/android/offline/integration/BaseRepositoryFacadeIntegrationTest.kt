@@ -5,10 +5,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.internal.repository.RepositoryFacade
-import io.getstream.chat.android.offline.internal.repository.creation.builder.RepositoryFacadeBuilder
-import io.getstream.chat.android.offline.internal.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
+import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.After
 import org.junit.Before

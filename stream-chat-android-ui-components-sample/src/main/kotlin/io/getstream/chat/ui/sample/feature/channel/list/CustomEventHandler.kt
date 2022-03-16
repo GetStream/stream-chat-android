@@ -11,9 +11,9 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.offline.event.handler.BaseChatEventHandler
-import io.getstream.chat.android.offline.event.handler.EventHandlingResult
-import io.getstream.chat.android.offline.event.handler.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.event.handler.chat.BaseChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.StateFlow
 

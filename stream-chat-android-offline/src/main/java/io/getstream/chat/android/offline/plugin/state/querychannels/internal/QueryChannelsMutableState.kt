@@ -5,10 +5,10 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.event.handler.ChatEventHandler
-import io.getstream.chat.android.offline.event.handler.DefaultChatEventHandler
-import io.getstream.chat.android.offline.internal.extensions.updateUsers
-import io.getstream.chat.android.offline.model.internal.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.offline.extensions.internal.updateUsers
+import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope

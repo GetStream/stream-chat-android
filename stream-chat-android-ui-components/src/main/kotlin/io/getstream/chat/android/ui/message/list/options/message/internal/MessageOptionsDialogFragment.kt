@@ -18,7 +18,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.plugin.extensions.globalState
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension

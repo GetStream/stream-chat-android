@@ -6,11 +6,11 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.internal.utils.filter
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomSyncStatus
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.utils.internal.filter
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomIntBetween

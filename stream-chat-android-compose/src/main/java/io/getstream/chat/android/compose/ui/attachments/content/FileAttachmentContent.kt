@@ -35,7 +35,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.offline.plugin.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 
 /**
  * Builds a file attachment message which shows a list of files.

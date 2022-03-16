@@ -1,8 +1,8 @@
 package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.offline.event.handler.EventHandlingResult
-import io.getstream.chat.android.offline.event.handler.NonMemberChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.offline.event.handler.chat.NonMemberChatEventHandler
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMemberAddedEvent
 import io.getstream.chat.android.offline.randomMemberRemovedEvent

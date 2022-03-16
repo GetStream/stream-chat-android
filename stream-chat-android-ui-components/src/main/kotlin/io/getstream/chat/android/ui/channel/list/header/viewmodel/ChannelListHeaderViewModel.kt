@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
-import io.getstream.chat.android.offline.plugin.extensions.globalState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 
 /**

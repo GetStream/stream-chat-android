@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.internal.extensions
 
+import io.getstream.chat.android.offline.extensions.internal.updateUsers
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomUser
 import org.amshove.kluent.shouldBeEqualTo

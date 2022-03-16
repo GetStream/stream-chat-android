@@ -4,9 +4,8 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.internal.message.attachments.AttachmentUrlValidator
-import io.getstream.chat.android.offline.internal.repository.RepositoryFacade
-import io.getstream.chat.android.offline.plugin.internal.logic.channel.ChannelLogic
+import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.randomChannel
@@ -23,6 +22,7 @@ import io.getstream.chat.android.offline.randomReactionNewEvent
 import io.getstream.chat.android.offline.randomTypingStartEvent
 import io.getstream.chat.android.offline.randomTypingStopEvent
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
