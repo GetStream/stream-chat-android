@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import android.os.Build
 import android.util.Base64
 import android.util.Log
 import androidx.annotation.CheckResult
@@ -228,7 +229,7 @@ public class ChatClient internal constructor(
                 storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
             }
         }
-        logger.logI("Initialised: " + getVersion())
+        logger.logI("Initialised: " + buildSdkTrackingHeaders())
     }
 
     internal fun addPlugins(plugins: List<Plugin>) {
@@ -1600,7 +1601,20 @@ public class ChatClient internal constructor(
         extraData: Map<Any, Any> = emptyMap(),
     ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
 
-    public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+    /**
+     * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and vendor and more.
+     *
+     * @return String formatted header that contains all the information.
+     */
+    public fun buildSdkTrackingHeaders(): String {
+        val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+        val buildModel = Build.MODEL
+        val deviceManufacturer = Build.MANUFACTURER
+        val apiLevel = Build.VERSION.SDK_INT
+        val osName = "Android ${Build.VERSION.RELEASE}"
+
+        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""
+    }
 
     @CheckResult
     public fun acceptInvite(
