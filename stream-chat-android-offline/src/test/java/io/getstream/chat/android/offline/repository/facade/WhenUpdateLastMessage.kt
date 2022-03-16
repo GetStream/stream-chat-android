@@ -1,6 +1,6 @@
 package io.getstream.chat.android.offline.repository.facade
 
-import io.getstream.chat.android.offline.extensions.lastMessage
+import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi

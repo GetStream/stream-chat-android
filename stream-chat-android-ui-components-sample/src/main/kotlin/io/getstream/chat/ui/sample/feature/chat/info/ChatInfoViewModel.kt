@@ -16,10 +16,10 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
@@ -36,7 +36,7 @@ class ChatInfoViewModel(
      */
     @OptIn(InternalStreamChatApi::class)
     private val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid ?: "").asState(viewModelScope)
+        chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()
@@ -177,6 +177,14 @@ class ChatInfoViewModel(
         object MuteChannelError : ErrorEvent()
         object BlockUserError : ErrorEvent()
         object DeleteChannelError : ErrorEvent()
+    }
+
+    private companion object {
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }
 

@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
 
 class AndroidIntroduction {
 
@@ -26,9 +25,9 @@ class AndroidIntroduction {
             .logLevel(ChatLogLevel.ALL)
             .build()
         // Step 2 - Set up the domain for offline storage
-        val domain = ChatDomain.Builder(applicationContext, client)
-            // Enable offline support
-            .build()
+        // val domain = ChatDomain.Builder(applicationContext, client)
+        //     // Enable offline support
+        //     .build()
 
         // Step 2 - Authenticate and connect the user
         val user = User(
@@ -50,7 +49,7 @@ class AndroidIntroduction {
         }
     }
 
-    fun watchingAChannel(client: ChatClient, chatDomain: ChatDomain) {
+    fun watchingAChannel(client: ChatClient) {
         val channelClient = client.channel(channelType = "messaging", channelId = "travel")
 
         val extraData = mutableMapOf<String, Any>(
@@ -68,20 +67,20 @@ class AndroidIntroduction {
         }
 
         // Watching a channel's state using the offline library
-        chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    val channelController = result.data()
-
-                    // LiveData objects to observe
-                    channelController.messages
-                    channelController.reads
-                    channelController.typing
-                }
-            }
+        // chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
+        //     .enqueue { result ->
+        //         if (result.isSuccess) {
+        //             val channelController = result.data()
+        //
+        //             // LiveData objects to observe
+        //             channelController.messages
+        //             channelController.reads
+        //             channelController.typing
+        //         }
+        //     }
     }
 
-    fun sendFirstMessage(channelClient: ChannelClient, chatDomain: ChatDomain) {
+    fun sendFirstMessage(channelClient: ChannelClient) {
         val message = Message(
             text = "I’m mowing the air Rand, I’m mowing the air.",
             cid = "messaging:travel",
@@ -98,7 +97,7 @@ class AndroidIntroduction {
         }
     }
 
-    fun queryChannels(client: ChatClient, chatDomain: ChatDomain) {
+    fun queryChannels(client: ChatClient) {
         val filter = Filters.and(
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "john"),
@@ -119,20 +118,5 @@ class AndroidIntroduction {
                 // Handle result.error()
             }
         }
-
-        // Using the offline library to query channels
-        chatDomain.queryChannels(filter, sort)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    val queryChannelsController = result.data()
-
-                    // LiveData objects to observe
-                    queryChannelsController.channels
-                    queryChannelsController.loading
-                    queryChannelsController.endOfChannels
-                } else {
-                    // Handle result.error()
-                }
-            }
     }
 }

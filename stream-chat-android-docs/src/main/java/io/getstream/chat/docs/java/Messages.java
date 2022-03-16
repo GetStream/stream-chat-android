@@ -1,18 +1,12 @@
 package io.getstream.chat.docs.java;
 
 import android.content.Context;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,11 +23,6 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer;
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager;
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory;
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder;
 import io.getstream.chat.docs.java.helpers.MyFileUploader;
 
 public class Messages {
@@ -429,66 +418,6 @@ public class Messages {
                             // Handle result.error()
                         }
                     });
-        }
-    }
-
-    class CustomAttachments {
-        private class CustomAttachmentFactory implements AttachmentFactory {
-
-            private static final String MY_URL_ADDRESS = "https://myurl.com";
-
-            @Override
-            public boolean canHandle(@NonNull Message message) {
-                boolean containsMyAttachments = false;
-                for (Attachment attachment : message.getAttachments()) {
-                    if (attachment.getImageUrl().contains(MY_URL_ADDRESS)) {
-                        containsMyAttachments = true;
-                    }
-                }
-                return containsMyAttachments;
-            }
-
-            @NonNull
-            @Override
-            public InnerAttachmentViewHolder createViewHolder(@NonNull Message message,
-                                                              @Nullable MessageListListenerContainer listeners,
-                                                              @NonNull ViewGroup parent) {
-                // put your custom attachment view creation here
-                return new CustomInnerAttachmentsViewHolder(new TextView(parent.getContext()), listeners);
-            }
-        }
-
-        private class CustomInnerAttachmentsViewHolder extends InnerAttachmentViewHolder {
-
-            private Message message;
-            private TextView textView;
-
-            public CustomInnerAttachmentsViewHolder(@NonNull TextView textView,
-                                               MessageListListenerContainer listeners) {
-                super(textView);
-                this.textView = textView;
-
-                textView.setOnClickListener(v -> {
-                    Attachment attachment = message.getAttachments().iterator().next();
-                    listeners.getAttachmentClickListener().onAttachmentClick(message, attachment);
-                });
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull Message message) {
-                this.message = message;
-
-                Attachment attachment = message.getAttachments().iterator().next();
-                textView.setText("Image URL: " + attachment.getImageUrl());
-            }
-        }
-
-        private MessageListView messageListView;
-
-        public void setAttachmentFactory() {
-            AttachmentFactory customAttachmentFactory = new CustomAttachmentFactory();
-            AttachmentFactoryManager attachmentFactoryManager = new AttachmentFactoryManager(Collections.singletonList(customAttachmentFactory));
-            messageListView.setAttachmentFactoryManager(attachmentFactoryManager);
         }
     }
 }

@@ -15,6 +15,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun addSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun appSettings ()Lio/getstream/chat/android/client/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
+	public final fun buildSdkTrackingHeaders ()Ljava/lang/String;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun connectAnonymousUser ()Lio/getstream/chat/android/client/call/Call;
@@ -53,10 +54,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
-	public final fun getRetryPolicy ()Lio/getstream/chat/android/client/utils/retry/RetryPolicy;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
-	public final fun getVersion ()Ljava/lang/String;
 	public static final fun handlePushMessage (Lio/getstream/chat/android/client/models/PushMessage;)V
 	public final fun hideChannel (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun hideChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -148,7 +147,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun updateChannelPartial (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun updateChannelPartial$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public final fun updateMessageInternal (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUsers (Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 }
@@ -166,11 +164,11 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public static synthetic fun notifications$default (Lio/getstream/chat/android/client/ChatClient$Builder;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/chat/android/client/utils/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withPlugin (Lio/getstream/chat/android/client/experimental/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public final fun build ()Lio/getstream/chat/android/client/ChatClient;
-	protected final fun getErrorHandlerFactories ()Ljava/util/List;
 	protected final fun getPluginFactories ()Ljava/util/List;
 }
 
@@ -1873,12 +1871,12 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler : java/lang/Comparable {
-	public static final field Companion Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion;
-	public static final field DEFAULT_PRIORITY I
-	public abstract fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
-	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getPriority ()I
+public final class io/getstream/chat/android/client/experimental/errorhandler/CreateChannelErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/CreateChannelErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+}
+
+public final class io/getstream/chat/android/client/experimental/errorhandler/DeleteReactionErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
 public final class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion {
@@ -1889,40 +1887,12 @@ public final class io/getstream/chat/android/client/experimental/errorhandler/Er
 	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/factory/ErrorHandlerFactory {
-	public abstract fun create ()Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;
+public final class io/getstream/chat/android/client/experimental/errorhandler/QueryMembersErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/QueryMembersErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/CreateChannelErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
-	public abstract fun onCreateChannelError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
-}
-
-public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/CreateChannelErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/CreateChannelErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
-}
-
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
-	public abstract fun onDeleteReactionError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
-}
-
-public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
-}
-
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/QueryMembersErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
-	public abstract fun onQueryMembersError (Lio/getstream/chat/android/client/call/Call;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
-}
-
-public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/QueryMembersErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/QueryMembersErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
-}
-
-public abstract interface class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler : io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler {
-	public abstract fun onSendReactionError (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/ReturnOnErrorCall;
-}
-
-public final class io/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/listeners/SendReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
+public final class io/getstream/chat/android/client/experimental/errorhandler/SendReactionErrorHandler$DefaultImpls {
+	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/SendReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin {
@@ -3163,7 +3133,6 @@ public final class io/getstream/chat/android/client/setup/InitializationCoordina
 	public static final field Companion Lio/getstream/chat/android/client/setup/InitializationCoordinator$Companion;
 	public final fun addUserConnectedListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun addUserDisconnectedListener (Lkotlin/jvm/functions/Function1;)V
-	public final fun addUserSetListener (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {

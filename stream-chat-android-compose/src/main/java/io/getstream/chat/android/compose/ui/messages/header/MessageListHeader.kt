@@ -41,7 +41,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.

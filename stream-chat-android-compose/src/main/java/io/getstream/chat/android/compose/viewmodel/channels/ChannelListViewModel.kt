@@ -20,12 +20,11 @@ import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
-import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
-import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.queryChannelsAsState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -62,7 +61,7 @@ public class ChannelListViewModel(
 
     /**
      * The current state of the search input. When changed, it emits a new value in a flow, which
-     * queries for a new [QueryChannelsController] and loads new data.
+     * queries and loads new data.
      */
     private val searchQuery = MutableStateFlow("")
 
@@ -138,8 +137,8 @@ public class ChannelListViewModel(
                     messageLimit = messageLimit,
                     memberLimit = memberLimit,
                 )
-                queryChannelsState =
-                    chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+
+                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
                 queryChannelsState?.let {
                     observeChannels(it, searchQuery = query)
                 }

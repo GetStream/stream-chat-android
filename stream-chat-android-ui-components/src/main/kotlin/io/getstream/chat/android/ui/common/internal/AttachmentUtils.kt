@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.common.internal
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import com.getstream.sdk.chat.StreamFileUtil
+import com.getstream.sdk.chat.disposable.Disposable
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
@@ -15,8 +16,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 
 private val FILE_THUMB_TRANSFORMATION = RoundedCorners(3.dpToPxPrecise())
 
-internal fun ImageView.loadAttachmentThumb(attachment: Attachment) {
-    with(attachment) {
+internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
+    return with(attachment) {
         when {
             type == ModelType.attach_video && !thumbUrl.isNullOrBlank() ->
                 load(data = thumbUrl, transformation = FILE_THUMB_TRANSFORMATION)
@@ -41,8 +42,8 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment) {
     }
 }
 
-internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData) {
-    with(attachment) {
+internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData): Disposable {
+    return with(attachment) {
         when (type) {
             ModelType.attach_video -> loadVideoThumbnail(
                 uri = uri,

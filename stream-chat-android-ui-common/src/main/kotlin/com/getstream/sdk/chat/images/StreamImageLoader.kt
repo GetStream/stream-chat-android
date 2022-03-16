@@ -7,6 +7,7 @@ import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
+import com.getstream.sdk.chat.disposable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
@@ -24,7 +25,7 @@ public sealed interface StreamImageLoader {
         transformation: ImageTransformation = ImageTransformation.None,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
-    )
+    ): Disposable
 
     public fun load(
         target: ImageView,
@@ -33,7 +34,7 @@ public sealed interface StreamImageLoader {
         transformation: ImageTransformation = ImageTransformation.None,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
-    )
+    ): Disposable
 
     public suspend fun loadAndResize(
         target: ImageView,
@@ -51,7 +52,7 @@ public sealed interface StreamImageLoader {
         transformation: ImageTransformation = ImageTransformation.None,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
-    )
+    ): Disposable
 
     public suspend fun loadAsBitmap(
         context: Context,

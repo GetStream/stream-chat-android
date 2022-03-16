@@ -2,6 +2,7 @@
 <!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fixed memory leaks related to image loading. [#2979](https://github.com/GetStream/stream-chat-android/pull/2979)
 
 ### ⬆️ Improved
 - Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
@@ -59,6 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
 
 ### ⬆️ Improved
 
@@ -82,6 +84,7 @@
 - Removed `ChatDomain` from all `ViewModels`. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 - Removed all uses of `ChatDomain` from all `Views` and functions that relied on it. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 - Updated the structure of UI components documentation. [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/). [#3186](https://github.com/GetStream/stream-chat-android/pull/3186)
+- Updated the code snippets from the UI Components documentation in the `stream-chat-android-docs` module. [3205](https://github.com/GetStream/stream-chat-android/pull/3205)
 
 ### ❌ Removed
 - All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
@@ -89,6 +92,8 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
+- Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
+- Fixed ripple color in dark mode. [#3211](https://github.com/GetStream/stream-chat-android/pull/3211)
 
 ### ⬆️ Improved
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)

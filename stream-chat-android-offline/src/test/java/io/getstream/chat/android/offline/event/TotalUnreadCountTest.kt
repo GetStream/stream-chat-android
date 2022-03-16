@@ -2,16 +2,12 @@ package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.experimental.global.GlobalMutableState
-import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
@@ -40,9 +36,8 @@ internal class TotalUnreadCountTest {
     @Test
     fun `When new message event is received for channel with read capability Should properly update total unread counts`() =
         testCoroutines.scope.runBlockingTest {
-            val chatDomain: ChatDomainImpl = mock()
             val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-            val sut = Fixture(chatDomain, testCoroutines.scope, data.user1, globalMutableState)
+            val sut = Fixture(globalMutableState)
                 .givenMockedRepositories()
                 .givenChannel(channelWithReadCapability)
                 .get()
@@ -62,9 +57,8 @@ internal class TotalUnreadCountTest {
     @Test
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`() =
         testCoroutines.scope.runBlockingTest {
-            val chatDomain: ChatDomainImpl = mock()
             val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-            val sut = Fixture(chatDomain, testCoroutines.scope, data.user1, globalMutableState)
+            val sut = Fixture(globalMutableState)
                 .givenMockedRepositories()
                 .givenChannel(channelWithReadCapability)
                 .get()
@@ -83,8 +77,7 @@ internal class TotalUnreadCountTest {
     @Test
     fun `when connected event is received, current user should be updated`() =
         testCoroutines.scope.runBlockingTest {
-            val chatDomain: ChatDomainImpl = mock()
-            val sut = Fixture(chatDomain, testCoroutines.scope, data.user1, globalMutableState)
+            val sut = Fixture(globalMutableState)
                 .givenMockedRepositories()
                 .get()
 
@@ -97,12 +90,7 @@ internal class TotalUnreadCountTest {
             globalMutableState._user.value `should be equal to` userWithUnread
         }
 
-    private class Fixture(
-        chatDomainImpl: ChatDomainImpl,
-        scope: CoroutineScope,
-        currentUser: User = mock(),
-        globalMutableState: GlobalMutableState
-    ) {
+    private class Fixture(globalMutableState: GlobalMutableState) {
         private val repos: RepositoryFacade = mock()
         private val eventHandlerImpl =
             EventHandlerImpl(
@@ -114,13 +102,6 @@ internal class TotalUnreadCountTest {
                 repos = repos,
                 syncManager = mock()
             )
-
-        init {
-            whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
-            whenever(chatDomainImpl.job) doReturn Job()
-            whenever(chatDomainImpl.scope) doReturn scope
-            whenever(chatDomainImpl.repos) doReturn repos
-        }
 
         fun givenMockedRepositories(): Fixture {
             runBlocking {

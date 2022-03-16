@@ -22,13 +22,13 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
-import io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData
-import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
-import io.getstream.chat.android.offline.querychannels.ChatEventHandler
-import io.getstream.chat.android.offline.querychannels.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.queryChannelsAsState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.map
@@ -146,7 +146,7 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-        queryChannelsState = chatClient.asReferenced().queryChannels(queryChannelsRequest).asState(viewModelScope)
+        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
         queryChannelsState?.let { queryChannelsState ->
             queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
             stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->

@@ -18,11 +18,11 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
-import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.experimental.extensions.globalState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.io.File
@@ -46,7 +46,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.asReferenced().watchChannel(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT).asState(viewModelScope)
+        chatClient.watchChannelAsState(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT, viewModelScope)
 
     /**
      * A list of [Channel] members.
