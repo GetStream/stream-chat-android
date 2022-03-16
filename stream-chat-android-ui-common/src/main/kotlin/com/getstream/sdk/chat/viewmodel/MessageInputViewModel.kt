@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -46,7 +45,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT, viewModelScope)
+        chatClient.watchChannelAsState(cid, 0, viewModelScope)
 
     /**
      * A list of [Channel] members.
