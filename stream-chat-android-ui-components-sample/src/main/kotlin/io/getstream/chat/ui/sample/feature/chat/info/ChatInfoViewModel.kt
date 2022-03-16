@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
 import io.getstream.chat.android.offline.experimental.extensions.globalState
@@ -23,7 +22,6 @@ import io.getstream.chat.android.offline.experimental.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
-@OptIn(InternalStreamChatApi::class)
 class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
@@ -34,7 +32,6 @@ class ChatInfoViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    @OptIn(InternalStreamChatApi::class)
     private val channelState: ChannelState =
         chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
