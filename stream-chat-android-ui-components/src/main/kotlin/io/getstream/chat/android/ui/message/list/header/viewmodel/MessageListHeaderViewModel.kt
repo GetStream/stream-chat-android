@@ -34,7 +34,11 @@ public class MessageListHeaderViewModel(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, 0, viewModelScope)
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            coroutineScope = viewModelScope
+        )
 
     /**
      * The current [Channel] created from [ChannelState]. It emits new data either when
@@ -92,5 +96,13 @@ public class MessageListHeaderViewModel(
      */
     public fun resetThread() {
         _activeThread.postValue(null)
+    }
+
+    private companion object {
+
+        /**
+         * The default limit for messages that will be requested.
+         */
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 0
     }
 }

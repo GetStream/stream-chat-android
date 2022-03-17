@@ -61,7 +61,10 @@ public class MessageComposerController(
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: ChannelState = chatClient.watchChannelAsState(channelId, 0)
+    public val channelState: ChannelState = chatClient.watchChannelAsState(
+        cid = channelId,
+        messageLimit = DEFAULT_MESSAGE_LIMIT
+    )
 
     /**
      * Full message composer state holding all the required information.
@@ -616,5 +619,10 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete command.
          */
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 0
     }
 }
