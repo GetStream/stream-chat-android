@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -210,10 +210,10 @@ internal fun ImageAttachmentViewMoreOverlay(
 ) {
     val remainingImagesCount = imageCount - (imageIndex + 1)
 
-    Surface(
+    Box(
         modifier = Modifier
-            .fillMaxSize(),
-        color = ChatTheme.colors.overlay
+            .fillMaxSize()
+            .background(color = ChatTheme.colors.overlay),
     ) {
         Text(
             modifier = modifier
