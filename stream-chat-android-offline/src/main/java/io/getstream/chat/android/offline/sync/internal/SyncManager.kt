@@ -241,20 +241,7 @@ internal class SyncManager(
     }
 
     private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val (messages, nonCorrectStateMessages) = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED).partition {
-            it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
-        }
-
-        if (nonCorrectStateMessages.isNotEmpty()) {
-            val message = nonCorrectStateMessages.first()
-            val attachmentUploadState =
-                message.attachments.firstOrNull { it.uploadState != Attachment.UploadState.Success }
-                    ?: Attachment.UploadState.Success
-            logger.logE(
-                "Logical error. Messages with non-synchronized attachments should have another sync status!" +
-                    "\nMessage has ${message.syncStatus} syncStatus, while attachment has $attachmentUploadState upload state"
-            )
-        }
+        val messages = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED)
 
         messages.forEach { message ->
             val channelClient = chatClient.channel(message.cid)
