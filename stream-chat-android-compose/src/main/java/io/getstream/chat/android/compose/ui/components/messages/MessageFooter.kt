@@ -50,7 +50,7 @@ public fun MessageFooter(messageItem: MessageItemState) {
                 Text(
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .weight(1f),
+                        .weight(1f, fill = false),
                     text = message.user.name,
                     style = ChatTheme.typography.footnote,
                     overflow = TextOverflow.Ellipsis,
