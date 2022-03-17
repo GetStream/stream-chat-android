@@ -12,6 +12,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -50,6 +51,12 @@ public fun MessageFooter(messageItem: MessageItemState) {
                     text = message.user.name,
                     style = ChatTheme.typography.footnote,
                     color = ChatTheme.colors.textLowEmphasis
+                )
+            } else {
+                MessageReadStatusIcon(
+                    modifier = Modifier.padding(end = 4.dp),
+                    message = messageItem.message,
+                    isMessageRead = messageItem.isMessageRead
                 )
             }
 
