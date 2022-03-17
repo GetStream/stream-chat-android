@@ -201,6 +201,9 @@ public class MessageListViewModel @JvmOverloads constructor(
      * [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
      */
     private fun initWithOfflinePlugin() {
+        chatClient.channel(cid).stopTyping(parentId = null)
+        chatClient.channel(cid).keystroke(parentId = null)
+
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
         val channelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGES_LIMIT, viewModelScope)

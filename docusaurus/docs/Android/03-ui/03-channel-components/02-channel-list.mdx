@@ -36,7 +36,7 @@ val viewModel: ChannelListViewModel by viewModels {
     ChannelListViewModelFactory(
         filter = Filters.and(
             Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)), 
+            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
         ),
         sort = ChannelListViewModel.DEFAULT_SORT,
         limit = 30,
