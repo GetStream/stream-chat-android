@@ -40,6 +40,7 @@ public data class SystemMessageState(val message: Message) : MessageListItemStat
  * @param focusState The focus state of the message.
  * @param isInThread If the message is being displayed in a thread.
  * @param currentUser The currently logged in user.
+ * @param isMessageRead If the message is read by any member.
  */
 public data class MessageItemState(
     val message: Message,
@@ -49,4 +50,5 @@ public data class MessageItemState(
     val focusState: MessageFocusState? = null,
     val isInThread: Boolean = false,
     val currentUser: User? = null,
+    val isMessageRead: Boolean = false,
 ) : MessageListItemState()

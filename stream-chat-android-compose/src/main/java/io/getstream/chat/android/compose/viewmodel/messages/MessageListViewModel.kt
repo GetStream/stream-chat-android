@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -210,30 +211,30 @@ public class MessageListViewModel(
      */
     private fun observeChannel() {
         viewModelScope.launch {
-            channelState.messagesState
-                .combine(user) { state, user ->
-                    when (state) {
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
-                        -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
+            combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
+                when (state) {
+                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
+                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
+                    -> messagesState.copy(isLoading = true)
+                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
+                        isLoading = false,
+                        messageItems = emptyList()
+                    )
+                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
+                        messagesState.copy(
                             isLoading = false,
-                            messageItems = emptyList()
+                            messageItems = groupMessages(
+                                messages = filterMessagesToShow(state.messages),
+                                isInThread = false,
+                                reads = reads,
+                            ),
+                            isLoadingMore = false,
+                            endOfMessages = channelState.endOfOlderMessages.value,
+                            currentUser = user
                         )
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
-                            messagesState.copy(
-                                isLoading = false,
-                                messageItems = groupMessages(
-                                    messages = filterMessagesToShow(state.messages),
-                                    isInThread = false
-                                ),
-                                isLoadingMore = false,
-                                endOfMessages = channelState.endOfOlderMessages.value,
-                                currentUser = user
-                            )
-                        }
                     }
                 }
+            }
                 .catch {
                     it.cause?.printStackTrace()
                     showEmptyState()
@@ -559,7 +560,12 @@ public class MessageListViewModel(
     private fun loadThread(parentMessage: Message) {
         val threadState = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGE_LIMIT)
         messageMode = MessageMode.MessageThread(parentMessage, threadState)
-        observeThreadMessages(threadState.parentId, threadState.messages, threadState.endOfOlderMessages)
+        observeThreadMessages(
+            threadId = threadState.parentId,
+            messages = threadState.messages,
+            endOfOlderMessages = threadState.endOfOlderMessages,
+            reads = channelState.reads
+        )
     }
 
     /**
@@ -572,27 +578,29 @@ public class MessageListViewModel(
      * @param threadId The message id with the thread we want to observe.
      * @param messages State flow source of thread messages.
      * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
+     * @param reads State flow source of read states.
      */
     private fun observeThreadMessages(
         threadId: String,
         messages: StateFlow<List<Message>>,
         endOfOlderMessages: StateFlow<Boolean>,
+        reads: StateFlow<List<ChannelUserRead>>,
     ) {
         threadJob = viewModelScope.launch {
-            messages.combine(user) { messages, user -> messages to user }
-                .combine(endOfOlderMessages) { (messages, user), endOfOlderMessages ->
-                    threadMessagesState.copy(
-                        isLoading = false,
-                        messageItems = groupMessages(
-                            messages = filterMessagesToShow(messages),
-                            isInThread = true
-                        ),
-                        isLoadingMore = false,
-                        endOfMessages = endOfOlderMessages,
-                        currentUser = user,
-                        parentMessageId = threadId
-                    )
-                }.collect { newState -> threadMessagesState = newState }
+            combine(user, endOfOlderMessages, messages, reads) { user, endOfOlderMessages, messages, reads ->
+                threadMessagesState.copy(
+                    isLoading = false,
+                    messageItems = groupMessages(
+                        messages = filterMessagesToShow(messages),
+                        isInThread = true,
+                        reads = reads,
+                    ),
+                    isLoadingMore = false,
+                    endOfMessages = endOfOlderMessages,
+                    currentUser = user,
+                    parentMessageId = threadId
+                )
+            }.collect { newState -> threadMessagesState = newState }
         }
     }
 
@@ -603,12 +611,22 @@ public class MessageListViewModel(
      *
      * @param messages The messages we need to group.
      * @param isInThread If we are in inside a thread.
+     * @param reads The list of read states.
+     *
      * @return A list of [MessageListItemState]s, each containing a position.
      */
-    private fun groupMessages(messages: List<Message>, isInThread: Boolean): List<MessageListItemState> {
+    private fun groupMessages(
+        messages: List<Message>,
+        isInThread: Boolean,
+        reads: List<ChannelUserRead>,
+    ): List<MessageListItemState> {
         val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
         val groupedMessages = mutableListOf<MessageListItemState>()
+        val lastRead = reads
+            .filter { it.user.id != currentUser?.id }
+            .mapNotNull { it.lastRead }
+            .maxOrNull()
 
         messages.forEachIndexed { index, message ->
             val user = message.user
@@ -635,6 +653,10 @@ public class MessageListViewModel(
             if (message.isSystem() || message.isError()) {
                 groupedMessages.add(SystemMessageState(message = message))
             } else {
+                val isMessageRead = message.createdAt
+                    ?.let { lastRead != null && it <= lastRead }
+                    ?: false
+
                 groupedMessages.add(
                     MessageItemState(
                         message = message,
@@ -642,7 +664,8 @@ public class MessageListViewModel(
                         groupPosition = position,
                         parentMessageId = parentMessageId,
                         isMine = user.id == currentUser?.id,
-                        isInThread = isInThread
+                        isInThread = isInThread,
+                        isMessageRead = isMessageRead
                     )
                 )
             }
