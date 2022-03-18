@@ -33,15 +33,16 @@ private const val CHANNEL_TYPE = "messaging"
 private const val CHANNEL_ID = "CID"
 private const val CHANNEL_NAME = "channel"
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageListHeaderViewModelTest {
 
-    private val membersMock = MutableStateFlow(createMembers())
-    private val channelDataMock = MutableStateFlow(ChannelData(Channel()))
+    private val membersStateFlow = MutableStateFlow(createMembers())
+    private val channelDataStateFlow = MutableStateFlow(ChannelData(Channel()))
 
     private val channelState: ChannelState = spy {
-        whenever(it.members).doAnswer { membersMock }
-        whenever(it.channelData).doAnswer { channelDataMock }
+        whenever(it.members).doAnswer { membersStateFlow }
+        whenever(it.channelData).doAnswer { channelDataStateFlow }
         whenever(it.toChannel()).doAnswer { returnChannel() }
     }
 
@@ -70,10 +71,10 @@ internal class MessageListHeaderViewModelTest {
         }
 
         val memberList = createMembers { createMember(User(name = "user")) }
-        membersMock.emit(memberList)
+        membersStateFlow.emit(memberList)
         advanceUntilIdle()
 
-        val expectedValue = channelDataMock.value
+        val expectedValue = channelDataStateFlow.value
             .toChannel()
             .apply {
                 members = memberList
@@ -95,20 +96,20 @@ internal class MessageListHeaderViewModelTest {
 
         val channel = Channel(cid = CID, id = CHANNEL_ID, type = CHANNEL_TYPE, name = CHANNEL_NAME)
         val channelData = ChannelData(channel)
-        channelDataMock.emit(channelData)
+        channelDataStateFlow.emit(channelData)
         advanceUntilIdle()
 
         val expectedValue = channel.apply {
-            members = membersMock.value
+            members = membersStateFlow.value
         }
 
         assertEquals(actual = result, expected = expectedValue)
     }
 
     private fun returnChannel(): Channel {
-        return channelDataMock.value
+        return channelDataStateFlow.value
             .toChannel()
-            .apply { members = membersMock.value }
+            .apply { members = membersStateFlow.value }
     }
 
     private fun ChannelData.toChannel(
