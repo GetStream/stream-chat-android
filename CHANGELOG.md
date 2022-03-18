@@ -88,6 +88,7 @@
 
 ### ❌ Removed
 - All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
+- Removed "Pin message", "Reply", "Thread reply" message actions for messages that are not synced. [#3226](https://github.com/GetStream/stream-chat-android/pull/3226)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -114,6 +115,7 @@
 
 ### ❌ Removed
 - Removed all use of `ChatDomain` inside the SDK. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
+- Removed "Pin message", "Reply", "Thread reply" message actions for messages that are not synced. [#3226](https://github.com/GetStream/stream-chat-android/pull/3226)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
