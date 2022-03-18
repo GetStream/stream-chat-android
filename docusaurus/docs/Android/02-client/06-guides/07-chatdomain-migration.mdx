@@ -44,7 +44,7 @@ chatDomain.sendMessage(message).enqueue { result ->
 ```
 
 In the new approach, all the operations should be performed using the `ChatClient` so you don't need to bother yourself whether to use `ChatDomain` or `ChatClient`.
-You can use the snippet below to send a message using the new approach:
+You can use the snippet below to send a message:
 
 ```kotlin
 val message = Message(cid = cid, text = messageText)
