@@ -63,7 +63,7 @@ class GroupChatInfoAddUsersViewModel(
 
     private fun addMember(user: User) {
         viewModelScope.launch {
-            val response = channelClient.addMembers(user.id).await()
+            val response = channelClient.addMembers(listOf(user.id)).await()
             if (response.isSuccess) {
                 _userAddedState.value = true
             } else {

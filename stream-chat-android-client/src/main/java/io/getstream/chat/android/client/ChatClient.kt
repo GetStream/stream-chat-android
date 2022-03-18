@@ -1646,35 +1646,46 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
+    /**
+     * Adds members to a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of the member ids to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
     @CheckResult
     public fun addMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        memberIds: List<String>,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
             channelId,
-            members
+            memberIds,
         )
     }
 
     /**
-     * Method to remove members of a given channel.
+     * Removes members from a given channel.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param members The list of the members to be removed.
+     * @param memberIds The list of the member ids to be removed.
+     *
+     * @return Executable async [Call] responsible for removing the members.
      */
     @CheckResult
     public fun removeMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        memberIds: List<String>,
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
-        members
+        memberIds,
     )
 
     /**

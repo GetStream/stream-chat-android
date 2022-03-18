@@ -110,7 +110,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     private fun removeFromChannel() {
         viewModelScope.launch {
-            val result = chatClient.channel(cid).removeMembers(memberId).await()
+            val result = chatClient.channel(cid).removeMembers(listOf(memberId)).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {

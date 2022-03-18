@@ -133,6 +133,30 @@ ChatClient.instance().updateMessage(messageToUpdate).enqueue { result ->
 }
 ```
 
+and `leaveChannel` was replaced by `removeMembers`:
+
+```kotlin
+// Old approach
+ChatDomain.instance().leaveChannel(cid).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+
+// New approach
+chatClient.getCurrentUser()?.let { currentUser ->
+    ChatClient.instance().channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
+        if (result.isSuccess) {
+            // Handle success
+        } else {
+            // Handle error
+        }
+    }
+}
+```
+
 The same applies to the method's parameters as some of them were changed.
 [Here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/ChatClient.kt) you can find the list of available methods.
 

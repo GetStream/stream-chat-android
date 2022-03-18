@@ -351,7 +351,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             val channelClient = client.channel("messaging", "general")
 
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers("thierry", "josh").enqueue { result ->
+            channelClient.addMembers(listOf("thierry", "josh")).enqueue { result ->
                 if (result.isSuccess) {
                     val channel: Channel = result.data()
                 } else {
@@ -360,7 +360,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             }
 
             // Remove member with id "tommaso"
-            channelClient.removeMembers("tommaso").enqueue { result ->
+            channelClient.removeMembers(listOf("tommaso")).enqueue { result ->
                 if (result.isSuccess) {
                     val channel: Channel = result.data()
                 } else {
