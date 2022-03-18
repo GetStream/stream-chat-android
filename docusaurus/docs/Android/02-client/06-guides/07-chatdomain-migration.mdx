@@ -7,7 +7,7 @@ The guide will help you with migrating from version `4.X.X` to `5.X.X`.
 
 ### Initialization
 
-Compared to `ChatDomain`, which was a standalone singleton with its own API, the `OfflinePlugin` is a plugin that should be provided to the `ChatClient.Builder`:
+Compared to `ChatDomain`, which was a standalone singleton with its own API, `OfflinePlugin` is a plugin that should be provided to the `ChatClient.Builder`:
 
 ```kotlin
 val offlinePluginFactory = StreamOfflinePluginFactory(
