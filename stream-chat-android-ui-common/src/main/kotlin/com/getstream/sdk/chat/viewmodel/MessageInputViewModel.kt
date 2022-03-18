@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -46,7 +45,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, MessageListViewModel.DEFAULT_MESSAGES_LIMIT, viewModelScope)
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            coroutineScope = viewModelScope
+        )
 
     /**
      * A list of [Channel] members.
@@ -309,5 +312,13 @@ public class MessageInputViewModel @JvmOverloads constructor(
         if (repliedMessage.value != null) {
             ChatClient.instance().setMessageForReply(cid, null).enqueue()
         }
+    }
+
+    private companion object {
+
+        /**
+         * The default limit for messages that will be requested.
+         */
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 0
     }
 }

@@ -26,7 +26,11 @@ public class TypingIndicatorViewModel(
      * Holds information about the current channel and is actively updated.
      */
     public val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            coroutineScope = viewModelScope
+        )
 
     /**
      * A list of users who are currently typing.
@@ -39,8 +43,8 @@ public class TypingIndicatorViewModel(
     private companion object {
 
         /**
-         * The default limit for messages count in requests.
+         * The default limit for messages that will be requested.
          */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 0
     }
 }

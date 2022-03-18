@@ -31,7 +31,11 @@ internal class ChannelActionsViewModel(
      * Holds information about the current channel and is actively updated.
      */
     val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = DEFAULT_MESSAGE_LIMIT,
+            coroutineScope = viewModelScope
+        )
 
     /**
      * The initial empty state.
@@ -125,6 +129,6 @@ internal class ChannelActionsViewModel(
         /**
          * The default limit for messages count in requests.
          */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 0
     }
 }
