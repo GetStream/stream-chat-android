@@ -17,7 +17,7 @@ val message = Message(
     text = "Look at this attachment!",
     attachments = mutableListOf(attachment),
 )
-ChatDomain.instance().sendMessage(message).enqueue { result ->
+ChatClient.instance().sendMessage(channelType = "messaging", channelId = "general", message = message).enqueue { result ->
     if (result.isSuccess) {
         // Use result.data()
     } else {
