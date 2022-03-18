@@ -48,7 +48,7 @@ val channelState = chatClient.state.channel(channelType = "messaging", channelId
 val threadState = chatClient.state.thread(messageId = "parentMessageId")
 
 // Gives you access to GlobalState object
-chatClient.globalState
+val globalState = chatClient.globalState
 ```
 
 :::warning
