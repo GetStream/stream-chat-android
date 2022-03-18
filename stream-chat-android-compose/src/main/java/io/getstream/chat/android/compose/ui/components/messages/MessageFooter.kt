@@ -7,11 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -46,10 +48,20 @@ public fun MessageFooter(messageItem: MessageItemState) {
         ) {
             if (!messageItem.isMine) {
                 Text(
-                    modifier = Modifier.padding(end = 8.dp),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .weight(1f, fill = false),
                     text = message.user.name,
                     style = ChatTheme.typography.footnote,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                     color = ChatTheme.colors.textLowEmphasis
+                )
+            } else {
+                MessageReadStatusIcon(
+                    modifier = Modifier.padding(end = 4.dp),
+                    message = messageItem.message,
+                    isMessageRead = messageItem.isMessageRead
                 )
             }
 

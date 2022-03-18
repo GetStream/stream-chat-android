@@ -1346,17 +1346,16 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return queryChannelsPostponeHelper.postponeQueryChannels {
-            val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
 
+        return queryChannelsPostponeHelper.postponeQueryChannels {
             api.queryChannels(request)
-                .doOnStart(scope) {
-                    relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
-                }
-                .doOnResult(scope) { result ->
-                    relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
-                }
-                .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+        }.doOnStart(scope) {
+            relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+        }.doOnResult(scope) { result ->
+            relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
+        }.precondition(relevantPlugins) {
+            onQueryChannelsPrecondition(request)
         }
     }
 
