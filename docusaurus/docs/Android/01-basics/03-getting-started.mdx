@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-### Adding an Offline Plugin
+### Adding the Offline Plugin
 
 If you want to have offline support or **use the UI Components package**, you'll need to initialize the `OfflinePlugin` class and add it to the `ChatClient.Builder`. You can skip this initialization step if you're only using the low-level client.
 
@@ -47,9 +47,13 @@ The initialization should be done using `StreamOfflinePluginFactory`:
 ```kotlin
 val offlinePluginFactory = StreamOfflinePluginFactory(
     config = Config(
+        // Enables the background sync which is performed to sync user actions done without the Internet connection.
         backgroundSyncEnabled = true,
+        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
         userPresence = true,
+        // Enables using the database as an internal caching mechanism.
         persistenceEnabled = true,
+        // An enumeration of various network types used as a constraint inside upload attachments worker.
         uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
     ),
     appContext = context,

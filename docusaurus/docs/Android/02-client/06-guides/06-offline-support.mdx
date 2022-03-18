@@ -1,25 +1,39 @@
 # Offline Support
 
 The offline library provides a caching mechanism applied automatically to some of the `ChatClient` functions as side effects.
-The offline results, as well as online results, are being exposed through a `StateFlow` objects that can be accessed using state related objects.
-
-When using the offline library, you first have to provide the `OfflinePlugin` to `ChatClient` as described on the [Getting Started](../../01-basics/03-getting-started.mdx#adding-an-offline-plugin) page.
+The offline results, as well as online results, are being exposed through `StateFlow` objects that can be accessed using state-related objects.
 
 ### Configuration
 
-You can configure some of the `OfflinePlugin` options using the `Config` class provided to the `StreamOfflinePluginFactory`. You can use following properties to:
-- `backgroundSyncEnabled` - Enables the background sync which is performed to sync user actions, such as sending the message,  performed without an active Internet connection.
+When using the offline library, you first have to provide the `OfflinePlugin` to `ChatClient` as described on the [Getting Started](../../01-basics/03-getting-started.mdx#adding-an-offline-plugin) page:
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(
+    config = Config(
+        backgroundSyncEnabled = true,
+        userPresence = true,
+        persistenceEnabled = true,
+        uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    ),
+    appContext = context,
+)
+
+ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
+```
+
+You can configure some of the `OfflinePlugin` options using the `Config` class provided to the `StreamOfflinePluginFactory`. You can use the following properties:
+- `backgroundSyncEnabled` - Enables the background sync which is performed to sync user actions, such as sending the message, done without an active Internet connection.
 - `userPresence` - Enables the ability to receive information about user activity such as last active date and if they are online right now.
-- `persistenceEnabled` - Enables using the database as an internal caching mechanism. You can disable it if you want to have an access to the `StateFlows` but you only want to keep the data in the memory.
-- `uploadAttachmentsNetworkType` - An enumeration of various network types used as a constraint inside upload attachments worker. Upload attachments might be a heavy work so we allow to restrict whether the job can be performed.
+- `persistenceEnabled` - Enables using the database as an internal caching mechanism. You can disable it if you want to have access to the `StateFlows` but you only want to keep the data in the memory.
+- `uploadAttachmentsNetworkType` - An enumeration of various network types used as a constraint inside upload attachments worker. Upload attachments might be heavy work so we allow restricting whether the job can be performed.
 
 ### State
 
-The offline library gives you access to a few objects responsible for exposing the state to particular situation:
+The offline library gives you access to a few objects responsible for exposing the state to a particular situation:
 - [`QueryChannelsState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState.kt) contains state related to a single query channels request. You can use it to collect information after performing the query channels request.
 - [`ChannelState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/channel/ChannelState.kt) contains state related to a single channel. You can use it to access channel related data after performing a watch channel request.
 - [`ThreadState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState.kt) contains state for a single thread within the channel.
-- [`GlobalState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/global/GlobalState.kt) contains a set of global information for the current user such as connection state, mutes, unread counts, etc.
+- [`GlobalState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/global/GlobalState.kt) contains global information for the current user such as connection state, mutes, unread counts, etc.
 
 You can access the objects mentioned above like this:
 
@@ -59,4 +73,4 @@ val threadState = chatClient.getRepliesAsState(messageId = "messaging:sampleId",
 The offline library allows you to perform the following actions without the Internet connection:
 - Creating a channel
 - Sending, updating and deleting a message
-- Sending and deleting reaction
+- Sending and deleting reactions
