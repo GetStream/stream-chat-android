@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,7 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
@@ -41,16 +43,27 @@ public class MessageListHeaderViewModel(
         )
 
     /**
+     * Necessary for testing because [LiveData] conversion caused issues with testing.
+     *
      * The current [Channel] created from [ChannelState]. It emits new data either when
      * channel data or the list of members in [ChannelState] updates.
      *
      * Combining the two is important because members changing online status does not result in
      * channel events being received.
      */
-    public val channel: LiveData<Channel> =
-        channelState.channelData.combine(channelState.members) { _, _ ->
-            channelState.toChannel()
-        }.asLiveData()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public val _channel: Flow<Channel> = channelState.channelData.combine(channelState.members) { _, _ ->
+        channelState.toChannel()
+    }
+
+    /**
+     * The current [Channel] created from [ChannelState]. It emits new data either when
+     * channel data or the list of members in [ChannelState] updates.
+     *
+     * Combining the two is important because members changing online status does not result in
+     * channel events being received.
+     */
+    public val channel: LiveData<Channel> = _channel.asLiveData()
 
     /**
      * A list of users who are currently typing.
