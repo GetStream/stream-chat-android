@@ -40,11 +40,8 @@ public class ClientAndUsers {
         public void setUser() {
             User user = new User();
             user.setId("bender");
-
-            HashMap<String, Object> extraData = new HashMap<>();
-            extraData.put("name", "Bender");
-            extraData.put("image", "https://bit.ly/321RmWb");
-            user.setExtraData(extraData);
+            user.setName("Bender");
+            user.setImage("https://bit.ly/321RmWb");
 
             // You can setup a user token in two ways:
 

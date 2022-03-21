@@ -39,8 +39,8 @@ public class AndroidIntroduction {
         // Step 2 - Authenticate and connect the user
         User user = new User();
         user.setId("summer-brook-2");
-        user.getExtraData().put("name", "Paranoid Android");
-        user.getExtraData().put("image", "https://bit.ly/2TIt8NR");
+        user.setName("Paranoid Android");
+        user.setImage("https://bit.ly/2TIt8NR");
 
         // You can use client.devToken(userId) if auth is disabled for your app
         client.connectUser(user, token).enqueue((result) -> {
