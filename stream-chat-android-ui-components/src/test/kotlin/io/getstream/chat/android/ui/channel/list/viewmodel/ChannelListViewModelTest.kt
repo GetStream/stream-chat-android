@@ -6,12 +6,12 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
-import io.getstream.chat.android.ui.createUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
@@ -31,11 +31,12 @@ internal class ChannelListViewModelTest {
     private val channels: MutableStateFlow<List<Channel>> = MutableStateFlow(listOf())
     private val endOfChannels = MutableStateFlow(false)
     private val nextPageRequest = MutableStateFlow<QueryChannelsRequest?>(null)
+    private val user = MutableStateFlow(User(id = "ID"))
 
     private val queryChannelsMock: Call<List<Channel>> = mock()
 
     private val globalState: GlobalState = mock {
-        whenever(it.user) doReturn MutableStateFlow(createUser())
+        whenever(it.user) doReturn user
         whenever(it.channelMutes) doReturn MutableStateFlow(listOf())
     }
 

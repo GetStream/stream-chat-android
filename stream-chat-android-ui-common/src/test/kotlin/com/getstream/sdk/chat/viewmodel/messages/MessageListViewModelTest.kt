@@ -9,11 +9,14 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
@@ -22,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -66,6 +68,7 @@ internal class MessageListViewModelTest {
     private val loadingOlderMessages = MutableStateFlow(false)
     private val messagesState = MutableStateFlow(MessagesState.Loading as MessagesState)
     private val messages = MutableStateFlow(listOf<Message>())
+    private val user = MutableStateFlow(User(id = "ID"))
 
     private val channelState: ChannelState = spy {
         whenever(it.channelType) doReturn CHANNEL_TYPE
@@ -81,6 +84,13 @@ internal class MessageListViewModelTest {
     private val stateRegistry: StateRegistry = mock {
         whenever(it.channel(any(), any())) doReturn channelState
     }
+
+    private val globalState: GlobalState = mock {
+        whenever(it.user) doReturn user
+        whenever(it.channelMutes) doReturn MutableStateFlow(listOf())
+        whenever(it.typingUpdates) doReturn MutableStateFlow(TypingEvent(channelId = CID, listOf()))
+    }
+
     private val chatClient: ChatClient = MockChatClientBuilder {
         mock {
             whenever(it.queryChannel(any(), any(), any())) doReturn Channel().asCall()
@@ -90,8 +100,7 @@ internal class MessageListViewModelTest {
         }
     }.build()
 
-    @BeforeEach
-    fun setup() {
+    init {
         StateRegistry.instance = stateRegistry
     }
 
@@ -107,16 +116,14 @@ internal class MessageListViewModelTest {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    // TODO fix this test
-    @Disabled("State does not update properly")
     @Test
     fun `Should display progressbar and messages`() = runBlockingTest {
-        val viewModel = MessageListViewModel(CID, chatClient = chatClient)
+        val viewModel = MessageListViewModel(CID, chatClient = chatClient, globalState = globalState)
         val stateList = viewModel.state.observeAll()
 
         stateList.first() shouldBeEqualTo MessageListViewModel.State.Loading
 
-        messagesState.emit(MessagesState.Result(listOf()))
+        messagesState.emit(MessagesState.Result(MESSAGES))
         advanceUntilIdle()
 
         stateList.last().apply {
