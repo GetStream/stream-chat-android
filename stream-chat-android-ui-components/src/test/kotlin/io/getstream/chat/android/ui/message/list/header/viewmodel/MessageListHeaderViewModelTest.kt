@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.internal.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -37,6 +36,8 @@ private const val CHANNEL_NAME = "channel"
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageListHeaderViewModelTest {
 
+    private val members = createMembers { createMember(User(name = "user")) }
+
     private val membersStateFlow = MutableStateFlow(createMembers())
     private val channelDataStateFlow = MutableStateFlow(ChannelData(Channel()))
 
@@ -53,56 +54,53 @@ internal class MessageListHeaderViewModelTest {
         whenever(it.queryChannel(any(), any(), any())) doReturn Channel().asCall()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @BeforeEach
-    private fun setup() {
+    init {
         StateRegistry.instance = stateRegistry
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `When channel members update should update channel`() = runBlockingTest {
+        // given
         val messageListHeaderViewModel = MessageListHeaderViewModel(CID, chatClient = chatClient)
-
         var result: Channel? = null
-
         launch {
             result = messageListHeaderViewModel._channel.take(2).toList().last()
         }
 
-        val memberList = createMembers { createMember(User(name = "user")) }
-        membersStateFlow.emit(memberList)
+        // when
+        membersStateFlow.emit(members)
         advanceUntilIdle()
-
         val expectedValue = channelDataStateFlow.value
             .toChannel()
             .apply {
-                members = memberList
+                members = this@MessageListHeaderViewModelTest.members
             }
 
+        // should
         assertEquals(actual = result, expected = expectedValue)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `When channel data updates should update channel`() = runBlockingTest {
+        // given
         val messageListHeaderViewModel = MessageListHeaderViewModel(CID, chatClient = chatClient)
-
         var result: Channel? = null
-
         launch {
             result = messageListHeaderViewModel._channel.take(2).toList().last()
         }
 
+        // when
         val channel = Channel(cid = CID, id = CHANNEL_ID, type = CHANNEL_TYPE, name = CHANNEL_NAME)
         val channelData = ChannelData(channel)
         channelDataStateFlow.emit(channelData)
         advanceUntilIdle()
-
         val expectedValue = channel.apply {
             members = membersStateFlow.value
         }
 
+        // should
         assertEquals(actual = result, expected = expectedValue)
     }
 

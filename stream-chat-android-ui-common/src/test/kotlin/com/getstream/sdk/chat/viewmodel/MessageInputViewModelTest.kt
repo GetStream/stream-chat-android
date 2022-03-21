@@ -16,7 +16,6 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -48,17 +47,20 @@ internal class MessageInputViewModelTest {
         whenever(it.queryChannel(any(), any(), any())) doReturn Channel().asCall()
     }
 
-    @BeforeEach
-    fun setup() {
+    init {
         StateRegistry.instance = stateRegistry
     }
 
     @Test
     fun `Should show commands`() {
+        // given
         val messageInputViewModel = MessageInputViewModel(CID, chatClient)
         val mockObserver: Observer<List<Command>> = spy()
+
+        // when
         messageInputViewModel.commands.observeForever(mockObserver)
 
+        // should
         verify(mockObserver).onChanged(eq(channelConfig.commands))
     }
 }
