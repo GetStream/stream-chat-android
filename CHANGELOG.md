@@ -96,6 +96,7 @@
 - Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
 - Fixed ripple color in dark mode. [#3211](https://github.com/GetStream/stream-chat-android/pull/3211)
 - Long user names no longer break layout in the message list. [#3219](https://github.com/GetStream/stream-chat-android/pull/3219)
+- Fixed the click handler on the last item in the image attachments content. [#3221](https://github.com/GetStream/stream-chat-android/pull/3221)
 
 ### ⬆️ Improved
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
