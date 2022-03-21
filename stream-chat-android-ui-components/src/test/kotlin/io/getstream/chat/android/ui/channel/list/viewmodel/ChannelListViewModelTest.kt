@@ -1,117 +1,116 @@
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
+import androidx.lifecycle.Observer
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
+import io.getstream.chat.android.ui.createUser
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
-/*
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelListViewModelTest {
 
-    @Test
-    fun `Should display channels when there are channels available`() {
-        // given
-        val viewModel = Fixture().givenInitialChannelList(mockChannels).please()
-        val mockObserver: Observer<ChannelListViewModel.State> = mock()
-        viewModel.state.observeForever(mockObserver)
+    private val channelStateData = MutableStateFlow(ChannelsStateData.Loading as ChannelsStateData)
+    private val channels: MutableStateFlow<List<Channel>> = MutableStateFlow(listOf())
+    private val endOfChannels = MutableStateFlow(false)
+    private val nextPageRequest = MutableStateFlow<QueryChannelsRequest?>(null)
 
-        // then
-        verify(mockObserver, times(2))
-            .onChanged(ChannelListViewModel.State(isLoading = false, channels = mockChannels))
+    private val queryChannelsMock: Call<List<Channel>> = mock()
+
+    private val globalState: GlobalState = mock {
+        whenever(it.user) doReturn MutableStateFlow(createUser())
+        whenever(it.channelMutes) doReturn MutableStateFlow(listOf())
     }
 
-    @Test
-    fun `Should display empty state info when there are no channels available`() {
-        // given
-        val viewModel = Fixture().givenNoChannelsAvailable().please()
-        val mockObserver: Observer<ChannelListViewModel.State> = mock()
-        viewModel.state.observeForever(mockObserver)
-
-        // then
-        verify(mockObserver, times(2))
-            .onChanged(ChannelListViewModel.State(isLoading = false, channels = emptyList()))
+    private val queryChannelState: QueryChannelsState = mock {
+        whenever(it.channelsStateData) doReturn channelStateData
+        whenever(it.loadingMore) doReturn MutableStateFlow(false)
+        whenever(it.endOfChannels) doReturn endOfChannels
+        whenever(it.channels) doReturn channels
+        whenever(it.nextPageRequest) doReturn nextPageRequest
     }
 
+    private val stateRegistry: StateRegistry = mock {
+        whenever(it.queryChannels(any(), any())) doReturn queryChannelState
+    }
+
+    private val chatClient: ChatClient = mock {
+        whenever(it.queryChannels(any())) doReturn queryChannelsMock
+    }
+
+    init {
+        StateRegistry.instance = stateRegistry
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Should load more channels when list is scrolled to the end region`() {
+    fun `Should display channels when there are channels available`() = runBlockingTest {
         // given
-        val viewModel = Fixture()
-            .givenInitialChannelList(mockChannels)
-            .givenMoreChannels(moreChannels)
-            .please()
-        val mockObserver = TestObserver<ChannelListViewModel.State>()
+        val viewModel =
+            ChannelListViewModel(chatClient = chatClient, globalState = globalState, chatEventHandlerFactory = mock())
+        val mockObserver: Observer<ChannelListViewModel.State> = mock()
         viewModel.state.observeForever(mockObserver)
 
         // when
+        channelStateData.emit(ChannelsStateData.Result(mockChannels))
+        advanceUntilIdle()
+
+        // then
+        verify(mockObserver, times(1))
+            .onChanged(ChannelListViewModel.State(isLoading = false, channels = mockChannels))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Should display empty state info when there are no channels available`() = runBlockingTest {
+        // given
+        val viewModel =
+            ChannelListViewModel(chatClient = chatClient, globalState = globalState, chatEventHandlerFactory = mock())
+        val mockObserver: Observer<ChannelListViewModel.State> = mock()
+        viewModel.state.observeForever(mockObserver)
+
+        // when
+        channelStateData.emit(ChannelsStateData.Result(listOf()))
+        advanceUntilIdle()
+
+        // then
+        verify(mockObserver, times(1))
+            .onChanged(ChannelListViewModel.State(isLoading = false, channels = emptyList()))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Should load more channels when list is scrolled to the end region`() = runBlockingTest {
+        // given
+        val viewModel =
+            ChannelListViewModel(chatClient = chatClient, globalState = globalState, chatEventHandlerFactory = mock())
+
+        // when
+        nextPageRequest.emit(QueryChannelsRequest(filter = Filters.neutral(), offset = 0, limit = 0))
         viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
 
         // then
-        val result = mockObserver.lastObservedValue.shouldBeInstanceOf<ChannelListViewModel.State>()
-        result.channels shouldBeEqualTo mockChannels + moreChannels
+        verify(queryChannelsMock, times(1))
     }
 
     companion object {
         val mockChannels = listOf(Channel(cid = "1", hidden = false), Channel(cid = "2", hidden = false))
-        val moreChannels = listOf(Channel(cid = "3", hidden = false), Channel(cid = "3", hidden = false))
     }
 }
-
-private class Fixture {
-    private val user = createUser()
-    private val chatDomain: ChatDomain = mock {
-        on(it.channelMutes) doReturn MutableStateFlow(emptyList())
-    }
-    private val chatClient: ChatClient = mock()
-    private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
-    private val queryChannelsCall = TestCall(queryChannelsControllerResult)
-    private val queryChannelsLoadMoreCall: Call<List<Channel>> = mock()
-    private val queryChannelsController: QueryChannelsController = mock()
-
-    private val channelsStateFlow: MutableStateFlow<List<Channel>> = MutableStateFlow(emptyList())
-    private val channelsState = MutableStateFlow<QueryChannelsController.ChannelsState>(
-        QueryChannelsController.ChannelsState.NoQueryActive
-    )
-
-    init {
-        whenever(chatDomain.user) doReturn MutableStateFlow(user)
-        whenever(
-            chatDomain.queryChannels(
-                any(),
-                eq(ChannelListViewModel.DEFAULT_SORT),
-                any(),
-                any(),
-                any(),
-            )
-        ) doReturn queryChannelsCall
-        whenever(queryChannelsControllerResult.isSuccess) doReturn true
-        whenever(queryChannelsControllerResult.data()) doReturn queryChannelsController
-        whenever(queryChannelsController.channels) doReturn channelsStateFlow
-        whenever(queryChannelsController.channelsState) doReturn channelsState
-        whenever(queryChannelsController.loading) doReturn MutableStateFlow(true)
-        whenever(queryChannelsController.loadingMore) doReturn MutableStateFlow(false)
-        whenever(queryChannelsController.endOfChannels) doReturn MutableStateFlow(false)
-    }
-
-    fun givenNoChannelsAvailable(): Fixture = apply {
-        channelsStateFlow.value = emptyList()
-        channelsState.value = QueryChannelsController.ChannelsState.OfflineNoResults
-    }
-
-    fun givenInitialChannelList(channels: List<Channel>): Fixture {
-        channelsStateFlow.value = channels
-        channelsState.value = QueryChannelsController.ChannelsState.Result(channels)
-        return this
-    }
-
-    fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
-        whenever(chatDomain.queryChannelsLoadMore(any(), any(), any(), any(), any())) doReturn queryChannelsLoadMoreCall
-        whenever(chatClient.queryChannels(any())) doReturn queryChannelsLoadMoreCall
-        whenever(queryChannelsLoadMoreCall.enqueue(any())) doAnswer {
-            val channels = channelsStateFlow.value + moreChannels
-            channelsStateFlow.value = channels
-            channelsState.value = QueryChannelsController.ChannelsState.Result(channels)
-        }
-        return this
-    }
-
-    fun please() = ChannelListViewModel(chatDomain = chatDomain, chatClient = chatClient)
-}
- */
