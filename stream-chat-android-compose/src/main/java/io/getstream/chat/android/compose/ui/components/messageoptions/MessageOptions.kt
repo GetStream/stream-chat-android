@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -51,7 +52,9 @@ public fun MessageOptions(
 ) {
     Column(modifier = modifier) {
         options.forEach { option ->
-            itemContent(option)
+            key(option.action) {
+                itemContent(option)
+            }
         }
     }
 }
@@ -94,6 +97,10 @@ public fun defaultMessageOptionsState(
     currentUser: User?,
     isInThread: Boolean,
 ): List<MessageOptionItemState> {
+    if (selectedMessage.id.isEmpty()) {
+        return emptyList()
+    }
+
     val selectedMessageUserId = selectedMessage.user.id
 
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
