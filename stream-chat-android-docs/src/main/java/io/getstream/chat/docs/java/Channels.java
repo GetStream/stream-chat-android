@@ -373,7 +373,7 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers("thierry", "josh").enqueue(result -> {
+            channelClient.addMembers(Arrays.asList("thierry", "josh")).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -382,7 +382,7 @@ public class Channels {
             });
 
             // Remove member with id "tommaso"
-            channelClient.removeMembers("tommaso").enqueue(result -> {
+            channelClient.removeMembers(Arrays.asList("tommaso")).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
