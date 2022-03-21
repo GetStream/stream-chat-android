@@ -97,14 +97,14 @@ internal class MoshiChatApi(
     private var userId: String = ""
         get() {
             if (field == "") {
-                logger.logE("userId accessed before being set")
+                logger.logE("userId accessed before being set. Did you forget to call ChatClient.connectUser()?")
             }
             return field
         }
     private var connectionId: String = ""
         get() {
             if (field == "") {
-                logger.logE("connectionId accessed before being set")
+                logger.logE("connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?")
             }
             return field
         }
