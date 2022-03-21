@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Edit
@@ -50,7 +52,9 @@ public fun MessageOptions(
 ) {
     Column(modifier = modifier) {
         options.forEach { option ->
-            itemContent(option)
+            key(option.action) {
+                itemContent(option)
+            }
         }
     }
 }
@@ -80,7 +84,8 @@ internal fun DefaultMessageOptionItem(
 }
 
 /**
- * Builds the default message options we show to our users.
+ * Builds the default message options we show to our users. A different set of options
+ * is shown for pending and sent messages.
  *
  * @param selectedMessage Currently selected message, used to callbacks.
  * @param currentUser Current user, used to expose different states for messages.
@@ -92,21 +97,28 @@ public fun defaultMessageOptionsState(
     currentUser: User?,
     isInThread: Boolean,
 ): List<MessageOptionItemState> {
+    if (selectedMessage.id.isEmpty()) {
+        return emptyList()
+    }
+
     val selectedMessageUserId = selectedMessage.user.id
 
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
     val isOwnMessage = selectedMessageUserId == currentUser?.id
     val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
+    val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
 
     return listOfNotNull(
-        MessageOptionItemState(
-            title = R.string.stream_compose_reply,
-            iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
-            action = Reply(selectedMessage),
-            titleColor = ChatTheme.colors.textHighEmphasis,
-            iconColor = ChatTheme.colors.textLowEmphasis,
-        ),
-        if (!isInThread) {
+        if (isMessageSynced) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_reply,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
+                action = Reply(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (!isInThread && isMessageSynced) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
@@ -142,13 +154,15 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        MessageOptionItemState(
-            title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
-            action = Pin(selectedMessage),
-            iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
-            iconColor = ChatTheme.colors.textLowEmphasis,
-            titleColor = ChatTheme.colors.textHighEmphasis
-        ),
+        if (isMessageSynced) {
+            MessageOptionItemState(
+                title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
+                action = Pin(selectedMessage),
+                iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                titleColor = ChatTheme.colors.textHighEmphasis
+            )
+        } else null,
         if (isOwnMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
