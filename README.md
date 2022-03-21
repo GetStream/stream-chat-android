@@ -45,7 +45,7 @@ This SDK consists of two low-level artifacts you can build on:
 - [**Client**](/stream-chat-android-client): A low-level client for making API calls and receiving chat events.
     - [Documentation website](https://getstream.io/chat/docs/android/?language=kotlin)
 - [**Offline support**](/stream-chat-android-offline): Local caching and automatic retries, exposed via Flow and LiveData APIs.
-    - [Working with Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/working-with-offline/)
+    - [Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/)
 
 **We also have two UI SDKs**. You can use our Compose UI Components SDK, or if you're using older UI solutions, the XML-based UI Components:
 
