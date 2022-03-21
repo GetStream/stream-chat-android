@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -26,7 +25,6 @@ class GroupChatInfoAddUsersViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    @OptIn(InternalStreamChatApi::class)
     private val channelState: ChannelState = chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope)
 
     private val channelClient = chatClient.channel(cid)
@@ -39,7 +37,6 @@ class GroupChatInfoAddUsersViewModel(
     val userAddedState: LiveData<Boolean> = _userAddedState
     val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
-    @OptIn(InternalStreamChatApi::class)
     private val membersLiveData: LiveData<List<Member>> = channelState.members.asLiveData()
 
     private val observer = Observer<List<Member>> { members = it }
@@ -66,7 +63,7 @@ class GroupChatInfoAddUsersViewModel(
 
     private fun addMember(user: User) {
         viewModelScope.launch {
-            val response = channelClient.addMembers(user.id).await()
+            val response = channelClient.addMembers(listOf(user.id)).await()
             if (response.isSuccess) {
                 _userAddedState.value = true
             } else {

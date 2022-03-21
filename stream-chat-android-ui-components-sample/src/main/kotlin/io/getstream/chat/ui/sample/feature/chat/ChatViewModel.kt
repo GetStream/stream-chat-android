@@ -7,7 +7,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -21,16 +20,13 @@ class ChatViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    @OptIn(InternalStreamChatApi::class)
     private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
 
-    @OptIn(InternalStreamChatApi::class)
     val members: LiveData<List<Member>> = channelState.members.asLiveData()
 
-    @OptIn(InternalStreamChatApi::class)
     fun onAction(action: Action) {
         when (action) {
             is Action.HeaderClicked -> {

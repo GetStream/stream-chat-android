@@ -560,14 +560,32 @@ public class ChannelClient internal constructor(
     public fun disableSlowMode(): Call<Channel> =
         client.disableSlowMode(channelType, channelId)
 
+    /**
+     * Adds members to a given channel.
+     *
+     * @see [ChatClient.addMembers]
+     *
+     * @param memberIds The list of the member ids to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
     @CheckResult
-    public fun addMembers(vararg userIds: String): Call<Channel> {
-        return client.addMembers(channelType, channelId, userIds.toList())
+    public fun addMembers(memberIds: List<String>): Call<Channel> {
+        return client.addMembers(channelType = channelType, channelId = channelId, memberIds = memberIds)
     }
 
+    /**
+     * Removes members from a given channel.
+     *
+     * @see [ChatClient.removeMembers]
+     *
+     * @param memberIds The list of the member ids to be removed.
+     *
+     * @return Executable async [Call] responsible for removing the members.
+     */
     @CheckResult
-    public fun removeMembers(vararg userIds: String): Call<Channel> {
-        return client.removeMembers(channelType, channelId, userIds.toList())
+    public fun removeMembers(memberIds: List<String>): Call<Channel> {
+        return client.removeMembers(channelType = channelType, channelId = channelId, memberIds = memberIds)
     }
 
     @CheckResult

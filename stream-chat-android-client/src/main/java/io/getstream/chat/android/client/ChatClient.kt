@@ -1346,17 +1346,16 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return queryChannelsPostponeHelper.postponeQueryChannels {
-            val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
 
+        return queryChannelsPostponeHelper.postponeQueryChannels {
             api.queryChannels(request)
-                .doOnStart(scope) {
-                    relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
-                }
-                .doOnResult(scope) { result ->
-                    relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
-                }
-                .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+        }.doOnStart(scope) {
+            relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+        }.doOnResult(scope) { result ->
+            relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
+        }.precondition(relevantPlugins) {
+            onQueryChannelsPrecondition(request)
         }
     }
 
@@ -1647,35 +1646,46 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
+    /**
+     * Adds members to a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of the member ids to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
     @CheckResult
     public fun addMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        memberIds: List<String>,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
             channelId,
-            members
+            memberIds,
         )
     }
 
     /**
-     * Method to remove members of a given channel.
+     * Removes members from a given channel.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param members The list of the members to be removed.
+     * @param memberIds The list of the member ids to be removed.
+     *
+     * @return Executable async [Call] responsible for removing the members.
      */
     @CheckResult
     public fun removeMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        memberIds: List<String>,
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
-        members
+        memberIds,
     )
 
     /**

@@ -4,16 +4,14 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `ChatDomain.editMessage` | 2022.01.31<br/>4.27.0 | 2022.02.28 ⌛ | 2022.03.21 ⌛ | Use `ChatClient.updateMessage` instead. |
-| `ChatDomain#deleteChannel` | 2022.02.08<br/>4.27.0 | 2022.03.08 ⌛ | 2022.04.08 ⌛ | Use `ChatClient.deleteChannel` instead. |
-| `ChatDomain#leaveChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient.removeMembers` instead. |
-| `ChatDomain#createChannel` | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use extension function `ChatClient.createChannel` instead |
-| `ChatDomain#cancelMessage` | 2021.01.25<br/>4.27.0 | 2022.02.22 ⌛ | 2022.03.15 ⌛ | Use `ChatClient#cancelMessage` instead |
-| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.11<br/>5.0.0 | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
-| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.08<br/>5.0.0 | Use `ChatUI.messageTextTransformer` instead. |
-| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.08<br/>5.0.0 | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
-| `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0 | 2022.02.22 ⌛ | Use `ChatClient#showChannel` instead |
-| `ChatDomain#loadOlderMessages` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0  | 2022.02.22 ⌛ | Use `ChatClient#loadOlderMessages` instead |
+| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
+| `ChannelController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `ChannelState` instead |
+| `QueryChannelsController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `QueryChannelsState` instead |
+| `ChatDomain` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `OfflinePlugin` instead |
+| `ChatUI.markdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.23<br/>5.0.0 | Use `ChatUI.messageTextTransformer` instead. |
+| `ChatMarkdown` | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | 2022.03.23<br/>5.0.0 | `ChatMarkdown` is deprecated in favour of `ChatMessageTextTransformer`. Use `MarkdownTextTransformer` from module `stream-chat-android-markdown-transformer` instead. If you want to use your own markdown implementation, you need to implement `ChatMessageTextTransformer`. |
+| `ChatDomain#showChannel` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0 | 2022.03.23<br/>5.0.0 | Use `ChatClient#showChannel` instead |
+| `ChatDomain#loadOlderMessages` | 2021.12.21<br/>4.25.0 | 2022.01.25<br/>4.27.0  | 2022.03.23<br/>5.0.0 | Use `ChatClient#loadOlderMessages` instead |
 | `ChatDomain#stopTyping` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 | 2022.02.08<br/>4.28.0 | Use `ChatClient#stopTyping` instead |
 | `ChatDomain#keystroke` | 2021.11.29<br/>4.24.0 | 2022.01.11<br/>4.26.0 |  2022.02.08<br/>4.28.0 | Use `ChatClient#keystroke` instead |
 | `QueryChannelsController#mutedChannelIds` | 2021.11.23<br/>4.23.0 | 2021.12.09<br/>4.24.0 | 2022.01.11<br/>4.26.0 | Use ChatDomain.mutedChannels instead |

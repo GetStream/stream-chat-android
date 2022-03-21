@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-@OptIn(InternalStreamChatApi::class)
 class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
@@ -112,7 +110,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     private fun removeFromChannel() {
         viewModelScope.launch {
-            val result = chatClient.channel(cid).removeMembers(memberId).await()
+            val result = chatClient.channel(cid).removeMembers(listOf(memberId)).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {

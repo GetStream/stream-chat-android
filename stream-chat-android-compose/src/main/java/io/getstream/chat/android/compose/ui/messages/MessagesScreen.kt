@@ -24,6 +24,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -38,6 +41,7 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -191,6 +195,18 @@ public fun MessagesScreen(
 
         val selectedMessage = selectedMessageState?.message ?: Message()
 
+        val newMessageOptions = defaultMessageOptionsState(
+            selectedMessage = selectedMessage,
+            currentUser = user,
+            isInThread = listViewModel.isInThread
+        )
+
+        var messageOptions by rememberSaveable { mutableStateOf<List<MessageOptionItemState>>(emptyList()) }
+
+        if (newMessageOptions.isNotEmpty()) {
+            messageOptions = newMessageOptions
+        }
+
         AnimatedVisibility(
             visible = selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty(),
             enter = fadeIn(),
@@ -209,11 +225,7 @@ public fun MessagesScreen(
                             animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
-                messageOptions = defaultMessageOptionsState(
-                    selectedMessage = selectedMessage,
-                    currentUser = user,
-                    isInThread = listViewModel.isInThread
-                ),
+                messageOptions = messageOptions,
                 message = selectedMessage,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)

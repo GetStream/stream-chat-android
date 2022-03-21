@@ -29,9 +29,10 @@
 ### ❌ Removed
 
 ## stream-chat-android-offline
+🚨🚨 **v5.0.0** release brings a big change to the offline support library - it replaces `ChatDomain` with the `OfflinePlugin`. You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/). 🚨🚨
+
 ### 🐞 Fixed
 - Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
-- Exposed a public value of `channelConfig: StateFlow<Config>` that holds channel config data inside `ChannelState`. [#3127](https://github.com/GetStream/stream-chat-android/pull/3127)
 - Fixed marking the channel as read if it was opened offline previously. [#3162](https://github.com/GetStream/stream-chat-android/pull/3162)
 
 ### ⬆️ Improved
@@ -51,12 +52,9 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Removed `ChatDomain` from all `ViewModels`. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
-- Removed all uses of `ChatDomain` from all `Views` and functions that relied on it. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190) 
 
 ### ❌ Removed
 - Removed ChatMarkdown in favor of ChatMessageTextTransformer [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
-- All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -81,37 +79,38 @@
 - Renamed MediaAttachmentViewStyle and its attributes to ImageAttachmentViewStyle. [#3067](https://github.com/GetStream/stream-chat-android/pull/3067)
 - Messages containing link attachments and no other types of attachments are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `LinkAttachmentsViewHolder`. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
 - Messages containing file attachments of different file types or types not handled by one of the other `ViewHolders` are no longer handled by `TextAndAttachmentsViewHolder`, instead they are handled by `FileAttachmentsViewHolder`. [#3091](https://github.com/GetStream/stream-chat-android/pull/3091)
-- Removed `ChatDomain` from all `ViewModels`. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
-- Removed all uses of `ChatDomain` from all `Views` and functions that relied on it. Now they rely on `OfflinePlugin` for offline capabilities. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
 - Updated the structure of UI components documentation. [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/). [#3186](https://github.com/GetStream/stream-chat-android/pull/3186)
 - Updated the code snippets from the UI Components documentation in the `stream-chat-android-docs` module. [3205](https://github.com/GetStream/stream-chat-android/pull/3205)
 
 ### ❌ Removed
 - All usage of `ChatDomain`. [#3190](https://github.com/GetStream/stream-chat-android/pull/3190)
+- Removed "Pin message", "Reply", "Thread reply" message actions for messages that are not synced. [#3226](https://github.com/GetStream/stream-chat-android/pull/3226)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Mitigated the effects of `ClickableText` consuming all pointer events when messages contain links by passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 - Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
 - Fixed ripple color in dark mode. [#3211](https://github.com/GetStream/stream-chat-android/pull/3211)
+- Long user names no longer break layout in the message list. [#3219](https://github.com/GetStream/stream-chat-android/pull/3219)
+- Fixed the click handler on the last item in the image attachments content. [#3221](https://github.com/GetStream/stream-chat-android/pull/3221)
 
 ### ⬆️ Improved
 - Allowed passing long press handlers to `MessageText`. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
 
 ### ✅ Added
 - Added code snippets from the Compose documentation to the `stream-chat-android-docs` module. [3197](https://github.com/GetStream/stream-chat-android/pull/3197)
+- Added support for delivery indicator in the message list. [#3218](https://github.com/GetStream/stream-chat-android/pull/3218)
 
 ### ⚠️ Changed
 - Replaced the `reactionTypes` field in `ChatTheme` with the new `reactionIconFactory` field that allows customizing reaction icons. [#3046](https://github.com/GetStream/stream-chat-android/pull/3046)
 - `MessageText` now requires the parameter `onLongItemClick: (Message) -> Unit`. This was done in order to mitigate `ClickableText` consuming all pointer events. [#3137](https://github.com/GetStream/stream-chat-android/pull/3137)
-- The SDK now relies on `OfflinePlugin` for offline capabilities instead of `ChatDomain`. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
 - Renamed the `state.channel` package to `state.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 - Renamed the `viewmodel.channel` package to `viewmodel.channels` for consistency. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 - Moved the contents of the `ui.imagepreview` and `ui.mediapreview` packages to `ui.attachments.preview`. [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 - Moved the preview handlers from the `ui.filepreview` package to `ui.attachments.preview.handler` [#3143](https://github.com/GetStream/stream-chat-android/pull/3143)
 
 ### ❌ Removed
-- Removed all use of `ChatDomain` inside the SDK. [#3148](https://github.com/GetStream/stream-chat-android/pull/3148)
+- Removed "Pin message", "Reply", "Thread reply" message actions for messages that are not synced. [#3226](https://github.com/GetStream/stream-chat-android/pull/3226)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed

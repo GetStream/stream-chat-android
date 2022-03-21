@@ -240,7 +240,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 if (isLastMessageFromCurrentUser) {
                     MessageReadStatusIcon(
                         channel = channel,
-                        lastMessage = lastMessage,
+                        message = lastMessage,
                         currentUser = currentUser,
                         modifier = Modifier
                             .padding(end = 8.dp)

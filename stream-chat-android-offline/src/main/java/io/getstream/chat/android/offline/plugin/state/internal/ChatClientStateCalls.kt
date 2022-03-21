@@ -37,16 +37,16 @@ internal class ChatClientStateCalls(
     }
 
     /** Reference request of the watch channel query. */
-    internal fun watchChannel(cid: String, limit: Int): ChannelState {
+    internal fun watchChannel(cid: String, messageLimit: Int): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
-        val request = QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence)
+        val request = QueryChannelPaginationRequest(messageLimit).toWatchChannelRequest(userPresence)
         return queryChannel(channelType, channelId, request)
     }
 
     /** Reference request of the get thread replies query. */
-    internal fun getReplies(messageId: String, limit: Int): ThreadState {
-        chatClient.getReplies(messageId, limit).launch(scope)
+    internal fun getReplies(messageId: String, messageLimit: Int): ThreadState {
+        chatClient.getReplies(messageId, messageLimit).launch(scope)
         return state.thread(messageId)
     }
 }

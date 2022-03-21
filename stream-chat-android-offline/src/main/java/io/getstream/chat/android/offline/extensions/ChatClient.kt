@@ -65,31 +65,37 @@ public fun ChatClient.queryChannelsAsState(
 /**
  * Same class of ChatClient.queryChannel, but provides the result as [ChannelState]
  *
- * @param cid
+ * @param cid The full channel id, i.e. "messaging:123"
+ * @param messageLimit The number of messages that will be initially loaded.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
  * @return [ChannelState]
  */
 @JvmOverloads
 public fun ChatClient.watchChannelAsState(
     cid: String,
-    limit: Int,
+    messageLimit: Int,
     coroutineScope: CoroutineScope = state.scope,
 ): ChannelState {
-    return requestsAsState(coroutineScope).watchChannel(cid, limit)
+    return requestsAsState(coroutineScope).watchChannel(cid, messageLimit)
 }
 
 /**
  * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
  *
- * @param cid
+ * @param messageId The ID of the original message the replies were made to.
+ * @param messageLimit The number of messages that will be initially loaded.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
  * @return [ThreadState]
  */
 @JvmOverloads
 public fun ChatClient.getRepliesAsState(
-    cid: String,
-    limit: Int,
+    messageId: String,
+    messageLimit: Int,
     coroutineScope: CoroutineScope = state.scope,
 ): ThreadState {
-    return requestsAsState(coroutineScope).getReplies(cid, limit)
+    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
 }
 
 /**
