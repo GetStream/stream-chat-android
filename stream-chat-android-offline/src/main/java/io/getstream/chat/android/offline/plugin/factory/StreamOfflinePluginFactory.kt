@@ -67,7 +67,6 @@ public class StreamOfflinePluginFactory(
         val chatClient = ChatClient.instance()
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
-            _user.value = user
         }
 
         val job = SupervisorJob()
@@ -159,6 +158,8 @@ public class StreamOfflinePluginFactory(
                 OfflineSyncFirebaseMessagingHandler().syncMessages(appContext, "$channelType:$channelId")
             }
         }
+
+        globalState._user.value = user
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),

@@ -118,7 +118,6 @@ public fun ChatClient.getRepliesAsState(
  *
  * If the user is set, we fetch the state using the provided operation and provide it to the user.
  */
-@JvmOverloads
 private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: () -> T,

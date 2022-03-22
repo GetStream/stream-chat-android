@@ -18,7 +18,7 @@ internal class QueryMembersListenerImpl(
     private val repos: RepositoryFacade,
 ) : QueryMembersListener {
 
-    override suspend fun onQueryChannelsResult(
+    override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
         channelType: String,
         channelId: String,
