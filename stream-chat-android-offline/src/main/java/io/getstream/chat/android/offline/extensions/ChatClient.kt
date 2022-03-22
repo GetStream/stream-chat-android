@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.isEphemeral
 import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
@@ -32,11 +33,19 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannel
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.validateCidWithResult
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * [StateRegistry] instance that contains all state objects exposed in offline plugin.
+ * The instance is being initialized after connecting the user!
+ *
+ * @throws IllegalArgumentException If the state was not initialized yet.
  */
 public val ChatClient.state: StateRegistry
+    @Throws(IllegalArgumentException::class)
     get() = requireNotNull(StateRegistry.get()) {
         "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
             "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
@@ -57,9 +66,15 @@ public val ChatClient.globalState: GlobalState
 @JvmOverloads
 public fun ChatClient.queryChannelsAsState(
     request: QueryChannelsRequest,
-    coroutineScope: CoroutineScope = state.scope,
-): QueryChannelsState {
-    return requestsAsState(coroutineScope).queryChannels(request)
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<QueryChannelsState?> {
+    return globalState.user.map { user ->
+        if (user == null) {
+            null
+        } else {
+            requestsAsState(coroutineScope).queryChannels(request)
+        }
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, null)
 }
 
 /**
