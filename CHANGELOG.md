@@ -59,6 +59,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
+- Fixed a crash when overriding `ChatUI::imageHeadersProvider` caused by compiler [issue](https://youtrack.jetbrains.com/issue/KT-49793). [#3237](https://github.com/GetStream/stream-chat-android/pull/3237)
 
 ### ⬆️ Improved
 

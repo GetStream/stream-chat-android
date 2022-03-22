@@ -38,7 +38,11 @@ public object ChatUI {
     /**
      * Provides HTTP headers for image loading requests.
      */
-    public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
+    public var imageHeadersProvider: ImageHeadersProvider
+        set(value) {
+            StreamImageLoader.instance().imageHeadersProvider = value
+        }
+        get() = StreamImageLoader.instance().imageHeadersProvider
 
     /**
      * Allows setting default fonts used by UI components.
