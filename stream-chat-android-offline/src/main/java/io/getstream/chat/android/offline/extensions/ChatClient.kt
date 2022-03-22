@@ -59,10 +59,14 @@ public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.getOrCreate()
 
 /**
- * Same class of ChatClient.queryChannels, but provides the result as [QueryChannelsState]
+ * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
+ * The [QueryChannelsState] cannot be created before connecting the user therefore, the method returns a StateFlow
+ * that emits a null when the user has not been connected yet and the new value every time the user changes.
  *
- * @param request [QueryChannelsRequest]
- * @return [QueryChannelsRequest]
+ * @param request The request's parameters combined into [QueryChannelsRequest] class.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return A StateFlow object that emits a null when the user has not been connected yet and the new [QueryChannelsState] when the user changes.
  */
 @JvmOverloads
 public fun ChatClient.queryChannelsAsState(
@@ -75,13 +79,15 @@ public fun ChatClient.queryChannelsAsState(
 }
 
 /**
- * Same class of ChatClient.queryChannel, but provides the result as [ChannelState]
+ * Performs [ChatClient.queryChannel] with watch = true under the hood and returns [ChannelState] associated with the query.
+ * The [ChannelState] cannot be created before connecting the user therefore, the method returns a StateFlow
+ * that emits a null when the user has not been connected yet and the new value every time the user changes.
  *
  * @param cid The full channel id, i.e. "messaging:123"
  * @param messageLimit The number of messages that will be initially loaded.
  * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
- * @return [ChannelState]
+ * @return A StateFlow object that emits a null when the user has not been connected yet and the new [ChannelState] when the user changes.
  */
 @JvmOverloads
 public fun ChatClient.watchChannelAsState(

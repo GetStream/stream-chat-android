@@ -36,7 +36,7 @@ public class MessageListHeaderViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: Flow<ChannelState> =
+    private val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,

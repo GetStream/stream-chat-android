@@ -28,7 +28,7 @@ public class TypingIndicatorViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: StateFlow<ChannelState?> =
+    private val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
