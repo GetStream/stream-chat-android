@@ -35,6 +35,7 @@ import io.getstream.chat.android.offline.utils.internal.validateCidWithResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -68,13 +69,9 @@ public fun ChatClient.queryChannelsAsState(
     request: QueryChannelsRequest,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
-    return globalState.user.map { user ->
-        if (user == null) {
-            null
-        } else {
-            requestsAsState(coroutineScope).queryChannels(request)
-        }
-    }.stateIn(coroutineScope, SharingStarted.Eagerly, null)
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).queryChannels(request)
+    }
 }
 
 /**
@@ -90,9 +87,11 @@ public fun ChatClient.queryChannelsAsState(
 public fun ChatClient.watchChannelAsState(
     cid: String,
     messageLimit: Int,
-    coroutineScope: CoroutineScope = state.scope,
-): ChannelState {
-    return requestsAsState(coroutineScope).watchChannel(cid, messageLimit)
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<ChannelState?> {
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit)
+    }
 }
 
 /**
@@ -108,9 +107,29 @@ public fun ChatClient.watchChannelAsState(
 public fun ChatClient.getRepliesAsState(
     messageId: String,
     messageLimit: Int,
-    coroutineScope: CoroutineScope = state.scope,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): ThreadState {
     return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+}
+
+/**
+ * Provides an ease-of-use piece of functionality that checks if the user is available or not. If it's not, we don't emit
+ * any state, but rather return an empty StateFlow.
+ *
+ * If the user is set, we fetch the state using the provided operation and provide it to the user.
+ */
+@JvmOverloads
+private fun <T> ChatClient.getStateOrNull(
+    coroutineScope: CoroutineScope,
+    producer: () -> T,
+): StateFlow<T?> {
+    return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
+        if (userId == null) {
+            null
+        } else {
+            producer()
+        }
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, null)
 }
 
 /**

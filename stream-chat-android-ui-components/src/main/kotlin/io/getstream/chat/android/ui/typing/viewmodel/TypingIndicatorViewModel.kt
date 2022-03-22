@@ -8,6 +8,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 /**
@@ -25,7 +28,7 @@ public class TypingIndicatorViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: ChannelState =
+    public val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
@@ -36,7 +39,7 @@ public class TypingIndicatorViewModel(
      * A list of users who are currently typing.
      */
     public val typingUsers: LiveData<List<User>> =
-        channelState.typing.map { typingEvent ->
+        channelState.filterNotNull().flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
 

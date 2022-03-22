@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,7 @@ class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
@@ -59,7 +60,10 @@ class GroupChatInfoMemberOptionsViewModel(
                         val cid = result.data().firstOrNull()?.cid ?: ""
 
                         chatClient.watchChannelAsState(cid, 30, viewModelScope)
-                            .messagesState
+                            .filterNotNull()
+                            .flatMapLatest {
+                                it.messagesState
+                            }
                             .map { mapChannelState(it, cid) }
                     } else {
                         MutableStateFlow(null)

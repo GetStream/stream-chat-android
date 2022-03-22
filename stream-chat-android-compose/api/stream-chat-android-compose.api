@@ -1734,7 +1734,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun flagMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun focusMessage (Ljava/lang/String;)V
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
-	public final fun getChannelState ()Lio/getstream/chat/android/offline/plugin/state/channel/ChannelState;
+	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public static fun getConnectionState$delegate (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;)Ljava/lang/Object;

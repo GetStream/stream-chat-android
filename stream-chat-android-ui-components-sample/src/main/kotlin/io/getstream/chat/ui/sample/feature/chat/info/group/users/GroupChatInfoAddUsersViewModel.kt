@@ -15,6 +15,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class GroupChatInfoAddUsersViewModel(
@@ -25,7 +28,8 @@ class GroupChatInfoAddUsersViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope)
+    private val channelState: Flow<ChannelState> =
+        chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope).filterNotNull()
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()
@@ -37,7 +41,7 @@ class GroupChatInfoAddUsersViewModel(
     val userAddedState: LiveData<Boolean> = _userAddedState
     val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
-    private val membersLiveData: LiveData<List<Member>> = channelState.members.asLiveData()
+    private val membersLiveData: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
 
     private val observer = Observer<List<Member>> { members = it }
 

@@ -62,7 +62,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -94,7 +97,7 @@ public class MessageListViewModel(
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: ChannelState = chatClient.watchChannelAsState(
+    public val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(
         cid = channelId,
         messageLimit = messageLimit,
         coroutineScope = viewModelScope
@@ -215,58 +218,60 @@ public class MessageListViewModel(
      */
     private fun observeChannel() {
         viewModelScope.launch {
-            combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
-                when (state) {
-                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
-                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
-                    -> messagesState.copy(isLoading = true)
-                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
-                        isLoading = false,
-                        messageItems = emptyList()
-                    )
-                    is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
-                        messagesState.copy(
+            channelState.filterNotNull().collectLatest { channelState ->
+                combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
+                    when (state) {
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
+                        -> messagesState.copy(isLoading = true)
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
                             isLoading = false,
-                            messageItems = groupMessages(
-                                messages = filterMessagesToShow(state.messages),
-                                isInThread = false,
-                                reads = reads,
-                            ),
-                            isLoadingMore = false,
-                            endOfMessages = channelState.endOfOlderMessages.value,
-                            currentUser = user
+                            messageItems = emptyList()
                         )
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
+                            messagesState.copy(
+                                isLoading = false,
+                                messageItems = groupMessages(
+                                    messages = filterMessagesToShow(state.messages),
+                                    isInThread = false,
+                                    reads = reads,
+                                ),
+                                isLoadingMore = false,
+                                endOfMessages = channelState.endOfOlderMessages.value,
+                                currentUser = user
+                            )
+                        }
                     }
                 }
+                    .catch {
+                        it.cause?.printStackTrace()
+                        showEmptyState()
+                    }
+                    .collect { newState ->
+                        val newLastMessage =
+                            (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
+
+                        val hasNewMessage = lastLoadedMessage != null &&
+                            messagesState.messageItems.isNotEmpty() &&
+                            newLastMessage?.id != lastLoadedMessage?.id
+
+                        messagesState = if (hasNewMessage) {
+                            val newMessageState = getNewMessageState(newLastMessage)
+
+                            newState.copy(
+                                newMessageState = newMessageState,
+                                unreadCount = getUnreadMessageCount(newMessageState)
+                            )
+                        } else {
+                            newState
+                        }
+                        lastLoadedMessage = newLastMessage
+                        channelState.toChannel().let { channel ->
+                            ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
+                            setCurrentChannel(channel)
+                        }
+                    }
             }
-                .catch {
-                    it.cause?.printStackTrace()
-                    showEmptyState()
-                }
-                .collect { newState ->
-                    val newLastMessage =
-                        (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
-
-                    val hasNewMessage = lastLoadedMessage != null &&
-                        messagesState.messageItems.isNotEmpty() &&
-                        newLastMessage?.id != lastLoadedMessage?.id
-
-                    messagesState = if (hasNewMessage) {
-                        val newMessageState = getNewMessageState(newLastMessage)
-
-                        newState.copy(
-                            newMessageState = newMessageState,
-                            unreadCount = getUnreadMessageCount(newMessageState)
-                        )
-                    } else {
-                        newState
-                    }
-                    lastLoadedMessage = newLastMessage
-                    channelState.toChannel().let { channel ->
-                        ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
-                        setCurrentChannel(channel)
-                    }
-                }
         }
     }
 
@@ -275,7 +280,7 @@ public class MessageListViewModel(
      */
     private fun observeTypingUsers() {
         viewModelScope.launch {
-            channelState.typing.collect {
+            channelState.filterNotNull().flatMapLatest { it.typing }.collect {
                 typingUsers = it.users
             }
         }
@@ -563,6 +568,8 @@ public class MessageListViewModel(
      */
     private fun loadThread(parentMessage: Message) {
         val threadState = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGE_LIMIT)
+        val channelState = channelState.value ?: return
+
         messageMode = MessageMode.MessageThread(parentMessage, threadState)
         observeThreadMessages(
             threadId = threadState.parentId,
@@ -765,6 +772,8 @@ public class MessageListViewModel(
      * @param message The currently selected message.
      */
     private fun reactToMessage(reaction: Reaction, message: Message) {
+        val channelState = channelState.value ?: return
+
         if (message.ownReactions.any { it.messageId == reaction.messageId && it.type == reaction.type }) {
             chatClient.deleteReaction(
                 messageId = message.id,

@@ -22,7 +22,10 @@ import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
 import java.io.File
 
@@ -44,23 +47,23 @@ public class MessageInputViewModel @JvmOverloads constructor(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: ChannelState =
+    public val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope
-        )
+        ).filterNotNull()
 
     /**
      * A list of [Channel] members.
      */
-    public val members: LiveData<List<Member>> = channelState.members.asLiveData()
+    public val members: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
 
     /**
      * List of available commands.
      */
     public val commands: LiveData<List<Command>> =
-        channelState.channelConfig.map { config ->
+        channelState.flatMapLatest { it.channelConfig }.map { config ->
             config.commands
         }.asLiveData()
 
@@ -68,7 +71,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * The cooldown interval for the given channel.
      */
     public val cooldownInterval: LiveData<Int> =
-        channelState.channelData.map { channelData ->
+        channelState.flatMapLatest { it.channelData }.map { channelData ->
             channelData.cooldown
         }.asLiveData()
 
@@ -76,7 +79,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * The maximum length of a message that can be typed in the message input.
      */
     public val maxMessageLength: LiveData<Int> =
-        channelState.channelConfig.map { config ->
+        channelState.flatMapLatest { it.channelConfig }.map { config ->
             config.maxMessageLength
         }.asLiveData()
 
@@ -84,7 +87,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * Holds the message the user is currently replying to,
      * if the user is replying to a message.
      */
-    public val repliedMessage: LiveData<Message?> = channelState.repliedMessage.asLiveData()
+    public val repliedMessage: LiveData<Message?> = channelState.flatMapLatest { it.repliedMessage }.asLiveData()
 
     /**
      * Emits true if the message is a direct message between two users.
@@ -94,8 +97,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * the user.
      */
     public val isDirectMessage: LiveData<Boolean> =
-        channelState.channelData.combine(globalState.user) { _, _ ->
-            channelState.toChannel().isDirectMessaging()
+        channelState.flatMapLatest { it.channelData }.map {
+            val state = channelState.lastOrNull()
+
+            state?.toChannel()?.isDirectMessaging() ?: false
         }.asLiveData()
 
     /**

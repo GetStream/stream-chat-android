@@ -31,6 +31,10 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStat
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -115,7 +119,7 @@ public class ChannelListViewModel(
     /**
      * Represents the current state of the channels query.
      */
-    private var queryChannelsState: QueryChannelsState? = null
+    private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
     init {
         stateMerger.addSource(filterLiveData) { filter ->
@@ -147,26 +151,28 @@ public class ChannelListViewModel(
                 memberLimit = memberLimit,
             )
         queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
-        queryChannelsState?.let { queryChannelsState ->
-            queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
-            stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
-                stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
-            }
-            stateMerger.addSource(globalState.channelMutes.asLiveData()) { channelMutes ->
-                val state = stateMerger.value
-
-                if (state?.channels?.isNotEmpty() == true) {
-                    stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
-                } else {
-                    stateMerger.value = state?.copy()
+        viewModelScope.launch {
+            queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+                queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
+                stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
+                    stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
                 }
-            }
+                stateMerger.addSource(globalState.channelMutes.asLiveData()) { channelMutes ->
+                    val state = stateMerger.value
 
-            paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
-                setPaginationState { copy(loadingMore = loadingMore) }
-            }
-            paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
-                setPaginationState { copy(endOfChannels = endOfChannels) }
+                    if (state?.channels?.isNotEmpty() == true) {
+                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
+                    } else {
+                        stateMerger.value = state?.copy()
+                    }
+                }
+
+                paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
+                    setPaginationState { copy(loadingMore = loadingMore) }
+                }
+                paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
+                    setPaginationState { copy(endOfChannels = endOfChannels) }
+                }
             }
         }
     }
@@ -273,7 +279,9 @@ public class ChannelListViewModel(
      */
     private fun requestMoreChannels() {
         filterLiveData.value?.let { filter ->
-            queryChannelsState?.nextPageRequest?.value?.let {
+            val queryChannelsState = queryChannelsState.value ?: return
+
+            queryChannelsState.nextPageRequest.value?.let {
                 viewModelScope.launch {
                     chatClient.queryChannels(it).enqueue(
                         onError = { chatError ->
