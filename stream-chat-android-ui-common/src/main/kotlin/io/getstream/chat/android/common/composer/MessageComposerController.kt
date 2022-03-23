@@ -625,6 +625,6 @@ public class MessageComposerController(
         /**
          * The default limit for messages count in requests.
          */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 0
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

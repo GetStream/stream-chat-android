@@ -292,7 +292,9 @@ public class MessageListViewModel(
             stateMerger.removeSource(it)
         }
         messageListData?.let {
-            stateMerger.addSource(it) { stateMerger.value = State.Result(it) }
+            stateMerger.addSource(it) { messageListItemWrapper ->
+                stateMerger.value = State.Result(messageListItemWrapper)
+            }
         }
     }
 
