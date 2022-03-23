@@ -295,7 +295,10 @@ public class MessageInputView : ConstraintLayout {
         )
 
         val dismissListener = PopupWindow.OnDismissListener {
-            binding.commandsButton.postDelayed(CLICK_DELAY) { binding.commandsButton.isSelected = false }
+            binding.commandsButton.postDelayed(CLICK_DELAY) {
+                binding.commandsButton.isSelected = false
+                hideSuggestionList()
+            }
         }
         val suggestionListUi = if (popupWindow) {
             SuggestionListPopupWindow(suggestionListView, this, dismissListener)
