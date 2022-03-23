@@ -48,6 +48,6 @@ public class TypingIndicatorViewModel(
         /**
          * The default limit for messages that will be requested.
          */
-        private const val DEFAULT_MESSAGES_LIMIT: Int = 0
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
     }
 }
