@@ -11,6 +11,9 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -30,12 +33,12 @@ internal class ChannelActionsViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    val channelState: ChannelState =
+    val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGE_LIMIT,
             coroutineScope = viewModelScope
-        )
+        ).filterNotNull()
 
     /**
      * The initial empty state.
@@ -60,7 +63,7 @@ internal class ChannelActionsViewModel(
     init {
         _state.postValue(currentState)
 
-        channelState.members.onEach { members ->
+        channelState.flatMapLatest { it.members }.onEach { members ->
             onAction(Action.UpdateMembers(members))
         }.launchIn(viewModelScope)
     }

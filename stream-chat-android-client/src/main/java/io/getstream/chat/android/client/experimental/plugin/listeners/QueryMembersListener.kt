@@ -23,7 +23,7 @@ public interface QueryMembersListener {
      * @param sort Sort the list of members.
      * @param members List of members.
      */
-    public suspend fun onQueryChannelsResult(
+    public suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
         channelType: String,
         channelId: String,

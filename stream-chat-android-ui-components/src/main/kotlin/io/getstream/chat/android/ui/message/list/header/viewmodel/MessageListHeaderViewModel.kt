@@ -15,7 +15,10 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 /**
@@ -33,12 +36,12 @@ public class MessageListHeaderViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: ChannelState =
+    private val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope
-        )
+        ).filterNotNull()
 
     /**
      * The current [Channel] created from [ChannelState]. It emits new data either when
@@ -48,22 +51,22 @@ public class MessageListHeaderViewModel(
      * channel events being received.
      */
     public val channel: LiveData<Channel> =
-        channelState.channelData.combine(channelState.members) { _, _ ->
-            channelState.toChannel()
+        channelState.flatMapLatest { state ->
+            state.channelData.combine(state.members) { _, _ -> state.toChannel() }
         }.asLiveData()
 
     /**
      * A list of users who are currently typing.
      */
     public val typingUsers: LiveData<List<User>> =
-        channelState.typing.map { typingEvent ->
+        channelState.flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
 
     /**
      * A list of [Channel] members.
      */
-    public val members: LiveData<List<Member>> = channelState.members.asLiveData()
+    public val members: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
 
     /**
      * Current user's online status.

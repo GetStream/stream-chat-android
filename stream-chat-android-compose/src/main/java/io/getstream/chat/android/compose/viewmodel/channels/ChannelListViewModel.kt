@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -113,7 +114,7 @@ public class ChannelListViewModel(
     /**
      * Current query channels state that contains filter, sort and other states related to channels query.
      */
-    private var queryChannelsState: QueryChannelsState? = null
+    private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
@@ -139,9 +140,7 @@ public class ChannelListViewModel(
                 )
 
                 queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
-                queryChannelsState?.let {
-                    observeChannels(it, searchQuery = query)
-                }
+                observeChannels(searchQuery = query)
             }
     }
 
@@ -178,37 +177,38 @@ public class ChannelListViewModel(
      * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [queryChannelsState].
-     * @param queryChannelsState The state that contains information about query channels.
      * @param searchQuery The search query string used to search channels.
      */
-    private suspend fun observeChannels(queryChannelsState: QueryChannelsState, searchQuery: String) {
-        channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
-            .map { (channelMutes, state) ->
-                when (state) {
-                    ChannelsStateData.NoQueryActive,
-                    ChannelsStateData.Loading,
-                    -> channelsState.copy(
-                        isLoading = true,
-                        searchQuery = searchQuery
-                    )
-                    ChannelsStateData.OfflineNoResults -> {
-                        channelsState.copy(
-                            isLoading = false,
-                            channelItems = emptyList(),
+    private suspend fun observeChannels(searchQuery: String) {
+        queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+            channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
+                .map { (channelMutes, state) ->
+                    when (state) {
+                        ChannelsStateData.NoQueryActive,
+                        ChannelsStateData.Loading,
+                        -> channelsState.copy(
+                            isLoading = true,
                             searchQuery = searchQuery
                         )
+                        ChannelsStateData.OfflineNoResults -> {
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = emptyList(),
+                                searchQuery = searchQuery
+                            )
+                        }
+                        is ChannelsStateData.Result -> {
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = createChannelItems(state.channels, channelMutes),
+                                isLoadingMore = false,
+                                endOfChannels = queryChannelsState.endOfChannels.value,
+                                searchQuery = searchQuery
+                            )
+                        }
                     }
-                    is ChannelsStateData.Result -> {
-                        channelsState.copy(
-                            isLoading = false,
-                            channelItems = createChannelItems(state.channels, channelMutes),
-                            isLoadingMore = false,
-                            endOfChannels = queryChannelsState.endOfChannels.value,
-                            searchQuery = searchQuery
-                        )
-                    }
-                }
-            }.collectLatest { newState -> channelsState = newState }
+                }.collectLatest { newState -> channelsState = newState }
+        }
     }
 
     /**
@@ -260,7 +260,7 @@ public class ChannelListViewModel(
 
         channelsState = channelsState.copy(isLoadingMore = true)
 
-        val currentQuery = queryChannelsState?.nextPageRequest?.value
+        val currentQuery = queryChannelsState.value?.nextPageRequest?.value
 
         currentQuery?.copy(
             filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),

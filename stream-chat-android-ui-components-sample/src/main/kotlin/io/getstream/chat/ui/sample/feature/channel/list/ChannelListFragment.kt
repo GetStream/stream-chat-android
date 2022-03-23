@@ -23,7 +23,9 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
@@ -31,10 +33,17 @@ import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 class ChannelListFragment : Fragment() {
 
     private val viewModel: ChannelListViewModel by viewModels {
+        val user = App.instance.userRepository.getUser()
+        val userId = if (user == SampleUser.None) {
+            ChatClient.instance().getCurrentUser()?.id ?: ""
+        } else {
+            user.id
+        }
+
         ChannelListViewModelFactory(
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
+                Filters.`in`("members", listOf(userId)),
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
