@@ -59,6 +59,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             mediaAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.pictureAttachmentIcon
+                backgroundTintList = attachmentSelectionDialogStyle.toggleButtonColorStateList
 
                 isChecked = true
                 setOnClickListener {
@@ -68,6 +69,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             fileAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.fileAttachmentIcon
+                backgroundTintList = attachmentSelectionDialogStyle.toggleButtonColorStateList
 
                 setOnClickListener {
                     setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)
@@ -76,6 +78,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             cameraAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.cameraAttachmentIcon
+                backgroundTintList = attachmentSelectionDialogStyle.toggleButtonColorStateList
 
                 setOnClickListener {
                     setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)
