@@ -1,5 +1,4 @@
 # UNRELEASED CHANGELOG
-<!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
 
@@ -109,12 +108,13 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-<!-- UNRELEASED END -->
 
+<!-- UNRELEASED START -->
 # March 24th, 2022 - 5.0.1
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed a bug where the missing implementation of the `MessageTextTransformer` caused message text not to show up. [#3248](https://github.com/GetStream/stream-chat-android/pull/3248)
+<!-- UNRELEASED END -->
 
 # March 24th, 2022 - 5.0.0
 **5.0.0** is a major release! You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/android-v5-sdk-release/).
