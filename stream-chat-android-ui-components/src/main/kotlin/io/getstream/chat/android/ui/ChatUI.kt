@@ -58,6 +58,7 @@ public object ChatUI {
     public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
             // Customize the transformer if needed
+            textView.text = messageItem.message.text
         }
     }
 
