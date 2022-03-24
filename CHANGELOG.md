@@ -109,8 +109,8 @@
 
 ### ❌ Removed
 
-<!-- UNRELEASED START -->
 # March 24th, 2022 - 5.0.1
+<!-- UNRELEASED START -->
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed a bug where the missing implementation of the `MessageTextTransformer` caused message text not to show up. [#3248](https://github.com/GetStream/stream-chat-android/pull/3248)
