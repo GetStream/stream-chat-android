@@ -8,12 +8,8 @@ apply plugin: 'kotlin-parcelize'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    if (snapshot) {
-        PUBLISH_VERSION = Configuration.snapshotVersionName
-    } else {
-        PUBLISH_VERSION = Configuration.versionName + "-beta"
-    }
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-compose'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
