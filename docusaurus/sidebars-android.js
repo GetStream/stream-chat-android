@@ -32,6 +32,10 @@ module.exports = {
                   type: 'doc',
                   id: 'client/guides/offline-support',
                 },
+                {
+                  type: 'doc',
+                  id: 'client/guides/chatdomain-migration',
+                },
             ]
 //        items: [
 //            {
