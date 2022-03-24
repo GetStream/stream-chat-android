@@ -1,16 +1,12 @@
 # UNRELEASED CHANGELOG
-<!-- UNRELEASED START -->
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- Fixed memory leaks related to image loading. [#2979](https://github.com/GetStream/stream-chat-android/pull/2979)
 
 ### ⬆️ Improved
-- Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- Updated AGP version to 7.1.2 and Gradle version to 7.4. [#3159](https://github.com/GetStream/stream-chat-android/pull/3159)
 
 ### ❌ Removed
 
@@ -20,20 +16,13 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ### ⚠️ Changed
-- Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
-- Deprecated `Member:role` in favor of `Member:channelRole` [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ### ❌ Removed
 
 ## stream-chat-android-offline
-🚨🚨 **v5.0.0** release brings a big change to the offline support library - it replaces `ChatDomain` with the `OfflinePlugin`. You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/). 🚨🚨
-
 ### 🐞 Fixed
-- Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
-- Fixed marking the channel as read if it was opened offline previously. [#3162](https://github.com/GetStream/stream-chat-android/pull/3162)
 
 ### ⬆️ Improved
 
@@ -42,7 +31,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Moved `RetryPolicy` related logic to `ChatClient`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -54,14 +42,112 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-xiaomi
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# March 24th, 2022 - 5.0.0
+<!-- UNRELEASED START -->
+**5.0.0** is a major release! You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/android-v5-sdk-release/).
+## Common changes for all artifacts
+### 🐞 Fixed
+- Fixed memory leaks related to image loading. [#2979](https://github.com/GetStream/stream-chat-android/pull/2979)
+
+### ⬆️ Improved
+- Replaced KAPT with KSP. [#3113](https://github.com/GetStream/stream-chat-android/pull/3113)
+
+### ⚠️ Changed
+- Updated AGP version to 7.1.2 and Gradle version to 7.4. [#3159](https://github.com/GetStream/stream-chat-android/pull/3159)
+
+## stream-chat-android-client
+### ✅ Added
+- Added possibility to configure `RetryPolicy` using `ChaClient.Builder()`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
+
+### ⚠️ Changed
+- Add `Channel::image`, `Channel:name`, `User::image`, `User::name` properties. [#3139](https://github.com/GetStream/stream-chat-android/pull/3139)
+- Deprecated `Member:role` in favor of `Member:channelRole` [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
+
+## stream-chat-android-offline
+🚨🚨 **v5.0.0** release brings a big change to the offline support library - it replaces `ChatDomain` with the `OfflinePlugin`. Make sure to check our [migration guide](https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/)! 🚨🚨
+
+### 🐞 Fixed
+- Unread count for muted channels no longer increments when the channel is muted and new messages are received. [#3112](https://github.com/GetStream/stream-chat-android/pull/3112)
+- Fixed marking the channel as read if it was opened offline previously. [#3162](https://github.com/GetStream/stream-chat-android/pull/3162)
+
+### ❌ Removed
+- Moved `RetryPolicy` related logic to `ChatClient`. [#3069](https://github.com/GetStream/stream-chat-android/pull/3069)
+
+## stream-chat-android-ui-common
+### ❌ Removed
 - Removed ChatMarkdown in favor of ChatMessageTextTransformer [#3189](https://github.com/GetStream/stream-chat-android/pull/3189)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed an issue with message flickering when sending a message with file attachments. [#3209](https://github.com/GetStream/stream-chat-android/pull/3209)
 - Fixed a crash when overriding `ChatUI::imageHeadersProvider` caused by compiler [issue](https://youtrack.jetbrains.com/issue/KT-49793). [#3237](https://github.com/GetStream/stream-chat-android/pull/3237)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added a separate `LinkAttachmentsViewHolder` for handling messages containing link attachments and no other types of attachments. [#3070](https://github.com/GetStream/stream-chat-android/pull/3070)
@@ -113,50 +199,6 @@
 
 ### ❌ Removed
 - Removed "Pin message", "Reply", "Thread reply" message actions for messages that are not synced. [#3226](https://github.com/GetStream/stream-chat-android/pull/3226)
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 <!-- UNRELEASED END -->
 
 # March 9th, 2022 - 4.30.1
