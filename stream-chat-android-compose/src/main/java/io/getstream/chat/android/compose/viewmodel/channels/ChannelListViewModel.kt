@@ -334,7 +334,7 @@ public class ChannelListViewModel(
         dismissChannelAction()
 
         chatClient.getCurrentUser()?.let { user ->
-            chatClient.removeMembers(channel.type, channel.id, listOf(user.id)).enqueue()
+            chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue()
         }
     }
 

@@ -268,6 +268,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         members: List<String>,
+        systemMessage: Message?,
     ): Call<Channel>
 
     @CheckResult
@@ -275,6 +276,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         members: List<String>,
+        systemMessage: Message?,
     ): Call<Channel>
 
     @CheckResult

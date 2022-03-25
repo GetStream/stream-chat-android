@@ -1652,6 +1652,7 @@ public class ChatClient internal constructor(
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of the member ids to be added.
+     * @param systemMessage The system message that will be shown in the channel.
      *
      * @return Executable async [Call] responsible for adding the members.
      */
@@ -1660,11 +1661,13 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
+        systemMessage: Message? = null
     ): Call<Channel> {
         return api.addMembers(
             channelType,
             channelId,
             memberIds,
+            systemMessage,
         )
     }
 
@@ -1674,6 +1677,7 @@ public class ChatClient internal constructor(
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of the member ids to be removed.
+     * @param systemMessage The system message that will be shown in the channel.
      *
      * @return Executable async [Call] responsible for removing the members.
      */
@@ -1682,10 +1686,12 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
+        systemMessage: Message? = null
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
         memberIds,
+        systemMessage
     )
 
     /**

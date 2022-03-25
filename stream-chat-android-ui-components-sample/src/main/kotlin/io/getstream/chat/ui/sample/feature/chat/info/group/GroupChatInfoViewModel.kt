@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -102,7 +103,10 @@ class GroupChatInfoViewModel(
     private fun leaveChannel() {
         viewModelScope.launch {
             val result = chatClient.getCurrentUser()?.let { user ->
-                chatClient.removeMembers(channelClient.channelType, channelClient.channelId, listOf(user.id)).await()
+                val message = Message(text = "${user.name} left")
+                chatClient.channel(channelClient.channelType, channelClient.channelId)
+                    .removeMembers(listOf(user.id), message)
+                    .await()
             }
             if (result?.isSuccess == true) {
                 _events.value = Event(UiEvent.RedirectToHome)
