@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a `systemMessage: Message` parameter to  `ChatClient::addMembers`, `ChatClient::removeMembers`, `ChannelClient::addMembers` and `ChannelClient::removeMembers` to send a system message to that channel. [#3254](https://github.com/GetStream/stream-chat-android/pull/3254)
 
 ### ⚠️ Changed
 
