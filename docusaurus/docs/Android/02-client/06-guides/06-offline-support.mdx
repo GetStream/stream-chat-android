@@ -52,20 +52,21 @@ val globalState = chatClient.globalState
 ```
 
 :::warning
-Methods mentioned above will only return a state object associated with the API call but they won't perform the API call itself.
+You should make sure that the user is connected before using the state. Acessing `chatClient.state` before connecting the user will result in a crash!
 :::
 
+Methods mentioned above will only return a state object associated with the API call but they won't perform the API call itself.
 If you don't want to bother yourself about doing API calls when using state objects, you can use one of the provided extension functions:
 
 ```kotlin
-// Returns QueryChannelsState object and performs queryChannels request
-val queryChannelsState = chatClient.queryChannelsAsState(request = queryChannelsRequest, coroutineScope = scope)
+// Returns StateFlow<QueryChannelsState?> object and performs queryChannels request
+val queryChannelsState: StateFlow<QueryChannelsState?> = chatClient.queryChannelsAsState(request = queryChannelsRequest, coroutineScope = scope)
 
-// Returns ChannelState object and performs watchChannel request
-val channelState = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+// Returns StateFlow<ChannelState?> object and performs watchChannel request
+val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
 
 // Returns ThreadState object for a thread associated with a given parentMessageId
-val threadState = chatClient.getRepliesAsState(messageId = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+val threadState: ThreadState = chatClient.getRepliesAsState(messageId = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
 ```
 
 ### Supported Operations

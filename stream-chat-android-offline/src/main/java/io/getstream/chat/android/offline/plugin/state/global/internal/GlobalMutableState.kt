@@ -97,6 +97,7 @@ internal class GlobalMutableState private constructor() : GlobalState {
 
         _mutedUsers.value = emptyList()
         _channelMutes.value = emptyList()
+        _user.value = null
     }
 }
 

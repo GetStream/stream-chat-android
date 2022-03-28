@@ -2,11 +2,12 @@ package io.getstream.chat.android.client.setup
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Coordinates the initialization of the Chat SDK
  */
-// Make it internal when ChatDomain merge is complete
+@InternalStreamChatApi
 public class InitializationCoordinator private constructor() {
 
     private val userDisconnectedListeners: MutableList<(User?) -> Unit> = mutableListOf()

@@ -1,7 +1,7 @@
 # ChatDomain Migration
 
 **v5.0.0** release brings a big change to the offline support library - it replaces `ChatDomain` with a new, easy-to-use `OfflinePlugin`.
-You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/).  <!--TODO: Replace with a real link -->
+You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/android-v5-sdk-release/).
 
 The guide will help you with migrating from version `4.X.X` to `5.X.X`.
 
@@ -101,8 +101,8 @@ ChatDomain.instance().watchChannel(cid = "messaging:sampleId", messageLimit = 30
     }
 }
 
-// New approach - returns ChannelState object and performs watchChannel request
-val channelState = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+// New approach - returns the StateFlow<ChannelState?> object and performs watchChannel request
+val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
 ```
 
 You can read more in the [Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/) documentation.

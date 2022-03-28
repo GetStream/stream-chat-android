@@ -11,6 +11,9 @@ import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 
 class ChatViewModel(
     private val cid: String,
@@ -20,17 +23,18 @@ class ChatViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+    private val channelState: StateFlow<ChannelState?> =
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
 
-    val members: LiveData<List<Member>> = channelState.members.asLiveData()
+    val members: LiveData<List<Member>> = channelState.filterNotNull().flatMapLatest { it.members }.asLiveData()
 
     fun onAction(action: Action) {
         when (action) {
             is Action.HeaderClicked -> {
-                val channelData = requireNotNull(channelState.channelData.value)
+                val channelData = requireNotNull(channelState.value?.channelData?.value)
                 _navigationEvent.value = Event(
                     if (action.members.size > 2 || !channelData.isAnonymousChannel()) {
                         NavigationEvent.NavigateToGroupChatInfo(cid)

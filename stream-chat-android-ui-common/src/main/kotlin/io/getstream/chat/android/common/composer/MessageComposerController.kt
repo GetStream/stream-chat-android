@@ -25,6 +25,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -61,10 +63,10 @@ public class MessageComposerController(
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: ChannelState = chatClient.watchChannelAsState(
+    public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
         cid = channelId,
         messageLimit = DEFAULT_MESSAGE_LIMIT
-    )
+    ).filterNotNull()
 
     /**
      * Full message composer state holding all the required information.
@@ -190,16 +192,16 @@ public class MessageComposerController(
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
-        channelState.channelConfig.onEach {
+        channelState.flatMapLatest { it.channelConfig }.onEach {
             maxMessageLength = it.maxMessageLength
             commands = it.commands
         }.launchIn(scope)
 
-        channelState.members.onEach { members ->
+        channelState.flatMapLatest { it.members }.onEach { members ->
             users = members.map { it.user }
         }.launchIn(scope)
 
-        channelState.channelData.onEach {
+        channelState.flatMapLatest { it.channelData }.onEach {
             cooldownInterval = it.cooldown
         }.launchIn(scope)
 
@@ -623,6 +625,6 @@ public class MessageComposerController(
         /**
          * The default limit for messages count in requests.
          */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 0
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

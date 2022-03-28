@@ -510,7 +510,7 @@ public class ChatClient internal constructor(
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    plugin.onQueryChannelsResult(
+                    plugin.onQueryMembersResult(
                         result,
                         channelType,
                         channelId,
@@ -1346,15 +1346,15 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
 
         return queryChannelsPostponeHelper.postponeQueryChannels {
             api.queryChannels(request)
         }.doOnStart(scope) {
-            relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+            relevantPluginsLazy().forEach { it.onQueryChannelsRequest(request) }
         }.doOnResult(scope) { result ->
-            relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
-        }.precondition(relevantPlugins) {
+            relevantPluginsLazy().forEach { it.onQueryChannelsResult(result, request) }
+        }.precondition(relevantPluginsLazy()) {
             onQueryChannelsPrecondition(request)
         }
     }

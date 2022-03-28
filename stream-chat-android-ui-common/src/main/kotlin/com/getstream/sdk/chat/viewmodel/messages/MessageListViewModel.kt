@@ -207,7 +207,7 @@ public class MessageListViewModel(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope
-        )
+        ).value ?: return
 
         ChatClient.dismissChannelNotifications(
             channelType = channelState.channelType,

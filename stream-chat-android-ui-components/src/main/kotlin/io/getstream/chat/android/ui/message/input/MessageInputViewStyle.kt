@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -357,6 +358,9 @@ public data class MessageInputViewStyle(
                     a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentSelectionAttachIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
 
+                val attachmentDialogTabButtonColorStateList = a.getColorStateList(R.styleable.MessageInputView_streamUiAttachmentTabButtonColorStateList)
+                    ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     fileAttachmentIcon = fileAttachmentIcon,
@@ -377,6 +381,7 @@ public data class MessageInputViewStyle(
                     videoIconVisible = videoIconVisible,
                     backgroundColor = attachmentSelectionBackgroundColor,
                     attachButtonIcon = attachmentSelectionAttachIcon,
+                    toggleButtonColorStateList = attachmentDialogTabButtonColorStateList
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

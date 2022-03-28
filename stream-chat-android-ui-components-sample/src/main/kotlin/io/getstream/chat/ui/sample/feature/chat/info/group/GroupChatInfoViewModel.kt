@@ -17,6 +17,11 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isOwnerOrAdmin
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GroupChatInfoViewModel(
@@ -28,7 +33,8 @@ class GroupChatInfoViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: ChannelState = chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+    private val channelState: Flow<ChannelState> =
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope).filterNotNull()
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()
@@ -45,17 +51,19 @@ class GroupChatInfoViewModel(
         globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
         // Update members
-        _state.addSource(channelState.members.asLiveData(), this::updateMembers)
+        _state.addSource(channelState.flatMapLatest { it.members }.asLiveData(), this::updateMembers)
 
-        getOwnerOrAdmin(channelState.members.value)?.let { member ->
-            _state.value = _state.value?.copy(
-                isCurrentUserOwnerOrAdmin = globalState.user.value?.id == member.getUserId()
-            )
-        }
-
-        _state.addSource(channelState.channelData.asLiveData()) { channelData ->
+        _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
             _state.value = _state.value?.copy(channelName = channelData.name)
         }
+
+        channelState.onEach { state ->
+            getOwnerOrAdmin(state.members.value)?.let { member ->
+                _state.value = _state.value?.copy(
+                    isCurrentUserOwnerOrAdmin = globalState.user.value?.id == member.getUserId()
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun getOwnerOrAdmin(members: List<Member>?): Member? {

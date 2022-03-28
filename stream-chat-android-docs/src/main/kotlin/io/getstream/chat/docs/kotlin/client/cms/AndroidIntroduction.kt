@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.kotlin
+package io.getstream.chat.docs.kotlin.client.cms
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
@@ -10,6 +10,13 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class AndroidIntroduction {
 
@@ -19,17 +26,25 @@ class AndroidIntroduction {
     fun chatClient(applicationContext: Context) {
         val apiKey = "{{ api_key }}"
         val token = "{{ chat_user_token }}"
-        // Step 1 - Set up the client for API calls
+        // Step 1 - Set up the OfflinePlugin for offline storage
+        val offlinePluginFactory = StreamOfflinePluginFactory(
+            config = Config(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                persistenceEnabled = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+            ),
+            appContext = applicationContext,
+        )
+
+        // Step 2 - Set up the client, together with offline plugin, for API calls
         val client = ChatClient.Builder(apiKey, applicationContext)
             // Change log level
             .logLevel(ChatLogLevel.ALL)
+            .withPlugin(offlinePluginFactory)
             .build()
-        // Step 2 - Set up the domain for offline storage
-        // val domain = ChatDomain.Builder(applicationContext, client)
-        //     // Enable offline support
-        //     .build()
 
-        // Step 2 - Authenticate and connect the user
+        // Step 3 - Authenticate and connect the user
         val user = User(
             id = "summer-brook-2",
             extraData = mutableMapOf(
@@ -49,7 +64,10 @@ class AndroidIntroduction {
         }
     }
 
-    fun watchingAChannel(client: ChatClient) {
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/?language=kotlin#channels">Channels</a>
+     */
+    fun channels(client: ChatClient, scope: CoroutineScope) {
         val channelClient = client.channel(channelType = "messaging", channelId = "travel")
 
         val extraData = mutableMapOf<String, Any>(
@@ -67,27 +85,30 @@ class AndroidIntroduction {
         }
 
         // Watching a channel's state using the offline library
-        // chatDomain.watchChannel(cid = "messaging:travel", messageLimit = 0)
-        //     .enqueue { result ->
-        //         if (result.isSuccess) {
-        //             val channelController = result.data()
-        //
-        //             // LiveData objects to observe
-        //             channelController.messages
-        //             channelController.reads
-        //             channelController.typing
-        //         }
-        //     }
+        scope.launch {
+            client.watchChannelAsState(cid = "messaging:travel", messageLimit = 0).collect { channelState ->
+                if (channelState != null) {
+                    // StateFlow objects to observe
+                    channelState.messages
+                    channelState.reads
+                    channelState.typing
+                } else {
+                    // User not connected yet.
+                }
+            }
+        }
     }
 
-    fun sendFirstMessage(channelClient: ChannelClient) {
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/?language=kotlin#messages">Messages</a>
+     */
+    fun messages(channelClient: ChannelClient) {
         val message = Message(
             text = "I’m mowing the air Rand, I’m mowing the air.",
             cid = "messaging:travel",
             extraData = mutableMapOf("customField" to "123")
         )
 
-        // Using the low level client
         channelClient.sendMessage(message).enqueue { result ->
             if (result.isSuccess) {
                 val message: Message = result.data()
@@ -97,20 +118,23 @@ class AndroidIntroduction {
         }
     }
 
-    fun queryChannels(client: ChatClient) {
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/?language=kotlin#querying-channels">Querying Channels</a>
+     */
+    fun queryingChannels(client: ChatClient) {
         val filter = Filters.and(
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "john"),
         )
         val sort = QuerySort<Channel>().desc("last_message_at")
 
-        // Using the low level client to query channels
         val request = QueryChannelsRequest(
             filter = filter,
             offset = 0,
             limit = 10,
             querySort = sort
         ).withWatch().withState()
+
         client.queryChannels(request).enqueue { result ->
             if (result.isSuccess) {
                 val channels: List<Channel> = result.data()

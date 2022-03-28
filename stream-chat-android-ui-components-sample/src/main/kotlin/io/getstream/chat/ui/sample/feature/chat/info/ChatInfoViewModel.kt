@@ -20,6 +20,9 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class ChatInfoViewModel(
@@ -32,8 +35,8 @@ class ChatInfoViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: ChannelState =
-        chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT, viewModelScope)
+    private val channelState: Flow<ChannelState> =
+        chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT, viewModelScope).filterNotNull()
 
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()
@@ -51,7 +54,7 @@ class ChatInfoViewModel(
                 // Update channel mute status
                 globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
-                _state.addSource(channelState.members.asLiveData()) { memberList ->
+                _state.addSource(channelState.flatMapLatest { it.members }.asLiveData()) { memberList ->
                     // Updates only if the user state is already set
                     _state.value = _state.value!!.copy(canDeleteChannel = memberList.isCurrentUserOwnerOrAdmin())
                     memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->

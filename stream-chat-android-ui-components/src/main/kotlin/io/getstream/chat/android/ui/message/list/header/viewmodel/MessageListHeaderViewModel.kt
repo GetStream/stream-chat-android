@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,6 +17,8 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 /**
@@ -35,26 +36,12 @@ public class MessageListHeaderViewModel(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: ChannelState =
+    private val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope
-        )
-
-    /**
-     * Necessary for testing because [LiveData] conversion caused issues with testing.
-     *
-     * The current [Channel] created from [ChannelState]. It emits new data either when
-     * channel data or the list of members in [ChannelState] updates.
-     *
-     * Combining the two is important because members changing online status does not result in
-     * channel events being received.
-     */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    public val _channel: Flow<Channel> = channelState.channelData.combine(channelState.members) { _, _ ->
-        channelState.toChannel()
-    }
+        ).filterNotNull()
 
     /**
      * The current [Channel] created from [ChannelState]. It emits new data either when
@@ -63,20 +50,23 @@ public class MessageListHeaderViewModel(
      * Combining the two is important because members changing online status does not result in
      * channel events being received.
      */
-    public val channel: LiveData<Channel> = _channel.asLiveData()
+    public val channel: LiveData<Channel> =
+        channelState.flatMapLatest { state ->
+            state.channelData.combine(state.members) { _, _ -> state.toChannel() }
+        }.asLiveData()
 
     /**
      * A list of users who are currently typing.
      */
     public val typingUsers: LiveData<List<User>> =
-        channelState.typing.map { typingEvent ->
+        channelState.flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
 
     /**
      * A list of [Channel] members.
      */
-    public val members: LiveData<List<Member>> = channelState.members.asLiveData()
+    public val members: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
 
     /**
      * Current user's online status.
@@ -116,6 +106,6 @@ public class MessageListHeaderViewModel(
         /**
          * The default limit for messages that will be requested.
          */
-        private const val DEFAULT_MESSAGES_LIMIT: Int = 0
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
     }
 }
