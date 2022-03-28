@@ -622,12 +622,13 @@ internal class MoshiChatApi(
         channelType: String,
         channelId: String,
         members: List<String>,
+        message: Message?,
     ): Call<Channel> {
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
-            body = AddMembersRequest(members),
+            body = AddMembersRequest(members, message?.toDto()),
         ).map(this::flattenChannel)
     }
 
@@ -635,12 +636,13 @@ internal class MoshiChatApi(
         channelType: String,
         channelId: String,
         members: List<String>,
+        message: Message?,
     ): Call<Channel> {
         return channelApi.removeMembers(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
-            body = RemoveMembersRequest(members),
+            body = RemoveMembersRequest(members, message?.toDto()),
         ).map(this::flattenChannel)
     }
 

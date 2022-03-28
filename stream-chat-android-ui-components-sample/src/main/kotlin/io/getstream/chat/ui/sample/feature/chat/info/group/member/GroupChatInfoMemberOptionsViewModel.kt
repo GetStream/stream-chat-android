@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -97,7 +98,7 @@ class GroupChatInfoMemberOptionsViewModel(
     fun onAction(action: Action) {
         when (action) {
             Action.MessageClicked -> handleMessageClicked()
-            Action.RemoveFromChannel -> removeFromChannel()
+            is Action.RemoveFromChannel -> removeFromChannel(action.username)
         }
     }
 
@@ -112,9 +113,10 @@ class GroupChatInfoMemberOptionsViewModel(
         )
     }
 
-    private fun removeFromChannel() {
+    private fun removeFromChannel(username: String) {
         viewModelScope.launch {
-            val result = chatClient.channel(cid).removeMembers(listOf(memberId)).await()
+            val message = Message(text = "$username has been removed from this channel")
+            val result = chatClient.channel(cid).removeMembers(listOf(memberId), message).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {
@@ -127,7 +129,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     sealed class Action {
         object MessageClicked : Action()
-        object RemoveFromChannel : Action()
+        data class RemoveFromChannel(val username: String) : Action()
     }
 
     sealed class UiEvent {

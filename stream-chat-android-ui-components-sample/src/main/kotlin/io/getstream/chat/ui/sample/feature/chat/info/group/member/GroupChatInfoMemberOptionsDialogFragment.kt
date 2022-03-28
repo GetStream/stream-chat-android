@@ -94,7 +94,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         cancelText = getString(R.string.cancel),
                     ).apply {
                         confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel)
+                            viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel(user.name))
                         }
                     }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
                 }

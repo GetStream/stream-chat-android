@@ -372,8 +372,10 @@ public class Channels {
         public void addingAndRemovingChannelMembers() {
             ChannelClient channelClient = client.channel("messaging", "general");
 
+            Message addMemberSystemMessage = new Message();
+            addMemberSystemMessage.setText("Thierry and Josh were added to this channel");
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers(Arrays.asList("thierry", "josh")).enqueue(result -> {
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {
@@ -381,8 +383,10 @@ public class Channels {
                 }
             });
 
+            Message removeMemberSystemMessage = new Message();
+            addMemberSystemMessage.setText("Tommaso was removed from this channel");
             // Remove member with id "tommaso"
-            channelClient.removeMembers(Arrays.asList("tommaso")).enqueue(result -> {
+            channelClient.removeMembers(Arrays.asList("tommaso"), removeMemberSystemMessage).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.data();
                 } else {

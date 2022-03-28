@@ -566,12 +566,18 @@ public class ChannelClient internal constructor(
      * @see [ChatClient.addMembers]
      *
      * @param memberIds The list of the member ids to be added.
+     * @param systemMessage The system message object that will be shown in the channel.
      *
      * @return Executable async [Call] responsible for adding the members.
      */
     @CheckResult
-    public fun addMembers(memberIds: List<String>): Call<Channel> {
-        return client.addMembers(channelType = channelType, channelId = channelId, memberIds = memberIds)
+    public fun addMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+        return client.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            systemMessage = systemMessage,
+        )
     }
 
     /**
@@ -580,12 +586,18 @@ public class ChannelClient internal constructor(
      * @see [ChatClient.removeMembers]
      *
      * @param memberIds The list of the member ids to be removed.
+     * @param systemMessage The system message object that will be shown in the channel.
      *
      * @return Executable async [Call] responsible for removing the members.
      */
     @CheckResult
-    public fun removeMembers(memberIds: List<String>): Call<Channel> {
-        return client.removeMembers(channelType = channelType, channelId = channelId, memberIds = memberIds)
+    public fun removeMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+        return client.removeMembers(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            systemMessage = systemMessage,
+        )
     }
 
     @CheckResult
