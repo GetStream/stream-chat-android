@@ -27,14 +27,14 @@ import io.getstream.chat.docs.databinding.CustomAttachmentItemBinding
 import java.io.File
 
 /**
- * [Message Input](https://getstream.io/chat/docs/sdk/android/ui/components/message-input/)
+ * [Message Input](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/)
  */
 private class MessageInputViewSnippets() : Fragment() {
 
     private lateinit var messageInputView: MessageInputView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/components/message-input/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#usage)
      */
     fun usage() {
         // Get ViewModel
@@ -45,7 +45,7 @@ private class MessageInputViewSnippets() : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/message-input/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#handling-actions)
      */
     fun handlingActions() {
         messageInputView.setOnSendButtonClickListener {
@@ -125,7 +125,7 @@ private class MessageInputViewSnippets() : Fragment() {
     }
 
     /**
-     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/components/message-input/#customization)
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#customization)
      */
     fun customization() {
         TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->

@@ -9,14 +9,14 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 
 /**
- * [Channel List Header](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-header/)
+ * [Channel List Header](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/)
  */
 private class ChannelListHeaderViewSnippets : Fragment() {
 
     private lateinit var channelListHeaderView: ChannelListHeaderView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-header/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/#usage)
      */
     fun usage() {
         // Get ViewModel
@@ -26,7 +26,7 @@ private class ChannelListHeaderViewSnippets : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-header/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/#handling-actions)
      */
     fun handlingActions() {
         channelListHeaderView.setOnActionButtonClickListener {

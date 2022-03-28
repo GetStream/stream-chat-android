@@ -35,14 +35,14 @@ import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
 /**
- * [Message List](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/)
+ * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
  */
 class MessageListViewSnippets : Fragment() {
 
     private lateinit var messageListView: MessageListView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#usage)
      */
     fun usage() {
         // Init view model
@@ -55,7 +55,7 @@ class MessageListViewSnippets : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#handling-actions)
      */
     fun handlingActions() {
         messageListView.setLastMessageReadHandler {
@@ -109,7 +109,7 @@ class MessageListViewSnippets : Fragment() {
     }
 
     /**
-     * [Listeners](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/#listeners)
+     * [Listeners](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#listeners)
      */
     fun listeners() {
         messageListView.setMessageClickListener { message: Message ->
@@ -136,7 +136,7 @@ class MessageListViewSnippets : Fragment() {
     }
 
     /**
-     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/#customization)
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#customization)
      */
     fun customization() {
         TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->

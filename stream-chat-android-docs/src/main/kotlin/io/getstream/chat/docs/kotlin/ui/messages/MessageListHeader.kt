@@ -10,14 +10,14 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 
 /**
- * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-header/)
+ * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
  */
 private class MessageListHeaderViewSnippets() : Fragment() {
 
     private lateinit var messageListHeaderView: MessageListHeaderView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-header/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#usage)
      */
     fun usage() {
         // Get ViewModel
@@ -28,7 +28,7 @@ private class MessageListHeaderViewSnippets() : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-header/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#handling-actions)
      */
     fun handlingActions() {
         messageListHeaderView.setAvatarClickListener {

@@ -35,14 +35,14 @@ import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
 /**
- * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/chatui)
+ * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
  */
 private class ChatUiSnippets {
 
     private lateinit var context: Context
 
     /**
-     * [Custom Reactions](https://getstream.io/chat/docs/sdk/android/ui/chatui/#custom-reactions)
+     * [Custom Reactions](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#custom-reactions)
      */
     fun customReactions() {
         val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
@@ -55,7 +55,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Custom MIME Type Icons](https://getstream.io/chat/docs/sdk/android/ui/chatui/#custom-mime-type-icons)
+     * [Custom MIME Type Icons](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#custom-mime-type-icons)
      */
     fun customMimeTypeIcons() {
         ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
@@ -75,7 +75,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Customizing Avatar](https://getstream.io/chat/docs/sdk/android/ui/chatui/#customizing-avatar)
+     * [Customizing Avatar](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#customizing-avatar)
      */
     fun customizingAvatar() {
         ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
@@ -97,7 +97,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/chatui/#adding-extra-headers-to-image-requests)
+     * [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#adding-extra-headers-to-image-requests)
      */
     fun customizingImageHeaders() {
         ChatUI.imageHeadersProvider = object : ImageHeadersProvider {
@@ -108,7 +108,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Changing the Default Font](https://getstream.io/chat/docs/sdk/android/ui/chatui/#changing-the-default-font)
+     * [Changing the Default Font](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#changing-the-default-font)
      */
     fun changingTheDefaultFont() {
         ChatUI.fonts = object : ChatFonts {
@@ -125,7 +125,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Transforming Message Text](https://getstream.io/chat/docs/sdk/android/ui/chatui/#transforming-message-text)
+     * [Transforming Message Text](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#transforming-message-text)
      */
     fun transformingMessageText() {
         ChatUI.messageTextTransformer =
@@ -136,14 +136,14 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Applying Markdown](https://getstream.io/chat/docs/sdk/android/ui/chatui/#markdown)
+     * [Applying Markdown](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#markdown)
      */
     fun applyingMarkDown() {
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
     }
 
     /**
-     * [Customizing Navigator](https://getstream.io/chat/docs/sdk/android/ui/chatui/#navigator)
+     * [Customizing Navigator](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#navigator)
      */
     fun customizingNavigator() {
         val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
@@ -155,7 +155,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Customizing Channel Name Formatter](https://getstream.io/chat/docs/sdk/android/ui/chatui/#customizing-channelnameformatter)
+     * [Customizing Channel Name Formatter](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#customizing-channelnameformatter)
      */
     fun customizingChannelNameFormatter() {
         ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
@@ -164,7 +164,7 @@ private class ChatUiSnippets {
     }
 
     /**
-     * [Customizing Date Formatter](https://getstream.io/chat/docs/sdk/android/ui/chatui/#customizing-dateformatter)
+     * [Customizing Date Formatter](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#customizing-dateformatter)
      */
     fun customizingDateFormatter() {
         ChatUI.dateFormatter = object : DateFormatter {

@@ -8,14 +8,14 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.message.list.MessageListView
 
 /**
- * [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/components/attachment-gallery/)
+ * [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/)
  */
 private class AttachmentGallery {
 
     private lateinit var messageListView: MessageListView
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/attachment-gallery/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/#handling-actions)
      */
     fun handlingActions() {
         messageListView.setAttachmentReplyOptionClickHandler { resultItem ->
@@ -41,7 +41,7 @@ private class AttachmentGallery {
     }
 
     /**
-     * [Navigating to Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/components/attachment-gallery/#navigating-to-attachment-gallery)
+     * [Navigating to Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/#navigating-to-attachment-gallery)
      */
     fun navigatingToAttachmentGallery(activity: AppCompatActivity) {
         // Create Attachment Gallery Destination
