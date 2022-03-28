@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the links in UI Components code snippets. [#3261](https://github.com/GetStream/stream-chat-android/pull/3261)
 
 ### ⬆️ Improved
 
