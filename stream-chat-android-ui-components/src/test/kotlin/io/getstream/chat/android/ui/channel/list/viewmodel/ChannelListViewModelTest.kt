@@ -15,6 +15,7 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.times
@@ -22,6 +23,7 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.validateMockitoUsage
 import org.mockito.kotlin.whenever
 
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -58,6 +60,11 @@ internal class ChannelListViewModelTest {
 
     init {
         StateRegistry.instance = stateRegistry
+    }
+
+    @AfterEach
+    fun validate(){
+        validateMockitoUsage()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -108,7 +115,7 @@ internal class ChannelListViewModelTest {
         viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
 
         // then
-        verify(queryChannelsMock, times(1))
+        verify(queryChannelsMock, times(2)).enqueue(any())
     }
 
     companion object {

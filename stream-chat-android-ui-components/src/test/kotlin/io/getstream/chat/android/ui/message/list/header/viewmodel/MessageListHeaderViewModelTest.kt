@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.internal.assertEquals
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -24,6 +25,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
+import org.mockito.kotlin.validateMockitoUsage
 import org.mockito.kotlin.whenever
 import java.util.Date
 
@@ -56,6 +58,11 @@ internal class MessageListHeaderViewModelTest {
 
     init {
         StateRegistry.instance = stateRegistry
+    }
+
+    @AfterEach
+    fun validate(){
+        validateMockitoUsage()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -16,6 +16,7 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -23,6 +24,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
+import org.mockito.kotlin.validateMockitoUsage
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -49,6 +51,11 @@ internal class MessageInputViewModelTest {
 
     init {
         StateRegistry.instance = stateRegistry
+    }
+
+    @AfterEach
+    fun validate(){
+        validateMockitoUsage()
     }
 
     @Test
