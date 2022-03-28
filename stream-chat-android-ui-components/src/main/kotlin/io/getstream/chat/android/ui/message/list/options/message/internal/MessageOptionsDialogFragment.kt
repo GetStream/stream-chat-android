@@ -11,8 +11,6 @@ import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -43,8 +41,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
-
-    private val currentUser: LiveData<User?> = ChatClient.instance().globalState.user.asLiveData()
 
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
@@ -196,7 +192,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         with(binding.userReactionsView) {
             isVisible = true
             configure(style)
-            currentUser.value?.let { user -> setMessage(message, user) }
+            ChatClient.instance().globalState.user.value?.let { user -> setMessage(message, user) }
 
             setOnUserReactionClickListener { user, reaction ->
                 userReactionClickHandler?.let {
@@ -208,7 +204,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun isMessageAuthorMuted(): Boolean {
-        return currentUser.value?.mutes?.any { mute -> mute.target.id == message.user.id } == true
+        return ChatClient.instance().globalState.user.value?.mutes?.any { mute -> mute.target.id == message.user.id } == true
     }
 
     private fun setupMessageOptions() {
