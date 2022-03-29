@@ -10,7 +10,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 
 /**
- * [Search View](https://getstream.io/chat/docs/sdk/android/ui/components/search-view/)
+ * [Search View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/)
  */
 private class SearchView : Fragment() {
 
@@ -18,7 +18,7 @@ private class SearchView : Fragment() {
     lateinit var searchResultListView: SearchResultListView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/components/search-view/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/#usage)
      */
     fun usage() {
         // Get ViewModel
@@ -32,7 +32,7 @@ private class SearchView : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/search-view/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/#handling-actions)
      */
     fun handlingActions() {
         searchInputView.setContinuousInputChangedListener {
@@ -47,7 +47,7 @@ private class SearchView : Fragment() {
     }
 
     /**
-     * [Updating Search Query Programmatically](https://getstream.io/chat/docs/sdk/android/ui/components/search-view/#updating-the-search-query-programmatically)
+     * [Updating Search Query Programmatically](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/#updating-the-search-query-programmatically)
      */
     fun updatingSearchQueryProgrammatically() {
         // Update the current search query programmatically

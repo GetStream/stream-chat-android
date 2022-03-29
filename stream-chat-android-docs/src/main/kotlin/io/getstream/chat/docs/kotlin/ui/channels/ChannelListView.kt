@@ -26,14 +26,14 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
- * [Channel List](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/)
+ * [Channel List](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/)
  */
 private class ChannelListViewSnippets() : Fragment() {
 
     private lateinit var channelListView: ChannelListView
 
     /**
-     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#usage)
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#usage)
      */
     fun usage() {
         // Instantiate the ViewModel
@@ -52,7 +52,7 @@ private class ChannelListViewSnippets() : Fragment() {
     }
 
     /**
-     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#handling-actions)
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#handling-actions)
      */
     fun handlingActions() {
         channelListView.setChannelItemClickListener { channel ->
@@ -67,7 +67,7 @@ private class ChannelListViewSnippets() : Fragment() {
     }
 
     /**
-     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#customization)
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#customization)
      */
     fun customization() {
         TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
@@ -88,7 +88,7 @@ private class ChannelListViewSnippets() : Fragment() {
     }
 
     /**
-     * [Creating a Custom ViewHolder Factory](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#creating-a-custom-viewholder-factory)
+     * [Creating a Custom ViewHolder Factory](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#creating-a-custom-viewholder-factory)
      */
     fun customViewHolderFactory() {
         class CustomChannelListItemViewHolderFactory : ChannelListItemViewHolderFactory() {
