@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.plugin.state
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -104,6 +105,8 @@ public class StateRegistry private constructor(
     internal companion object {
         private var instance: StateRegistry? = null
 
+        private val logger = ChatLogger.get("StateRegistry")
+
         /**
          * Creates and returns a new instance of StateRegistry.
          *
@@ -124,8 +127,11 @@ public class StateRegistry private constructor(
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
-            check(instance == null) {
-                throw IllegalStateException("Another instance of StateRegistry is already created. Use StateRegistry.get().")
+            if (instance == null) {
+                logger.logE(
+                    "StateRegistry instance is already created. " +
+                        "Avoid creating multiple instances to prevent ambiguous state. Use StateRegistry.get()"
+                )
             }
             return StateRegistry(
                 job = job,

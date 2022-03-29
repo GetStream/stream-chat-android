@@ -165,6 +165,7 @@ internal class SendReactionsTests {
             messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
+
         private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()

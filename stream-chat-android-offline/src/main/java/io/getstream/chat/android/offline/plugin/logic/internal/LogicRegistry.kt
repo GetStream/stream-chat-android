@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
@@ -114,6 +115,8 @@ internal class LogicRegistry internal constructor(
     internal companion object {
         private var instance: LogicRegistry? = null
 
+        private val logger = ChatLogger.get("LogicRegistry")
+
         /**
          * Creates and returns new instance of LogicRegistry.
          *
@@ -134,8 +137,11 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
-            check(instance == null) {
-                throw IllegalStateException("Another instance of LogicRegistry is already created. Use LogicRegistry.get().")
+            if (instance == null) {
+                logger.logE(
+                    "LogicRegistry instance is already created. " +
+                        "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
+                )
             }
             return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
                 instance = logicRegistry
