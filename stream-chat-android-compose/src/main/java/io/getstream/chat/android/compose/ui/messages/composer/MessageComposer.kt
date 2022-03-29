@@ -482,7 +482,7 @@ internal fun DefaultComposerLabel() {
  * @param messageComposerState The state of the message input.
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
- * */
+ */
 @Composable
 public fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,

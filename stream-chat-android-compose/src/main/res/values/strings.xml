@@ -60,6 +60,7 @@
     <string name="stream_compose_message_list_empty_messages">No messages</string>
 
     <!-- Selected Message Menu -->
+    <string name="stream_compose_resend_message">Resend</string>
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
     <string name="stream_compose_copy_message">Copy Message</string>

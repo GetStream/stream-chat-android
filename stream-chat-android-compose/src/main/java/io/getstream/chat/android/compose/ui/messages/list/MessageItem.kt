@@ -21,10 +21,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -380,19 +383,47 @@ internal fun DefaultMessageItemCenterContent(
 
     val modifier = Modifier.widthIn(max = 250.dp)
 
-    MessageBubble(
-        modifier = modifier,
-        shape = messageBubbleShape,
-        color = messageBubbleColor,
-        content = {
-            MessageContent(
-                message = message,
-                onLongItemClick = onLongItemClick,
-                onGiphyActionClick = onGiphyActionClick,
-                onImagePreviewResult = onImagePreviewResult
+    val isFailed = ownsMessage && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+    if (!isFailed) {
+        MessageBubble(
+            modifier = modifier,
+            shape = messageBubbleShape,
+            color = messageBubbleColor,
+            content = {
+                MessageContent(
+                    message = message,
+                    onLongItemClick = onLongItemClick,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onImagePreviewResult = onImagePreviewResult
+                )
+            }
+        )
+    } else {
+        Box(modifier = modifier) {
+            MessageBubble(
+                modifier = Modifier.padding(end = 12.dp),
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                content = {
+                    MessageContent(
+                        message = message,
+                        onLongItemClick = onLongItemClick,
+                        onGiphyActionClick = onGiphyActionClick,
+                        onImagePreviewResult = onImagePreviewResult
+                    )
+                }
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd),
+                painter = painterResource(id = R.drawable.stream_compose_ic_error),
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent,
             )
         }
-    )
+    }
 }
 
 /**
