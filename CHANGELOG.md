@@ -64,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added support for failed messages and an option to resend them. [#3263](https://github.com/GetStream/stream-chat-android/pull/3263)
 
 ### ⚠️ Changed
 
