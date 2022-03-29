@@ -115,13 +115,17 @@ internal class LogicRegistry internal constructor(
         private var instance: LogicRegistry? = null
 
         /**
-         * Gets the singleton of LogicRegistry or creates it in the first call
+         * Creates and returns new instance of LogicRegistry.
          *
          * @param stateRegistry [StateRegistry].
          * @param globalState [GlobalMutableState] state of the SDK.
          * @param userPresence True if userPresence should be enabled, false otherwise.
          * @param repos [RepositoryFacade] to interact with local data sources.
          * @param client An instance of [ChatClient].
+         *
+         * @return Instance of [LogicRegistry].
+         *
+         * @throws IllegalStateException if instance is not null.
          */
         internal fun create(
             stateRegistry: StateRegistry,
@@ -139,7 +143,11 @@ internal class LogicRegistry internal constructor(
         }
 
         /**
-         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it returns null.
+         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it throws exception.
+         *
+         * @return Singleton instance of [LogicRegistry].
+         *
+         * @throws IllegalArgumentException if instance is null.
          */
         @Throws(IllegalArgumentException::class)
         internal fun get(): LogicRegistry = requireNotNull(instance) {

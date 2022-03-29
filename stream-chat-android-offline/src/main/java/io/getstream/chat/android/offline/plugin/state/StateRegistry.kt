@@ -105,7 +105,7 @@ public class StateRegistry private constructor(
         private var instance: StateRegistry? = null
 
         /**
-         * Creates the new instance of StateRegistry.
+         * Creates and returns a new instance of StateRegistry.
          *
          * @param job A background job cancelled after calling [clear].
          * @param scope A scope for new coroutines.
@@ -113,7 +113,9 @@ public class StateRegistry private constructor(
          * @param messageRepository [MessageRepository] Repository for all messages
          * @param latestUsers Latest users of the SDK.
          *
-         * @return Instance of [StateRegistry]
+         * @return Instance of [StateRegistry].
+         *
+         * @throws IllegalStateException if instance is not null.
          */
         internal fun create(
             job: Job,
@@ -137,7 +139,11 @@ public class StateRegistry private constructor(
         }
 
         /**
-         * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it returns null.
+         * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it throws exception.
+         *
+         * @return Singleton instance of [StateRegistry].
+         *
+         * @throws IllegalArgumentException if instance is null.
          */
         @Throws(IllegalArgumentException::class)
         internal fun get(): StateRegistry = requireNotNull(instance) {
