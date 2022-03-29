@@ -188,7 +188,7 @@ internal class RepositoryFacade(
                 configsRepository = factory.createChannelConfigRepository(),
                 channelsRepository = factory.createChannelRepository(getUser, getMessage),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
-                messageRepository = factory.createMessageRepository(getUser),
+                messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
                 attachmentRepository = factory.createAttachmentRepository(),

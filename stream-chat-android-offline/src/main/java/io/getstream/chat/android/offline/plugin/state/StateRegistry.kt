@@ -112,14 +112,14 @@ public class StateRegistry private constructor(
          * @param messageRepository [MessageRepository] Repository for all messages
          * @param latestUsers Latest users of the SDK.
          */
-        internal fun getOrCreate(
+        internal fun create(
             job: Job,
             scope: CoroutineScope,
             userStateFlow: StateFlow<User?>,
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
-            return instance ?: StateRegistry(
+            return StateRegistry(
                 job = job,
                 scope = scope,
                 userStateFlow = userStateFlow,

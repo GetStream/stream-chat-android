@@ -122,14 +122,14 @@ internal class LogicRegistry internal constructor(
          * @param repos [RepositoryFacade] to interact with local data sources.
          * @param client An instance of [ChatClient].
          */
-        internal fun getOrCreate(
+        internal fun create(
             stateRegistry: StateRegistry,
             globalState: GlobalMutableState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
-            return instance ?: LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
+            return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
                 instance = logicRegistry
             }
         }
