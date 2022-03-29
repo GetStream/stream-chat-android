@@ -98,19 +98,22 @@ public class StateRegistry private constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
+        instance = null
     }
 
     internal companion object {
         private var instance: StateRegistry? = null
 
         /**
-         * Gets the singleton of StateRegistry or creates it in the first call.
+         * Creates the new instance of StateRegistry.
          *
          * @param job A background job cancelled after calling [clear].
          * @param scope A scope for new coroutines.
          * @param userStateFlow The state flow that provides the user once it is set.
          * @param messageRepository [MessageRepository] Repository for all messages
          * @param latestUsers Latest users of the SDK.
+         *
+         * @return Instance of [StateRegistry]
          */
         internal fun create(
             job: Job,
@@ -119,6 +122,9 @@ public class StateRegistry private constructor(
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
+            check(instance == null) {
+                throw IllegalStateException("Another instance of StateRegistry is already created. Use StateRegistry.get().")
+            }
             return StateRegistry(
                 job = job,
                 scope = scope,

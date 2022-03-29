@@ -108,6 +108,7 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
+        instance = null
     }
 
     internal companion object {
@@ -129,6 +130,9 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
+            check(instance == null) {
+                throw IllegalStateException("Another instance of LogicRegistry is already created. Use LogicRegistry.get().")
+            }
             return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
                 instance = logicRegistry
             }
