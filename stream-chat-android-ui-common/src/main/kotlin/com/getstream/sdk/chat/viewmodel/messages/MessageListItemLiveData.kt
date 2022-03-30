@@ -182,7 +182,7 @@ internal class MessageListItemLiveData(
     private fun filterDeletedMessages(messages: List<Message>?): List<Message>? {
         return when (deletedMessageVisibility.value) {
             MessageListViewModel.DeletedMessageVisibility.ALL -> messages
-            MessageListViewModel.DeletedMessageVisibility.MINE -> messages?.filterNot { it.deletedAt != null && it.user != currentUser.value }
+            MessageListViewModel.DeletedMessageVisibility.MINE -> messages?.filter { it.deletedAt == null || it.user.id == currentUser.value?.id }
             MessageListViewModel.DeletedMessageVisibility.NONE -> messages?.filter { it.deletedAt == null }
             else -> messages
         }
