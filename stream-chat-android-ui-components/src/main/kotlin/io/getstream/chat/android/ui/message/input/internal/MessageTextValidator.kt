@@ -17,7 +17,7 @@ internal object MessageTextValidator {
     /**
      * Checks if the message text contains an incomplete "giphy" command.
      *
-     * @return If the given message text contains an incomplete "giphy" command.
+     * @return If the given "giphy" message is valid, it contains the giphy command and non empty text.
      */
     private fun isEmptyGiphy(text: String): Boolean {
         val giphyCommand = "/giphy"
@@ -25,7 +25,7 @@ internal object MessageTextValidator {
         if (text.startsWith(giphyCommand)) {
             val giphyContent = text.removePrefix(giphyCommand)
 
-            return giphyContent.isEmpty() || giphyContent.isBlank()
+            return giphyContent.isBlank()
         }
 
         return false
