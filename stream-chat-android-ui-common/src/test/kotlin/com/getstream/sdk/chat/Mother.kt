@@ -11,14 +11,20 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.time.Instant
 import java.util.Date
@@ -230,3 +236,84 @@ internal fun createAttachment(
 )
 
 internal fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }
+
+public fun buildChannelState(
+    channelType: String = "messaging",
+    channelId: String = "123",
+    cid: String = "$channelType:$channelId",
+    repliedMessage: StateFlow<Message?> = MutableStateFlow(Message()),
+    messages: StateFlow<List<Message>> = MutableStateFlow(listOf()),
+    messagesState: StateFlow<MessagesState> = MutableStateFlow(MessagesState.Loading),
+    oldMessages: StateFlow<List<Message>> = MutableStateFlow(listOf()),
+    watcherCount: StateFlow<Int> = MutableStateFlow(1),
+    watchers: StateFlow<List<User>> = MutableStateFlow(listOf()),
+    typing: StateFlow<TypingEvent> = MutableStateFlow(TypingEvent(cid, listOf())),
+    reads: StateFlow<List<ChannelUserRead>> = MutableStateFlow(listOf()),
+    read: StateFlow<ChannelUserRead?> = MutableStateFlow(ChannelUserRead(User())),
+    unreadCount: StateFlow<Int?> = MutableStateFlow(0),
+    members: StateFlow<List<Member>> = MutableStateFlow(listOf()),
+    channelData: StateFlow<ChannelData> = MutableStateFlow(ChannelData(Channel())),
+    hidden: StateFlow<Boolean> = MutableStateFlow(false),
+    muted: StateFlow<Boolean> = MutableStateFlow(false),
+    loading: StateFlow<Boolean> = MutableStateFlow(true),
+    loadingOlderMessages: StateFlow<Boolean> = MutableStateFlow(false),
+    loadingNewerMessages: StateFlow<Boolean> = MutableStateFlow(false),
+    endOfOlderMessages: StateFlow<Boolean> = MutableStateFlow(false),
+    endOfNewerMessages: StateFlow<Boolean> = MutableStateFlow(false),
+    recoveryNeeded: Boolean = false,
+    channelConfig: StateFlow<Config> = MutableStateFlow(Config()),
+    toChannel: () -> Channel = { Channel() },
+): ChannelState = object : ChannelState {
+
+    override val channelType: String = channelType
+
+    override val channelId: String = channelId
+
+    override val cid: String = cid
+
+    override val repliedMessage: StateFlow<Message?> = repliedMessage
+
+    override val messages: StateFlow<List<Message>> = messages
+
+    override val messagesState: StateFlow<MessagesState> = messagesState
+
+    override val oldMessages: StateFlow<List<Message>> = oldMessages
+
+    override val watcherCount: StateFlow<Int> = watcherCount
+
+    override val watchers: StateFlow<List<User>> = watchers
+
+    override val typing: StateFlow<TypingEvent> = typing
+
+    override val reads: StateFlow<List<ChannelUserRead>> = reads
+
+    override val read: StateFlow<ChannelUserRead?> = read
+
+    override val unreadCount: StateFlow<Int?> = unreadCount
+
+    override val members: StateFlow<List<Member>> = members
+
+    override val channelData: StateFlow<ChannelData> = channelData
+
+    override val hidden: StateFlow<Boolean> = hidden
+
+    override val muted: StateFlow<Boolean> = muted
+
+    override val loading: StateFlow<Boolean> = loading
+
+    override val loadingOlderMessages: StateFlow<Boolean> = loadingOlderMessages
+
+    override val loadingNewerMessages: StateFlow<Boolean> = loadingNewerMessages
+
+    override val endOfOlderMessages: StateFlow<Boolean> = endOfOlderMessages
+
+    override val endOfNewerMessages: StateFlow<Boolean> = endOfNewerMessages
+
+    override val recoveryNeeded: Boolean = recoveryNeeded
+
+    override val channelConfig: StateFlow<Config> = channelConfig
+
+    override fun toChannel(): Channel {
+        return toChannel()
+    }
+}

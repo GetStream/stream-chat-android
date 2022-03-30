@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,16 +45,27 @@ public class MessageListHeaderViewModel(
         ).filterNotNull()
 
     /**
+     * Necessary for testing because [LiveData] conversion caused issues with testing.
+     *
      * The current [Channel] created from [ChannelState]. It emits new data either when
      * channel data or the list of members in [ChannelState] updates.
      *
      * Combining the two is important because members changing online status does not result in
      * channel events being received.
      */
-    public val channel: LiveData<Channel> =
-        channelState.flatMapLatest { state ->
-            state.channelData.combine(state.members) { _, _ -> state.toChannel() }
-        }.asLiveData()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public val _channel: Flow<Channel> = channelState.flatMapLatest { state ->
+        state.channelData.combine(state.members) { _, _ -> state.toChannel() }
+    }
+
+    /**
+     * The current [Channel] created from [ChannelState]. It emits new data either when
+     * channel data or the list of members in [ChannelState] updates.
+     *
+     * Combining the two is important because members changing online status does not result in
+     * channel events being received.
+     */
+    public val channel: LiveData<Channel> = _channel.asLiveData()
 
     /**
      * A list of users who are currently typing.
