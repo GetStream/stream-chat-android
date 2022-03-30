@@ -93,7 +93,6 @@ internal class EventHandlerImpl(
 
     internal fun initialize(user: User, scope: CoroutineScope) {
         initJob = scope.async {
-            logic.clear()
             syncManager.updateAllReadStateForDate(user.id, Date())
             syncManager.loadSyncStateForUser(user.id)
             replayEventsForAllChannels(user)
