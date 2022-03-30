@@ -10,6 +10,9 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+/**
+ * The [StreamLogger] implementation for kotlin projects. Mainly used in Unit Tests.
+ */
 public class KotlinStreamLogger(
     private val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH),
 ) : StreamLogger {

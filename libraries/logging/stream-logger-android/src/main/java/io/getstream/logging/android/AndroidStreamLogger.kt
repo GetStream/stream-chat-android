@@ -10,6 +10,9 @@ import io.getstream.logging.helper.stringify
 
 private const val MAX_TAG_LEN = 23
 
+/**
+ * The [StreamLogger] implementation for android projects.
+ */
 public class AndroidStreamLogger : StreamLogger {
 
     override fun log(priority: Priority, tag: String, throwable: Throwable?, message: String, args: Array<out Any?>?) {

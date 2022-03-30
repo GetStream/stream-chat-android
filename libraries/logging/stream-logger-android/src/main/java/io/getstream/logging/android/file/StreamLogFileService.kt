@@ -7,6 +7,9 @@ import android.os.IBinder
 private const val ACTION_SHARE = "io.getstream.logging.android.SHARE"
 private const val ACTION_CLEAR = "io.getstream.logging.android.CLEAR"
 
+/**
+ * The service handles adb commands to share/clear the log file.
+ */
 public class StreamLogFileService : Service() {
 
     override fun onBind(intent: Intent): IBinder? {

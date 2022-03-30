@@ -24,6 +24,9 @@ private const val SHAREABLE_FILE: String = "stream_log_%s.txt"
 private const val INTERNAL_FILE_0: String = "internal_0.txt"
 private const val INTERNAL_FILE_1: String = "internal_1.txt"
 
+/**
+ * The [StreamLogger] implementation with log file persistence.
+ */
 public class FileStreamLogger(
     private val config: Config,
 ) : StreamLogger {

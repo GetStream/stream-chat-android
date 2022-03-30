@@ -12,10 +12,16 @@ import io.getstream.logging.android.AndroidStreamLogger
 import io.getstream.logging.android.file.impl.LifecycleAwareLogFileManager
 import io.getstream.logging.file.FileStreamLogger
 
+/**
+ * Initializes [StreamLog] at app startup time and represents a [FileProvider] for log file sharing.
+ */
 public class StreamLogFileProvider : FileProvider() {
 
     private val application: Application? get() = context as? Application
 
+    /**
+     * Called before [Application.onCreate].
+     */
     override fun onCreate(): Boolean {
 
         val context = context ?: return super.onCreate()
