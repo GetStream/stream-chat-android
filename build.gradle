@@ -55,10 +55,9 @@ buildscript {
 }
 
 subprojects {
-    if (it.name != 'stream-chat-android-docs') {
-        apply from: "${rootDir}/spotless/spotless.gradle"
-    }
-    apply plugin: "io.gitlab.arturbosch.detekt"
+    if (it.name == 'stream-chat-android-docs') return
+    if (!it.buildFile.exists()) return
+    apply from: "${rootDir}/spotless/spotless.gradle"
 }
 
 allprojects {
