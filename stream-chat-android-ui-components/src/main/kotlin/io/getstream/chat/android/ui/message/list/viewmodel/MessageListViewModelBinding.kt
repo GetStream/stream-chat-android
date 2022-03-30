@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Retr
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 
 /**
@@ -29,6 +30,16 @@ import io.getstream.chat.android.ui.message.list.MessageListView
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+
+    view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
+        deletedMessageVisibility.value = when (messageListItemPredicate) {
+            DeletedMessageListItemPredicate.NotVisibleToAnyone -> MessageListViewModel.DeletedMessageVisibility.NONE
+            DeletedMessageListItemPredicate.VisibleToAuthorOnly -> MessageListViewModel.DeletedMessageVisibility.MINE
+            DeletedMessageListItemPredicate.VisibleToEveryone -> MessageListViewModel.DeletedMessageVisibility.ALL
+            else -> MessageListViewModel.DeletedMessageVisibility.ALL
+        }
+    }
+
     channel.observe(lifecycleOwner) {
         view.init(it)
     }

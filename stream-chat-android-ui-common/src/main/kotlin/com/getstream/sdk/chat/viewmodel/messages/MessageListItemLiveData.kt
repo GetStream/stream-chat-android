@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -57,6 +58,7 @@ internal class MessageListItemLiveData(
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
+    private val deletedMessageVisibility: LiveData<MessageListViewModel.DeletedMessageVisibility>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -74,10 +76,22 @@ internal class MessageListItemLiveData(
         typingLd?.let { typing -> configTypingChange(typing, currentUser) }
     }
 
+    /**
+     * Emits a value from this [MediatorLiveData] class when either
+     * the user gets updated or the deleted message visibility gets
+     * changed.
+     */
     private fun configMessagesChange(messages: LiveData<List<Message>>, getCurrentUser: LiveData<User?>) {
-        val messagesChange = getCurrentUser.changeOnUserLoaded(messages) { changedMessages, currentUser ->
-            messagesChanged(changedMessages, currentUser!!.id)
-        }
+        val messagesChange = getCurrentUser
+            .combineWith(deletedMessageVisibility) { user, _ ->
+                user
+            }
+            .changeOnUserLoaded(messages) { changedMessages, currentUser ->
+                messagesChanged(
+                    changedMessages,
+                    currentUser!!.id
+                )
+            }
 
         addSource(messagesChange) { value ->
             this.value = value
@@ -162,14 +176,30 @@ internal class MessageListItemLiveData(
     }
 
     /**
+     * Filters out or leaves in deleted messages based on their visibility
+     * set by the user.
+     */
+    private fun filterDeletedMessages(messages: List<Message>?): List<Message>? {
+        return when (deletedMessageVisibility.value) {
+            MessageListViewModel.DeletedMessageVisibility.ALL -> messages
+            MessageListViewModel.DeletedMessageVisibility.MINE -> messages?.filterNot { it.deletedAt != null && it.user != currentUser.value }
+            MessageListViewModel.DeletedMessageVisibility.NONE -> messages?.filter { it.deletedAt == null }
+            else -> messages
+        }
+    }
+
+    /**
      * We could speed this up further in the case of a new message by only recomputing the last 2 items
      * It's fast enough though.
      */
     private fun groupMessages(messages: List<Message>?, currentUserId: String): List<MessageListItem> {
-        hasNewMessages = false
-        if (messages == null || messages.isEmpty()) return emptyList()
 
-        val newLastMessageId: String = messages[messages.size - 1].id
+        val filteredMessages = filterDeletedMessages(messages)
+
+        hasNewMessages = false
+        if (filteredMessages == null || filteredMessages.isEmpty()) return emptyList()
+
+        val newLastMessageId: String = filteredMessages[filteredMessages.size - 1].id
         if (newLastMessageId != lastMessageID) {
             hasNewMessages = true
         }
@@ -177,12 +207,12 @@ internal class MessageListItemLiveData(
 
         val items = mutableListOf<MessageListItem>()
         var previousMessage: Message? = null
-        val topIndex = 0.coerceAtLeast(messages.size - 1)
+        val topIndex = 0.coerceAtLeast(filteredMessages.size - 1)
 
-        for ((i, message) in messages.withIndex()) {
+        for ((i, message) in filteredMessages.withIndex()) {
             var nextMessage: Message? = null
             if (i + 1 <= topIndex) {
-                nextMessage = messages[i + 1]
+                nextMessage = filteredMessages[i + 1]
             }
 
             // thread separator
@@ -190,7 +220,7 @@ internal class MessageListItemLiveData(
                 items.add(
                     MessageListItem.ThreadSeparatorItem(
                         date = message.getCreatedAtOrThrow(),
-                        messageCount = messages.size - 1,
+                        messageCount = filteredMessages.size - 1,
                     )
                 )
             }

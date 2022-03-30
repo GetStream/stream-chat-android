@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -276,6 +277,9 @@ public class MessageListView : ConstraintLayout {
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
+
+    internal var deletedMessageListItemPredicateLiveData = MutableLiveData(deletedMessageListItemPredicate)
+
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
@@ -984,6 +988,7 @@ public class MessageListView : ConstraintLayout {
             "Adapter was already initialized, please set MessageListItemPredicate first"
         }
         this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
+        this.deletedMessageListItemPredicateLiveData.value = this.deletedMessageListItemPredicate
     }
 
     /**
