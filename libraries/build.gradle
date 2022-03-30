@@ -9,7 +9,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    PUBLISH_ARTIFACT_ID = 'stream-chat-android-core'
+    PUBLISH_ARTIFACT_ID = 'libraries'
     PUBLISH_VERSION = rootVersionName
 }
 
@@ -31,9 +31,5 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    api project(":libraries:logging:stream-logger")
-
-    implementation Dependencies.kotlinReflect
-    implementation Dependencies.coroutinesCore
-    implementation Dependencies.androidxAnnotations
+    testImplementation Dependencies.junit4
 }

@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.ui.sample.R
+import io.getstream.logging.StreamLog
 
 const val EXTRA_CHANNEL_ID = "extra_channel_id"
 const val EXTRA_CHANNEL_TYPE = "extra_channel_type"
@@ -34,6 +35,11 @@ class HostActivity : AppCompatActivity(R.layout.activity_main) {
             startActivity(packageManager.getLaunchIntentForPackage(packageName))
             finishAffinity()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        StreamLog.i("HostActivity", "[onResume] arg1: %d, arg2: %s", 1, "test")
     }
 
     companion object {
