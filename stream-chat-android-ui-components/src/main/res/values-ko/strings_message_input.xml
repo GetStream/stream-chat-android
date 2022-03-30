@@ -2,6 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="stream_ui_message_input_camera_access">"카메라 액세스 허용"</string>
   <string name="stream_ui_message_input_capture_media">"이미지 또는 비디오 캡처"</string>
+  <string name="stream_ui_message_input_command_template">"/%1$s %2$s"</string>
   <string name="stream_ui_message_input_error_file_large_size">"파일이 너무 큽니다 - 최대 %dMB입니다"</string>
   <string name="stream_ui_message_input_error_file_size">"파일이 너무 큽니다"</string>
   <string name="stream_ui_message_input_error_max_attachments_count_exceeded">"첨부파일 개수가 (%1$d) 개를 초과하였습니다"</string>
