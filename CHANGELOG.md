@@ -24,6 +24,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed a bug which occurs when we reinitialize OfflinePlugin because it uses old instance of `StateRegistry` and `LogicRegistry`. [#3267](https://github.com/GetStream/stream-chat-android/pull/3267)
 
 ### ⬆️ Improved
 
