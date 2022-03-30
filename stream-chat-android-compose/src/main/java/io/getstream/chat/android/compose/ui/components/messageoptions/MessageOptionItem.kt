@@ -2,17 +2,20 @@ package io.getstream.chat.android.compose.ui.components.messageoptions
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -55,20 +58,22 @@ public fun MessageOptionItem(
 
 /**
  * Preview of [MessageOptionItem].
- * */
+ */
 @Preview(showBackground = true, name = "MessageOptionItem Preview")
 @Composable
 private fun MessageOptionItemPreview() {
     ChatTheme {
-        val messageOptionsState =
-            defaultMessageOptionsState(
-                selectedMessage = Message(),
-                currentUser = User(),
-                isInThread = false
-            ).firstOrNull()
+        val option = MessageOptionItemState(
+            title = R.string.stream_compose_reply,
+            iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
+            action = Reply(PreviewMessageData.message1),
+            titleColor = ChatTheme.colors.textHighEmphasis,
+            iconColor = ChatTheme.colors.textLowEmphasis,
+        )
 
-        if (messageOptionsState != null) {
-            MessageOptionItem(option = messageOptionsState)
-        }
+        MessageOptionItem(
+            modifier = Modifier.fillMaxWidth(),
+            option = option
+        )
     }
 }

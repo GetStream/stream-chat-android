@@ -158,18 +158,19 @@ internal class SendReactionsTests {
 
     private class Fixture(scope: CoroutineScope, user: User) {
 
-        private val stateRegistry = StateRegistry.getOrCreate(
+        private val stateRegistry = StateRegistry.create(
             job = mock(),
             scope = scope,
             userStateFlow = MutableStateFlow(user),
             messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
+
         private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<GlobalMutableState>()
-        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry, globalState, false, repos, client)
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client)
 
         suspend fun givenMessageWithReactions(message: Message): Fixture = apply {
             whenever(repos.selectMessage(message.id)) doReturn message
