@@ -409,20 +409,21 @@ public class MessageComposerController(
     ): Message {
         val activeAction = activeAction
 
+        val trimmedMessage = message.trim()
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
-        val mentions = filterMentions(selectedMentions, message)
+        val mentions = filterMentions(selectedMentions, trimmedMessage)
 
         return if (isInEditMode) {
             actionMessage.copy(
-                text = message,
+                text = trimmedMessage,
                 attachments = attachments.toMutableList(),
                 mentionedUsersIds = mentions
             )
         } else {
             Message(
                 cid = channelId,
-                text = message,
+                text = trimmedMessage,
                 parentId = parentMessageId,
                 replyMessageId = replyMessageId,
                 attachments = attachments.toMutableList(),

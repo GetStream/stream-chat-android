@@ -141,17 +141,17 @@ If you want to know more you can take a look at the [class documentation](https:
 
 `AttachmentPreviewHandler.defaultAttachmentHandlers()` provides default handlers for media, document and url attachments.
 
-If you want you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/filepreview/AttachmentPreviewHandler.kt).
+If you want you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/attachments/preview/handler/AttachmentPreviewHandler.kt).
 
 You can customize file previews by creating your own list of `AttachmentPreviewHandler`s and overriding `ChatTheme.attachmentPreviewHandlers` with it.
 
-### DefaultReactionTypes
+### ReactionIconFactory
 
-Used for defining reactions the user can add to messages. `DefaultReactionTypes.defaultReactionTypes()` provides our default basic reactions out of the box.
+Used for defining reactions the user can add to messages. `ReactionIconFactory.defaultFactory()` provides our default basic reactions out of the box.
 
-You can find their definitions in the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/DefaultReactionTypes.kt).
+You can find their definitions in the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/ReactionIconFactory.kt).
 
-Reactions are easily customizable by passing in your own map which contains reactions and overriding `ChatTheme.reactionTypes` with it.
+Reactions are easily customizable by passing in your own `ReactionIconFactory` which contains reactions and overriding `ChatTheme.reactionIconFactory` with it.
 
 ### DateFormatter
 
