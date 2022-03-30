@@ -74,7 +74,8 @@ public class MessageListViewModel(
      * Regulates the visibility of deleted messages.
      */
     @InternalStreamChatApi
-    public var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> = MutableLiveData(DeletedMessageVisibility.ALL)
+    public var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
+        MutableLiveData(DeletedMessageVisibility.ALL)
 
     /**
      * Represents the current state of the message list
@@ -946,7 +947,8 @@ public class MessageListViewModel(
         NONE,
 
         /**
-         * Only the current user's messages are visible.
+         * Deleted messages from the current user are visible,
+         * ones from other users are not.
          */
         MINE,
 
