@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.plugin.state
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -98,28 +99,41 @@ public class StateRegistry private constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
+        instance = null
     }
 
     internal companion object {
         private var instance: StateRegistry? = null
 
+        private val logger = ChatLogger.get("StateRegistry")
+
         /**
-         * Gets the singleton of StateRegistry or creates it in the first call.
+         * Creates and returns a new instance of StateRegistry.
          *
          * @param job A background job cancelled after calling [clear].
          * @param scope A scope for new coroutines.
          * @param userStateFlow The state flow that provides the user once it is set.
          * @param messageRepository [MessageRepository] Repository for all messages
          * @param latestUsers Latest users of the SDK.
+         *
+         * @return Instance of [StateRegistry].
+         *
+         * @throws IllegalStateException if instance is not null.
          */
-        internal fun getOrCreate(
+        internal fun create(
             job: Job,
             scope: CoroutineScope,
             userStateFlow: StateFlow<User?>,
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
-            return instance ?: StateRegistry(
+            if (instance == null) {
+                logger.logE(
+                    "StateRegistry instance is already created. " +
+                        "Avoid creating multiple instances to prevent ambiguous state. Use StateRegistry.get()"
+                )
+            }
+            return StateRegistry(
                 job = job,
                 scope = scope,
                 userStateFlow = userStateFlow,
@@ -131,7 +145,11 @@ public class StateRegistry private constructor(
         }
 
         /**
-         * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it returns null.
+         * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it throws exception.
+         *
+         * @return Singleton instance of [StateRegistry].
+         *
+         * @throws IllegalArgumentException if instance is null.
          */
         @Throws(IllegalArgumentException::class)
         internal fun get(): StateRegistry = requireNotNull(instance) {
