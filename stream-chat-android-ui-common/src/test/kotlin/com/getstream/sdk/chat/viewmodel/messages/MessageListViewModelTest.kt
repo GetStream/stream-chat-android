@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import com.getstream.sdk.chat.MockChatClientBuilder
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.buildChannelState
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
 import com.getstream.sdk.chat.createUser
@@ -26,6 +27,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -72,42 +74,42 @@ internal class MessageListViewModelTest {
     private val messages = MutableStateFlow(listOf<Message>())
     private val user = MutableStateFlow(User(id = "ID"))
 
-    private val channelState: ChannelState = spy {
-        whenever(it.channelType) doReturn CHANNEL_TYPE
-        whenever(it.channelId) doReturn CHANNEL_ID
-        whenever(it.messages) doReturn messages
-        whenever(it.reads) doReturn MutableStateFlow(listOf())
-        whenever(it.messagesState).doAnswer { messagesState }
-        whenever(it.loading) doReturn MutableStateFlow(false)
-        whenever(it.loadingOlderMessages) doReturn loadingOlderMessages
-        whenever(it.channelData) doReturn MutableStateFlow(ChannelData(Channel()))
-    }
+    private val channelState: ChannelState = buildChannelState(
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        messages = messages,
+        reads = MutableStateFlow(listOf()),
+        messagesState = messagesState,
+        loading = MutableStateFlow(false),
+        loadingOlderMessages = loadingOlderMessages,
+        channelData = MutableStateFlow(ChannelData(Channel()))
+    )
 
-    private val stateRegistry: StateRegistry = mock {
-        whenever(it.channel(any(), any())) doReturn channelState
-    }
+    private val stateRegistry: StateRegistry = mock()
 
-    private val globalState: GlobalState = mock {
-        whenever(it.user) doReturn user
-        whenever(it.channelMutes) doReturn MutableStateFlow(listOf())
-        whenever(it.typingUpdates) doReturn MutableStateFlow(TypingEvent(channelId = CID, listOf()))
-    }
+    private val globalState: GlobalState = mock()
 
     private val chatClient: ChatClient = MockChatClientBuilder {
-        mock {
-            whenever(it.queryChannel(any(), any(), any())) doReturn Channel().asCall()
-            whenever(it.notifications) doReturn mock()
-            whenever(it.flagMessage(any())) doReturn mock()
-            whenever(it.deleteMessage(any(), any())) doReturn mock()
-        }
+        mock()
     }.build()
 
     init {
         StateRegistry.instance = stateRegistry
     }
 
+    @BeforeEach
+    fun setup(){
+        // setup StateRegistry
+        whenever(stateRegistry.channel(any(), any())) doReturn channelState
+        // setup GlobalState
+        whenever(globalState.user) doReturn user
+        // setup ChatClient
+        whenever(chatClient.queryChannel(any(), any(), any())) doReturn Channel().asCall()
+        whenever(chatClient.notifications) doReturn mock()
+    }
+
     @AfterEach
-    fun validate(){
+    fun validate() {
         validateMockitoUsage()
     }
 
@@ -121,7 +123,7 @@ internal class MessageListViewModelTest {
         // when
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
 
-        // should
+        // then
         verify(chatClient).loadOlderMessages(CID, DEFAULT_MESSAGES_LIMIT)
     }
 
@@ -133,14 +135,14 @@ internal class MessageListViewModelTest {
         val viewModel = MessageListViewModel(CID, chatClient = chatClient, globalState = globalState)
         val stateList = viewModel.state.observeAll()
 
-        // should
+        // then
         stateList.first() shouldBeEqualTo MessageListViewModel.State.Loading
 
         // when
         messagesState.emit(MessagesState.Result(MESSAGES))
         advanceUntilIdle()
 
-        // should
+        // then
         stateList.last().apply {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             val state = (this as MessageListViewModel.State.Result)
@@ -153,39 +155,42 @@ internal class MessageListViewModelTest {
     @Test
     fun `When delete event doesn't have hard flag Should delete message`() {
         // given
+        whenever(chatClient.deleteMessage(any(), any())) doReturn mock()
         val viewModel = MessageListViewModel(CID, chatClient = chatClient)
         viewModel.state.observeAll()
 
         // when
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = false))
 
-        // should
+        // then
         verify(chatClient).deleteMessage(MESSAGE.id, false)
     }
 
     @Test
     fun `When delete event has hard flag Should hard delete message`() {
         // given
+        whenever(chatClient.deleteMessage(any(), any())) doReturn mock()
         val viewModel = MessageListViewModel(CID, chatClient = chatClient)
         viewModel.state.observeAll()
 
         // when
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE, hard = true))
 
-        // should
+        // then
         verify(chatClient).deleteMessage(MESSAGE.id, true)
     }
 
     @Test
     fun `Should flag message`() {
         // given
+        whenever(chatClient.flagMessage(any())) doReturn mock()
         val viewModel = MessageListViewModel(CID, chatClient = chatClient)
         viewModel.state.observeAll()
 
         // when
         viewModel.onEvent(MessageListViewModel.Event.FlagMessage(MESSAGE))
 
-        // should
+        // then
         verify(chatClient).flagMessage(MESSAGE.id)
     }
 
@@ -198,7 +203,7 @@ internal class MessageListViewModelTest {
         // when
         viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 
-        // should
+        // then
         states.last() shouldBeEqualTo MessageListViewModel.State.NavigateUp
     }
 
@@ -216,7 +221,7 @@ internal class MessageListViewModelTest {
         viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
         viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 
-        // should
+        // then
         states.last().run {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             (this as MessageListViewModel.State.Result).let { it ->
