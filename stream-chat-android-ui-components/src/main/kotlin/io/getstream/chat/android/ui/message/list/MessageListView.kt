@@ -278,7 +278,7 @@ public class MessageListView : ConstraintLayout {
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
 
-    internal var deletedMessageListItemPredicateLiveData = MutableLiveData(deletedMessageListItemPredicate)
+    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> = MutableLiveData(null)
 
     private lateinit var loadMoreListener: EndlessScrollListener
 
