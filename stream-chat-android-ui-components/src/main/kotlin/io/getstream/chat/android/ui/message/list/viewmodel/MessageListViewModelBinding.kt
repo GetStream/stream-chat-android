@@ -32,11 +32,10 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
 
     view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
-        deletedMessageVisibility.value = when (messageListItemPredicate) {
-            DeletedMessageListItemPredicate.NotVisibleToAnyone -> MessageListViewModel.DeletedMessageVisibility.NONE
-            DeletedMessageListItemPredicate.VisibleToAuthorOnly -> MessageListViewModel.DeletedMessageVisibility.MINE
-            DeletedMessageListItemPredicate.VisibleToEveryone -> MessageListViewModel.DeletedMessageVisibility.ALL
-            else -> MessageListViewModel.DeletedMessageVisibility.ALL
+        deletedMessagesVisibility.value = when (messageListItemPredicate) {
+            DeletedMessageListItemPredicate.NotVisibleToAnyone -> MessageListViewModel.DeletedMessagesVisibility.NONE
+            DeletedMessageListItemPredicate.VisibleToAuthorOnly -> MessageListViewModel.DeletedMessagesVisibility.MINE
+            else -> MessageListViewModel.DeletedMessagesVisibility.ALL
         }
     }
 

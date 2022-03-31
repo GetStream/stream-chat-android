@@ -983,6 +983,11 @@ public class MessageListView : ConstraintLayout {
      * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
      * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
      */
+    @Deprecated(
+        message = "Filtering deleted messages should be performed in the ViewModel.",
+        replaceWith = ReplaceWith("MessageListViewModel().setDeletedMessageVisibility(MessageListViewModel.DeletedMessageVisibility)", "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"),
+        level = DeprecationLevel.WARNING
+    )
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
         check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageListItemPredicate first"

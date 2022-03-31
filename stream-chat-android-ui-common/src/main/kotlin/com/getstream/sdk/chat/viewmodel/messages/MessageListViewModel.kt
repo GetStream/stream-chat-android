@@ -74,8 +74,8 @@ public class MessageListViewModel(
      * Regulates the visibility of deleted messages.
      */
     @InternalStreamChatApi
-    public var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
-        MutableLiveData(DeletedMessageVisibility.ALL)
+    public var deletedMessagesVisibility: MutableLiveData<DeletedMessagesVisibility> =
+        MutableLiveData(DeletedMessagesVisibility.ALL)
 
     /**
      * Represents the current state of the message list
@@ -237,7 +237,7 @@ public class MessageListViewModel(
             typingLd = typingIds,
             isThread = false,
             dateSeparatorHandler = dateSeparatorHandler,
-            deletedMessageVisibility = deletedMessageVisibility
+            deletedMessagesVisibility = deletedMessagesVisibility
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -282,7 +282,7 @@ public class MessageListViewModel(
             null,
             true,
             threadDateSeparatorHandler,
-            deletedMessageVisibility
+            deletedMessagesVisibility
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -686,6 +686,16 @@ public class MessageListViewModel(
     }
 
     /**
+     * Sets the value used to filter deleted messages.
+     * @see DeletedMessagesVisibility
+     *
+     * @param deletedMessagesVisibility Changes the visibility of deleted messages.
+     */
+    public fun setDeletedMessagesVisibility(deletedMessagesVisibility: DeletedMessagesVisibility) {
+        this.deletedMessagesVisibility.value = deletedMessagesVisibility
+    }
+
+    /**
      * The current state of the message list.
      */
     public sealed class State {
@@ -938,8 +948,7 @@ public class MessageListViewModel(
      * Intended to be used for regulating visibility of deleted messages
      * and filtering them out accordingly.
      */
-    @InternalStreamChatApi
-    public enum class DeletedMessageVisibility {
+    public enum class DeletedMessagesVisibility {
 
         /**
          * No deleted messages are visible.
