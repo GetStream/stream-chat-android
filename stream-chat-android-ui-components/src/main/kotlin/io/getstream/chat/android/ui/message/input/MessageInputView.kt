@@ -797,28 +797,37 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        val messageText = binding.messageInputFieldView.messageText
+        val messageText = getTrimmedMessageText()
 
         doSend(
-            { attachments ->
+            attachmentSender = { attachments ->
                 sendMessageHandler.sendMessageWithAttachments(
                     messageText,
                     attachments,
                     messageReplyTo
                 )
             },
-            { sendMessageHandler.sendMessage(messageText, messageReplyTo) },
-            { customAttachments ->
-                sendMessageHandler.sendMessageWithCustomAttachments(messageText, customAttachments, messageReplyTo)
+            simpleSender = {
+                sendMessageHandler.sendMessage(
+                    messageText,
+                    messageReplyTo
+                )
+            },
+            customAttachmentsSender = { customAttachments ->
+                sendMessageHandler.sendMessageWithCustomAttachments(
+                    messageText,
+                    customAttachments,
+                    messageReplyTo
+                )
             }
         )
     }
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        val messageText = binding.messageInputFieldView.messageText
+        val messageText = getTrimmedMessageText()
         doSend(
-            { attachments ->
+            attachmentSender = { attachments ->
                 sendMessageHandler.sendToThreadWithAttachments(
                     parentMessage,
                     messageText,
@@ -826,14 +835,14 @@ public class MessageInputView : ConstraintLayout {
                     attachments
                 )
             },
-            {
+            simpleSender = {
                 sendMessageHandler.sendToThread(
                     parentMessage,
                     messageText,
                     sendAlsoToChannel
                 )
             },
-            { customAttachments ->
+            customAttachmentsSender = { customAttachments ->
                 sendMessageHandler.sendToThreadWithCustomAttachments(
                     parentMessage,
                     messageText,
@@ -866,7 +875,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun editMessage(oldMessage: Message) {
-        sendMessageHandler.editMessage(oldMessage, binding.messageInputFieldView.messageText)
+        sendMessageHandler.editMessage(oldMessage, getTrimmedMessageText())
         inputMode = InputMode.Normal
     }
 
@@ -891,6 +900,15 @@ public class MessageInputView : ConstraintLayout {
         viewHolderFactory: SelectedCustomAttachmentViewHolderFactory,
     ) {
         customAttachmentsSelectionListener(attachments, viewHolderFactory)
+    }
+
+    /**
+     * Returns trimmed text from the message input.
+     *
+     * @return Trimmed text from the message input.
+     */
+    private fun getTrimmedMessageText(): String {
+        return binding.messageInputFieldView.messageText.trim()
     }
 
     private companion object {

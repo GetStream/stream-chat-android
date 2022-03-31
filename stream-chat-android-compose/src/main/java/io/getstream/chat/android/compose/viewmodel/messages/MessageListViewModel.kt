@@ -23,6 +23,7 @@ import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
 import io.getstream.chat.android.compose.state.messages.MessagesState
@@ -496,7 +497,7 @@ public class MessageListViewModel(
      * on the thread mode.
      *
      * @param selectedMessageState The selected message state.
-     * */
+     */
     private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
@@ -543,6 +544,7 @@ public class MessageListViewModel(
         removeOverlay()
 
         when (messageAction) {
+            is Resend -> resendMessage(messageAction.message)
             is ThreadReply -> {
                 messageActions = messageActions + Reply(messageAction.message)
                 loadThread(messageAction.message)
@@ -736,6 +738,17 @@ public class MessageListViewModel(
         removeOverlay()
 
         chatClient.flagMessage(message.id).enqueue()
+    }
+
+    /**
+     * Retries sending a message that has failed to send.
+     *
+     * @param message The message that will be re-sent.
+     */
+    private fun resendMessage(message: Message) {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+
+        chatClient.sendMessage(channelType, channelId, message).enqueue()
     }
 
     /**

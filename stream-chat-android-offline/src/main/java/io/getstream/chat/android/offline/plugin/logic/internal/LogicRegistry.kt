@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
@@ -108,34 +109,51 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
+        instance = null
     }
 
     internal companion object {
         private var instance: LogicRegistry? = null
 
+        private val logger = ChatLogger.get("LogicRegistry")
+
         /**
-         * Gets the singleton of LogicRegistry or creates it in the first call
+         * Creates and returns new instance of LogicRegistry.
          *
          * @param stateRegistry [StateRegistry].
          * @param globalState [GlobalMutableState] state of the SDK.
          * @param userPresence True if userPresence should be enabled, false otherwise.
          * @param repos [RepositoryFacade] to interact with local data sources.
          * @param client An instance of [ChatClient].
+         *
+         * @return Instance of [LogicRegistry].
+         *
+         * @throws IllegalStateException if instance is not null.
          */
-        internal fun getOrCreate(
+        internal fun create(
             stateRegistry: StateRegistry,
             globalState: GlobalMutableState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
-            return instance ?: LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
+            if (instance == null) {
+                logger.logE(
+                    "LogicRegistry instance is already created. " +
+                        "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
+                )
+            }
+            return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
                 instance = logicRegistry
             }
         }
 
         /**
-         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it returns null.
+         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it throws exception.
+         *
+         * @return Singleton instance of [LogicRegistry].
+         *
+         * @throws IllegalArgumentException if instance is null.
          */
         @Throws(IllegalArgumentException::class)
         internal fun get(): LogicRegistry = requireNotNull(instance) {

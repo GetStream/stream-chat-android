@@ -21,6 +21,11 @@ public class React(
 ) : MessageAction(message)
 
 /**
+ * Retry sending a message.
+ */
+public class Resend(message: Message) : MessageAction(message)
+
+/**
  * Start a message reply.
  */
 public class Reply(message: Message) : MessageAction(message)

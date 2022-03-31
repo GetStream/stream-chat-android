@@ -44,10 +44,11 @@
   <string name="stream_ui_message_list_giphy_cancel">"취소"</string>
   <string name="stream_ui_message_list_giphy_send">"보내기"</string>
   <string name="stream_ui_message_list_giphy_shuffle">"섞기"</string>
+  <string name="stream_ui_message_list_giphy_title">"Giphy"</string>
   <string name="stream_ui_message_list_mute_user">"사용자 음소거"</string>
   <string name="stream_ui_message_list_pin_message">"메세지 핀하기"</string>
   <string name="stream_ui_message_list_pinned_message">"%s의 핀"</string>
-  <string name="stream_ui_message_list_pinned_message_you">"나</string>
+  <string name="stream_ui_message_list_pinned_message_you">"나"</string>
   <string name="stream_ui_message_list_reply">"답장"</string>
   <string name="stream_ui_message_list_resend_message">"재전송"</string>
   <string name="stream_ui_message_list_thread_reply">"스레드 답장"</string>
