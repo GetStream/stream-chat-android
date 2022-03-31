@@ -4,7 +4,6 @@ import io.getstream.logging.Priority
 import io.getstream.logging.StreamLogger
 import io.getstream.logging.StreamLogger.Level.ASSERT
 import io.getstream.logging.StreamLogger.Level.ERROR
-import io.getstream.logging.format.MessageFormatter
 import io.getstream.logging.helper.stringify
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -17,11 +16,10 @@ public class KotlinStreamLogger(
     private val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH),
 ) : StreamLogger {
 
-    override fun log(priority: Priority, tag: String, throwable: Throwable?, message: String, args: Array<out Any?>?) {
+    override fun log(priority: Priority, tag: String, message: () -> String, throwable: Throwable?) {
         val now = dateFormat.format(now())
         val thread = Thread.currentThread().run { "$name:$id" }
-        val formatted = MessageFormatter.formatMessage(message, args)
-        val composed = "$now ($thread) [${priority.stringify()}/$tag]: $formatted"
+        val composed = "$now ($thread) [${priority.stringify()}/$tag]: ${message()}"
         val finalMessage = throwable?.let {
             "$composed\n${it.stringify()}"
         } ?: composed

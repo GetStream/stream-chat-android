@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import io.getstream.logging.Priority
 import io.getstream.logging.StreamLogger
-import io.getstream.logging.format.MessageFormatter
 import io.getstream.logging.helper.stringify
 
 private const val MAX_TAG_LEN = 23
@@ -15,7 +14,7 @@ private const val MAX_TAG_LEN = 23
  */
 public class AndroidStreamLogger : StreamLogger {
 
-    override fun log(priority: Priority, tag: String, throwable: Throwable?, message: String, args: Array<out Any?>?) {
+    override fun log(priority: Priority, tag: String, message: () -> String, throwable: Throwable?) {
 
         val androidPriority = priority.toAndroidPriority()
         val androidTag = tag.takeIf { it.length > MAX_TAG_LEN && !isNougatOrHigher() }
@@ -23,8 +22,7 @@ public class AndroidStreamLogger : StreamLogger {
             ?: tag
 
         val thread = Thread.currentThread().run { "$name:$id" }
-        val formatted = MessageFormatter.formatMessage(message, args)
-        val composed = "($thread) $formatted"
+        val composed = "($thread) $${message()}"
         val finalMessage = throwable?.let {
             "$composed\n${it.stringify()}"
         } ?: composed

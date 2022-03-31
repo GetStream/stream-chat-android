@@ -31,70 +31,60 @@ public object StreamLog {
      *
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
      * @param throwable An exception to log.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun e(tag: String, throwable: Throwable, message: String, vararg args: Any?) {
-        logger.log(ERROR, tag, throwable, message, args)
+    public fun e(tag: String, throwable: Throwable, message: () -> String) {
+        logger.log(ERROR, tag, message, throwable)
     }
 
     /**
      * Send a [ERROR] log message.
      *
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun e(tag: String, message: String, vararg args: Any?) {
-        logger.log(WARN, tag, message, args)
+    public fun e(tag: String, message: () -> String) {
+        logger.log(ERROR, tag, message)
     }
 
     /**
      * Send a [WARN] log message.
      *
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun w(tag: String, message: String, vararg args: Any?) {
-        logger.log(WARN, tag, message, args)
+    public fun w(tag: String, message: () -> String) {
+        logger.log(WARN, tag, message)
     }
 
     /**
      * Send a [INFO] log message.
      *
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun i(tag: String, message: String, vararg args: Any?) {
-        logger.log(INFO, tag, message, args)
+    public fun i(tag: String, message: () -> String) {
+        logger.log(INFO, tag, message)
     }
 
     /**
      * Send a [DEBUG] log message.
      *
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun d(tag: String, message: String, vararg args: Any?) {
-        logger.log(DEBUG, tag, message, args)
+    public fun d(tag: String, message: () -> String) {
+        logger.log(DEBUG, tag, message)
     }
 
     /**
      * Send a [VERBOSE] log message.
      *
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun v(tag: String, message: String, vararg args: Any?) {
-        logger.log(VERBOSE, tag, message, args)
-    }
-
-    private fun StreamLogger.log(priority: Priority, tag: String, message: String, args: Array<out Any?>?) {
-        log(priority, tag, null, message, args)
+    public fun v(tag: String, message: () -> String) {
+        logger.log(VERBOSE, tag, message)
     }
 }
 
@@ -107,48 +97,42 @@ public interface TaggedLogger {
      * Send a [ERROR] log message.
      *
      * @param throwable An exception to log.
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun e(throwable: Throwable, message: String, vararg args: Any?)
+    public fun e(throwable: Throwable, message: () -> String)
 
     /**
      * Send a [ERROR] log message.
      *
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun e(message: String, vararg args: Any?)
+    public fun e(message: () -> String)
 
     /**
      * Send a [WARN] log message.
      *
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun w(message: String, vararg args: Any?)
+    public fun w(message: () -> String)
 
     /**
      * Send a [INFO] log message.
      *
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun i(message: String, vararg args: Any?)
+    public fun i(message: () -> String)
 
     /**
      * Send a [DEBUG] log message.
      *
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun d(message: String, vararg args: Any?)
+    public fun d(message: () -> String)
 
     /**
      * Send a [VERBOSE] log message.
      *
-     * @param message The format string you would like logged.
-     * @param args Arguments referenced by the format specifiers in the format string.
+     * @param message The function returning a message you would like logged.
      */
-    public fun v(message: String, vararg args: Any?)
+    public fun v(message: () -> String)
 }

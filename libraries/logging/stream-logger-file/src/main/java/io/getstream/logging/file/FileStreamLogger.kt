@@ -2,7 +2,6 @@ package io.getstream.logging.file
 
 import io.getstream.logging.Priority
 import io.getstream.logging.StreamLogger
-import io.getstream.logging.format.MessageFormatter
 import io.getstream.logging.helper.stringify
 import java.io.BufferedWriter
 import java.io.Closeable
@@ -52,9 +51,8 @@ public class FileStreamLogger(
     override fun log(
         priority: Priority,
         tag: String,
+        message: () -> String,
         throwable: Throwable?,
-        message: String,
-        args: Array<out Any?>?,
     ) {
         val thread = Thread.currentThread()
         executor.execute {
@@ -64,10 +62,9 @@ public class FileStreamLogger(
                 val formattedThread = "%20s".format(thread.stringify())
                 val formattedPriority = priority.stringify()
                 val formatterPrefix = "$formattedDateTime $formattedPriority/$formattedThread [$tag]: "
-                val formattedMessage = MessageFormatter.formatMessage(message, args)
 
                 write(formatterPrefix)
-                write(formattedMessage)
+                write(message())
                 appendLine()
                 if (write(throwable)) {
                     appendLine()

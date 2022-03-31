@@ -1,7 +1,7 @@
 package io.getstream.logging
 
 public class CompositeStreamLogger(
-    public val children: List<StreamLogger>,
+    private val children: List<StreamLogger>,
 ) : StreamLogger {
 
     public constructor(vararg children: StreamLogger) : this(children.toList())
@@ -9,12 +9,11 @@ public class CompositeStreamLogger(
     override fun log(
         priority: Priority,
         tag: String,
+        message: () -> String,
         throwable: Throwable?,
-        message: String,
-        args: Array<out Any?>?,
     ) {
         children.forEach { childLogger ->
-            childLogger.log(priority, tag, throwable, message, args)
+            childLogger.log(priority, tag, message, throwable)
         }
     }
 }
