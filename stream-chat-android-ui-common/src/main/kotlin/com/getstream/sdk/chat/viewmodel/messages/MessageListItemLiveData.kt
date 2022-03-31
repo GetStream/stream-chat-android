@@ -87,14 +87,18 @@ internal class MessageListItemLiveData(
                 user
             }
             .changeOnUserLoaded(messages) { changedMessages, currentUser ->
-                messagesChanged(
-                    changedMessages,
-                    currentUser!!.id
-                )
+                if (currentUser != null) {
+                    messagesChanged(
+                        changedMessages,
+                        currentUser.id
+                    )
+                } else null
             }
 
         addSource(messagesChange) { value ->
-            this.value = value
+            if (value != null) {
+                this.value = value
+            }
         }
     }
 
@@ -181,7 +185,6 @@ internal class MessageListItemLiveData(
      */
     private fun filterDeletedMessages(messages: List<Message>?): List<Message>? {
         return when (deletedMessageVisibility.value) {
-            MessageListViewModel.DeletedMessageVisibility.ALL -> messages
             MessageListViewModel.DeletedMessageVisibility.MINE -> messages?.filter { it.deletedAt == null || it.user.id == currentUser.value?.id }
             MessageListViewModel.DeletedMessageVisibility.NONE -> messages?.filter { it.deletedAt == null }
             else -> messages
