@@ -15,10 +15,10 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
      */
     inner class InitializationAndUsers {
         fun initialization() {
-            // Typically done in your Application class on startup
+            // Typically done in your Application class using your API Key on startup
             val client = ChatClient.Builder("{{ api_key }}", context).build()
 
-            // Client singleton is also available via static reference
+            // Static reference to initialised client
             val staticClientRef = ChatClient.instance()
         }
 

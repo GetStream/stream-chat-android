@@ -171,6 +171,16 @@ class Messages(
                 .fileUploader(MyFileUploader())
                 .build()
         }
+
+        fun deleteImageOrFile() {
+            val channelClient = client.channel("messaging", "general")
+
+            // Deletes the image
+            channelClient.deleteImage("{{ url of uploaded image }}").enqueue()
+
+            // Deletes the file
+            channelClient.deleteFile("{{ url of uploaded file }}").enqueue()
+        }
     }
 
     /**

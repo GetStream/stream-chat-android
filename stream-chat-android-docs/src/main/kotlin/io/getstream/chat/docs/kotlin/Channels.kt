@@ -65,6 +65,21 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 }
             }
         }
+
+        fun createChannelWithListOfMembers() {
+            client.createChannel(
+                channelType = "messaging",
+                channelId = "general",
+                memberIds = listOf("thierry", "tomasso"),
+                extraData = emptyMap()
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    val channel = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
     }
 
     /**
@@ -326,7 +341,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                     text = "Thierry changed the channel color to green"
                 ),
                 extraData = mapOf(
-                    "color" to "green",
+                    "name" to "myspecialchannel",
                     "color" to "green",
                 ),
             ).enqueue { result ->
@@ -368,62 +383,32 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 }
             }
         }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin">One to One Conversations</a>
-     */
-    inner class OneToOneConversations {
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin#creating-conversations">Creating Conversations</a>
+         * @see <a href="https://getstream.io/chat/docs/android/channel_members/?language=kotlin#message-parameter">Message Parameter</a>
          */
-        fun creatingConversation() {
-            client.createChannel(
-                channelType = "messaging",
-                channelId = "",
-                memberIds = listOf("thierry", "tomasso"),
-                extraData = emptyMap(),
+        fun addingAndRemovingChannelMembersWithMessage() {
+            val channelClient = client.channel("messaging", "general")
+
+            // Add members with ids "thierry" and "josh"
+            channelClient.addMembers(
+                listOf("thierry", "josh"),
+                Message(text = "Thierry and Josh joined this channel.")
             ).enqueue { result ->
                 if (result.isSuccess) {
-                    val channel = result.data()
+                    val channel: Channel = result.data()
                 } else {
                     // Handle result.error()
                 }
             }
-        }
-    }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin">Invites</a>
-     */
-    inner class Invites {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#inviting-users">Inviting Users</a>
-         */
-        fun invitingUsers() {
-            val channelClient = client.channel("messaging", "general")
-            val data = mapOf("invites" to listOf("nick"))
-
-            channelClient.create(memberIds = listOf("thierry", "tommaso"), extraData = data).enqueue { result ->
-                if (result.isSuccess) {
-                    val channel = result.data()
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#accepting-an-invite">Accept an Invite</a>
-         */
-        fun acceptingAnInvite() {
-            channelClient.acceptInvite(
-                message = "Nick joined this channel!"
+            // Remove member with id "tommaso"
+            channelClient.removeMembers(
+                listOf("tommaso"),
+                Message(text = "Tommaso was removed from this channel.")
             ).enqueue { result ->
                 if (result.isSuccess) {
-                    val channel = result.data()
+                    val channel: Channel = result.data()
                 } else {
                     // Handle result.error()
                 }
@@ -431,296 +416,385 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#rejecting-an-invite">Rejecting an Invite</a>
+         * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin">One to One Conversations</a>
          */
-        fun rejectingAnInvite() {
-            channelClient.rejectInvite().enqueue { result ->
-                if (result.isSuccess) {
-                    // Invite rejected
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
+        inner class OneToOneConversations {
 
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-accepted-invites">Query For Accepted Invites</a>
-         */
-        fun queryForAcceptedInvites() {
-            val request = QueryChannelsRequest(
-                filter = Filters.eq("invite", "accepted"),
-                offset = 0,
-                limit = 10
-            )
-            client.queryChannels(request).enqueue { result ->
-                if (result.isSuccess) {
-                    val channels: List<Channel> = result.data()
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-rejected-invites">Query For Rejected Invites</a>
-         */
-        fun queryForRejectedInvites() {
-            val request = QueryChannelsRequest(
-                filter = Filters.eq("invite", "rejected"),
-                offset = 0,
-                limit = 10
-            )
-            client.queryChannels(request).enqueue { result ->
-                if (result.isSuccess) {
-                    val channels: List<Channel> = result.data()
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Deleting & Hiding a Channel</a>
-     */
-    inner class DeletingAndHidingAChannel {
-
-        fun deletingAChannel() {
-            val channelClient = client.channel("messaging", "general")
-
-            channelClient.delete().enqueue { result ->
-                if (result.isSuccess) {
-                    val channel = result.data()
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin#hiding-a-channel">Hiding a Channel</a>
-         */
-        fun hidingAChannel() {
-            // Hides the channel until a new message is added there
-            channelClient.hide().enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is hidden
-                } else {
-                    // Handle result.error()
-                }
-            }
-
-            // Shows a previously hidden channel
-            channelClient.show().enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is shown
-                } else {
-                    // Handle result.error()
-                }
-            }
-
-            // Hide the channel and clear the message history
-            channelClient.hide(clearHistory = true).enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is hidden
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/android/channel_delete/?language=kotlin#truncating-a-channel">Truncating a Channel</a>
-         */
-        fun truncatingAChannel() {
-            // Removes all of the messages of the channel but doesn't affect the channel data or members
-            channelClient.truncate().enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is truncated
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin">Muting Channels</a>
-     */
-    inner class MutingChannels {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#channel-mute">Channel Mute</a>
-         */
-        fun channelMute() {
-            // Mute a channel
-            val channelClient = client.channel("messaging", "general")
-            channelClient.mute().enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is muted
-                } else {
-                    // Handle result.error()
-                }
-            }
-
-            // Mute a channel for 60 minutes
-            channelClient.mute(expiration = 60 * 60 * 1000).enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is muted
-                } else {
-                    // Handle result.error()
-                }
-            }
-
-            // Get list of muted channels when user is connected
-            client.connectUser(User("user-id"), "token")
-                .enqueue { result ->
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin#creating-conversations">Creating Conversations</a>
+             */
+            fun creatingConversation() {
+                client.createChannel(
+                    channelType = "messaging",
+                    channelId = "",
+                    memberIds = listOf("thierry", "tomasso"),
+                    extraData = emptyMap(),
+                ).enqueue { result ->
                     if (result.isSuccess) {
-                        val user = result.data().user
-                        // Result contains the list of channel mutes
-                        val mutes: List<ChannelMute> = user.channelMutes
+                        val channel = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin">Invites</a>
+         */
+        inner class Invites {
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#inviting-users">Inviting Users</a>
+             */
+            fun invitingUsers() {
+                val channelClient = client.channel("messaging", "general")
+                val data = mapOf("invites" to listOf("nick"))
+
+                channelClient.create(memberIds = listOf("thierry", "tommaso"), extraData = data).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#accepting-an-invite">Accept an Invite</a>
+             */
+            fun acceptingAnInvite() {
+                channelClient.acceptInvite(
+                    message = "Nick joined this channel!"
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#rejecting-an-invite">Rejecting an Invite</a>
+             */
+            fun rejectingAnInvite() {
+                channelClient.rejectInvite().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Invite rejected
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-accepted-invites">Query For Accepted Invites</a>
+             */
+            fun queryForAcceptedInvites() {
+                val request = QueryChannelsRequest(
+                    filter = Filters.eq("invite", "accepted"),
+                    offset = 0,
+                    limit = 10
+                )
+                client.queryChannels(request).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channels: List<Channel> = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-rejected-invites">Query For Rejected Invites</a>
+             */
+            fun queryForRejectedInvites() {
+                val request = QueryChannelsRequest(
+                    filter = Filters.eq("invite", "rejected"),
+                    offset = 0,
+                    limit = 10
+                )
+                client.queryChannels(request).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channels: List<Channel> = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-pending-invites">Query For Pending Invites</a>
+             */
+            fun queryForPendingInvites() {
+                val request = QueryChannelsRequest(
+                    filter = Filters.eq("invite", "pending"),
+                    offset = 0,
+                    limit = 10
+                )
+                client.queryChannels(request).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channels: List<Channel> = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Deleting & Hiding a Channel</a>
+         */
+        inner class DeletingAndHidingAChannel {
+
+            fun deletingAChannel() {
+                val channelClient = client.channel("messaging", "general")
+
+                channelClient.delete().enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin#hiding-a-channel">Hiding a Channel</a>
+             */
+            fun hidingAChannel() {
+                // Hides the channel until a new message is added there
+                channelClient.hide().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is hidden
+                    } else {
+                        // Handle result.error()
                     }
                 }
 
-            // Get updates about muted channels
-            client.subscribeFor<NotificationChannelMutesUpdatedEvent> { event ->
-                val mutes: List<ChannelMute> = event.me.channelMutes
+                // Shows a previously hidden channel
+                channelClient.show().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is shown
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+
+                // Hide the channel and clear the message history
+                channelClient.hide(clearHistory = true).enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is hidden
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/android/channel_delete/?language=kotlin#truncating-a-channel">Truncating a Channel</a>
+             */
+            fun truncatingAChannel() {
+                // Removes all of the messages of the channel but doesn't affect the channel data or members
+                channelClient.truncate().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is truncated
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+
+                // Or with message parameter.
+                val message = Message(text = "Dear Everyone. The channel has been truncated.")
+                channelClient.truncate(systemMessage = message).enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is truncated
+                    } else {
+                        // Handle result.error()
+                    }
+                }
             }
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#query-muted-channels">Query Muted Channels</a>
+         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin">Muting Channels</a>
          */
-        fun queryMutedChannels(currentUserId: String, filter: FilterObject) {
-            // Filter for all channels excluding muted ones
-            val notMutedFilter = Filters.and(
-                Filters.eq("muted", false),
-                Filters.`in`("members", listOf(currentUserId)),
-            )
+        inner class MutingChannels {
 
-            // Filter for muted channels
-            val mutedFilter = Filters.eq("muted", true)
+            /**
+             * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#channel-mute">Channel Mute</a>
+             */
+            fun channelMute() {
+                // Mute a channel
+                val channelClient = client.channel("messaging", "general")
+                channelClient.mute().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is muted
+                    } else {
+                        // Handle result.error()
+                    }
+                }
 
-            // Executing a channels query with either of the filters
-            client.queryChannels(
-                QueryChannelsRequest(
-                    filter = filter, // Set the correct filter here
-                    offset = 0,
-                    limit = 10,
+                // Mute a channel for 60 minutes
+                channelClient.mute(expiration = 60 * 60 * 1000).enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is muted
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+
+                // Get list of muted channels when user is connected
+                client.connectUser(User("user-id"), "token")
+                    .enqueue { result ->
+                        if (result.isSuccess) {
+                            val user = result.data().user
+                            // Result contains the list of channel mutes
+                            val mutes: List<ChannelMute> = user.channelMutes
+                        }
+                    }
+
+                // Get updates about muted channels
+                client.subscribeFor<NotificationChannelMutesUpdatedEvent> { event ->
+                    val mutes: List<ChannelMute> = event.me.channelMutes
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#query-muted-channels">Query Muted Channels</a>
+             */
+            fun queryMutedChannels(currentUserId: String, filter: FilterObject) {
+                // Filter for all channels excluding muted ones
+                val notMutedFilter = Filters.and(
+                    Filters.eq("muted", false),
+                    Filters.`in`("members", listOf(currentUserId)),
                 )
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    val channels: List<Channel> = result.data()
-                } else {
-                    // Handle result.error()
+
+                // Filter for muted channels
+                val mutedFilter = Filters.eq("muted", true)
+
+                // Executing a channels query with either of the filters
+                client.queryChannels(
+                    QueryChannelsRequest(
+                        filter = filter, // Set the correct filter here
+                        offset = 0,
+                        limit = 10,
+                    )
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channels: List<Channel> = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#remove-a-channel-mute">Remove a Channel Mute</a>
+             */
+            fun removeAChannelMute() {
+                // Unmute channel for current user
+                channelClient.unmute().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel is unmuted
+                    } else {
+                        // Handle result.error()
+                    }
                 }
             }
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#remove-a-channel-mute">Remove a Channel Mute</a>
+         * @see <a href="https://getstream.io/chat/docs/query_members/?language=kotlin">Query Members</a>
          */
-        fun removeAChannelMute() {
-            // Unmute channel for current user
-            channelClient.unmute().enqueue { result ->
-                if (result.isSuccess) {
-                    // Channel is unmuted
-                } else {
-                    // Handle result.error()
+        inner class QueryMembers {
+            fun queryingMembers() {
+                val channelClient = client.channel("messaging", "general")
+
+                val offset = 0 // Use this value for pagination
+                val limit = 10
+                val sort = QuerySort<Member>()
+
+                // Channel members can be queried with various filters
+                // 1. Create the filter, e.g query members by user name
+                val filterByName = Filters.eq("name", "tommaso")
+                // 2. Call queryMembers with that filter
+                channelClient.queryMembers(offset, limit, filterByName, sort).enqueue { result ->
+                    if (result.isSuccess) {
+                        val members: List<Member> = result.data()
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    }
                 }
+
+                // Here are some other commons filters you can use:
+
+                // Autocomplete members by user name (names containing "tom")
+                val filterByAutoCompleteName = Filters.autocomplete("name", "tom")
+
+                // Query member by id
+                val filterById = Filters.eq("id", "tommaso")
+
+                // Query multiple members by id
+                val filterByIds = Filters.`in`("id", listOf("tommaso", "thierry"))
+
+                // Query channel moderators
+                val filterByModerator = Filters.eq("is_moderator", true)
+
+                // Query for banned members in channel
+                val filterByBannedMembers = Filters.eq("banned", true)
+
+                // Query members with pending invites
+                val filterByPendingInvite = Filters.eq("invite", "pending")
+
+                // Query all the members
+                val filterByNone = NeutralFilterObject
+
+                // Results can also be orderd with the QuerySort param
+                // For example, this will order results by member creation time, descending
+                val createdAtDescendingSort = QuerySort<Member>().desc("created_at")
             }
         }
-    }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/query_members/?language=kotlin">Query Members</a>
-     */
-    inner class QueryMembers {
-        fun queryingMembers() {
-            val channelClient = client.channel("messaging", "general")
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/slow_mode/?language=kotlin">Throttling & Slow mode</a>
+         */
+        inner class ThrottlingAndSlowMode {
+            private fun disableMessageSendingUi() {}
+            private fun enableMessageSendingUi() {}
 
-            val offset = 0 // Use this value for pagination
-            val limit = 10
-            val sort = QuerySort<Member>()
+            fun enableAndDisable() {
+                val channelClient = client.channel("messaging", "general")
 
-            // Channel members can be queried with various filters
-            // 1. Create the filter, e.g query members by user name
-            val filterByName = Filters.eq("name", "tommaso")
-            // 2. Call queryMembers with that filter
-            channelClient.queryMembers(offset, limit, filterByName, sort).enqueue { result ->
-                if (result.isSuccess) {
-                    val members: List<Member> = result.data()
-                } else {
-                    Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
-                }
+                // Enable slow mode and set cooldown to 1s
+                channelClient.enableSlowMode(cooldownTimeInSeconds = 1).enqueue { /* Result handling */ }
+
+                // Increase cooldown to 30s
+                channelClient.enableSlowMode(cooldownTimeInSeconds = 30).enqueue { /* Result handling */ }
+
+                // Disable slow mode
+                channelClient.disableSlowMode().enqueue { /* Result handling */ }
             }
 
-            // Here are some other commons filters you can use:
+            fun blockUi() {
+                val channelClient = client.channel("messaging", "general")
 
-            // Autocomplete members by user name (names containing "tom")
-            val filterByAutoCompleteName = Filters.autocomplete("name", "tom")
+                // Get the cooldown value
+                channelClient.query(QueryChannelRequest()).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                        val cooldown = channel.cooldown
 
-            // Query member by id
-            val filterById = Filters.eq("id", "tommaso")
+                        val message = Message(text = "Hello")
+                        channelClient.sendMessage(message).enqueue {
+                            // After sending a message, block the UI temporarily
+                            // The disable/enable UI methods have to be implemented by you
+                            disableMessageSendingUi()
 
-            // Query multiple members by id
-            val filterByIds = Filters.`in`("id", listOf("tommaso", "thierry"))
-
-            // Query channel moderators
-            val filterByModerator = Filters.eq("is_moderator", true)
-
-            // Query for banned members in channel
-            val filterByBannedMembers = Filters.eq("banned", true)
-
-            // Query members with pending invites
-            val filterByPendingInvite = Filters.eq("invite", "pending")
-
-            // Query all the members
-            val filterByNone = NeutralFilterObject
-
-            // Results can also be orderd with the QuerySort param
-            // For example, this will order results by member creation time, descending
-            val createdAtDescendingSort = QuerySort<Member>().desc("created_at")
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/android/slow_mode/?language=kotlin">Throttling & Slow mode</a>
-     */
-    inner class ThrottlingAndSlowMode {
-        private fun disableMessageSendingUi() {}
-        private fun enableMessageSendingUi() {}
-
-        fun enableAndDisable() {
-            val channelClient = client.channel("messaging", "general")
-
-            // Enable slow mode and set cooldown to 1s
-            channelClient.enableSlowMode(cooldownTimeInSeconds = 1).enqueue { /* Result handling */ }
-
-            // Increase cooldown to 30s
-            channelClient.enableSlowMode(cooldownTimeInSeconds = 30).enqueue { /* Result handling */ }
-
-            // Disable slow mode
-            channelClient.disableSlowMode().enqueue { /* Result handling */ }
-        }
-
-        fun blockUi() {
-            val channelClient = client.channel("messaging", "general")
-
-            // Get the cooldown value
-            channelClient.query(QueryChannelRequest()).enqueue { result ->
-                if (result.isSuccess) {
-                    val channel = result.data()
-                    val cooldown = channel.cooldown
-
-                    val message = Message(text = "Hello")
-                    channelClient.sendMessage(message).enqueue {
-                        // After sending a message, block the UI temporarily
-                        // The disable/enable UI methods have to be implemented by you
-                        disableMessageSendingUi()
-
-                        Handler(Looper.getMainLooper())
-                            .postDelayed(::enableMessageSendingUi, cooldown.toLong())
+                            Handler(Looper.getMainLooper())
+                                .postDelayed(::enableMessageSendingUi, cooldown.toLong())
+                        }
                     }
                 }
             }
