@@ -241,7 +241,7 @@ public fun DefaultMessageListHeaderCenterContent(
  *
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
- * */
+ */
 @Composable
 internal fun DefaultMessageListHeaderTrailingContent(channel: Channel, currentUser: User?) {
     ChannelAvatar(

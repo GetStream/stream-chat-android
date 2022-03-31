@@ -155,7 +155,7 @@ internal class TypingEventsTest {
         }
 
     private class Fixture(scope: CoroutineScope, user: User) {
-        private val stateRegistry = StateRegistry.getOrCreate(
+        private val stateRegistry = StateRegistry.create(
             job = mock(),
             scope = scope,
             userStateFlow = MutableStateFlow(user),
