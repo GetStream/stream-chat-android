@@ -43,6 +43,9 @@ class Messages(
                     // Handle result.error()
                 }
             }
+
+            // Send a message synchronously
+            val messageResult = channelClient.sendMessage(message).execute()
         }
 
         fun sendAComplexMessage() {
