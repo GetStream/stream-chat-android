@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
@@ -73,8 +72,7 @@ public class MessageListViewModel(
     /**
      * Regulates the visibility of deleted messages.
      */
-    @InternalStreamChatApi
-    public var deletedMessagesVisibility: MutableLiveData<DeletedMessagesVisibility> =
+    private var deletedMessagesVisibility: MutableLiveData<DeletedMessagesVisibility> =
         MutableLiveData(DeletedMessagesVisibility.ALL)
 
     /**
