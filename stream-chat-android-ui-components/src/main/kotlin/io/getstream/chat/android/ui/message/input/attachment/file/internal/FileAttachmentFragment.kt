@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -17,6 +18,7 @@ import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
@@ -129,6 +131,14 @@ internal class FileAttachmentFragment : Fragment() {
                         storageHelper.getAttachmentsFromUriList(requireContext(), it)
                     }
                     val filteredAttachments = attachmentFilter.filterFileAttachments(attachments)
+
+                    if (filteredAttachments.size < attachments.size) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.stream_ui_message_input_file_not_supported),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
                     setFragmentResult(
                         AttachmentSelectionDialogFragment.REQUEST_KEY_FILE_MANAGER,
