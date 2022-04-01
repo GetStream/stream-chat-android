@@ -43,7 +43,9 @@ buildscript {
 }
 
 subprojects {
-    apply from: "${rootDir}/scripts/spotless.gradle"
+    if (it.name != 'stream-chat-android-docs') {
+        apply from: "${rootDir}/spotless/spotless.gradle"
+    }
 }
 
 allprojects {
