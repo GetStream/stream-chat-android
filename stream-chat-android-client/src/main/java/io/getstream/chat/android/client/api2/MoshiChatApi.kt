@@ -45,7 +45,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartial
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
-import io.getstream.chat.android.client.api2.model.response.AppSettingsAPIResponse
+import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -115,7 +115,7 @@ internal class MoshiChatApi(
     }
 
     override fun appSettings(): Call<AppSettings> {
-        return configApi.getAppSettings().map(AppSettingsAPIResponse::toDomain)
+        return configApi.getAppSettings().map(AppSettingsResponse::toDomain)
     }
 
     override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {

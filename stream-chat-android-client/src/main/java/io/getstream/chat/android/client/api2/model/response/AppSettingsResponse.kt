@@ -3,7 +3,9 @@ package io.getstream.chat.android.client.api2.model.response
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class AppSettingsAPIResponse(val appDto: AppDto)
+internal data class AppSettingsResponse(
+    val app: AppDto,
+)
 
 @JsonClass(generateAdapter = true)
 internal data class AppDto(
@@ -14,14 +16,6 @@ internal data class AppDto(
 
 @JsonClass(generateAdapter = true)
 internal data class FileUploadConfigDto(
-    val allowed_file_extensions: List<String>,
-    val allowed_mime_types: List<String>,
-    val blocked_file_extensions: List<String>,
-    val blocked_mime_types: List<String>,
-)
-
-@JsonClass(generateAdapter = true)
-internal data class ImageUploadConfigDto(
     val allowed_file_extensions: List<String>,
     val allowed_mime_types: List<String>,
     val blocked_file_extensions: List<String>,

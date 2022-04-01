@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
@@ -32,6 +33,7 @@ internal class MediaAttachmentFragment : Fragment() {
 
     private val storageHelper: StorageHelper = StorageHelper()
     private val permissionChecker: PermissionChecker = PermissionChecker()
+    private val attachmentFilter: AttachmentFilter = AttachmentFilter()
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
@@ -135,14 +137,15 @@ internal class MediaAttachmentFragment : Fragment() {
             val attachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getMediaAttachments(requireContext())
             }
+            val filteredAttachments = attachmentFilter.filterImageAttachments(attachments)
 
-            if (attachments.isEmpty()) {
+            if (filteredAttachments.isEmpty()) {
                 style?.mediaAttachmentEmptyStateTextStyle?.apply(binding.emptyPlaceholderTextView)
                 binding.emptyPlaceholderTextView.text = style?.mediaAttachmentEmptyStateText
                     ?: requireContext().getString(R.string.stream_ui_message_input_no_files)
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
-                mediaAttachmentsAdapter.setAttachments(attachments)
+                mediaAttachmentsAdapter.setAttachments(filteredAttachments)
             }
             binding.progressBar.isVisible = false
         }

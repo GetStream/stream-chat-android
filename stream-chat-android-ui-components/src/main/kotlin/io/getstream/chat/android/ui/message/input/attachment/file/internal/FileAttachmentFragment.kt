@@ -13,6 +13,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -32,6 +33,7 @@ internal class FileAttachmentFragment : Fragment() {
 
     private val storageHelper: StorageHelper = StorageHelper()
     private val permissionChecker: PermissionChecker = PermissionChecker()
+    private val attachmentFilter: AttachmentFilter = AttachmentFilter()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
     private val style: MessageInputViewStyle by lazy { staticStyle!! }
@@ -126,9 +128,11 @@ internal class FileAttachmentFragment : Fragment() {
                     val attachments = withContext(DispatcherProvider.IO) {
                         storageHelper.getAttachmentsFromUriList(requireContext(), it)
                     }
+                    val filteredAttachments = attachmentFilter.filterFileAttachments(attachments)
+
                     setFragmentResult(
                         AttachmentSelectionDialogFragment.REQUEST_KEY_FILE_MANAGER,
-                        bundleOf(AttachmentSelectionDialogFragment.BUNDLE_KEY to attachments.toSet())
+                        bundleOf(AttachmentSelectionDialogFragment.BUNDLE_KEY to filteredAttachments.toSet())
                     )
                 }
             }
@@ -150,13 +154,14 @@ internal class FileAttachmentFragment : Fragment() {
             val attachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getFileAttachments(requireContext())
             }
+            val filteredAttachments = attachmentFilter.filterFileAttachments(attachments)
 
-            if (attachments.isEmpty()) {
+            if (filteredAttachments.isEmpty()) {
                 style.fileAttachmentEmptyStateTextStyle.apply(binding.emptyPlaceholderTextView)
                 binding.emptyPlaceholderTextView.text = style.fileAttachmentEmptyStateText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
-                fileAttachmentsAdapter.setAttachments(attachments)
+                fileAttachmentsAdapter.setAttachments(filteredAttachments)
             }
             binding.progressBar.isVisible = false
         }
