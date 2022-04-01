@@ -34,6 +34,7 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         userStateService = userStateService,
         scope = testCoroutines.scope,
         retryPolicy = NoRetryPolicy(),
+        appSettingsManager = mock(),
     )
 
     @Test

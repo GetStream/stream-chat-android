@@ -158,7 +158,7 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
-    private val appSettingsManager: AppSettingManager = AppSettingManager(),
+    private val appSettingsManager: AppSettingManager,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -372,8 +372,8 @@ public class ChatClient internal constructor(
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
+        appSettingsManager.loadAppSettings()
         warmUp()
-        initializeAppSettings()
     }
 
     /**
@@ -2123,17 +2123,6 @@ public class ChatClient internal constructor(
         }
     }
 
-    /**
-     * Fetches application settings from the backend and initializes them.
-     */
-    private fun initializeAppSettings() {
-        appSettings().enqueue {
-            if (it.isSuccess) {
-                appSettingsManager.setAppSettings(it.data())
-            }
-        }
-    }
-
     private fun isUserSet() = userStateService.state !is UserState.NotSet
 
     public fun devToken(userId: String): String {
@@ -2391,6 +2380,8 @@ public class ChatClient internal constructor(
                     customOkHttpClient,
                 )
 
+            val appSettingsManager = AppSettingManager(module.api())
+
             return ChatClient(
                 config,
                 module.api(),
@@ -2403,6 +2394,7 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
+                appSettingsManager = appSettingsManager,
             ).also {
                 configureInitializer(it)
             }

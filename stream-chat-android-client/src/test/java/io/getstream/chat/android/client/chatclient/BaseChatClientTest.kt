@@ -64,7 +64,8 @@ internal open class BaseChatClientTest {
             tokenUtils = tokenUtils,
             scope = coroutineRule.scope,
             retryPolicy = NoRetryPolicy(),
-            initializationCoordinator = initializationCoordinator
+            initializationCoordinator = initializationCoordinator,
+            appSettingsManager = mock(),
         )
     }
 }
