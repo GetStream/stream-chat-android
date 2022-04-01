@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added support for file upload configuration that let's you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
 
 ### ⚠️ Changed
 
