@@ -412,7 +412,7 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
-    private fun hasValidText(): Boolean = isMessageTextValid(messageText)
+    private fun hasValidText(): Boolean = MessageTextValidator.isMessageTextValid(messageText)
 
     fun hasValidContent(): Boolean {
         return hasValidText() || selectedAttachments.isNotEmpty() || selectedCustomAttachments.isNotEmpty()

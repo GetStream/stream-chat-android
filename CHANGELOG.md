@@ -16,7 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added a `systemMessage: Message` parameter to  `ChatClient::addMembers`, `ChatClient::removeMembers`, `ChannelClient::addMembers` and `ChannelClient::removeMembers` to send a system message to that channel. [#3254](https://github.com/GetStream/stream-chat-android/pull/3254)
 
 ### ⚠️ Changed
 
@@ -116,12 +115,37 @@
 
 ### ❌ Removed
 
-# March 24th, 2022 - 5.0.1
+# UNRELEASED CHANGELOG
+# March 30th, 2022 - 5.0.2
 <!-- UNRELEASED START -->
+## stream-chat-android-client
+### ✅ Added
+- Added a `systemMessage: Message` parameter to  `ChatClient::addMembers`, `ChatClient::removeMembers`, `ChannelClient::addMembers` and `ChannelClient::removeMembers` to send a system message to that channel. [#3254](https://github.com/GetStream/stream-chat-android/pull/3254)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed a bug which occurs when we reinitialize `OfflinePlugin` because it uses old instance of `StateRegistry` and `LogicRegistry`. [#3267](https://github.com/GetStream/stream-chat-android/pull/3267)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Users now able to open `MessageOptionsDialogFragment` by clicking on a reaction left on a Giphy message. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
+- inside `MessageOptionsDialogFragment` now properly displays all of the reactions to a message. Previously it erroneously displayed a blank state. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
+- Fixed the links in UI Components code snippets. [#3261](https://github.com/GetStream/stream-chat-android/pull/3261)
+- Messages containing links are now properly aligned with other types of messages. They use `@dimen/stream_ui_spacing_small` for their root layout start and end padding. [#3264](https://github.com/GetStream/stream-chat-android/pull/3264)
+- Made it impossible to send blank or empty messages. [#3269](https://github.com/GetStream/stream-chat-android/pull/3269)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Made it impossible to send blank or empty messages. [#3269](https://github.com/GetStream/stream-chat-android/pull/3269)
+
+### ✅ Added
+- Added support for failed messages and an option to resend them. [#3263](https://github.com/GetStream/stream-chat-android/pull/3263)
+<!-- UNRELEASED END -->
+
+# March 24th, 2022 - 5.0.1
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed a bug where the missing implementation of the `MessageTextTransformer` caused message text not to show up. [#3248](https://github.com/GetStream/stream-chat-android/pull/3248)
-<!-- UNRELEASED END -->
 
 # March 24th, 2022 - 5.0.0
 **5.0.0** is a major release! You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/android-v5-sdk-release/).

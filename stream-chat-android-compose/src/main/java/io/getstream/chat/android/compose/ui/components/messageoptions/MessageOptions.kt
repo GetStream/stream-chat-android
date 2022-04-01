@@ -23,8 +23,11 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewMessageData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isGiphy
@@ -107,8 +110,18 @@ public fun defaultMessageOptionsState(
     val isOwnMessage = selectedMessageUserId == currentUser?.id
     val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
     val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
+    val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
 
     return listOfNotNull(
+        if (isOwnMessage && isMessageFailed) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_resend_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
+                action = Resend(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
         if (isMessageSynced) {
             MessageOptionItemState(
                 title = R.string.stream_compose_reply,
@@ -185,15 +198,66 @@ public fun defaultMessageOptionsState(
 }
 
 /**
- * Preview of [MessageOptions].
- * */
-@Preview(showBackground = true, name = "MessageOptions Preview")
+ * Preview of [MessageOptions] for a delivered message of the current user.
+ */
+@Preview(showBackground = true, name = "MessageOptions Preview (Own Message)")
 @Composable
-private fun MessageOptionsPreview() {
+private fun MessageOptionsForOwnMessagePreview() {
+    MessageOptionsPreview(
+        messageUser = PreviewUserData.user1,
+        currentUser = PreviewUserData.user1,
+        syncStatus = SyncStatus.COMPLETED,
+    )
+}
+
+/**
+ * Preview of [MessageOptions] for theirs message.
+ */
+@Preview(showBackground = true, name = "MessageOptions Preview (Theirs Message)")
+@Composable
+private fun MessageOptionsForTheirsMessagePreview() {
+    MessageOptionsPreview(
+        messageUser = PreviewUserData.user1,
+        currentUser = PreviewUserData.user2,
+        syncStatus = SyncStatus.COMPLETED,
+    )
+}
+
+/**
+ * Preview of [MessageOptions] for a failed message.
+ */
+@Preview(showBackground = true, name = "MessageOptions Preview (Failed Message)")
+@Composable
+private fun MessageOptionsForFailedMessagePreview() {
+    MessageOptionsPreview(
+        messageUser = PreviewUserData.user1,
+        currentUser = PreviewUserData.user1,
+        syncStatus = SyncStatus.FAILED_PERMANENTLY,
+    )
+}
+
+/**
+ * Shows [MessageOptions] preview for the provided parameters.
+ *
+ * @param messageUser The user who sent the message.
+ * @param currentUser The currently logged in user.
+ * @param syncStatus The message sync status.
+ */
+@Composable
+private fun MessageOptionsPreview(
+    messageUser: User,
+    currentUser: User,
+    syncStatus: SyncStatus,
+) {
     ChatTheme {
+        val selectedMMessage = PreviewMessageData.message1.copy(
+            user = messageUser,
+            syncStatus = syncStatus
+        )
+
         val messageOptionsStateList = defaultMessageOptionsState(
-            selectedMessage = Message(),
-            currentUser = User(),
+            selectedMessage = selectedMMessage,
+            currentUser = currentUser,
             isInThread = false
         )
 
