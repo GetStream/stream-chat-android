@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated Gradle version to 7.4. [#3159](https://github.com/GetStream/stream-chat-android/pull/3281)
 
 ### ❌ Removed
 
