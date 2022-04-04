@@ -4,7 +4,9 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.FileUploadConfig
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -14,80 +16,31 @@ internal class AttachmentFilterTest {
 
     private val chatClient: ChatClient = mock(defaultAnswer = Mockito.RETURNS_DEEP_STUBS)
 
-    @Test
-    fun `Given empty upload configs When filtering attachments Should return all attachments`() {
-        val fileUploadConfig = FileUploadConfig(
-            allowedFileExtensions = emptyList(),
-            allowedMimeTypes = emptyList(),
-            blockedFileExtensions = emptyList(),
-            blockedMimeTypes = emptyList()
-        )
-        val imageUploadConfig = FileUploadConfig(
-            allowedFileExtensions = emptyList(),
-            allowedMimeTypes = emptyList(),
-            blockedFileExtensions = emptyList(),
-            blockedMimeTypes = emptyList()
-        )
-        whenever(chatClient.getAppSettings().app.fileUploadConfig) doReturn fileUploadConfig
-        whenever(chatClient.getAppSettings().app.imageUploadConfig) doReturn imageUploadConfig
+    @ParameterizedTest
+    @MethodSource("attachmentFilterArguments")
+    fun `Given file and image upload configs When filtering attachments Should return only valid attachments`(
+        attachmentFilterTestData: AttachmentFilterTestData,
+    ) {
+        whenever(chatClient.getAppSettings().app.fileUploadConfig) doReturn attachmentFilterTestData.fileUploadConfig
+        whenever(chatClient.getAppSettings().app.imageUploadConfig) doReturn attachmentFilterTestData.imageUploadConfig
         val attachmentFilter = AttachmentFilter(chatClient)
 
         val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
-        filteredAttachments.size `should be equal to` 2
+        filteredAttachments.size `should be equal to` attachmentFilterTestData.expectedAttachmentCount
     }
 
-    @Test
-    fun `Given upload config with allowed lists matching attachments When filtering attachments Should return all attachments`() {
-        val fileUploadConfig = FileUploadConfig(
-            allowedFileExtensions = listOf(".mp4"),
-            allowedMimeTypes = listOf(),
-            blockedFileExtensions = emptyList(),
-            blockedMimeTypes = emptyList()
-        )
-        val imageUploadConfig = FileUploadConfig(
-            allowedFileExtensions = listOf(".jpg"),
-            allowedMimeTypes = emptyList(),
-            blockedFileExtensions = emptyList(),
-            blockedMimeTypes = emptyList()
-        )
-        whenever(chatClient.getAppSettings().app.fileUploadConfig) doReturn fileUploadConfig
-        whenever(chatClient.getAppSettings().app.imageUploadConfig) doReturn imageUploadConfig
-        val attachmentFilter = AttachmentFilter(chatClient)
-
-        val filteredAttachments = attachmentFilter.filterAttachments(attachments)
-
-        filteredAttachments.size `should be equal to` 2
-    }
-
-    @Test
-    fun `Given upload config with blocked lists matching attachments When filtering attachments Should return no attachments`() {
-        val fileUploadConfig = FileUploadConfig(
-            allowedFileExtensions = emptyList(),
-            allowedMimeTypes = listOf(),
-            blockedFileExtensions = listOf(".mp4"),
-            blockedMimeTypes = emptyList()
-        )
-        val imageUploadConfig = FileUploadConfig(
-            allowedFileExtensions = emptyList(),
-            allowedMimeTypes = emptyList(),
-            blockedFileExtensions = listOf(".jpg"),
-            blockedMimeTypes = emptyList()
-        )
-        whenever(chatClient.getAppSettings().app.fileUploadConfig) doReturn fileUploadConfig
-        whenever(chatClient.getAppSettings().app.imageUploadConfig) doReturn imageUploadConfig
-        val attachmentFilter = AttachmentFilter(chatClient)
-
-        val filteredAttachments = attachmentFilter.filterAttachments(attachments)
-
-        filteredAttachments.size `should be equal to` 0
-    }
+    internal data class AttachmentFilterTestData(
+        val fileUploadConfig: FileUploadConfig,
+        val imageUploadConfig: FileUploadConfig,
+        val expectedAttachmentCount: Int,
+    )
 
     private companion object {
         private val attachments = listOf(
             AttachmentMetaData(
                 mimeType = "image/jpeg",
-                title = "IMG_123.jpg",
+                title = "IMG_123.jpeg",
                 type = "image"
             ),
             AttachmentMetaData(
@@ -96,5 +49,58 @@ internal class AttachmentFilterTest {
                 type = "file"
             )
         )
+
+        @JvmStatic
+        fun attachmentFilterArguments() = listOf(
+            Arguments.of(
+                AttachmentFilterTestData(
+                    fileUploadConfig = fileUploadConfig(),
+                    imageUploadConfig = fileUploadConfig(),
+                    expectedAttachmentCount = 2
+                )
+            ),
+            Arguments.of(
+                AttachmentFilterTestData(
+                    fileUploadConfig = fileUploadConfig(allowedFileExtensions = listOf(".mp4")),
+                    imageUploadConfig = fileUploadConfig(allowedFileExtensions = listOf(".jpeg")),
+                    expectedAttachmentCount = 2
+                )
+            ),
+            Arguments.of(
+                AttachmentFilterTestData(
+                    fileUploadConfig = fileUploadConfig(blockedFileExtensions = listOf(".mp4")),
+                    imageUploadConfig = fileUploadConfig(blockedFileExtensions = listOf(".jpeg")),
+                    expectedAttachmentCount = 0
+                )
+            ),
+            Arguments.of(
+                AttachmentFilterTestData(
+                    fileUploadConfig = fileUploadConfig(allowedMimeTypes = listOf("video/mp4")),
+                    imageUploadConfig = fileUploadConfig(allowedMimeTypes = listOf("image/jpeg")),
+                    expectedAttachmentCount = 2
+                )
+            ),
+            Arguments.of(
+                AttachmentFilterTestData(
+                    fileUploadConfig = fileUploadConfig(blockedMimeTypes = listOf("video/mp4")),
+                    imageUploadConfig = fileUploadConfig(blockedMimeTypes = listOf("image/jpeg")),
+                    expectedAttachmentCount = 0
+                )
+            ),
+        )
+
+        private fun fileUploadConfig(
+            allowedFileExtensions: List<String> = emptyList(),
+            allowedMimeTypes: List<String> = emptyList(),
+            blockedFileExtensions: List<String> = emptyList(),
+            blockedMimeTypes: List<String> = emptyList(),
+        ): FileUploadConfig {
+            return FileUploadConfig(
+                allowedFileExtensions = allowedFileExtensions,
+                allowedMimeTypes = allowedMimeTypes,
+                blockedFileExtensions = blockedFileExtensions,
+                blockedMimeTypes = blockedMimeTypes,
+            )
+        }
     }
 }
