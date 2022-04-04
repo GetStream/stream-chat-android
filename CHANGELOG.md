@@ -18,6 +18,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Migrate androidx-lifecycle version to [2.4.1](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.4.1). [#3282](https://github.com/GetStream/stream-chat-android/pull/3282)
 
 ### ❌ Removed
 
