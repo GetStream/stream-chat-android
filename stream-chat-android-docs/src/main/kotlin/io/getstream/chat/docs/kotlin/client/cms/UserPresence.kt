@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.kotlin
+package io.getstream.chat.docs.kotlin.client.cms
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest

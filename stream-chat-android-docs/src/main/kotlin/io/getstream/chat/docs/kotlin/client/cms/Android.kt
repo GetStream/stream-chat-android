@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.kotlin
+package io.getstream.chat.docs.kotlin.client.cms
 
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.ChatClient
