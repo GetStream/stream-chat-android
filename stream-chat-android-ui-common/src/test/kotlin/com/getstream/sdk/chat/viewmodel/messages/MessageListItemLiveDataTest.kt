@@ -56,16 +56,18 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf())
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessagesVisibility.ALL)
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessagesVisibility.ALL)
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -86,8 +88,9 @@ internal class MessageListItemLiveDataTest {
         val read2 = ChannelUserRead(users[1], messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessagesVisibility.ALL)
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
     }
 
     // livedata testing
@@ -197,6 +200,6 @@ internal class MessageListItemLiveDataTest {
         val testObserver: Observer<MessageListItemWrapper> = mock()
         messageListItemLd.observeForever(testObserver)
         messageListItemLd.typingChanged(listOf(currentUser.value!!))
-        verify(testObserver, times(2)).onChanged(any())
+        verify(testObserver, times(3)).onChanged(any())
     }
 }
