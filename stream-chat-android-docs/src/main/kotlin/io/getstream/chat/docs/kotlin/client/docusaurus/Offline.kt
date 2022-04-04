@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
@@ -22,6 +21,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -31,7 +31,7 @@ class Offline {
 
     private val apiKey = "api-key"
 
-    private val scope = CoroutineScope(DispatcherProvider.IO)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     /**
      * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/#configuration">Configuration</a>
