@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.kotlin
+package io.getstream.chat.docs.kotlin.client.cms
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
@@ -43,8 +43,14 @@ class Messages(
                     // Handle result.error()
                 }
             }
+
+            // Send a message synchronously
+            val messageResult = channelClient.sendMessage(message).execute()
         }
 
+        /**
+         * @see <a href="https://getstream.io/chat/docs/react/send_message/?language=kotlin#complex-example">Complex Example</a>
+         */
         fun sendAComplexMessage() {
             // Create an image attachment
             val attachment = Attachment(
@@ -170,6 +176,19 @@ class Messages(
             val client = ChatClient.Builder("{{ api_key }}", context)
                 .fileUploader(MyFileUploader())
                 .build()
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#deleting-files-and-images">Deleting Files and Images</a>
+         */
+        fun deleteImageOrFile() {
+            val channelClient = client.channel("messaging", "general")
+
+            // Deletes the image
+            channelClient.deleteImage("{{ url of uploaded image }}").enqueue()
+
+            // Deletes the file
+            channelClient.deleteFile("{{ url of uploaded file }}").enqueue()
         }
     }
 
