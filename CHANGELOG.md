@@ -24,6 +24,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed crash related with logging out while running a request to update channels.
 
 ### ⬆️ Improved
 
