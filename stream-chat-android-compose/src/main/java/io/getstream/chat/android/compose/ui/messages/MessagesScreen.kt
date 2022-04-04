@@ -42,6 +42,7 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.DeletedMessagesVisibility
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -85,6 +86,7 @@ public fun MessagesScreen(
     enforceUniqueReactions: Boolean = true,
     showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
+    deletedMessagesVisibility: DeletedMessagesVisibility = ChatTheme.deletedMessagesVisibility,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
@@ -94,7 +96,8 @@ public fun MessagesScreen(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators
+        showDateSeparators = showDateSeparators,
+        deletedMessagesVisibility = deletedMessagesVisibility
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -362,6 +365,7 @@ public fun MessagesScreen(
  * @param channelId The current channel ID, to load the messages from.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
+ * @param deletedMessagesVisibility The behavior of deleted messages in the list.
  */
 private fun buildViewModelFactory(
     context: Context,
@@ -370,6 +374,7 @@ private fun buildViewModelFactory(
     messageLimit: Int,
     showDateSeparators: Boolean,
     showSystemMessages: Boolean,
+    deletedMessagesVisibility: DeletedMessagesVisibility
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -377,6 +382,7 @@ private fun buildViewModelFactory(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showDateSeparators = showDateSeparators,
-        showSystemMessages = showSystemMessages
+        showSystemMessages = showSystemMessages,
+        deletedMessagesVisibility = deletedMessagesVisibility
     )
 }

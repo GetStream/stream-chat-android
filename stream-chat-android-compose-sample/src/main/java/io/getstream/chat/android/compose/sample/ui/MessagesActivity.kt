@@ -39,6 +39,7 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messages.DeletedMessagesVisibility
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -63,6 +64,7 @@ class MessagesActivity : AppCompatActivity() {
         MessagesViewModelFactory(
             context = this,
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+            deletedMessagesVisibility = DeletedMessagesVisibility.OWN
         )
     }
 
@@ -76,7 +78,10 @@ class MessagesActivity : AppCompatActivity() {
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
 
         setContent {
-            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
+            ChatTheme(
+                dateFormatter = ChatApp.dateFormatter,
+                deletedMessagesVisibility = DeletedMessagesVisibility.OWN
+            ) {
                 MessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },

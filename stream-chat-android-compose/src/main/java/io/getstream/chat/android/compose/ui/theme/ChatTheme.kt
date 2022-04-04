@@ -14,6 +14,7 @@ import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.compose.state.messages.DeletedMessagesVisibility
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
@@ -60,6 +61,11 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
+// TODO - use the same class from the UI components once implemented
+private val LocalDeletedMessagesVisibility = compositionLocalOf<DeletedMessagesVisibility> {
+    error("No DeletedMessagesVisibility provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
@@ -88,7 +94,9 @@ public fun ChatTheme(
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(
+        LocalContext.current
+    ),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -98,6 +106,7 @@ public fun ChatTheme(
         attachmentFactories = attachmentFactories
     ),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
+    deletedMessagesVisibility: DeletedMessagesVisibility = DeletedMessagesVisibility.ALL,
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -118,6 +127,7 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
+        LocalDeletedMessagesVisibility provides deletedMessagesVisibility
     ) {
         content()
     }
@@ -215,4 +225,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
+
+    /**
+     * Retrieves the current [DeletedMessagesVisibility] at the call site's position in the hierarchy.
+     */
+    public val deletedMessagesVisibility: DeletedMessagesVisibility
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDeletedMessagesVisibility.current
 }

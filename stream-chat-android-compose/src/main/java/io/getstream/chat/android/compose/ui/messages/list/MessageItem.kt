@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -318,7 +319,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message
             )
         }
-        message.isDeleted() && messageItem.isMine -> {
+        message.isDeleted() && messageItem.isMine && messageItem.groupPosition == Bottom -> {
             OwnedMessageVisibilityContent(message = message)
         }
         !message.isDeleted() -> {
@@ -389,6 +390,7 @@ internal fun DefaultMessageItemCenterContent(
             modifier = modifier,
             shape = messageBubbleShape,
             color = messageBubbleColor,
+            border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
             content = {
                 MessageContent(
                     message = message,

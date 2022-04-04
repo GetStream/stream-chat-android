@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
+import io.getstream.chat.android.compose.state.messages.DeletedMessagesVisibility
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 
 /**
@@ -23,6 +24,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  * @param showDateSeparators If we should show date separator items in the list.
  * @param showSystemMessages If we should show system message items in the list.
+ * @param deletedMessagesVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -34,6 +36,7 @@ public class MessagesViewModelFactory(
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
+    private val deletedMessagesVisibility: DeletedMessagesVisibility = DeletedMessagesVisibility.ALL
 ) : ViewModelProvider.Factory {
 
     /**
@@ -58,7 +61,8 @@ public class MessagesViewModelFactory(
                 enforceUniqueReactions = enforceUniqueReactions,
                 clipboardHandler = ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
                 showDateSeparators = showDateSeparators,
-                showSystemMessages = showSystemMessages
+                showSystemMessages = showSystemMessages,
+                deletedMessagesVisibility = deletedMessagesVisibility
             )
         },
         AttachmentsPickerViewModel::class.java to {
