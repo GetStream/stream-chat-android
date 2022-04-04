@@ -54,6 +54,50 @@ internal object UserDtoTestData {
         )
 
     @Language("JSON")
+    val downstreamJsonWithoutImageAndName =
+        """{
+            "id": "",
+            "role": "",
+            "name": null,
+            "image": null,
+            "invisible": false,
+            "banned": false,
+            "devices": [],
+            "online": false,
+            "created_at": null,
+            "updated_at": null,
+            "last_active": null,
+            "total_unread_count": 0,
+            "unread_channels": 0,
+            "unread_count": 0,
+            "mutes": [],
+            "teams": [],
+            "channel_mutes": []
+         }"""
+
+    val downstreamUserWithoutImageAndName =
+        DownstreamUserDto(
+            banned = false,
+            id = "",
+            name = null,
+            image = null,
+            invisible = false,
+            role = "",
+            devices = emptyList(),
+            online = false,
+            updated_at = null,
+            created_at = null,
+            last_active = null,
+            total_unread_count = 0,
+            unread_channels = 0,
+            unread_count = 0,
+            mutes = emptyList(),
+            teams = emptyList(),
+            channel_mutes = emptyList(),
+            extraData = emptyMap(),
+        )
+
+    @Language("JSON")
     val downstreamJson =
         """{
             "id": "userId",

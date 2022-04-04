@@ -13,6 +13,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed `User` model deserialization error when `User.image` is null. [#3283](https://github.com/GetStream/stream-chat-android/pull/3283)
 
 ### ⬆️ Improved
 
