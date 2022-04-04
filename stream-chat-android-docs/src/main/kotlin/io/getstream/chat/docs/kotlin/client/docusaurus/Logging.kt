@@ -7,7 +7,14 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 
+/**
+ * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/logging/">Logging</a>
+ */
 class Logging(private val context: Context) {
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/logging/#intercepting-logs">Intercepting Logs</a>
+     */
     fun addLoggingHandler() {
         val client = ChatClient.Builder("apiKey", context)
             .logLevel(ChatLogLevel.ALL)

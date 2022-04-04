@@ -13,8 +13,14 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 
+/**
+ * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/">Push Notifications</a>
+ */
 class Push {
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#overview">Overview</a>
+     */
     fun configureNotification(context: Context, notificationHandler: NotificationHandler) {
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(
@@ -27,6 +33,9 @@ class Push {
             .build()
     }
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#using-our-notificationhandlerfactory">Using our NotificationHandlerFactory</a>
+     */
     fun customNotificationHandler(context: Context) {
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(
@@ -52,7 +61,14 @@ class Push {
             .build()
     }
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/">Firebase Cloud Messaging</a>
+     */
     inner class Firebase {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#receiving-notifications-in-the-client">Receiving Notifications in the Client</a>
+         */
         fun configureFirebaseNotifications(context: Context) {
             val notificationConfig = NotificationConfig(
                 pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
@@ -62,6 +78,9 @@ class Push {
                 .build()
         }
 
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service">Using a Custom Firebase Messaging Service</a>
+         */
         inner class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
             override fun onNewToken(token: String) {

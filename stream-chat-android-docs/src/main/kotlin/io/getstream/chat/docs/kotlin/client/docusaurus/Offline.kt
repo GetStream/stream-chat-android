@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
@@ -25,13 +24,18 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
-@InternalStreamChatApi
+/**
+ * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/offline-support">Offline Support</a>
+ */
 class Offline {
 
     private val apiKey = "api-key"
 
     private val scope = CoroutineScope(DispatcherProvider.IO)
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/#configuration">Configuration</a>
+     */
     fun configureOfflinePlugin(context: Context) {
         val offlinePluginFactory = StreamOfflinePluginFactory(
             config = Config(
@@ -46,6 +50,9 @@ class Offline {
         ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
     }
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/#state">State</a>
+     */
     inner class State {
         val chatClient = ChatClient.instance()
 
@@ -86,9 +93,15 @@ class Offline {
         }
     }
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/">ChatDomain Migration</a>
+     */
     inner class Migration {
         val chatClient = ChatClient.instance()
 
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/#requesting-data">Requesting Data</a>
+         */
         fun sendMessage() {
             val cid = "channel-cid"
             val messageText = "Hey there!"
@@ -116,8 +129,11 @@ class Offline {
             }
         }
 
-        fun updateMessage() {
-            // Old approach
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/#other-changes">Other changes</a>
+         */
+        fun otherChanges() {
+            // Old approach of update message
             /*
             val messageToUpdate = Message(text = "Updated text")
             ChatDomain.instance().editMessage(messageToUpdate).enqueue { result ->
@@ -128,7 +144,7 @@ class Offline {
                 }
             }*/
 
-            // New approach
+            // New approach of updating message
             val messageToUpdate = Message(text = "Updated text")
             ChatClient.instance().updateMessage(messageToUpdate).enqueue { result ->
                 if (result.isSuccess) {
@@ -137,10 +153,8 @@ class Offline {
                     // Handle error
                 }
             }
-        }
 
-        fun leaveChannel() {
-            // Old approach
+            // Old approach of leaving channel
             /*ChatDomain.instance().leaveChannel(cid).enqueue { result ->
                 if (result.isSuccess) {
                     // Handle success
@@ -150,7 +164,7 @@ class Offline {
             }*/
 
             val cid = "cid"
-            // New approach
+            // New approach of leaving channel
             chatClient.getCurrentUser()?.let { currentUser ->
                 ChatClient.instance().channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
                     if (result.isSuccess) {

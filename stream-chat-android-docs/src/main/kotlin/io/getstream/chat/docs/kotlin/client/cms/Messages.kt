@@ -48,6 +48,9 @@ class Messages(
             val messageResult = channelClient.sendMessage(message).execute()
         }
 
+        /**
+         * @see <a href="https://getstream.io/chat/docs/react/send_message/?language=kotlin#complex-example">Complex Example</a>
+         */
         fun sendAComplexMessage() {
             // Create an image attachment
             val attachment = Attachment(
@@ -175,6 +178,9 @@ class Messages(
                 .build()
         }
 
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#deleting-files-and-images">Deleting Files and Images</a>
+         */
         fun deleteImageOrFile() {
             val channelClient = client.channel("messaging", "general")
 

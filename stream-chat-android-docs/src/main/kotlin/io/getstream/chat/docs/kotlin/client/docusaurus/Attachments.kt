@@ -7,8 +7,14 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
+/**
+ * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/">Sending Attachments</a>
+ */
 class Attachments {
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/#sending-custom-attachments">Sending Custom Attachments</a>
+     */
     fun sendAttachment() {
         val attachment = Attachment()
         val message = Message(
@@ -26,6 +32,9 @@ class Attachments {
             }
     }
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/#create-an-attachment-without-files">Create an Attachment Without Files#</a>
+     */
     fun attachmentWithoutFile() {
         val attachment = Attachment(
             type = "location", // 1
@@ -36,6 +45,9 @@ class Attachments {
         )
     }
 
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/#create-an-attachment-with-files">Create an Attachment With Files</a>
+     */
     fun attachmentWithFile() {
         val attachment = Attachment(
             type = "audio", // 1

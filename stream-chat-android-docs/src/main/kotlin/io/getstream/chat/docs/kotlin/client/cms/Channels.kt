@@ -54,6 +54,10 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
      * @see <a href="https://getstream.io/chat/docs/creating_channels/?language=kotlin">Creating Channels</a>
      */
     inner class CreatingChannels {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/react/creating_channels/?language=kotlin#1.-creating-a-channel-using-a-channel-id">Creating a Channel Using a Channel Id</a>
+         */
         fun createAChannel() {
             val channelClient = client.channel(channelType = "messaging", channelId = "general")
 
@@ -66,6 +70,9 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
             }
         }
 
+        /**
+         * @see <a href="https://getstream.io/chat/docs/react/creating_channels/?language=kotlin#2.-creating-a-channel-for-a-list-of-members">Creating a Channel for a List of Members</a>
+         */
         fun createChannelWithListOfMembers() {
             client.createChannel(
                 channelType = "messaging",
