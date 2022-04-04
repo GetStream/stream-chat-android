@@ -35,7 +35,7 @@ public fun ImageAttachmentPreviewContent(
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
-        modifier = modifier.clip(RoundedCornerShape(16.dp)),
+        modifier = modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
     ) {
