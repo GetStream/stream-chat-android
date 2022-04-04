@@ -137,7 +137,7 @@ internal class MediaAttachmentFragment : Fragment() {
             val attachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getMediaAttachments(requireContext())
             }
-            val filteredAttachments = attachmentFilter.filterImageAttachments(attachments)
+            val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
             if (filteredAttachments.isEmpty()) {
                 style?.mediaAttachmentEmptyStateTextStyle?.apply(binding.emptyPlaceholderTextView)

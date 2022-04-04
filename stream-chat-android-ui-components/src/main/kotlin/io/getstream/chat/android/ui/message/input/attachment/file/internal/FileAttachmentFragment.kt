@@ -130,7 +130,7 @@ internal class FileAttachmentFragment : Fragment() {
                     val attachments = withContext(DispatcherProvider.IO) {
                         storageHelper.getAttachmentsFromUriList(requireContext(), it)
                     }
-                    val filteredAttachments = attachmentFilter.filterFileAttachments(attachments)
+                    val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
                     if (filteredAttachments.size < attachments.size) {
                         Toast.makeText(
@@ -164,7 +164,7 @@ internal class FileAttachmentFragment : Fragment() {
             val attachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getFileAttachments(requireContext())
             }
-            val filteredAttachments = attachmentFilter.filterFileAttachments(attachments)
+            val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
             if (filteredAttachments.isEmpty()) {
                 style.fileAttachmentEmptyStateTextStyle.apply(binding.emptyPlaceholderTextView)

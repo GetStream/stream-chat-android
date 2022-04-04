@@ -2,8 +2,9 @@ package com.getstream.sdk.chat.utils
 
 import androidx.core.content.MimeTypeFilter
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.FileUploadConfig
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * A filter that is used to filter out attachments that will not be accepted by the backend.
@@ -13,62 +14,72 @@ import io.getstream.chat.android.client.models.FileUploadConfig
  *
  * @param chatClient An instance of the low level chat client to fetch upload config.
  */
+@InternalStreamChatApi
 public class AttachmentFilter(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
-
     /**
-     * Filters out file attachments that can't be uploaded to the backend according
-     * to the file upload configuration in the dashboard.
-     *
-     * @param attachments A list of file attachments.
-     * @return A list of file attachments allowed by the server.
-     */
-    public fun filterFileAttachments(attachments: List<AttachmentMetaData>): List<AttachmentMetaData> {
-        return filterAttachments(attachments, chatClient.getAppSettings().app.fileUploadConfig)
-    }
-
-    /**
-     * Filters out image attachments that can't be uploaded to the backend according
-     * to the image upload configuration in the dashboard.
-     *
-     * @param attachments A list of image attachments.
-     * @return A list of image attachments allowed by the server.
-     */
-    public fun filterImageAttachments(attachments: List<AttachmentMetaData>): List<AttachmentMetaData> {
-        return filterAttachments(attachments, chatClient.getAppSettings().app.imageUploadConfig)
-    }
-
-    /**
-     * Filters out attachments that can not be uploaded to the backend according
-     * to the corresponding upload configuration.
+     * Filters out attachments that can be uploaded to the backend according to files
+     * and images upload configurations.
      *
      * @param attachments A list of attachments.
-     * @param fileUploadConfig The configuration of file upload.
      * @return A list of attachments allowed by the server.
      */
-    private fun filterAttachments(
-        attachments: List<AttachmentMetaData>,
-        fileUploadConfig: FileUploadConfig,
-    ): List<AttachmentMetaData> {
+    public fun filterAttachments(attachments: List<AttachmentMetaData>): List<AttachmentMetaData> {
+        val fileUploadConfig = chatClient.getAppSettings().app.fileUploadConfig
         val allowedFileExtensions = fileUploadConfig.allowedFileExtensions
-        val allowedMimeTypes = fileUploadConfig.allowedMimeTypes.toTypedArray()
+        val allowedFileMimeTypes = fileUploadConfig.allowedMimeTypes.toTypedArray()
         val blockedFileExtensions = fileUploadConfig.blockedFileExtensions
-        val blockedMimeTypes = fileUploadConfig.blockedMimeTypes.toTypedArray()
+        val blockedFileMimeTypes = fileUploadConfig.blockedMimeTypes.toTypedArray()
+
+        val imageUploadConfig = chatClient.getAppSettings().app.imageUploadConfig
+        val allowedImageExtensions = imageUploadConfig.allowedFileExtensions
+        val allowedImageMimeTypes = imageUploadConfig.allowedMimeTypes.toTypedArray()
+        val blockedImageExtensions = imageUploadConfig.blockedFileExtensions
+        val blockedImageMimeTypes = imageUploadConfig.blockedMimeTypes.toTypedArray()
 
         return attachments.filter { attachment ->
-            /**
-             * Blocked and allowed lists are mutually exclusive. It should not be possible to
-             * configure both lists simultaneously in the dashboard.
-             */
-            val isWhiteList = allowedFileExtensions.isNotEmpty() || allowedMimeTypes.isNotEmpty()
-            val isBlackList = blockedFileExtensions.isNotEmpty() || blockedMimeTypes.isNotEmpty()
+            val isImage = attachment.type == ModelType.attach_image
 
-            when {
-                isWhiteList -> matchesFileExtensionOrMimeType(attachment, allowedFileExtensions, allowedMimeTypes)
-                isBlackList -> !matchesFileExtensionOrMimeType(attachment, blockedFileExtensions, blockedMimeTypes)
-                else -> true
-            }
+            matchesUploadConfig(
+                attachment = attachment,
+                allowedFileExtensions = if (isImage) allowedImageExtensions else allowedFileExtensions,
+                allowedMimeTypes = if (isImage) allowedImageMimeTypes else allowedFileMimeTypes,
+                blockedFileExtensions = if (isImage) blockedImageExtensions else blockedFileExtensions,
+                blockedMimeTypes = if (isImage) blockedImageMimeTypes else blockedFileMimeTypes
+            )
+        }
+    }
+
+    /**
+     * Checks if the attachment is allowed to be uploaded to the server according
+     * to the upload config values.
+     *
+     * @param attachment The attachment to check.
+     * @param allowedFileExtensions Allowed file extensions.
+     * @param allowedFileExtensions Allowed mime types.
+     * @param blockedFileExtensions Blocked mime types.
+     * @param blockedMimeTypes Blocked mime types.
+     * @return True if the attachment can be uploaded to the server.
+     */
+    private fun matchesUploadConfig(
+        attachment: AttachmentMetaData,
+        allowedFileExtensions: List<String>,
+        allowedMimeTypes: Array<String>,
+        blockedFileExtensions: List<String>,
+        blockedMimeTypes: Array<String>,
+    ): Boolean {
+        /**
+         * Blocked and allowed lists are mutually exclusive. It should not be possible to
+         * configure both lists simultaneously in the dashboard.
+         */
+        val isWhiteList = allowedFileExtensions.isNotEmpty() || allowedMimeTypes.isNotEmpty()
+        val isBlackList = blockedFileExtensions.isNotEmpty() || blockedMimeTypes.isNotEmpty()
+
+        return when {
+            isWhiteList -> matchesFileExtensionOrMimeType(attachment, allowedFileExtensions, allowedMimeTypes)
+            isBlackList -> !matchesFileExtensionOrMimeType(attachment, blockedFileExtensions, blockedMimeTypes)
+            else -> true
         }
     }
 
