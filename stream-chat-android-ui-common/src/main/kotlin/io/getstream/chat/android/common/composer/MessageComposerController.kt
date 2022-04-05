@@ -69,6 +69,16 @@ public class MessageComposerController(
     ).filterNotNull()
 
     /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: Flow<Set<String>> = channelState.flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+
+    /**
      * Full message composer state holding all the required information.
      */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
@@ -246,6 +256,10 @@ public class MessageComposerController(
 
         alsoSendToChannel.onEach { alsoSendToChannel ->
             state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
+        }.launchIn(scope)
+
+        ownCapabilities.onEach { ownCapabilities ->
+            state.value = state.value.copy(ownCapabilities = ownCapabilities)
         }.launchIn(scope)
     }
 
