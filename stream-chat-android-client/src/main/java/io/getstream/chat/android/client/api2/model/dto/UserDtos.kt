@@ -28,8 +28,8 @@ internal data class UpstreamUserDto(
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserDto(
     val id: String,
-    val name: String = "",
-    val image: String = "",
+    val name: String?,
+    val image: String?,
     val role: String,
     val invisible: Boolean = false,
     val banned: Boolean,
