@@ -131,9 +131,6 @@ internal class ExtraDataValidator(
     }
 
     private companion object {
-        private val reservedInChannelPredicate: (String) -> Boolean = { reservedInChannel.contains(it) }
-        private val reservedInMessagePredicate: (String) -> Boolean = { reservedInMessage.contains(it) }
-        private val reservedInUserPredicate: (String) -> Boolean = { reservedInUser.contains(it) }
 
         private val reservedInChannel = arrayOf(
             "cid",
@@ -163,5 +160,9 @@ internal class ExtraDataValidator(
             "created_at",
             "updated_at",
         )
+
+        private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel::contains
+        private val reservedInMessagePredicate: (String) -> Boolean = reservedInMessage::contains
+        private val reservedInUserPredicate: (String) -> Boolean = reservedInUser::contains
     }
 }
