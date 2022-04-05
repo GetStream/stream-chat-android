@@ -90,7 +90,7 @@ jobs:
     name: Size Check XML
     runs-on: ubuntu-18.04
     steps:
-    - name: Generate Android demo debug apk
+      - name: Generate Android demo debug apk
       - uses: actions/checkout@v2
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
       - name: Upload artifact to Emerge
@@ -103,7 +103,7 @@ jobs:
     name: Size Check Compose
     runs-on: ubuntu-18.04
     steps:
-    - name: Generate Android debug apk
+      - name: Generate Android debug apk
       - uses: actions/checkout@v2
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
       - name: Upload artifact to Emerge
