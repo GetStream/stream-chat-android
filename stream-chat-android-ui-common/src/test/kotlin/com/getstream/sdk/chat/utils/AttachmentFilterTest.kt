@@ -16,7 +16,6 @@
  
 package com.getstream.sdk.chat.utils
 
-import AttachmentFilter
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.FileUploadConfig
