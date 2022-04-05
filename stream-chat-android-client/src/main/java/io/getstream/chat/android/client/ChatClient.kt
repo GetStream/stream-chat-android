@@ -94,6 +94,7 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -173,6 +174,7 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
+    private val appSettingsManager: AppSettingManager,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -386,6 +388,7 @@ public class ChatClient internal constructor(
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
+        appSettingsManager.loadAppSettings()
         warmUp()
     }
 
@@ -907,6 +910,7 @@ public class ChatClient internal constructor(
         socket.disconnect()
         userCredentialStorage.clear()
         lifecycleObserver.dispose()
+        appSettingsManager.clear()
     }
 
     //region: api calls
@@ -1677,7 +1681,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
-        systemMessage: Message? = null
+        systemMessage: Message? = null,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
@@ -1702,7 +1706,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
-        systemMessage: Message? = null
+        systemMessage: Message? = null,
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
@@ -1917,6 +1921,15 @@ public class ChatClient internal constructor(
                 else -> null
             }
         }.getOrNull()
+    }
+
+    /**
+     * Returns application settings from the server or the default ones as a fallback.
+     *
+     * @return The application settings.
+     */
+    public fun getAppSettings(): AppSettings {
+        return appSettingsManager.getAppSettings()
     }
 
     public fun isSocketConnected(): Boolean {
@@ -2383,6 +2396,8 @@ public class ChatClient internal constructor(
                     customOkHttpClient,
                 )
 
+            val appSettingsManager = AppSettingManager(module.api())
+
             return ChatClient(
                 config,
                 module.api(),
@@ -2395,6 +2410,7 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
+                appSettingsManager = appSettingsManager,
             ).also {
                 configureInitializer(it)
             }

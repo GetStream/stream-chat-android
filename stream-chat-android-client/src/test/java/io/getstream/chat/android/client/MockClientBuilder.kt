@@ -101,6 +101,7 @@ internal class MockClientBuilder(
             tokenUtils = tokenUtil,
             scope = testCoroutineScope,
             retryPolicy = NoRetryPolicy(),
+            appSettingsManager = mock(),
         )
 
         client.connectUser(user, token).enqueue()

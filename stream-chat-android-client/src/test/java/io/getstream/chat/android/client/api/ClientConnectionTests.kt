@@ -121,6 +121,7 @@ internal class ClientConnectionTests {
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
+            appSettingsManager = mock(),
         )
     }
 
