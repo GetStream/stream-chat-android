@@ -51,13 +51,16 @@ internal fun Channel.updateLastMessage(message: Message) {
     }
 }
 
-internal fun Channel.setMember(userId: String, member: Member?) {
+internal fun Channel.setMember(userId: String, member: Member?, isUpdate: Boolean = false) {
     if (member == null) {
         members.firstOrNull { it.user.id == userId }?.also { foundMember ->
             members = members - foundMember
+            memberCount -= 1
         }
     } else {
         members = members + member
+        if (!isUpdate)
+            memberCount += 1
     }
 }
 

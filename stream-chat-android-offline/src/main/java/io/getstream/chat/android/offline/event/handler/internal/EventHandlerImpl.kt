@@ -385,7 +385,7 @@ internal class EventHandlerImpl(
                 }
                 is MemberUpdatedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
+                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member, true) })
                     }
                 }
                 is MemberRemovedEvent -> {

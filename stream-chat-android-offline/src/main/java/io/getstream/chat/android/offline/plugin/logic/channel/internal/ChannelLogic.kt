@@ -333,6 +333,7 @@ internal class ChannelLogic(
         setWatcherCount(c.watcherCount)
 
         mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
+        mutableState._membersCount.value = c.memberCount
 
         updateReads(c.read)
 
@@ -629,6 +630,7 @@ internal class ChannelLogic(
 
     private fun deleteMember(userId: String) {
         mutableState._members.value = mutableState._members.value - userId
+        mutableState._membersCount.value -= 1
     }
 
     private fun upsertMembers(members: List<Member>) {
@@ -770,6 +772,7 @@ internal class ChannelLogic(
                 deleteMember(event.user.id)
             }
             is MemberAddedEvent -> {
+                mutableState._membersCount.value += 1
                 upsertMember(event.member)
             }
             is MemberUpdatedEvent -> {

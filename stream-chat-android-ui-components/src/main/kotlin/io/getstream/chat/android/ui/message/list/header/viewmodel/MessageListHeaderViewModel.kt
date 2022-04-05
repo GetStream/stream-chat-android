@@ -85,6 +85,11 @@ public class MessageListHeaderViewModel(
     public val members: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
 
     /**
+     * Number of [Channel] members.
+     */
+    public val membersCount: LiveData<Int?> = channelState.flatMapLatest { it.membersCount }.asLiveData()
+
+    /**
      * Current user's online status.
      */
     public val online: LiveData<ConnectionState> = globalState.connectionState.asLiveData()

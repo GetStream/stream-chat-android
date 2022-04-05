@@ -70,6 +70,7 @@ internal class ChannelMutableState(
     internal val lastMessageAt = MutableStateFlow<Date?>(null)
     internal val _repliedMessage = MutableStateFlow<Message?>(null)
     internal val _unreadCount = MutableStateFlow(0)
+    internal val _membersCount = MutableStateFlow(0)
 
     /** Channel config data. */
     internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
@@ -157,6 +158,8 @@ internal class ChannelMutableState(
         .combine(latestUsers) { membersMap, usersMap -> membersMap.values.updateUsers(usersMap) }
         .map { it.sortedBy(Member::createdAt) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
+
+    override val membersCount: StateFlow<Int> = _membersCount
 
     override val channelData: StateFlow<ChannelData> =
         _channelData.filterNotNull().combine(latestUsers) { channelData, users ->
