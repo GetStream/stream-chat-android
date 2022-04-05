@@ -19,8 +19,10 @@ package io.getstream.chat.android.client.parser2
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJson
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJsonWithoutExtraData
+import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJsonWithoutImageAndName
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUser
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutExtraData
+import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutImageAndName
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
@@ -33,6 +35,12 @@ internal class DownstreamUserDtoAdapterTest {
     fun `Deserialize JSON user without custom fields`() {
         val user = parser.fromJson(downstreamJsonWithoutExtraData, DownstreamUserDto::class.java)
         user shouldBeEqualTo downstreamUserWithoutExtraData
+    }
+
+    @Test
+    fun `Deserialize JSON user without image and name fields`() {
+        val user = parser.fromJson(downstreamJsonWithoutImageAndName, DownstreamUserDto::class.java)
+        user shouldBeEqualTo downstreamUserWithoutImageAndName
     }
 
     @Test

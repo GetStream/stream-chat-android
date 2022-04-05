@@ -40,8 +40,8 @@ internal fun User.toDto(): UpstreamUserDto =
 internal fun DownstreamUserDto.toDomain(): User =
     User(
         id = id,
-        name = name,
-        image = image,
+        name = name ?: "",
+        image = image ?: "",
         role = role,
         invisible = invisible,
         banned = banned,
