@@ -50,7 +50,7 @@ public object ChannelCapabilities {
     /** Ability to enable or disable slow mode. */
     public const val SET_CHANNEL_COOLDOWN: String = "set-channel-cooldown"
     /** Ability to send and receive typing events. */
-    public const val TYPING_EVENTS: String = "typing-events"
+    public const val SEND_TYPING_EVENTS: String = "send-typing-events"
     /** Ability to update any message in the channel. */
     public const val UPDATE_ANY_MESSAGE: String = "update-any-message"
     /** Ability to update channel data. */

@@ -2383,8 +2383,8 @@ public final class io/getstream/chat/android/client/models/ChannelCapabilities {
 	public static final field SEND_MESSAGE Ljava/lang/String;
 	public static final field SEND_REACTION Ljava/lang/String;
 	public static final field SEND_REPLY Ljava/lang/String;
+	public static final field SEND_TYPING_EVENTS Ljava/lang/String;
 	public static final field SET_CHANNEL_COOLDOWN Ljava/lang/String;
-	public static final field TYPING_EVENTS Ljava/lang/String;
 	public static final field UPDATE_ANY_MESSAGE Ljava/lang/String;
 	public static final field UPDATE_CHANNEL Ljava/lang/String;
 	public static final field UPDATE_CHANNEL_MEMBERS Ljava/lang/String;

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
@@ -15,9 +14,7 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -91,11 +88,6 @@ public class MessageComposerViewModel(
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = setOf()
-        )
 
     /**
      * Called when the input changes and the internal state needs to be updated.

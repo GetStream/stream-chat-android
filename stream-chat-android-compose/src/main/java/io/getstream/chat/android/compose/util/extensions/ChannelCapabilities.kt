@@ -29,7 +29,7 @@ internal fun ChannelCapabilities.toSet(): Set<String> = setOf(
     SEND_REACTION,
     SEND_REPLY,
     SET_CHANNEL_COOLDOWN,
-    TYPING_EVENTS,
+    SEND_TYPING_EVENTS,
     UPDATE_ANY_MESSAGE,
     UPDATE_CHANNEL,
     UPDATE_CHANNEL_MEMBERS,
