@@ -123,6 +123,7 @@ public fun defaultMessageOptionsState(
     val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
     val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
     val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
+    val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
 
     return listOfNotNull(
         if (isOwnMessage && isMessageFailed) {
@@ -161,7 +162,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (isOwnMessage && canEditOwnMessage && !selectedMessage.isGiphy()) {
+        if (((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),

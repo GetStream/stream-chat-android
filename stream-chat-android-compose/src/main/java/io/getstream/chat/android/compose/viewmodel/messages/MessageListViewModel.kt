@@ -120,7 +120,7 @@ public class MessageListViewModel(
             .map { it.ownCapabilities }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.Lazily,
+                started = SharingStarted.Eagerly,
                 initialValue = setOf()
             )
 

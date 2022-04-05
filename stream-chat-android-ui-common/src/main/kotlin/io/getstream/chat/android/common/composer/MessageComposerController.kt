@@ -83,7 +83,7 @@ public class MessageComposerController(
         .map { it.ownCapabilities }
         .stateIn(
             scope = scope,
-            started = SharingStarted.Lazily,
+            started = SharingStarted.Eagerly,
             initialValue = setOf()
         )
 
