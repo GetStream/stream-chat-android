@@ -30,6 +30,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelState::membersCount` property that can be used to observe total members of the channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
 
@@ -48,11 +49,13 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed bug in which member counter shown in the `MessageListHeaderViewModel` is incorrect and limited to 30 only. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+- Added `membersCount` livedata in `MessageListHeaderViewModel` to observe number of all members of channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
 
