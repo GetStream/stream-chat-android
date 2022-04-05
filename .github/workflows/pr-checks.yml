@@ -86,4 +86,29 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
-      
+  size_check_xml:
+    name: Size Check XML
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Generate Android demo debug apk
+      - uses: actions/checkout@v2
+        run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
+      - name: Upload artifact to Emerge
+        uses: EmergeTools/emerge-upload-action@v1.0.2
+        with:
+          artifact_path: ./stream-chat-android-ui-components-sample/build/outputs/apk/demo/debug/stream-chat-android-ui-components-sample-demo-release.apk
+          emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
+          build_type: debug # Optional, change if your workflow builds a specific type
+  size_check_compose:
+    name: Size Check Compose
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Generate Android debug apk
+      - uses: actions/checkout@v2
+        run: ./gradlew stream-chat-android-compose-sample:assembleDebug
+      - name: Upload artifact to Emerge
+        uses: EmergeTools/emerge-upload-action@v1.0.2
+        with:
+          artifact_path: ./stream-chat-android-compose-sample/build/outputs/apk/debug/stream-chat-android-compose-sample-debug.apk
+          emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
+          build_type: debug
