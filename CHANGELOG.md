@@ -65,6 +65,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
 
 ### ❌ Removed
 
