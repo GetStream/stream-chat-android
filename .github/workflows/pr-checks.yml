@@ -102,7 +102,7 @@ jobs:
       - name: Upload artifact to Emerge
         uses: EmergeTools/emerge-upload-action@v1.0.2
         with:
-          artifact_path: ./stream-chat-android-ui-components-sample/build/outputs/apk/demo/debug/stream-chat-android-ui-components-sample-demo-release.apk
+          artifact_path: ./stream-chat-android-ui-components-sample/build/outputs/apk/demo/debug/stream-chat-android-ui-components-sample-demo-debug.apk
           emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
           build_type: debug 
   size_check_compose:
