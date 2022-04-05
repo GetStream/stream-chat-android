@@ -215,23 +215,24 @@ public final class io/getstream/chat/android/compose/state/messages/Other : io/g
 
 public final class io/getstream/chat/android/compose/state/messages/SelectedMessageOptionsState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;)V
 }
 
 public final class io/getstream/chat/android/compose/state/messages/SelectedMessageReactionsPickerState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;)V
 }
 
 public final class io/getstream/chat/android/compose/state/messages/SelectedMessageReactionsState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;)V
 }
 
 public abstract class io/getstream/chat/android/compose/state/messages/SelectedMessageState {
 	public static final field $stable I
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public final fun getOwnCapabilities ()Ljava/util/Set;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState {
@@ -835,7 +836,7 @@ public final class io/getstream/chat/android/compose/ui/components/channels/Chan
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ChannelOptionsKt {
 	public static final fun ChannelOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun buildDefaultChannelOptionsState (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ZLjava/util/List;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
+	public static final fun buildDefaultChannelOptionsState (Lio/getstream/chat/android/client/models/Channel;ZLjava/util/Set;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ComposableSingletons$ChannelMembersItemKt {
@@ -935,7 +936,7 @@ public final class io/getstream/chat/android/compose/ui/components/messageoption
 
 public final class io/getstream/chat/android/compose/ui/components/messageoptions/MessageOptionsKt {
 	public static final fun MessageOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
-	public static final fun defaultMessageOptionsState (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLandroidx/compose/runtime/Composer;I)Ljava/util/List;
+	public static final fun defaultMessageOptionsState (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLjava/util/Set;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionItemKt {
@@ -1086,7 +1087,7 @@ public final class io/getstream/chat/android/compose/ui/components/selectedmessa
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenuKt {
-	public static final fun SelectedMessageMenu-E1AOrGg (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLjava/util/Map;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun SelectedMessageMenu-OkTjGUA (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Ljava/util/Set;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLjava/util/Map;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenuKt {
@@ -1700,6 +1701,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun getMentionSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getMessageComposerState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageMode ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getOwnCapabilities ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSelectedAttachments ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getValidationErrors ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun leaveThread ()V
