@@ -193,6 +193,11 @@
     <ID>TooManyFunctions:ReactionsDecorator.kt$ReactionsDecorator : BaseDecorator</ID>
     <ID>TooManyFunctions:SimpleChannelListView.kt$SimpleChannelListView : RecyclerView</ID>
     <ID>UnnecessaryAbstractClass:InnerAttachmentViewHolder.kt$InnerAttachmentViewHolder</ID>
+    <ID>UnusedImports:ChannelListViewStyle.kt$import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder</ID>
+    <ID>UnusedImports:MessageListItemStyle.kt$import io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView</ID>
+    <ID>UnusedImports:MessageListItemStyle.kt$import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView</ID>
+    <ID>UnusedImports:MessageListViewStyle.kt$import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder</ID>
+    <ID>UnusedImports:MessageListViewStyle.kt$import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView</ID>
     <ID>UnusedPrivateClass:MediaAttachmentGridView.kt$MediaAttachmentGridView$SharedMediaSpaceItemDecorator : ItemDecoration</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputHintTextColor = a.getColor( R.styleable.MessageInputView_streamUiMessageInputHintTextColor, context.getColorCompat(R.color.stream_ui_text_color_hint) )</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputTextColor = a.getColor( R.styleable.MessageInputView_streamUiMessageInputTextColor, context.getColorCompat(R.color.stream_ui_text_color_primary) )</ID>

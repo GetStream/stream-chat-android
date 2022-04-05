@@ -764,7 +764,7 @@ style:
   UntilInsteadOfRangeTo:
     active: false
   UnusedImports:
-    active: false
+    active: true
   UnusedPrivateClass:
     active: true
   UnusedPrivateMember:

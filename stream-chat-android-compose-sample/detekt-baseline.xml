@@ -2,19 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>FunctionNaming:ChannelsActivity.kt$ChannelsActivity$ @Composable private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?)</ID>
-    <ID>FunctionNaming:ChannelsActivity.kt$ChannelsActivity$ @Composable private fun MyCustomUi()</ID>
-    <ID>FunctionNaming:ChannelsActivity.kt$ChannelsActivity$ @Composable private fun MyCustomUiSimplified()</ID>
-    <ID>FunctionNaming:CustomLoginActivity.kt$CustomLoginActivity$@Composable fun CustomLoginScreen( onBackButtonClick: () -> Unit, onLoginButtonClick: (UserCredentials) -> Unit, )</ID>
-    <ID>FunctionNaming:CustomLoginActivity.kt$CustomLoginActivity$@Composable private fun CustomLoginButton( enabled: Boolean, onClick: () -> Unit = {}, )</ID>
-    <ID>FunctionNaming:CustomLoginActivity.kt$CustomLoginActivity$@Composable private fun CustomLoginInputField( hint: String, value: String, onValueChange: (String) -> Unit, )</ID>
-    <ID>FunctionNaming:CustomLoginActivity.kt$CustomLoginActivity$@Composable private fun CustomLoginToolbar(onClick: () -> Unit)</ID>
-    <ID>FunctionNaming:MessagesActivity.kt$MessagesActivity$@Composable fun MyCustomComposer()</ID>
-    <ID>FunctionNaming:MessagesActivity.kt$MessagesActivity$@OptIn(ExperimentalFoundationApi::class) @Composable fun MyCustomUi()</ID>
-    <ID>FunctionNaming:UserLoginActivity.kt$UserLoginActivity$ @Composable fun UserLoginItem( userCredentials: UserCredentials, onItemClick: (UserCredentials) -> Unit, )</ID>
-    <ID>FunctionNaming:UserLoginActivity.kt$UserLoginActivity$ @Composable private fun CustomLoginItem(onItemClick: () -> Unit)</ID>
-    <ID>FunctionNaming:UserLoginActivity.kt$UserLoginActivity$@Composable fun UserLoginScreen( onUserItemClick: (UserCredentials) -> Unit, onCustomLoginClick: () -> Unit, )</ID>
-    <ID>FunctionNaming:UserLoginActivity.kt$UserLoginActivity$@Composable private fun DividerItem()</ID>
     <ID>LongMethod:CustomLoginActivity.kt$CustomLoginActivity$@Composable fun CustomLoginScreen( onBackButtonClick: () -> Unit, onLoginButtonClick: (UserCredentials) -> Unit, )</ID>
     <ID>LongMethod:MessagesActivity.kt$MessagesActivity$@OptIn(ExperimentalFoundationApi::class) @Composable fun MyCustomUi()</ID>
     <ID>MagicNumber:ChannelsActivity.kt$ChannelsActivity$0.5f</ID>
