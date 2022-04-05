@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Reply
@@ -41,17 +42,19 @@ public fun MessageInput(
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     maxLines: Int = DEFAULT_MESSAGE_INPUT_MAX_LINES,
-    label: @Composable () -> Unit = { DefaultComposerLabel() },
+    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(ownCapabilities = messageComposerState.ownCapabilities) },
     innerLeadingContent: @Composable RowScope.() -> Unit = {},
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     val (value, attachments, activeAction) = messageComposerState
+    val canSendMessage = messageComposerState.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
 
     InputField(
         modifier = modifier,
         value = value,
         maxLines = maxLines,
         onValueChange = onValueChange,
+        enabled = canSendMessage,
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {
@@ -88,7 +91,7 @@ public fun MessageInput(
                         innerTextField()
 
                         if (value.isEmpty()) {
-                            label()
+                            label(messageComposerState)
                         }
                     }
 

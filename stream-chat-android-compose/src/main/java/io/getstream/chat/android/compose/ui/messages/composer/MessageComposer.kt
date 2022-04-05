@@ -119,16 +119,17 @@ public fun MessageComposer(
         DefaultComposerIntegrations(
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick
+            onCommandsClick = onCommandsClick,
+            ownCapabilities = it.ownCapabilities
         )
     },
-    label: @Composable () -> Unit = { DefaultComposerLabel() },
+    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
-            label = label
+            label = label,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
@@ -237,10 +238,11 @@ public fun MessageComposer(
         DefaultComposerIntegrations(
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick
+            onCommandsClick = onCommandsClick,
+            ownCapabilities = messageComposerState.ownCapabilities
         )
     },
-    label: @Composable () -> Unit = { DefaultComposerLabel() },
+    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultComposerInputContent(
             messageComposerState = messageComposerState,
@@ -405,12 +407,15 @@ internal fun DefaultCommandPopupContent(
  * @param messageInputState The state of the input.
  * @param onAttachmentsClick Handler when the user selects attachments.
  * @param onCommandsClick Handler when the user selects commands.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
 internal fun DefaultComposerIntegrations(
     messageInputState: MessageComposerState,
     onAttachmentsClick: () -> Unit,
     onCommandsClick: () -> Unit,
+    ownCapabilities: Set<String>,
 ) {
     val hasTextInput = messageInputState.inputValue.isNotEmpty()
     val hasAttachments = messageInputState.attachments.isNotEmpty()
@@ -421,59 +426,75 @@ internal fun DefaultComposerIntegrations(
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-    Row(
-        modifier = Modifier
-            .height(44.dp)
-            .padding(horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(
-            enabled = isAttachmentsButtonEnabled,
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp),
-            content = {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
-                    contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
-                )
-            },
-            onClick = onAttachmentsClick
-        )
+    val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
 
-        val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
-            ChatTheme.colors.primaryAccent
-        } else if (isCommandsButtonEnabled) {
-            ChatTheme.colors.textLowEmphasis
-        } else {
-            ChatTheme.colors.disabled
+    if (canSendMessage) {
+        Row(
+            modifier = Modifier
+                .height(44.dp)
+                .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                enabled = isAttachmentsButtonEnabled,
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp),
+                content = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
+                        contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                        tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+                    )
+                },
+                onClick = onAttachmentsClick
+            )
+
+            val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
+                ChatTheme.colors.primaryAccent
+            } else if (isCommandsButtonEnabled) {
+                ChatTheme.colors.textLowEmphasis
+            } else {
+                ChatTheme.colors.disabled
+            }
+
+            IconButton(
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp),
+                enabled = isCommandsButtonEnabled,
+                content = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_command),
+                        contentDescription = null,
+                        tint = commandsButtonTint,
+                    )
+                },
+                onClick = onCommandsClick
+            )
         }
-
-        IconButton(
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp),
-            enabled = isCommandsButtonEnabled,
-            content = {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                    contentDescription = null,
-                    tint = commandsButtonTint,
-                )
-            },
-            onClick = onCommandsClick
-        )
+    } else {
+        Spacer(modifier = Modifier.width(12.dp))
     }
 }
 
 /**
  * Default input field label that the user can override in [MessageComposer].
+ *
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
-internal fun DefaultComposerLabel() {
+internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
+    val text =
+        if (ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)) {
+            stringResource(id = R.string.stream_compose_message_label)
+        } else {
+            stringResource(id = R.string.stream_compose_cannot_send_messages_label)
+        }
+
     Text(
-        text = stringResource(id = R.string.stream_compose_message_label),
+        text = text,
         color = ChatTheme.colors.textLowEmphasis
     )
 }
@@ -491,7 +512,7 @@ public fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
-    label: @Composable () -> Unit,
+    label: @Composable (MessageComposerState) -> Unit,
 ) {
     MessageInput(
         modifier = Modifier
@@ -501,7 +522,7 @@ public fun RowScope.DefaultComposerInputContent(
         label = label,
         messageComposerState = messageComposerState,
         onValueChange = onValueChange,
-        onAttachmentRemoved = onAttachmentRemoved
+        onAttachmentRemoved = onAttachmentRemoved,
     )
 }
 
