@@ -45,7 +45,9 @@ internal class LogicRegistry internal constructor(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 client,
                 repos,
-                GlobalMutableState.get().toMutableState()
+                GlobalMutableState.get().toMutableState(),
+                this,
+                stateRegistry
             )
         }
     }
