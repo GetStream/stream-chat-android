@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -136,6 +137,7 @@ public fun MessageComposer(
             coolDownTime = it.coolDownTime,
             validationErrors = it.validationErrors,
             attachments = it.attachments,
+            ownCapabilities = it.ownCapabilities,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
@@ -253,7 +255,8 @@ public fun MessageComposer(
             coolDownTime = it.coolDownTime,
             validationErrors = it.validationErrors,
             attachments = it.attachments,
-            onSendMessage = onSendMessage
+            onSendMessage = onSendMessage,
+            ownCapabilities = messageComposerState.ownCapabilities
         )
     },
 ) {
@@ -510,6 +513,8 @@ public fun RowScope.DefaultComposerInputContent(
  * @param attachments The selected attachments.
  * @param validationErrors List of errors for message validation.
  * @param onSendMessage Handler when the user wants to send a message.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
 internal fun DefaultMessageComposerTrailingContent(
@@ -517,15 +522,17 @@ internal fun DefaultMessageComposerTrailingContent(
     coolDownTime: Int,
     attachments: List<Attachment>,
     validationErrors: List<ValidationError>,
+    ownCapabilities: Set<String>,
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
-    val isInputValid = (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
+    val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
 
     if (coolDownTime > 0) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         IconButton(
-            enabled = isInputValid,
+            enabled = isSendButtonEnabled && isInputValid,
             content = {
                 val layoutDirection = LocalLayoutDirection.current
 
