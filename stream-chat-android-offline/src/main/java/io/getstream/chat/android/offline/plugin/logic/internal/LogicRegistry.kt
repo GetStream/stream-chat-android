@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.logic.internal
 
 import io.getstream.chat.android.client.ChatClient
@@ -49,7 +49,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
-): ChannelsManager {
+) : ChannelsManager {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
