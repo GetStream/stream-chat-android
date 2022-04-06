@@ -1,0 +1,539 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexMethod:ChannelClient.kt$ChannelClient$private fun isRelevantForChannel(event: ChatEvent): Boolean</ID>
+    <ID>ComplexMethod:EventAdapter.kt$EventDtoAdapter$override fun fromJson(reader: JsonReader): ChatEventDto?</ID>
+    <ID>ComplexMethod:EventMapping.kt$internal fun ChatEventDto.toDomain(): ChatEvent</ID>
+    <ID>ComplexMethod:FilterObjectToMap.kt$internal fun FilterObject.toMap(): Map&lt;String, Any></ID>
+    <ID>ComplexMethod:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$@JvmStatic fun writeArguments()</ID>
+    <ID>ComplexMethod:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$@Throws(IOException::class) override fun intercept(chain: Interceptor.Chain): Response</ID>
+    <ID>ConstructorParameterNaming:AcceptInviteRequest.kt$AcceptInviteRequest$val accept_invite: Boolean = true</ID>
+    <ID>ConstructorParameterNaming:AddDeviceRequest.kt$AddDeviceRequest$val push_provider: String</ID>
+    <ID>ConstructorParameterNaming:AddMembersRequest.kt$AddMembersRequest$val add_members: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:AppSettingsResponse.kt$AppDto$val file_upload_config: FileUploadConfigDto</ID>
+    <ID>ConstructorParameterNaming:AppSettingsResponse.kt$AppDto$val image_upload_config: FileUploadConfigDto</ID>
+    <ID>ConstructorParameterNaming:AppSettingsResponse.kt$FileUploadConfigDto$val allowed_file_extensions: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:AppSettingsResponse.kt$FileUploadConfigDto$val allowed_mime_types: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:AppSettingsResponse.kt$FileUploadConfigDto$val blocked_file_extensions: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:AppSettingsResponse.kt$FileUploadConfigDto$val blocked_mime_types: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val asset_url: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val author_link: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val author_name: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val file_size: Int = 0</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val image_url: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val mime_type: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val og_scrape_url: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val thumb_url: String?</ID>
+    <ID>ConstructorParameterNaming:AttachmentDto.kt$AttachmentDto$val title_link: String?</ID>
+    <ID>ConstructorParameterNaming:BanUserRequest.kt$BanUserRequest$val target_user_id: String</ID>
+    <ID>ConstructorParameterNaming:BannedUserResponse.kt$BannedUserResponse$val banned_by: DownstreamUserDto?</ID>
+    <ID>ConstructorParameterNaming:BannedUserResponse.kt$BannedUserResponse$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val created_by: DownstreamUserDto?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val deleted_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val last_message_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val member_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val own_capabilities: List&lt;String> = emptyList()</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val pinned_messages: List&lt;DownstreamMessageDto> = emptyList()</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$DownstreamChannelDto$val watcher_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val created_by: UpstreamUserDto</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val deleted_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val last_message_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val member_count: Int</ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val pinned_messages: List&lt;UpstreamMessageDto></ID>
+    <ID>ConstructorParameterNaming:ChannelDtos.kt$UpstreamChannelDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelInfoDto.kt$ChannelInfoDto$val member_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:ChannelResponse.kt$ChannelResponse$val hide_messages_before: Date?</ID>
+    <ID>ConstructorParameterNaming:ChannelResponse.kt$ChannelResponse$val watcher_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:ChannelUserReadDtos.kt$DownstreamChannelUserRead$val last_read: Date</ID>
+    <ID>ConstructorParameterNaming:ChannelUserReadDtos.kt$DownstreamChannelUserRead$val unread_messages: Int</ID>
+    <ID>ConstructorParameterNaming:ChannelUserReadDtos.kt$UpstreamChannelUserRead$val last_read: Date</ID>
+    <ID>ConstructorParameterNaming:ChannelUserReadDtos.kt$UpstreamChannelUserRead$val unread_messages: Int</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val automod_behavior: String</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val blocklist_behavior: String?</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val connect_events: Boolean</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val custom_events: Boolean</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val max_message_length: Int</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val message_retention: String</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val push_notifications: Boolean</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val read_events: Boolean</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val typing_events: Boolean</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ConfigDto.kt$ConfigDto$val url_enrichment: Boolean</ID>
+    <ID>ConstructorParameterNaming:DeviceDto.kt$DeviceDto$val push_provider: String</ID>
+    <ID>ConstructorParameterNaming:DownstreamChannelMuteDto.kt$DownstreamChannelMuteDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:DownstreamChannelMuteDto.kt$DownstreamChannelMuteDto$val updated_at: Date</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val approved_at: Date</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val created_at: String</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val created_by_automod: Boolean</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val rejected_at: Date</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val reviewed_at: Date</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val reviewed_by: Date?</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val target_message_id: String</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val target_user: DownstreamUserDto?</ID>
+    <ID>ConstructorParameterNaming:DownstreamFlagDto.kt$DownstreamFlagDto$val updated_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelDeletedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelDeletedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelDeletedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelHiddenEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelHiddenEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelHiddenEventDto$val clear_history: Boolean</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelHiddenEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelTruncatedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelTruncatedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelTruncatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUpdatedByUserEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUpdatedByUserEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUpdatedByUserEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUpdatedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUpdatedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUpdatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUserBannedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUserBannedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUserBannedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUserUnbannedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUserUnbannedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelUserUnbannedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelVisibleEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelVisibleEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ChannelVisibleEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ConnectedEventDto$val connection_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ConnectedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$GlobalUserBannedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$GlobalUserUnbannedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$HealthEventDto$val connection_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$HealthEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MarkAllReadEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MarkAllReadEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MarkAllReadEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberAddedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberAddedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberAddedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberRemovedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberRemovedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberRemovedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberUpdatedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberUpdatedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MemberUpdatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageDeletedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageDeletedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageDeletedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageDeletedEventDto$val hard_delete: Boolean?</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageReadEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageReadEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageReadEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageUpdatedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageUpdatedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$MessageUpdatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NewMessageEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NewMessageEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NewMessageEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NewMessageEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NewMessageEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NewMessageEventDto$val watcher_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationAddedToChannelEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationAddedToChannelEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationAddedToChannelEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationAddedToChannelEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationAddedToChannelEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelDeletedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelDeletedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelDeletedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelDeletedEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelDeletedEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelMutesUpdatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelTruncatedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelTruncatedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelTruncatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelTruncatedEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationChannelTruncatedEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInviteAcceptedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInviteAcceptedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInviteAcceptedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInviteRejectedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInviteRejectedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInviteRejectedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInvitedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInvitedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationInvitedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMarkReadEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMarkReadEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMarkReadEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMarkReadEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMarkReadEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMessageNewEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMessageNewEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMessageNewEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMessageNewEventDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMessageNewEventDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationMutesUpdatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationRemovedFromChannelEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationRemovedFromChannelEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$NotificationRemovedFromChannelEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionDeletedEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionDeletedEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionDeletedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionNewEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionNewEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionNewEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionUpdateEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionUpdateEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$ReactionUpdateEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStartEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStartEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStartEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStartEventDto$val parent_id: String?</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStopEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStopEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStopEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$TypingStopEventDto$val parent_id: String?</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UnknownEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UpstreamConnectedEventDto$val connection_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UpstreamConnectedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserDeletedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserPresenceChangedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStartWatchingEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStartWatchingEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStartWatchingEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStartWatchingEventDto$val watcher_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStopWatchingEventDto$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStopWatchingEventDto$val channel_type: String</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStopWatchingEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserStopWatchingEventDto$val watcher_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:EventDtos.kt$UserUpdatedEventDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:HideChannelRequest.kt$HideChannelRequest$val clear_history: Boolean</ID>
+    <ID>ConstructorParameterNaming:MarkReadRequest.kt$MarkReadRequest$val message_id: String</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$DownstreamMemberDto$val channel_role: String?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$DownstreamMemberDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$DownstreamMemberDto$val invite_accepted_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$DownstreamMemberDto$val invite_rejected_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$DownstreamMemberDto$val shadow_banned: Boolean = false</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$DownstreamMemberDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$UpstreamMemberDto$val channel_role: String?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$UpstreamMemberDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$UpstreamMemberDto$val invite_accepted_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$UpstreamMemberDto$val invite_rejected_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$UpstreamMemberDto$val shadow_banned: Boolean</ID>
+    <ID>ConstructorParameterNaming:MemberDtos.kt$UpstreamMemberDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val deleted_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val latest_reactions: List&lt;DownstreamReactionDto></ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val mentioned_users: List&lt;DownstreamUserDto></ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val own_reactions: List&lt;DownstreamReactionDto></ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val parent_id: String?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val pin_expires: Date?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val pinned_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val pinned_by: DownstreamUserDto?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val quoted_message: DownstreamMessageDto?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val quoted_message_id: String?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val reaction_counts: Map&lt;String, Int>?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val reaction_scores: Map&lt;String, Int>?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val reply_count: Int</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val show_in_channel: Boolean = false</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val thread_participants: List&lt;DownstreamUserDto> = emptyList()</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$DownstreamMessageDto$val updated_at: Date</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val mentioned_users: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val parent_id: String?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val pin_expires: Date?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val pinned_at: Date?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val pinned_by: UpstreamUserDto?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val quoted_message_id: String?</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val show_in_channel: Boolean</ID>
+    <ID>ConstructorParameterNaming:MessageDtos.kt$UpstreamMessageDto$val thread_participants: List&lt;UpstreamUserDto></ID>
+    <ID>ConstructorParameterNaming:MuteChannelRequest.kt$MuteChannelRequest$val channel_cid: String</ID>
+    <ID>ConstructorParameterNaming:MuteDtos.kt$DownstreamMuteDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:MuteDtos.kt$DownstreamMuteDto$val updated_at: Date</ID>
+    <ID>ConstructorParameterNaming:MuteDtos.kt$UpstreamMuteDto$val created_at: Date</ID>
+    <ID>ConstructorParameterNaming:MuteDtos.kt$UpstreamMuteDto$val updated_at: Date</ID>
+    <ID>ConstructorParameterNaming:MuteUserRequest.kt$MuteUserRequest$val target_id: String</ID>
+    <ID>ConstructorParameterNaming:MuteUserRequest.kt$MuteUserRequest$val user_id: String</ID>
+    <ID>ConstructorParameterNaming:MuteUserResponse.kt$MuteUserResponse$val own_user: DownstreamUserDto</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val id_around: String? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val id_gt: String? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val id_gte: String? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val id_lt: String? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val id_lte: String? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val pinned_at_after: Date? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val pinned_at_after_or_equal: Date? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val pinned_at_around: Date? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val pinned_at_before: Date? = null</ID>
+    <ID>ConstructorParameterNaming:PinnedMessagesRequest.kt$PinnedMessagesRequest$val pinned_at_before_or_equal: Date? = null</ID>
+    <ID>ConstructorParameterNaming:QueryBannedUsersRequest.kt$QueryBannedUsersRequest$val created_at_after: Date?</ID>
+    <ID>ConstructorParameterNaming:QueryBannedUsersRequest.kt$QueryBannedUsersRequest$val created_at_after_or_equal: Date?</ID>
+    <ID>ConstructorParameterNaming:QueryBannedUsersRequest.kt$QueryBannedUsersRequest$val created_at_before: Date?</ID>
+    <ID>ConstructorParameterNaming:QueryBannedUsersRequest.kt$QueryBannedUsersRequest$val created_at_before_or_equal: Date?</ID>
+    <ID>ConstructorParameterNaming:QueryBannedUsersRequest.kt$QueryBannedUsersRequest$var filter_conditions: Map&lt;*, *></ID>
+    <ID>ConstructorParameterNaming:QueryChannelsRequest.kt$QueryChannelsRequest$val filter_conditions: Map&lt;*, *></ID>
+    <ID>ConstructorParameterNaming:QueryChannelsRequest.kt$QueryChannelsRequest$val member_limit: Int</ID>
+    <ID>ConstructorParameterNaming:QueryChannelsRequest.kt$QueryChannelsRequest$val message_limit: Int</ID>
+    <ID>ConstructorParameterNaming:QueryMembersRequest.kt$QueryMembersRequest$val filter_conditions: Map&lt;*, *></ID>
+    <ID>ConstructorParameterNaming:QueryUsersRequest.kt$QueryUsersRequest$val filter_conditions: Map&lt;*, *></ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$DownstreamReactionDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$DownstreamReactionDto$val message_id: String</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$DownstreamReactionDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$DownstreamReactionDto$val user_id: String</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$UpstreamReactionDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$UpstreamReactionDto$val message_id: String</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$UpstreamReactionDto$val updated_at: Date?</ID>
+    <ID>ConstructorParameterNaming:ReactionDtos.kt$UpstreamReactionDto$val user_id: String</ID>
+    <ID>ConstructorParameterNaming:ReactionRequest.kt$ReactionRequest$val enforce_unique: Boolean</ID>
+    <ID>ConstructorParameterNaming:RejectInviteRequest.kt$RejectInviteRequest$val reject_invite: Boolean = true</ID>
+    <ID>ConstructorParameterNaming:RemoveMembersRequest.kt$RemoveMembersRequest$val remove_members: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:SearchMessagesRequest.kt$SearchMessagesRequest$val filter_conditions: Map&lt;*, *></ID>
+    <ID>ConstructorParameterNaming:SearchMessagesRequest.kt$SearchMessagesRequest$val message_filter_conditions: Map&lt;*, *></ID>
+    <ID>ConstructorParameterNaming:SearchWarningDto.kt$SearchWarningDto$val channel_search_cids: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:SearchWarningDto.kt$SearchWarningDto$val channel_search_count: Int</ID>
+    <ID>ConstructorParameterNaming:SearchWarningDto.kt$SearchWarningDto$val warning_code: Int</ID>
+    <ID>ConstructorParameterNaming:SearchWarningDto.kt$SearchWarningDto$val warning_description: String</ID>
+    <ID>ConstructorParameterNaming:SendActionRequest.kt$SendActionRequest$val channel_id: String</ID>
+    <ID>ConstructorParameterNaming:SendActionRequest.kt$SendActionRequest$val form_data: Map&lt;Any, Any></ID>
+    <ID>ConstructorParameterNaming:SendActionRequest.kt$SendActionRequest$val message_id: String</ID>
+    <ID>ConstructorParameterNaming:SocketErrorResponse.kt$SocketErrorResponse.ErrorResponse$val StatusCode: Int = -1</ID>
+    <ID>ConstructorParameterNaming:SyncHistoryRequest.kt$SyncHistoryRequest$val channel_cids: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:SyncHistoryRequest.kt$SyncHistoryRequest$val last_sync_at: Date</ID>
+    <ID>ConstructorParameterNaming:TokenResponse.kt$TokenResponse$val access_token: String</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val channel_mutes: List&lt;DownstreamChannelMuteDto>?</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val created_at: Date?</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val last_active: Date?</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val total_unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val unread_channels: Int = 0</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val unread_count: Int = 0</ID>
+    <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val updated_at: Date?</ID>
+    <ID>EmptyFunctionBlock:ChatClient.kt$ChatClient.&lt;no name provided>${}</ID>
+    <ID>EmptyFunctionBlock:EventsParser.kt$EventsParser${ }</ID>
+    <ID>EmptyFunctionBlock:FakeChatSocket.kt$FakeChatSocket${ }</ID>
+    <ID>EmptyFunctionBlock:FakeSocketService.kt$FakeSocketService${ }</ID>
+    <ID>EmptyFunctionBlock:RetroError.kt$RetroError${ }</ID>
+    <ID>EmptyFunctionBlock:RetroSuccess.kt$RetroSuccess${ }</ID>
+    <ID>ForbiddenComment:Call.kt$// TODO: Make internal after migrating ChatDomain</ID>
+    <ID>ForbiddenComment:ChatClient.kt$ChatClient$// TODO: An InterceptedCall wrapper can be created to avoid so much code here.</ID>
+    <ID>LargeClass:ChatClient.kt$ChatClient</ID>
+    <ID>LargeClass:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>
+    <ID>LongMethod:EventAdapter.kt$EventDtoAdapter$override fun fromJson(reader: JsonReader): ChatEventDto?</ID>
+    <ID>LongMethod:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$@JvmStatic fun writeArguments()</ID>
+    <ID>LongMethod:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$@Throws(IOException::class) override fun intercept(chain: Interceptor.Chain): Response</ID>
+    <ID>LongMethod:TokenUtilsTest.kt$TokenUtilsTest.Companion$@JvmStatic @ParameterizedRobolectricTestRunner.Parameters(name = "{index}: {0} => {1}") fun data(): Collection&lt;Array&lt;Any?>></ID>
+    <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val callbackExecutor: Executor?, private val customOkHttpClient: OkHttpClient? = null, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
+    <ID>LongParameterList:ChannelClient.kt$ChannelClient$( filter: FilterObject? = null, sort: QuerySort&lt;BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt), offset: Int? = null, limit: Int? = null, createdAtAfter: Date? = null, createdAtAfterOrEqual: Date? = null, createdAtBefore: Date? = null, createdAtBeforeOrEqual: Date? = null, )</ID>
+    <ID>LongParameterList:ChatApi.kt$ChatApi$( channelFilter: FilterObject, messageFilter: FilterObject, offset: Int?, limit: Int?, next: String?, sort: QuerySort&lt;Message>?, )</ID>
+    <ID>LongParameterList:ChatApi.kt$ChatApi$( channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
+    <ID>LongParameterList:ChatApi.kt$ChatApi$( filter: FilterObject, sort: QuerySort&lt;BannedUsersSort>, offset: Int?, limit: Int?, createdAtAfter: Date?, createdAtAfterOrEqual: Date?, createdAtBefore: Date?, createdAtBeforeOrEqual: Date?, )</ID>
+    <ID>LongParameterList:ChatApi.kt$ChatApi$( targetId: String, timeout: Int?, reason: String?, channelType: String, channelId: String, shadow: Boolean, )</ID>
+    <ID>LongParameterList:ChatClient.kt$ChatClient$( channelFilter: FilterObject, messageFilter: FilterObject, offset: Int? = null, limit: Int? = null, next: String? = null, sort: QuerySort&lt;Message>? = null, )</ID>
+    <ID>LongParameterList:ChatClient.kt$ChatClient$( channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member> = emptyList(), )</ID>
+    <ID>LongParameterList:ChatClient.kt$ChatClient$( filter: FilterObject, sort: QuerySort&lt;BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt), offset: Int? = null, limit: Int? = null, createdAtAfter: Date? = null, createdAtAfterOrEqual: Date? = null, createdAtBefore: Date? = null, createdAtBeforeOrEqual: Date? = null, )</ID>
+    <ID>LongParameterList:ChatClient.kt$ChatClient$( public val config: ChatClientConfig, private val api: ChatApi, private val socket: ChatSocket, @property:InternalStreamChatApi public val notifications: ChatNotifications, private val tokenManager: TokenManager = TokenManagerImpl(), private val socketStateService: SocketStateService = SocketStateService(), private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper, private val userCredentialStorage: UserCredentialStorage, private val userStateService: UserStateService = UserStateService(), private val tokenUtils: TokenUtils = TokenUtils, internal val scope: CoroutineScope, internal val retryPolicy: RetryPolicy, private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(), private val appSettingsManager: AppSettingManager, )</ID>
+    <ID>LongParameterList:FileUploader.kt$FileUploader$( channelType: String, channelId: String, userId: String, connectionId: String, file: File, callback: ProgressCallback, )</ID>
+    <ID>LongParameterList:MoshiChatApi.kt$MoshiChatApi$( private val fileUploader: FileUploader, private val userApi: UserApi, private val guestApi: GuestApi, private val messageApi: MessageApi, private val channelApi: ChannelApi, private val deviceApi: DeviceApi, private val moderationApi: ModerationApi, private val generalApi: GeneralApi, private val configApi: ConfigApi, private val coroutineScope: CoroutineScope, )</ID>
+    <ID>LongParameterList:QueryChannelsRequest.kt$QueryChannelsRequest$( val filter_conditions: Map&lt;*, *>, val offset: Int, val limit: Int, val sort: List&lt;Map&lt;String, Any>>, val message_limit: Int, val member_limit: Int, val state: Boolean, val watch: Boolean, val presence: Boolean, )</ID>
+    <ID>LongParameterList:QueryMembersErrorHandler.kt$( errorHandlers: List&lt;QueryMembersErrorHandler>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
+    <ID>LongParameterList:QueryMembersErrorHandler.kt$QueryMembersErrorHandler$( originalCall: Call&lt;List&lt;Member>>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
+    <ID>LongParameterList:QueryMembersListener.kt$QueryMembersListener$( result: Result&lt;List&lt;Member>>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
+    <ID>LongParameterList:TypingEventListener.kt$TypingEventListener$( result: Result&lt;ChatEvent>, eventType: String, channelType: String, channelId: String, extraData: Map&lt;Any, Any>, eventTime: Date, )</ID>
+    <ID>LoopWithTooManyJumpStatements:CallRetryService.kt$CallRetryService$while (true) { result = runnable().await() if (result.isSuccess || result.error().isPermanent()) { break } else { // retry logic val shouldRetry = retryPolicy.shouldRetry(attempt, result.error()) val timeout = retryPolicy.retryTimeout(attempt, result.error()) if (shouldRetry) { // temporary failure, continue logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}") delay(timeout.toLong()) attempt += 1 } else { logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}") break } } }</ID>
+    <ID>MagicNumber:ChatClient.kt$ChatClient$120</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.AUTHENTICATION_ERROR$5</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.CANT_PARSE_CONNECTION_EVENT$1004</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.CANT_PARSE_EVENT$1005</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.INVALID_TOKEN$1006</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.NETWORK_FAILED$1000</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.NO_ERROR_BODY$1009</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.PARSER_ERROR$1001</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.SOCKET_CLOSED$1002</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.SOCKET_FAILURE$1003</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.TOKEN_DATE_INCORRECT$42</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.TOKEN_EXPIRED$40</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.TOKEN_NOT_VALID$41</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.TOKEN_SIGNATURE_INCORRECT$43</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT$1008</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.UNDEFINED_TOKEN$1007</ID>
+    <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.VALIDATION_ERROR$4</ID>
+    <ID>MagicNumber:ChatLogLevel.kt$ChatLogLevel.ERROR$3</ID>
+    <ID>MagicNumber:ChatLogLevel.kt$ChatLogLevel.NOTHING$4</ID>
+    <ID>MagicNumber:ChatSocketServiceImpl.kt$ChatSocketServiceImpl$500</ID>
+    <ID>MagicNumber:HealthMonitor.kt$HealthMonitor$2000</ID>
+    <ID>MagicNumber:HealthMonitor.kt$HealthMonitor$250</ID>
+    <ID>MagicNumber:HealthMonitor.kt$HealthMonitor$25000</ID>
+    <ID>MagicNumber:HealthMonitor.kt$HealthMonitor$500</ID>
+    <ID>MagicNumber:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$16</ID>
+    <ID>MagicNumber:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$64</ID>
+    <ID>MagicNumber:PerformanceUtils.kt$PerformanceUtils$1000.0</ID>
+    <ID>MagicNumber:SyncStatus.kt$SyncStatus.AWAITING_ATTACHMENTS$4</ID>
+    <ID>MagicNumber:SyncStatus.kt$SyncStatus.IN_PROGRESS$3</ID>
+    <ID>MaxLineLength:AttachmentHelper.kt$AttachmentHelper.Companion$private val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)</ID>
+    <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests$fun</ID>
+    <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests.Companion$"https://stream-chat-.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&amp;s=43257e963dbb993d65bd358d57b54a38" to false</ID>
+    <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests.Companion$"https://stream-chat-us-east-c4.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&amp;s=43257e963dbb993d65bd358d57b54a38" to true</ID>
+    <ID>MaxLineLength:BaseChatModule.kt$BaseChatModule$throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")</ID>
+    <ID>MaxLineLength:CallRetryService.kt$CallRetryService$logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")</ID>
+    <ID>MaxLineLength:CallRetryService.kt$CallRetryService$logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")</ID>
+    <ID>MaxLineLength:Channel.kt$Channel$*</ID>
+    <ID>MaxLineLength:ChannelClient.kt$ChannelClient$*</ID>
+    <ID>MaxLineLength:ChannelUserRead.kt$ChannelUserRead$*</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$*</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$// Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$userState is UserState.UserSet &amp;&amp; userState.user.id == user.id &amp;&amp; socketStateService.state == SocketState.Idle</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$*</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext)</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient.Companion$*</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient.Companion$?:</ID>
+    <ID>MaxLineLength:ChatSocketServiceImplTest.kt$ChatSocketServiceImplTest$fun</ID>
+    <ID>MaxLineLength:ConnectUserTest.kt$ConnectUserTest$result.error().message `should be equal to` "The user_id provided on the JWT token doesn't match with the current user you try to connect"</ID>
+    <ID>MaxLineLength:DeleteMessageListener.kt$DeleteMessageListener$*</ID>
+    <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, null, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, null, null, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, message, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUserBannedEvent = ChannelUserBannedEvent(EventType.USER_BANNED, date, cid, channelType, channelId, user, date)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(EventType.USER_UNBANNED, date, user, cid, channelType, channelId)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val memberAddedEvent = MemberAddedEvent(EventType.MEMBER_ADDED, date, user, cid, channelType, channelId, member)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId, member)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val memberUpdatedEvent = MemberUpdatedEvent(EventType.MEMBER_UPDATED, date, user, cid, channelType, channelId, member)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message, hardDelete = false)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val messageDeletedServerSideEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, null, cid, channelType, channelId, message, hardDelete = true)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, date, user, cid, channelType, channelId, message)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel, totalUnreadCount, unreadChannels)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(EventType.NOTIFICATION_CHANNEL_DELETED, date, cid, channelType, channelId, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, date, cid, channelType, channelId, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(EventType.NOTIFICATION_INVITE_ACCEPTED, date, cid, channelType, channelId, user, member, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(EventType.NOTIFICATION_INVITE_REJECTED, date, cid, channelType, channelId, user, member, channel)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationInvitedEvent = NotificationInvitedEvent(EventType.NOTIFICATION_INVITED, date, cid, channelType, channelId, user, member)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationMarkReadEvent = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, date, user, cid, channelType, channelId, totalUnreadCount, unreadChannels)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationMessageNewEvent = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, date, cid, channelType, channelId, channel, message, totalUnreadCount, unreadChannels)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(EventType.NOTIFICATION_REMOVED_FROM_CHANNEL, date, user, cid, channelType, channelId, channel, member)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, null, mapOf("type" to "some.unknown.type", "created_at" to dateString))</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val reactionDeletedEvent = ReactionDeletedEvent(EventType.REACTION_DELETED, date, user, cid, channelType, channelId, message, reaction)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val reactionNewEvent = ReactionNewEvent(EventType.REACTION_NEW, date, user, cid, channelType, channelId, message, reaction)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val reactionUpdateEvent = ReactionUpdateEvent(EventType.REACTION_UPDATED, date, user, cid, channelType, channelId, message, reaction)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val typingStartEvent = TypingStartEvent(EventType.TYPING_START, date, user, cid, channelType, channelId, parentMessageId)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val typingStopEvent = TypingStopEvent(EventType.TYPING_STOP, date, user, cid, channelType, channelId, parentMessageId)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, null, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, date, cid, watcherCount, channelType, channelId, user)</ID>
+    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val userStopWatchingEvent = UserStopWatchingEvent(EventType.USER_WATCHING_STOP, date, cid, watcherCount, channelType, channelId, user)</ID>
+    <ID>MaxLineLength:FileUploader.kt$FileUploader$*</ID>
+    <ID>MaxLineLength:FilterObject.kt$AutocompleteFilterObject : FilterObject</ID>
+    <ID>MaxLineLength:FilterObject.kt$GreaterThanOrEqualsFilterObject : FilterObject</ID>
+    <ID>MaxLineLength:FilterObject.kt$LessThanOrEqualsFilterObject : FilterObject</ID>
+    <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
+    <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
+    <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
+    <ID>MaxLineLength:Filters.kt$Filters$*</ID>
+    <ID>MaxLineLength:Filters.kt$Filters$public</ID>
+    <ID>MaxLineLength:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$"&lt;-- ${response.code}${if (response.message.isEmpty()) "" else ' ' + response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"</ID>
+    <ID>MaxLineLength:MessagesApiCallsTests.kt$MessagesApiCallsTests$verifySuccess(result, SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page"))</ID>
+    <ID>MaxLineLength:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler$private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }</ID>
+    <ID>MaxLineLength:NetworkStateProvider.kt$NetworkStateProvider$hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &amp;&amp; hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)</ID>
+    <ID>MaxLineLength:NotificationHandler.kt$NotificationHandler$*</ID>
+    <ID>MaxLineLength:NotificationHandlerFactory.kt$NotificationHandlerFactory$*</ID>
+    <ID>MaxLineLength:NotificationHandlerFactory.kt$NotificationHandlerFactory$private</ID>
+    <ID>MaxLineLength:PinnedMessagesRequest.kt$PinnedMessagesRequest$*</ID>
+    <ID>MaxLineLength:ProgressCallback.kt$ProgressCallback$*</ID>
+    <ID>MaxLineLength:QueryChannelRequest.kt$QueryChannelRequest$return keys.contains(Pagination.GREATER_THAN.toString()) || keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())</ID>
+    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Channel>(it), QuerySort.Companion.asc&lt;Channel>(it)) }</ID>
+    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Message>(it), QuerySort.Companion.asc&lt;Message>(it)) }</ID>
+    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Channel>(it), QuerySort.Companion.desc&lt;Channel>(it)) }</ID>
+    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Message>(it), QuerySort.Companion.desc&lt;Message>(it)) }</ID>
+    <ID>MaxLineLength:RetryCall.kt$RetryCall$*</ID>
+    <ID>MaxLineLength:SocketFactory.kt$SocketFactory$private</ID>
+    <ID>MaxLineLength:ToggleDialogController.kt$ToggleDialogController.ToggleEvent.CommitChanges$class</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDYzNTY1NjQtMTQ5Zi00YjJjLTg1MjUtZDIyMDU2ZmVjNDA0In0.R3-HY9Cno62yIhCjLXDBR8LF7y1udwX8m4LLNP2dIZo"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMGQzZTZlNjMtNjIwMC00ZGQxLWE4NDEtNDA1MDY2NDg5MWUyIn0.osFIgnle17f6yEkK7rPJguQaKhOiawAO3BylYaiRTqE"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTJmYjBlZDktOTNkOC00OGE1LTk4ODUtMjhlNDFmMmU0YzQzIn0.t_oc_DEwTav7ni0z4bi8Xla_5Zj5cI6l3rKxwoCvtB0"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWUzMzAxMTEtNjcwZC00OWE3LThmMDgtZTY3MzQzMzhjNjQxIn0.YEFdEMWj5rurQKr0QMrvO72jGZHU-AlpUIbyY4jxYdU"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYwNTJjMDgtZjY4Mi00YTgzLTg5NmMtOWYxOWE2OGJkMmJiIn0.L-cQ-DYubOzFpsg94OEwlTRYjat9G4cqfAgzBPALW0g"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYzN2U1OGQtZDhiMC00NzZhLWE0ZjItZjg2MTFlMGQ4NWQ5In0.l3u9P1NKhJ91rI1tzOcABGh045Kj69-iVkC2yUtohVw"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjllNDZkZWYtODhmNC00YjZhLWExMGMtNTg0ZDEwYzRmZGM5In0.Mxr4Prnb1-EVM5NSSP2EugLApSChoKnVFwe7ZO15V_U"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNTUzMWE4Y2ItM2I4MS00YTU0LWI0MjQtN2FlNGUyN2JmOGJhIn0.PXkmukg3JU4igH_YUMr7WC7a1EcwKBr_C5V2ouBlmIs"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNmQ5NTI3M2ItMzNmMC00MGY1LWIwN2MtMGRhMjYxMDkyMDc0In0.lT5O4EmWzhRKPTau6dHP4F6M42EA2aN_8-iAPuiFPLc"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiY2ViZjU2MmEtNDgwNi00YzY0LWE4MjctNTlkNTBhYWM0MmJhIn0.kuXab7RhQRHdsErEW5tTN_mmuyLPNU4ZbprvuPXM4OY"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWQ3ZDkzMTQtNTA3MS00ZDYxLTk4YTEtZmZhNjQzY2U4MjRhIn0.iF4UWGFtX0eTAIBTCum7fjD_TKn8wjEqb3PVxJrwbuM"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiRnJhIn0.ENQGHEsAL3WjVhd_qTiJa_9ojGKi2ftJ8xlocT8SVX4"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MCJ9.Vow00KvvhLvWRZIPKomXQOYpBL_P-_-eDeDKmBRvEj4"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc"</ID>
+    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MyJ9.kLZJz5kl7e3Zw7i2T39Yp05_nAmh9RGG0rt6-5zOpfE"</ID>
+    <ID>MaxLineLength:TypingEventListener.kt$TypingEventListener$*</ID>
+    <ID>MaxLineLength:User.kt$User$*</ID>
+    <ID>MaxLineLength:UserStateServiceTests.kt$UserStateServiceTests$fun</ID>
+    <ID>MaxLineLength:WhenConnectUser.kt$WhenConnectUser$fun</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val channelId = "channelId"</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val channelType = "channelType"</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val cid = "channelType:channelId"</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val connectionId = "6cfffec7-40df-40ac-901a-6ea6c5b7fb83"</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val dateString = "2020-06-29T06:14:28.000Z"</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val parentMessageId = "parentMessageId"</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val totalUnreadCount = 4</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val unreadChannels = 5</ID>
+    <ID>MayBeConst:EventArguments.kt$EventArguments$private val watcherCount = 3</ID>
+    <ID>MemberNameEqualsClassName:EventArguments.kt$EventArguments$private fun eventArguments()</ID>
+    <ID>NestedBlockDepth:ChatParser.kt$ChatParser$fun toError(okHttpResponse: Response): ChatNetworkError</ID>
+    <ID>ProtectedMemberInFinalClass:RetrofitCall.kt$RetrofitCall$protected var canceled = AtomicBoolean(false)</ID>
+    <ID>ReturnCount:AttachmentHelper.kt$AttachmentHelper$public fun hasValidImageUrl(attachment: Attachment): Boolean</ID>
+    <ID>ReturnCount:EventAdapter.kt$EventDtoAdapter$override fun fromJson(reader: JsonReader): ChatEventDto?</ID>
+    <ID>ReturnCount:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$@Throws(IOException::class) override fun intercept(chain: Interceptor.Chain): Response</ID>
+    <ID>ReturnCount:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$private fun Buffer.isProbablyUtf8(): Boolean</ID>
+    <ID>ReturnCount:MoshiChatParser.kt$MoshiChatParser$override fun &lt;T : Any> fromJson(raw: String, clazz: Class&lt;T>): T</ID>
+    <ID>ReturnCount:MoshiChatParser.kt$MoshiChatParser$override fun toJson(any: Any): String</ID>
+    <ID>SpreadOperator:ChannelClientExtensions.kt$(*javaClassTypes, listener = listener)</ID>
+    <ID>SpreadOperator:ChannelClientExtensions.kt$(lifecycleOwner, *javaClassTypes, listener = listener)</ID>
+    <ID>SpreadOperator:ClientExtensions.kt$(*javaClassTypes, listener = listener)</ID>
+    <ID>SpreadOperator:ClientExtensions.kt$(lifecycleOwner, *javaClassTypes, listener = listener)</ID>
+    <ID>SwallowedException:ChatParser.kt$ChatParser$t: Throwable</ID>
+    <ID>SwallowedException:DateAdapter.kt$DateAdapter$t: Throwable</ID>
+    <ID>SwallowedException:SocketFactory.kt$SocketFactory$throwable: Throwable</ID>
+    <ID>SwallowedException:TokenManagerImpl.kt$TokenManagerImpl$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:ChatParser.kt$ChatParser$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:DateAdapter.kt$DateAdapter$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:EventsParser.kt$EventsParser$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MoshiChatParser.kt$MoshiChatParser$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MoshiErrorLogging.kt$&lt;no name provided>$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:QueryChannelsPostponeHelper.kt$QueryChannelsPostponeHelper$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RetrofitCall.kt$RetrofitCall$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:SocketFactory.kt$SocketFactory$throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:TokenAuthInterceptor.kt$TokenAuthInterceptor$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:TokenManagerImpl.kt$TokenManagerImpl$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:TokenUtils.kt$TokenUtils$e: Exception</ID>
+    <ID>TooManyFunctions:BaseChatModule.kt$BaseChatModule</ID>
+    <ID>TooManyFunctions:ChannelApi.kt$ChannelApi</ID>
+    <ID>TooManyFunctions:ChannelClient.kt$ChannelClient</ID>
+    <ID>TooManyFunctions:ChatApi.kt$ChatApi</ID>
+    <ID>TooManyFunctions:ChatClient.kt$ChatClient</ID>
+    <ID>TooManyFunctions:ChatClient.kt$ChatClient$Builder : ChatClientBuilder</ID>
+    <ID>TooManyFunctions:ChatLoggerImpl.kt$ChatLoggerImpl : ChatLogger</ID>
+    <ID>TooManyFunctions:ChatNotificationHandler.kt$ChatNotificationHandler : NotificationHandler</ID>
+    <ID>TooManyFunctions:ChatNotifications.kt$ChatNotificationsImpl : ChatNotifications</ID>
+    <ID>TooManyFunctions:ChatSocketServiceImpl.kt$ChatSocketServiceImpl : ChatSocketService</ID>
+    <ID>TooManyFunctions:EventMapping.kt$io.getstream.chat.android.client.api2.mapping.EventMapping.kt</ID>
+    <ID>TooManyFunctions:EventsParser.kt$EventsParser : WebSocketListener</ID>
+    <ID>TooManyFunctions:Filters.kt$Filters$Filters</ID>
+    <ID>TooManyFunctions:MessageApi.kt$MessageApi</ID>
+    <ID>TooManyFunctions:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler : NotificationHandler</ID>
+    <ID>TooManyFunctions:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>
+    <ID>TooManyFunctions:QueryChannelRequest.kt$QueryChannelRequest : ChannelRequest</ID>
+    <ID>TooManyFunctions:QuerySort.kt$QuerySort&lt;T : Any></ID>
+    <ID>UnnecessaryAbstractClass:CustomObjectDtoAdapter.kt$CustomObjectDtoAdapter&lt;Value : Any></ID>
+    <ID>UnnecessaryAbstractClass:InitConnectionListener.kt$InitConnectionListener</ID>
+    <ID>UnusedPrivateMember:ChannelsApiCallsTests.kt$ChannelsApiCallsTests$val event = MessageReadEvent( EventType.MESSAGE_READ, Date(), User(), "${mock.channelType}:${mock.channelId}", mock.channelType, mock.channelId, )</ID>
+    <ID>UnusedPrivateMember:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$i</ID>
+    <ID>UtilityClassWithPublicConstructor:ModelFields.kt$ModelFields</ID>
+    <ID>VariableNaming:ChatParser.kt$ChatParser$private val TAG: String get() = ChatParser::class.java.simpleName</ID>
+  </CurrentIssues>
+</SmellBaseline>
