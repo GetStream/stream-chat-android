@@ -21,7 +21,7 @@ import androidx.room.Room
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
-import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
+import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -69,7 +69,7 @@ internal class RepositoryFacadeBuilder {
     fun build(): RepositoryFacade {
         val config = requireNotNull(defaultConfig)
         val scope = requireNotNull(coroutineScope)
-        val factory = RepositoryFactory(getChatDatabase(scope), currentUser)
+        val factory = RepositoryFactoryImpl(getChatDatabase(scope), currentUser)
 
         return RepositoryFacade.create(factory, scope, config)
     }

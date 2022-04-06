@@ -43,7 +43,7 @@ import io.getstream.chat.android.offline.model.querychannels.internal.QueryChann
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
-import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
+import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
@@ -192,7 +192,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         val context = ApplicationProvider.getApplicationContext() as Context
 
         repos = RepositoryFacade.create(
-            RepositoryFactory(db, data.user1),
+            RepositoryFactoryImpl(db, data.user1),
             getTestScope(),
             Config(connectEventsEnabled = true, muteEnabled = true)
         )

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistence.repository.MessageRepository
 import io.getstream.chat.android.client.persistence.repository.UserRepository
+import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepositoryImpl
@@ -36,11 +37,11 @@ import io.getstream.chat.android.offline.repository.domain.syncState.internal.Sy
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepositoryImpl
 
-internal class RepositoryFactory(
+internal class RepositoryFactoryImpl(
     private val database: ChatDatabase,
     private val currentUser: User?,
-) {
-    fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), 100)
+): RepositoryFactory {
+    override fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), 100)
     fun createChannelConfigRepository(): ChannelConfigRepository =
         ChannelConfigRepositoryImpl(database.channelConfigDao())
 
@@ -52,7 +53,7 @@ internal class RepositoryFactory(
     fun createQueryChannelsRepository(): QueryChannelsRepository =
         QueryChannelsRepositoryImpl(database.queryChannelsDao())
 
-    fun createMessageRepository(
+    override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
     ): MessageRepository = MessageRepositoryImpl(database.messageDao(), getUser, currentUser, 100)
 

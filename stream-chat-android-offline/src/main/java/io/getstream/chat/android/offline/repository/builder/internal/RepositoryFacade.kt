@@ -37,7 +37,7 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.in
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepository
-import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
+import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -182,13 +182,13 @@ internal class RepositoryFacade(
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
          * used mainly for tests or internally by other constructor methods.
          *
-         * @param factory [RepositoryFactory]
+         * @param factory [RepositoryFactoryImpl]
          * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
         @VisibleForTesting
         internal fun create(
-            factory: RepositoryFactory,
+            factory: RepositoryFactoryImpl,
             scope: CoroutineScope,
             defaultConfig: Config,
         ): RepositoryFacade {
