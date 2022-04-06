@@ -17,14 +17,15 @@
 package io.getstream.chat.android.offline.repository.builder.internal
 
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.extensions.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistence.MessageRepository
-import io.getstream.chat.android.client.persistence.UserRepository
+import io.getstream.chat.android.client.persistence.repository.MessageRepository
+import io.getstream.chat.android.client.persistence.repository.UserRepository
 import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.offline.extensions.internal.lastMessage

@@ -19,7 +19,7 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistence.MessageRepository
+import io.getstream.chat.android.client.persistence.repository.MessageRepository
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry

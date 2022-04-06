@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.persistence
+package io.getstream.chat.android.client.persistence.repository
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.query.AnyChannelPaginationRequest

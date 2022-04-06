@@ -20,7 +20,7 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistence.MessageRepository
+import io.getstream.chat.android.client.persistence.repository.MessageRepository
 import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date

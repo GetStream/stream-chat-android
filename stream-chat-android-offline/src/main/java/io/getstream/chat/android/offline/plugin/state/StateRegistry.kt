@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistence.MessageRepository
+import io.getstream.chat.android.client.persistence.repository.MessageRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState

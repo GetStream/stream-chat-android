@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistence.UserRepository
+import io.getstream.chat.android.client.persistence.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

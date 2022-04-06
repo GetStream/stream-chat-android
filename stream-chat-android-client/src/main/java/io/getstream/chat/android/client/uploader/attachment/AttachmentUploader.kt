@@ -14,12 +14,13 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.client.uploader
+package io.getstream.chat.android.client.uploader.attachment
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File

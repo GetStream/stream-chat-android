@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.persistence
+package io.getstream.chat.android.client.persistence.repository
 
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.StateFlow

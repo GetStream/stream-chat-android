@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.client.uploader.worker
+package io.getstream.chat.android.client.uploader.attachment.worker
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.manager.ChannelStateManager
@@ -24,9 +24,9 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.extensions.users
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistence.MessageRepository
-import io.getstream.chat.android.client.persistence.UserRepository
-import io.getstream.chat.android.client.uploader.AttachmentUploader
+import io.getstream.chat.android.client.persistence.repository.MessageRepository
+import io.getstream.chat.android.client.persistence.repository.UserRepository
+import io.getstream.chat.android.client.uploader.attachment.AttachmentUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
