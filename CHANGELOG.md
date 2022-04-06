@@ -61,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
 
 ### ⚠️ Changed
 
