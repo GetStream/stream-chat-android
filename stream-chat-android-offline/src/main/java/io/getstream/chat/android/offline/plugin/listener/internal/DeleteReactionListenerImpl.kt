@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.extensions.internal.removeMyReaction
-import io.getstream.chat.android.offline.extensions.internal.updateSyncStatus
+import io.getstream.chat.android.client.extensions.updateSyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade

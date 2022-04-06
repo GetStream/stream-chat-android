@@ -14,10 +14,9 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
@@ -45,7 +44,7 @@ internal fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Col
  *
  * @return Collection of reactions where cached data is substituted by more recent one if they have same [Reaction.type].
  */
-internal fun mergeReactions(
+public fun mergeReactions(
     recentReactions: Collection<Reaction>,
     cachedReactions: Collection<Reaction>,
 ): Collection<Reaction> {
@@ -62,7 +61,7 @@ internal fun mergeReactions(
  *
  * @return [Reaction] object with updated [Reaction.syncStatus].
  */
-internal fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
+public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
     return if (result.isSuccess) {
         copy(syncStatus = SyncStatus.COMPLETED)
     } else {
@@ -91,7 +90,7 @@ private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError): React
 /**
  *
  */
-internal fun Reaction.enrichWithDataBeforeSending(
+public fun Reaction.enrichWithDataBeforeSending(
     currentUser: User,
     isOnline: Boolean,
     enforceUnique: Boolean,

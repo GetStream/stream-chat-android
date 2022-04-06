@@ -36,7 +36,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.extensions.internal.isEphemeral
+import io.getstream.chat.android.client.extensions.isEphemeral
 import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry

@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.extensions.updateUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -26,7 +27,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
-import io.getstream.chat.android.offline.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.extensions.wasCreatedAfter
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState

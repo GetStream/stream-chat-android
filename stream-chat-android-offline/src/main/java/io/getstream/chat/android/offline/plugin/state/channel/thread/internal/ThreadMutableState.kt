@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.plugin.state.channel.thread.internal
 
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.extensions.internal.wasCreatedAfterOrAt
+import io.getstream.chat.android.client.extensions.wasCreatedAfterOrAt
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.CoroutineScope

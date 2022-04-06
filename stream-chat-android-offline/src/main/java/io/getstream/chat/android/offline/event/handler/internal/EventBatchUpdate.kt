@@ -20,7 +20,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.internal.incrementUnreadCount
-import io.getstream.chat.android.offline.extensions.internal.shouldIncrementUnreadCount
+import io.getstream.chat.android.client.extensions.shouldIncrementUnreadCount
+import io.getstream.chat.android.client.extensions.updateUsers
+import io.getstream.chat.android.client.extensions.users
 import io.getstream.chat.android.offline.extensions.internal.updateLastMessage
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
 import io.getstream.chat.android.offline.extensions.internal.users

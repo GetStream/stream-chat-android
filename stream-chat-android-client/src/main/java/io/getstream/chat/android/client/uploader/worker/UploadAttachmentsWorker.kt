@@ -14,13 +14,14 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.uploader.worker
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.manager.ChannelStateManager
 import io.getstream.chat.android.client.channel.manager.ChannelsManager
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.extensions.users
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistence.MessageRepository
@@ -30,7 +31,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.offline.extensions.internal.users
 
 internal class UploadAttachmentsWorker(
     private val channelsManager: ChannelsManager,

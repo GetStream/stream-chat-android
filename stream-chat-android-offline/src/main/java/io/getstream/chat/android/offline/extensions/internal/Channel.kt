@@ -16,6 +16,8 @@
  
 package io.getstream.chat.android.offline.extensions.internal
 
+import io.getstream.chat.android.client.extensions.updateUsers
+import io.getstream.chat.android.client.extensions.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member

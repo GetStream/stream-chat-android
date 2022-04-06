@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.experimental.errorhandler.SendReactionEr
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.internal.enrichWithDataBeforeSending
+import io.getstream.chat.android.client.extensions.enrichWithDataBeforeSending
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
 

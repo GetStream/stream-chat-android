@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.uploader.worker
 
 import android.content.Context
 import androidx.work.Constraints
@@ -25,9 +25,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 
 internal class UploadAttachmentsAndroidWorker(
     appContext: Context,

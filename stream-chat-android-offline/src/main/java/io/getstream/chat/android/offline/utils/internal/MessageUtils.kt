@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.utils.internal
 
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.extensions.internal.hasPendingAttachments
+import io.getstream.chat.android.client.extensions.hasPendingAttachments
 import java.util.regex.Pattern
 
 private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
