@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -32,18 +32,27 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import coil.fetch.VideoFrameUriFetcher
+import coil.request.videoFrameMillis
+import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 /**
  * Shows the UI for images the user can pick for message attachments. Exposes the logic of selecting
@@ -86,7 +95,18 @@ internal fun DefaultImagesPickerItem(
     imageItem: AttachmentPickerItemState,
     onImageSelected: (AttachmentPickerItemState) -> Unit,
 ) {
-    val painter = rememberImagePainter(data = imageItem.attachmentMetaData.uri.toString())
+    val attachmentMetaData = imageItem.attachmentMetaData
+    val isVideo = attachmentMetaData.type == ModelType.attach_video
+
+    val painter = rememberImagePainter(
+        data = attachmentMetaData.uri.toString(),
+        builder = {
+            if (isVideo) {
+                videoFrameMillis(VideoFrameMillis)
+                fetcher(VideoFrameUriFetcher(LocalContext.current))
+            }
+        }
+    )
 
     Box(
         modifier = Modifier
@@ -121,5 +141,35 @@ internal fun DefaultImagesPickerItem(
                 )
             }
         }
+
+        if (isVideo) {
+            Icon(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(24.dp)
+                    .mirrorRtl(LocalLayoutDirection.current)
+                    .align(Alignment.BottomStart),
+                painter = painterResource(id = R.drawable.stream_compose_ic_video),
+                contentDescription = null,
+                tint = Color.White
+            )
+
+            val videoLength = attachmentMetaData.videoLength
+            if (videoLength != 0L) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp, vertical = 8.dp)
+                        .align(Alignment.BottomEnd),
+                    text = MediaStringUtil.convertVideoLength(videoLength),
+                    style = ChatTheme.typography.bodyBold,
+                    color = Color.White
+                )
+            }
+        }
     }
 }
+
+/**
+ * The time code of the frame to extract from a video.
+ */
+private const val VideoFrameMillis: Long = 1000
