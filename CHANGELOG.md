@@ -13,6 +13,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed `User` model deserialization error when `User.image` is null. [#3283](https://github.com/GetStream/stream-chat-android/pull/3283)
 
 ### ⬆️ Improved
 
@@ -24,6 +25,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed crash related with logging out while running a request to update channels.
 
 ### ⬆️ Improved
 
@@ -50,6 +52,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
 
 ### ⚠️ Changed
 
@@ -64,6 +67,7 @@
 - Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
 
 ### ⚠️ Changed
+- Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
 
 ### ❌ Removed
 
