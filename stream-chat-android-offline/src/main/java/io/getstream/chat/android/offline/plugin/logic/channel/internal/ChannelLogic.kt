@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.channel.manager.ChannelStateManager
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -121,7 +122,7 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-) : QueryChannelListener {
+) : QueryChannelListener, ChannelStateManager {
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -345,7 +346,7 @@ internal class ChannelLogic(
         mutableState._channelConfig.value = c.config
     }
 
-    internal fun upsertMessages(messages: List<Message>) {
+    override fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages
@@ -370,7 +371,7 @@ internal class ChannelLogic(
         repos.insertMessages(messages)
     }
 
-    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+    override fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
     internal fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
@@ -867,7 +868,7 @@ internal class ChannelLogic(
         mutableState._repliedMessage.value = repliedMessage
     }
 
-    internal fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
+    override fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
         val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
         if (message != null) {
             val newAttachments = message.attachments.map { attachment ->

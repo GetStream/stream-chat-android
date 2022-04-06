@@ -17,6 +17,8 @@
 package io.getstream.chat.android.offline.message.attachments.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.manager.ChannelStateManager
+import io.getstream.chat.android.client.channel.manager.ChannelsManager
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -27,13 +29,11 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 
 internal class UploadAttachmentsWorker(
-    private val logic: LogicRegistry,
+    private val channelsManager: ChannelsManager,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
     private val chatClient: ChatClient,
@@ -102,7 +102,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            logic.channel(channelType, channelId)
+                            channelsManager.channel(channelType, channelId)
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
@@ -132,14 +132,14 @@ internal class UploadAttachmentsWorker(
             userRepository.insertUsers(message.users())
             messageRepository.insertMessage(message)
 
-            logic.channel(channelType, channelId).upsertMessage(message)
+            channelsManager.channel(channelType, channelId).upsertMessage(message)
         }
     }
 
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val channel: ChannelLogic,
+        private val channel: ChannelStateManager,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
