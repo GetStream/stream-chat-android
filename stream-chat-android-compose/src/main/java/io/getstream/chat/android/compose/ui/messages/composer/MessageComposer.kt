@@ -427,6 +427,7 @@ internal fun DefaultComposerIntegrations(
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
     val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendAttachments = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 
     if (canSendMessage) {
         Row(
@@ -435,20 +436,22 @@ internal fun DefaultComposerIntegrations(
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                enabled = isAttachmentsButtonEnabled,
-                modifier = Modifier
-                    .size(32.dp)
-                    .padding(4.dp),
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
-                        contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                        tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
-                    )
-                },
-                onClick = onAttachmentsClick
-            )
+            if (canSendAttachments) {
+                IconButton(
+                    enabled = isAttachmentsButtonEnabled,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(4.dp),
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
+                            contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                            tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+                        )
+                    },
+                    onClick = onAttachmentsClick
+                )
+            }
 
             val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
                 ChatTheme.colors.primaryAccent
