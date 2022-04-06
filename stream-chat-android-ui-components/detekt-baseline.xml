@@ -161,30 +161,12 @@
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionCaught:MessageInputView.kt$MessageInputView$e: Exception</ID>
-    <ID>TooManyFunctions:AttachmentGalleryActivity.kt$AttachmentGalleryActivity : AppCompatActivity</ID>
-    <ID>TooManyFunctions:AttachmentSelectionDialogFragment.kt$AttachmentSelectionDialogFragment : BottomSheetDialogFragmentAttachmentSelectionListener</ID>
-    <ID>TooManyFunctions:AvatarBitmapFactory.kt$AvatarBitmapFactory</ID>
-    <ID>TooManyFunctions:AvatarDecorator.kt$AvatarDecorator : BaseDecorator</ID>
-    <ID>TooManyFunctions:ChannelActionsDialogFragment.kt$ChannelActionsDialogFragment : BottomSheetDialogFragment</ID>
-    <ID>TooManyFunctions:ChannelListFragment.kt$ChannelListFragment : Fragment</ID>
-    <ID>TooManyFunctions:ChannelListHeaderView.kt$ChannelListHeaderView : ConstraintLayout</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
-    <ID>TooManyFunctions:ChannelListViewModel.kt$ChannelListViewModel : ViewModel</ID>
-    <ID>TooManyFunctions:ChannelViewHolder.kt$ChannelViewHolder : SwipeViewHolder</ID>
-    <ID>TooManyFunctions:FileAttachmentFragment.kt$FileAttachmentFragment : Fragment</ID>
-    <ID>TooManyFunctions:FootnoteDecorator.kt$FootnoteDecorator : BaseDecorator</ID>
-    <ID>TooManyFunctions:FootnoteView.kt$FootnoteView : ConstraintLayout</ID>
-    <ID>TooManyFunctions:MediaAttachmentFragment.kt$MediaAttachmentFragment : Fragment</ID>
-    <ID>TooManyFunctions:Message.kt$io.getstream.chat.android.ui.common.extensions.Message.kt</ID>
     <ID>TooManyFunctions:MessageInputFieldView.kt$MessageInputFieldView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>TooManyFunctions:MessageListHeaderView.kt$MessageListHeaderView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory</ID>
     <ID>TooManyFunctions:MessageListView.kt$MessageListView : ConstraintLayout</ID>
-    <ID>TooManyFunctions:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment : FullScreenDialogFragment</ID>
-    <ID>TooManyFunctions:MessageOptionsView.kt$MessageOptionsView : FrameLayout</ID>
-    <ID>TooManyFunctions:MessageReplyView.kt$MessageReplyView : FrameLayout</ID>
-    <ID>TooManyFunctions:ReactionsDecorator.kt$ReactionsDecorator : BaseDecorator</ID>
     <ID>TooManyFunctions:SimpleChannelListView.kt$SimpleChannelListView : RecyclerView</ID>
     <ID>UnnecessaryAbstractClass:InnerAttachmentViewHolder.kt$InnerAttachmentViewHolder</ID>
     <ID>UnusedImports:ChannelListViewStyle.kt$import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder</ID>

@@ -138,16 +138,6 @@
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
-    <ID>TooManyFunctions:ChannelLogic.kt$ChannelLogic : QueryChannelListener</ID>
-    <ID>TooManyFunctions:DatabaseChannelRepository.kt$DatabaseChannelRepository : ChannelRepository</ID>
-    <ID>TooManyFunctions:DatabaseMessageRepository.kt$DatabaseMessageRepository : MessageRepository</ID>
-    <ID>TooManyFunctions:DatabaseUserRepository.kt$DatabaseUserRepository : UserRepository</ID>
-    <ID>TooManyFunctions:EventHandlerImpl.kt$EventHandlerImpl</ID>
-    <ID>TooManyFunctions:Message.kt$io.getstream.chat.android.offline.extensions.internal.Message.kt</ID>
-    <ID>TooManyFunctions:MessageDao.kt$MessageDao</ID>
-    <ID>TooManyFunctions:QueryChannelsLogic.kt$QueryChannelsLogic</ID>
-    <ID>TooManyFunctions:RepositoryFacade.kt$RepositoryFacade : UserRepositoryChannelRepositoryReactionRepositoryMessageRepositoryChannelConfigRepositoryQueryChannelsRepositorySyncStateRepositoryAttachmentRepository</ID>
-    <ID>TooManyFunctions:SyncManager.kt$SyncManager</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
