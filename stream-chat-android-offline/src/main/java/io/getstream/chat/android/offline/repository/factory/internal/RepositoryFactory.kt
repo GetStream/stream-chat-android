@@ -18,6 +18,8 @@ package io.getstream.chat.android.offline.repository.factory.internal
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistence.MessageRepository
+import io.getstream.chat.android.client.persistence.UserRepository
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepositoryImpl
@@ -25,7 +27,6 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.interna
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepository
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepositoryImpl
@@ -33,7 +34,6 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepositoryImpl
 
 internal class RepositoryFactory(

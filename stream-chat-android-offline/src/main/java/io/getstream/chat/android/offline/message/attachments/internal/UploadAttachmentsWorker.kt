@@ -23,14 +23,14 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistence.MessageRepository
+import io.getstream.chat.android.client.persistence.UserRepository
 import io.getstream.chat.android.client.uploader.AttachmentUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 
 internal class UploadAttachmentsWorker(
     private val channelsManager: ChannelsManager,

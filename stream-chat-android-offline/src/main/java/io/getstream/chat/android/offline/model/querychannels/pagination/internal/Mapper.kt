@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.model.querychannels.pagination.interna
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 
 internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
     val originalRequest = this

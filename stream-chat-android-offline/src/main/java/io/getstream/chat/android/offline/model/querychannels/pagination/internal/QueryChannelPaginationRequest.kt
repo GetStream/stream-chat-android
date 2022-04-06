@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.model.querychannels.pagination.interna
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 
 internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRequest() {
 
