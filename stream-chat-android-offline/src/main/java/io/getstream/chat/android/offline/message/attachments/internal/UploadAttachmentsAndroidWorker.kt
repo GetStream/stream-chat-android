@@ -39,7 +39,9 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        return UploadAttachmentsWorker(LogicRegistry.get(), RepositoryFacade.get(), ChatClient.instance())
+        val repos = RepositoryFacade.get()
+
+        return UploadAttachmentsWorker(LogicRegistry.get(), repos, repos, ChatClient.instance())
             .uploadAttachmentsForMessage(
                 channelType,
                 channelId,

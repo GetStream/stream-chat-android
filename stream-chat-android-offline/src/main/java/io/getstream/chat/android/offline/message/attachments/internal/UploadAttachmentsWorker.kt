@@ -26,13 +26,16 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
+import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 
 internal class UploadAttachmentsWorker(
     private val logic: LogicRegistry,
-    private val repos: RepositoryFacade,
+    private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
@@ -53,7 +56,7 @@ internal class UploadAttachmentsWorker(
                 }
             }
 
-            val message = repos.selectMessage(messageId)
+            val message = messageRepository.selectMessage(messageId)
 
             if (message == null) {
                 Result.success(Unit)
@@ -124,8 +127,11 @@ internal class UploadAttachmentsWorker(
                 message.syncStatus = SyncStatus.FAILED_PERMANENTLY
             }
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
-            repos.deleteChannelMessage(message)
-            repos.insertMessage(message)
+            messageRepository.deleteChannelMessage(message)
+
+            userRepository.insertUsers(message.users())
+            messageRepository.insertMessage(message)
+
             logic.channel(channelType, channelId).upsertMessage(message)
         }
     }
