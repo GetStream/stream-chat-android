@@ -165,7 +165,6 @@
     <ID>SwallowedException:Push.kt$Push.AndroidAndFirebase.CustomFirebaseMessagingService$exception: IllegalStateException</ID>
     <ID>SwallowedException:Push.kt$Push.Firebase.CustomFirebaseMessagingService$exception: IllegalStateException</ID>
     <ID>TooGenericExceptionCaught:MyFileUploader.kt$MyFileUploader$e: Exception</ID>
-    <ID>TooManyFunctions:MessageList.kt$MessageListViewSnippets : Fragment</ID>
     <ID>UnusedPrivateClass:AttachmentGallery.kt$AttachmentGallery</ID>
     <ID>UnusedPrivateClass:ChannelListHeader.kt$ChannelListHeaderViewSnippets : Fragment</ID>
     <ID>UnusedPrivateClass:ChannelListView.kt$ChannelListViewSnippets : Fragment</ID>

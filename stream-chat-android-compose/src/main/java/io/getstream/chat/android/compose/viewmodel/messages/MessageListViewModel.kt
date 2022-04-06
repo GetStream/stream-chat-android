@@ -102,6 +102,7 @@ import java.util.concurrent.TimeUnit
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
+@Suppress("TooManyFunctions")
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     private val channelId: String,
