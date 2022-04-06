@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
+import io.getstream.chat.android.client.uploader.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.randomAttachment

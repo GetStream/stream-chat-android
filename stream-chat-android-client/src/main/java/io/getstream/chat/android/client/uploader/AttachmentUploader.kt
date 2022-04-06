@@ -14,22 +14,22 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.uploader
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
-internal class AttachmentUploader(
+/* Todo: Evaluate if this class need to be public at the end of the refactor */
+public class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
 
-    internal suspend fun uploadAttachment(
+    public suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,

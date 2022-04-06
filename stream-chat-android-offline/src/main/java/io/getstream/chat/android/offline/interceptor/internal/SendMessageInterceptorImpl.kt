@@ -59,6 +59,7 @@ internal class SendMessageInterceptorImpl(
     private var jobsMap: Map<String, Job> = emptyMap()
 
     private val logger = ChatLogger.get("MessageSendingService")
+
     override suspend fun interceptMessage(
         channelType: String,
         channelId: String,
@@ -86,7 +87,7 @@ internal class SendMessageInterceptorImpl(
      *
      * @return [Result] with a prepared message.
      */
-    suspend fun prepareNewMessageWithAttachments(
+    private suspend fun prepareNewMessageWithAttachments(
         message: Message,
         channelType: String,
         channelId: String,
@@ -157,7 +158,7 @@ internal class SendMessageInterceptorImpl(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    internal suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
+    private suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
         uploadAttachments(message, channelType, channelId)
 
     /**
