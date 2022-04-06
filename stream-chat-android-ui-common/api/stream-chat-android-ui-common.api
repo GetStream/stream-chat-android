@@ -883,6 +883,10 @@ public final class io/getstream/chat/android/common/state/ValidationError$Attach
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/common/state/ValidationError$ContainsLinksWhenNotAllowed : io/getstream/chat/android/common/state/ValidationError {
+	public static final field INSTANCE Lio/getstream/chat/android/common/state/ValidationError$ContainsLinksWhenNotAllowed;
+}
+
 public final class io/getstream/chat/android/common/state/ValidationError$MessageLengthExceeded : io/getstream/chat/android/common/state/ValidationError {
 	public fun <init> (II)V
 	public final fun component1 ()I

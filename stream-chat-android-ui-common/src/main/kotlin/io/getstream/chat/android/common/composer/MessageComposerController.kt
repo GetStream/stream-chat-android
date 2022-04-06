@@ -1,6 +1,7 @@
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.extensions.containsLinks
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -88,6 +89,8 @@ public class MessageComposerController(
         )
 
     /**
+     * Signals if the user's typing will send a typing update in the given channel.
+     *
      * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
      * on every typing update.
      *
@@ -95,6 +98,22 @@ public class MessageComposerController(
      * ever read directly.
      */
     private val canSendTypingUpdates = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    /**
+     * Signals if the user is allowed to send links.
+     *
+     * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
+     * on every typing update.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -530,7 +549,9 @@ public class MessageComposerController(
      */
     private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
-            val messageLength = input.value.length
+            val message = input.value
+            val messageLength = message.length
+
             if (messageLength > maxMessageLength) {
                 add(
                     ValidationError.MessageLengthExceeded(
@@ -558,6 +579,11 @@ public class MessageComposerController(
                         attachments = attachments,
                         maxAttachmentSize = maxAttachmentSize
                     )
+                )
+            }
+            if (!canSendLinks.value && message.containsLinks()) {
+                add(
+                    ValidationError.ContainsLinksWhenNotAllowed
                 )
             }
         }

@@ -15,12 +15,16 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
@@ -30,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
@@ -47,6 +52,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInputOpti
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -263,8 +269,12 @@ public fun MessageComposer(
     },
 ) {
     val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    MessageInputValidationError(validationErrors)
+    MessageInputValidationError(
+        validationErrors = validationErrors,
+        snackbarHostState = snackbarHostState
+    )
 
     Surface(
         modifier = modifier,
@@ -293,6 +303,10 @@ public fun MessageComposer(
             }
 
             footerContent(messageComposerState)
+        }
+
+        if (snackbarHostState.currentSnackbarData != null) {
+            SnackbarPopup(snackbarHostState = snackbarHostState)
         }
 
         if (mentionSuggestions.isNotEmpty()) {
@@ -586,9 +600,11 @@ internal fun DefaultMessageComposerTrailingContent(
  * @param validationErrors The list of validation errors for the current user input.
  */
 @Composable
-private fun MessageInputValidationError(validationErrors: List<ValidationError>) {
+private fun MessageInputValidationError(validationErrors: List<ValidationError>, snackbarHostState: SnackbarHostState) {
     if (validationErrors.isNotEmpty()) {
-        val errorMessage = when (val validationError = validationErrors.first()) {
+        val firstValidationError = validationErrors.first()
+
+        val errorMessage = when (val validationError = firstValidationError) {
             is ValidationError.MessageLengthExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_message_length,
@@ -607,11 +623,36 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>)
                     MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
                 )
             }
+            is ValidationError.ContainsLinksWhenNotAllowed -> {
+                stringResource(
+                    R.string.stream_compose_message_composer_error_sending_links_not_allowed,
+                )
+            }
         }
 
         val context = LocalContext.current
         LaunchedEffect(validationErrors.size) {
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed) {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage, duration = SnackbarDuration.Short
+                )
+            } else {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+}
+
+/**
+ * A snackbar wrapped inside of a popup allowing it be
+ * displayed above the Composable it's anchored to.
+ *
+ * @param snackbarHostState The state of the snackbar host. Contains
+ * the snackbar data necessary to display the snackbar.
+ */
+@Composable
+private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
+    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider()) {
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
