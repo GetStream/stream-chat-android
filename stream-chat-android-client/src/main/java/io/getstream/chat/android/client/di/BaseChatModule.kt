@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
 import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
+import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.ConfigApi
 import io.getstream.chat.android.client.api2.DeviceApi
@@ -226,7 +227,9 @@ internal open class BaseChatModule(
             buildRetrofitApi<GeneralApi>(),
             buildRetrofitApi<ConfigApi>(),
             networkScope,
-        )
+        ).let { originalApi ->
+            ExtraDataValidator(originalApi)
+        }
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {
