@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.uploader.attachment.worker
 
 import android.content.Context
@@ -25,6 +25,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistence.repository.provider.RepositoryProvider
 import io.getstream.chat.android.client.uploader.attachment.network.UploadAttachmentsNetworkType
 
 internal class UploadAttachmentsAndroidWorker(
@@ -37,15 +38,17 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        val repos = RepositoryFacade.get()
-
-        return UploadAttachmentsWorker(LogicRegistry.get(), repos, repos, ChatClient.instance())
-            .uploadAttachmentsForMessage(
-                channelType,
-                channelId,
-                messageId
-            )
-            .run { if (isSuccess) Result.success() else Result.failure() }
+        //Todo: Review the !!
+        return UploadAttachmentsWorker(
+            LogicRegistry.get(),
+            RepositoryProvider.createMessageRepository { ChatClient.instance().getCurrentUser()!! },
+            RepositoryProvider.createUserRepository(),
+            ChatClient.instance()
+        ).uploadAttachmentsForMessage(
+            channelType,
+            channelId,
+            messageId
+        ).run { if (isSuccess) Result.success() else Result.failure() }
     }
 
     companion object {

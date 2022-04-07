@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.factory
 
 import android.content.Context
+import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
+import io.getstream.chat.android.client.persistence.repository.provider.RepositoryProvider
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -50,6 +53,8 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
+import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
@@ -88,6 +93,10 @@ public class StreamOfflinePluginFactory(
         val job = SupervisorJob()
         val scope = CoroutineScope(job + DispatcherProvider.IO)
 
+        val repositoryFactory = createRepositoryFactory(scope, appContext, user, config.persistenceEnabled)
+
+        RepositoryProvider.setRepositoryFactory(repositoryFactory)
+
         val repos = RepositoryFacadeBuilder {
             context(appContext)
             scope(scope)
@@ -98,7 +107,7 @@ public class StreamOfflinePluginFactory(
                 )
             )
             currentUser(user)
-            setOfflineEnabled(config.persistenceEnabled)
+            repositoryFactory(repositoryFactory)
         }.build()
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
@@ -195,5 +204,29 @@ public class StreamOfflinePluginFactory(
             typingEventListener = TypingEventListenerImpl(stateRegistry),
             createChannelListener = CreateChannelListenerImpl(globalState, repos),
         )
+    }
+
+    private fun createRepositoryFactory(
+        scope: CoroutineScope,
+        context: Context,
+        user: User?,
+        offlineEnabled: Boolean,
+    ): RepositoryFactory {
+        return RepositoryFactoryImpl(createDatabase(scope, context, user, offlineEnabled), user)
+    }
+
+    private fun createDatabase(
+        scope: CoroutineScope,
+        context: Context,
+        user: User?,
+        offlineEnabled: Boolean,
+    ): ChatDatabase {
+        return if (offlineEnabled && user != null) {
+            ChatDatabase.getDatabase(context, user.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build().also { inMemoryDatabase ->
+                scope.launch { inMemoryDatabase.clearAllTables() }
+            }
+        }
     }
 }
