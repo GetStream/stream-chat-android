@@ -160,7 +160,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (!isInThread && isMessageSynced) {
+        if (!isInThread && isMessageSynced && canReplyToMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
