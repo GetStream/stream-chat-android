@@ -18,6 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added an `ExtraDataValidator` to intercept `ChatApi` calls and validate `CustomObject.extraData` does not contain the reserved keywords. [#3279](https://github.com/GetStream/stream-chat-android/pull/3279)
 
 ### ⚠️ Changed
 
