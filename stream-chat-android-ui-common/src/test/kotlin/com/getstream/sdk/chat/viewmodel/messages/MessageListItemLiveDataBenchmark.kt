@@ -67,9 +67,16 @@ internal class MessageListItemLiveDataBenchmark {
         val read2 = ChannelUserRead(messages[10].user, messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messagesLd,
+            readsLd = reads, typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     @Test

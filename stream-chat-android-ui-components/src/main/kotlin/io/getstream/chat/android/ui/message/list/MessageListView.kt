@@ -294,7 +294,8 @@ public class MessageListView : ConstraintLayout {
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
 
-    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> = MutableLiveData(null)
+    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> =
+        MutableLiveData(null)
 
     private lateinit var loadMoreListener: EndlessScrollListener
 
@@ -1001,7 +1002,10 @@ public class MessageListView : ConstraintLayout {
      */
     @Deprecated(
         message = "Filtering deleted messages should be performed in the ViewModel.",
-        replaceWith = ReplaceWith("MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)", "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"),
+        replaceWith = ReplaceWith(
+            "MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)",
+            "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"
+        ),
         level = DeprecationLevel.WARNING
     )
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
