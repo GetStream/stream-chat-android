@@ -31,7 +31,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 
 internal class AvatarDecorator(
-    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
+    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate,
 ) : BaseDecorator() {
 
     /**

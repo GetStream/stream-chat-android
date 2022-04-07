@@ -340,6 +340,7 @@ public class MessageListView : ConstraintLayout {
                         messageListItemViewHolderFactory,
                         messageBackgroundFactory,
                         attachmentFactoryManager,
+                        showAvatarPredicate
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -467,6 +468,7 @@ public class MessageListView : ConstraintLayout {
                     messageListItemViewHolderFactory,
                     messageBackgroundFactory,
                     attachmentFactoryManager,
+                    showAvatarPredicate
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)

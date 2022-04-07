@@ -413,6 +413,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
             attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.REACTION_OPTIONS,
@@ -422,6 +423,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 messageViewHolderFactory,
                 messageBackgroundFactory,
                 attachmentFactoryManager,
+                showAvatarPredicate
             )
         }
 
@@ -432,6 +434,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
             attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.MESSAGE_OPTIONS,
@@ -441,6 +444,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 messageViewHolderFactory,
                 messageBackgroundFactory,
                 attachmentFactoryManager,
+                showAvatarPredicate
             )
         }
 
@@ -452,6 +456,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
             attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         ): MessageOptionsDialogFragment {
             this.messageListViewStyle = style
             this.attachmentFactoryManager = attachmentFactoryManager
@@ -465,7 +470,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         decoratorProvider = MessageOptionsDecoratorProvider(
                             style.itemStyle,
                             style.replyMessageStyle,
-                            messageBackgroundFactory
+                            messageBackgroundFactory,
+                            showAvatarPredicate
                         )
                     }
             return MessageOptionsDialogFragment().apply {
