@@ -24,7 +24,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
 import androidx.core.content.ContextCompat
-import io.getstream.chat.android.ui.utils.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 internal fun TextView.setTextSizePx(@Px size: Float) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, size)

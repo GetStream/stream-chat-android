@@ -22,7 +22,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
-import io.getstream.chat.android.ui.utils.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 /**
  * Draw the bubble of view reactions.

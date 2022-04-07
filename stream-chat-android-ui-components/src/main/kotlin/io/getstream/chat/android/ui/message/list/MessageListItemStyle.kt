@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -66,6 +67,8 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property iconIndicatorRead Icon for message's read status. Default value is [R.drawable.stream_ui_ic_check_double].
  * @property iconIndicatorPendingSync Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_clock].
  * @property iconOnlyVisibleToYou Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_icon_eye_off].
+ * @property iconFailedMessage Icon for message failed status. Default value is [R.drawable.stream_ui_ic_warning].
+ * @property iconBannedMessage Icon for message when the current user is banned. Default value is [R.drawable.stream_ui_ic_warning].
  * @property textStyleMessageDeleted Appearance for message deleted text.
  * @property messageDeletedBackground Background color for deleted message. Default value is [R.color.stream_ui_grey_whisper].
  * @property messageStrokeColorMine Stroke color for message sent by the current user. Default value is [MESSAGE_STROKE_COLOR_MINE].
@@ -105,6 +108,8 @@ public data class MessageListItemStyle(
     public val iconIndicatorRead: Drawable,
     public val iconIndicatorPendingSync: Drawable,
     public val iconOnlyVisibleToYou: Drawable,
+    public val iconFailedMessage: Drawable,
+    public val iconBannedMessage: Drawable,
     public val textStyleMessageDeleted: TextStyle,
     @ColorInt public val messageDeletedBackground: Int,
     @ColorInt public val messageStrokeColorMine: Int,
@@ -445,6 +450,11 @@ public data class MessageListItemStyle(
                 R.styleable.MessageListView_streamUiIconOnlyVisibleToYou
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_icon_eye_off)!!
 
+            val iconFailedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconFailedIndicator)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
+            val iconBannedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconBannedIndicator)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
+
             val messageDeletedBackground =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiDeletedMessageBackgroundColor,
@@ -595,6 +605,8 @@ public data class MessageListItemStyle(
                 iconIndicatorRead = iconIndicatorRead,
                 iconIndicatorPendingSync = iconIndicatorPendingSync,
                 iconOnlyVisibleToYou = iconOnlyVisibleToYou,
+                iconFailedMessage = iconFailedMessage,
+                iconBannedMessage = iconBannedMessage,
                 messageDeletedBackground = messageDeletedBackground,
                 textStyleMessageDeleted = textStyleMessageDeleted,
                 messageStrokeColorMine = messageStrokeColorMine,
@@ -610,7 +622,7 @@ public data class MessageListItemStyle(
                 messageEndMargin = messageEndMargin,
                 messageMaxWidthFactorMine = messageMaxWidthFactorMine,
                 messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs,
-                showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator
+                showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }

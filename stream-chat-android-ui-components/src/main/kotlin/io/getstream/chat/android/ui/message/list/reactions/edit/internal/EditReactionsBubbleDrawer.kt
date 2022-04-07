@@ -21,7 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
-import io.getstream.chat.android.ui.utils.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 private const val LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_DP = 2
 

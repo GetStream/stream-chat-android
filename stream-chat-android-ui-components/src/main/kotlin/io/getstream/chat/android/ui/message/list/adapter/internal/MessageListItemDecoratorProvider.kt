@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
  * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
  * @param deletedMessageListItemPredicate [MessageListView.MessageListItemPredicate] Predicate to hide or show the the deleted message accordingly to the logic provided.
+ * @param isCurrentUserBanned Checks if the current user is banned inside the channel. Used for failed icon indicator.
  */
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
@@ -51,6 +52,7 @@ internal class MessageListItemDecoratorProvider(
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
     deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
+    isCurrentUserBanned: () -> Boolean
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
@@ -60,7 +62,7 @@ internal class MessageListItemDecoratorProvider(
         MaxPossibleWidthDecorator(messageListViewStyle.itemStyle),
         MessageContainerMarginDecorator(messageListViewStyle.itemStyle),
         AvatarDecorator(showAvatarPredicate),
-        FailedIndicatorDecorator(),
+        FailedIndicatorDecorator(messageListViewStyle.itemStyle, isCurrentUserBanned),
         ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
         ReplyDecorator(messageListViewStyle.replyMessageStyle),
         FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle, deletedMessageListItemPredicate),

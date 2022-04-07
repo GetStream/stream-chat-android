@@ -119,6 +119,7 @@ import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemP
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -710,7 +711,8 @@ public class MessageListView : ConstraintLayout {
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory,
-            deletedMessageListItemPredicate
+            deletedMessageListItemPredicate,
+            isCurrentUserBanned = { channel.isCurrentUserBanned() },
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

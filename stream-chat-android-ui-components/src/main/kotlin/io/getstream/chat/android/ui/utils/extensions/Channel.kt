@@ -14,13 +14,14 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.ui.utils.extensions
 
-import android.content.Context
-import android.view.View
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-/**
- * Helper method to check is the system requests RTL direction.
- */
-internal val Context.isRtlLayout: Boolean
-    get() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+@InternalStreamChatApi
+internal fun Channel.isCurrentUserBanned(): Boolean {
+    val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
+    return members.any { it.user.id == currentUserId && it.banned }
+}
