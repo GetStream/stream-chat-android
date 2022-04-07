@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
@@ -22,19 +38,9 @@ internal class ExtraDataValidator(
         extraData: Map<String, Any>,
         updateMessage: Message?,
     ): Call<Channel> {
-        val reservedInChannel = extraData.findReserved<Channel>()
-        val reservedInMessage = updateMessage?.findReserved() ?: emptyList()
-        return when (reservedInChannel.isEmpty() && reservedInMessage.isEmpty()) {
-            true -> delegate.updateChannel(channelType, channelId, extraData, updateMessage)
-            else -> ErrorCall(
-                ChatError(
-                    message = when (reservedInMessage.isEmpty()) {
-                        true -> "[ChatApi.updateChannel] 'extraData' param contains reserved keys: $reservedInChannel"
-                        else -> "[ChatApi.updateChannel] 'updateMessage.extraData' property contains reserved keys: $reservedInMessage"
-                    }
-                )
-            )
-        }
+        return delegate.updateChannel(channelType, channelId, extraData, updateMessage)
+            .withExtraDataValidation(extraData)
+            .withExtraDataValidation(updateMessage)
     }
 
     override fun updateChannelPartial(
@@ -43,60 +49,63 @@ internal class ExtraDataValidator(
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Channel> {
-        val reserved = set.findReserved<Channel>()
-        return when (reserved.isEmpty()) {
-            true -> delegate.updateChannelPartial(channelType, channelId, set, unset)
-            else -> ErrorCall(
-                ChatError(
-                    message = "[ChatApi.updateChannelPartial] 'set' param contains reserved keys: $reserved"
-                )
-            )
-        }
+        return delegate.updateChannelPartial(channelType, channelId, set, unset)
+            .withExtraDataValidation(set)
     }
 
     override fun updateMessage(message: Message): Call<Message> {
-        val reserved = message.findReserved()
-        return when (reserved.isEmpty()) {
-            true -> delegate.updateMessage(message)
-            else -> ErrorCall(
-                ChatError(
-                    message = "[ChatApi.updateMessage] 'message.extraData' property contains reserved keys: $reserved"
-                )
-            )
-        }
+        return delegate.updateMessage(message)
+            .withExtraDataValidation(message.extraData)
     }
 
     override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
-        val reserved = set.findReserved<Message>()
-        return when (reserved.isEmpty()) {
-            true -> delegate.partialUpdateMessage(messageId, set, unset)
-            else -> ErrorCall(
-                ChatError(
-                    message = "[ChatApi.partialUpdateMessage] 'set' param contains reserved keys: $reserved"
-                )
-            )
-        }
+        return delegate.partialUpdateMessage(messageId, set, unset)
+            .withExtraDataValidation(set)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
-        val (user, reserved) = users.findReserved()
-        return when (user == null || reserved == null) {
-            true -> delegate.updateUsers(users)
+        return delegate.updateUsers(users)
+            .withExtraDataValidation(users)
+    }
+
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
+        return delegate.partialUpdateUser(id, set, unset)
+            .withExtraDataValidation(set)
+    }
+
+    private fun <T : CustomObject> Call<List<T>>.withExtraDataValidation(
+        objects: List<T>
+    ): Call<List<T>> {
+        val (obj, reserved) = objects.findReserved()
+        return when (obj == null || reserved == null) {
+            true -> this
             else -> ErrorCall(
                 ChatError(
-                    message = "[ChatApi.updateUsers] 'user(id=${user.id}).extraData' property contains reserved keys: $reserved"
+                    message = "'${obj.resolveName()}(id=${obj.resolveId()}).extraData' contains reserved keys: ${reserved.joinToString()}"
                 )
             )
         }
     }
 
-    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
-        val reserved = set.findReserved<User>()
+    private fun <T : CustomObject, K : CustomObject> Call<T>.withExtraDataValidation(obj: K?): Call<T> {
+        val reserved = obj?.findReserved() ?: emptyList()
         return when (reserved.isEmpty()) {
-            true -> delegate.partialUpdateUser(id, set, unset)
+            true -> this
             else -> ErrorCall(
                 ChatError(
-                    message = "[ChatApi.partialUpdateUser] 'set' param contains reserved keys: $reserved"
+                    message = "'${obj.resolveName()}(id=${obj.resolveId()}).extraData' contains reserved keys: ${reserved.joinToString()}"
+                )
+            )
+        }
+    }
+
+    private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(extraData: Map<String, Any>): Call<T> {
+        val reserved = extraData.findReserved<T>()
+        return when (reserved.isEmpty()) {
+            true -> this
+            else -> ErrorCall(
+                ChatError(
+                    message = "'extraData' contains reserved keys: ${reserved.joinToString()}"
                 )
             )
         }
@@ -127,6 +136,24 @@ internal class ExtraDataValidator(
             Message::class -> keys.filter(reservedInMessagePredicate)
             User::class -> keys.filter(reservedInUserPredicate)
             else -> emptyList()
+        }
+    }
+
+    private fun <T : CustomObject> T?.resolveName(): String {
+        return when (this) {
+            is Channel -> "channel"
+            is Message -> "message"
+            is User -> "user"
+            else -> ""
+        }
+    }
+
+    private fun <T : CustomObject> T?.resolveId(): String {
+        return when (this) {
+            is Channel -> id
+            is Message -> id
+            is User -> id
+            else -> ""
         }
     }
 
