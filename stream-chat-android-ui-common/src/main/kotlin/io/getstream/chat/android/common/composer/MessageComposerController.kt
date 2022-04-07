@@ -129,7 +129,7 @@ public class MessageComposerController(
      * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
      * ever read directly.
      */
-    private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
+    private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_LINKS) }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
