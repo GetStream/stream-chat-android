@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package io.getstream.chat.android.client
 
 import android.content.Context
@@ -77,6 +93,7 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -156,6 +173,7 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
+    private val appSettingsManager: AppSettingManager,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -369,6 +387,7 @@ public class ChatClient internal constructor(
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
+        appSettingsManager.loadAppSettings()
         warmUp()
     }
 
@@ -888,6 +907,7 @@ public class ChatClient internal constructor(
         socket.disconnect()
         userCredentialStorage.clear()
         lifecycleObserver.dispose()
+        appSettingsManager.clear()
     }
 
     //region: api calls
@@ -1900,6 +1920,15 @@ public class ChatClient internal constructor(
         }.getOrNull()
     }
 
+    /**
+     * Returns application settings from the server or the default ones as a fallback.
+     *
+     * @return The application settings.
+     */
+    public fun getAppSettings(): AppSettings {
+        return appSettingsManager.getAppSettings()
+    }
+
     public fun isSocketConnected(): Boolean {
         return socketStateService.state is SocketState.Connected
     }
@@ -2364,6 +2393,8 @@ public class ChatClient internal constructor(
                     customOkHttpClient,
                 )
 
+            val appSettingsManager = AppSettingManager(module.api())
+
             return ChatClient(
                 config,
                 module.api(),
@@ -2376,6 +2407,7 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
+                appSettingsManager = appSettingsManager,
             ).also {
                 configureInitializer(it)
             }

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongParameterList:Mother.kt$( year: Int = positiveRandomInt(), month: Int = positiveRandomInt(), date: Int = positiveRandomInt(), hourOfDay: Int = 0, minute: Int = 0, seconds: Int = 0 )</ID>
+  </CurrentIssues>
+</SmellBaseline>

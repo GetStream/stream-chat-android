@@ -39,11 +39,15 @@ buildscript {
         classpath Dependencies.shot
         classpath Dependencies.spotlessGradlePlugin
         classpath Dependencies.ksp
+        classpath Dependencies.detektPlugin
     }
 }
 
 subprojects {
-    apply from: "${rootDir}/scripts/spotless.gradle"
+    if (it.name != 'stream-chat-android-docs') {
+        apply from: "${rootDir}/spotless/spotless.gradle"
+    }
+    apply plugin: "io.gitlab.arturbosch.detekt"
 }
 
 allprojects {
