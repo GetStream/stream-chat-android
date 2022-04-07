@@ -451,7 +451,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactoryManager: AttachmentFactoryManager,
+            attachmentFactoryManager: AttachmentFactoryManager, // comment
         ): MessageOptionsDialogFragment {
             this.messageListViewStyle = style
             this.attachmentFactoryManager = attachmentFactoryManager
