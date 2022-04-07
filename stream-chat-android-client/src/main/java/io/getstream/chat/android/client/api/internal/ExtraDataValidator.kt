@@ -81,7 +81,7 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 ChatError(
-                    message = "'${obj.resolveName()}(id=${obj.resolveId()}).extraData' contains reserved keys: ${reserved.joinToString()}"
+                    message = obj.composeErrorMessage(reserved)
                 )
             )
         }
@@ -93,13 +93,15 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 ChatError(
-                    message = "'${obj.resolveName()}(id=${obj.resolveId()}).extraData' contains reserved keys: ${reserved.joinToString()}"
+                    message = obj.composeErrorMessage(reserved)
                 )
             )
         }
     }
 
-    private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(extraData: Map<String, Any>): Call<T> {
+    private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(
+        extraData: Map<String, Any>
+    ): Call<T> {
         val reserved = extraData.findReserved<T>()
         return when (reserved.isEmpty()) {
             true -> this
@@ -137,6 +139,10 @@ internal class ExtraDataValidator(
             User::class -> keys.filter(reservedInUserPredicate)
             else -> emptyList()
         }
+    }
+
+    private fun <T : CustomObject> T?.composeErrorMessage(reserved: List<String>): String {
+        return "'${resolveName()}(id=${resolveId()}" + ").extraData' contains reserved keys: ${reserved.joinToString()}"
     }
 
     private fun <T : CustomObject> T?.resolveName(): String {
