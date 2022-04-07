@@ -40,17 +40,17 @@ import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.extensions.internal.applyPagination
 import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.client.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.extensions.users
+import io.getstream.chat.android.client.persistence.repository.ChannelConfigRepository
+import io.getstream.chat.android.client.persistence.repository.ChannelRepository
+import io.getstream.chat.android.client.persistence.repository.QueryChannelsRepository
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepository
-import io.getstream.chat.android.offline.utils.Event
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.ChannelFilterRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 

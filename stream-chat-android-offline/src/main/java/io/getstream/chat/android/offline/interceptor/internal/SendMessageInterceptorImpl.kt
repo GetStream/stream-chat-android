@@ -28,9 +28,9 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.extensions.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.populateMentions
-import io.getstream.chat.android.client.uploader.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
 import io.getstream.chat.android.client.uploader.attachment.network.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.uploader.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade

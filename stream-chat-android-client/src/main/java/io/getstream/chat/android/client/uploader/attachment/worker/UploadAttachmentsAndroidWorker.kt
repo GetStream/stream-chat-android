@@ -25,10 +25,11 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.manager.ChannelsManagerProvider
 import io.getstream.chat.android.client.persistence.repository.provider.RepositoryProvider
 import io.getstream.chat.android.client.uploader.attachment.network.UploadAttachmentsNetworkType
 
-internal class UploadAttachmentsAndroidWorker(
+public class UploadAttachmentsAndroidWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -40,7 +41,7 @@ internal class UploadAttachmentsAndroidWorker(
 
         //Todo: Review the !!
         return UploadAttachmentsWorker(
-            LogicRegistry.get(),
+            ChannelsManagerProvider.getChannelsManager(),
             RepositoryProvider.createMessageRepository { ChatClient.instance().getCurrentUser()!! },
             RepositoryProvider.createUserRepository(),
             ChatClient.instance()
@@ -51,12 +52,12 @@ internal class UploadAttachmentsAndroidWorker(
         ).run { if (isSuccess) Result.success() else Result.failure() }
     }
 
-    companion object {
+    public companion object {
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
 
-        fun start(
+        public fun start(
             context: Context,
             channelType: String,
             channelId: String,

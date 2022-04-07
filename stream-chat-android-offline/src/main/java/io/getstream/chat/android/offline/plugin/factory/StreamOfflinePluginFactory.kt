@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.manager.ChannelsManagerProvider
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.models.User
@@ -113,6 +114,8 @@ public class StreamOfflinePluginFactory(
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
         val stateRegistry = StateRegistry.create(job, scope, userStateFlow, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
+
+        ChannelsManagerProvider.setChannelsManager(logic)
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
