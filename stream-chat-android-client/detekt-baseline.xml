@@ -523,6 +523,7 @@
     <ID>TooManyFunctions:ChatSocketServiceImpl.kt$ChatSocketServiceImpl : ChatSocketService</ID>
     <ID>TooManyFunctions:EventMapping.kt$io.getstream.chat.android.client.api2.mapping.EventMapping.kt</ID>
     <ID>TooManyFunctions:EventsParser.kt$EventsParser : WebSocketListener</ID>
+    <ID>TooManyFunctions:ExtraDataValidator.kt$ExtraDataValidator : ChatApi</ID>
     <ID>TooManyFunctions:Filters.kt$Filters$Filters</ID>
     <ID>TooManyFunctions:MessageApi.kt$MessageApi</ID>
     <ID>TooManyFunctions:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler : NotificationHandler</ID>
