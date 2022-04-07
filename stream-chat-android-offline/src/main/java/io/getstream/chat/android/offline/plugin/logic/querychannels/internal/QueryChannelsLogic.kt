@@ -39,7 +39,7 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.extensions.internal.applyPagination
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState

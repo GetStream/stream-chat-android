@@ -22,44 +22,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistence.repository.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import java.util.Date
-
-internal interface ChannelRepository {
-    suspend fun insertChannel(channel: Channel)
-    suspend fun insertChannels(channels: Collection<Channel>)
-    suspend fun deleteChannel(cid: String)
-    suspend fun selectChannelWithoutMessages(cid: String): Channel?
-
-    /**
-     * Selects all channels' cids.
-     *
-     * @return A list of channels' cids stored in the repository.
-     */
-    suspend fun selectAllCids(): List<String>
-
-    /**
-     * Select channels by full channel IDs [Channel.cid]
-     *
-     * @param channelCIDs A list of [Channel.cid] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
-     *
-     * @return A list of channels found in repository.
-     */
-    suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean = false): List<Channel>
-    suspend fun selectChannelsSyncNeeded(): List<Channel>
-    suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
-    suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date)
-    suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
-    suspend fun selectMembersForChannel(cid: String): List<Member>
-    suspend fun updateMembersForChannel(cid: String, members: List<Member>)
-    suspend fun evictChannel(cid: String)
-
-    @VisibleForTesting
-    fun clearChannelCache()
-}
 
 internal class ChannelRepositoryImpl(
     private val channelDao: ChannelDao,

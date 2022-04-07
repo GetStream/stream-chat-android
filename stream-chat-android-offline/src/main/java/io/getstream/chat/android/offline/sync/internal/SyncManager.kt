@@ -34,7 +34,8 @@ import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.models.SyncState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry

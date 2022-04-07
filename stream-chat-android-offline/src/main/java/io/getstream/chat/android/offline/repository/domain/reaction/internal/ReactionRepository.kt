@@ -18,29 +18,9 @@ package io.getstream.chat.android.offline.repository.domain.reaction.internal
 
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistence.repository.ReactionRepository
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
-
-internal interface ReactionRepository {
-    suspend fun insertReaction(reaction: Reaction)
-    suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
-    suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction>
-    /**
-     * Selects the reaction of given type to the message if exists.
-     *
-     * @param reactionType The type of reaction.
-     * @param messageId The id of the message to which reaction belongs.
-     * @param userId The id of the user who is the owner of reaction.
-     *
-     * @return [Reaction] if exists, null otherwise.
-     */
-    suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): Reaction?
-
-    suspend fun selectUserReactionsToMessage(
-        messageId: String,
-        userId: String,
-    ): List<Reaction>
-}
 
 /**
  * We don't do any caching on reactions since usage is infrequent.

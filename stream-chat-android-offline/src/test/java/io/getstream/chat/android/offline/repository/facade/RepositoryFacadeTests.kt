@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMember
@@ -34,12 +34,9 @@ import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain same`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify

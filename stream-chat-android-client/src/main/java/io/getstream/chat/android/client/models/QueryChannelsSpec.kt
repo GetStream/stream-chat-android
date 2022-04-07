@@ -14,13 +14,14 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.offline.sync.internal
+package io.getstream.chat.android.client.models
 
-import java.util.Date
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QuerySort
 
-internal data class SyncState(
-    val userId: String,
-    val activeChannelIds: List<String> = emptyList(),
-    val lastSyncedAt: Date? = null,
-    val markedAllReadAt: Date? = null,
-)
+public data class QueryChannelsSpec(
+    val filter: FilterObject,
+    val querySort: QuerySort<Channel>
+) {
+    var cids: Set<String> = emptySet()
+}

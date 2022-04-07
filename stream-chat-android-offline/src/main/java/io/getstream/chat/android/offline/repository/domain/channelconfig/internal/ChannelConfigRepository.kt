@@ -16,18 +16,9 @@
  
 package io.getstream.chat.android.offline.repository.domain.channelconfig.internal
 
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.persistence.repository.ChannelConfigRepository
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
 import java.util.Collections
-
-internal interface ChannelConfigRepository {
-    /**
-     * Caches in memory data from DB.
-     */
-    suspend fun cacheChannelConfigs()
-    fun selectChannelConfig(channelType: String): ChannelConfig?
-    suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>)
-    suspend fun insertChannelConfig(config: ChannelConfig)
-}
 
 /**
  * The channel config repository stores all channel configs in room as well as in memory.

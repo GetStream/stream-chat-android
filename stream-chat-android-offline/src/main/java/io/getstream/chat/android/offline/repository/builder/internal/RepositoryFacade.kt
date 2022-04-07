@@ -26,17 +26,18 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistence.repository.MessageRepository
 import io.getstream.chat.android.client.persistence.repository.UserRepository
+import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.isRequestingMoreThanLastMessage
-import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepository
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepository
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
-import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepository
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.persistence.repository.AttachmentRepository
+import io.getstream.chat.android.client.persistence.repository.ChannelConfigRepository
+import io.getstream.chat.android.client.persistence.repository.ChannelRepository
+import io.getstream.chat.android.client.persistence.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.persistence.repository.ReactionRepository
+import io.getstream.chat.android.client.persistence.repository.SyncStateRepository
+import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -188,7 +189,7 @@ internal class RepositoryFacade(
          */
         @VisibleForTesting
         internal fun create(
-            factory: RepositoryFactoryImpl,
+            factory: RepositoryFactory,
             scope: CoroutineScope,
             defaultConfig: Config,
         ): RepositoryFacade {

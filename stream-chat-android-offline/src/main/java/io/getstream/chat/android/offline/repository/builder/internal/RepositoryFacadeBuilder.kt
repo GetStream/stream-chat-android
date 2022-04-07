@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
 import kotlinx.coroutines.CoroutineScope
@@ -34,16 +35,17 @@ internal class RepositoryFacadeBuilder {
 
     private var context: Context? = null
     private var currentUser: User? = null
-    private var isOfflineEnabled: Boolean = false
-    private var database: ChatDatabase? = null
+    // private var isOfflineEnabled: Boolean = false
+    // private var database: ChatDatabase? = null
     private var coroutineScope: CoroutineScope? = null
     private var defaultConfig: Config? = null
+    private var repositoryFactory: RepositoryFactory? = null
 
     fun context(context: Context): RepositoryFacadeBuilder = apply { this.context = context }
     fun currentUser(user: User): RepositoryFacadeBuilder = apply { this.currentUser = user }
-    fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder =
-        apply { this.isOfflineEnabled = isOfflineEnabled }
-    fun database(database: ChatDatabase?): RepositoryFacadeBuilder = apply { this.database = database }
+    // fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder =
+    //     apply { this.isOfflineEnabled = isOfflineEnabled }
+    // fun database(database: ChatDatabase?): RepositoryFacadeBuilder = apply { this.database = database }
     fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
     fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
 
@@ -62,14 +64,14 @@ internal class RepositoryFacadeBuilder {
         }
     }
 
-    private fun getChatDatabase(scope: CoroutineScope): ChatDatabase {
-        return database ?: createDatabase(scope, requireNotNull(context), currentUser, isOfflineEnabled)
-    }
+    // private fun getChatDatabase(scope: CoroutineScope): ChatDatabase {
+    //     return database ?: createDatabase(scope, requireNotNull(context), currentUser, isOfflineEnabled)
+    // }
 
     fun build(): RepositoryFacade {
         val config = requireNotNull(defaultConfig)
         val scope = requireNotNull(coroutineScope)
-        val factory = RepositoryFactoryImpl(getChatDatabase(scope), currentUser)
+        val factory = requireNotNull(repositoryFactory)
 
         return RepositoryFacade.create(factory, scope, config)
     }

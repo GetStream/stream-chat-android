@@ -16,7 +16,7 @@
  
 package io.getstream.chat.android.offline.repository.domain.syncState.internal
 
-import io.getstream.chat.android.offline.sync.internal.SyncState
+import io.getstream.chat.android.client.models.SyncState
 
 internal fun SyncStateEntity.toModel() =
     SyncState(userId, activeChannelIds, lastSyncedAt, markedAllReadAt)

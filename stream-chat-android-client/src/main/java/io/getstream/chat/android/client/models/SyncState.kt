@@ -14,8 +14,13 @@
  * limitations under the License.
  */
  
-package io.getstream.chat.android.offline.model.channel.internal
+package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.models.Config
+import java.util.Date
 
-internal data class ChannelConfig(val type: String, val config: Config)
+public data class SyncState(
+    val userId: String,
+    val activeChannelIds: List<String> = emptyList(),
+    val lastSyncedAt: Date? = null,
+    val markedAllReadAt: Date? = null,
+)

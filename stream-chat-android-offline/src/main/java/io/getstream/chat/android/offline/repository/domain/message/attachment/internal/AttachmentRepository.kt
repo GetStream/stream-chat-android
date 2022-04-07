@@ -17,13 +17,10 @@
 package io.getstream.chat.android.offline.repository.domain.message.attachment.internal
 
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.persistence.repository.AttachmentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-
-internal interface AttachmentRepository {
-    fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
-}
 
 internal class AttachmentRepositoryImpl(private val attachmentDao: AttachmentDao) : AttachmentRepository {
     override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {

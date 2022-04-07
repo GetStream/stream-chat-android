@@ -55,7 +55,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
+import io.getstream.chat.android.client.models.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateEntity
 import io.github.cdimascio.dotenv.dotenv
 import java.time.Instant

@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.repository.domain.channelconfig.intern
 
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
 
 internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity(
     channelConfigInnerEntity = with(config) {
