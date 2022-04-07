@@ -52,7 +52,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+ - Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [#3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+ - Added attributes to `MessageListItemStyle` to allow customisation of failed and banned indicator icons. [#3236](https://github.com/GetStream/stream-chat-android/pull/3301)
 
 ### ⚠️ Changed
 
