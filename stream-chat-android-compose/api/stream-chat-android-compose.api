@@ -1085,7 +1085,7 @@ public final class io/getstream/chat/android/compose/ui/components/selectedmessa
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenuKt {
-	public static final fun SelectedMessageMenu-OkTjGUA (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Ljava/util/Set;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLjava/util/Map;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun SelectedMessageMenu-OkTjGUA (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLjava/util/Map;ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenuKt {

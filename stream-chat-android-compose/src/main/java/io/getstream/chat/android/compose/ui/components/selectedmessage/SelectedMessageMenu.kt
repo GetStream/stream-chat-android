@@ -47,10 +47,10 @@ import io.getstream.chat.android.compose.util.extensions.toSet
  *
  * @param message The selected message.
  * @param messageOptions The available message options within the menu.
- * @param onMessageAction Handler that propagates click events on each item.
- * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * @param onMessageAction Handler that propagates click events on each item.
+ * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of [SelectedMessageMenu].
  * @param overlayColor The color applied to the overlay.
@@ -64,9 +64,9 @@ import io.getstream.chat.android.compose.util.extensions.toSet
 public fun SelectedMessageMenu(
     message: Message,
     messageOptions: List<MessageOptionItemState>,
+    ownCapabilities: Set<String>,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
-    ownCapabilities: Set<String>,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
