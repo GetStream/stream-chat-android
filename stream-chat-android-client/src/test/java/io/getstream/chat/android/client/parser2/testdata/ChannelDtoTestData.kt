@@ -222,6 +222,43 @@ internal object ChannelDtoTestData {
     )
 
     @Language("JSON")
+    val downstreamJsonWithoutNameAndImage =
+        """{
+          "cid": "channelType:channelId",
+          "id": "channelId",
+          "type": "channelType",
+          "name": null,
+          "image": null,
+          "frozen": false,
+          "config": $configJson
+        }
+        """.withoutWhitespace()
+    val downstreamChannelWithoutNameAndImage = DownstreamChannelDto(
+        cid = "channelType:channelId",
+        id = "channelId",
+        type = "channelType",
+        name = null,
+        image = null,
+        watcher_count = 0,
+        frozen = false,
+        last_message_at = null,
+        created_at = null,
+        deleted_at = null,
+        updated_at = null,
+        member_count = 0,
+        messages = emptyList(),
+        members = emptyList(),
+        watchers = emptyList(),
+        read = emptyList(),
+        config = configDto,
+        created_by = null,
+        team = "",
+        cooldown = 0,
+        pinned_messages = emptyList(),
+        extraData = emptyMap(),
+    )
+
+    @Language("JSON")
     val upstreamJson =
         """{
           "cid": "channelType:channelId",
