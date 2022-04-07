@@ -705,7 +705,7 @@ public class MessageListViewModel(
      *
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
-    public fun setDeletedMessagesVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
         this.deletedMessageVisibility.value = deletedMessageVisibility
     }
 

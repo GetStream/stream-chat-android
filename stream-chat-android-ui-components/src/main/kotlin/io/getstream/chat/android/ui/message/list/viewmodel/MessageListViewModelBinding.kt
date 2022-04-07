@@ -49,7 +49,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
 
     view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
         if (messageListItemPredicate != null) {
-            val deletedMessagesVisibility = when (messageListItemPredicate) {
+            val deletedMessageVisibility = when (messageListItemPredicate) {
                 DeletedMessageListItemPredicate.NotVisibleToAnyone ->
                     MessageListViewModel.DeletedMessageVisibility.ALWAYS_HIDDEN
                 DeletedMessageListItemPredicate.VisibleToAuthorOnly ->
@@ -57,7 +57,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
                 else -> MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE
             }
 
-            setDeletedMessagesVisibility(deletedMessagesVisibility)
+            setDeletedMessageVisibility(deletedMessageVisibility)
         }
     }
 
