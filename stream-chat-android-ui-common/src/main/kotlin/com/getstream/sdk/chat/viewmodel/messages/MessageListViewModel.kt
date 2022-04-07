@@ -88,8 +88,8 @@ public class MessageListViewModel(
     /**
      * Regulates the visibility of deleted messages.
      */
-    private var deletedMessagesVisibility: MutableLiveData<DeletedMessagesVisibility> =
-        MutableLiveData(DeletedMessagesVisibility.ALL)
+    private var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
+        MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
     /**
      * Represents the current state of the message list
@@ -220,7 +220,7 @@ public class MessageListViewModel(
 
     /**
      * Initializes the ViewModel with offline capabilities using
-     * [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
+     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
      */
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
@@ -251,7 +251,7 @@ public class MessageListViewModel(
             typingLd = typingIds,
             isThread = false,
             dateSeparatorHandler = dateSeparatorHandler,
-            deletedMessagesVisibility = deletedMessagesVisibility
+            deletedMessageVisibility = deletedMessageVisibility
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -296,7 +296,7 @@ public class MessageListViewModel(
             null,
             true,
             threadDateSeparatorHandler,
-            deletedMessagesVisibility
+            deletedMessageVisibility
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -701,12 +701,12 @@ public class MessageListViewModel(
 
     /**
      * Sets the value used to filter deleted messages.
-     * @see DeletedMessagesVisibility
+     * @see DeletedMessageVisibility
      *
-     * @param deletedMessagesVisibility Changes the visibility of deleted messages.
+     * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
-    public fun setDeletedMessagesVisibility(deletedMessagesVisibility: DeletedMessagesVisibility) {
-        this.deletedMessagesVisibility.value = deletedMessagesVisibility
+    public fun setDeletedMessagesVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+        this.deletedMessageVisibility.value = deletedMessageVisibility
     }
 
     /**
@@ -962,24 +962,24 @@ public class MessageListViewModel(
      * Intended to be used for regulating visibility of deleted messages
      * and filtering them out accordingly.
      */
-    public enum class DeletedMessagesVisibility {
+    public enum class DeletedMessageVisibility {
 
         /**
          * No deleted messages are visible.
          */
-        NONE,
+        ALWAYS_HIDDEN,
 
         /**
          * Deleted messages from the current user are visible,
          * ones from other users are not.
          */
-        MINE,
+        VISIBLE_FOR_CURRENT_USER,
 
         /**
          * All deleted messages are visible, regardless of the
          * user who authored them.
          */
-        ALL
+        ALWAYS_VISIBLE
     }
 
     /**

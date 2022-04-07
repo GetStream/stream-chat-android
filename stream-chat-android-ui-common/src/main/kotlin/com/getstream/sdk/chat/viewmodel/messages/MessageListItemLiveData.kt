@@ -74,7 +74,7 @@ internal class MessageListItemLiveData(
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
-    private val deletedMessagesVisibility: LiveData<MessageListViewModel.DeletedMessagesVisibility>,
+    private val deletedMessageVisibility: LiveData<MessageListViewModel.DeletedMessageVisibility>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -99,7 +99,7 @@ internal class MessageListItemLiveData(
      */
     private fun configMessagesChange(messages: LiveData<List<Message>>, getCurrentUser: LiveData<User?>) {
         val messagesChange = getCurrentUser
-            .combineWith(deletedMessagesVisibility) { user, _ ->
+            .combineWith(deletedMessageVisibility) { user, _ ->
                 user
             }
             .changeOnUserLoaded(messages) { changedMessages, currentUser ->
@@ -200,9 +200,9 @@ internal class MessageListItemLiveData(
      * set by the user.
      */
     private fun filterDeletedMessages(messages: List<Message>?): List<Message>? {
-        return when (deletedMessagesVisibility.value) {
-            MessageListViewModel.DeletedMessagesVisibility.MINE -> messages?.filter { it.deletedAt == null || it.user.id == currentUser.value?.id }
-            MessageListViewModel.DeletedMessagesVisibility.NONE -> messages?.filter { it.deletedAt == null }
+        return when (deletedMessageVisibility.value) {
+            MessageListViewModel.DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> messages?.filter { it.deletedAt == null || it.user.id == currentUser.value?.id }
+            MessageListViewModel.DeletedMessageVisibility.ALWAYS_HIDDEN -> messages?.filter { it.deletedAt == null }
             else -> messages
         }
     }

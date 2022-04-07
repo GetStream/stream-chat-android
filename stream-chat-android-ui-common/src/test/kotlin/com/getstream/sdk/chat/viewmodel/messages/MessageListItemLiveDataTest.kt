@@ -72,7 +72,7 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf())
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessagesVisibility.ALL)
+        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
     }
@@ -81,7 +81,7 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessagesVisibility.ALL)
+        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
     }
@@ -104,7 +104,7 @@ internal class MessageListItemLiveDataTest {
         val read2 = ChannelUserRead(users[1], messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessagesVisibility.ALL)
+        val deletedMessagesVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups, deletedMessagesVisibility)
     }
