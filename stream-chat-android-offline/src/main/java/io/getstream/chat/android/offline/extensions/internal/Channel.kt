@@ -59,8 +59,9 @@ internal fun Channel.setMember(userId: String, member: Member?, isUpdate: Boolea
         }
     } else {
         members = members + member
-        if (!isUpdate)
+        if (!isUpdate) {
             memberCount += 1
+        }
     }
 }
 
