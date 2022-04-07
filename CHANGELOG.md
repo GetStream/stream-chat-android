@@ -7,22 +7,27 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated Gradle version to [7.4.2](https://docs.gradle.org/7.4.2/release-notes.html). [#3281](https://github.com/GetStream/stream-chat-android/pull/3281)
 
 ### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed `User` model deserialization error when `User.image` is null. [#3283](https://github.com/GetStream/stream-chat-android/pull/3283)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added an `ExtraDataValidator` to intercept `ChatApi` calls and validate `CustomObject.extraData` does not contain the reserved keywords. [#3279](https://github.com/GetStream/stream-chat-android/pull/3279)
 
 ### ⚠️ Changed
+- Migrate androidx-lifecycle version to [2.4.1](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.4.1). [#3282](https://github.com/GetStream/stream-chat-android/pull/3282)
 
 ### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed crash related with logging out while running a request to update channels.
 
 ### ⬆️ Improved
 
@@ -49,6 +54,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
 
 ### ⚠️ Changed
 
@@ -62,6 +68,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
 
 ### ❌ Removed
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
@@ -21,11 +37,11 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.extensions.internal.applyPagination
-import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.extensions.state
 import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
@@ -43,6 +59,8 @@ internal class QueryChannelsLogic(
     private val client: ChatClient,
     private val repos: RepositoryFacade,
     private val globalState: GlobalMutableState,
+    private val logicRegistry: LogicRegistry,
+    private val stateRegistry: StateRegistry
 ) {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
@@ -103,7 +121,7 @@ internal class QueryChannelsLogic(
      */
     internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
-        client.logic.channel(channel.type, channel.id).updateDataFromChannel(channel)
+        logicRegistry.channel(channel.type, channel.id).updateDataFromChannel(channel)
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
@@ -202,7 +220,7 @@ internal class QueryChannelsLogic(
                 .let { removeChannels(it, repos) }
         }
         mutableState.channelsOffset.value += channels.size
-        channels.forEach { client.logic.channel(it.type, it.id).updateDataFromChannel(it) }
+        channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
         addChannels(channels, repos)
     }
 
@@ -272,7 +290,7 @@ internal class QueryChannelsLogic(
             .intersect(cidList)
             .associateWith { cid ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                client.state.channel(channelType, channelId).toChannel()
+                stateRegistry.channel(channelType, channelId).toChannel()
             }
     }
 

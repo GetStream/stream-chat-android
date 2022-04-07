@@ -1,0 +1,5 @@
+detekt {
+    // Define the detekt configuration(s) you want to use.
+    // Defaults to the default detekt configuration.
+    config = files("$rootDir/config/detekt/detekt.yml", "$rootDir/config/detekt/detekt-compose.yml")
+}
