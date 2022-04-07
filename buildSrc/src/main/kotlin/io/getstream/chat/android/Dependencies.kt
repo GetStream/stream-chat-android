@@ -12,9 +12,7 @@ object Versions {
     internal const val ANDROIDX_CORE_TEST = "2.1.0"
     internal const val ANDROIDX_FRAGMENT_KTX = "1.4.0"
     internal const val ANDROIDX_KTX = "1.7.0"
-    internal const val ANDROIDX_LIFECYCLE_EXTENSIONS = "2.2.0"
-    internal const val ANDROIDX_LIFECYCLE_LIVEDATA_KTX = "2.4.0"
-    internal const val ANDROIDX_LIFECYCLE_VIEWMODEL_KTX = "2.4.0"
+    internal const val ANDROIDX_LIFECYCLE = "2.4.1"
     internal const val ANDROIDX_PREFERENCES = "1.1.1"
     internal const val ANDROIDX_RECYCLERVIEW = "1.2.1"
     internal const val ANDROIDX_STARTUP = "1.1.0"
@@ -93,12 +91,9 @@ object Dependencies {
     const val androidxArchCoreTest = "androidx.arch.core:core-testing:${Versions.ANDROIDX_CORE_TEST}"
     const val androidxCoreKtx = "androidx.core:core-ktx:${Versions.ANDROIDX_KTX}"
     const val androidxFragmentKtx = "androidx.fragment:fragment-ktx:${Versions.ANDROIDX_FRAGMENT_KTX}"
-    const val androidxLifecycleExtensions =
-        "androidx.lifecycle:lifecycle-extensions:${Versions.ANDROIDX_LIFECYCLE_EXTENSIONS}"
-    const val androidxLifecycleLiveDataKtx =
-        "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROIDX_LIFECYCLE_LIVEDATA_KTX}"
-    const val androidxLifecycleViewModelKtx =
-        "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROIDX_LIFECYCLE_VIEWMODEL_KTX}"
+    const val androidxLifecycleProcess = "androidx.lifecycle:lifecycle-process:${Versions.ANDROIDX_LIFECYCLE}"
+    const val androidxLifecycleLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROIDX_LIFECYCLE}"
+    const val androidxLifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxPreferences = "androidx.preference:preference:${Versions.ANDROIDX_PREFERENCES}"
     const val androidxRecyclerview = "androidx.recyclerview:recyclerview:${Versions.ANDROIDX_RECYCLERVIEW}"
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
