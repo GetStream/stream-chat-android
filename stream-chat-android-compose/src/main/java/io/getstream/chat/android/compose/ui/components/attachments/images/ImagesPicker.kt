@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -143,28 +144,55 @@ internal fun DefaultImagesPickerItem(
         }
 
         if (isVideo) {
-            Icon(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(24.dp)
-                    .mirrorRtl(LocalLayoutDirection.current)
-                    .align(Alignment.BottomStart),
-                painter = painterResource(id = R.drawable.stream_compose_ic_video),
-                contentDescription = null,
-                tint = Color.White
-            )
+            VideoThumbnailOverlay(attachmentMetaData.videoLength)
+        }
+    }
+}
 
-            val videoLength = attachmentMetaData.videoLength
-            if (videoLength != 0L) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp, vertical = 8.dp)
-                        .align(Alignment.BottomEnd),
-                    text = MediaStringUtil.convertVideoLength(videoLength),
-                    style = ChatTheme.typography.bodyBold,
-                    color = Color.White
+/**
+ * Represents an overlay that is shown over videos in the picker.
+ *
+ * @param videoLength The duration of video in seconds.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+private fun VideoThumbnailOverlay(
+    videoLength: Long,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        Color.Transparent,
+                        Color.Black
+                    )
                 )
-            }
+            )
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(4.dp)
+                .size(24.dp)
+                .mirrorRtl(LocalLayoutDirection.current)
+                .align(Alignment.BottomStart),
+            painter = painterResource(id = R.drawable.stream_compose_ic_video),
+            contentDescription = null,
+            tint = Color.White
+        )
+
+        if (videoLength != 0L) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp, vertical = 8.dp)
+                    .align(Alignment.BottomEnd),
+                text = MediaStringUtil.convertVideoLength(videoLength),
+                style = ChatTheme.typography.bodyBold,
+                color = Color.White
+            )
         }
     }
 }
