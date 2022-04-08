@@ -50,7 +50,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Adding ShowAvatarPredicate for MessageOptions overlay making it possible to hide the avatar picture when in the message options.
+- Adding ShowAvatarPredicate for MessageOptions overlay making it possible to hide the avatar picture when in the message options. [#3302](https://github.com/GetStream/stream-chat-android/pull/3302)
 
 ### ⬆️ Improved
 
