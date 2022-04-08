@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : LifecycleObserver {
+internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : DefaultLifecycleObserver {
     private var recurringResumeEvent = false
-    @Volatile private var isObserving = false
+
+    @Volatile
+    private var isObserving = false
 
     fun observe() {
         if (isObserving.not()) {
@@ -52,8 +53,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
         recurringResumeEvent = false
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
+    override fun onResume(owner: LifecycleOwner) {
         // ignore event when we just started observing the lifecycle
         if (recurringResumeEvent) {
             handler.resume()
@@ -61,8 +61,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
         recurringResumeEvent = true
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStopped() {
+    override fun onStop(owner: LifecycleOwner) {
         handler.stopped()
     }
 }

@@ -63,7 +63,7 @@ dependencies {
 
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxLifecycleProcess
     implementation Dependencies.workRuntimeKtx
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
