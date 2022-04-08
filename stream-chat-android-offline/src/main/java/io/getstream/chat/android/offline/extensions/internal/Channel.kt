@@ -51,7 +51,14 @@ internal fun Channel.updateLastMessage(message: Message) {
     }
 }
 
-internal fun Channel.setMember(userId: String, member: Member?, isUpdate: Boolean = false) {
+/**
+ * Updates member counts and list of members of this channel based on whether [member] is added, removed or updated.
+ *
+ * @param userId User id of the added/removed/updated member.
+ * @param member Member object.
+ * @param isUpdate True if a member is updated but not added/removed, false otherwise.
+ */
+internal fun Channel.updateMembers(userId: String, member: Member?, isUpdate: Boolean) {
     if (member == null) {
         members.firstOrNull { it.user.id == userId }?.also { foundMember ->
             members = members - foundMember

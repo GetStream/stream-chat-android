@@ -315,6 +315,7 @@ internal class ChannelLogic(
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
+        mutableState._membersCount.value = c.memberCount
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
@@ -779,6 +780,7 @@ internal class ChannelLogic(
                 upsertMember(event.member)
             }
             is NotificationAddedToChannelEvent -> {
+                mutableState._membersCount.value += event.channel.members.size
                 upsertMembers(event.channel.members)
             }
             is UserPresenceChangedEvent -> {
