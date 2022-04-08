@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.avatar.AvatarView
-import io.getstream.chat.android.ui.message.list.DefaultShowAvatarPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
@@ -31,7 +30,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 
 internal class AvatarDecorator(
-    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
+    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate,
 ) : BaseDecorator() {
 
     /**

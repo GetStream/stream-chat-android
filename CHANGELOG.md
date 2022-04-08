@@ -51,6 +51,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Adding ShowAvatarPredicate for MessageOptions overlay making it possible to hide the avatar picture when in the message options. [#3302](https://github.com/GetStream/stream-chat-android/pull/3302)
 
 ### ⬆️ Improved
 
@@ -68,6 +69,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
