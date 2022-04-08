@@ -16,15 +16,12 @@
 
 package io.getstream.chat.android.offline.repository
 
-import app.cash.turbine.test
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
@@ -45,7 +42,7 @@ internal class UserRepositoryTests {
     @BeforeEach
     fun setup() {
         userDao = mock()
-        sut = UserRepositoryImpl(userDao)
+        sut = DatabaseUserRepository(userDao)
     }
 
     @Test

@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-internal class AttachmentRepositoryImpl(private val attachmentDao: AttachmentDao) : AttachmentRepository {
+internal class DatabaseAttachmentRepository(private val attachmentDao: AttachmentDao) : AttachmentRepository {
     override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {
         return attachmentDao.observeAttachmentsForMessage(messageId)
             .distinctUntilChanged()

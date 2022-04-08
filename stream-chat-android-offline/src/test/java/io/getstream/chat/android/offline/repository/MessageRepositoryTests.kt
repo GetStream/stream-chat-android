@@ -25,11 +25,10 @@ import io.getstream.chat.android.offline.randomMessageEntity
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyList
@@ -55,7 +54,7 @@ internal class MessageRepositoryTests {
     fun setup() {
         messageDao = mock()
         cache = mock()
-        sut = MessageRepositoryImpl(messageDao, ::randomUser, null, 100, cache)
+        sut = DatabaseMessageRepository(messageDao, ::randomUser, null, 100, cache)
     }
 
     @Test

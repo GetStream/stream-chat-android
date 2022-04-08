@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
-internal class MessageRepositoryImpl(
+internal class DatabaseMessageRepository(
     private val messageDao: MessageDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,

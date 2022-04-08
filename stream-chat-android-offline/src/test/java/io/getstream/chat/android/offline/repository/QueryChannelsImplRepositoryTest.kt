@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
@@ -41,12 +41,12 @@ import org.mockito.kotlin.whenever
 internal class QueryChannelsImplRepositoryTest {
 
     private lateinit var dao: QueryChannelsDao
-    private lateinit var sut: QueryChannelsRepositoryImpl
+    private lateinit var sut: DatabaseQueryChannelsRepository
 
     @BeforeEach
     fun before() {
         dao = mock()
-        sut = QueryChannelsRepositoryImpl(dao)
+        sut = DatabaseQueryChannelsRepository(dao)
     }
 
     @Test

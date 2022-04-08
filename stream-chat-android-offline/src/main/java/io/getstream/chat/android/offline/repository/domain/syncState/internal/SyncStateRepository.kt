@@ -19,7 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.syncState.internal
 import io.getstream.chat.android.client.models.SyncState
 import io.getstream.chat.android.client.persistence.repository.SyncStateRepository
 
-internal class SyncStateRepositoryImpl(private val syncStateDao: SyncStateDao) : SyncStateRepository {
+internal class DatabaseSyncStateRepository(private val syncStateDao: SyncStateDao) : SyncStateRepository {
     override suspend fun insertSyncState(syncState: SyncState) {
         syncStateDao.insert(syncState.toEntity())
     }

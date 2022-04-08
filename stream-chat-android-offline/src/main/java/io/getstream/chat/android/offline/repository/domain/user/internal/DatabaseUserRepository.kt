@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.persistence.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class UserRepositoryImpl(
+internal class DatabaseUserRepository(
     private val userDao: UserDao,
     cacheSize: Int = 100,
 ) : UserRepository {

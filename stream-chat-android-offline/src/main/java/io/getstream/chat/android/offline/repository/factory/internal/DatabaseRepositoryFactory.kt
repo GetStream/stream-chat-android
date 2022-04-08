@@ -28,40 +28,40 @@ import io.getstream.chat.android.client.persistence.repository.SyncStateReposito
 import io.getstream.chat.android.client.persistence.repository.UserRepository
 import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.channel.internal.DatabaseChannelRepository
+import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.DatabaseAttachmentRepository
+import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
+import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
+import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User?,
 ): RepositoryFactory {
-    override fun userRepository(): UserRepository = UserRepositoryImpl(database.userDao(), 100)
+    override fun userRepository(): UserRepository = DatabaseUserRepository(database.userDao(), 100)
 
     override fun channelConfigRepository(): ChannelConfigRepository =
-        ChannelConfigRepositoryImpl(database.channelConfigDao())
+        DatabaseChannelConfigRepository(database.channelConfigDao())
 
     override fun channelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = ChannelRepositoryImpl(database.channelStateDao(), getUser, getMessage, 100)
+    ): ChannelRepository = DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, 100)
 
     override fun queryChannelsRepository(): QueryChannelsRepository =
-        QueryChannelsRepositoryImpl(database.queryChannelsDao())
+        DatabaseQueryChannelsRepository(database.queryChannelsDao())
 
     override fun messageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = MessageRepositoryImpl(database.messageDao(), getUser, currentUser, 100)
+    ): MessageRepository = DatabaseMessageRepository(database.messageDao(), getUser, currentUser, 100)
 
     override fun reactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
-        ReactionRepositoryImpl(database.reactionDao(), getUser)
+        DatabaseReactionRepository(database.reactionDao(), getUser)
 
-    override fun syncStateRepository(): SyncStateRepository = SyncStateRepositoryImpl(database.syncStateDao())
+    override fun syncStateRepository(): SyncStateRepository = DatabaseSyncStateRepository(database.syncStateDao())
 
-    override fun attachmentRepository(): AttachmentRepository = AttachmentRepositoryImpl(database.attachmentDao())
+    override fun attachmentRepository(): AttachmentRepository = DatabaseAttachmentRepository(database.attachmentDao())
 }

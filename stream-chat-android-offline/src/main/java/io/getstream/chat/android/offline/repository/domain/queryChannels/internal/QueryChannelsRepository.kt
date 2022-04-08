@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.QueryChannelsSpec
 import io.getstream.chat.android.client.persistence.repository.QueryChannelsRepository
 
-internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
+internal class DatabaseQueryChannelsRepository(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }

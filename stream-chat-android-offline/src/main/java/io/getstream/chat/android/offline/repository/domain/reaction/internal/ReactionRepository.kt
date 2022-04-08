@@ -25,7 +25,7 @@ import java.util.Date
 /**
  * We don't do any caching on reactions since usage is infrequent.
  */
-internal class ReactionRepositoryImpl(
+internal class DatabaseReactionRepository(
     private val reactionDao: ReactionDao,
     private val getUser: suspend (userId: String) -> User,
 ) : ReactionRepository {

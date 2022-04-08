@@ -22,14 +22,13 @@ import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.coInvoking
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -50,7 +49,7 @@ internal class ReactionRepositoryTest {
         runBlocking {
             currentUser = randomUser()
             reactionDao = mock()
-            reactionRepo = ReactionRepositoryImpl(reactionDao) { currentUser }
+            reactionRepo = DatabaseReactionRepository(reactionDao) { currentUser }
         }
     }
 

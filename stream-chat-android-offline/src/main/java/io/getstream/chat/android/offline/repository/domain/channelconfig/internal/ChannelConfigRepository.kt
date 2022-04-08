@@ -24,7 +24,7 @@ import java.util.Collections
  * The channel config repository stores all channel configs in room as well as in memory.
  * Call channelConfigRepository.load to load all configs into memory.
  */
-internal class ChannelConfigRepositoryImpl(private val channelConfigDao: ChannelConfigDao) : ChannelConfigRepository {
+internal class DatabaseChannelConfigRepository(private val channelConfigDao: ChannelConfigDao) : ChannelConfigRepository {
     private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
 
     override suspend fun cacheChannelConfigs() {
