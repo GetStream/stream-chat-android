@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.common.composer
 
+import android.util.Log
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -38,6 +39,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,6 +77,13 @@ public class MessageComposerController(
      * ViewModel is disposed.
      */
     private val scope = CoroutineScope(DispatcherProvider.Main)
+
+    /**
+     * Buffers typing updates.
+     *
+     * @see [TypingUpdateBuffer]
+     */
+    private val typingUpdateBuffer = TypingUpdateBuffer()
 
     /**
      * Holds information about the current state of the [Channel].
@@ -273,7 +282,8 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        handleTypingEvent(isTyping = value.isNotEmpty())
+
+        typingUpdateBuffer.onTypingEvent()
         handleMentionSuggestions()
         handleCommandSuggestions()
         handleValidationErrors()
@@ -402,7 +412,6 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
-        handleTypingEvent(isTyping = false)
         handleCooldownTimer()
 
         sendMessageCall.enqueue()
@@ -481,26 +490,10 @@ public class MessageComposerController(
     }
 
     /**
-     * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
-     *
-     * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
-     * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
-     *
-     * @param isTyping If the user is currently typing.
-     */
-    private fun handleTypingEvent(isTyping: Boolean) {
-        val (type, id) = channelId.cidToTypeAndId()
-        if (isTyping) {
-            chatClient.keystroke(type, id, parentMessageId)
-        } else {
-            chatClient.stopTyping(type, id, parentMessageId)
-        }.enqueue()
-    }
-
-    /**
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
+        typingUpdateBuffer.clearTypingUpdates()
         scope.cancel()
     }
 
@@ -643,5 +636,89 @@ public class MessageComposerController(
          * The default limit for messages count in requests.
          */
         private const val DEFAULT_MESSAGE_LIMIT: Int = 30
+    }
+
+    /**
+     * A class designed to buffer typing updates.
+     * It works by sending the initial keystroke event and
+     * delaying for [delayInterval] before sending a stop typing
+     * event.
+     *
+     * Every subsequent keystroke will cancel the previous work
+     * and reset the time before sending a stop typing event.
+     *
+     * @param delayInterval The interval between the sending the
+     * keystroke event and the stop typing event.
+     */
+    private inner class TypingUpdateBuffer(private val delayInterval: Long = 1000) {
+
+        /**
+         * If the user is currently typing or not.
+         *
+         * Sends out a typing related event on every value
+         * change.
+         */
+        private var isTyping: Boolean = false
+            set(value) {
+                field = value
+                handleTypingEvent(isTyping)
+            }
+
+        /**
+         * Holds the currently viable job.
+         */
+        var job: Job? = null
+
+        /**
+         * Used to send a stop typing event after a
+         * set amount of time dictated by [delayInterval].
+         */
+        private suspend fun startTypingTimer() {
+            delay(delayInterval)
+            clearTypingUpdates()
+        }
+
+        /**
+         * Sets the value of [isTyping] only if there is
+         * a change in state in order to not create unnecessary events.
+         *
+         * It also cancels the previous job and creates a new one
+         * designed to send a stop typing event after a set amount of time,
+         * effectively debouncing keystrokes.
+         */
+        fun onTypingEvent() {
+            if (!isTyping) {
+                isTyping = true
+            }
+            job?.cancel()
+            job = scope.launch { startTypingTimer() }
+        }
+
+        /**
+         * Sets [isTyping] to false.
+         *
+         * Useful both for aiding the purpose of the class
+         * and hygiene events that need to be performed upon [onCleared].
+         */
+        fun clearTypingUpdates() {
+            isTyping = false
+        }
+
+        /**
+         * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
+         *
+         * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
+         * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
+         *
+         * @param isTyping If the user is currently typing.
+         */
+        private fun handleTypingEvent(isTyping: Boolean) {
+            val (type, id) = channelId.cidToTypeAndId()
+            if (isTyping) {
+                chatClient.keystroke(type, id, parentMessageId)
+            } else {
+                chatClient.stopTyping(type, id, parentMessageId)
+            }.enqueue()
+        }
     }
 }
