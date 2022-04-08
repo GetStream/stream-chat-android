@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.common.composer
 
-import android.util.Log
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -39,7 +38,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -281,7 +279,6 @@ public class MessageComposerController(
      */
     public fun setMessageInput(value: String) {
         this.input.value = value
-
 
         typingUpdateBuffer.onTypingEvent()
         handleMentionSuggestions()
