@@ -10,56 +10,35 @@ import io.getstream.chat.android.client.persistence.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistence.repository.ReactionRepository
 import io.getstream.chat.android.client.persistence.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistence.repository.UserRepository
+import io.getstream.chat.android.client.persistence.repository.factory.InMemoryRepositoryFactory
 import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
 
 public object RepositoryProvider : RepositoryFactory {
 
-    private var repositoryFactory: RepositoryFactory? = null
+    private var repositoryFactory: RepositoryFactory = InMemoryRepositoryFactory()
 
     public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
         this.repositoryFactory = repositoryFactory
     }
 
-    override fun createUserRepository(): UserRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createUserRepository()
-    }
+    override fun userRepository(): UserRepository = repositoryFactory.userRepository()
 
-    override fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createMessageRepository(getUser)
-    }
+    override fun messageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
+        repositoryFactory.messageRepository(getUser)
 
-    override fun createChannelConfigRepository(): ChannelConfigRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createChannelConfigRepository()
-    }
+    override fun channelConfigRepository(): ChannelConfigRepository = repositoryFactory.channelConfigRepository()
 
-    override fun createChannelRepository(
+    override fun channelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createChannelRepository(getUser, getMessage)
-    }
+    ): ChannelRepository = repositoryFactory.channelRepository(getUser, getMessage)
 
-    override fun createQueryChannelsRepository(): QueryChannelsRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createQueryChannelsRepository()
-    }
+    override fun queryChannelsRepository(): QueryChannelsRepository = repositoryFactory.queryChannelsRepository()
 
-    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createReactionRepository(getUser)
-    }
+    override fun reactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
+        repositoryFactory.reactionRepository(getUser)
 
-    override fun createSyncStateRepository(): SyncStateRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createSyncStateRepository()
-    }
+    override fun syncStateRepository(): SyncStateRepository = repositoryFactory.syncStateRepository()
 
-    override fun createAttachmentRepository(): AttachmentRepository {
-        checkNotNull(repositoryFactory) { "You need to define repositoryFactory" }
-        return repositoryFactory!!.createAttachmentRepository()
-    }
+    override fun attachmentRepository(): AttachmentRepository = repositoryFactory.attachmentRepository()
 }

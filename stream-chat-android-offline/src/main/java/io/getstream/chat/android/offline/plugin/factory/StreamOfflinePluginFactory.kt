@@ -55,7 +55,7 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
-import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
+import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
@@ -215,7 +215,7 @@ public class StreamOfflinePluginFactory(
         user: User?,
         offlineEnabled: Boolean,
     ): RepositoryFactory {
-        return RepositoryFactoryImpl(createDatabase(scope, context, user, offlineEnabled), user)
+        return DatabaseRepositoryFactory(createDatabase(scope, context, user, offlineEnabled), user)
     }
 
     private fun createDatabase(

@@ -13,24 +13,24 @@ import io.getstream.chat.android.client.persistence.repository.UserRepository
 
 public interface RepositoryFactory {
 
-    public fun createUserRepository(): UserRepository
+    public fun userRepository(): UserRepository
 
-    public fun createChannelConfigRepository(): ChannelConfigRepository
+    public fun channelConfigRepository(): ChannelConfigRepository
 
-    public fun createChannelRepository(
+    public fun channelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository
 
-    public fun createQueryChannelsRepository(): QueryChannelsRepository
+    public fun queryChannelsRepository(): QueryChannelsRepository
 
-    public fun createMessageRepository(
+    public fun messageRepository(
         getUser: suspend (userId: String) -> User,
     ): MessageRepository
 
-    public fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository
+    public fun reactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository
 
-    public fun createSyncStateRepository(): SyncStateRepository
+    public fun syncStateRepository(): SyncStateRepository
 
-    public fun createAttachmentRepository(): AttachmentRepository
+    public fun attachmentRepository(): AttachmentRepository
 }

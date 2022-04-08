@@ -38,7 +38,7 @@ import io.getstream.chat.android.client.persistence.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistence.repository.ReactionRepository
 import io.getstream.chat.android.client.persistence.repository.SyncStateRepository
 import io.getstream.chat.android.offline.extensions.internal.lastMessage
-import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactoryImpl
+import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -183,7 +183,7 @@ internal class RepositoryFacade(
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
          * used mainly for tests or internally by other constructor methods.
          *
-         * @param factory [RepositoryFactoryImpl]
+         * @param factory [DatabaseRepositoryFactory]
          * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
@@ -193,23 +193,23 @@ internal class RepositoryFacade(
             scope: CoroutineScope,
             defaultConfig: Config,
         ): RepositoryFacade {
-            val userRepository = factory.createUserRepository()
+            val userRepository = factory.userRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
                 requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
             }
 
-            val messageRepository = factory.createMessageRepository(getUser)
+            val messageRepository = factory.messageRepository(getUser)
             val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
             return RepositoryFacade(
                 userRepository = userRepository,
-                configsRepository = factory.createChannelConfigRepository(),
-                channelsRepository = factory.createChannelRepository(getUser, getMessage),
-                queryChannelsRepository = factory.createQueryChannelsRepository(),
+                configsRepository = factory.channelConfigRepository(),
+                channelsRepository = factory.channelRepository(getUser, getMessage),
+                queryChannelsRepository = factory.queryChannelsRepository(),
                 messageRepository = messageRepository,
-                reactionsRepository = factory.createReactionRepository(getUser),
-                syncStateRepository = factory.createSyncStateRepository(),
-                attachmentRepository = factory.createAttachmentRepository(),
+                reactionsRepository = factory.reactionRepository(getUser),
+                syncStateRepository = factory.syncStateRepository(),
+                attachmentRepository = factory.attachmentRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
             ).also {

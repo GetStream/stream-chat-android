@@ -42,8 +42,8 @@ public class UploadAttachmentsAndroidWorker(
         //Todo: Review the !!
         return UploadAttachmentsWorker(
             ChannelsManagerProvider.getChannelsManager(),
-            RepositoryProvider.createMessageRepository { ChatClient.instance().getCurrentUser()!! },
-            RepositoryProvider.createUserRepository(),
+            RepositoryProvider.messageRepository { ChatClient.instance().getCurrentUser()!! },
+            RepositoryProvider.userRepository(),
             ChatClient.instance()
         ).uploadAttachmentsForMessage(
             channelType,

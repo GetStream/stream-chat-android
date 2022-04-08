@@ -37,31 +37,31 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepositoryImpl
 
-internal class RepositoryFactoryImpl(
+internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User?,
 ): RepositoryFactory {
-    override fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), 100)
+    override fun userRepository(): UserRepository = UserRepositoryImpl(database.userDao(), 100)
 
-    override fun createChannelConfigRepository(): ChannelConfigRepository =
+    override fun channelConfigRepository(): ChannelConfigRepository =
         ChannelConfigRepositoryImpl(database.channelConfigDao())
 
-    override fun createChannelRepository(
+    override fun channelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository = ChannelRepositoryImpl(database.channelStateDao(), getUser, getMessage, 100)
 
-    override fun createQueryChannelsRepository(): QueryChannelsRepository =
+    override fun queryChannelsRepository(): QueryChannelsRepository =
         QueryChannelsRepositoryImpl(database.queryChannelsDao())
 
-    override fun createMessageRepository(
+    override fun messageRepository(
         getUser: suspend (userId: String) -> User,
     ): MessageRepository = MessageRepositoryImpl(database.messageDao(), getUser, currentUser, 100)
 
-    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
+    override fun reactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         ReactionRepositoryImpl(database.reactionDao(), getUser)
 
-    override fun createSyncStateRepository(): SyncStateRepository = SyncStateRepositoryImpl(database.syncStateDao())
+    override fun syncStateRepository(): SyncStateRepository = SyncStateRepositoryImpl(database.syncStateDao())
 
-    override fun createAttachmentRepository(): AttachmentRepository = AttachmentRepositoryImpl(database.attachmentDao())
+    override fun attachmentRepository(): AttachmentRepository = AttachmentRepositoryImpl(database.attachmentDao())
 }
