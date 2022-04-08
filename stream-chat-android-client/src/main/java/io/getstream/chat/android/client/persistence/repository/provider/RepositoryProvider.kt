@@ -11,7 +11,7 @@ internal class RepositoryProvider private constructor(
 
         private var instance: RepositoryProvider = RepositoryProvider(InMemoryRepositoryFactory())
 
-        fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
+        fun changeRepositoryFactory(repositoryFactory: RepositoryFactory) {
             instance = RepositoryProvider(repositoryFactory)
         }
 
