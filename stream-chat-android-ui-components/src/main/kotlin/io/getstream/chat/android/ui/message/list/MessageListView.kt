@@ -27,6 +27,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -292,6 +293,10 @@ public class MessageListView : ConstraintLayout {
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
+
+    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> =
+        MutableLiveData(null)
+
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
@@ -997,11 +1002,20 @@ public class MessageListView : ConstraintLayout {
      * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
      * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
      */
+    @Deprecated(
+        message = "Filtering deleted messages should be performed in the ViewModel.",
+        replaceWith = ReplaceWith(
+            "MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)",
+            "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
         check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageListItemPredicate first"
         }
         this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
+        this.deletedMessageListItemPredicateLiveData.value = this.deletedMessageListItemPredicate
     }
 
     /**

@@ -21,6 +21,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -79,7 +80,7 @@ public class MessagesViewModelFactory(
         },
         AttachmentsPickerViewModel::class.java to {
             AttachmentsPickerViewModel(
-                StorageHelperWrapper(context, StorageHelper())
+                StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()),
             )
         }
     )
