@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.socket
 
 import android.os.Handler
@@ -58,6 +58,7 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
     }
 
     fun start() {
+        logger.logD("Starting")
         lastEventDate = Date()
         disconnected = false
         resetHealthMonitor()

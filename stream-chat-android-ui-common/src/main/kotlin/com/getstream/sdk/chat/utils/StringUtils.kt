@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.getstream.sdk.chat.utils
 
 import com.getstream.sdk.chat.utils.StorageHelper.Companion.FILE_NAME_PREFIX
