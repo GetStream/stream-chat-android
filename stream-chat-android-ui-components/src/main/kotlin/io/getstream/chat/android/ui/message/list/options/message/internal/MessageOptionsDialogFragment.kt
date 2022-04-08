@@ -444,6 +444,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             )
         }
 
+	/**
+	*
+	* Comment should be written as javadoc instead of inline comment
+	**/
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
@@ -451,7 +455,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactoryManager: AttachmentFactoryManager, // comment
+            attachmentFactoryManager: AttachmentFactoryManager,
         ): MessageOptionsDialogFragment {
             this.messageListViewStyle = style
             this.attachmentFactoryManager = attachmentFactoryManager
