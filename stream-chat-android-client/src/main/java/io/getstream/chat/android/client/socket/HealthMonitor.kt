@@ -58,6 +58,7 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
     }
 
     fun start() {
+        logger.logD("Starting")
         lastEventDate = Date()
         disconnected = false
         resetHealthMonitor()
