@@ -647,7 +647,7 @@ public class MessageComposerController(
      * @param delayInterval The interval between the sending the
      * keystroke event and the stop typing event.
      */
-    private inner class TypingUpdateBuffer(private val delayInterval: Long = 1000) {
+    private inner class TypingUpdateBuffer(private val delayInterval: Long = 2000) {
 
         /**
          * If the user is currently typing or not.
