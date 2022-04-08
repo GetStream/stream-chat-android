@@ -64,7 +64,7 @@ Added support for file upload configuration that lets you specify what types of 
 ### ⬆️ Improved
 
 ### ✅ Added
-Added support for file upload configuration that let's you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
+Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
