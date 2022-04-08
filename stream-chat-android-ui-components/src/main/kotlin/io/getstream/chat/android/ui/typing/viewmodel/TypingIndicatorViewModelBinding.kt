@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 @file:JvmName("TypingIndicatorViewModelBinding")
 
 package io.getstream.chat.android.ui.typing.viewmodel

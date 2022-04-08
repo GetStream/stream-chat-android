@@ -390,6 +390,7 @@
     <ID>MaxLineLength:ConnectUserTest.kt$ConnectUserTest$result.error().message `should be equal to` "The user_id provided on the JWT token doesn't match with the current user you try to connect"</ID>
     <ID>MaxLineLength:DeleteMessageListener.kt$DeleteMessageListener$*</ID>
     <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)</ID>
+    <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutNameAndImage, DownstreamChannelDto::class.java)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, null, channel)</ID>
@@ -523,6 +524,7 @@
     <ID>TooManyFunctions:ChatSocketServiceImpl.kt$ChatSocketServiceImpl : ChatSocketService</ID>
     <ID>TooManyFunctions:EventMapping.kt$io.getstream.chat.android.client.api2.mapping.EventMapping.kt</ID>
     <ID>TooManyFunctions:EventsParser.kt$EventsParser : WebSocketListener</ID>
+    <ID>TooManyFunctions:ExtraDataValidator.kt$ExtraDataValidator : ChatApi</ID>
     <ID>TooManyFunctions:Filters.kt$Filters$Filters</ID>
     <ID>TooManyFunctions:MessageApi.kt$MessageApi</ID>
     <ID>TooManyFunctions:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler : NotificationHandler</ID>

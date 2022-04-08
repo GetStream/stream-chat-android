@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 @file:JvmName("MessageListViewModelBinding")
 
 package io.getstream.chat.android.ui.message.list.viewmodel
@@ -34,6 +34,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Retr
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 
 /**
@@ -45,6 +46,21 @@ import io.getstream.chat.android.ui.message.list.MessageListView
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+
+    view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
+        if (messageListItemPredicate != null) {
+            val deletedMessageVisibility = when (messageListItemPredicate) {
+                DeletedMessageListItemPredicate.NotVisibleToAnyone ->
+                    MessageListViewModel.DeletedMessageVisibility.ALWAYS_HIDDEN
+                DeletedMessageListItemPredicate.VisibleToAuthorOnly ->
+                    MessageListViewModel.DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+                else -> MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE
+            }
+
+            setDeletedMessageVisibility(deletedMessageVisibility)
+        }
+    }
+
     channel.observe(lifecycleOwner) {
         view.init(it)
     }

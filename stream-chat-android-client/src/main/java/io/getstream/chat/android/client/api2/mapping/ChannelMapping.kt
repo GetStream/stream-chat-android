@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -29,8 +29,8 @@ internal fun DownstreamChannelDto.toDomain(): Channel =
         cid = cid,
         id = id,
         type = type,
-        name = name,
-        image = image,
+        name = name ?: "",
+        image = image ?: "",
         watcherCount = watcher_count,
         frozen = frozen,
         lastMessageAt = last_message_at,

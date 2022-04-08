@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client
 
 import android.content.Context
@@ -22,10 +22,9 @@ import android.util.Base64
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -816,9 +815,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -860,9 +858,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }

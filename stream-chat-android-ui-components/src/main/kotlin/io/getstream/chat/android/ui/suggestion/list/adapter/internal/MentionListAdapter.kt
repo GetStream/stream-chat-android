@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.suggestion.list.adapter.internal
 
 import android.view.ViewGroup
