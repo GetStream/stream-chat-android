@@ -58,7 +58,9 @@ public fun MessageInput(
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     maxLines: Int = DEFAULT_MESSAGE_INPUT_MAX_LINES,
-    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(ownCapabilities = messageComposerState.ownCapabilities) },
+    label: @Composable (MessageComposerState) -> Unit = {
+        DefaultComposerLabel(ownCapabilities = messageComposerState.ownCapabilities)
+    },
     innerLeadingContent: @Composable RowScope.() -> Unit = {},
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
 ) {
