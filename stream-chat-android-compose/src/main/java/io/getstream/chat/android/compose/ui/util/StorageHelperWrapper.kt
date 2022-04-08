@@ -40,7 +40,7 @@ public class StorageHelperWrapper(
 ) {
 
     /**
-     * Loads a list of file metadata from the system.
+     * Loads a list of file metadata from the system and filters it against file types accepted by the backend.
      *
      * @return List of [AttachmentMetaData] that describe the files.
      */
