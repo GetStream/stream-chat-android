@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.parser2.testdata
 
 internal fun String.withoutWhitespace() = filterNot(Char::isWhitespace)
