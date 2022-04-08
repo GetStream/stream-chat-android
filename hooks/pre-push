@@ -1,0 +1,36 @@
+#!/bin/sh
+
+./gradlew spotlessCheck -q
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "❌ spotlessCheck failed, running spotlessApply for you..."
+
+  ./gradlew spotlessApply -q
+
+  echo "Formatting done, please try your commit again!"
+  exit $EXIT_CODE
+fi
+
+./gradlew apiCheck -q
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "❌ apiCheck failed, running apiDump for you..."
+
+  ./gradlew apiDump -q
+
+  echo "API dump done, please check the results and then try your commit again!"
+  exit $EXIT_CODE
+fi
+
+./gradlew detekt -q
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "======================================================================================================================================================"
+  echo "❌ Detekt failed!!!"
+  echo "If you can't fix this now (Really? Can't you? Are you kidding me?) you can run \`./gradlew detektBaseline\` and push the generated \`baseline.xml\` file "
+  echo "======================================================================================================================================================"
+  exit $EXIT_CODE
+fi
+
+exit 0

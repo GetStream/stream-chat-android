@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.message.list.options.message.internal
 
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.AvatarDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
@@ -31,7 +32,8 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
 internal class MessageOptionsDecoratorProvider(
     messageListItemStyle: MessageListItemStyle,
     messageReplyStyle: MessageReplyStyle,
-    messageBackgroundFactory: MessageBackgroundFactory
+    messageBackgroundFactory: MessageBackgroundFactory,
+    showAvatarPredicate: MessageListView.ShowAvatarPredicate,
 ) : DecoratorProvider {
 
     private val messageOptionsDecorators = listOf<Decorator>(
@@ -39,7 +41,7 @@ internal class MessageOptionsDecoratorProvider(
         TextDecorator(messageListItemStyle),
         MaxPossibleWidthDecorator(messageListItemStyle),
         MessageContainerMarginDecorator(messageListItemStyle),
-        AvatarDecorator(),
+        AvatarDecorator(showAvatarPredicate),
         ReplyDecorator(messageReplyStyle),
     )
 
