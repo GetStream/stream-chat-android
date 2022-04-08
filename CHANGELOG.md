@@ -40,6 +40,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
 
 ### ⬆️ Improved
 
@@ -52,6 +53,11 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Adding ShowAvatarPredicate for MessageOptions overlay making it possible to hide the avatar picture when in the message options. [#3302](https://github.com/GetStream/stream-chat-android/pull/3302)
+- Users now able to open `MessageOptionsDialogFragment` by clicking on a reaction left on a Giphy message. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
+- inside `MessageOptionsDialogFragment` now properly displays all of the reactions to a message. Previously it erroneously displayed a blank state. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
+- Fixed the links in UI Components code snippets. [#3261](https://github.com/GetStream/stream-chat-android/pull/3261)
+- Messages containing links are now properly aligned with other types of messages. They use `@dimen/stream_ui_spacing_small` for their root layout start and end padding. [#3264](https://github.com/GetStream/stream-chat-android/pull/3264)
+- Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
 
 ### ⬆️ Improved
 
