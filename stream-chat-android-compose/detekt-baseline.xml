@@ -51,7 +51,6 @@
     <ID>MaxLineLength:ExtendedReactionsOptions.kt$*</ID>
     <ID>MaxLineLength:FileAttachmentFactory.kt$it.uploadId != null || it.upload != null || it.type == ModelType.attach_file || it.type == ModelType.attach_video || it.type == ModelType.attach_audio</ID>
     <ID>MaxLineLength:FilesPickerItemImage.kt$*</ID>
-    <ID>MaxLineLength:MediaAttachmentPreviewHandler.kt$MediaAttachmentPreviewHandler$if (!mimeType.isNullOrEmpty() &amp;&amp; (mimeType.contains(ModelType.attach_audio) || mimeType.contains(ModelType.attach_video))) return true</ID>
     <ID>MaxLineLength:MessageComposer.kt$*</ID>
     <ID>MaxLineLength:MessageComposer.kt$tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
@@ -76,7 +75,6 @@
     <ID>MaxLineLength:ThreadParticipants.kt$*</ID>
     <ID>MaxLineLength:UploadingFooter.kt$*</ID>
     <ID>ReturnCount:DocumentAttachmentPreviewHandler.kt$DocumentAttachmentPreviewHandler$override fun canHandle(attachment: Attachment): Boolean</ID>
-    <ID>ReturnCount:MediaAttachmentPreviewHandler.kt$MediaAttachmentPreviewHandler$override fun canHandle(attachment: Attachment): Boolean</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$ public fun updateLastSeenMessage(message: Message)</ID>
     <ID>TopLevelPropertyNaming:ImageUtils.kt$private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f</ID>
     <ID>TopLevelPropertyNaming:ImageUtils.kt$private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f</ID>
