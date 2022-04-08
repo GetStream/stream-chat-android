@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
 import android.text.format.DateUtils
