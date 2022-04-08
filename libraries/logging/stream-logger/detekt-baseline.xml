@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>EmptyFunctionBlock:StreamLogger.kt$SilentStreamLogger${}</ID>
+    <ID>MagicNumber:stringify.kt$256</ID>
+    <ID>MaxLineLength:StreamLog.kt$StreamLog$*</ID>
+    <ID>MaxLineLength:StreamLogger.kt$StreamLogger$*</ID>
+  </CurrentIssues>
+</SmellBaseline>
