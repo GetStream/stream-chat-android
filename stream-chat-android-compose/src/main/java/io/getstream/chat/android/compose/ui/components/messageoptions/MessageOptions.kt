@@ -188,9 +188,19 @@ public fun defaultMessageOptionsState(
         } else null,
         if (isMessageSynced) {
             MessageOptionItemState(
-                title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
+                title = if (selectedMessage.pinned) {
+                    R.string.stream_compose_unpin_message
+                } else {
+                    R.string.stream_compose_pin_message
+                },
                 action = Pin(selectedMessage),
-                iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
+                iconPainter = painterResource(
+                    id = if (selectedMessage.pinned) {
+                        R.drawable.stream_compose_ic_unpin_message
+                    } else {
+                        R.drawable.stream_compose_ic_pin_message
+                    }
+                ),
                 iconColor = ChatTheme.colors.textLowEmphasis,
                 titleColor = ChatTheme.colors.textHighEmphasis
             )
@@ -207,7 +217,9 @@ public fun defaultMessageOptionsState(
         if (!isOwnMessage) {
             MessageOptionItemState(
                 title = if (isUserMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
-                iconPainter = painterResource(id = if (isUserMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute),
+                iconPainter = painterResource(
+                    id = if (isUserMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute
+                ),
                 action = MuteUser(selectedMessage),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,

@@ -245,10 +245,11 @@ public class MessageListViewModel(
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
-                            isLoading = false,
-                            messageItems = emptyList()
-                        )
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
+                            messagesState.copy(
+                                isLoading = false,
+                                messageItems = emptyList()
+                            )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
@@ -955,8 +956,8 @@ public class MessageListViewModel(
 
     internal companion object {
         /**
-         * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
-         * we show a separator, if it's enabled in the list.
+         * The default threshold for showing date separators. If the message difference in hours is equal to this
+         * number, then we show a separator, if it's enabled in the list.
          */
         internal const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
 

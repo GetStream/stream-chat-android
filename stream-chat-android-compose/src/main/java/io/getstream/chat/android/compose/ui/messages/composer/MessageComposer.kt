@@ -93,7 +93,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param trailingContent Customizable composable that represents the trailing content of the composer, send button by default.
+ * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
+ * by default.
  */
 @Composable
 public fun MessageComposer(
@@ -210,7 +211,8 @@ public fun MessageComposer(
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param trailingContent Customizable composable that represents the trailing content of the composer, send button by default.
+ * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
+ * by default.
  */
 @Composable
 public fun MessageComposer(
@@ -451,7 +453,11 @@ internal fun DefaultComposerIntegrations(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
                     contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+                    tint = if (isAttachmentsButtonEnabled) {
+                        ChatTheme.colors.textLowEmphasis
+                    } else {
+                        ChatTheme.colors.disabled
+                    },
                 )
             },
             onClick = onAttachmentsClick

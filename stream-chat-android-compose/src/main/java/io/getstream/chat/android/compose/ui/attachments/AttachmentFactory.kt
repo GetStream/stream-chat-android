@@ -28,7 +28,8 @@ import io.getstream.chat.android.compose.ui.util.previewText
  * @param canHandle Checks the message and returns if the factory can consume it or not.
  * @param previewContent Composable function that allows users to define the content the [AttachmentFactory] will build,
  * using any given [AttachmentState], when the message is displayed in the message input preview, before sending.
- * @param content Composable function that allows users to define the content the [AttachmentFactory] will build using any given
+ * @param content Composable function that allows users to define the content the [AttachmentFactory] will build
+ * using any given
  * [AttachmentState], when the message is displayed in the message list.
  * @param textFormatter The formatter used to get a string representation for the given attachment.
  */

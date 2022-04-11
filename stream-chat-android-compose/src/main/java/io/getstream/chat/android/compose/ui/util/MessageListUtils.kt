@@ -28,7 +28,8 @@ import androidx.compose.runtime.Composable
  * In case you want to customize the behavior, provide the [LazyListState] based on your logic and conditions.
  *
  * @param initialFirstVisibleItemIndex The first visible item index that's required for the base [LazyListState].
- * @param initialFirstVisibleItemScrollOffset The offset of the first visible item, required for the base [LazyListState].
+ * @param initialFirstVisibleItemScrollOffset The offset of the first visible item, required for the
+ * base [LazyListState].
  * @param parentMessageId The ID of the parent message, if we're in a thread.
  *
  * @return [LazyListState] that keeps the scrolling position and offset of the given list.
