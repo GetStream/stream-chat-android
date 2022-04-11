@@ -379,7 +379,7 @@
     <ID>MaxLineLength:ChatClient.kt$ChatClient$listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$userState is UserState.UserSet &amp;&amp; userState.user.id == user.id &amp;&amp; socketStateService.state == SocketState.Idle</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$*</ID>
