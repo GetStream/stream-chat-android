@@ -32,5 +32,6 @@
     <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
+    <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$ public fun updateLastSeenMessage(message: Message)</ID>
   </CurrentIssues>
 </SmellBaseline>

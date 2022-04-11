@@ -28,16 +28,17 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
 
     override fun canHandle(attachment: Attachment): Boolean {
         val assetUrl = attachment.assetUrl
-        val mimeType = attachment.mimeType
-        val type = attachment.type
+        val mimeType = attachment.mimeType ?: ""
+        val type = attachment.type ?: ""
 
         return when {
             assetUrl.isNullOrEmpty() -> false
-            mimeType?.contains(ModelType.attach_audio) == true -> true
-            mimeType?.contains(ModelType.attach_video) == true -> true
-            type?.contains(ModelType.attach_audio) == true -> true
-            type?.contains(ModelType.attach_video) == true -> true
-            buildMimeSubTypeList().any { subtype -> mimeType?.contains(subtype) == true } -> true
+            mimeType.isBlank() && type.isBlank() -> false
+            ModelType.attach_audio in mimeType -> true
+            ModelType.attach_video in mimeType -> true
+            ModelType.attach_audio in type -> true
+            ModelType.attach_video in type -> true
+            buildMimeSubTypeList().any { subtype -> mimeType.contains(subtype) } -> true
             else -> false
         }
     }
