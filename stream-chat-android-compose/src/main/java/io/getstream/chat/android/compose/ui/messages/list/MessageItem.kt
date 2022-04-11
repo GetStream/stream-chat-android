@@ -282,7 +282,6 @@ internal fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-
         val reactionCounts = message.reactionCounts.ifEmpty { return }
         val iconFactory = ChatTheme.reactionIconFactory
         reactionCounts
@@ -292,9 +291,8 @@ internal fun DefaultMessageItemHeaderContent(
             ?.map { type ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)
-                val painter = reactionIcon.getPainter(isSelected)
                 ReactionOptionItemState(
-                    painter = painter,
+                    painter = reactionIcon.getPainter(isSelected),
                     type = type
                 )
             }

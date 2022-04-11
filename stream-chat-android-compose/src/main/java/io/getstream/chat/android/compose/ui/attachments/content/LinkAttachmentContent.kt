@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -88,8 +89,6 @@ public fun LinkAttachmentContent(
         "Missing preview URL."
     }
 
-    val hasImage = attachment.imagePreviewUrl != null
-    val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
     val errorMessage = stringResource(
         id = R.string.stream_compose_message_list_error_cannot_open_link,
         previewUrl
@@ -120,69 +119,79 @@ public fun LinkAttachmentContent(
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
-        if (hasImage) {
-            BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
-                Image(
+        AttachmentImagePreview(attachment)
+        Title(attachment.title)
+        Description(attachment.text, linkDescriptionMaxLines)
+    }
+}
+
+@Composable
+private fun AttachmentImagePreview(attachment: Attachment) {
+    if (attachment.imagePreviewUrl != null) {
+        val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
+        BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 250.dp)
+                    .clip(ChatTheme.shapes.attachment),
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+
+            val authorName = attachment.authorName
+
+            if (authorName != null) {
+                Text(
+                    text = authorName,
+                    color = ChatTheme.colors.primaryAccent,
+                    maxLines = 1,
+                    style = ChatTheme.typography.bodyBold,
+                    fontSize = 16.sp,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 250.dp)
-                        .clip(ChatTheme.shapes.attachment),
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
+                        .wrapContentWidth()
+                        .widthIn(max = maxWidth / 2)
+                        .background(
+                            color = ChatTheme.colors.linkBackground,
+                            shape = ChatTheme.shapes.attachmentSiteLabel
+                        )
+                        .padding(vertical = 6.dp, horizontal = 12.dp)
+                        .align(Alignment.BottomStart)
                 )
-
-                val authorName = attachment.authorName
-
-                if (authorName != null) {
-                    Text(
-                        text = authorName,
-                        color = ChatTheme.colors.primaryAccent,
-                        maxLines = 1,
-                        style = ChatTheme.typography.bodyBold,
-                        fontSize = 16.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .widthIn(max = maxWidth / 2)
-                            .background(
-                                color = ChatTheme.colors.linkBackground,
-                                shape = ChatTheme.shapes.attachmentSiteLabel
-                            )
-                            .padding(vertical = 6.dp, horizontal = 12.dp)
-                            .align(Alignment.BottomStart)
-                    )
-                }
             }
         }
+    }
+}
 
-        val title = attachment.title
+@Composable
+private fun Description(text: String?, linkDescriptionMaxLines: Int) {
+    if (text != null) {
+        Text(
+            modifier = Modifier.padding(
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 4.dp,
+                top = 2.dp
+            ),
+            text = text,
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = linkDescriptionMaxLines,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
 
-        if (title != null) {
-            Text(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-                text = title,
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
-            )
-        }
-
-        val description = attachment.text
-
-        if (description != null) {
-            Text(
-                modifier = Modifier.padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    bottom = 4.dp,
-                    top = 2.dp
-                ),
-                text = description,
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textHighEmphasis,
-                maxLines = linkDescriptionMaxLines,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+@Composable
+private fun Title(text: String?) {
+    if (text != null) {
+        Text(
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            text = text,
+            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
     }
 }
