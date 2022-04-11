@@ -60,7 +60,7 @@ public class StreamLogFileProvider : FileProvider() {
 
         val compositeLogger = CompositeStreamLogger(androidLogger, fileLogger)
         val fileManager = LifecycleAwareLogFileManager(fileLogger)
-        StreamLog.init(compositeLogger)
+        StreamLog.init(compositeLogger) { _, _ -> true }
 
         StreamLogFileManager.init(fileManager, fileManager)
         application?.registerActivityLifecycleCallbacks(fileManager)

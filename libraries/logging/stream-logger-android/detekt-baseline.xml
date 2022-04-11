@@ -2,10 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>EmptyCatchBlock:LifecycleAwareLogFileManager.kt$LifecycleAwareLogFileManager${ }</ID>
     <ID>EmptyFunctionBlock:ActivityLifecycleCallbacks.kt$ActivityLifecycleCallbacks${}</ID>
-    <ID>SwallowedException:LifecycleAwareLogFileManager.kt$LifecycleAwareLogFileManager$e: Throwable</ID>
     <ID>SwallowedException:StreamLogFileProvider.kt$StreamLogFileProvider$e: PackageManager.NameNotFoundException</ID>
-    <ID>TooGenericExceptionCaught:LifecycleAwareLogFileManager.kt$LifecycleAwareLogFileManager$e: Throwable</ID>
   </CurrentIssues>
 </SmellBaseline>

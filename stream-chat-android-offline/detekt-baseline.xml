@@ -78,7 +78,6 @@
     <ID>MaxLineLength:DeleteReactionErrorHandlerImpl.kt$DeleteReactionErrorHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
-    <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$logger.i { "[handleConnectEvents] Received ConnectedEvent, marking the domain as online and initialized" }</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$throw InputMismatchException("received connect event for user with id ${me.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")</ID>
     <ID>MaxLineLength:EventHandlerProvider.kt$EventHandlerProvider$get() = _eventHandler ?: throw IllegalStateException("EventHandlerImpl was not set in the EventHandlerProvider. Looks like there's a initialisation problem")</ID>
     <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>

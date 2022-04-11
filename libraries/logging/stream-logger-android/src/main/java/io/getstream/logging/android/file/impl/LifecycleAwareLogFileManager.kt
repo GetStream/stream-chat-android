@@ -48,17 +48,14 @@ internal class LifecycleAwareLogFileManager(
         }
     }
 
-    private fun Activity.shareLogFile(file: File) {
-        try {
-            val authority = "$packageName.streamlogfileprovider"
-            val uri = FileProvider.getUriForFile(this, authority, file)
-            val share = Intent(Intent.ACTION_SEND)
-            share.putExtra(Intent.EXTRA_STREAM, uri)
-            share.type = "*/*"
-            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivity(Intent.createChooser(share, "Share Logs"))
-        } catch (e: Throwable) {
-        }
+    private fun Activity.shareLogFile(file: File) = runCatching {
+        val authority = "$packageName.streamlogfileprovider"
+        val uri = FileProvider.getUriForFile(this, authority, file)
+        val share = Intent(Intent.ACTION_SEND)
+        share.putExtra(Intent.EXTRA_STREAM, uri)
+        share.type = "*/*"
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        startActivity(Intent.createChooser(share, "Share Logs"))
     }
 
     override fun onActivityResumed(activity: Activity) {

@@ -21,6 +21,8 @@ import io.getstream.logging.StreamLogger
 import java.io.PrintWriter
 import java.io.StringWriter
 
+private const val INITIAL_BUFFER_SIZE = 256
+
 public fun Thread.stringify(): String {
     return "$name:$id"
 }
@@ -38,7 +40,7 @@ public fun Priority.stringify(): String = when (this) {
 public fun Throwable.stringify(): String {
     // Don't replace this with Log.getStackTraceString() - it hides
     // UnknownHostException, which is not what we want.
-    val sw = StringWriter(256)
+    val sw = StringWriter(INITIAL_BUFFER_SIZE)
     val pw = PrintWriter(sw, false)
     printStackTrace(pw)
     pw.flush()
