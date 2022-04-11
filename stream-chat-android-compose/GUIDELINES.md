@@ -187,7 +187,7 @@ We heavily rely on [Slot APIs](https://developer.android.com/jetpack/compose/lay
 
 Rules when implementing Slot APIs:
 - **Consistent naming**: When exposing content slots consider using these common names: `leadingContent`, `centerContent`, `trailingContent`, `footerContent`, `headerContent`, `itemContent`, `content`.
-- **Default implementation**: The default implementation of a content slot should be located in the same source file and should be named according to this patter: `Default*LeadingContent`, `Default*CenterContent`, etc.  
+- **Default implementation**: The default implementation of a content slot should be internal, located in the same source file and should be named according to this pattern: `Default*LeadingContent`, `Default*CenterContent`, etc.  
 - **Inner padding**: A component containing slots should be as simple as possible. That's why we try to handle paddings inside slots (for example, instead of adding a margin between slots).
 
 #### Example:
