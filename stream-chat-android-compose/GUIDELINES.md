@@ -21,7 +21,7 @@
 
 We follow official [Guidelines For Compose](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md) when developing our Compose SDK. On top of that, to make the code consistent and easy to maintain, we developed a set of coding conventions described in this document.
 
-Contributions to this project are very much welcome! Even if some of the requirements above are not met, don't hesitate to submit your code changes. 💙
+Contributions to this project are very much welcome! Even if some of the requirements below are not met, don't hesitate to submit your code changes. 💙
 
 ## Project Structure
 
@@ -226,6 +226,13 @@ fun MyComposable(
 
         trailingContent(messageItem) 
     }
+}
+
+@Composable
+internal fun RowScope.DefaultMyComposableLeadingContent(myComposableState: MyComposableState) {
+    // The padding is handled inside the default implementation
+    val modifier = Modifier.padding(start = 16.dp)
+    // ...
 }
 ```
 
