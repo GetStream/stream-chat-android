@@ -1663,6 +1663,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
+	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
 	public final fun setRepliesEnabled (Z)V

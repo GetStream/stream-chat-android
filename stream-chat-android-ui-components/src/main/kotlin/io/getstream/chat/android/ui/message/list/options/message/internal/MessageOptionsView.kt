@@ -21,6 +21,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
@@ -57,6 +58,7 @@ internal class MessageOptionsView : FrameLayout {
     ) {
         val isMessageMine = !isMessageTheirs
         val isMessageSynced = syncStatus == SyncStatus.COMPLETED
+        val ownCapabilities = configuration.ownCapabilities
 
         configureMessageOption(
             isVisible = isMessageMine && syncStatus == SyncStatus.FAILED_PERMANENTLY,
@@ -86,8 +88,12 @@ internal class MessageOptionsView : FrameLayout {
             optionIcon = style.copyIcon,
         )
 
+        val userCanEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
+        val userCalEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
+
         configureMessageOption(
-            isVisible = configuration.editMessageEnabled && isMessageMine,
+            isVisible = configuration.editMessageEnabled &&
+                (userCalEditAnyMessage || (userCanEditOwnMessage && isMessageMine)),
             textView = binding.editTV,
             textStyle = style.messageOptionsText,
             optionIcon = style.editIcon,
@@ -105,6 +111,7 @@ internal class MessageOptionsView : FrameLayout {
         } else {
             R.string.stream_ui_message_list_pin_message to style.pinIcon
         }
+
         configureMessageOption(
             isVisible = configuration.pinMessageEnabled && isMessageSynced,
             textView = binding.pinTV,
@@ -113,8 +120,12 @@ internal class MessageOptionsView : FrameLayout {
             optionText = pinText,
         )
 
+        val userCanDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
+        val userCanDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
+
         configureMessageOption(
-            isVisible = configuration.deleteMessageEnabled && isMessageMine,
+            isVisible = configuration.deleteMessageEnabled &&
+                (userCanDeleteAnyMessage || (userCanDeleteOwnMessage && isMessageMine)),
             textView = binding.deleteTV,
             textStyle = style.warningMessageOptionsText,
             optionIcon = style.deleteIcon,
@@ -156,6 +167,7 @@ internal class MessageOptionsView : FrameLayout {
         val muteEnabled: Boolean,
         val blockEnabled: Boolean,
         val retryMessageEnabled: Boolean,
+        val ownCapabilities: Set<String>,
     ) : Serializable {
         internal companion object {
             operator fun invoke(
@@ -163,20 +175,30 @@ internal class MessageOptionsView : FrameLayout {
                 channelConfig: Config,
                 hasTextToCopy: Boolean,
                 suppressThreads: Boolean,
-            ) = Configuration(
-                replyEnabled = viewStyle.replyEnabled,
-                threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isThreadEnabled,
-                editMessageEnabled = viewStyle.editMessageEnabled,
-                deleteMessageEnabled = viewStyle.deleteMessageEnabled,
-                copyTextEnabled = viewStyle.copyTextEnabled && hasTextToCopy,
-                deleteConfirmationEnabled = viewStyle.deleteConfirmationEnabled,
-                reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled,
-                flagEnabled = viewStyle.flagEnabled,
-                pinMessageEnabled = viewStyle.pinMessageEnabled,
-                muteEnabled = viewStyle.muteEnabled,
-                blockEnabled = viewStyle.blockEnabled,
-                retryMessageEnabled = viewStyle.retryMessageEnabled,
-            )
+                ownCapabilities: Set<String>,
+            ): Configuration {
+                val userCanReply = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+                val userCanPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
+                val userCanBlockMembers = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)
+
+                return Configuration(
+                    replyEnabled = viewStyle.replyEnabled && userCanReply,
+                    threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isThreadEnabled && userCanReply,
+                    editMessageEnabled = viewStyle.editMessageEnabled,
+                    deleteMessageEnabled = viewStyle.deleteMessageEnabled,
+                    copyTextEnabled = viewStyle.copyTextEnabled && hasTextToCopy,
+                    deleteConfirmationEnabled = viewStyle.deleteConfirmationEnabled,
+                    reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled && ownCapabilities.contains(
+                        ChannelCapabilities.SEND_REACTION
+                    ),
+                    flagEnabled = viewStyle.flagEnabled,
+                    pinMessageEnabled = viewStyle.pinMessageEnabled && userCanPinMessage,
+                    muteEnabled = viewStyle.muteEnabled,
+                    blockEnabled = viewStyle.blockEnabled && userCanBlockMembers,
+                    retryMessageEnabled = viewStyle.retryMessageEnabled,
+                    ownCapabilities = ownCapabilities
+                )
+            }
         }
     }
 
