@@ -52,7 +52,7 @@ This SDK consists of two low-level artifacts you can build on:
 - [**Compose UI Components**](/stream-chat-android-compose): Reusable and modular Composables for displaying conversations, lists of channels, and more!
   - [Sample app](/stream-chat-android-compose-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
-  - [SDK Guidelines](/stream-chat-android-compose/GUIDELINES.md)
+  - [Compose SDK Guidelines](/stream-chat-android-compose/GUIDELINES.md)
 - [**UI Components**](/stream-chat-android-ui-components): Reusable and customizable chat Views for displaying conversations, lists of channels, and more!
   - [Sample app](/stream-chat-android-ui-components-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
