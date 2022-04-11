@@ -43,8 +43,8 @@ import io.getstream.chat.android.compose.ui.util.ReactionIcon
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
- * @param itemContent Composable that allows the user to customize the individual items shown in [ExtendedReactionsOptions].
- * By default it shows individual reactions.
+ * @param itemContent Composable that allows the user to customize the individual items shown
+ * in [ExtendedReactionsOptions]. By default it shows individual reactions.
  */
 @ExperimentalFoundationApi
 @Composable
