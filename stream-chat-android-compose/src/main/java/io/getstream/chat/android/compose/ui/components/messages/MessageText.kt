@@ -1,18 +1,41 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.messages
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.client.models.Message
@@ -28,11 +51,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -49,7 +74,8 @@ public fun MessageText(
                     bottom = 8.dp
                 ),
             text = styledText,
-            style = ChatTheme.typography.bodyBold
+            style = ChatTheme.typography.bodyBold,
+            onLongPress = { onLongItemClick(message) }
         ) { position ->
             val targetUrl = annotations.firstOrNull {
                 position in it.start..it.end
@@ -139,4 +165,50 @@ private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
             )
         }
     }
+}
+
+/**
+ * A spin-off of a Foundation component that allows calling long press handlers.
+ * Contains only one additional parameter.
+ *
+ * @param onLongPress Handler called on long press.
+ *
+ * @see androidx.compose.foundation.text.ClickableText
+ */
+@Composable
+private fun ClickableText(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    style: TextStyle = TextStyle.Default,
+    softWrap: Boolean = true,
+    overflow: TextOverflow = TextOverflow.Clip,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    onLongPress: () -> Unit,
+    onClick: (Int) -> Unit,
+) {
+    val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+    val pressIndicator = Modifier.pointerInput(onClick, onLongPress) {
+        detectTapGestures(
+            onLongPress = { onLongPress() },
+            onTap = { pos ->
+                layoutResult.value?.let { layoutResult ->
+                    onClick(layoutResult.getOffsetForPosition(pos))
+                }
+            }
+        )
+    }
+
+    BasicText(
+        text = text,
+        modifier = modifier.then(pressIndicator),
+        style = style,
+        softWrap = softWrap,
+        overflow = overflow,
+        maxLines = maxLines,
+        onTextLayout = {
+            layoutResult.value = it
+            onTextLayout(it)
+        }
+    )
 }

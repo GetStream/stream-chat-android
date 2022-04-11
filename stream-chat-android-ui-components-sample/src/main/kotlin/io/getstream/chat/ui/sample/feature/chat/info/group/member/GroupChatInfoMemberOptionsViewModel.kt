@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.ui.sample.feature.chat.info.group.member
 
 import androidx.lifecycle.LiveData
@@ -7,26 +23,30 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.ui.sample.common.isDraft
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
@@ -38,23 +58,30 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            chatDomain.user
+            globalState.user
                 .filterNotNull()
                 .map { user ->
-                    chatDomain.queryChannels(
-                        filter = Filters.and(
-                            Filters.eq("type", "messaging"),
-                            Filters.distinct(listOf(memberId, user.id)),
-                        ),
-                        sort = QuerySort.desc(Channel::lastUpdated),
-                        messageLimit = 0,
-                        limit = 1,
+                    chatClient.queryChannels(
+                        request = QueryChannelsRequest(
+                            filter = Filters.and(
+                                Filters.eq("type", "messaging"),
+                                Filters.distinct(listOf(memberId, user.id)),
+                            ),
+                            querySort = QuerySort.desc(Channel::lastUpdated),
+                            messageLimit = 0,
+                            limit = 1,
+                        )
                     ).await()
                 }.flatMapConcat { result ->
                     if (result.isSuccess) {
-                        result.data()
-                            .channelsState
-                            .map(this@GroupChatInfoMemberOptionsViewModel::mapChannelState)
+                        val cid = result.data().firstOrNull()?.cid ?: ""
+
+                        chatClient.watchChannelAsState(cid, 30, viewModelScope)
+                            .filterNotNull()
+                            .flatMapLatest {
+                                it.messagesState
+                            }
+                            .map { mapChannelState(it, cid) }
                     } else {
                         MutableStateFlow(null)
                     }
@@ -66,20 +93,18 @@ class GroupChatInfoMemberOptionsViewModel(
         }
     }
 
-    private fun mapChannelState(channelState: QueryChannelsController.ChannelsState): State {
-        return when (channelState) {
-            is QueryChannelsController.ChannelsState.Result -> {
+    private fun mapChannelState(messagesState: MessagesState, cid: String): State {
+        return when (messagesState) {
+            is MessagesState.Result -> {
                 State(
-                    directChannelCid = channelState.channels.filterNot { channel ->
-                        channel.isDraft
-                    }.firstOrNull()?.cid,
+                    directChannelCid = cid,
                     loading = false,
                 )
             }
-            QueryChannelsController.ChannelsState.NoQueryActive,
-            QueryChannelsController.ChannelsState.Loading,
+            MessagesState.NoQueryActive,
+            MessagesState.Loading,
             -> State(directChannelCid = null, loading = true)
-            QueryChannelsController.ChannelsState.OfflineNoResults -> State(
+            MessagesState.OfflineNoResults -> State(
                 directChannelCid = null,
                 loading = false,
             )
@@ -89,7 +114,7 @@ class GroupChatInfoMemberOptionsViewModel(
     fun onAction(action: Action) {
         when (action) {
             Action.MessageClicked -> handleMessageClicked()
-            Action.RemoveFromChannel -> removeFromChannel()
+            is Action.RemoveFromChannel -> removeFromChannel(action.username)
         }
     }
 
@@ -104,9 +129,10 @@ class GroupChatInfoMemberOptionsViewModel(
         )
     }
 
-    private fun removeFromChannel() {
+    private fun removeFromChannel(username: String) {
         viewModelScope.launch {
-            val result = chatClient.channel(cid).removeMembers(memberId).await()
+            val message = Message(text = "$username has been removed from this channel")
+            val result = chatClient.channel(cid).removeMembers(listOf(memberId), message).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {
@@ -119,7 +145,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     sealed class Action {
         object MessageClicked : Action()
-        object RemoveFromChannel : Action()
+        data class RemoveFromChannel(val username: String) : Action()
     }
 
     sealed class UiEvent {

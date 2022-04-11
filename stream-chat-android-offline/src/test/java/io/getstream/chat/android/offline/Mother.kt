@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline
 
 import androidx.room.Room
@@ -41,16 +57,16 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.message.attachment.generateUploadId
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.message.MessageEntity
-import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
-import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
-import io.getstream.chat.android.offline.repository.domain.reaction.ReactionEntity
-import io.getstream.chat.android.offline.repository.domain.user.UserEntity
+import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
+import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -336,6 +352,8 @@ internal fun randomAttachmentsWithFile(
 
 internal fun randomUser(
     id: String = randomString(),
+    name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     invisible: Boolean = randomBoolean(),
     banned: Boolean = randomBoolean(),
@@ -353,6 +371,8 @@ internal fun randomUser(
 ): User = User(
     id,
     role,
+    name,
+    image,
     invisible,
     banned,
     devices,
@@ -372,6 +392,7 @@ internal fun randomUserEntity(
     id: String = randomString(),
     originalId: String = randomString(),
     name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     createdAt: Date? = null,
     updatedAt: Date? = null,
@@ -381,7 +402,7 @@ internal fun randomUserEntity(
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
 ): UserEntity =
-    UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
+    UserEntity(id, originalId, name, role, image, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 internal fun randomMessage(
     id: String = randomString(),

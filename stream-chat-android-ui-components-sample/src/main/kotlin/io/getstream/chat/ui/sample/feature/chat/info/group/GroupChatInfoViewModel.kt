@@ -1,26 +1,57 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.ui.sample.feature.chat.info.group
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.isOwnerOrAdmin
-import io.getstream.chat.ui.sample.common.name
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GroupChatInfoViewModel(
     private val cid: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    private val channelState: Flow<ChannelState> =
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope).filterNotNull()
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()
@@ -32,26 +63,24 @@ class GroupChatInfoViewModel(
 
     init {
         _state.value = INITIAL_STATE
-        chatDomain.getChannelController(cid).enqueue { result ->
-            if (result.isSuccess) {
-                val controller = result.data()
-                // Update channel mute status
-                chatDomain.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
-                // Update members
-                _state.addSource(controller.members, this::updateMembers)
+        // Update channel mute status
+        globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
-                getOwnerOrAdmin(controller.members.value)?.let { member ->
-                    _state.value = _state.value?.copy(
-                        isCurrentUserOwnerOrAdmin = chatDomain.user.value?.id == member.getUserId()
-                    )
-                }
+        // Update members
+        _state.addSource(channelState.flatMapLatest { it.members }.asLiveData(), this::updateMembers)
 
-                _state.addSource(controller.offlineChannelData) { channelData ->
-                    _state.value = _state.value?.copy(channelName = channelData.name)
-                }
-            }
+        _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
+            _state.value = _state.value?.copy(channelName = channelData.name)
         }
+
+        channelState.onEach { state ->
+            getOwnerOrAdmin(state.members.value)?.let { member ->
+                _state.value = _state.value?.copy(
+                    isCurrentUserOwnerOrAdmin = globalState.user.value?.id == member.getUserId()
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun getOwnerOrAdmin(members: List<Member>?): Member? {
@@ -72,7 +101,7 @@ class GroupChatInfoViewModel(
     }
 
     private fun handleMemberClick(member: Member) {
-        if (member.getUserId() != chatDomain.user.value?.id) {
+        if (member.getUserId() != globalState.user.value?.id) {
             val currentState = _state.value!!
             _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
         }
@@ -90,7 +119,10 @@ class GroupChatInfoViewModel(
     private fun leaveChannel() {
         viewModelScope.launch {
             val result = chatClient.getCurrentUser()?.let { user ->
-                chatClient.removeMembers(channelClient.channelType, channelClient.channelId, listOf(user.id)).await()
+                val message = Message(text = "${user.name} left")
+                chatClient.channel(channelClient.channelType, channelClient.channelId)
+                    .removeMembers(listOf(user.id), message)
+                    .await()
             }
             if (result?.isSuccess == true) {
                 _events.value = Event(UiEvent.RedirectToHome)
@@ -167,5 +199,10 @@ class GroupChatInfoViewModel(
             membersToShowCount = 0,
             false,
         )
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

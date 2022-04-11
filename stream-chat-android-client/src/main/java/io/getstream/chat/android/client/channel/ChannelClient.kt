@@ -1,4 +1,18 @@
-@file:Suppress("DEPRECATION_ERROR")
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package io.getstream.chat.android.client.channel
 
@@ -13,6 +27,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -85,14 +100,23 @@ public class ChannelClient internal constructor(
 
     public val cid: String = "$channelType:$channelId"
 
+    /**
+     * Creates the id-based channel.
+     * @see [ChatClient.createChannel]
+     *
+     * @param memberIds The list of members' ids.
+     * @param extraData Map of key-value pairs that let you store extra data
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
     @CheckResult
-    public fun create(members: List<String>, extraData: Map<String, Any> = emptyMap()): Call<Channel> {
-        return client.createChannel(channelType, channelId, members, extraData)
-    }
-
-    @CheckResult
-    public fun create(extraData: Map<String, Any> = emptyMap()): Call<Channel> {
-        return client.createChannel(channelType, channelId, extraData)
+    public fun create(memberIds: List<String>, extraData: Map<String, Any>): Call<Channel> {
+        return client.createChannel(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            extraData = extraData,
+        )
     }
 
     public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable {
@@ -246,7 +270,7 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        return client.updateMessageInternal(message)
+        return client.updateMessage(message)
     }
 
     @CheckResult
@@ -256,15 +280,17 @@ public class ChannelClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel with side effects if there is any plugin added in the client.
      *
-     * @param message Message object
+     * @param message Message to send.
+     * @param isRetrying True if this message is being retried.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
-    public fun sendMessage(message: Message): Call<Message> {
-        return client.sendMessage(channelType, channelId, message)
+    @JvmOverloads
+    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
+        return client.sendMessage(channelType, channelId, message, isRetrying)
     }
 
     @CheckResult
@@ -352,9 +378,17 @@ public class ChannelClient internal constructor(
         return client.showChannel(channelType, channelId)
     }
 
+    /**
+     * Hides the channel.
+     * @see [ChatClient.hideChannel]
+     *
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     */
     @CheckResult
     public fun hide(clearHistory: Boolean = false): Call<Unit> {
-        return client.hideChannelInternal(channelType, channelId, clearHistory)
+        return client.hideChannel(channelType, channelId, clearHistory)
     }
 
     /**
@@ -445,6 +479,17 @@ public class ChannelClient internal constructor(
         return client.deleteImage(channelType, channelId, url)
     }
 
+    /**
+     * Sends the reaction.
+     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the current user.
+     *
+     * @see [ChatClient.sendReaction]
+     *
+     * @param reaction The [Reaction] to send.
+     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     *
+     * @return Executable async [Call] responsible for sending the reaction.
+     */
     @CheckResult
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
         return client.sendReaction(reaction, enforceUnique)
@@ -457,6 +502,8 @@ public class ChannelClient internal constructor(
 
     /**
      * Deletes the reaction associated with the message with the given message id.
+     *
+     * @see [ChatClient.deleteReaction]
      *
      * @param messageId The id of the message to which reaction belongs.
      * @param reactionType The type of reaction.
@@ -529,14 +576,44 @@ public class ChannelClient internal constructor(
     public fun disableSlowMode(): Call<Channel> =
         client.disableSlowMode(channelType, channelId)
 
+    /**
+     * Adds members to a given channel.
+     *
+     * @see [ChatClient.addMembers]
+     *
+     * @param memberIds The list of the member ids to be added.
+     * @param systemMessage The system message object that will be shown in the channel.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
     @CheckResult
-    public fun addMembers(vararg userIds: String): Call<Channel> {
-        return client.addMembers(channelType, channelId, userIds.toList())
+    public fun addMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+        return client.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            systemMessage = systemMessage,
+        )
     }
 
+    /**
+     * Removes members from a given channel.
+     *
+     * @see [ChatClient.removeMembers]
+     *
+     * @param memberIds The list of the member ids to be removed.
+     * @param systemMessage The system message object that will be shown in the channel.
+     *
+     * @return Executable async [Call] responsible for removing the members.
+     */
     @CheckResult
-    public fun removeMembers(vararg userIds: String): Call<Channel> {
-        return client.removeMembers(channelType, channelId, userIds.toList())
+    public fun removeMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+        return client.removeMembers(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            systemMessage = systemMessage,
+        )
     }
 
     @CheckResult
@@ -623,34 +700,30 @@ public class ChannelClient internal constructor(
         return client.unmuteCurrentUser()
     }
 
+    /**
+     * Sends a start typing event [EventType.TYPING_START] in this channel to the server.
+     *
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
     @CheckResult
-    public fun keystroke(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_START, channelType, channelId)
+    @JvmOverloads
+    public fun keystroke(parentId: String? = null): Call<ChatEvent> {
+        return client.keystroke(channelType, channelId, parentId)
     }
 
+    /**
+     * Sends a stop typing event [EventType.TYPING_STOP] in this channel to the server.
+     *
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     */
     @CheckResult
-    public fun keystroke(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_START,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
-    }
-
-    @CheckResult
-    public fun stopTyping(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
-    }
-
-    @CheckResult
-    public fun stopTyping(parentId: String): Call<ChatEvent> {
-        return client.sendEvent(
-            eventType = EventType.TYPING_STOP,
-            channelType = channelType,
-            channelId = channelId,
-            extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
-        )
+    @JvmOverloads
+    public fun stopTyping(parentId: String? = null): Call<ChatEvent> {
+        return client.stopTyping(channelType, channelId, parentId)
     }
 
     /**
@@ -669,12 +742,23 @@ public class ChannelClient internal constructor(
         return client.sendEvent(eventType, channelType, channelId, extraData)
     }
 
+    /**
+     * Queries members for this channel.
+     *
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members to search in distinct channels.
+     *
+     * @return [Call] with a list of members or an error.
+     */
     @CheckResult
     public fun queryMembers(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member> = QuerySort(),
+        sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
@@ -747,8 +831,4 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
-
-    private companion object {
-        private const val ARG_TYPING_PARENT_ID = "parent_id"
-    }
 }

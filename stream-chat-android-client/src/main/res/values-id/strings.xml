@@ -11,4 +11,5 @@
   <string name="stream_chat_notification_reply">"Balas"</string>
   <string name="stream_chat_notification_title">"Pesan Obrolan"</string>
   <string name="stream_chat_notification_type_hint">"Ketik pesan"</string>
+  <string name="stream_chat_other_notifications_channel_name">"Notifikasi lainnya"</string>
 </resources>

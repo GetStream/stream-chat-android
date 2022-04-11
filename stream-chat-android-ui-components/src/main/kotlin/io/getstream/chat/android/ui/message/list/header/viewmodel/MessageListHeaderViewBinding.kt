@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:JvmName("MessageListHeaderViewModelBinding")
 
 package io.getstream.chat.android.ui.message.list.header.viewmodel
@@ -7,8 +23,8 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
@@ -24,7 +40,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
  */
 @JvmName("bind")
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
-    channelState.observe(lifecycle) { channel ->
+    channel.observe(lifecycle) { channel ->
         val channelName = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
             currentUser = ChatClient.instance().getCurrentUser()
@@ -74,8 +90,8 @@ private fun getOnlineStateSubtitle(context: Context, members: List<Member>): Str
 }
 
 private fun List<User>.filterCurrentUser(): List<User> {
-    return if (ChatDomain.isInitialized) {
-        val currentUser = ChatDomain.instance().user.value
+    return if (ChatClient.isInitialized) {
+        val currentUser = ChatClient.instance().globalState.user.value
         filter { it.id != currentUser?.id }
     } else {
         this

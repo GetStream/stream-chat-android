@@ -1,0 +1,167 @@
+# ChatDomain Migration
+
+**v5.0.0** release brings a big change to the offline support library - it replaces `ChatDomain` with a new, easy-to-use `OfflinePlugin`.
+You can read more about the motivation behind the effort and featured changes in the [announcement blog post](https://getstream.io/blog/android-v5-sdk-release/).
+
+The guide will help you with migrating from version `4.X.X` to `5.X.X`.
+
+### Initialization
+
+Compared to `ChatDomain`, which was a standalone singleton with its own API, `OfflinePlugin` is a plugin that should be provided to the `ChatClient.Builder`:
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(
+    config = Config(
+        backgroundSyncEnabled = true,
+        userPresence = true,
+        persistenceEnabled = true,
+        uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    ),
+    appContext = context,
+)
+
+ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
+```
+
+From this point onward, the caching mechanism will be enabled and you'll have access to state objects.
+
+You can read more about the initialization process in [Getting Started](../../01-basics/03-getting-started.mdx#adding-an-offline-plugin) page.
+
+### Requesting Data
+
+`ChatDomain` mirrored some of the `ChatClient` API while adding offline support. For example, if you wanted to send a message with offline support, you were supposed to call:
+
+```kotlin
+val message = Message(cid = cid, text = "New message")
+
+chatDomain.sendMessage(message).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handler error
+    }
+}
+```
+
+In the new approach, all the operations should be performed using the `ChatClient` so you don't need to bother yourself whether to use `ChatDomain` or `ChatClient`.
+You can use the snippet below to send a message:
+
+```kotlin
+val message = Message(cid = cid, text = messageText)
+
+chatClient.channel(cid).sendMessage(message).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+```
+
+:::note
+`chatClient.channel(cid)` returns a `ChannelClient` that uses `ChatClient` under the hood and simplifies performing actions in particular channel.
+:::
+
+The approach mentioned above can be applied to all API-call-related `ChatDomain` methods.
+
+### Observing the State
+
+We've renamed the objects used to obtain state:
+
+- `QueryChannelsController` was replaced by [`QueryChannelsState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState.kt) .
+- `ChannelController` was replaced by [`ChannelState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/channel/ChannelState.kt).
+- `ThreadController` was replaced by [`ThreadState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState.kt).
+- Global state available through `ChatDomain` can be now obtained from [`GlobalState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/global/GlobalState.kt).
+
+You can access the objects mentioned above like this:
+
+```kotlin
+// Returns QueryChannelsState object based on filter and sort used to query channels
+val queryChannelsState = chatClient.state.queryChannels(filter = filter, sort = sort)
+
+// Returns ChannelState object for a given channel
+val channelState = chatClient.state.channel(channelType = "messaging", channelId = "sampleId")
+
+// Returns ThreadState object for a thread associated with a given parentMessageId
+val threadState = chatClient.state.thread(messageId = "parentMessageId")
+
+// Gives you access to GlobalState object
+val globalState = chatClient.globalState
+```
+
+In addition to that, the offline library provides a bunch of extension methods that can be used to obtain the state after performing a particular API call:
+
+```kotlin
+// Old approach - returns ChannelController object and performs watchChannel request
+ChatDomain.instance().watchChannel(cid = "messaging:sampleId", messageLimit = 30).enqueue { result ->
+    if (result.isSuccess) {
+        val channelController = result.data()
+    } else {
+        // Handle error
+    }
+}
+
+// New approach - returns the StateFlow<ChannelState?> object and performs watchChannel request
+val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+```
+
+You can read more in the [Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/) documentation.
+
+### Other changes
+
+You might notice that some of the method names have changed. For example, `editMessage` was replaced with `updateMessage`:
+
+```kotlin
+// Old approach
+val messageToUpdate = Message(text = "Updated text")
+ChatDomain.instance().editMessage(messageToUpdate).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+
+// New approach
+val messageToUpdate = Message(text = "Updated text")
+ChatClient.instance().updateMessage(messageToUpdate).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+```
+
+and `leaveChannel` was replaced by `removeMembers`:
+
+```kotlin
+// Old approach
+ChatDomain.instance().leaveChannel(cid).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+
+// New approach
+chatClient.getCurrentUser()?.let { currentUser ->
+    ChatClient.instance().channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
+        if (result.isSuccess) {
+            // Handle success
+        } else {
+            // Handle error
+        }
+    }
+}
+```
+
+The same applies to the method's parameters as some of them were changed.
+[Here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/ChatClient.kt) you can find the list of available methods.
+
+Last, but not least, we've reorganized the offline library package structure to better match the current implementation.
+This shouldn't affect you much because most of the classes are brand new, but you can spot that some of the remaining public classes were moved.
+For example, `io.getstream.chat.android.offline.querychannels.ChatEventHandler` was moved to `io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler`.
+
+We strongly recommend to remove imports that cannot be resolved and reimport such classes again.

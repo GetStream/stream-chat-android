@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.content.ClipboardManager
@@ -5,12 +21,12 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
@@ -18,7 +34,6 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
  * @param chatClient The client to use for API calls.
- * @param chatDomain The domain used to fetch data.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
@@ -30,7 +45,6 @@ public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val enforceUniqueReactions: Boolean = true,
     private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -47,7 +61,6 @@ public class MessagesViewModelFactory(
             MessageComposerViewModel(
                 MessageComposerController(
                     chatClient = chatClient,
-                    chatDomain = chatDomain,
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize
@@ -57,7 +70,6 @@ public class MessagesViewModelFactory(
         MessageListViewModel::class.java to {
             MessageListViewModel(
                 chatClient = chatClient,
-                chatDomain = chatDomain,
                 channelId = channelId,
                 messageLimit = messageLimit,
                 enforceUniqueReactions = enforceUniqueReactions,
@@ -68,7 +80,7 @@ public class MessagesViewModelFactory(
         },
         AttachmentsPickerViewModel::class.java to {
             AttachmentsPickerViewModel(
-                StorageHelperWrapper(context, StorageHelper())
+                StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()),
             )
         }
     )

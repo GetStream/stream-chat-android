@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:Suppress("DEPRECATION_ERROR")
 
 package io.getstream.chat.android.ui
@@ -8,11 +24,11 @@ import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
-import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.lazyVar
@@ -20,7 +36,7 @@ import io.getstream.chat.android.ui.utils.lazyVar
 /**
  * ChatUI handles any configuration for the Chat UI elements.
  *
- * @see ChatMarkdown
+ * @see ChatMessageTextTransformer
  * @see ChatFonts
  * @see ImageHeadersProvider
  */
@@ -38,30 +54,16 @@ public object ChatUI {
     /**
      * Provides HTTP headers for image loading requests.
      */
-    public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
+    public var imageHeadersProvider: ImageHeadersProvider
+        set(value) {
+            StreamImageLoader.instance().imageHeadersProvider = value
+        }
+        get() = StreamImageLoader.instance().imageHeadersProvider
 
     /**
      * Allows setting default fonts used by UI components.
      */
     public var fonts: ChatFonts by lazyVar { ChatFontsImpl(style, appContext) }
-
-    /**
-     * Allows customizing the markdown parsing behaviour, e.g. useful if you want
-     * to use more markdown modules.
-     */
-    @Deprecated(
-        message = "ChatUI.markdown is deprecated. Markdown support is extracted into another module. " +
-            "See docs for more reference",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith(
-            expression = "ChatUI.messageTextTransformer"
-        )
-    )
-    public var markdown: ChatMarkdown by lazyVar {
-        ChatMarkdown { textView, message ->
-            textView.text = message
-        }
-    }
 
     /**
      * Allows customising the message text's format or style.
@@ -71,8 +73,8 @@ public object ChatUI {
      */
     public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
-            // Bypass to markdown by default for backwards compatibility.
-            markdown.setText(textView, messageItem.message.text)
+            // Customize the transformer if needed
+            textView.text = messageItem.message.text
         }
     }
 
@@ -102,4 +104,9 @@ public object ChatUI {
      * Allows formatting date-time objects as strings.
      */
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
+
+    /**
+     * Allows adding support for custom attachments in the message list.
+     */
+    public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
 }

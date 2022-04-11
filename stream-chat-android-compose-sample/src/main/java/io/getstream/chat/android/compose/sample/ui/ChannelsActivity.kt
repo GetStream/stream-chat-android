@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.sample.ui
 
 import android.content.Context
@@ -38,7 +54,7 @@ import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
@@ -46,15 +62,15 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.offline.extensions.globalState
 
 class ChannelsActivity : AppCompatActivity() {
 
     private val factory by lazy {
         ChannelViewModelFactory(
-            ChatClient.instance(), ChatDomain.instance(),
+            ChatClient.instance(),
             QuerySort.desc("last_updated"),
             Filters.and(
                 Filters.eq("type", "messaging"),
@@ -102,7 +118,7 @@ class ChannelsActivity : AppCompatActivity() {
      */
     @Composable
     private fun MyCustomUiSimplified() {
-        val user by ChatDomain.instance().user.collectAsState()
+        val user by ChatClient.instance().globalState.user.collectAsState()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -166,7 +182,7 @@ class ChannelsActivity : AppCompatActivity() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
-        val selectedChannel by listViewModel.selectedChannel
+        val delegatedSelectedChannel by listViewModel.selectedChannel
         val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -197,7 +213,7 @@ class ChannelsActivity : AppCompatActivity() {
                 )
             }
 
-            val selectedChannel = selectedChannel
+            val selectedChannel = delegatedSelectedChannel
             if (selectedChannel != null) {
                 SelectedChannelMenu(
                     modifier = Modifier

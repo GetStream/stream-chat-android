@@ -1,25 +1,34 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.repository.facade
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
+import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -29,6 +38,13 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
@@ -82,7 +98,10 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
         val message1 = randomMessage()
         val message2 = randomMessage()
-        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(message1, message2)
+        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(
+            message1,
+            message2
+        )
 
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 
@@ -107,7 +126,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(channels).insertChannel(eq(channel))
         verify(users).insertUsers(
-            com.nhaarman.mockitokotlin2.check { listUser ->
+            org.mockito.kotlin.check { listUser ->
                 listUser.size `should be equal to` 5
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser)
             }
@@ -125,7 +144,8 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
         val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
         val pinnedByUser = randomUser()
-        val expectedListOfUser = latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser
+        val expectedListOfUser =
+            latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser
         val message = randomMessage(
             user = messageUser,
             replyTo = randomMessage(user = replyToUser, pinnedBy = null),
@@ -140,7 +160,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(messages).insertMessage(eq(message), eq(cache))
         verify(users).insertUsers(
-            com.nhaarman.mockitokotlin2.check { listUser ->
+            org.mockito.kotlin.check { listUser ->
                 listUser `should contain same` expectedListOfUser
             }
         )
@@ -162,14 +182,20 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                         read = listOf(ChannelUserRead(userRead)),
                         messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
                     )
-                    acc.first + listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser) to acc.second + channel
+                    acc.first + listOf(
+                        memberUser,
+                        channelUser,
+                        userRead,
+                        messageUser,
+                        pinnedByUser
+                    ) to acc.second + channel
                 }
 
             sut.insertChannels(listOfChannels)
 
             verify(channels).insertChannels(eq(listOfChannels))
             verify(users).insertUsers(
-                com.nhaarman.mockitokotlin2.check { listUser ->
+                org.mockito.kotlin.check { listUser ->
                     listUser `should contain same` listOfUser
                 }
             )
@@ -206,7 +232,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             verify(messages).insertMessages(eq(listOfMessages), eq(cache))
             verify(users).insertUsers(
-                com.nhaarman.mockitokotlin2.check { listUser ->
+                org.mockito.kotlin.check { listUser ->
                     listUser `should contain same` listOfUser
                 }
             )
@@ -273,7 +299,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                 cacheForMessages = false
             )
 
-            verifyZeroInteractions(configs)
+            verifyNoInteractions(configs)
             verify(users).insertUsers(userList)
             verify(channels).insertChannels(channelList)
             verify(messages).insertMessages(messageList, false)

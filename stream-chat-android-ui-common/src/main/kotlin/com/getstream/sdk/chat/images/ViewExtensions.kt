@@ -1,9 +1,26 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.images
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import com.getstream.sdk.chat.disposable.Disposable
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -14,8 +31,8 @@ public fun ImageView.load(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-) {
-    StreamImageLoader.instance().load(
+): Disposable {
+    return StreamImageLoader.instance().load(
         target = this,
         data = data,
         placeholderResId = placeholderResId,
@@ -32,8 +49,8 @@ public fun ImageView.load(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-) {
-    StreamImageLoader.instance().load(
+): Disposable {
+    return StreamImageLoader.instance().load(
         target = this,
         data = data,
         placeholderDrawable = placeholderDrawable,
@@ -78,8 +95,8 @@ public fun ImageView.loadVideoThumbnail(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-) {
-    StreamImageLoader.instance().loadVideoThumbnail(
+): Disposable {
+    return StreamImageLoader.instance().loadVideoThumbnail(
         target = this,
         uri = uri,
         placeholderResId = placeholderResId,

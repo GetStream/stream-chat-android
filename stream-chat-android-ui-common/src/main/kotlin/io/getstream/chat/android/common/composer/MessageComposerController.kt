@@ -1,14 +1,30 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -17,15 +33,16 @@ import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.keystroke
-import io.getstream.chat.android.offline.extensions.stopTyping
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -42,7 +59,6 @@ import java.util.regex.Pattern
  *
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
- * @param chatDomain The domain used to communicate to the API and store data offline.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
@@ -50,15 +66,23 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
+
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
      */
     private val scope = CoroutineScope(DispatcherProvider.Main)
+
+    /**
+     * Holds information about the current state of the [Channel].
+     */
+    public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
+        cid = channelId,
+        messageLimit = DEFAULT_MESSAGE_LIMIT
+    ).filterNotNull()
 
     /**
      * Full message composer state holding all the required information.
@@ -184,26 +208,18 @@ public class MessageComposerController(
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
-        scope.launch {
-            val result = chatDomain.watchChannel(channelId, 0).await()
+        channelState.flatMapLatest { it.channelConfig }.onEach {
+            maxMessageLength = it.maxMessageLength
+            commands = it.commands
+        }.launchIn(scope)
 
-            if (result.isSuccess) {
-                val channelController = result.data()
+        channelState.flatMapLatest { it.members }.onEach { members ->
+            users = members.map { it.user }
+        }.launchIn(scope)
 
-                channelController.channelConfig.onEach {
-                    maxMessageLength = it.maxMessageLength
-                    commands = it.commands
-                }.launchIn(scope)
-
-                channelController.members.onEach { members ->
-                    users = members.map { it.user }
-                }.launchIn(scope)
-
-                channelController.channelData.onEach {
-                    cooldownInterval = it.cooldown
-                }.launchIn(scope)
-            }
-        }
+        channelState.flatMapLatest { it.channelData }.onEach {
+            cooldownInterval = it.cooldown
+        }.launchIn(scope)
 
         setupComposerState()
     }
@@ -360,7 +376,7 @@ public class MessageComposerController(
      * Clears all the data from the input - both the current [input] value and the
      * [selectedAttachments].
      */
-    private fun clearData() {
+    public fun clearData() {
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
@@ -369,7 +385,7 @@ public class MessageComposerController(
 
     /**
      * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using the [ChatDomain].
+     * message, or we send a new message, using [ChatClient].
      *
      * It also dismisses any current message actions.
      *
@@ -380,7 +396,8 @@ public class MessageComposerController(
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
-            chatDomain.sendMessage(message)
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            chatClient.sendMessage(channelType, channelId, message)
         }
 
         dismissMessageActions()
@@ -408,20 +425,21 @@ public class MessageComposerController(
     ): Message {
         val activeAction = activeAction
 
+        val trimmedMessage = message.trim()
         val actionMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
-        val mentions = filterMentions(selectedMentions, message)
+        val mentions = filterMentions(selectedMentions, trimmedMessage)
 
         return if (isInEditMode) {
             actionMessage.copy(
-                text = message,
+                text = trimmedMessage,
                 attachments = attachments.toMutableList(),
                 mentionedUsersIds = mentions
             )
         } else {
             Message(
                 cid = channelId,
-                text = message,
+                text = trimmedMessage,
                 parentId = parentMessageId,
                 replyMessageId = replyMessageId,
                 attachments = attachments.toMutableList(),
@@ -471,10 +489,11 @@ public class MessageComposerController(
      * @param isTyping If the user is currently typing.
      */
     private fun handleTypingEvent(isTyping: Boolean) {
+        val (type, id) = channelId.cidToTypeAndId()
         if (isTyping) {
-            chatClient.keystroke(channelId, parentMessageId)
+            chatClient.keystroke(type, id, parentMessageId)
         } else {
-            chatClient.stopTyping(channelId, parentMessageId)
+            chatClient.stopTyping(type, id, parentMessageId)
         }.enqueue()
     }
 
@@ -596,16 +615,12 @@ public class MessageComposerController(
     }
 
     /**
-     * Gets the edit message call accordingly with feature toggle, using either chatDomain or chatClient.
+     * Gets the edit message call using [ChatClient].
      *
      * @param message [Message]
      */
     private fun getEditMessageCall(message: Message): Call<Message> {
-        return if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
-            chatClient.updateMessage(message)
-        } else {
-            chatDomain.editMessage(message)
-        }
+        return chatClient.updateMessage(message)
     }
 
     private companion object {
@@ -623,5 +638,10 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete command.
          */
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

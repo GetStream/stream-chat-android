@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
@@ -12,7 +28,6 @@ import io.getstream.chat.android.ui.common.extensions.isReply
 import io.getstream.chat.android.ui.databinding.StreamUiItemGiphyAttachmentBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
@@ -40,34 +55,36 @@ internal class GiphyAttachmentViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
+    init {
+        initializeListeners()
+    }
+
     /**
-     * We override the Message passed to listeners here with the up-to-date Message
-     * object from the [data] property of the base ViewHolder.
-     *
-     * This is required because these listeners will be invoked by the AttachmentViews,
-     * which don't always have an up-to-date Message object in them. This is due to the
-     * optimization that we don't re-create the AttachmentViews when the attachments
-     * of the Message are unchanged. However, other properties (like reactions) might
-     * change, and these listeners should receive a fully up-to-date Message.
+     * Initializes listeners that enable handling clicks on various
+     * elements such as reactions, threads, message containers, etc.
      */
-    private fun modifiedListeners(listeners: MessageListListenerContainer?): MessageListListenerContainer? {
-        return listeners?.let { container ->
-            MessageListListenerContainerImpl(
-                messageClickListener = { container.messageClickListener.onMessageClick(data.message) },
-                messageLongClickListener = { container.messageLongClickListener.onMessageLongClick(data.message) },
-                messageRetryListener = { container.messageRetryListener.onRetryMessage(data.message) },
-                threadClickListener = { container.threadClickListener.onThreadClick(data.message) },
-                attachmentClickListener = { _, attachment ->
-                    container.attachmentClickListener.onAttachmentClick(data.message, attachment)
-                },
-                attachmentDownloadClickListener = container.attachmentDownloadClickListener::onAttachmentDownloadClick,
-                reactionViewClickListener = { container.reactionViewClickListener.onReactionViewClick(data.message) },
-                userClickListener = { container.userClickListener.onUserClick(data.message.user) },
-                giphySendListener = { _, action ->
-                    container.giphySendListener.onGiphySend(data.message, action)
-                },
-                linkClickListener = container.linkClickListener::onLinkClick
-            )
+    private fun initializeListeners() {
+        binding.run {
+            listeners?.let { container ->
+                root.setOnClickListener {
+                    data.message.attachments.firstOrNull()?.let { attachment ->
+                        container.attachmentClickListener.onAttachmentClick(data.message, attachment)
+                    }
+                }
+                reactionsView.setReactionClickListener {
+                    container.reactionViewClickListener.onReactionViewClick(data.message)
+                }
+                footnote.setOnThreadClickListener {
+                    container.threadClickListener.onThreadClick(data.message)
+                }
+                root.setOnLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    true
+                }
+                avatarView.setOnClickListener {
+                    container.userClickListener.onUserClick(data.message.user)
+                }
+            }
         }
     }
 
@@ -92,34 +109,8 @@ internal class GiphyAttachmentViewHolder(
 
         imageCorners(binding.mediaAttachmentView, data)
 
-        modifiedListeners(listeners)?.let { listeners ->
-            setListeners(binding.mediaAttachmentView, listeners, data)
-        }
-
         val attachment = data.message.attachments.first()
         binding.mediaAttachmentView.showGiphy(attachment = attachment)
-    }
-
-    /**
-     * Sets the listeners that are valid for the Giphy container.
-     *
-     * @param mediaAttachmentView The Giphy image container.
-     * @param listeners The set of listeners available.
-     * @param data The data used to propagate events through the listeners.
-     */
-    private fun setListeners(
-        mediaAttachmentView: GiphyMediaAttachmentView,
-        listeners: MessageListListenerContainer,
-        data: MessageListItem.MessageItem,
-    ) {
-        mediaAttachmentView.setOnLongClickListener {
-            listeners.messageLongClickListener.onMessageLongClick(data.message)
-            true
-        }
-
-        mediaAttachmentView.setOnClickListener {
-            listeners.attachmentClickListener.onAttachmentClick(data.message, data.message.attachments.first())
-        }
     }
 
     /**

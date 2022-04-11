@@ -1,101 +1,156 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:JvmName("ChatClientExtensions")
 
 package io.getstream.chat.android.offline.extensions
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.call.doOnResult
-import io.getstream.chat.android.client.call.onErrorReturn
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.experimental.plugin.listeners.GetMessageListener
-import io.getstream.chat.android.client.extensions.retry
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.CreateChannelService
-import io.getstream.chat.android.offline.usecase.DownloadAttachment
-import io.getstream.chat.android.offline.utils.validateCid
-
-private const val KEY_MESSAGE_ACTION = "image_action"
-private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-private const val MESSAGE_ACTION_SEND = "send"
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.offline.extensions.internal.isEphemeral
+import io.getstream.chat.android.offline.extensions.internal.logic
+import io.getstream.chat.android.offline.extensions.internal.requestsAsState
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.offline.utils.internal.validateCidWithResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 /**
- * Returns the instance of [ChatDomainImpl] as cast of singleton [ChatDomain.instance] to the [ChatDomainImpl] class.
+ * [StateRegistry] instance that contains all state objects exposed in offline plugin.
+ * The instance is being initialized after connecting the user!
+ *
+ * @throws IllegalArgumentException If the state was not initialized yet.
  */
-private fun domainImpl(): ChatDomainImpl {
-    return ChatDomain.instance as ChatDomainImpl
+public val ChatClient.state: StateRegistry
+    @Throws(IllegalArgumentException::class)
+    get() = requireNotNull(StateRegistry.get()) {
+        "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
+            "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
+    }
+
+/**
+ * [GlobalState] instance that contains information about the current user, unreads, etc.
+ */
+public val ChatClient.globalState: GlobalState
+    get() = GlobalMutableState.getOrCreate()
+
+/**
+ * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
+ * The [QueryChannelsState] cannot be created before connecting the user therefore, the method returns a StateFlow
+ * that emits a null when the user has not been connected yet and the new value every time the user changes.
+ *
+ * @param request The request's parameters combined into [QueryChannelsRequest] class.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return A StateFlow object that emits a null when the user has not been connected yet and the new [QueryChannelsState] when the user changes.
+ */
+@JvmOverloads
+public fun ChatClient.queryChannelsAsState(
+    request: QueryChannelsRequest,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<QueryChannelsState?> {
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).queryChannels(request)
+    }
 }
 
 /**
- * Query members of a channel.
+ * Performs [ChatClient.queryChannel] with watch = true under the hood and returns [ChannelState] associated with the query.
+ * The [ChannelState] cannot be created before connecting the user therefore, the method returns a StateFlow
+ * that emits a null when the user has not been connected yet and the new value every time the user changes.
  *
- * @param cid CID of the Channel whose members we are querying.
- * @param offset Indicates how many items to exclude from the start of the result.
- * @param limit Indicates the maximum allowed number of items in the result.
- * @param filter Filter applied to online queries for advanced selection criteria.
- * @param sort The sort criteria applied to the result.
- * @param members
+ * @param cid The full channel id, i.e. "messaging:123"
+ * @param messageLimit The number of messages that will be initially loaded.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
- * @return Executable async [Call] querying members.
+ * @return A StateFlow object that emits a null when the user has not been connected yet and the new [ChannelState] when the user changes.
  */
 @JvmOverloads
-@CheckResult
-public fun ChatClient.requestMembers(
+public fun ChatClient.watchChannelAsState(
     cid: String,
-    offset: Int = 0,
-    limit: Int = 0,
-    filter: FilterObject = NeutralFilterObject,
-    sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
-    members: List<Member> = emptyList(),
-): Call<List<Member>> = ChatDomain.instance().queryMembers(cid, offset, limit, filter, sort, members)
-
-/**
- * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
- * in local database.
- *
- * @param querySearch Search string used as autocomplete.
- * @param offset Offset for paginated requests.
- * @param userLimit The page size in the request.
- * @param userPresence Presence flag to obtain additional info such as last active date.
- *
- * @return Executable async [Call] querying users.
- */
-@CheckResult
-public fun ChatClient.searchUsersByName(
-    querySearch: String,
-    offset: Int,
-    userLimit: Int,
-    userPresence: Boolean,
-): Call<List<User>> = ChatDomain.instance().searchUsersByName(querySearch, offset, userLimit, userPresence)
-
-/**
- * Adds the provided channel to the active channels and replays events for all active channels.
- *
- * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
- */
-@CheckResult
-public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> {
-    validateCid(cid)
-
-    val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
-        domainImpl.replayEvents(cid)
+    messageLimit: Int,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<ChannelState?> {
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit)
     }
+}
+
+/**
+ * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
+ *
+ * @param messageId The ID of the original message the replies were made to.
+ * @param messageLimit The number of messages that will be initially loaded.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return [ThreadState]
+ */
+@JvmOverloads
+public fun ChatClient.getRepliesAsState(
+    messageId: String,
+    messageLimit: Int,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): ThreadState {
+    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+}
+
+/**
+ * Provides an ease-of-use piece of functionality that checks if the user is available or not. If it's not, we don't emit
+ * any state, but rather return an empty StateFlow.
+ *
+ * If the user is set, we fetch the state using the provided operation and provide it to the user.
+ */
+private fun <T> ChatClient.getStateOrNull(
+    coroutineScope: CoroutineScope,
+    producer: () -> T,
+): StateFlow<T?> {
+    return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
+        if (userId == null) {
+            null
+        } else {
+            producer()
+        }
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, null)
 }
 
 /**
@@ -108,13 +163,18 @@ public fun ChatClient.replayEventsForActiveChannels(cid: String): Call<List<Chat
  */
 @CheckResult
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
-    validateCid(cid)
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult<Unit>(cid)
 
-    val chatDomain = domainImpl()
-    val channelController = chatDomain.channel(cid)
-    return CoroutineCall(chatDomain.scope) {
-        channelController.replyMessage(message)
-        Result(Unit)
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            state.channel(channelType = channelType, channelId = channelId).toMutableState().run {
+                _repliedMessage.value = message
+            }
+            Result(Unit)
+        } else {
+            cidValidationResult
+        }
     }
 }
 
@@ -126,46 +186,26 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  * @return Executable async [Call] downloading attachment.
  */
 @CheckResult
-public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
-    DownloadAttachment(domainImpl()).invoke(attachment)
+public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
+    return CoroutineCall(state.scope) {
+        try {
+            val logger = ChatLogger.get("DownloadAttachment")
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val url = attachment.assetUrl ?: attachment.imageUrl
+            val subPath = attachment.name ?: attachment.title
 
-/**
- * Keystroke should be called whenever a user enters text into the message input.
- * It automatically calls stopTyping when the user stops typing after 5 seconds.
- *
- * @param cid The full channel id i. e. messaging:123.
- * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
- *
- * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
- */
-@CheckResult
-public fun ChatClient.keystroke(cid: String, parentId: String? = null): Call<Boolean> {
-    validateCid(cid)
+            logger.logD("Downloading attachment. Name: $subPath, Url: $url")
 
-    val chatDomain = domainImpl()
-    val channelController = chatDomain.channel(cid)
-    return CoroutineCall(chatDomain.scope) {
-        channelController.keystroke(parentId)
-    }
-}
-
-/**
- * StopTyping should be called when the user submits the text and finishes typing.
- *
- * @param cid The full channel id i. e. messaging:123.
- * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
- *
- * @return Executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
- * false if it wasn't sent.
- */
-@CheckResult
-public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Boolean> {
-    validateCid(cid)
-
-    val chatDomain = domainImpl()
-    val channelController = chatDomain.channel(cid)
-    return CoroutineCall(chatDomain.scope) {
-        channelController.stopTyping(parentId)
+            downloadManager.enqueue(
+                DownloadManager.Request(Uri.parse(url))
+                    .setTitle(subPath)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            )
+            Result.success(Unit)
+        } catch (exception: Exception) {
+            Result.error(exception)
+        }
     }
 }
 
@@ -178,134 +218,46 @@ public fun ChatClient.stopTyping(cid: String, parentId: String? = null): Call<Bo
  * @return The channel wrapped in [Call]. This channel contains older requested messages.
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
-    validateCid(cid)
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult<Channel>(cid)
 
-    val domainImpl = domainImpl()
-    val channelController = domainImpl.channel(cid)
-    return CoroutineCall(domainImpl.scope) {
-        channelController.loadOlderMessages(messageLimit)
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId)
+                .loadOlderMessages(messageLimit = messageLimit)
+        } else {
+            cidValidationResult
+        }
     }
 }
 
 /**
- *  Cancels the message of "ephemeral" type. Removes the message from local storage.
- * API call to remove the message is retried according to the retry policy specified on the chatDomain.
+ * Cancels the message of "ephemeral" type.
+ * Removes the message from local storage and state.
  *
  * @param message The `ephemeral` message to cancel.
  *
  * @return Executable async [Call] responsible for canceling ephemeral message.
  */
-public fun ChatClient.cancelMessage(message: Message): Call<Boolean> {
-    val cid = message.cid
-    validateCid(cid)
+public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult<Boolean>(message.cid)
 
-    val domainImpl = domainImpl()
-    val channelController = domainImpl.channel(cid)
-    return CoroutineCall(domainImpl.scope) {
-        channelController.cancelEphemeralMessage(message)
-    }
-}
+        if (cidValidationResult.isSuccess) {
+            try {
+                require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
 
-/**
- * Creates a new channel. Will retry according to the retry policy if it fails.
- *
- * @param channel The channel object.
- *
- * @return Executable async [Call] responsible for creating a channel.
- *
- * @see io.getstream.chat.android.offline.utils.RetryPolicy
- */
-@CheckResult
-public fun ChatClient.createChannel(channel: Channel): Call<Channel> {
-    val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
-        CreateChannelService(
-            scope = domainImpl.scope,
-            client = this@createChannel,
-            repositoryFacade = domainImpl.repos,
-            getChannelController = domainImpl::channel,
-            activeQueries = domainImpl.getActiveQueries(),
-        ).createChannel(channel, domainImpl.isOnline(), domainImpl.user.value)
-    }
-}
+                val repos = RepositoryFacade.get()
+                val (channelType, channelId) = message.cid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
+                repos.deleteChannelMessage(message)
 
-/**
- * Checks if channel needs to be marked read.
- *
- * @param cid The full channel id i.e. "messaging:123".
- *
- * @return True if channel is needed to be marked otherwise false.
- */
-internal fun ChatClient.needsMarkRead(cid: String): Boolean {
-    validateCid(cid)
-    val channelController = domainImpl().channel(cid)
-
-    return channelController.markRead()
-}
-
-/**
- * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
- * Returns new "ephemeral" message with new giphy url.
- * API call to remove the message is retried according to the retry policy specified on the chatDomain.
- *
- * @param message The message to send.
- * @see io.getstream.chat.android.offline.utils.RetryPolicy
- */
-internal fun ChatClient.sendGiphy(message: Message): Call<Message> {
-    val domainImpl = domainImpl()
-
-    return CoroutineCall(domainImpl.scope) {
-        val cid = message.cid
-        val channelController = domainImpl.channel(cid)
-        val channelClient = channel(channelController.channelType, channelController.channelId)
-
-        val request = message.run {
-            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
-        }
-
-        validateCid(cid)
-
-        channelClient.sendAction(request).retry(domainImpl.scope, retryPolicy).await().also { resultMessage ->
-            if (resultMessage.isSuccess) {
-                channelController.removeLocalMessage(resultMessage.data())
+                Result.success(true)
+            } catch (exception: Exception) {
+                Result.error(exception)
             }
-        }
-    }
-}
-
-/**
- * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
- * Returns new "ephemeral" message with new giphy url.
- * API call to remove the message is retried according to the retry policy specified on the chatDomain
- *
- * @param message The message to send.
- * @see io.getstream.chat.android.offline.utils.RetryPolicy
- */
-internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
-    val domainImpl = domainImpl()
-    return CoroutineCall(domainImpl.scope) {
-        val cid = message.cid
-        val channelController = domainImpl.channel(cid)
-        val channelClient = channel(channelController.channelType, channelController.channelId)
-
-        validateCid(cid)
-
-        val request = message.run {
-            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
-        }
-
-        val result = channelClient.sendAction(request).retry(domainImpl.scope, retryPolicy).await()
-
-        if (result.isSuccess) {
-            val processedMessage: Message = result.data()
-            processedMessage.apply {
-                syncStatus = SyncStatus.COMPLETED
-                domainImpl.repos.insertMessage(this)
-            }
-            channelController.upsertMessage(processedMessage)
-            Result(processedMessage)
         } else {
-            Result(result.error())
+            cidValidationResult
         }
     }
 }
@@ -320,7 +272,6 @@ internal fun ChatClient.shuffleGiphy(message: Message): Call<Message> {
  *
  * @return Executable async [Call] responsible for loading a message.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 @CheckResult
 public fun ChatClient.loadMessageById(
     cid: String,
@@ -328,20 +279,34 @@ public fun ChatClient.loadMessageById(
     olderMessagesOffset: Int,
     newerMessagesOffset: Int,
 ): Call<Message> {
-    val relevantPlugins = plugins.filterIsInstance<GetMessageListener>()
-    return this.getMessage(messageId)
-        .onErrorReturn(domainImpl().scope) {
-            relevantPlugins.first().onGetMessageError(cid, messageId, olderMessagesOffset, newerMessagesOffset)
-        }
-        .doOnResult(domainImpl().scope) { result ->
-            relevantPlugins.forEach {
-                it.onGetMessageResult(
-                    result,
-                    cid,
-                    messageId,
-                    olderMessagesOffset,
-                    newerMessagesOffset
-                )
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult<Message>(cid)
+
+        if (cidValidationResult.isSuccess) {
+            val result = getMessage(messageId).await()
+
+            if (result.isSuccess) {
+                val message = result.data()
+                val (channelType, channelId) = cid.cidToTypeAndId()
+
+                logic.channel(channelType = channelType, channelId = channelId).run {
+                    storeMessageLocally(listOf(message))
+                    upsertMessages(listOf(message))
+                    loadOlderMessages(newerMessagesOffset, messageId)
+                    loadNewerMessages(messageId, olderMessagesOffset)
+                }
+                result
+            } else {
+                try {
+                    RepositoryFacade.get().selectMessage(messageId)?.let { message ->
+                        Result(message)
+                    } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+                } catch (exception: Exception) {
+                    Result.error(exception)
+                }
             }
+        } else {
+            cidValidationResult
         }
+    }
 }

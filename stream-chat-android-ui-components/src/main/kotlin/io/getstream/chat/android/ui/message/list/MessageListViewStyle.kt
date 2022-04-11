@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
@@ -25,6 +41,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
  * @property itemStyle Style for message list view holders.
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
+ * @property replyMessageStyle Styles messages that are replies.
  * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
  * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
  * @property replyIcon Icon for reply option. Default value is [R.drawable.stream_ui_ic_arrow_curve_left_grey].
@@ -41,12 +58,14 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property unpinIcon Icon for unpin message option. Default value is [R.drawable.stream_ui_ic_unpin].
  * @property pinMessageEnabled Enables/disables pin message feature. Disabled by default.
  * @property muteIcon Icon for mute option. Default value is [R.drawable.stream_ui_ic_mute].
+ * @property unmuteIcon Icon for the unmute option. Default value is [R.drawable.stream_ui_ic_umnute].
  * @property muteEnabled Enables/disables "mute user" option.
  * @property blockIcon Icon for block option. Default value is [R.drawable.stream_ui_ic_user_block].
  * @property blockEnabled Enables/disables "block user" option.
  * @property deleteIcon Icon for delete message option. Default value is [R.drawable.stream_ui_ic_delete].
  * @property deleteMessageEnabled Enables/disables delete message feature. Enabled by default.
  * @property copyTextEnabled Enables/disables copy text feature. Enabled by default.
+ * @property retryMessageEnabled Enables/disables retry failed message feature. Enabled by default.
  * @property deleteConfirmationEnabled Enables/disables showing confirmation dialog before deleting message. Enabled by default.
  * @property flagMessageConfirmationEnabled Enables/disables showing confirmation dialog before flagging message. Disabled by default.
  * @property messageOptionsText Text appearance of message option items.
@@ -55,6 +74,8 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property userReactionsBackgroundColor Background color of user reactions card. Default value is [R.color.stream_ui_white].
  * @property userReactionsTitleText Text appearance of of user reactions card title.
  * @property optionsOverlayDimColor Overlay dim color. Default value is [R.color.stream_ui_literal_transparent].
+ * @property emptyViewTextStyle Style for the text displayed in the empty view when no data is present.
+ * @property loadingView Layout for the loading view. Default value is [R.layout.stream_ui_default_loading_view].
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
  */
@@ -87,6 +108,7 @@ public data class MessageListViewStyle(
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
+    val retryMessageEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
     val messageOptionsText: TextStyle,
@@ -266,6 +288,9 @@ public data class MessageListViewStyle(
                 val copyTextEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
+                val retryMessageEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiRetryMessageEnabled, true)
+
                 val deleteConfirmationEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
@@ -394,6 +419,7 @@ public data class MessageListViewStyle(
                     blockEnabled = blockEnabled,
                     deleteIcon = deleteIcon,
                     copyTextEnabled = copyTextEnabled,
+                    retryMessageEnabled = retryMessageEnabled,
                     deleteConfirmationEnabled = deleteConfirmationEnabled,
                     flagMessageConfirmationEnabled = flagMessageConfirmationEnabled,
                     deleteMessageEnabled = deleteMessageEnabled,

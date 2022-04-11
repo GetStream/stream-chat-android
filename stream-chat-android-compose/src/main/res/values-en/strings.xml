@@ -60,6 +60,7 @@
     <string name="stream_compose_message_list_empty_messages">No messages</string>
 
     <!-- Selected Message Menu -->
+    <string name="stream_compose_resend_message">Resend</string>
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
     <string name="stream_compose_copy_message">Copy Message</string>
@@ -89,6 +90,7 @@
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
+    <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_send_message">Send</string>

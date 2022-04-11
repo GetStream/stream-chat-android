@@ -1,10 +1,22 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.reactions
 
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -13,41 +25,38 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
-import io.getstream.chat.android.offline.experimental.global.GlobalState
-import io.getstream.chat.android.offline.experimental.plugin.listener.DeleteReactionListenerImpl
-import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.extensions.addMyReaction
+import io.getstream.chat.android.offline.extensions.internal.addMyReaction
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerImpl
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-@OptIn(ExperimentalStreamChatApi::class)
-internal class DeleteReactionsTests : SynchronizedCoroutineTest {
+internal class DeleteReactionsTests {
 
     companion object {
         @JvmField
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
-
-    override fun getTestScope(): TestCoroutineScope = TestCoroutineScope()
 
     private val currentUser = User()
     private val myReactions: List<Reaction> = listOf(
@@ -81,7 +90,7 @@ internal class DeleteReactionsTests : SynchronizedCoroutineTest {
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)
         }
-        val (sut, stateRegistry) = Fixture(getTestScope(), currentUser)
+        val (sut, stateRegistry) = Fixture(testCoroutines.scope, currentUser)
             .givenMessageWithReactions(message)
             .get()
 
@@ -209,20 +218,19 @@ internal class DeleteReactionsTests : SynchronizedCoroutineTest {
 
     private class Fixture(scope: CoroutineScope, user: User) {
 
-        private val stateRegistry = StateRegistry.getOrCreate(
+        private val stateRegistry = StateRegistry.create(
+            job = mock(),
             scope = scope,
             userStateFlow = MutableStateFlow(user),
             messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
-        private val logicRegistry = LogicRegistry.getOrCreate(stateRegistry)
+
+        private val client = mock<ChatClient>()
 
         private var repos = mock<RepositoryFacade>()
-        private val globalState = mock<GlobalState>()
-
-        init {
-            ChatDomain.instance = mock<ChatDomainImpl>()
-        }
+        private val globalState = mock<GlobalMutableState>()
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client)
 
         fun givenMockedRepos(repos: RepositoryFacade): Fixture = apply {
             this.repos = repos

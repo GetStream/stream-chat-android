@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.socket
 
 import android.os.Handler
@@ -55,6 +71,7 @@ internal class ChatSocketServiceImpl constructor(
     )
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
+            logger.logI("Network connected. Socket state: ${state.javaClass.simpleName}")
             if (state is State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
                 logger.logI("network connected, reconnecting socket")
                 reconnect(connectionConf)
@@ -62,6 +79,7 @@ internal class ChatSocketServiceImpl constructor(
         }
 
         override fun onDisconnected() {
+            logger.logI("Network disconnected. Socket state: ${state.javaClass.simpleName}")
             healthMonitor.stop()
             if (state is State.Connected || state is State.Connecting) {
                 state = State.NetworkDisconnected
@@ -73,45 +91,44 @@ internal class ChatSocketServiceImpl constructor(
 
     @VisibleForTesting
     internal var state: State by Delegates.observable(
-        State.DisconnectedTemporarily(null) as State,
-        { _, oldState, newState ->
-            if (oldState != newState) {
-                logger.logI("updateState: ${newState.javaClass.simpleName}")
-                when (newState) {
-                    is State.Connecting -> {
-                        healthMonitor.stop()
-                        callListeners { it.onConnecting() }
-                    }
-                    is State.Connected -> {
-                        healthMonitor.start()
-                        callListeners { it.onConnected(newState.event) }
-                    }
-                    is State.NetworkDisconnected -> {
-                        shutdownSocketConnection()
-                        healthMonitor.stop()
-                        callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
-                    }
-                    is State.DisconnectedByRequest -> {
-                        shutdownSocketConnection()
-                        healthMonitor.stop()
-                        callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
-                    }
-                    is State.DisconnectedTemporarily -> {
-                        shutdownSocketConnection()
-                        healthMonitor.onDisconnected()
-                        callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
-                    }
-                    is State.DisconnectedPermanently -> {
-                        shutdownSocketConnection()
-                        connectionConf = ConnectionConf.None
-                        networkStateProvider.unsubscribe(networkStateListener)
-                        healthMonitor.stop()
-                        callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
-                    }
+        State.DisconnectedTemporarily(null) as State
+    ) { _, oldState, newState ->
+        if (oldState != newState) {
+            logger.logI("updateState: ${newState.javaClass.simpleName}")
+            when (newState) {
+                is State.Connecting -> {
+                    healthMonitor.stop()
+                    callListeners { it.onConnecting() }
+                }
+                is State.Connected -> {
+                    healthMonitor.start()
+                    callListeners { it.onConnected(newState.event) }
+                }
+                is State.NetworkDisconnected -> {
+                    shutdownSocketConnection()
+                    healthMonitor.stop()
+                    callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
+                }
+                is State.DisconnectedByRequest -> {
+                    shutdownSocketConnection()
+                    healthMonitor.stop()
+                    callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
+                }
+                is State.DisconnectedTemporarily -> {
+                    shutdownSocketConnection()
+                    healthMonitor.onDisconnected()
+                    callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
+                }
+                is State.DisconnectedPermanently -> {
+                    shutdownSocketConnection()
+                    connectionConf = ConnectionConf.None
+                    networkStateProvider.unsubscribe(networkStateListener)
+                    healthMonitor.stop()
+                    callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
                 }
             }
         }
-    )
+    }
         private set
 
     override fun onSocketError(error: ChatError) {
@@ -174,9 +191,10 @@ internal class ChatSocketServiceImpl constructor(
         connect(ConnectionConf.UserConnectionConf(endpoint, apiKey, user))
 
     private fun connect(connectionConf: ConnectionConf) {
-        logger.logI("connect")
+        val isNetworkConnected = networkStateProvider.isConnected()
+        logger.logI("Connect. Network available: $isNetworkConnected")
         this.connectionConf = connectionConf
-        if (networkStateProvider.isConnected()) {
+        if (isNetworkConnected) {
             setupSocket(connectionConf)
         } else {
             state = State.NetworkDisconnected

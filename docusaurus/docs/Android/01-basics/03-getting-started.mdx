@@ -38,22 +38,31 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-### Creating a ChatDomain
+### Adding the Offline Plugin
 
-If you want to have offline support or use the UI Components package, you'll need to initialize the `ChatDomain` class in addition to `ChatClient`. You can skip this initialization step if you're only using the low-level client.
+If you want to have offline support or **use the UI Components package**, you'll need to initialize the `OfflinePlugin` class and add it to the `ChatClient.Builder`. You can skip this initialization step if you're only using the low-level client.
 
-The initialization is done similarly to `ChatClient`, using a builder, which exposes several methods for configuring the SDK's behavior:
+The initialization should be done using `StreamOfflinePluginFactory`:
 
 ```kotlin
-val chatClient = ChatClient.Builder(apiKey, appContext).build()
+val offlinePluginFactory = StreamOfflinePluginFactory(
+    config = Config(
+        // Enables the background sync which is performed to sync user actions done without the Internet connection.
+        backgroundSyncEnabled = true,
+        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
+        userPresence = true,
+        // Enables using the database as an internal caching mechanism.
+        persistenceEnabled = true,
+        // An enumeration of various network types used as a constraint inside upload attachments worker.
+        uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    ),
+    appContext = context,
+)
 
-val chatDomain = ChatDomain.Builder(appContext, chatClient)
-    .offlineEnabled()
-    .userPresenceEnabled()
-    .build()
+ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
 ```
 
-For more about working with `ChatDomain`, see [Working with Offline Support](../02-client/06-guides/06-working-with-offline.mdx).
+For more about working with `OfflinePlugin`, see [Offline Support](../02-client/06-guides/06-offline-support.mdx)
 
 ### Connecting a User
 
@@ -62,10 +71,8 @@ The next step is connecting the user. This requires a valid Stream Chat token. A
 ```kotlin
 val user = User(
     id = "bender",
-    extraData = mutableMapOf(
-        "name" to "Bender",
-        "image" to "https://bit.ly/321RmWb",
-    ),
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
 )
 
 ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token

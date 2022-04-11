@@ -1,10 +1,24 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.utils
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.experimental.errorhandler.factory.NoOpErrorHandlerFactory
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -13,6 +27,7 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -22,7 +37,7 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
 
     private val socketStateService = SocketStateService()
     private val userStateService: UserStateService = UserStateService()
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
+    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
     private val client = ChatClient(
         config = mock(),
         api = mock(),
@@ -31,11 +46,11 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         tokenManager = FakeTokenManager(""),
         socketStateService = socketStateService,
         queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-        userStateService = userStateService,
         userCredentialStorage = mock(),
+        userStateService = userStateService,
         scope = testCoroutines.scope,
         retryPolicy = NoRetryPolicy(),
-        errorHandlerFactory = NoOpErrorHandlerFactory(),
+        appSettingsManager = mock(),
     )
 
     @Test

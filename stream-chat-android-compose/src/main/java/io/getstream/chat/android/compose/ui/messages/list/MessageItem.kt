@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.animation.animateColorAsState
@@ -21,11 +37,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -43,10 +61,9 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPos
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
-import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
+import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
@@ -382,67 +399,74 @@ internal fun DefaultMessageItemCenterContent(
 
     val modifier = Modifier.widthIn(max = 250.dp)
 
-    MessageBubble(
-        modifier = modifier,
-        shape = messageBubbleShape,
-        color = messageBubbleColor,
-        content = {
-            when {
-                message.isGiphyEphemeral() -> {
-                    GiphyMessageContent(
-                        message = messageItem.message,
-                        onGiphyActionClick = onGiphyActionClick
-                    )
-                }
-                message.isDeleted() -> {
-                    Text(
-                        modifier = modifier
-                            .padding(
-                                start = 12.dp,
-                                end = 12.dp,
-                                top = 8.dp,
-                                bottom = 8.dp
-                            ),
-                        text = stringResource(id = R.string.stream_compose_message_deleted),
-                        color = ChatTheme.colors.textLowEmphasis,
-                        style = ChatTheme.typography.footnoteItalic
-                    )
-                }
-                else -> {
-                    Column {
-                        MessageAttachmentsContent(
-                            message = messageItem.message,
-                            onLongItemClick = onLongItemClick,
-                            onImagePreviewResult = onImagePreviewResult,
-                        )
-
-                        if (message.text.isNotEmpty()) {
-                            DefaultMessageContent(message = message)
-                        }
-                    }
-                }
+    val isFailed = ownsMessage && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+    if (!isFailed) {
+        MessageBubble(
+            modifier = modifier,
+            shape = messageBubbleShape,
+            color = messageBubbleColor,
+            content = {
+                MessageContent(
+                    message = message,
+                    onLongItemClick = onLongItemClick,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onImagePreviewResult = onImagePreviewResult
+                )
             }
+        )
+    } else {
+        Box(modifier = modifier) {
+            MessageBubble(
+                modifier = Modifier.padding(end = 12.dp),
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                content = {
+                    MessageContent(
+                        message = message,
+                        onLongItemClick = onLongItemClick,
+                        onGiphyActionClick = onGiphyActionClick,
+                        onImagePreviewResult = onImagePreviewResult
+                    )
+                }
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd),
+                painter = painterResource(id = R.drawable.stream_compose_ic_error),
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent,
+            )
         }
-    )
+    }
 }
 
 /**
  * The default text message content. It holds the quoted message in case there is one.
  *
  * @param message The message to show.
+ * @param onLongItemClick Handler when the item is long clicked.
  */
 @Composable
-internal fun DefaultMessageContent(message: Message) {
+internal fun DefaultMessageTextContent(
+    message: Message,
+    onLongItemClick: (Message) -> Unit,
+) {
     val quotedMessage = message.replyTo
 
     Column {
         if (quotedMessage != null) {
             QuotedMessage(
                 modifier = Modifier.padding(8.dp),
-                message = quotedMessage
+                message = quotedMessage,
+                onLongItemClick = onLongItemClick
             )
         }
-        MessageText(message = message)
+        MessageText(
+            message = message,
+            onLongItemClick = onLongItemClick
+        )
     }
 }
 

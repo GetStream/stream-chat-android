@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.input
 
 import android.animation.AnimatorSet
@@ -295,7 +311,10 @@ public class MessageInputView : ConstraintLayout {
         )
 
         val dismissListener = PopupWindow.OnDismissListener {
-            binding.commandsButton.postDelayed(CLICK_DELAY) { binding.commandsButton.isSelected = false }
+            binding.commandsButton.postDelayed(CLICK_DELAY) {
+                binding.commandsButton.isSelected = false
+                hideSuggestionList()
+            }
         }
         val suggestionListUi = if (popupWindow) {
             SuggestionListPopupWindow(suggestionListView, this, dismissListener)
@@ -662,8 +681,8 @@ public class MessageInputView : ConstraintLayout {
                     refreshControlsState()
                     handleKeyStroke()
 
-                    /* Debouncing when clearing the input will cause the suggestion list
-                    popup to appear briefly after clearing the input in certain cases. */
+                    /** Debouncing when clearing the input will cause the suggestion list
+                     popup to appear briefly after clearing the input in certain cases. */
                     if (messageText.isEmpty()) {
                         messageInputDebouncer?.cancelLastDebounce()
                         suggestionListController?.onNewMessageText(messageText)
@@ -794,28 +813,37 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        val messageText = binding.messageInputFieldView.messageText
+        val messageText = getTrimmedMessageText()
 
         doSend(
-            { attachments ->
+            attachmentSender = { attachments ->
                 sendMessageHandler.sendMessageWithAttachments(
                     messageText,
                     attachments,
                     messageReplyTo
                 )
             },
-            { sendMessageHandler.sendMessage(messageText, messageReplyTo) },
-            { customAttachments ->
-                sendMessageHandler.sendMessageWithCustomAttachments(messageText, customAttachments, messageReplyTo)
+            simpleSender = {
+                sendMessageHandler.sendMessage(
+                    messageText,
+                    messageReplyTo
+                )
+            },
+            customAttachmentsSender = { customAttachments ->
+                sendMessageHandler.sendMessageWithCustomAttachments(
+                    messageText,
+                    customAttachments,
+                    messageReplyTo
+                )
             }
         )
     }
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        val messageText = binding.messageInputFieldView.messageText
+        val messageText = getTrimmedMessageText()
         doSend(
-            { attachments ->
+            attachmentSender = { attachments ->
                 sendMessageHandler.sendToThreadWithAttachments(
                     parentMessage,
                     messageText,
@@ -823,14 +851,14 @@ public class MessageInputView : ConstraintLayout {
                     attachments
                 )
             },
-            {
+            simpleSender = {
                 sendMessageHandler.sendToThread(
                     parentMessage,
                     messageText,
                     sendAlsoToChannel
                 )
             },
-            { customAttachments ->
+            customAttachmentsSender = { customAttachments ->
                 sendMessageHandler.sendToThreadWithCustomAttachments(
                     parentMessage,
                     messageText,
@@ -863,7 +891,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun editMessage(oldMessage: Message) {
-        sendMessageHandler.editMessage(oldMessage, binding.messageInputFieldView.messageText)
+        sendMessageHandler.editMessage(oldMessage, getTrimmedMessageText())
         inputMode = InputMode.Normal
     }
 
@@ -888,6 +916,15 @@ public class MessageInputView : ConstraintLayout {
         viewHolderFactory: SelectedCustomAttachmentViewHolderFactory,
     ) {
         customAttachmentsSelectionListener(attachments, viewHolderFactory)
+    }
+
+    /**
+     * Returns trimmed text from the message input.
+     *
+     * @return Trimmed text from the message input.
+     */
+    private fun getTrimmedMessageText(): String {
+        return binding.messageInputFieldView.messageText.trim()
     }
 
     private companion object {

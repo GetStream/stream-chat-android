@@ -11,4 +11,5 @@
   <string name="stream_chat_notification_reply">"Rispondi"</string>
   <string name="stream_chat_notification_title">"Messaggio"</string>
   <string name="stream_chat_notification_type_hint">"Digita il messaggio"</string>
+  <string name="stream_chat_other_notifications_channel_name">"Altre notifiche"</string>
 </resources>

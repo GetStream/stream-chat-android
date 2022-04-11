@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +60,7 @@ import kotlin.math.abs
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
+ * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that represents the item that displays each message.
  */
 @Composable
@@ -57,6 +74,7 @@ public fun Messages(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(messagesState, lazyListState)
     },
+    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
@@ -93,12 +111,7 @@ public fun Messages(
 
             if (isLoadingMore) {
                 item {
-                    LoadingIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(8.dp)
-                    )
+                    loadingMoreContent()
                 }
             }
         }
@@ -162,4 +175,17 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         )
     }
+}
+
+/**
+ * The default loading more indicator.
+ */
+@Composable
+internal fun DefaultMessagesLoadingMoreIndicator() {
+    LoadingIndicator(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(8.dp)
+    )
 }
