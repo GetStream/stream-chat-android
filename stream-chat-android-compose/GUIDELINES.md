@@ -4,8 +4,8 @@
 
 * [Motivation](#motivation)
 * [Project Structure](#project-structure)
-* [KDoc Comments](#kdoc-comments)
-* [Component Previews](#component-previews)
+* [Writing documentation](#writting-documentation)
+  * [KDoc Comments](#kdoc-comments)
 * [Naming Conventions](#naming-conventions)
   * [Naming Components](#naming-components)
   * [Naming Listeners](#naming-listeners)
@@ -13,6 +13,8 @@
   * [Naming Resources](#naming-resources)
 * [Customizing Components](#customizing-components)
   * [Slot APIs](#slot-apis)
+* [Drawable colors](#drawable-colors)
+* [Component Previews](#component-previews)  
 
 ## Motivation
 
@@ -55,36 +57,35 @@ stream-chat-android-compose
 │             └── messages   // Utility components for the "messages" feature 
 ```
 
-## KDoc Comments
+## Writing documentation
 
-We believe that all the code should be covered with KDoc. This includes classes, methods, fields, parameters and return values.
+### KDoc Comments
 
-## Component Previews
+For code comments, we use [KDoc](https://kotlinlang.org/docs/kotlin-doc.html). We believe that **all** of the code should be covered with KDoc. This includes classes, methods, fields, parameters and return values.
 
-We provide component [previews](https://developer.android.com/jetpack/compose/tooling#preview) for [stateless](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/#stateless-components) components.
+When writing code comments, keep the following in mind:
 
-When creating component previews, keep the following in mind:
-
-- A preview should be located in the same source file as the Composable.
-- Sample data should be located in the `previewdata` package.
-- A preview should have a display name.
-
-#### Example:
-
-```kotlin
-@Composable
-fun MyComposable() {
-    // ...
-}
-
-@Preview(name = "MyComposable Preview")
-@Composable
-fun MyComposablePreview() {
-    ChatTheme {
-        MyComposable()
-    }
-}
-```
+- Use full sentences: start with capital letters, end with punctuation.
+   ```diff
+   - the default message container for all messages
+   + The default message container for all messages.
+   ```
+- Do NOT put dashes between the KDoc tag and its contents, as these get interpreted as bullet points (KDoc supports markdown).
+   ```diff
+   - * @param modifier - Modifier for styling.
+   + * @param modifier Modifier for styling.
+   - * @return - The display name for the given channel.
+   + * @return The display name for the given channel.
+   ```
+- Do NOT end comments with `* */`. Just use `*/`.
+   ```diff
+   - * */
+   + */
+   ```
+- Use square brackets to refer to other declarations (classes, functions, properties, etc) in the code where applicable.
+  ```
+  Checks if the [Channel] is distinct.
+  ```
 
 ## Naming Conventions
 
@@ -206,6 +207,47 @@ fun MyComposable(
         }
 
         trailingContent(messageItem) 
+    }
+}
+```
+
+## Drawable colors
+
+Whenever possible, prefer to create drawable resources that have a `#000000` color, and then tint them at the use site (instead of creating drawable resources that are specific colors, e.g. red or grey).
+
+#### Example:
+
+```kotlin
+Icon(
+    painter = painterResource(id = R.drawable.stream_compose_ic_share),
+    contentDescription = null,
+    tint = ChatTheme.colors.textHighEmphasis
+)
+```
+
+## Component Previews
+
+We provide component [previews](https://developer.android.com/jetpack/compose/tooling#preview) for [stateless](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/#stateless-components) components.
+
+When creating component previews, keep the following in mind:
+
+- Place previews in the same source file as the Composable.
+- Set a display name for the preview.
+- Store sample date for the preview in the `previewdata` package.
+
+#### Example:
+
+```kotlin
+@Composable
+fun MyComposable() {
+    // ...
+}
+
+@Preview(name = "MyComposable Preview")
+@Composable
+fun MyComposablePreview() {
+    ChatTheme {
+        MyComposable()
     }
 }
 ```
