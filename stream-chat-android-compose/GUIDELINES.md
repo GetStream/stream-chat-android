@@ -16,7 +16,7 @@
 
 ## Motivation
 
-We follow the official [Guidelines For Compose](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md) when developing our Compose SDK. On top of that, we developed a set of rules described in this document.
+We follow official [Guidelines For Compose](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md) when developing our Compose SDK. On top of that, to make the code consistent and easy to maintain, we developed a set of coding conventions described in this document.
 
 Contributions to this project are very much welcome! Even if some of the requirements above are not met, don't hesitate to submit your code changes. 💙
 
@@ -35,7 +35,7 @@ stream-chat-android-compose
 ```
 
 * **viewmodel**: Contains ViewModels for [bound](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/#bound-components) UI components.
-* **state**: Contains classes encapsulating state for Composables in `ui` package.
+* **state**: Contains classes encapsulating state for Composable UI components.
 * **ui**: Contains [screen](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/#screen-components), [bound](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/#bound-components) and [stateless](https://getstream.io/chat/docs/sdk/android/compose/component-architecture/#stateless-components) UI components.
 * **ui/components**: Contains reusable independent components that can be used as building blocks when creating fully custom UI.
 * **previewdata**: Contains sample data for component previews.
