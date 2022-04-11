@@ -70,6 +70,10 @@ public fun MessageInputViewModel.bindView(
         view.chatMode = if (isDirectMessage) DIRECT_CHAT else GROUP_CHAT
     }
 
+    canSendMessages.observe(lifecycleOwner) {
+        view.setCanSendMessages(it)
+    }
+
     view.setSendMessageHandler(
         object : MessageInputView.MessageSendHandler {
             val viewModel = this@bindView

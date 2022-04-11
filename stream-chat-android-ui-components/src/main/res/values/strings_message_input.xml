@@ -4,6 +4,7 @@
     <string name="stream_ui_message_input_send_as_direct_message">Also send as direct message</string>
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
+    <string name="stream_ui_message_cannot_send_messages_hint">You can\'t send messages in this channel</string>
     <string name="stream_ui_message_input_only_attachments_hint">Add a comment or send</string>
     <string name="stream_ui_message_input_slow_mode_hint">Slow mode ON</string>
 

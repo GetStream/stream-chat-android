@@ -116,6 +116,11 @@ public class MessageInputView : ConstraintLayout {
     private var cooldownInterval: Int = 0
     private var cooldownTimerJob: Job? = null
 
+    // used to regulate UI according to ownCapabilities
+    private var canSendAttachments = true
+    private var canUseCommands = true
+    private var canSendLinks = true
+
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
             when (attachmentSource) {
@@ -798,11 +803,35 @@ public class MessageInputView : ConstraintLayout {
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode
+            attachmentsButton.isVisible =
+                messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
+            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
+    }
+
+    /**
+     * Disables or enables entering and sending a message
+     * into the [MessageInputView] depending on if the given user
+     * can send messages in the given channel.
+     */
+    internal fun setCanSendMessages(canSend: Boolean) {
+        binding.commandsButton.isVisible = canSend
+        binding.attachmentsButton.isVisible = canSend
+
+        canSendAttachments = canSend
+        canUseCommands = canSend
+
+        if (canSend) {
+            enableSendButton()
+            binding.messageInputFieldView.binding.messageEditText.setHint(R.string.stream_ui_message_input_hint)
+        } else {
+            disableSendButton()
+            binding.messageInputFieldView.binding.messageEditText.setHint(R.string.stream_ui_message_cannot_send_messages_hint)
+        }
+        binding.messageInputFieldView.binding.messageEditText.isEnabled = canSend
+        binding.messageInputFieldView.binding.messageEditText.isFocusable = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {
