@@ -74,6 +74,10 @@ public fun MessageInputViewModel.bindView(
         view.setCanSendMessages(it)
     }
 
+    canUploadAttachments.observe(lifecycleOwner) {
+        view.canSendAttachments(false)
+    }
+
     view.setSendMessageHandler(
         object : MessageInputView.MessageSendHandler {
             val viewModel = this@bindView

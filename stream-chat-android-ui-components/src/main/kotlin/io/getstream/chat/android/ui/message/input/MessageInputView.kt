@@ -834,6 +834,16 @@ public class MessageInputView : ConstraintLayout {
         binding.messageInputFieldView.binding.messageEditText.isFocusable = canSend
     }
 
+    /**
+     * Disables or enables the integration for sending attachments
+     * depending on if the given user can send attachments
+     * in the given channel.
+     */
+    internal fun canSendAttachments(canSend: Boolean) {
+        binding.attachmentsButton.isVisible = canSend
+        canSendAttachments = canSend
+    }
+
     private fun shouldShowCommandsButton(): Boolean {
         val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
 

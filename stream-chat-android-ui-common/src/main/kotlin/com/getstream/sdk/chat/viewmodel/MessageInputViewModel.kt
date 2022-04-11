@@ -127,6 +127,14 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }.asLiveData()
 
     /**
+     * If the user does or does not have the ability to upload attachments
+     * in the given channel.
+     */
+    public val canUploadAttachments: LiveData<Boolean> = ownCapabilities.map {
+        it.contains(ChannelCapabilities.UPLOAD_FILE)
+    }.asLiveData()
+
+    /**
      * Holds the message the user is currently replying to,
      * if the user is replying to a message.
      */
