@@ -75,7 +75,7 @@ public fun MessageInputViewModel.bindView(
     }
 
     canUploadAttachments.observe(lifecycleOwner) {
-        view.canSendAttachments(false)
+        view.canSendAttachments(it)
     }
 
     view.setSendMessageHandler(
