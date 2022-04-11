@@ -267,8 +267,9 @@ internal class SyncManager(
                     logger.logD("Deleting message: ${message.id}")
                     channelClient.deleteMessage(message.id).await()
                 }
-                message.updatedLocallyAt != null -> {
+                message.updatedLocallyAt != null && message.createdAt != null -> {
                     logger.logD("Updating message: ${message.id}")
+
                     channelClient.updateMessage(message).await()
                 }
                 else -> {
