@@ -143,12 +143,18 @@ public fun MessageInputViewModel.bindView(
             }
         }
     )
-    view.setTypingListener(
-        object : MessageInputView.TypingListener {
-            override fun onKeystroke() = keystroke()
-            override fun onStopTyping() = stopTyping()
+    this.canSendTypingEvents.observe(lifecycleOwner) {
+        if (it) {
+            view.setTypingListener(
+                object : MessageInputView.TypingListener {
+                    override fun onKeystroke() = keystroke()
+                    override fun onStopTyping() = stopTyping()
+                }
+            )
+        } else {
+            view.setTypingListener(null)
         }
-    )
+    }
 
     repliedMessage.observe(lifecycleOwner) {
         if (it != null) {

@@ -135,6 +135,14 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }.asLiveData()
 
     /**
+     * If the user does or does not have the ability to send typing events
+     * in the given channel.
+     */
+    public val canSendTypingEvents: LiveData<Boolean> = ownCapabilities.map {
+        it.contains(ChannelCapabilities.SEND_TYPING_EVENTS)
+    }.asLiveData()
+
+    /**
      * Holds the message the user is currently replying to,
      * if the user is replying to a message.
      */
