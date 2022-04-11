@@ -4,7 +4,7 @@
 
 * [Motivation](#motivation)
 * [Project Structure](#project-structure)
-* [Writing documentation](#writting-documentation)
+* [Writing documentation](#writing-documentation)
   * [KDoc Comments](#kdoc-comments)
 * [Naming Conventions](#naming-conventions)
   * [Naming Components](#naming-components)
@@ -12,6 +12,7 @@
   * [Naming State](#naming-state)
   * [Naming Resources](#naming-resources)
 * [Customizing Components](#customizing-components)
+  * [Customization Options](#customization-options)
   * [Slot APIs](#slot-apis)
 * [Drawable colors](#drawable-colors)
 * [Component Previews](#component-previews)  
@@ -91,7 +92,7 @@ When writing code comments, keep the following in mind:
 
 ### Naming Components
 
-When choosing a name for your component, try not to use the naming conventions from Android View based system.
+When choosing a name for your component, try avoid the naming conventions from Android View based system.
 
 #### Do
 
@@ -154,25 +155,42 @@ Resource names must start with `stream_compose_` prefix.
 
 ## Customizing Components 
 
-Customization options should be exposed where possible. 
+### Customization Options
 
-- Theming via `ChatTheme` (ChatTheme.colors, ChatTheme.typography, etc.)
-- Exposing Modifier
-- Action handlers  
-- Slot APIs
+Customization options should be exposed where possible:
 
-The order of parameters in a Composable (state, handlers, styling, Slot APIs)
+- Modifiers for styling
+- Action handlers
+- Styling options
+- [Slot APIs](https://developer.android.com/jetpack/compose/layouts/basics#slot-based-layouts)
+
+#### Example:
+
+```kotlin
+@Composable
+fun UserAvatar(
+    // State
+    user: User,
+    // Modifier and Styling
+    modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.avatar,
+    // Action Handlers
+    onClick: (() -> Unit)? = { },
+    // Slot APIs
+    onlineIndicator: @Composable BoxScope.() -> Unit = { ... },
+)
+```
 
 ### Slot APIs
 
-We heavily rely on [Slot APIs](https://developer.android.com/jetpack/compose/layouts/basics#slot-based-layouts) when building our components. When designing a complex component, it is hard to expose every possible customization parameter. In that case, consider exposing customization slots.
+We heavily rely on [Slot APIs](https://developer.android.com/jetpack/compose/layouts/basics#slot-based-layouts) when building our components. When designing a complex component, it is hard to expose every possible customization parameter. In that case, consider exposing customization slots instead.
 
 Rules when implementing Slot APIs:
 - Consistent naming: `leadingContent`, `centerContent`, `trailingContent`, `footerContent`, `headerContent`, `itemContent`, `content`, etc.
 - The default implementations of Slot APIs should be located in the same source file and name according to the template: `Default*LeadingContent`, `Default*CenterContent`
 - Padding inside Slots: we should tend to make components containing Slot APIs as simple as possible without inner padding, without margins between slots.
 
-#### Example
+#### Example:
 
 ```kotlin
 @Composable
@@ -233,7 +251,7 @@ When creating component previews, keep the following in mind:
 
 - Place previews in the same source file as the Composable.
 - Set a display name for the preview.
-- Store sample date for the preview in the `previewdata` package.
+- Store sample data for the preview in the `previewdata` package.
 
 #### Example:
 
