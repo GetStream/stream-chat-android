@@ -33,6 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
+private const val NumberOfAvatars = 4
 /**
  * Represents an avatar with a matrix of user images or initials.
  *
@@ -50,7 +51,7 @@ public fun GroupAvatar(
     textStyle: TextStyle = ChatTheme.typography.captionBold,
     onClick: (() -> Unit)? = null,
 ) {
-    val avatarUsers = users.take(4)
+    val avatarUsers = users.take(NumberOfAvatars)
     val imageCount = avatarUsers.size
 
     val clickableModifier: Modifier = if (onClick != null) {

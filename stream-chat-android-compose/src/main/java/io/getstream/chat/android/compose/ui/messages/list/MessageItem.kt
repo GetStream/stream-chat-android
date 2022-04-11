@@ -170,7 +170,7 @@ public fun MessageItem(
             durationMillis = if (focusState is MessageFocused) {
                 AnimationConstants.DefaultDurationMillis
             } else {
-                HIGHLIGHT_FADE_OUT_DURATION_MILLIS
+                HighlightFadeOutDurationMillis
             }
         )
     ).value else backgroundColor
@@ -557,4 +557,4 @@ internal fun DefaultMessageTextContent(
 /**
  * Represents the time the highlight fade out transition will take.
  */
-public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+public const val HighlightFadeOutDurationMillis: Int = 1000

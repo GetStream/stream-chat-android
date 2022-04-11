@@ -60,7 +60,7 @@ public fun ReactionOptions(
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
-    numberOfReactionsShown: Int = DEFAULT_NUMBER_OF_REACTIONS_SHOWN,
+    numberOfReactionsShown: Int = DefaultNumberOfReactionsShown,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
@@ -154,4 +154,4 @@ private fun ReactionOptionsPreview() {
 /**
  * The default maximum number of reactions shown before the show more button.
  */
-private const val DEFAULT_NUMBER_OF_REACTIONS_SHOWN = 5
+private const val DefaultNumberOfReactionsShown = 5
