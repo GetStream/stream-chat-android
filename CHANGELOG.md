@@ -76,7 +76,8 @@
 - Improved the way typing updates work in the MessageComposerController. [#3313](https://github.com/GetStream/stream-chat-android/pull/3313)
 
 ### ✅ Added
-Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
+- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
+- Added Compose SDK Guidelines for internal and external contributors. [#3315](https://github.com/GetStream/stream-chat-android/pull/3315)
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
