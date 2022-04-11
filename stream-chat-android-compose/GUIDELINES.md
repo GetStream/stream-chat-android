@@ -62,7 +62,7 @@ stream-chat-android-compose
 
 ### KDoc Comments
 
-For code comments, we use [KDoc](https://kotlinlang.org/docs/kotlin-doc.html). We believe that **all** of the code should be covered with KDoc. This includes classes, methods, fields, parameters and return values.
+For code comments, we use [KDoc](https://kotlinlang.org/docs/kotlin-doc.html). We believe that **all of the code** should be covered with KDoc. This includes classes, methods, fields, parameters and return values.
 
 When writing code comments, keep the following in mind:
 
@@ -92,7 +92,7 @@ When writing code comments, keep the following in mind:
 
 ### Naming Components
 
-When choosing a name for your component, try avoid the naming conventions from Android View based system.
+When choosing a name for your component, try to avoid the naming conventions from Android view-based system.
 
 #### Do
 
@@ -177,7 +177,7 @@ fun UserAvatar(
     // Action Handlers
     onClick: (() -> Unit)? = { },
     // Slot APIs
-    onlineIndicator: @Composable BoxScope.() -> Unit = { ... },
+    onlineIndicator: @Composable BoxScope.() -> Unit = { ... }
 )
 ```
 
@@ -186,9 +186,9 @@ fun UserAvatar(
 We heavily rely on [Slot APIs](https://developer.android.com/jetpack/compose/layouts/basics#slot-based-layouts) when building our components. When designing a complex component, it is hard to expose every possible customization parameter. In that case, consider exposing customization slots instead.
 
 Rules when implementing Slot APIs:
-- Consistent naming: `leadingContent`, `centerContent`, `trailingContent`, `footerContent`, `headerContent`, `itemContent`, `content`, etc.
-- The default implementations of Slot APIs should be located in the same source file and name according to the template: `Default*LeadingContent`, `Default*CenterContent`
-- Padding inside Slots: we should tend to make components containing Slot APIs as simple as possible without inner padding, without margins between slots.
+- **Consistent naming**: When exposing content slots consider using these common names: `leadingContent`, `centerContent`, `trailingContent`, `footerContent`, `headerContent`, `itemContent`, `content`.
+- **Default implementation**: The default implementation of a content slot should be located in the same source file and should be named according to this patter: `Default*LeadingContent`, `Default*CenterContent`, etc.  
+- **Inner padding**: A component containing slots should be as simple as possible. That's why we try to handle paddings inside slots (for example, instead of adding a margin between slots).
 
 #### Example:
 
