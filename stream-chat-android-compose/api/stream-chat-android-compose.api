@@ -1602,7 +1602,7 @@ public final class io/getstream/chat/android/compose/ui/util/ReactionIconFactory
 
 public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrapper {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Lcom/getstream/sdk/chat/utils/StorageHelper;)V
+	public fun <init> (Landroid/content/Context;Lcom/getstream/sdk/chat/utils/StorageHelper;Lcom/getstream/sdk/chat/utils/AttachmentFilter;)V
 	public final fun getAttachmentsForUpload (Ljava/util/List;)Ljava/util/List;
 	public final fun getAttachmentsFromUris (Ljava/util/List;)Ljava/util/List;
 	public final fun getFiles ()Ljava/util/List;

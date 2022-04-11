@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.network
 
 import android.net.ConnectivityManager
@@ -21,10 +21,12 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import io.getstream.chat.android.client.logger.ChatLogger
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
+    private val logger = ChatLogger.get("NetworkStateProvider")
     private val lock: Any = Any()
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -51,9 +53,11 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     private fun notifyListenersIfNetworkStateChanged() {
         val isNowConnected = isConnected()
         if (!isConnected && isNowConnected) {
+            logger.logI("Network connected.")
             isConnected = true
             listeners.forEach { it.onConnected() }
         } else if (isConnected && !isNowConnected) {
+            logger.logI("Network disconnected.")
             isConnected = false
             listeners.forEach { it.onDisconnected() }
         }
