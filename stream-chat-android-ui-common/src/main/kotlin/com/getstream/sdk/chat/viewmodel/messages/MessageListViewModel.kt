@@ -86,6 +86,12 @@ public class MessageListViewModel(
     private var threadListData: MessageListItemLiveData? = null
 
     /**
+     * Regulates the visibility of deleted messages.
+     */
+    private var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
+        MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+
+    /**
      * Represents the current state of the message list
      * that is a product of multiple sources.
      */
@@ -214,7 +220,7 @@ public class MessageListViewModel(
 
     /**
      * Initializes the ViewModel with offline capabilities using
-     * [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
+     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
      */
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
@@ -239,12 +245,13 @@ public class MessageListViewModel(
         val typingIds = channelState.typing.map { (_, idList) -> idList }.asLiveData()
 
         messageListData = MessageListItemLiveData(
-            user,
-            channelState.messages.asLiveData(),
-            channelState.reads.asLiveData(),
-            typingIds,
-            false,
-            dateSeparatorHandler,
+            currentUser = user,
+            messages = channelState.messages.asLiveData(),
+            readsLd = channelState.reads.asLiveData(),
+            typingLd = typingIds,
+            isThread = false,
+            dateSeparatorHandler = dateSeparatorHandler,
+            deletedMessageVisibility = deletedMessageVisibility
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -289,6 +296,7 @@ public class MessageListViewModel(
             null,
             true,
             threadDateSeparatorHandler,
+            deletedMessageVisibility
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -692,6 +700,16 @@ public class MessageListViewModel(
     }
 
     /**
+     * Sets the value used to filter deleted messages.
+     * @see DeletedMessageVisibility
+     *
+     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     */
+    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+        this.deletedMessageVisibility.value = deletedMessageVisibility
+    }
+
+    /**
      * The current state of the message list.
      */
     public sealed class State {
@@ -938,6 +956,30 @@ public class MessageListViewModel(
          * @param chatError Contains the original [Throwable] along with a message.
          */
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+    }
+
+    /**
+     * Intended to be used for regulating visibility of deleted messages
+     * and filtering them out accordingly.
+     */
+    public enum class DeletedMessageVisibility {
+
+        /**
+         * No deleted messages are visible.
+         */
+        ALWAYS_HIDDEN,
+
+        /**
+         * Deleted messages from the current user are visible,
+         * ones from other users are not.
+         */
+        VISIBLE_FOR_CURRENT_USER,
+
+        /**
+         * All deleted messages are visible, regardless of the
+         * user who authored them.
+         */
+        ALWAYS_VISIBLE
     }
 
     /**
