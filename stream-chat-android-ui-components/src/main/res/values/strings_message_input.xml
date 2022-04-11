@@ -34,5 +34,6 @@
     <string name="stream_ui_message_input_error_max_length">Max message length (%1$d) exceeded.</string>
     <string name="stream_ui_message_input_error_file_large_size">File is too large - max %dMB.</string>
     <string name="stream_ui_message_input_error_max_attachments_count_exceeded">Attachments count (%1$d) exceeded.</string>
+    <string name="stream_ui_message_input_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
     <string name="stream_ui_message_input_error_command_not_allowed" translatable="false">It is not possible to use a command when editing messages</string>
 </resources>

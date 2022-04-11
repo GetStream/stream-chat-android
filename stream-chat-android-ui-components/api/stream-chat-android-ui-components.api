@@ -1095,6 +1095,9 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun hideSuggestionList ()V
 	public final fun listenForBigAttachments (Lio/getstream/chat/android/ui/message/input/MessageInputView$BigFileSelectionListener;)V
 	public final fun setAttachmentButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener;)V
+	public final fun setCanSendAttachments (Z)V
+	public final fun setCanSendLinks (Z)V
+	public final fun setCanSendMessages (Z)V
 	public final fun setChatMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;)V
 	public final fun setCommands (Ljava/util/List;)V
 	public final fun setCommandsEnabled (Z)V

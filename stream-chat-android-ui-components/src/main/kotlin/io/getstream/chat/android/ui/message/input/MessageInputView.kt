@@ -72,6 +72,7 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
+import io.getstream.chat.android.ui.utils.extensions.containsLinks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -116,10 +117,32 @@ public class MessageInputView : ConstraintLayout {
     private var cooldownInterval: Int = 0
     private var cooldownTimerJob: Job? = null
 
+    private var currentlyActiveSnackBar: Snackbar? = null
+
     // used to regulate UI according to ownCapabilities
     private var canSendAttachments = true
     private var canUseCommands = true
     private var canSendLinks = true
+
+    /**
+     * Changes value only when the new value
+     * is not the same as the current one.
+     *
+     * Disables or enables the send button and
+     * displays a snackbar when necessary.
+     */
+    private var inputContainsLinks = false
+        set(value) {
+            if (value != inputContainsLinks) {
+                field = value
+                if (field) {
+                    disableSendButton()
+                    alertInputContainsLinkWhenNotAllowed()
+                } else {
+                    enableSendButton()
+                }
+            }
+        }
 
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
@@ -385,6 +408,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
+        currentlyActiveSnackBar?.dismiss()
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
         cooldownTimerJob?.cancel()
@@ -492,7 +516,10 @@ public class MessageInputView : ConstraintLayout {
             ),
             Snackbar.LENGTH_LONG
         )
-            .apply { anchorView = binding.sendButtonContainer }
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+            }
             .show()
     }
 
@@ -505,7 +532,30 @@ public class MessageInputView : ConstraintLayout {
             ),
             Snackbar.LENGTH_LONG,
         )
-            .apply { anchorView = binding.sendButtonContainer }
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+            }
+            .show()
+    }
+
+    /**
+     * Displays a snackbar informing the user that
+     * sending links is not allowed in the given channel
+     */
+    private fun alertInputContainsLinkWhenNotAllowed() {
+        Snackbar.make(
+            this,
+            resources.getString(
+                R.string.stream_ui_message_input_error_sending_links_not_allowed,
+            ),
+            Snackbar.LENGTH_INDEFINITE,
+        )
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+                setAction(R.string.stream_ui_ok) { dismiss() }
+            }
             .show()
     }
 
@@ -683,6 +733,8 @@ public class MessageInputView : ConstraintLayout {
                         maxMessageLengthExceeded = isMessageTooLong()
                     )
 
+                    inputContainsLinks = !canSendLinks && messageText.containsLinks()
+
                     refreshControlsState()
                     handleKeyStroke()
 
@@ -816,7 +868,7 @@ public class MessageInputView : ConstraintLayout {
      * into the [MessageInputView] depending on if the given user
      * can send messages in the given channel.
      */
-    internal fun setCanSendMessages(canSend: Boolean) {
+    public fun setCanSendMessages(canSend: Boolean) {
         binding.commandsButton.isVisible = canSend
         binding.attachmentsButton.isVisible = canSend
 
@@ -839,9 +891,21 @@ public class MessageInputView : ConstraintLayout {
      * depending on if the given user can send attachments
      * in the given channel.
      */
-    internal fun canSendAttachments(canSend: Boolean) {
+    public fun setCanSendAttachments(canSend: Boolean) {
         binding.attachmentsButton.isVisible = canSend
         canSendAttachments = canSend
+    }
+
+    /**
+     * Sets if the user is able to send links or not.
+     *
+     * Further mechanisms will enable or disable the send
+     * button and display a snackbar when needed, i.e.
+     * when the user inputs a link but is not allowed
+     * to send them.
+     */
+    public fun setCanSendLinks(canSend: Boolean) {
+        canSendLinks = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {

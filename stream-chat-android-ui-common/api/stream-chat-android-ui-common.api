@@ -386,6 +386,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun dismissReply ()V
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
+	public final fun getCanSendLinks ()Landroidx/lifecycle/LiveData;
 	public final fun getCanSendMessages ()Landroidx/lifecycle/LiveData;
 	public final fun getCanSendTypingEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getCanUploadAttachments ()Landroidx/lifecycle/LiveData;
