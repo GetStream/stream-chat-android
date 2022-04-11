@@ -29,8 +29,7 @@ import io.getstream.chat.android.compose.ui.util.previewText
  * @param previewContent Composable function that allows users to define the content the [AttachmentFactory] will build,
  * using any given [AttachmentState], when the message is displayed in the message input preview, before sending.
  * @param content Composable function that allows users to define the content the [AttachmentFactory] will build
- * using any given
- * [AttachmentState], when the message is displayed in the message list.
+ * using any given [AttachmentState], when the message is displayed in the message list.
  * @param textFormatter The formatter used to get a string representation for the given attachment.
  */
 public open class AttachmentFactory constructor(
