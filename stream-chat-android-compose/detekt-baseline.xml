@@ -42,8 +42,6 @@
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
     <ID>MagicNumber:UnreadCountIndicator.kt$99</ID>
-    <ID>ReturnCount:DocumentAttachmentPreviewHandler.kt$DocumentAttachmentPreviewHandler$override fun canHandle(attachment: Attachment): Boolean</ID>
-    <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$ public fun updateLastSeenMessage(message: Message)</ID>
     <ID>TopLevelPropertyNaming:ImageUtils.kt$private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f</ID>
     <ID>TopLevelPropertyNaming:ImageUtils.kt$private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f</ID>
     <ID>TopLevelPropertyNaming:MessageInput.kt$/** * The default number of lines allowed in the input. The message input will become scrollable after * this threshold is exceeded. */ private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6</ID>
