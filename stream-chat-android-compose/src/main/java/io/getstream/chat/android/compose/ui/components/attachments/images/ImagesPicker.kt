@@ -55,6 +55,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
+private const val NumberOfPicturesPerRow = 3
+
 /**
  * Shows the UI for images the user can pick for message attachments. Exposes the logic of selecting
  * items.
@@ -78,7 +80,7 @@ public fun ImagesPicker(
 ) {
     LazyVerticalGrid(
         modifier = modifier,
-        cells = GridCells.Fixed(3),
+        cells = GridCells.Fixed(NumberOfPicturesPerRow),
         contentPadding = PaddingValues(1.dp)
     ) {
         items(images) { imageItem -> itemContent(imageItem) }

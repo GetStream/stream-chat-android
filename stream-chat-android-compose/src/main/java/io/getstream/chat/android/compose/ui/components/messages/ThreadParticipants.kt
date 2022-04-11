@@ -47,7 +47,7 @@ public fun ThreadParticipants(
     alignment: MessageAlignment,
     modifier: Modifier = Modifier,
     borderStroke: BorderStroke = BorderStroke(width = 1.dp, color = ChatTheme.colors.appBackground),
-    participantsLimit: Int = DEFAULT_PARTICIPANTS_LIMIT,
+    participantsLimit: Int = DefaultParticipantsLimit,
 ) {
     Box(modifier) {
         /**
@@ -91,4 +91,4 @@ public fun ThreadParticipants(
     }
 }
 
-private const val DEFAULT_PARTICIPANTS_LIMIT = 4
+private const val DefaultParticipantsLimit = 4

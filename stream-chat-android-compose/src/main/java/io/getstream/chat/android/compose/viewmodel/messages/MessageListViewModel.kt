@@ -890,7 +890,7 @@ public class MessageListViewModel(
 
         viewModelScope.launch {
             updateMessages(messages)
-            delay(2000)
+            delay(REMOVE_MESSAGE_FOCUS_DELAY)
             removeMessageFocus(messageId)
         }
     }
@@ -963,5 +963,10 @@ public class MessageListViewModel(
          * The default limit for messages count in requests.
          */
         internal const val DEFAULT_MESSAGE_LIMIT: Int = 30
+
+        /**
+         * Time after the focus is removed
+         */
+        private const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
     }
 }

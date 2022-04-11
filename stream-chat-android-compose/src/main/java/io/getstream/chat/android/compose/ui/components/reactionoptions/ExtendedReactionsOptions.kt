@@ -36,6 +36,8 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
+private const val DefaultNumberOfColumns = 5
+
 /**
  * Displays all available reactions a user can set on a message.
  *
@@ -52,7 +54,7 @@ public fun ExtendedReactionsOptions(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
-    cells: GridCells = GridCells.Fixed(5),
+    cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultExtendedReactionsItemContent(
