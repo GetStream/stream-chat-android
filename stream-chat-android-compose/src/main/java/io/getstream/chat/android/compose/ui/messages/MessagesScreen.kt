@@ -284,7 +284,8 @@ public fun MessagesScreen(
                 onShowMoreReactionsSelected = {
                     listViewModel.selectExtendedReactions(selectedMessage)
                 },
-                onDismiss = { listViewModel.removeOverlay() }
+                onDismiss = { listViewModel.removeOverlay() },
+                ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
             )
         }
 
