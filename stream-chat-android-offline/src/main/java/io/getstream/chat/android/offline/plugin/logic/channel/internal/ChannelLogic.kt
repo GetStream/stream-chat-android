@@ -772,6 +772,9 @@ internal class ChannelLogic(
             is MemberRemovedEvent -> {
                 deleteMember(event.user.id)
             }
+            is NotificationRemovedFromChannelEvent -> {
+                deleteMember(event.member.user.id)
+            }
             is MemberAddedEvent -> {
                 mutableState._membersCount.value += 1
                 upsertMember(event.member)
@@ -851,7 +854,6 @@ internal class ChannelLogic(
             is ChannelUserUnbannedEvent,
             is NotificationChannelDeletedEvent,
             is NotificationInvitedEvent,
-            is NotificationRemovedFromChannelEvent,
             is ConnectedEvent,
             is ConnectingEvent,
             is DisconnectedEvent,
