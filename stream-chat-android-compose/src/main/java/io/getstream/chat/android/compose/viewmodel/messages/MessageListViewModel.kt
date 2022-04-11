@@ -414,12 +414,10 @@ public class MessageListViewModel(
             return
         }
 
-        if (message.id == lastSeenMessage.id) return
-
         val lastSeenMessageDate = lastSeenMessage.createdAt ?: Date()
         val currentMessageDate = message.createdAt ?: Date()
 
-        if (currentMessageDate < lastSeenMessageDate) {
+        if (message.id == lastSeenMessage.id || currentMessageDate < lastSeenMessageDate) {
             return
         }
         updateLastSeenMessageState(message)

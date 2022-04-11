@@ -30,8 +30,7 @@ public class DocumentAttachmentPreviewHandler(private val context: Context) : At
         val assetUrl = attachment.assetUrl
         val mimeType = attachment.mimeType
 
-        if (assetUrl.isNullOrEmpty()) return false
-        if (mimeType.isNullOrEmpty()) return false
+        if (assetUrl.isNullOrEmpty() || mimeType.isNullOrEmpty()) return false
 
         val supportedMimeTypes = listOf(
             ModelType.attach_mime_doc,
