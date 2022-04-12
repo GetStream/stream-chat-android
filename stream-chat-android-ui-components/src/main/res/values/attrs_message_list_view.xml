@@ -208,6 +208,8 @@
         <attr name="streamUiIconIndicatorRead" format="reference" />
         <attr name="streamUiIconIndicatorPendingSync" format="reference" />
         <attr name="streamUiIconOnlyVisibleToYou" format="reference" />
+        <attr name="streamUiIconFailedIndicator" format="reference" />
+        <attr name="streamUiIconBannedIndicator" format="reference" />
 
         <!-- Message deleted style -->
         <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
