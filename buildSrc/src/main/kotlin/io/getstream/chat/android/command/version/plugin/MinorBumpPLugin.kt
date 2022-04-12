@@ -5,10 +5,9 @@ import io.getstream.chat.android.command.version.task.MinorBumpTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-private const val CONFIG_CLOJURE_NAME = "versionBump"
-private const val COMMAND_NAME = "version-bump"
+private const val COMMAND_NAME = "minor-bump"
 
-class VersionBumpPlugin : Plugin<Project> {
+class MinorBumpPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.tasks.registerExt<MinorBumpTask>(COMMAND_NAME) {}
