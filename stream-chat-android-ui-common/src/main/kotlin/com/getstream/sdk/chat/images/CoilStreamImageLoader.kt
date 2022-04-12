@@ -109,8 +109,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
     }
 
     /**
-     * Loads an image into a drawable and then applies the drawable to the container, resizing it based on the scale types
-     * and the given configuration.
+     * Loads an image into a drawable and then applies the drawable to the container, resizing it based on the scale
+     * types and the given configuration.
      *
      * @param target The target to load the image into.
      * @param data The data to load.
@@ -148,7 +148,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             result.drawable
         } ?: return
 
-        if (drawable is ScaleDrawable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable) {
+        if (drawable is ScaleDrawable &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable
+        ) {
             (drawable.child as AnimatedImageDrawable).start()
         } else if (drawable is MovieDrawable) {
             drawable.start()

@@ -25,6 +25,7 @@ import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.Locale
 
+private const val DAYS_IN_A_WEEK = 7L
 internal class DefaultDateFormatter(
     private val dateContext: DateContext
 ) : DateFormatter {
@@ -65,7 +66,7 @@ internal class DefaultDateFormatter(
     }
 
     private fun LocalDate.isWithinLastWeek(): Boolean {
-        return this >= dateContext.now().minusDays(6)
+        return this > dateContext.now().minusDays(DAYS_IN_A_WEEK)
     }
 
     interface DateContext {
