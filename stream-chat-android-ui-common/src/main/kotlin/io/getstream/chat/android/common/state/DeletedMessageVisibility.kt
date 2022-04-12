@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.utils
-
-import android.content.Context
-import android.view.View
+package io.getstream.chat.android.common.state
 
 /**
- * Helper method to check is the system requests RTL direction.
+ * Intended to be used for regulating visibility of deleted messages
+ * and filtering them out accordingly.
  */
-internal val Context.isRtlLayout: Boolean
-    get() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+public enum class DeletedMessageVisibility {
+
+    /**
+     * No deleted messages are visible.
+     */
+    ALWAYS_HIDDEN,
+
+    /**
+     * Deleted messages from the current user are visible,
+     * ones from other users are not.
+     */
+    VISIBLE_FOR_CURRENT_USER,
+
+    /**
+     * All deleted messages are visible, regardless of the
+     * user who authored them.
+     */
+    ALWAYS_VISIBLE
+}

@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
@@ -956,30 +957,6 @@ public class MessageListViewModel(
          * @param chatError Contains the original [Throwable] along with a message.
          */
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-    }
-
-    /**
-     * Intended to be used for regulating visibility of deleted messages
-     * and filtering them out accordingly.
-     */
-    public enum class DeletedMessageVisibility {
-
-        /**
-         * No deleted messages are visible.
-         */
-        ALWAYS_HIDDEN,
-
-        /**
-         * Deleted messages from the current user are visible,
-         * ones from other users are not.
-         */
-        VISIBLE_FOR_CURRENT_USER,
-
-        /**
-         * All deleted messages are visible, regardless of the
-         * user who authored them.
-         */
-        ALWAYS_VISIBLE
     }
 
     /**

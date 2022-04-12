@@ -1178,7 +1178,7 @@ public final class io/getstream/chat/android/compose/ui/components/userreactions
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun MessagesScreen (Ljava/lang/String;IZZZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessagesScreen (Ljava/lang/String;IZZZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
@@ -1716,8 +1716,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/compose/handlers/ClipboardHandler;IZZZJ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/compose/handlers/ClipboardHandler;IZZZJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/compose/handlers/ClipboardHandler;IZZZJLio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/compose/handlers/ClipboardHandler;IZZZJLio/getstream/chat/android/common/state/DeletedMessageVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun clearNewMessageState ()V
 	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)V
@@ -1753,8 +1753,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZ)V
-	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.sample.ChatApp
@@ -79,6 +80,7 @@ class MessagesActivity : AppCompatActivity() {
         MessagesViewModelFactory(
             context = this,
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
         )
     }
 
