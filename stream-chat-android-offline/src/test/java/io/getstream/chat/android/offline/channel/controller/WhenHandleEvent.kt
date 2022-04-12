@@ -165,7 +165,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelMutableState.messages.value shouldBeEqualTo listOf(message)
 
         // Unread count should be propagated, because it is a message form another user
-        // channelMutableState.unreadCount.value shouldBeEqualTo 1
+        channelMutableState.unreadCount.value shouldBeEqualTo 1
 
         // Last message is updated
         channelMutableState.toChannel().lastMessageAt shouldBeEqualTo createdAt
