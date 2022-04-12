@@ -32,7 +32,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -45,7 +45,6 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class ChannelMarkReadHelperTests {
-
     companion object {
         @JvmField
         @RegisterExtension
@@ -53,7 +52,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `Given channel without read events When marking channel as read Should return false`() = runBlockingTest {
+    fun `Given channel without read events When marking channel as read Should return false`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn false
         }
@@ -71,7 +70,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `Given channel without messages When marking channel as read Should return false`() = runBlockingTest {
+    fun `Given channel without messages When marking channel as read Should return false`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
         }
@@ -90,7 +89,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `Given read channel When marking channel as read Should return false`() = runBlockingTest {
+    fun `Given read channel When marking channel as read Should return false`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
         }
@@ -111,7 +110,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `Given user not set When marking channel as read Should return false`() = runBlockingTest {
+    fun `Given user not set When marking channel as read Should return false`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
         }
@@ -130,7 +129,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `Given offline user When marking channel as read Should return false`() = runBlockingTest {
+    fun `Given offline user When marking channel as read Should return false`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
         }
@@ -150,7 +149,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `When marking channel as read Should properly update last mark read date`() = runBlockingTest {
+    fun `When marking channel as read Should properly update last mark read date`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
         }
@@ -173,7 +172,7 @@ internal class ChannelMarkReadHelperTests {
     }
 
     @Test
-    fun `When marking channel as read Should return true`() = runBlockingTest {
+    fun `When marking channel as read Should return true`() = runTest {
         val config = mock<Config> {
             on { it.readEventsEnabled } doReturn true
         }

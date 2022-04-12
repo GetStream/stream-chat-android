@@ -31,13 +31,15 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
@@ -46,6 +48,8 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class SendReactionsTests {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField
@@ -68,7 +72,7 @@ internal class SendReactionsTests {
     )
 
     @Test
-    fun `When adding reaction Should add it to own and latest reactions`() = runBlockingTest {
+    fun `When adding reaction Should add it to own and latest reactions`() = runTest {
         val cid = randomCID()
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)
@@ -97,7 +101,7 @@ internal class SendReactionsTests {
     }
 
     @Test
-    fun `When adding reaction with enforce unique Should remove current user's other reactions`() = runBlockingTest {
+    fun `When adding reaction with enforce unique Should remove current user's other reactions`() = runTest {
         val cid = randomCID()
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)
@@ -127,7 +131,7 @@ internal class SendReactionsTests {
     }
 
     @Test
-    fun `When adding reaction with enforce unique Should properly update reactions count`() = runBlockingTest {
+    fun `When adding reaction with enforce unique Should properly update reactions count`() = runTest {
         val cid = randomCID()
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)
@@ -150,7 +154,7 @@ internal class SendReactionsTests {
     }
 
     @Test
-    fun `When adding reaction with enforce unique Should properly update reactions score`() = runBlockingTest {
+    fun `When adding reaction with enforce unique Should properly update reactions score`() = runTest {
         val cid = randomCID()
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)

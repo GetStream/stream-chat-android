@@ -8,6 +8,7 @@
 
 ### ⚠️ Changed
 - Updated Gradle version to [7.4.2](https://docs.gradle.org/7.4.2/release-notes.html). [#3281](https://github.com/GetStream/stream-chat-android/pull/3281)
+- Update Coroutines to 1.6.1 and migrate to runTest. [#3327](https://github.com/GetStream/stream-chat-android/pull/3327)
 
 ### ❌ Removed
 

@@ -23,10 +23,12 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -37,6 +39,8 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class TotalUnreadCountTest {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField
@@ -51,7 +55,7 @@ internal class TotalUnreadCountTest {
 
     @Test
     fun `When new message event is received for channel with read capability Should properly update total unread counts`() =
-        testCoroutines.scope.runBlockingTest {
+        runTest {
             val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
             val sut = Fixture(globalMutableState)
                 .givenMockedRepositories()
@@ -72,7 +76,7 @@ internal class TotalUnreadCountTest {
 
     @Test
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`() =
-        testCoroutines.scope.runBlockingTest {
+        runTest {
             val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
             val sut = Fixture(globalMutableState)
                 .givenMockedRepositories()
@@ -91,20 +95,19 @@ internal class TotalUnreadCountTest {
         }
 
     @Test
-    fun `when connected event is received, current user should be updated`() =
-        testCoroutines.scope.runBlockingTest {
-            val sut = Fixture(globalMutableState)
-                .givenMockedRepositories()
-                .get()
+    fun `when connected event is received, current user should be updated`() = runTest {
+        val sut = Fixture(globalMutableState)
+            .givenMockedRepositories()
+            .get()
 
-            val userWithUnread = data.user1.copy(totalUnreadCount = 5, unreadChannels = 2)
-            val connectedEvent = data.connectedEvent.copy(me = userWithUnread)
+        val userWithUnread = data.user1.copy(totalUnreadCount = 5, unreadChannels = 2)
+        val connectedEvent = data.connectedEvent.copy(me = userWithUnread)
 
-            sut.handleEvent(connectedEvent)
+        sut.handleEvent(connectedEvent)
 
-            // unread count are updated internally when a user is updated
-            globalMutableState._user.value `should be equal to` userWithUnread
-        }
+        // unread count are updated internally when a user is updated
+        globalMutableState._user.value `should be equal to` userWithUnread
+    }
 
     private class Fixture(globalMutableState: GlobalMutableState) {
         private val repos: RepositoryFacade = mock()
@@ -128,7 +131,7 @@ internal class TotalUnreadCountTest {
         }
 
         fun givenChannel(channel: Channel) = apply {
-            runBlockingTest {
+            runTest {
                 whenever(repos.selectChannels(eq(listOf(channel.cid)), any<Boolean>())) doReturn listOf(channel)
             }
         }

@@ -398,7 +398,7 @@ internal class ChannelLogic(
      * @param message [Message].
      */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = GlobalMutableState.getOrCreate().user.value?.id ?: return
+        val currentUserId = globalMutableState.user.value?.id ?: return
 
         val shouldIncrementUnreadCount =
             message.shouldIncrementUnreadCount(
