@@ -10,6 +10,7 @@ import io.getstream.chat.android.offline.repository.builder.internal.RepositoryF
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.Dispatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,7 +31,7 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     @Before
     @CallSuper
     open fun setup() {
-        chatDatabase = createRoomDB(testCoroutines.dispatcher)
+        chatDatabase = createRoomDB(Dispatchers.IO)
         repositoryFacade = createRepositoryFacade()
     }
 

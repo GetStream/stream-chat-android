@@ -32,10 +32,11 @@ import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.TestScope
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
@@ -79,7 +80,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
+    override fun getTestScope(): TestScope = testCoroutines.scope
 
     @Before
     @CallSuper
@@ -168,7 +169,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
             // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .setQueryExecutor(testCoroutines.dispatcher.asExecutor())
+            .setQueryExecutor(Dispatchers.IO.asExecutor())
             .build()
     }
 
