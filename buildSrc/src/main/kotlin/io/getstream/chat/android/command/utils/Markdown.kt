@@ -11,7 +11,7 @@ private const val UNRELEASED_END = "<!-- UNRELEASED END -->"
 
 fun parseChangelogFile(file: File): Document {
     return file.readLines()
-        .filterListSection()
+        .filterUnreleasedSection()
         .parseReleaseDocument()
         .clean()
 }
@@ -53,15 +53,15 @@ private fun List<String>.parseReleaseDocument(): Document {
     return document
 }
 
-private fun List<String>.filterOldReleases(start: String = "<!-- UNRELEASED END -->"): List<String> {
-    var shouldAdd = false
+private fun List<String>.filterOldReleases(): List<String> {
+    var sectionCount = 0
 
     val filteredList = filter { line ->
-        if (line.trim() == start) {
-            shouldAdd = true
+        if (isStartOfMainSection(line)) {
+            sectionCount++
         }
 
-        shouldAdd
+        sectionCount > 1
     }
 
     return filteredList.ifEmpty {
@@ -73,19 +73,22 @@ fun isStartOfProject(line: String) = line.startsWith("##") && !line.startsWith("
 
 fun isStartOfSection(line: String) = line.startsWith("###")
 
-private fun List<String>.filterListSection(
-    start: String = UNRELEASED_START,
-    end: String = UNRELEASED_END
-): List<String> {
+fun isStartOfMainSection(line: String) = line.trim().startsWith("# ")
+
+private fun List<String>.filterUnreleasedSection(): List<String> {
     var shouldAdd = false
+    var firstSection = true
 
     val filteredList = filter { line ->
-        if (line.trim() == start) {
-            shouldAdd = true
-        }
+        when {
+            firstSection && !shouldAdd && isStartOfMainSection(line) -> {
+                shouldAdd = true
+            }
 
-        if (line.trim() == end) {
-            shouldAdd = false
+            shouldAdd && isStartOfMainSection(line) -> {
+                shouldAdd = false
+                firstSection = false
+            }
         }
 
         shouldAdd
@@ -94,7 +97,11 @@ private fun List<String>.filterListSection(
     return if (!shouldAdd && filteredList.isNotEmpty()) {
         filteredList
     } else {
-        throw IllegalStateException("Could not find the start or end of unreleased section")
+        throw if (!shouldAdd) {
+            IllegalStateException("Could not find the end of unreleased section")
+        } else {
+            IllegalStateException("Could not find the start of unreleased section")
+        }
     }
 }
 

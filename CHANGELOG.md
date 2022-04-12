@@ -112,7 +112,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-<!-- UNRELEASED START -->
 # April 12th, 2022 - 5.0.3
 ## Common changes for all artifacts
 
@@ -176,7 +175,6 @@
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
-<!-- UNRELEASED END -->
 
 # March 30th, 2022 - 5.0.2
 ## stream-chat-android-client
