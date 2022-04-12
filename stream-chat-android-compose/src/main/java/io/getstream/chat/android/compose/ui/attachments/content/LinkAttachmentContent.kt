@@ -51,6 +51,7 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.extensions.internal.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.compose.ui.util.hasLink
 
 /**
@@ -81,6 +82,7 @@ public fun LinkAttachmentContent(
     }
 
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
+    val urlWithScheme = previewUrl?.addSchemeToUrlIfNeeded()
 
     checkNotNull(previewUrl) {
         "Missing preview URL."
@@ -105,7 +107,7 @@ public fun LinkAttachmentContent(
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(previewUrl)
+                                Uri.parse(urlWithScheme)
                             )
                         )
                     } catch (e: ActivityNotFoundException) {
