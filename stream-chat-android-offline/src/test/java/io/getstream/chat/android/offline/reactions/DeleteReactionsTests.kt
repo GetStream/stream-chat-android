@@ -18,13 +18,15 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.argThat
@@ -35,6 +37,8 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class DeleteReactionsTests {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField
@@ -69,7 +73,7 @@ internal class DeleteReactionsTests {
     }
 
     @Test
-    fun `When deleting reaction Should remove it from own and latest reactions`() = runBlockingTest {
+    fun `When deleting reaction Should remove it from own and latest reactions`() = runTest {
         val cid = randomCID()
         val message = Message().apply {
             myReactions.forEach(::addMyReaction)
@@ -97,7 +101,7 @@ internal class DeleteReactionsTests {
 
     @Test
     fun `Given offline state When deleting a reaction Should insert a reaction with proper status`() =
-        runBlockingTest {
+        runTest {
             val cid = randomCID()
             val repos = mock<RepositoryFacade>()
             val (sut, _) = Fixture(testCoroutines.scope, currentUser)
@@ -121,7 +125,7 @@ internal class DeleteReactionsTests {
 
     @Test
     fun `When deleting reaction FAILED Should insert the reaction with proper sync status`() =
-        runBlockingTest {
+        runTest {
             val cid = randomCID()
             val repos = mock<RepositoryFacade>()
             val (sut, _) = Fixture(testCoroutines.scope, currentUser)
@@ -146,7 +150,7 @@ internal class DeleteReactionsTests {
 
     @Test
     fun `When deleting reaction failed PERMANENTLY Should insert the reaction with proper sync status`() =
-        runBlockingTest {
+        runTest {
             val chatError = ChatNetworkError.create(
                 description = "error",
                 streamCode = 401,
@@ -177,7 +181,7 @@ internal class DeleteReactionsTests {
 
     @Test
     fun `When deleting a reaction SUCCESSFULLY Should insert the reaction with proper sync status`() =
-        runBlockingTest {
+        runTest {
             val cid = randomCID()
             val repos = mock<RepositoryFacade>()
             val (sut, _) = Fixture(testCoroutines.scope, currentUser)

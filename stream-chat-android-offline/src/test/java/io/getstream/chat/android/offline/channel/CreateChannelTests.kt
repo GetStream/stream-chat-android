@@ -12,9 +12,11 @@ import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.argThat
@@ -25,6 +27,8 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class CreateChannelTests {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField
@@ -34,7 +38,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given offline user When creating channel Should mark it with sync needed and store in database`(): Unit =
-        runBlockingTest {
+        runTest {
             val members = listOf(randomMember())
             val repos = mock<RepositoryFacade> {
                 on(it.selectUsers(members.map(Member::getUserId))) doReturn members.map(Member::user)
@@ -69,7 +73,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given online user When creating channel Should mark it with in progress and store in database`(): Unit =
-        runBlockingTest {
+        runTest {
             val members = listOf(randomMember())
             val repos = mock<RepositoryFacade> {
                 on(it.selectUsers(members.map(Member::getUserId))) doReturn members.map(Member::user)
@@ -104,7 +108,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given successful result When creating channel Should mark it as completed and store in database`(): Unit =
-        runBlockingTest {
+        runTest {
             val repos = mock<RepositoryFacade>()
             val sut = Fixture()
                 .givenMockedRepos(repos)
@@ -128,7 +132,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given successful result When creating channel Should delete local channel from DB if result has different cid`(): Unit =
-        runBlockingTest {
+        runTest {
             val repos = mock<RepositoryFacade>()
             val sut = Fixture()
                 .givenMockedRepos(repos)
@@ -152,7 +156,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given failed result When creating channel Should mark it as sync needed and store in the DB`(): Unit =
-        runBlockingTest {
+        runTest {
             val channelType = "channelType"
             val channelId = "channel"
             val cid = "$channelType:$channelId"
@@ -186,7 +190,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given failed result When creating channel Should mark it as failed permanently and store in the DB`(): Unit =
-        runBlockingTest {
+        runTest {
             val channelType = "channelType"
             val channelId = "channel"
             val cid = "$channelType:$channelId"
@@ -220,7 +224,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given user not set user When creating channel Should return error`(): Unit =
-        runBlockingTest {
+        runTest {
             val sut = Fixture().get()
 
             val result = sut.onCreateChannelPrecondition(
@@ -234,7 +238,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given empty both id and member list When creating channel Should return error`(): Unit =
-        runBlockingTest {
+        runTest {
             val sut = Fixture().get()
 
             val result = sut.onCreateChannelPrecondition(
@@ -248,7 +252,7 @@ internal class CreateChannelTests {
 
     @Test
     fun `Given user set and correct id When creating channel Should return success`(): Unit =
-        runBlockingTest {
+        runTest {
             val sut = Fixture().get()
 
             val result = sut.onCreateChannelPrecondition(

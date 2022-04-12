@@ -11,7 +11,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.kotlin.mock
 
@@ -27,7 +27,7 @@ internal open class BaseRepositoryFacadeTest {
     protected lateinit var syncState: SyncStateRepository
     protected lateinit var attachmentRepository: AttachmentRepository
 
-    protected val scope = TestCoroutineScope()
+    protected val scope = TestScope()
 
     protected lateinit var sut: RepositoryFacade
 

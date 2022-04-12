@@ -1,14 +1,21 @@
 package io.getstream.chat.android.client.utils
 
-import kotlinx.coroutines.test.runBlockingTest
+import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
+@ExperimentalCoroutinesApi
 internal class ResultTests {
 
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
+
     @Test
-    fun `Should execute side effects for onSuccess and onSuccessSuspend`() = runBlockingTest {
+    fun `Should execute side effects for onSuccess and onSuccessSuspend`() = runTest {
         val action = mock<Action>()
         val suspendAction = mock<SuspendAction>()
 

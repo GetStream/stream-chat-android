@@ -12,11 +12,13 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.shouldBeTrue
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
@@ -30,6 +32,8 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class WhenUploadAttachmentsTests {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private val channelType = "channelType"
     private val channelId = "channelId"
@@ -56,7 +60,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `when there's no attachment with pending status, there's no need to try to send attachments`() =
-        runBlockingTest {
+        runTest {
             val repositoryFacade = mock<RepositoryFacade> {
                 on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
                 on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
@@ -73,7 +77,7 @@ internal class WhenUploadAttachmentsTests {
         }
 
     @Test
-    fun `when there's a pending attachment, it should be uploaded`() = runBlockingTest {
+    fun `when there's a pending attachment, it should be uploaded`() = runTest {
         val repositoryFacade = mock<RepositoryFacade> {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
@@ -90,7 +94,7 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
-    fun `when not all attachments have state as success, it should return error`() = runBlockingTest {
+    fun `when not all attachments have state as success, it should return error`() = runTest {
         val repositoryFacade = mock<RepositoryFacade> {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
@@ -106,7 +110,7 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
-    fun `when user can not be set, it should return an error`() = runBlockingTest {
+    fun `when user can not be set, it should return an error`() = runTest {
         val result = Fixture().givenChatClientNoStoredCredentials().get()
             .uploadAttachmentsForMessage(
                 channelType,
@@ -118,7 +122,7 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
-    fun `Given exception when upload Should insert message with failed sync status to repo`() = runBlockingTest {
+    fun `Given exception when upload Should insert message with failed sync status to repo`() = runTest {
         val attachmentUploader = mock<AttachmentUploader> {
             on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
         }
@@ -146,7 +150,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `Given uploaded and not uploaded attachments And exception when upload Should insert message with 2 attachments`() =
-        runBlockingTest {
+        runTest {
             val attachmentUploader = mock<AttachmentUploader> {
                 on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
             }
@@ -184,7 +188,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `Given uploaded and not uploaded attachments And failure when upload Should insert message with 2 attachments`() =
-        runBlockingTest {
+        runTest {
             val attachmentUploader = mock<AttachmentUploader> {
                 on(
                     it.uploadAttachment(
@@ -229,7 +233,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `Given uploaded and not uploaded attachments And upload succeed Should insert message with 2 uploaded attachments`() =
-        runBlockingTest {
+        runTest {
             val attachmentUploader = mock<AttachmentUploader> {
                 on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
                     val attachment = invocation.arguments[2] as Attachment
