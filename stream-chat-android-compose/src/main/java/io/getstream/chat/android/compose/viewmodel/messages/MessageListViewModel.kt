@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
@@ -42,7 +43,6 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
-import io.getstream.chat.android.compose.state.messages.DeletedMessagesVisibility
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
@@ -100,7 +100,7 @@ import java.util.concurrent.TimeUnit
  * @param showDateSeparators Enables or disables date separator items in the list.
  * @param showSystemMessages Enables or disables system messages in the list.
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
- * @param deletedMessagesVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
@@ -111,7 +111,7 @@ public class MessageListViewModel(
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD),
-    private val deletedMessagesVisibility: DeletedMessagesVisibility = DeletedMessagesVisibility.ALL,
+    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
 ) : ViewModel() {
 
     /**
@@ -323,9 +323,9 @@ public class MessageListViewModel(
         val currentUser = user.value
 
         return messages.filter {
-            val shouldShowIfDeleted = when (deletedMessagesVisibility) {
-                DeletedMessagesVisibility.ALL -> true
-                DeletedMessagesVisibility.OWN -> {
+            val shouldShowIfDeleted = when (deletedMessageVisibility) {
+                DeletedMessageVisibility.ALWAYS_VISIBLE -> true
+                DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.deletedAt != null && it.user.id != currentUser?.id)
                 }
                 else -> it.deletedAt == null
