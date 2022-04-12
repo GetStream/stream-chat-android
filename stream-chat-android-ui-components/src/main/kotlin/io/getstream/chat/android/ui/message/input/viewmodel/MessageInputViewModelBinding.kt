@@ -70,16 +70,8 @@ public fun MessageInputViewModel.bindView(
         view.chatMode = if (isDirectMessage) DIRECT_CHAT else GROUP_CHAT
     }
 
-    canSendMessages.observe(lifecycleOwner) {
-        view.setCanSendMessages(it)
-    }
-
-    canUploadAttachments.observe(lifecycleOwner) {
-        view.setCanSendAttachments(it)
-    }
-
-    canSendLinks.observe(lifecycleOwner) {
-        view.setCanSendLinks(it)
+    ownCapabilities.observe(lifecycleOwner) {
+        view.setOwnCapabilities(it)
     }
 
     view.setSendMessageHandler(
@@ -147,18 +139,13 @@ public fun MessageInputViewModel.bindView(
             }
         }
     )
-    this.canSendTypingEvents.observe(lifecycleOwner) {
-        if (it) {
-            view.setTypingListener(
-                object : MessageInputView.TypingListener {
-                    override fun onKeystroke() = keystroke()
-                    override fun onStopTyping() = stopTyping()
-                }
-            )
-        } else {
-            view.setTypingListener(null)
+
+    view.setTypingListener(
+        object : MessageInputView.TypingListener {
+            override fun onKeystroke() = keystroke()
+            override fun onStopTyping() = stopTyping()
         }
-    }
+    )
 
     repliedMessage.observe(lifecycleOwner) {
         if (it != null) {

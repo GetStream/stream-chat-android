@@ -41,6 +41,7 @@ import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -119,10 +120,17 @@ public class MessageInputView : ConstraintLayout {
 
     private var currentlyActiveSnackBar: Snackbar? = null
 
+    /**
+     * Used to enable or disable parts of the UI depending
+     * on which abilities the user has in the given channel.
+     */
+    private var ownCapabilities: Set<String> = setOf()
+
     // used to regulate UI according to ownCapabilities
-    private var canSendAttachments = true
-    private var canUseCommands = true
-    private var canSendLinks = true
+    private var canSendAttachments = false
+    private var canUseCommands = false
+    private var canSendLinks = false
+    private var canSendTypingUpdates = false
 
     /**
      * Changes value only when the new value
@@ -825,10 +833,12 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun handleKeyStroke() {
-        if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-            typingListener?.onKeystroke()
-        } else {
-            typingListener?.onStopTyping()
+        if (canSendTypingUpdates) {
+            if (binding.messageInputFieldView.messageText.isNotEmpty()) {
+                typingListener?.onKeystroke()
+            } else {
+                typingListener?.onStopTyping()
+            }
         }
     }
 
@@ -864,11 +874,30 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
+     * Setter method for own capabilities which dictate which
+     * parts of the UI are enabled or disabled for the current user
+     * in the given channel.
+     */
+    public fun setOwnCapabilities(ownCapabilities: Set<String>) {
+        this.ownCapabilities = ownCapabilities
+
+        val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canSendAttachment = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+
+        // precedence and boolean logic matter here
+        // otherwise you can undo a previous capability
+        setCanSendMessages(canSendMessage)
+        setCanSendAttachments(canSendAttachment && canSendMessage)
+        this.canSendLinks = ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
+        this.canSendTypingUpdates = ownCapabilities.contains(ChannelCapabilities.SEND_TYPING_EVENTS)
+    }
+
+    /**
      * Disables or enables entering and sending a message
      * into the [MessageInputView] depending on if the given user
      * can send messages in the given channel.
      */
-    public fun setCanSendMessages(canSend: Boolean) {
+    private fun setCanSendMessages(canSend: Boolean) {
         binding.commandsButton.isVisible = canSend
         binding.attachmentsButton.isVisible = canSend
 
@@ -891,21 +920,9 @@ public class MessageInputView : ConstraintLayout {
      * depending on if the given user can send attachments
      * in the given channel.
      */
-    public fun setCanSendAttachments(canSend: Boolean) {
+    private fun setCanSendAttachments(canSend: Boolean) {
         binding.attachmentsButton.isVisible = canSend
         canSendAttachments = canSend
-    }
-
-    /**
-     * Sets if the user is able to send links or not.
-     *
-     * Further mechanisms will enable or disable the send
-     * button and display a snackbar when needed, i.e.
-     * when the user inputs a link but is not allowed
-     * to send them.
-     */
-    public fun setCanSendLinks(canSend: Boolean) {
-        canSendLinks = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {

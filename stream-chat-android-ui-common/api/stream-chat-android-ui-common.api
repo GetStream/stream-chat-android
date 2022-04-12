@@ -386,17 +386,13 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun dismissReply ()V
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
-	public final fun getCanSendLinks ()Landroidx/lifecycle/LiveData;
-	public final fun getCanSendMessages ()Landroidx/lifecycle/LiveData;
-	public final fun getCanSendTypingEvents ()Landroidx/lifecycle/LiveData;
-	public final fun getCanUploadAttachments ()Landroidx/lifecycle/LiveData;
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/Flow;
 	public final fun getCommands ()Landroidx/lifecycle/LiveData;
 	public final fun getCooldownInterval ()Landroidx/lifecycle/LiveData;
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
-	public final fun getOwnCapabilities ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getRepliedMessage ()Landroidx/lifecycle/LiveData;
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V

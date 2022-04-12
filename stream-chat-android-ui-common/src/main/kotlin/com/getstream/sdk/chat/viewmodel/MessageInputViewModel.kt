@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -41,7 +40,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.lastOrNull
@@ -110,45 +108,13 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
-    public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
+    public val ownCapabilities: LiveData<Set<String>> = channelState.flatMapLatest { it.channelData }
         .map { it.ownCapabilities }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
             initialValue = setOf()
-        )
-
-    /**
-     * If the user does or does not have the ability to send messages
-     * in the given channel.
-     */
-    public val canSendMessages: LiveData<Boolean> = ownCapabilities.map {
-        it.contains(ChannelCapabilities.SEND_MESSAGE)
-    }.asLiveData()
-
-    /**
-     * If the user does or does not have the ability to upload attachments
-     * in the given channel.
-     */
-    public val canUploadAttachments: LiveData<Boolean> = ownCapabilities.map {
-        it.contains(ChannelCapabilities.UPLOAD_FILE)
-    }.asLiveData()
-
-    /**
-     * If the user does or does not have the ability to send typing events
-     * in the given channel.
-     */
-    public val canSendTypingEvents: LiveData<Boolean> = ownCapabilities.map {
-        it.contains(ChannelCapabilities.SEND_TYPING_EVENTS)
-    }.asLiveData()
-
-    /**
-     * If the user does or does not have the ability to send links
-     * in the given channel.
-     */
-    public val canSendLinks: LiveData<Boolean> = ownCapabilities.map {
-        it.contains(ChannelCapabilities.SEND_LINKS)
-    }.asLiveData()
+        ).asLiveData()
 
     /**
      * Holds the message the user is currently replying to,
