@@ -49,7 +49,7 @@ import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
-import io.getstream.chat.android.ui.utils.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import kotlin.math.absoluteValue
 
 internal class ChannelViewHolder @JvmOverloads constructor(

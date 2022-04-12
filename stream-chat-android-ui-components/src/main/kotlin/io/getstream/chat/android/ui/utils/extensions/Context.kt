@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import android.view.View
