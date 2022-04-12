@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.input.attachment.media.internal
 
 import android.content.Context
@@ -11,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
@@ -32,6 +49,7 @@ internal class MediaAttachmentFragment : Fragment() {
 
     private val storageHelper: StorageHelper = StorageHelper()
     private val permissionChecker: PermissionChecker = PermissionChecker()
+    private val attachmentFilter: AttachmentFilter = AttachmentFilter()
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
@@ -135,14 +153,15 @@ internal class MediaAttachmentFragment : Fragment() {
             val attachments = withContext(DispatcherProvider.IO) {
                 storageHelper.getMediaAttachments(requireContext())
             }
+            val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
-            if (attachments.isEmpty()) {
+            if (filteredAttachments.isEmpty()) {
                 style?.mediaAttachmentEmptyStateTextStyle?.apply(binding.emptyPlaceholderTextView)
                 binding.emptyPlaceholderTextView.text = style?.mediaAttachmentEmptyStateText
                     ?: requireContext().getString(R.string.stream_ui_message_input_no_files)
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
-                mediaAttachmentsAdapter.setAttachments(attachments)
+                mediaAttachmentsAdapter.setAttachments(filteredAttachments)
             }
             binding.progressBar.isVisible = false
         }

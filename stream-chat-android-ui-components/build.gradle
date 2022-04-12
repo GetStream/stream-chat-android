@@ -3,7 +3,6 @@ import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'de.mannodermaus.android-junit5'
 
@@ -73,7 +72,6 @@ dependencies {
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.exoMedia
 
     // Tests
     testImplementation project(":stream-chat-android-test")

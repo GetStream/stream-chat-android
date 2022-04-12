@@ -8,16 +8,13 @@ apply plugin: 'kotlin-parcelize'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    if (snapshot) {
-        PUBLISH_VERSION = Configuration.snapshotVersionName
-    } else {
-        PUBLISH_VERSION = Configuration.versionName + "-beta"
-    }
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-compose'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
+apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
     defaultConfig {
@@ -76,4 +73,5 @@ dependencies {
     // Coil
     implementation Dependencies.composeCoil
     implementation Dependencies.coilGif
+    implementation Dependencies.coilVideo
 }

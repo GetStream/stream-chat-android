@@ -6,10 +6,6 @@ slug: /client/guides/push-notifications/
 
 Besides [Events](https://getstream.io/chat/docs/android/event_listening/?language=kotlin), push notifications are another way to stay up to date with changes in your chat in real time.
 
-:::info
-Members of a channel will receive a push notification if they don't have an open socket connection.
-:::
-
 To receive push notifications from Stream Chat, you'll need to:
 
 1. Configure your push notification provider on the [Stream Dashboard](https://dashboard.getstream.io/).
@@ -126,7 +122,7 @@ ChatClient.Builder("api-key", context)
 
 ### Dismissing notifications
 
-Our [`MessageListView`](../../../03-ui/05-components/05-message-list.mdx) UI component and [`MessageList`](../../../04-compose/04-message-components/03-message-list.mdx) Compose UI Component automatically dismiss notifications related to a `Channel` when the user opens it.
+Our [`MessageListView`](../../../03-ui/04-message-components/02-message-list.mdx) UI component and [`MessageList`](../../../04-compose/05-message-components/03-message-list.mdx) Compose UI Component automatically dismiss notifications related to a `Channel` when the user opens it.
 
 If you need to dismiss them manually (for example, if you are using a custom `MessageListView` component) you can call the `ChatClient::dismissChannelNotifications` method, providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications:
 

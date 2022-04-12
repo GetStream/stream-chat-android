@@ -1,6 +1,24 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -14,7 +32,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.filepreview.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
@@ -67,6 +85,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
+ * @param rippleTheme Defines the appearance for ripples.
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
@@ -83,8 +102,11 @@ public fun ChatTheme(
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
     shapes: StreamShapes = StreamShapes.defaultShapes(),
+    rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(
+        LocalContext.current
+    ),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -105,6 +127,7 @@ public fun ChatTheme(
         LocalDimens provides dimens,
         LocalTypography provides typography,
         LocalShapes provides shapes,
+        LocalRippleTheme provides rippleTheme,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalReactionIconFactory provides reactionIconFactory,
@@ -112,7 +135,7 @@ public fun ChatTheme(
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current),
-        LocalMessageAlignmentProvider provides messageAlignmentProvider
+        LocalMessageAlignmentProvider provides messageAlignmentProvider,
     ) {
         content()
     }

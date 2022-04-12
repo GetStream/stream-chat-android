@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.call
 
 import androidx.annotation.WorkerThread
@@ -5,6 +21,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -72,6 +89,16 @@ public suspend fun <T : Any> Call<T>.await(): Result<T> {
     }
 }
 
+/**
+ * Runs a call using coroutines scope
+ */
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.launch(scope: CoroutineScope) {
+    scope.launch {
+        this@launch.await()
+    }
+}
+
 @InternalStreamChatApi
 public fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
     return MapCall(this, mapper)
@@ -101,14 +128,13 @@ public fun <T : Any> Call<T>.withPrecondition(
  * Wraps this [Call] into [ReturnOnErrorCall] to return an item specified by side effect function when it encounters an error.
  *
  * @param scope Scope of coroutine in which to execute side effect function.
- * @param function Function that returns data in the case of error.
+ * @param onError Function that returns data in the case of error.
  */
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
     function: suspend (originalError: ChatError) -> Result<T>,
-): Call<T> =
-    ReturnOnErrorCall(this, scope, function)
+): ReturnOnErrorCall<T> = ReturnOnErrorCall(this, scope, function)
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.input
 
 import android.content.Context
@@ -9,6 +25,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -357,6 +374,9 @@ public data class MessageInputViewStyle(
                     a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentSelectionAttachIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
 
+                val attachmentDialogTabButtonColorStateList = a.getColorStateList(R.styleable.MessageInputView_streamUiAttachmentTabButtonColorStateList)
+                    ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     fileAttachmentIcon = fileAttachmentIcon,
@@ -377,6 +397,7 @@ public data class MessageInputViewStyle(
                     videoIconVisible = videoIconVisible,
                     backgroundColor = attachmentSelectionBackgroundColor,
                     attachButtonIcon = attachmentSelectionAttachIcon,
+                    toggleButtonColorStateList = attachmentDialogTabButtonColorStateList
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

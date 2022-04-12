@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -8,13 +24,10 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomUser
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
 import org.amshove.kluent.shouldBeEmpty
@@ -23,6 +36,10 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeEmpty
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
@@ -56,16 +73,34 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf())
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messages,
+            readsLd = reads,
+            typingLd = typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messages,
+            readsLd = reads,
+            typingLd = typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -81,13 +116,23 @@ internal class MessageListItemLiveDataTest {
             }
         }
         val messagesLd: LiveData<List<Message>> = MutableLiveData(messages)
-        // user 0 read till the end, user 1 read the first message, user 3 read is missing
+        // user 0 read till the end, user 1 read the first message,
+        // user 3 read is missing
         val read1 = ChannelUserRead(users[0], messages.last().createdAt)
         val read2 = ChannelUserRead(users[1], messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messagesLd,
+            readsLd = reads,
+            typingLd = typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     // livedata testing
@@ -197,6 +242,6 @@ internal class MessageListItemLiveDataTest {
         val testObserver: Observer<MessageListItemWrapper> = mock()
         messageListItemLd.observeForever(testObserver)
         messageListItemLd.typingChanged(listOf(currentUser.value!!))
-        verify(testObserver, times(2)).onChanged(any())
+        verify(testObserver, times(3)).onChanged(any())
     }
 }

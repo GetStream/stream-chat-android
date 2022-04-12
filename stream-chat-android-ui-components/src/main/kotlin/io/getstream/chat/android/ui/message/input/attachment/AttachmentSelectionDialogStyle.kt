@@ -1,12 +1,30 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.input.attachment
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.style.TextStyle
 
@@ -30,6 +48,7 @@ public data class AttachmentSelectionDialogStyle(
     val videoLengthLabelVisible: Boolean,
     @ColorInt val backgroundColor: Int,
     val attachButtonIcon: Drawable,
+    val toggleButtonColorStateList: ColorStateList?
 ) {
     public companion object {
         /**
@@ -67,6 +86,7 @@ public data class AttachmentSelectionDialogStyle(
                 videoLengthLabelVisible = true,
                 backgroundColor = context.getColorCompat(R.color.stream_ui_white_smoke),
                 attachButtonIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!,
+                toggleButtonColorStateList = context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
             )
         }
     }

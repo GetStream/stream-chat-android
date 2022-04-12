@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages
 
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
@@ -23,6 +40,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,12 +52,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -81,6 +102,7 @@ public fun MessagesScreen(
     enforceUniqueReactions: Boolean = true,
     showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
+    deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
@@ -90,7 +112,8 @@ public fun MessagesScreen(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators
+        showDateSeparators = showDateSeparators,
+        deletedMessageVisibility = deletedMessageVisibility
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -123,7 +146,7 @@ public fun MessagesScreen(
         }
     }
 
-    SystemBackPressedHandler(isEnabled = true, onBackPressed = backAction)
+    BackHandler(enabled = true, onBack = backAction)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -191,6 +214,18 @@ public fun MessagesScreen(
 
         val selectedMessage = selectedMessageState?.message ?: Message()
 
+        val newMessageOptions = defaultMessageOptionsState(
+            selectedMessage = selectedMessage,
+            currentUser = user,
+            isInThread = listViewModel.isInThread
+        )
+
+        var messageOptions by remember { mutableStateOf<List<MessageOptionItemState>>(emptyList()) }
+
+        if (newMessageOptions.isNotEmpty()) {
+            messageOptions = newMessageOptions
+        }
+
         AnimatedVisibility(
             visible = selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty(),
             enter = fadeIn(),
@@ -209,11 +244,7 @@ public fun MessagesScreen(
                             animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
-                messageOptions = defaultMessageOptionsState(
-                    selectedMessage = selectedMessage,
-                    currentUser = user,
-                    isInThread = listViewModel.isInThread
-                ),
+                messageOptions = messageOptions,
                 message = selectedMessage,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)
@@ -350,6 +381,7 @@ public fun MessagesScreen(
  * @param channelId The current channel ID, to load the messages from.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list.
  */
 private fun buildViewModelFactory(
     context: Context,
@@ -358,6 +390,7 @@ private fun buildViewModelFactory(
     messageLimit: Int,
     showDateSeparators: Boolean,
     showSystemMessages: Boolean,
+    deletedMessageVisibility: DeletedMessageVisibility,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -365,6 +398,7 @@ private fun buildViewModelFactory(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showDateSeparators = showDateSeparators,
-        showSystemMessages = showSystemMessages
+        showSystemMessages = showSystemMessages,
+        deletedMessageVisibility = deletedMessageVisibility
     )
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
@@ -7,6 +23,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -62,6 +79,9 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageEndMargin Margin for messages in the right side. Default value is 0dp.
  * @property messageMaxWidthFactorMine Factor used to compute max width for message sent by the current user. Should be in <0.75, 1> range.
  * @property messageMaxWidthFactorTheirs Factor used to compute max width for message sent by other user. Should be in <0.75, 1> range.
+ * @property showMessageDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
+ * @property iconFailedMessage Icon for message failed status. Default value is [R.drawable.stream_ui_ic_warning].
+ * @property iconBannedMessage Icon for message when the current user is banned. Default value is [R.drawable.stream_ui_ic_warning].
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -103,6 +123,9 @@ public data class MessageListItemStyle(
     @Px public val messageEndMargin: Int,
     public val messageMaxWidthFactorMine: Float,
     public val messageMaxWidthFactorTheirs: Float,
+    public val showMessageDeliveryStatusIndicator: Boolean,
+    public val iconFailedMessage: Drawable,
+    public val iconBannedMessage: Drawable,
 ) {
 
     @ColorInt
@@ -408,6 +431,11 @@ public data class MessageListItemStyle(
                 .reactionsColumns(R.styleable.MessageListView_streamUiEditReactionsColumns)
                 .build()
 
+            val showMessageDeliveryStatusIndicator = attributes.getBoolean(
+                R.styleable.MessageListView_streamUiShowMessageDeliveryStatusIndicator,
+                true
+            )
+
             val iconIndicatorSent = attributes.getDrawable(
                 R.styleable.MessageListView_streamUiIconIndicatorSent
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_single)!!
@@ -547,6 +575,11 @@ public data class MessageListItemStyle(
                 DEFAULT_MESSAGE_MAX_WIDTH_FACTOR,
             )
 
+            val iconFailedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconFailedIndicator)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
+            val iconBannedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconBannedIndicator)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -586,7 +619,10 @@ public data class MessageListItemStyle(
                 messageStartMargin = messageStartMargin,
                 messageEndMargin = messageEndMargin,
                 messageMaxWidthFactorMine = messageMaxWidthFactorMine,
-                messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs
+                messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs,
+                showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator,
+                iconFailedMessage = iconFailedMessage,
+                iconBannedMessage = iconBannedMessage,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }

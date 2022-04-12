@@ -203,10 +203,13 @@
         <attr name="streamUiEditReactionsColumns" format="integer" />
 
         <!-- Indicator icons -->
+        <attr name="streamUiShowMessageDeliveryStatusIndicator" format="boolean" />
         <attr name="streamUiIconIndicatorSent" format="reference" />
         <attr name="streamUiIconIndicatorRead" format="reference" />
         <attr name="streamUiIconIndicatorPendingSync" format="reference" />
         <attr name="streamUiIconOnlyVisibleToYou" format="reference" />
+        <attr name="streamUiIconFailedIndicator" format="reference" />
+        <attr name="streamUiIconBannedIndicator" format="reference" />
 
         <!-- Message deleted style -->
         <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
@@ -251,6 +254,7 @@
         <attr name="streamUiReplyOptionIcon" format="reference" />
         <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
+        <attr name="streamUiRetryMessageEnabled" format="boolean" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
         <attr name="streamUiEditOptionIcon" format="reference" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />

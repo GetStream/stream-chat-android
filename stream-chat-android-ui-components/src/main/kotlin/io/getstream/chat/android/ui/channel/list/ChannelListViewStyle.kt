@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.channel.list
 
 import android.content.Context
@@ -41,6 +57,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property emptyStateView Empty state view. Default value is [R.layout.stream_ui_channel_list_empty_state_view].
  * @property loadingMoreView Loading more view. Default value is [R.layout.stream_ui_channel_list_loading_more_view].
  * @property edgeEffectColor Color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default value is null.
+ * @property showChannelDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
@@ -65,6 +82,7 @@ public data class ChannelListViewStyle(
     @LayoutRes public val emptyStateView: Int,
     @LayoutRes public val loadingMoreView: Int,
     @ColorInt public val edgeEffectColor: Int?,
+    public val showChannelDeliveryStatusIndicator: Boolean
 ) {
 
     internal companion object {
@@ -163,6 +181,11 @@ public data class ChannelListViewStyle(
                     )
                     .build()
 
+                val showChannelDeliveryStatusIndicator = a.getBoolean(
+                    R.styleable.ChannelListView_streamUiShowChannelDeliveryStatusIndicator,
+                    true
+                )
+
                 val indicatorSentIcon = a.getDrawable(R.styleable.ChannelListView_streamUiIndicatorSentIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_single)!!
 
@@ -250,6 +273,7 @@ public data class ChannelListViewStyle(
                     emptyStateView = emptyStateView,
                     loadingMoreView = loadingMoreView,
                     edgeEffectColor = edgeEffectColor,
+                    showChannelDeliveryStatusIndicator = showChannelDeliveryStatusIndicator
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

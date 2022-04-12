@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.channels.header
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,7 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -19,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
@@ -33,7 +47,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -171,13 +185,13 @@ internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
-            .size(40.dp)
-            .shadow(4.dp, shape = CircleShape, clip = true),
+        modifier = Modifier.size(40.dp),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },
         indication = rememberRipple(bounded = false),
         color = ChatTheme.colors.primaryAccent,
+        shape = ChatTheme.shapes.avatar,
+        elevation = 4.dp
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),

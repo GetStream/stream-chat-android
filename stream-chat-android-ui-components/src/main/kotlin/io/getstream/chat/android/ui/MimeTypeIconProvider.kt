@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui
 
 import com.getstream.sdk.chat.model.ModelType
@@ -48,7 +64,7 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         ModelType.attach_mime_quicktime to R.drawable.stream_ui_ic_file_mov,
         ModelType.attach_mime_video_quicktime to R.drawable.stream_ui_ic_file_mov,
         ModelType.attach_mime_mp4 to R.drawable.stream_ui_ic_file_mov,
-        ModelType.attach_mime_video_mp4 to R.drawable.stream_ui_ic_file_mov,
+        ModelType.attach_mime_video_mp4 to R.drawable.stream_ui_ic_file_mp4,
         ModelType.attach_mime_m4a to R.drawable.stream_ui_ic_file_m4a,
         ModelType.attach_mime_mp3 to R.drawable.stream_ui_ic_file_mp3,
     )

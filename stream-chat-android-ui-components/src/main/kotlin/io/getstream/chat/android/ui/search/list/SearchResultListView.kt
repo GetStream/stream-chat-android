@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.search.list
 
 import android.content.Context
@@ -9,7 +25,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -29,7 +44,7 @@ public class SearchResultListView : ViewFlipper {
      */
     private var loadMoreListener: LoadMoreListener? = null
 
-    private val adapter = SearchResultListAdapter(ChatDomain.instance())
+    private val adapter = SearchResultListAdapter()
 
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()

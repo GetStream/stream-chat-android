@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.notifications.handler
 
 import android.app.Notification
@@ -7,9 +23,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import io.getstream.chat.android.client.R
@@ -20,11 +34,12 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
 /**
  * Class responsible for handling chat notifications.
+ * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
 internal class ChatNotificationHandler(
     private val context: Context,
-    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
-        { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! },
+    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
+    private val notificationChannel: (() -> NotificationChannel),
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -36,40 +51,18 @@ internal class ChatNotificationHandler(
     private val notificationManager: NotificationManager by lazy {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                it.createNotificationChannel(createNotificationChannel())
+                it.createNotificationChannel(notificationChannel())
             }
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    fun createNotificationChannel(): NotificationChannel {
-        return NotificationChannel(
-            getNotificationChannelId(),
-            getNotificationChannelName(),
-            NotificationManager.IMPORTANCE_DEFAULT,
-        ).apply {
-            setShowBadge(true)
-            importance = NotificationManager.IMPORTANCE_HIGH
-            enableLights(true)
-            lightColor = Color.RED
-            enableVibration(true)
-            vibrationPattern = longArrayOf(
-                100,
-                200,
-                300,
-                400,
-                500,
-                400,
-                300,
-                200,
-                400,
-            )
+    private fun getNotificationChannelId(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel().id
+        } else {
+            ""
         }
     }
-
-    private fun getNotificationChannelId(): String = context.getString(R.string.stream_chat_notification_channel_id)
-    private fun getNotificationChannelName(): String =
-        context.getString(R.string.stream_chat_notification_channel_name)
 
     override fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()

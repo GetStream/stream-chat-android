@@ -14,17 +14,17 @@ This library builds on top of the offline library, and provides [ViewModels](#vi
 
 See the individual pages of the components to learn more about them:
 
-- [Channel List Screen](05-components/01-channel-list-screen.mdx)
-- [Channel List](05-components/02-channel-list.mdx)
-- [Channel List Header](05-components/03-channel-list-header.mdx)
-- [Message List Screen](05-components/04-message-list-screen.mdx)
-- [Message List](05-components/05-message-list.mdx)
-- [Message List Header](05-components/06-message-list-header.mdx)
-- [Message Input](05-components/07-message-input.mdx)
-- [Mention List View](05-components/08-mention-list-view.mdx)
-- [Pinned Message List View](05-components/09-pinned-message-list-view.mdx)
-- [Search View](05-components/10-search-view.mdx)
-- [Attachment Gallery](05-components/11-attachment-gallery.mdx)
+- [Channel List Screen](03-channel-components/01-channel-list-screen.mdx)
+- [Channel List](03-channel-components/02-channel-list.mdx)
+- [Channel List Header](03-channel-components/03-channel-list-header.mdx)
+- [Message List Screen](04-message-components/01-message-list-screen.mdx)
+- [Message List](04-message-components/02-message-list.mdx)
+- [Message List Header](04-message-components/03-message-list-header.mdx)
+- [Message Input](04-message-components/04-message-input.mdx)
+- [Mention List View](05-utility-components/01-mention-list-view.mdx)
+- [Pinned Message List View](05-utility-components/02-pinned-message-list-view.mdx)
+- [Search View](05-utility-components/03-search-view.mdx)
+- [Attachment Gallery](05-utility-components/04-attachment-gallery.mdx)
 
 ## Requirements
 
@@ -40,7 +40,7 @@ If you want to keep using an `AppCompat` theme for styling, you can use a [Bridg
 
 ## ViewModels
 
-Each UI component comes with its own ViewModel. These are used to easily connect them to `ChatDomain` to fetch data and perform actions.
+Each UI component comes with its own ViewModel. These are used to easily connect them to the client to fetch data and perform actions.
 
 These are Jetpack [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel), so they allow the components to retain data across configuration changes. It's your responsibility to create these in the correct scope, usually in a Fragment or Activity.
 
@@ -74,6 +74,6 @@ The [UI components sample app](https://github.com/GetStream/stream-chat-android/
 
 ## Customization
 
-The UI components offer customization options via XML attributes as well as instance methods. You can check the individual pages of the components for more details about this. Components can also be customized globally via themes and style transformations. The [Theming](02-theming.mdx) page describes all the available styling options for the SDK in detail.
+The UI components offer customization options via XML attributes as well as instance methods. You can check the individual pages of the components for more details about this. Components can also be customized globally via themes and style transformations. The [Theming](02-general-customization/01-theming.mdx) page describes all the available styling options for the SDK in detail.
 
-You can also use the [`ChatUI` object](03-chatui.mdx) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.
+You can also use the [`ChatUI` object](02-general-customization/02-chatui.mdx) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.

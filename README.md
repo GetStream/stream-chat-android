@@ -13,7 +13,13 @@
 
 This is the official Android SDK for [Stream Chat](https://getstream.io/chat/sdk/android/), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
 
-The SDK supports both Kotlin and Java, but *we strongly recommend using Kotlin*.
+We're proud to say that we're the first Android Chat SDK that supports Jetpack Compose! We [released](https://github.com/GetStream/stream-chat-android/releases/tag/4.15.0) our Compose UI Components one day after the official Jetpack Compose 1.0 release and our team members have been working hard on it since then.
+
+Now it's mature and stable enough for us to officially recommend it for all new applications and all modern chat implementations. If you're looking for something highly customizable and extremely performant, check out our [Compose SDK](https://getstream.io/chat/sdk/compose/).
+
+The Android SDK supports both Kotlin and Java, but *we strongly recommend using Kotlin*.
+
+> **Note**: The Compose SDK supports only Kotlin, since Compose uses Kotlin compiler plugins to process the UI.
 
 ### 🔗 Quick Links
 
@@ -34,49 +40,58 @@ For complete pricing details, visit our [Chat Pricing Page](https://getstream.io
 
 ## 🗺️ Overview and Documentation 📚
 
-This SDK consists of three main artifacts you can build on:
+This SDK consists of two low-level artifacts you can build on:
 
 - [**Client**](/stream-chat-android-client): A low-level client for making API calls and receiving chat events.
     - [Documentation website](https://getstream.io/chat/docs/android/?language=kotlin)
 - [**Offline support**](/stream-chat-android-offline): Local caching and automatic retries, exposed via Flow and LiveData APIs.
-    - [Working with Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/working-with-offline/)
-- [**UI Components**](/stream-chat-android-ui-components): Reusable and customizable chat Views for displaying conversations, lists of channels, and more!
-    - [Sample app](/stream-chat-android-ui-components-sample)
-    - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
+    - [Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/)
 
-We also support Jetpack Compose! You can use our Compose UI Components as an alternative to the **UI Components**.
+**We also have two UI SDKs**. You can use our Compose UI Components SDK, or if you're using older UI solutions, the XML-based UI Components:
 
 - [**Compose UI Components**](/stream-chat-android-compose): Reusable and modular Composables for displaying conversations, lists of channels, and more!
   - [Sample app](/stream-chat-android-compose-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
+  - [Compose SDK Guidelines](/stream-chat-android-compose/GUIDELINES.md)
+- [**UI Components**](/stream-chat-android-ui-components): Reusable and customizable chat Views for displaying conversations, lists of channels, and more!
+  - [Sample app](/stream-chat-android-ui-components-sample)
+  - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
 
 Learn more about the modules by visiting [the documentation](https://getstream.io/chat/docs/sdk/android/).
 
 ## 📖 Tutorial
 
-The best place to start is the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/). It teaches you the basics of using this SDK and also shows how to make frequently required changes.
+The best place to start is the [Compose Chat Messaging Tutorial](https://getstream.io/chat/compose/tutorial/). It teaches you the basics of using the Compose Chat SDK and also shows how to make frequently required changes.
+
+>  **Note**: If you're using older UI toolkits, like XML, you can follow the [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/) which features the XML-based UI Components.
 
 ## 🛠️ Installation and Getting Started 🚀
 
 See the [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/) and [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/) pages of the documentation.
 
+## 🏗️ Jetpack Compose Sample App
+
+Our Jetpack Compose implementation comes with its own [example app](/stream-chat-android-compose-sample), which you can play with to see how awesome Compose is.
+
+To run the sample app, start by cloning this repo:
+
+```shell
+git clone git@github.com:GetStream/stream-chat-android.git
+```
+
+Next, open [Android Studio](https://developer.android.com/studio) and open the newly created project folder. You'll want to run the [`stream-chat-android-compose-sample`](/stream-chat-android-compose-sample) module.
+
+Since Compose is a highly customizable SDK, we're eager to hear your feedback on how it helps you build complex Chat UI. Join us in [this repo's discussions](https://github.com/GetStream/stream-chat-android/discussions) or tweet at us [@getstream_io](https://twitter.com/getstream_io)!
+
 ## 📲 Sample App
 
-This repo includes a fully functional [example app](/stream-chat-android-ui-components-sample) featuring threads, reactions, typing indicators, optimistic UI updates and offline storage. To run the sample app, start by cloning this repo:
+However, if you're still using XML due to technical limitations, our UI Components SDK includes a fully functional [example app](/stream-chat-android-ui-components-sample) featuring threads, reactions, typing indicators, optimistic UI updates and offline storage. To run the sample app, start by cloning this repo:
 
 ```shell
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
 Next, open [Android Studio](https://developer.android.com/studio) and open the newly created project folder. You'll want to run the [`stream-chat-android-ui-components-sample`](/stream-chat-android-ui-components-sample) app.
-
-## 🏗️ Jetpack Compose Sample App
-
-We also have a UI implementation built in Jetpack Compose available, currently in a beta version.
-
-This also comes with its own [example app](/stream-chat-android-compose-sample), which you can try by cloning this repo, and then running the app in the [`stream-chat-android-compose-sample`](/stream-chat-android-compose-sample) module.
-
-As this is a beta, we're eager to hear your feedback. Join us in [this repo's discussions](https://github.com/GetStream/stream-chat-android/discussions) or tweet at us [@getstream_io](https://twitter.com/getstream_io)!
 
 ## 💡 Supported features 🎨
 
@@ -108,3 +123,21 @@ For more, see the [SDK's website](https://getstream.io/chat/sdk/android/).
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
 Check out our current openings and apply via [Stream's website](https://getstream.io/team/#jobs).
+
+## License
+
+```
+Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+Licensed under the Stream License;
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```

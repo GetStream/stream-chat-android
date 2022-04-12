@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.input.internal
 
 import android.annotation.TargetApi
@@ -14,12 +30,12 @@ import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -327,7 +343,7 @@ internal class MessageInputFieldView : FrameLayout {
         switchToMessageMode()
         binding.messageReplyView.setMessage(
             currentMode.repliedMessage,
-            ChatDomain.instance().user.value?.id == currentMode.repliedMessage.user.id,
+            ChatClient.instance().getCurrentUser()?.id == currentMode.repliedMessage.user.id,
             null,
         )
         binding.messageReplyView.isVisible = true
@@ -412,7 +428,7 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
-    private fun hasValidText(): Boolean = isMessageTextValid(messageText)
+    private fun hasValidText(): Boolean = MessageTextValidator.isMessageTextValid(messageText)
 
     fun hasValidContent(): Boolean {
         return hasValidText() || selectedAttachments.isNotEmpty() || selectedCustomAttachments.isNotEmpty()

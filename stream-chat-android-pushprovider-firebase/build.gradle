@@ -3,7 +3,6 @@ import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: "de.mannodermaus.android-junit5"
 
 ext {

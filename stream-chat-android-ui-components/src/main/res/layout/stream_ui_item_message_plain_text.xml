@@ -27,8 +27,8 @@
         android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
         android:paddingTop="@dimen/stream_ui_spacing_tiny"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:visibility="gone"
         android:textDirection="locale"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -81,7 +81,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hyphenationFrequency="normal"
-            app:lineHeight="16sp"
             android:paddingLeft="@dimen/stream_ui_spacing_medium"
             android:paddingTop="@dimen/stream_ui_spacing_small"
             android:paddingRight="@dimen/stream_ui_spacing_medium"
@@ -89,6 +88,7 @@
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_accent_blue"
             android:textDirection="locale"
+            app:lineHeight="16sp"
             tools:text="@tools:sample/lorem"
             />
 
@@ -128,11 +128,11 @@
         android:id="@+id/deliveryFailedIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/footnote"
         app:layout_constraintEnd_toStartOf="@id/avatarMineView"
         tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_warning"
         tools:visibility="visible"
         />
 

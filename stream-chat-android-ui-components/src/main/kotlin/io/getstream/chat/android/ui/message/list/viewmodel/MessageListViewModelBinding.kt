@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:JvmName("MessageListViewModelBinding")
 
 package io.getstream.chat.android.ui.message.list.viewmodel
@@ -16,8 +32,10 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
+import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 
 /**
@@ -29,6 +47,21 @@ import io.getstream.chat.android.ui.message.list.MessageListView
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+
+    view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
+        if (messageListItemPredicate != null) {
+            val deletedMessageVisibility = when (messageListItemPredicate) {
+                DeletedMessageListItemPredicate.NotVisibleToAnyone ->
+                    DeletedMessageVisibility.ALWAYS_HIDDEN
+                DeletedMessageListItemPredicate.VisibleToAuthorOnly ->
+                    DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+                else -> DeletedMessageVisibility.ALWAYS_VISIBLE
+            }
+
+            setDeletedMessageVisibility(deletedMessageVisibility)
+        }
+    }
+
     channel.observe(lifecycleOwner) {
         view.init(it)
     }
@@ -50,7 +83,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
     view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
-    view.setAttachmentDownloadHandler { attachment -> onEvent(DownloadAttachment(attachment)) }
+    view.setAttachmentDownloadHandler { downloadAttachmentCall -> onEvent(DownloadAttachment(downloadAttachmentCall)) }
     view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
 
     state.observe(lifecycleOwner) { state ->

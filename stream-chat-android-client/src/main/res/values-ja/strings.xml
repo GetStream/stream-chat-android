@@ -11,4 +11,5 @@
   <string name="stream_chat_notification_reply">"返信"</string>
   <string name="stream_chat_notification_title">"チャットメッセージ"</string>
   <string name="stream_chat_notification_type_hint">"メッセージを入力する"</string>
+  <string name="stream_chat_other_notifications_channel_name">"その他の通知"</string>
 </resources>

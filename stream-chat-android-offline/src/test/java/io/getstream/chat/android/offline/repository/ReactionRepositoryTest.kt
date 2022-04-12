@@ -1,18 +1,29 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.repository
 
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.repository.domain.reaction.ReactionDao
-import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepository
-import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepositoryImpl
-import io.getstream.chat.android.offline.repository.domain.reaction.toEntity
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -22,6 +33,11 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ReactionRepositoryTest {
@@ -58,7 +74,7 @@ internal class ReactionRepositoryTest {
 
         coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
-        verifyZeroInteractions(reactionDao)
+        verifyNoInteractions(reactionDao)
     }
 
     @Test
@@ -67,7 +83,7 @@ internal class ReactionRepositoryTest {
 
         coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
-        verifyZeroInteractions(reactionDao)
+        verifyNoInteractions(reactionDao)
     }
 
     @Test
@@ -76,25 +92,15 @@ internal class ReactionRepositoryTest {
 
         coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
-        verifyZeroInteractions(reactionDao)
+        verifyNoInteractions(reactionDao)
     }
 
     @Test
     fun `When dao returns reactions with syncNeeded == true they should contain current user data`() = runBlockingTest {
-        whenever(reactionDao.selectSyncNeeded()).thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))
+        whenever(reactionDao.selectSyncStatus(SyncStatus.SYNC_NEEDED))
+            .thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))
 
-        reactionRepo.selectReactionsSyncNeeded().apply {
-            this.size `should be equal to` 1
-            this.first().user `should be equal to` currentUser
-        }
-    }
-
-    @Test
-    fun `When dao returns reactions for specific messageId they should contain user data`() = runBlockingTest {
-        val messageId = randomString(10)
-        whenever(reactionDao.selectUserReactionsToMessage(messageId, currentUser.id)).thenReturn(listOf(randomReaction(syncStatus = SyncStatus.SYNC_NEEDED).toEntity()))
-
-        reactionRepo.selectUserReactionsToMessage(messageId, currentUser.id).apply {
+        reactionRepo.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).apply {
             this.size `should be equal to` 1
             this.first().user `should be equal to` currentUser
         }

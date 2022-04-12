@@ -18,6 +18,7 @@
     <string name="stream_ui_message_input_recent_files">Recent Files</string>
     <string name="stream_ui_message_input_no_files">There is no photo or video.</string>
     <string name="stream_ui_message_input_capture_media">Capture Image or Video</string>
+    <string name="stream_ui_message_input_file_not_supported">File type is not supported</string>
 
     <!-- System Permission Dialog -->
     <string name="stream_ui_message_input_permission_camera_title">Camera and Storage Access Permission</string>
