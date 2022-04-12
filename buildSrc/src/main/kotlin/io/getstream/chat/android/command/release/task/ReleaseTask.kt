@@ -11,8 +11,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-private const val CHANGELOG_UPDATED_TEMP = "CHANGELOG_UPDATED_TEMP.md"
-
 open class ReleaseTask : DefaultTask() {
 
     @Input
@@ -27,22 +25,5 @@ open class ReleaseTask : DefaultTask() {
         FilePrinter.fromFileName("CHANGELOG_PARSED.md").use { printer -> releaseDocument.print(printer) }
 
         println("CHANGELOG_PARSED.md generated")
-
-        val oldReleases = filterOldReleases(changeLogFile)
-
-        val inMemoryPrinter = InMemoryPrinter()
-        FilePrinter.fromFileName(CHANGELOG_UPDATED_TEMP).use { printer ->
-            createdUpdatedChangelog(
-                inMemoryPrinter,
-                File(config.changelogModel),
-                releaseDocument,
-                oldReleases,
-                "5.0.4"
-            )
-        }
-
-        changeLogFile.printWriter().use { printer ->
-            inMemoryPrinter.lines().forEach(printer::println)
-        }
     }
 }
