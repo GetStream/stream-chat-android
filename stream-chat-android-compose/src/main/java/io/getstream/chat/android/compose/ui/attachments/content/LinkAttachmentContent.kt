@@ -113,7 +113,6 @@ public fun LinkAttachmentContent(
                             .makeText(context, errorMessage, Toast.LENGTH_LONG)
                             .show()
                     }
-
                 },
                 onLongClick = { onLongItemClick(message) }
             )
