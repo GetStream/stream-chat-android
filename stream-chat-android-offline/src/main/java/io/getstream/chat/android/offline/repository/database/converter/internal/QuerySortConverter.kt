@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
@@ -47,8 +47,21 @@ internal class QuerySortConverter {
         }
     }
 
+    /**
+     * @return Nullable [String] to let KSP know this function cannot be used for "Nullable to NonNull" converting.
+     *
+     * An example of the incorrect behaviour:
+     *     val stringifiedObject: String? = anotherConverter.objectToString(...)
+     *     val stringList: List<String>? = QuerySortConverter.stringToObject(stringifiedObject)
+     *     val nonNullStringifiedObject: String = QuerySortConverter.objectToString(stringifiedObject)
+     *     // ... binding nonNullStringifiedObject to table's column
+     *
+     * The current behavior:
+     *     val stringifiedObject: String? = anotherConverter.objectToString(...)
+     *     // ... binding stringifiedObject to table's column
+     */
     @TypeConverter
-    fun objectToString(querySort: QuerySort<Channel>): String {
+    fun objectToString(querySort: QuerySort<Channel>): String? {
         return adapter.toJson(querySort.toDto())
     }
 }

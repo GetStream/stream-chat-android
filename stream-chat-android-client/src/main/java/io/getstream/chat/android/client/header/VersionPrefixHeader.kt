@@ -13,15 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.header
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+/**
+ * An enumeration used for tracking which SDK is being used.
+ *
+ * @param prefix Header for particular SDK.
+ */
 @InternalStreamChatApi
 public enum class VersionPrefixHeader(public val prefix: String) {
+    /**
+     * Low-level client.
+     */
     DEFAULT("stream-chat-android-"),
-    OLD_UI_COMPONENTS("stream-chat-android-old-ui-"),
+
+    /**
+     * XML based UI components.
+     */
     UI_COMPONENTS("stream-chat-android-ui-components-"),
+
+    /**
+     * Compose UI components.
+     */
     COMPOSE("stream-chat-android-compose-")
 }

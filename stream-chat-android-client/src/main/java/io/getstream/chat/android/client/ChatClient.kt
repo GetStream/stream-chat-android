@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client
 
 import android.content.Context
@@ -22,10 +22,9 @@ import android.util.Base64
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -816,9 +815,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -860,9 +858,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -1572,6 +1569,7 @@ public class ChatClient internal constructor(
      *
      * @return String formatted header that contains all the information.
      */
+    @InternalStreamChatApi
     public fun buildSdkTrackingHeaders(): String {
         val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
         val buildModel = Build.MODEL
@@ -1579,7 +1577,7 @@ public class ChatClient internal constructor(
         val apiLevel = Build.VERSION.SDK_INT
         val osName = "Android ${Build.VERSION.RELEASE}"
 
-        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""
+        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""
     }
 
     @CheckResult
@@ -2440,9 +2438,19 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
+        /**
+         * Header used to track which SDK is being used.
+         */
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        /**
+         * Flag used to track whether offline support is enabled.
+         */
+        @InternalStreamChatApi
+        @JvmStatic
+        public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"

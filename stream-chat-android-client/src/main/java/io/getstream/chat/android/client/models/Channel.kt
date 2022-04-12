@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -64,7 +64,7 @@ public data class Channel(
     var deletedAt: Date? = null,
     var updatedAt: Date? = null,
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
-    val memberCount: Int = 0,
+    var memberCount: Int = 0,
     var messages: List<Message> = mutableListOf(),
     var members: List<Member> = mutableListOf(),
     var watchers: List<User> = mutableListOf(),

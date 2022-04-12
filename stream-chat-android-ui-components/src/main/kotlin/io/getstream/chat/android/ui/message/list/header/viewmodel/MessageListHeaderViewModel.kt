@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
 import androidx.lifecycle.LiveData
@@ -83,6 +83,11 @@ public class MessageListHeaderViewModel(
      * A list of [Channel] members.
      */
     public val members: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
+
+    /**
+     * Number of [Channel] members.
+     */
+    public val membersCount: LiveData<Int?> = channelState.flatMapLatest { it.membersCount }.asLiveData()
 
     /**
      * Current user's online status.

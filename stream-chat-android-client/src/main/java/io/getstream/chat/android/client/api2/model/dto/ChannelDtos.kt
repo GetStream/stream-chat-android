@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
@@ -51,8 +51,8 @@ internal data class DownstreamChannelDto(
     val cid: String,
     val id: String,
     val type: String,
-    val name: String = "",
-    val image: String = "",
+    val name: String?,
+    val image: String?,
     val watcher_count: Int = 0,
     val frozen: Boolean,
     val last_message_at: Date?,

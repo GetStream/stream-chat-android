@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.extensions
 
 internal fun <T1 : Any, T2 : Any, T3 : Any, R : Any> safeLet(

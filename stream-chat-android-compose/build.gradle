@@ -14,6 +14,7 @@ ext {
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
+apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
     defaultConfig {
@@ -72,4 +73,5 @@ dependencies {
     // Coil
     implementation Dependencies.composeCoil
     implementation Dependencies.coilGif
+    implementation Dependencies.coilVideo
 }

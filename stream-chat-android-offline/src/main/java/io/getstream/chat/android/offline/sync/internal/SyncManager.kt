@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.sync.internal
 
 import androidx.annotation.VisibleForTesting
@@ -267,8 +267,9 @@ internal class SyncManager(
                     logger.logD("Deleting message: ${message.id}")
                     channelClient.deleteMessage(message.id).await()
                 }
-                message.updatedLocallyAt != null -> {
+                message.updatedLocallyAt != null && message.createdAt != null -> {
                     logger.logD("Updating message: ${message.id}")
+
                     channelClient.updateMessage(message).await()
                 }
                 else -> {

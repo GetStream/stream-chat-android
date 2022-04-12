@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.state.channel
 
 import io.getstream.chat.android.client.models.Channel
@@ -69,6 +69,9 @@ public interface ChannelState {
 
     /** The list of members of this channel. */
     public val members: StateFlow<List<Member>>
+
+    /** Number of all members of this channel. */
+    public val membersCount: StateFlow<Int>
 
     /** StateFlow object with the channel data. */
     public val channelData: StateFlow<ChannelData>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -36,6 +36,12 @@ internal class DownstreamChannelDtoAdapterTest {
     fun `Deserialize JSON channel without custom fields`() {
         val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutExtraData
+    }
+
+    @Test
+    fun `Deserialize JSON channel without name and image fields`() {
+        val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutNameAndImage, DownstreamChannelDto::class.java)
+        channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutNameAndImage
     }
 
     @Test

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.layout.Row
@@ -81,7 +81,10 @@ public fun MessageFooter(messageItem: MessageItemState) {
                 )
             }
 
-            Timestamp(date = message.updatedAt ?: message.createdAt)
+            val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
+            if (date != null) {
+                Timestamp(date = date)
+            }
         }
     }
 }
