@@ -180,11 +180,11 @@ The message preview formatter can be customized by overriding `ChatTheme.message
 
 ### ImageLoader
 
-Coil ImageLoader used to load images. The default implementation is provided by `StreamCoilImageLoader`.
+Coil `ImageLoader` used to load images. The default implementation is provided by `StreamCoilImageLoader`.
 
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/StreamCoilImageLoader.kt).
 
-You can easily customize how the images are loaded by overriding `ChatTheme.imageLoader` with your own implementation of Coil `ImageLoader`.
+You can easily customize how the images are loaded by passing your own implementation of `ImageLoader` to `ChatTheme`.
 
 ### MessageAlignmentProvider
 
@@ -193,4 +193,3 @@ Used for aligning messages. The default message alignment provider is `DefaultMe
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider.kt).
 
 As with all of the other `ChatTheme` properties, you can easily customize how the messages are aligned by overriding `ChatTheme.messageAlignmentProvider` with your own implementation of `MessageAlignmentProvider`.
-
