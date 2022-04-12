@@ -20,7 +20,8 @@ import java.util.Stack
 
 internal fun String.fixItalicAtEnd(): String {
     return if (this.isNotEmpty() && (this.last() == '*' || this.last() == '_')) {
-        // This check is down here to emphasise that this check must be run last, otherwise there's a performance drop when setting text
+        // This check is down here to emphasise that this check must be run last,
+        // otherwise there's a performance drop when setting text
         if (endsWithItalic(this)) "$this&#x200A;" else this
     } else {
         this

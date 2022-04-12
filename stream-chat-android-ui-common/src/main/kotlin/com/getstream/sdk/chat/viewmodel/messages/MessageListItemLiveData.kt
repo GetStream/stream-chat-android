@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import java.util.Date
 
 /**
@@ -74,7 +75,7 @@ internal class MessageListItemLiveData(
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
-    private val deletedMessageVisibility: LiveData<MessageListViewModel.DeletedMessageVisibility>,
+    private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -201,9 +202,9 @@ internal class MessageListItemLiveData(
      */
     private fun filterDeletedMessages(messages: List<Message>?): List<Message>? {
         return when (deletedMessageVisibility.value) {
-            MessageListViewModel.DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER ->
+            DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER ->
                 messages?.filter { it.deletedAt == null || it.user.id == currentUser.value?.id }
-            MessageListViewModel.DeletedMessageVisibility.ALWAYS_HIDDEN -> messages?.filter { it.deletedAt == null }
+            DeletedMessageVisibility.ALWAYS_HIDDEN -> messages?.filter { it.deletedAt == null }
             else -> messages
         }
     }

@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.randomUser
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
 import org.amshove.kluent.shouldBeLessThan
@@ -67,7 +68,7 @@ internal class MessageListItemLiveDataBenchmark {
         val read2 = ChannelUserRead(messages[10].user, messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(
             currentUser = currentUser,

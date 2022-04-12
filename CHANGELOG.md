@@ -29,10 +29,12 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed crash related with logging out while running a request to update channels. [3286](https://github.com/GetStream/stream-chat-android/pull/3286)
+- Fixed bug where user was not able to send and edit a message while offline. [3318](https://github.com/GetStream/stream-chat-android/pull/3324)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelState::membersCount` property that can be used to observe total members of the channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
 
@@ -58,11 +60,14 @@
 - Fixed the links in UI Components code snippets. [#3261](https://github.com/GetStream/stream-chat-android/pull/3261)
 - Messages containing links are now properly aligned with other types of messages. They use `@dimen/stream_ui_spacing_small` for their root layout start and end padding. [#3264](https://github.com/GetStream/stream-chat-android/pull/3264)
 - Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
+- Fixed bug in which member counter shown in the `MessageListHeaderViewModel` is incorrect and limited to 30 only. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+ - Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [#3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+ - Added attributes to `MessageListItemStyle` to allow customisation of failed and banned indicator icons. [#3236](https://github.com/GetStream/stream-chat-android/pull/3301)
+- Added `membersCount` livedata in `MessageListHeaderViewModel` to observe number of all members of channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
 
@@ -73,9 +78,12 @@
 - Added thumbnails for video attachments in the attachment picker. [#3300](https://github.com/GetStream/stream-chat-android/pull/3300)
 
 ### ⬆️ Improved
+- Improved the way typing updates work in the MessageComposerController. [#3313](https://github.com/GetStream/stream-chat-android/pull/3313)
 
 ### ✅ Added
-Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
+- Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
+- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
+- Added Compose SDK Guidelines for internal and external contributors. [#3315](https://github.com/GetStream/stream-chat-android/pull/3315)
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)

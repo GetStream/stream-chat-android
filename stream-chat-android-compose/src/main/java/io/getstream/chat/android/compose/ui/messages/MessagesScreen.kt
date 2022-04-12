@@ -52,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
@@ -101,6 +102,7 @@ public fun MessagesScreen(
     enforceUniqueReactions: Boolean = true,
     showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
+    deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
@@ -110,7 +112,8 @@ public fun MessagesScreen(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators
+        showDateSeparators = showDateSeparators,
+        deletedMessageVisibility = deletedMessageVisibility
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -378,6 +381,7 @@ public fun MessagesScreen(
  * @param channelId The current channel ID, to load the messages from.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list.
  */
 private fun buildViewModelFactory(
     context: Context,
@@ -386,6 +390,7 @@ private fun buildViewModelFactory(
     messageLimit: Int,
     showDateSeparators: Boolean,
     showSystemMessages: Boolean,
+    deletedMessageVisibility: DeletedMessageVisibility,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -393,6 +398,7 @@ private fun buildViewModelFactory(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showDateSeparators = showDateSeparators,
-        showSystemMessages = showSystemMessages
+        showSystemMessages = showSystemMessages,
+        deletedMessageVisibility = deletedMessageVisibility
     )
 }
