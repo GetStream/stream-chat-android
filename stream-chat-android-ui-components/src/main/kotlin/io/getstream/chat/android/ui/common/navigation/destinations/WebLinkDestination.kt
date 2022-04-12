@@ -32,9 +32,11 @@ public class WebLinkDestination(context: Context, private val url: String) : Cha
         try {
             start(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context,
+            Toast.makeText(
+                context,
                 context.getString(R.string.stream_ui_message_list_error_cannot_open_link, url),
-                Toast.LENGTH_LONG).show()
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 }
