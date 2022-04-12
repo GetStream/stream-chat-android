@@ -21,7 +21,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,7 +65,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.offline.extensions.globalState
 
-class ChannelsActivity : AppCompatActivity() {
+class ChannelsActivity : BaseConnectedActivity() {
 
     private val factory by lazy {
         ChannelViewModelFactory(
