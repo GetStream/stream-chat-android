@@ -117,6 +117,7 @@ complexity:
     threshold: 60
   LongParameterList:
     active: true
+    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
     functionThreshold: 6
     constructorThreshold: 7
     ignoreDefaultParameters: false
