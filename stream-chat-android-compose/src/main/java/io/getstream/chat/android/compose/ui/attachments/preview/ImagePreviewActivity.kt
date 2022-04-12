@@ -473,7 +473,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
     }
 
     /**
-     * Renders a horizontal pager that shows images and allows the user to swipe them and zoom in.
+     * Renders a horizontal pager that shows images and allows the user to swipe, zoom and pan through them.
      *
      * @param pagerState The state of the content pager.
      * @param attachments The attachments to show within the pager.
@@ -600,12 +600,26 @@ public class ImagePreviewActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Calculates max offset that an image can have before reaching the edges.
+     *
+     * @param imageSize The size of the image that is being viewed.
+     * @param scale The current scale of the image that is being viewed.
+     * @param parentSize The size of the view containing the image being viewed.
+     */
     private fun calculateMaxOffset(imageSize: Size, scale: Float, parentSize: Size): Offset {
         val maxTranslationY = calculateMaxOffsetPerAxis(imageSize.height, scale, parentSize.height)
         val maxTranslationX = calculateMaxOffsetPerAxis(imageSize.width, scale, parentSize.width)
         return Offset(maxTranslationX, maxTranslationY)
     }
 
+    /**
+     * Calculates max offset an image can have on a single axis.
+     *
+     * @param axisSize The size of the image on a given axis.
+     * @param scale The current scale of of the image.
+     * @param parentAxisSize The size of the parent view on a given axis.
+     */
     private fun calculateMaxOffsetPerAxis(axisSize: Float, scale: Float, parentAxisSize: Float): Float {
         return (axisSize * scale - parentAxisSize).coerceAtLeast(0f) / 2
     }
