@@ -229,6 +229,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/c
 	public abstract fun getLoadingNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMembers ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getMembersCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessagesState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;

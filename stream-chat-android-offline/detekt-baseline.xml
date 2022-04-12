@@ -202,6 +202,7 @@
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loadingNewerMessages = MutableStateFlow(false)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loadingOlderMessages = MutableStateFlow(false)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _members = MutableStateFlow&lt;Map&lt;String, Member>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _membersCount = MutableStateFlow(0)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _messages = MutableStateFlow&lt;Map&lt;String, Message>>(emptyMap())</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _muted = MutableStateFlow(false)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _oldMessages = MutableStateFlow&lt;Map&lt;String, Message>>(emptyMap())</ID>

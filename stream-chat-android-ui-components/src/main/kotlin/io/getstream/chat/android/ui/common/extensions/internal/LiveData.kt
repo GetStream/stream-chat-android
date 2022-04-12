@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.header
+package io.getstream.chat.android.ui.common.extensions.internal
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 
 /**
- * An enumeration used for tracking which SDK is being used.
- *
- * @param prefix Header for particular SDK.
+ * Observes two live datas together.
  */
-@InternalStreamChatApi
-public enum class VersionPrefixHeader(public val prefix: String) {
-    /**
-     * Low-level client.
-     */
-    DEFAULT("stream-chat-android-"),
+internal fun <P, Q> Pair<LiveData<P>, LiveData<Q>>.observeTogether(
+    lifecycle: LifecycleOwner,
+    block: (P?, Q?) -> Unit,
+) {
+    this.first.observe(lifecycle) {
+        block(it, this.second.value)
+    }
 
-    /**
-     * XML based UI components.
-     */
-    UI_COMPONENTS("stream-chat-android-ui-components-"),
-
-    /**
-     * Compose UI components.
-     */
-    COMPOSE("stream-chat-android-compose-")
+    this.second.observe(lifecycle) {
+        block(this.first.value, it)
+    }
 }
