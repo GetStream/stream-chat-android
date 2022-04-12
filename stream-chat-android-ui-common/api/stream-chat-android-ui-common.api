@@ -425,20 +425,12 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event;)V
 	public final fun setDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
-	public final fun setDeletedMessageVisibility (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility;)V
+	public final fun setDeletedMessageVisibility (Lio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
 	public final fun setThreadDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
 }
 
 public abstract interface class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler {
 	public abstract fun shouldAddDateSeparator (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Message;)Z
-}
-
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility : java/lang/Enum {
-	public static final field ALWAYS_HIDDEN Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility;
-	public static final field ALWAYS_VISIBLE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility;
-	public static final field VISIBLE_FOR_CURRENT_USER Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility;
-	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility;
-	public static fun values ()[Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DeletedMessageVisibility;
 }
 
 public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
@@ -807,6 +799,14 @@ public final class io/getstream/chat/android/common/state/CustomAction : io/gets
 
 public final class io/getstream/chat/android/common/state/Delete : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/DeletedMessageVisibility : java/lang/Enum {
+	public static final field ALWAYS_HIDDEN Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
+	public static final field ALWAYS_VISIBLE Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
+	public static final field VISIBLE_FOR_CURRENT_USER Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
+	public static fun values ()[Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
 }
 
 public final class io/getstream/chat/android/common/state/Edit : io/getstream/chat/android/common/state/MessageAction {

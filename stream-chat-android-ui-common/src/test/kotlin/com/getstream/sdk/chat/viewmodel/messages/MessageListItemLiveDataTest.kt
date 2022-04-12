@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
 import org.amshove.kluent.shouldBeEmpty
@@ -72,7 +73,7 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf())
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -89,7 +90,7 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -121,7 +122,7 @@ internal class MessageListItemLiveDataTest {
         val read2 = ChannelUserRead(users[1], messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
-        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
         return MessageListItemLiveData(
             currentUser = currentUser,

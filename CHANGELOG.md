@@ -81,6 +81,7 @@
 - Improved the way typing updates work in the MessageComposerController. [#3313](https://github.com/GetStream/stream-chat-android/pull/3313)
 
 ### ✅ Added
+- Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
 - Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
 - Added Compose SDK Guidelines for internal and external contributors. [#3315](https://github.com/GetStream/stream-chat-android/pull/3315)
 
