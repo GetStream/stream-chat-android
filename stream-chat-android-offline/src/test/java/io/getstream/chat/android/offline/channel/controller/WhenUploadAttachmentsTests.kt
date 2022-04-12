@@ -28,13 +28,11 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.shouldBeTrue
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
@@ -48,9 +46,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class WhenUploadAttachmentsTests {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
-
     private val channelType = "channelType"
     private val channelId = "channelId"
 

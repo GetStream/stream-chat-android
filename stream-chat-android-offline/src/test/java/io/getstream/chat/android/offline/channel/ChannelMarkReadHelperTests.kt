@@ -29,13 +29,11 @@ import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -47,9 +45,6 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class ChannelMarkReadHelperTests {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
-
     companion object {
         @JvmField
         @RegisterExtension

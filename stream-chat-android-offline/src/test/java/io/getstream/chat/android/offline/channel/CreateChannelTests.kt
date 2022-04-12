@@ -28,11 +28,9 @@ import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.argThat
@@ -43,9 +41,6 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class CreateChannelTests {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
-
     companion object {
         @JvmField
         @RegisterExtension
