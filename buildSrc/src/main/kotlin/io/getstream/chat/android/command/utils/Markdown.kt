@@ -1,5 +1,6 @@
 package io.getstream.chat.android.command.utils
 
+import io.getstream.chat.android.command.release.markdown.clean
 import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
 import io.getstream.chat.android.command.release.model.Section
@@ -12,6 +13,11 @@ fun parseChangelogFile(file: File): Document {
     return file.readLines()
         .filterListSection()
         .parseReleaseDocument()
+        .clean()
+}
+
+fun filterOldReleases(file: File): List<String> {
+    return file.readLines().filterOldReleases()
 }
 
 private fun List<String>.parseReleaseDocument(): Document {
@@ -45,6 +51,22 @@ private fun List<String>.parseReleaseDocument(): Document {
     }
 
     return document
+}
+
+private fun List<String>.filterOldReleases(start: String = "<!-- UNRELEASED END -->"): List<String> {
+    var shouldAdd = false
+
+    val filteredList = filter { line ->
+        if (line.trim() == start) {
+            shouldAdd = true
+        }
+
+        shouldAdd
+    }
+
+    return filteredList.ifEmpty {
+        throw IllegalStateException("Could not find the end unreleased section")
+    }
 }
 
 fun isStartOfProject(line: String) = line.startsWith("##") && !line.startsWith("###")

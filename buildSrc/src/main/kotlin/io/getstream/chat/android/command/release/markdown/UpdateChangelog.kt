@@ -1,34 +1,45 @@
 package io.getstream.chat.android.command.release.markdown
 
 import io.getstream.chat.android.command.release.model.Document
-import io.getstream.chat.android.command.release.output.FilePrinter
+import io.getstream.chat.android.command.release.output.Printer
 import io.getstream.chat.android.command.release.output.print
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
-fun createdUpdatedChangelog(fileName: String, modelFile: File, releaseDocument: Document, currentVersion: String) {
-    FilePrinter(fileName).use { printer ->
-        printer.modelHeader(modelFile)
-        printer.printline("\n")
+private const val DATE_PATTERN = "MMMM dd'th', yyyy"
 
-        printer.releaseHeader(releaseDocument, currentVersion)
-    }
+fun createdUpdatedChangelog(
+    printer: Printer,
+    modelFile: File,
+    releaseDocument: Document,
+    oldReleases: List<String>,
+    currentVersion: String,
+) {
+    printer.modelHeader(modelFile)
+    printer.printline("")
+
+    printer.releaseHeader(releaseDocument, currentVersion)
+
+    printer.printOldReleases(oldReleases)
 }
 
-private fun FilePrinter.modelHeader(modelFile: File) {
+private fun Printer.modelHeader(modelFile: File) {
     printline("# UNRELEASED CHANGELOG")
-    modelFile.reader().copyTo(getPrinter())
+    modelFile.readLines().forEach(this::printline)
 }
 
-private fun FilePrinter.releaseHeader(releaseDocument: Document, currentVersion: String) {
+private fun Printer.releaseHeader(releaseDocument: Document, currentVersion: String) {
     printline(dateHeader(currentVersion))
     releaseDocument.print(this)
 }
 
 private fun dateHeader(currentVersion: String): String {
-    val formattedDate = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(LocalDateTime.now())
+    val formattedDate = DateTimeFormatter.ofPattern(DATE_PATTERN).format(LocalDateTime.now())
 
     return "# $formattedDate - $currentVersion"
+}
+
+private fun Printer.printOldReleases(oldReleases: List<String>) {
+    oldReleases.forEach(this::printline)
 }
