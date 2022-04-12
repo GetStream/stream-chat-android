@@ -3,6 +3,7 @@ package io.getstream.chat.android.command.release.task
 import io.getstream.chat.android.command.release.markdown.createdUpdatedChangelog
 import io.getstream.chat.android.command.utils.parseChangelogFile
 import io.getstream.chat.android.command.release.output.FilePrinter
+import io.getstream.chat.android.command.release.output.InMemoryPrinter
 import io.getstream.chat.android.command.release.output.print
 import io.getstream.chat.android.command.release.plugin.ReleaseCommandExtension
 import org.gradle.api.DefaultTask
@@ -29,14 +30,19 @@ open class ReleaseTask : DefaultTask() {
 
         val oldReleases = filterOldReleases(changeLogFile)
 
+        val inMemoryPrinter = InMemoryPrinter()
         FilePrinter.fromFileName(CHANGELOG_UPDATED_TEMP).use { printer ->
             createdUpdatedChangelog(
-                printer,
+                inMemoryPrinter,
                 File(config.changelogModel),
                 releaseDocument,
                 oldReleases,
                 "5.0.4"
             )
+        }
+
+        changeLogFile.printWriter().use { printer ->
+            inMemoryPrinter.lines().forEach(printer::println)
         }
     }
 }
