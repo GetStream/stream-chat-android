@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.extensions.globalState
@@ -45,7 +46,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
@@ -192,7 +192,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             }
         }
         binding.itemBackgroundView.deleteImageView.apply {
-            val canDeleteChannel = channel.members.isCurrentUserOwnerOrAdmin()
+            val canDeleteChannel = channel.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
             if (canDeleteChannel && style.deleteEnabled) {
                 isVisible = true
                 optionsCount++
