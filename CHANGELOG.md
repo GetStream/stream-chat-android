@@ -1,3 +1,4 @@
+
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
@@ -7,35 +8,26 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Updated Gradle version to [7.4.2](https://docs.gradle.org/7.4.2/release-notes.html). [#3281](https://github.com/GetStream/stream-chat-android/pull/3281)
-- Update Coroutines to 1.6.1 and migrate to runTest. [#3327](https://github.com/GetStream/stream-chat-android/pull/3327)
 
 ### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed `User` model deserialization error when `User.image` or `User.name` is null. [#3283](https://github.com/GetStream/stream-chat-android/pull/3283)
-- Fixed `Channel` model deserialization error when `Channel.image` or `Channel.name` is null. [#3306](https://github.com/GetStream/stream-chat-android/pull/3306)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added an `ExtraDataValidator` to intercept `ChatApi` calls and validate `CustomObject.extraData` does not contain the reserved keywords. [#3279](https://github.com/GetStream/stream-chat-android/pull/3279)
 
 ### ⚠️ Changed
-- Migrate androidx-lifecycle version to [2.4.1](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.4.1). [#3282](https://github.com/GetStream/stream-chat-android/pull/3282)
 
 ### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed crash related with logging out while running a request to update channels. [3286](https://github.com/GetStream/stream-chat-android/pull/3286)
-- Fixed bug where user was not able to send and edit a message while offline. [3318](https://github.com/GetStream/stream-chat-android/pull/3324)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ChannelState::membersCount` property that can be used to observe total members of the channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
 
@@ -43,7 +35,6 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
 
 ### ⬆️ Improved
 
@@ -55,21 +46,11 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Adding ShowAvatarPredicate for MessageOptions overlay making it possible to hide the avatar picture when in the message options. [#3302](https://github.com/GetStream/stream-chat-android/pull/3302)
-- Users now able to open `MessageOptionsDialogFragment` by clicking on a reaction left on a Giphy message. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
-- inside `MessageOptionsDialogFragment` now properly displays all of the reactions to a message. Previously it erroneously displayed a blank state. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
-- Fixed the links in UI Components code snippets. [#3261](https://github.com/GetStream/stream-chat-android/pull/3261)
-- Messages containing links are now properly aligned with other types of messages. They use `@dimen/stream_ui_spacing_small` for their root layout start and end padding. [#3264](https://github.com/GetStream/stream-chat-android/pull/3264)
-- Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
-- Fixed bug in which member counter shown in the `MessageListHeaderViewModel` is incorrect and limited to 30 only. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 - Fixed a bug where command suggestion popup was displayed even though all the commands were disabled. [#3334](https://github.com/GetStream/stream-chat-android/pull/3334)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [#3280](https://github.com/GetStream/stream-chat-android/pull/3280)
-- Added attributes to `MessageListItemStyle` to allow customisation of failed and banned indicator icons. [#3236](https://github.com/GetStream/stream-chat-android/pull/3301)
-- Added `membersCount` livedata in `MessageListHeaderViewModel` to observe number of all members of channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
 
@@ -77,19 +58,12 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Added thumbnails for video attachments in the attachment picker. [#3300](https://github.com/GetStream/stream-chat-android/pull/3300)
-- Fixed a crash occurring when the user would click on a preview of a link that contained no scheme. [#3331](https://github.com/GetStream/stream-chat-android/pull/3331)
 
 ### ⬆️ Improved
-- Improved the way typing updates work in the MessageComposerController. [#3313](https://github.com/GetStream/stream-chat-android/pull/3313)
 
 ### ✅ Added
-- Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
-- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
-- Added Compose SDK Guidelines for internal and external contributors. [#3315](https://github.com/GetStream/stream-chat-android/pull/3315)
 
 ### ⚠️ Changed
-- Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
 
 ### ❌ Removed
 
@@ -136,10 +110,73 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
-# UNRELEASED CHANGELOG
-# March 30th, 2022 - 5.0.2
 <!-- UNRELEASED START -->
+# April 12th, 2022 - 5.0.3
+## Common changes for all artifacts
+
+### ⚠️ Changed
+- Updated Gradle version to [7.4.2](https://docs.gradle.org/7.4.2/release-notes.html). [#3281](https://github.com/GetStream/stream-chat-android/pull/3281)
+- Update Coroutines to 1.6.1 and migrate to runTest. [#3327](https://github.com/GetStream/stream-chat-android/pull/3327)
+
+## stream-chat-android-client
+
+### 🐞 Fixed
+- Fixed `User` model deserialization error when `User.image` or `User.name` is null. [#3283](https://github.com/GetStream/stream-chat-android/pull/3283)
+- Fixed `Channel` model deserialization error when `Channel.image` or `Channel.name` is null. [#3306](https://github.com/GetStream/stream-chat-android/pull/3306)
+
+### ✅ Added
+- Added an `ExtraDataValidator` to intercept `ChatApi` calls and validate `CustomObject.extraData` does not contain the reserved keywords. [#3279](https://github.com/GetStream/stream-chat-android/pull/3279)
+
+### ⚠️ Changed
+- Migrate androidx-lifecycle version to [2.4.1](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.4.1). [#3282](https://github.com/GetStream/stream-chat-android/pull/3282)
+
+## stream-chat-android-offline
+
+### 🐞 Fixed
+- Fixed crash related with logging out while running a request to update channels. [3286](https://github.com/GetStream/stream-chat-android/pull/3286)
+- Fixed bug where user was not able to send and edit a message while offline. [3318](https://github.com/GetStream/stream-chat-android/pull/3324)
+
+### ✅ Added
+- Added `ChannelState::membersCount` property that can be used to observe total members of the channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
+
+## stream-chat-android-ui-common
+
+### 🐞 Fixed
+- Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
+
+## stream-chat-android-ui-components
+
+### 🐞 Fixed
+- Adding ShowAvatarPredicate for MessageOptions overlay making it possible to hide the avatar picture when in the message options. [#3302](https://github.com/GetStream/stream-chat-android/pull/3302)
+- Users now able to open `MessageOptionsDialogFragment` by clicking on a reaction left on a Giphy message. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
+- inside `MessageOptionsDialogFragment` now properly displays all of the reactions to a message. Previously it erroneously displayed a blank state. [#3620](https://github.com/GetStream/stream-chat-android/pull/3260)
+- Fixed the links in UI Components code snippets. [#3261](https://github.com/GetStream/stream-chat-android/pull/3261)
+- Messages containing links are now properly aligned with other types of messages. They use `@dimen/stream_ui_spacing_small` for their root layout start and end padding. [#3264](https://github.com/GetStream/stream-chat-android/pull/3264)
+- Fixed avatar disappearing from a message group when `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone` or `MessageListView.deletedMessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToAuthorOnly` and the last message in a group of messages posted by someone other than the currently logged in user was deleted. [#3272](https://github.com/GetStream/stream-chat-android/pull/3272)
+- Fixed bug in which member counter shown in the `MessageListHeaderViewModel` is incorrect and limited to 30 only. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
+
+### ✅ Added
+- Added `membersCount` livedata in `MessageListHeaderViewModel` to observe number of all members of channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
+
+## stream-chat-android-compose
+
+### 🐞 Fixed
+- Added thumbnails for video attachments in the attachment picker. [#3300](https://github.com/GetStream/stream-chat-android/pull/3300)
+- Fixed a crash occurring when the user would click on a preview of a link that contained no scheme. [#3331](https://github.com/GetStream/stream-chat-android/pull/3331)
+
+### ⬆️ Improved
+- Improved the way typing updates work in the MessageComposerController. [#3313](https://github.com/GetStream/stream-chat-android/pull/3313)
+
+### ✅ Added
+- Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
+- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
+- Added Compose SDK Guidelines for internal and external contributors. [#3315](https://github.com/GetStream/stream-chat-android/pull/3315)
+
+### ⚠️ Changed
+- Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
+<!-- UNRELEASED END -->
+
+# March 30th, 2022 - 5.0.2
 ## stream-chat-android-client
 ### ✅ Added
 - Added a `systemMessage: Message` parameter to  `ChatClient::addMembers`, `ChatClient::removeMembers`, `ChannelClient::addMembers` and `ChannelClient::removeMembers` to send a system message to that channel. [#3254](https://github.com/GetStream/stream-chat-android/pull/3254)
@@ -162,7 +199,6 @@
 
 ### ✅ Added
 - Added support for failed messages and an option to resend them. [#3263](https://github.com/GetStream/stream-chat-android/pull/3263)
-<!-- UNRELEASED END -->
 
 # March 24th, 2022 - 5.0.1
 ## stream-chat-android-ui-components
