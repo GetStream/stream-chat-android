@@ -22,11 +22,13 @@ import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepositoryImpl
+import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -37,6 +39,9 @@ import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
 internal class UserRepositoryTests {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
+
     private lateinit var sut: UserRepository
 
     private lateinit var userDao: UserDao
@@ -49,7 +54,7 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When insert users Should insert to dao`() = runBlockingTest {
+    fun `When insert users Should insert to dao`() = runTest {
         val users = listOf(randomUser(), randomUser())
 
         sut.insertUsers(users)
@@ -58,14 +63,14 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When insert users If users list is empty Should never insert to dao`() = runBlockingTest {
+    fun `When insert users If users list is empty Should never insert to dao`() = runTest {
         sut.insertUsers(emptyList())
 
         verify(userDao, never()).insertMany(any())
     }
 
     @Test
-    fun `When insert me Should insert entity with me id to dao`() = runBlockingTest {
+    fun `When insert me Should insert entity with me id to dao`() = runTest {
         val user = randomUser(id = "userId")
 
         sut.insertCurrentUser(user)
@@ -74,7 +79,7 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When insert user Should propagate updates to flow`() = runBlockingTest {
+    fun `When insert user Should propagate updates to flow`() = runTest {
         val newUser = randomUser()
         val flow = sut.observeLatestUsers()
 
@@ -86,7 +91,7 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When insert users Should propagate updates to flow`() = runBlockingTest {
+    fun `When insert users Should propagate updates to flow`() = runTest {
         val newUser1 = randomUser()
         val newUser2 = randomUser()
         val flow = sut.observeLatestUsers()
@@ -101,7 +106,7 @@ internal class UserRepositoryTests {
 
     @Test
     fun `Given users were inserted When insert a new user Should propagated new value to flow`() =
-        runBlockingTest {
+        runTest {
             val newUser1 = randomUser()
             val newUser2 = randomUser()
             val newUser3 = randomUser()
@@ -122,7 +127,7 @@ internal class UserRepositoryTests {
 
     @Test
     fun `Given users were inserted already When insert a user Shouldn't be propagated value to flow again`() =
-        runBlockingTest {
+        runTest {
             val newUser1 = randomUser()
             val newUser2 = randomUser()
             var observedTimes = 0
@@ -142,7 +147,7 @@ internal class UserRepositoryTests {
 
     @Test
     fun `Given users were inserted already When insert an updated user Should propagate value to flow`() =
-        runBlockingTest {
+        runTest {
             val newUser1 = randomUser()
             val newUser2 = randomUser()
             val updatedUser1 = newUser1.copy(extraData = mutableMapOf()).apply {
