@@ -169,7 +169,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
             // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .setQueryExecutor(Dispatchers.IO.asExecutor())
+            .setQueryExecutor(testCoroutines.ioDispatcher.asExecutor())
             .build()
     }
 

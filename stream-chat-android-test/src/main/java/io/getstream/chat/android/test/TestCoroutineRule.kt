@@ -3,6 +3,7 @@
 package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -14,15 +15,16 @@ import org.junit.runner.Description
 
 public class TestCoroutineRule : TestWatcher() {
 
-    public val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
-    public val scope: TestScope = TestScope(dispatcher)
+    public val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
+    public val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    public val scope: TestScope = TestScope(testDispatcher)
 
     override fun starting(description: Description) {
         super.starting(description)
-        Dispatchers.setMain(dispatcher)
+        Dispatchers.setMain(testDispatcher)
         DispatcherProvider.set(
-            mainDispatcher = dispatcher,
-            ioDispatcher = dispatcher
+            mainDispatcher = testDispatcher,
+            ioDispatcher = testDispatcher
         )
     }
 
