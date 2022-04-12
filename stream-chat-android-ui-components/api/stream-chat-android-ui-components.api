@@ -2240,6 +2240,7 @@ public final class io/getstream/chat/android/ui/message/list/header/viewmodel/Me
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
+	public final fun getMembersCount ()Landroidx/lifecycle/LiveData;
 	public final fun getOnline ()Landroidx/lifecycle/LiveData;
 	public final fun getTypingUsers ()Landroidx/lifecycle/LiveData;
 	public final fun resetThread ()V

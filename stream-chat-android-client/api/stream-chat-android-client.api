@@ -2343,6 +2343,7 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public final fun setId (Ljava/lang/String;)V
 	public final fun setImage (Ljava/lang/String;)V
 	public final fun setLastMessageAt (Ljava/util/Date;)V
+	public final fun setMemberCount (I)V
 	public final fun setMembers (Ljava/util/List;)V
 	public final fun setMessages (Ljava/util/List;)V
 	public final fun setName (Ljava/lang/String;)V
