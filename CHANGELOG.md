@@ -29,6 +29,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed crash related with logging out while running a request to update channels. [3286](https://github.com/GetStream/stream-chat-android/pull/3286)
+- Fixed bug where user was not able to send and edit a message while offline. [3318](https://github.com/GetStream/stream-chat-android/pull/3324)
 
 ### ⬆️ Improved
 

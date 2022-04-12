@@ -81,7 +81,10 @@ public fun MessageFooter(messageItem: MessageItemState) {
                 )
             }
 
-            Timestamp(date = message.updatedAt ?: message.createdAt)
+            val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
+            if (date != null) {
+                Timestamp(date = date)
+            }
         }
     }
 }
