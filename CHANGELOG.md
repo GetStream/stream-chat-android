@@ -30,6 +30,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed crash related with logging out while running a request to update channels. [3286](https://github.com/GetStream/stream-chat-android/pull/3286)
+- Fixed bug where user was not able to send and edit a message while offline. [3318](https://github.com/GetStream/stream-chat-android/pull/3324)
 
 ### ⬆️ Improved
 
@@ -65,7 +66,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+ - Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [#3280](https://github.com/GetStream/stream-chat-android/pull/3280)
+ - Added attributes to `MessageListItemStyle` to allow customisation of failed and banned indicator icons. [#3236](https://github.com/GetStream/stream-chat-android/pull/3301)
 - Added `membersCount` livedata in `MessageListHeaderViewModel` to observe number of all members of channel. [#3297](https://github.com/GetStream/stream-chat-android/pull/3297)
 
 ### ⚠️ Changed
@@ -80,6 +82,7 @@
 - Improved the way typing updates work in the MessageComposerController. [#3313](https://github.com/GetStream/stream-chat-android/pull/3313)
 
 ### ✅ Added
+- Added a way to customize the visibility of deleted messages. [#3298](https://github.com/GetStream/stream-chat-android/pull/3298)
 - Added support for file upload configuration that lets you specify what types of files and images you want to allow or block from being uploaded. [3288](https://github.com/GetStream/stream-chat-android/pull/3288)
 - Added Compose SDK Guidelines for internal and external contributors. [#3315](https://github.com/GetStream/stream-chat-android/pull/3315)
 

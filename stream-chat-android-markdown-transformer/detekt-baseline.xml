@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<SmellBaseline>
-  <ManuallySuppressedIssues/>
-  <CurrentIssues>
-    <ID>MaxLineLength:ItalicFix.kt$// This check is down here to emphasise that this check must be run last, otherwise there's a performance drop when setting text</ID>
-  </CurrentIssues>
-</SmellBaseline>
