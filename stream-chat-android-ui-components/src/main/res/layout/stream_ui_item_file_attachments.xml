@@ -148,11 +148,11 @@
         android:id="@+id/deliveryFailedIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toStartOf="@id/avatarMineView"
         tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_warning"
         tools:visibility="visible"
         />
 
