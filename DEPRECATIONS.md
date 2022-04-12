@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `MessageListView.setDeletedMessageListItemPredicate` | 2022.04.12<br/>5.0.3 | 2022.05.10 ⌛ | 2022.06.07 ⌛ | Use `MessageListViewModel.setDeletedMessagesVisibility` instead. |
 | `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.05.11 ⌛ | Use `Member.channelRole` instead. |
 | `ChannelController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `ChannelState` instead |
 | `QueryChannelsController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `QueryChannelsState` instead |

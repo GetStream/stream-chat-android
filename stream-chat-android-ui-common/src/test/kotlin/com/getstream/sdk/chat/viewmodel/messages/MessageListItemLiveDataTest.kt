@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -56,16 +72,34 @@ internal class MessageListItemLiveDataTest {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf())
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messages,
+            readsLd = reads,
+            typingLd = typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
         val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messages,
+            readsLd = reads,
+            typingLd = typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -81,13 +115,23 @@ internal class MessageListItemLiveDataTest {
             }
         }
         val messagesLd: LiveData<List<Message>> = MutableLiveData(messages)
-        // user 0 read till the end, user 1 read the first message, user 3 read is missing
+        // user 0 read till the end, user 1 read the first message,
+        // user 3 read is missing
         val read1 = ChannelUserRead(users[0], messages.last().createdAt)
         val read2 = ChannelUserRead(users[1], messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
+        val deletedMessageVisibility = MutableLiveData(MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE)
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(
+            currentUser = currentUser,
+            messages = messagesLd,
+            readsLd = reads,
+            typingLd = typing,
+            isThread = false,
+            dateSeparatorHandler = ::simpleDateGroups,
+            deletedMessageVisibility = deletedMessageVisibility
+        )
     }
 
     // livedata testing
@@ -197,6 +241,6 @@ internal class MessageListItemLiveDataTest {
         val testObserver: Observer<MessageListItemWrapper> = mock()
         messageListItemLd.observeForever(testObserver)
         messageListItemLd.typingChanged(listOf(currentUser.value!!))
-        verify(testObserver, times(2)).onChanged(any())
+        verify(testObserver, times(3)).onChanged(any())
     }
 }

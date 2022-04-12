@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client
 
 import android.content.Context
@@ -6,10 +22,9 @@ import android.util.Base64
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -78,6 +93,7 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -157,6 +173,7 @@ public class ChatClient internal constructor(
     internal val scope: CoroutineScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
+    private val appSettingsManager: AppSettingManager,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -370,6 +387,7 @@ public class ChatClient internal constructor(
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
+        appSettingsManager.loadAppSettings()
         warmUp()
     }
 
@@ -797,9 +815,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -841,9 +858,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -891,6 +907,7 @@ public class ChatClient internal constructor(
         socket.disconnect()
         userCredentialStorage.clear()
         lifecycleObserver.dispose()
+        appSettingsManager.clear()
     }
 
     //region: api calls
@@ -1552,6 +1569,7 @@ public class ChatClient internal constructor(
      *
      * @return String formatted header that contains all the information.
      */
+    @InternalStreamChatApi
     public fun buildSdkTrackingHeaders(): String {
         val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
         val buildModel = Build.MODEL
@@ -1559,7 +1577,7 @@ public class ChatClient internal constructor(
         val apiLevel = Build.VERSION.SDK_INT
         val osName = "Android ${Build.VERSION.RELEASE}"
 
-        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""
+        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""
     }
 
     @CheckResult
@@ -1661,7 +1679,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
-        systemMessage: Message? = null
+        systemMessage: Message? = null,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
@@ -1686,7 +1704,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
-        systemMessage: Message? = null
+        systemMessage: Message? = null,
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
@@ -1901,6 +1919,15 @@ public class ChatClient internal constructor(
                 else -> null
             }
         }.getOrNull()
+    }
+
+    /**
+     * Returns application settings from the server or the default ones as a fallback.
+     *
+     * @return The application settings.
+     */
+    public fun getAppSettings(): AppSettings {
+        return appSettingsManager.getAppSettings()
     }
 
     public fun isSocketConnected(): Boolean {
@@ -2367,6 +2394,8 @@ public class ChatClient internal constructor(
                     customOkHttpClient,
                 )
 
+            val appSettingsManager = AppSettingManager(module.api())
+
             return ChatClient(
                 config,
                 module.api(),
@@ -2379,6 +2408,7 @@ public class ChatClient internal constructor(
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
+                appSettingsManager = appSettingsManager,
             ).also {
                 configureInitializer(it)
             }
@@ -2408,9 +2438,19 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
+        /**
+         * Header used to track which SDK is being used.
+         */
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        /**
+         * Flag used to track whether offline support is enabled.
+         */
+        @InternalStreamChatApi
+        @JvmStatic
+        public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"

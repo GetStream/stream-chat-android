@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
@@ -6,6 +22,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -150,11 +167,18 @@ public fun AttachmentsPicker(
                                 files = attachmentsPickerViewModel.files,
                                 onItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onBrowseFilesResult = { uris ->
-                                    onAttachmentsSelected(
-                                        attachmentsPickerViewModel.getAttachmentsFromUris(
-                                            uris
-                                        )
-                                    )
+                                    val attachments = attachmentsPickerViewModel.getAttachmentsFromUris(uris)
+
+                                    // Check if some of the files were filtered out due to upload config
+                                    if (uris.size != attachments.size) {
+                                        Toast.makeText(
+                                            context,
+                                            R.string.stream_compose_message_composer_file_not_supported,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    onAttachmentsSelected(attachments)
                                 }
                             )
                             Images -> ImagesPicker(

@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexMethod:MessageListItemLiveData.kt$MessageListItemLiveData$ private fun groupMessages(messages: List&lt;Message>?, currentUserId: String): List&lt;MessageListItem></ID>
+    <ID>ComplexMethod:MessageListViewModel.kt$MessageListViewModel$ public fun onEvent(event: Event)</ID>
+    <ID>ForbiddenComment:StorageHelper.kt$// TODO: Attachment's title should never be null. Review AttachmentMetaData class</ID>
+    <ID>ImplicitDefaultLocale:MediaStringUtil.kt$MediaStringUtil$String.format("%02d:%02d:%02d", hours, minutes, seconds)</ID>
+    <ID>LongMethod:MessageListViewModel.kt$MessageListViewModel$ public fun onEvent(event: Event)</ID>
+    <ID>LongParameterList:Linkify.kt$Linkify$( links: MutableList&lt;LinkSpec>, s: Spannable, pattern: Pattern, schemes: Array&lt;String>, matchFilter: Linkify.MatchFilter?, transformFilter: Linkify.TransformFilter?, )</ID>
+    <ID>LongParameterList:MessageListItemLiveData.kt$MessageListItemLiveData$( private val currentUser: LiveData&lt;User?>, messages: LiveData&lt;List&lt;Message>>, private val readsLd: LiveData&lt;List&lt;ChannelUserRead>>, private val typingLd: LiveData&lt;List&lt;User>>? = null, private val isThread: Boolean = false, private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null, private val deletedMessageVisibility: LiveData&lt;MessageListViewModel.DeletedMessageVisibility>, )</ID>
+    <ID>LongParameterList:Mother.kt$( authorName: String? = randomString(), titleLink: String? = randomString(), thumbUrl: String? = randomString(), imageUrl: String? = randomString(), assetUrl: String? = randomString(), ogUrl: String? = randomString(), mimeType: String? = randomString(), fileSize: Int = randomInt(), title: String? = randomString(), text: String? = randomString(), type: String? = randomString(), image: String? = randomString(), url: String? = randomString(), name: String? = randomString(), fallback: String? = randomString(), uploadFile: File? = null, uploadState: Attachment.UploadState? = null, extraData: MutableMap&lt;String, Any> = mutableMapOf(), authorLink: String? = randomString(), )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), cid: String = randomCID(), text: String = randomString(), html: String = randomString(), parentId: String? = randomString(), command: String? = randomString(), attachments: MutableList&lt;Attachment> = mutableListOf(), mentionedUsers: MutableList&lt;User> = mutableListOf(), replyCount: Int = randomInt(), reactionCounts: MutableMap&lt;String, Int> = mutableMapOf(), reactionScores: MutableMap&lt;String, Int> = mutableMapOf(), syncStatus: SyncStatus = randomSyncStatus(), type: String = randomString(), latestReactions: MutableList&lt;Reaction> = mutableListOf(), ownReactions: MutableList&lt;Reaction> = mutableListOf(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), deletedAt: Date? = randomDate(), user: User = createUser(), extraData: MutableMap&lt;String, Any> = mutableMapOf(), silent: Boolean = randomBoolean() )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), name: String = randomString(), image: String = randomString(), role: String = randomString(), invisible: Boolean = randomBoolean(), banned: Boolean = randomBoolean(), devices: List&lt;Device> = mutableListOf(), online: Boolean = randomBoolean(), createdAt: Date? = null, updatedAt: Date? = null, lastActive: Date? = null, totalUnreadCount: Int = positiveRandomInt(), unreadChannels: Int = positiveRandomInt(), mutes: List&lt;Mute> = mutableListOf(), teams: List&lt;String> = listOf(), channelMutes: List&lt;ChannelMute> = emptyList(), extraData: MutableMap&lt;String, Any> = mutableMapOf() )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), name: String = randomString(), image: String = randomString(), role: String = randomString(), invisible: Boolean = randomBoolean(), banned: Boolean = randomBoolean(), devices: List&lt;Device> = mutableListOf(), online: Boolean = randomBoolean(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), lastActive: Date? = randomDate(), totalUnreadCount: Int = positiveRandomInt(), unreadChannels: Int = positiveRandomInt(), mutes: List&lt;Mute> = mutableListOf(), teams: List&lt;String> = listOf(), channelMutes: List&lt;ChannelMute> = emptyList(), extraData: MutableMap&lt;String, Any> = mutableMapOf() )</ID>
+    <ID>LongParameterList:Mother.kt$( user: User = createUser(), role: String = randomString(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), isInvited: Boolean = randomBoolean(), inviteAcceptedAt: Date? = randomDate(), inviteRejectedAt: Date? = randomDate() )</ID>
+    <ID>LongParameterList:PermissionChecker.kt$PermissionChecker$( view: View, dialogTitle: String, dialogMessage: String, snackbarMessage: String, permissions: List&lt;String>, onPermissionDenied: () -> Unit, onPermissionGranted: () -> Unit, )</ID>
+    <ID>LongParameterList:StreamImageLoader.kt$StreamImageLoader$( target: ImageView, data: Any?, @DrawableRes placeholderResId: Int? = null, transformation: ImageTransformation = ImageTransformation.None, onStart: () -> Unit = {}, onComplete: () -> Unit = {}, )</ID>
+    <ID>LongParameterList:StreamImageLoader.kt$StreamImageLoader$( target: ImageView, data: Any?, placeholderDrawable: Drawable? = null, transformation: ImageTransformation = ImageTransformation.None, onStart: () -> Unit = {}, onComplete: () -> Unit = {}, )</ID>
+    <ID>LongParameterList:StreamImageLoader.kt$StreamImageLoader$( target: ImageView, uri: Uri?, @DrawableRes placeholderResId: Int? = null, transformation: ImageTransformation = ImageTransformation.None, onStart: () -> Unit = {}, onComplete: () -> Unit = {}, )</ID>
+    <ID>MagicNumber:Date.kt$60000</ID>
+    <ID>MagicNumber:DefaultDateFormatter.kt$DefaultDateFormatter$6</ID>
+    <ID>MagicNumber:MediaStringUtil.kt$MediaStringUtil$1024</ID>
+    <ID>MagicNumber:MediaStringUtil.kt$MediaStringUtil$3600</ID>
+    <ID>MagicNumber:MediaStringUtil.kt$MediaStringUtil$60</ID>
+    <ID>MagicNumber:MessageComposerController.kt$MessageComposerController$1000</ID>
+    <ID>MagicNumber:MessageListViewModel.kt$MessageListViewModel$1000</ID>
+    <ID>MagicNumber:MessageListViewModel.kt$MessageListViewModel$4</ID>
+    <ID>MagicNumber:MessageListViewModel.kt$MessageListViewModel$60</ID>
+    <ID>MagicNumber:StorageHelper.kt$StorageHelper$1000</ID>
+    <ID>MagicNumber:StreamFileUtil.kt$StreamFileUtil$90</ID>
+    <ID>MagicNumber:StreamImageLoaderFactory.kt$StreamImageLoaderFactory$0.25</ID>
+    <ID>MaxLineLength:CaptureMediaContract.kt$CaptureMediaContract$File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir, createFileName("STREAM_VID", "mp4"))</ID>
+    <ID>MaxLineLength:CaptureMediaContract.kt$CaptureMediaContract$File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir, createFileName("STREAM_IMG", "jpg"))</ID>
+    <ID>MaxLineLength:CoilStreamImageLoader.kt$CoilStreamImageLoader$*</ID>
+    <ID>MaxLineLength:CoilStreamImageLoader.kt$CoilStreamImageLoader$if</ID>
+    <ID>MaxLineLength:Disposable.kt$Disposable$* Disposable resource. Implementations of this interface can be disposed once their work is done or the result is no longer necessary</ID>
+    <ID>MaxLineLength:MessageComposerController.kt$MessageComposerController$*</ID>
+    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not edit message with cid: ${updatedMessage.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not send keystroke cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageInputViewModel.kt$MessageInputViewModel$logger.logE("Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageListItemLiveData.kt$MessageListItemLiveData$*</ID>
+    <ID>MaxLineLength:MessageListItemLiveDataBenchmark.kt$MessageListItemLiveDataBenchmark$println("changing read information 100 times on a message list with ${items.size} items took $duration milliseconds")</ID>
+    <ID>MaxLineLength:MessageListItemLiveDataBenchmark.kt$MessageListItemLiveDataBenchmark$println("changing typing information 100 times on a message list with ${items.size} items took $duration milliseconds")</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not cancel giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not delete message: ${chatError.message}, Hard: ${event.hard}. Cause: ${chatError.cause?.message}. "</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not delete reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not send giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not send reaction for message with id: ${reaction.messageId} Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"Could not shuffle giphy for message id: ${event.message.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}"</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$"If you're using OfflinePlugin, the message should be deleted in the database and "</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("(Retry) Could not send message: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Could not edit message to remove its attachments: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$logger.logE("Could not mark cid: $cid as read. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")</ID>
+    <ID>MaxLineLength:MockChatClientBuilder.kt$MockChatClientBuilder$public</ID>
+    <ID>MaxLineLength:ModelType.kt$ModelType$public const val attach_mime_docx: String = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"</ID>
+    <ID>MaxLineLength:ModelType.kt$ModelType$public const val attach_mime_pptx: String = "application/vnd.openxmlformats-officedocument.presentationml.presentation"</ID>
+    <ID>MaxLineLength:PermissionChecker.kt$PermissionChecker$*</ID>
+    <ID>MaxLineLength:PermissionChecker.kt$PermissionChecker$ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED</ID>
+    <ID>MaxLineLength:StorageHelper.kt$StorageHelper$selection = "${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL AND ${MediaStore.Files.FileColumns.MIME_TYPE} != ''"</ID>
+    <ID>MaxLineLength:StorageHelper.kt$StorageHelper$throw IllegalStateException("Unable to create cache file for attachment: $attachmentMetaData. Either file or URI cannot be null.")</ID>
+    <ID>NestedBlockDepth:Linkify.kt$Linkify$private fun pruneOverlaps(links: MutableList&lt;LinkSpec>, text: Spannable)</ID>
+    <ID>NestedBlockDepth:MessageListItemLiveData.kt$MessageListItemLiveData$ private fun addReads( messages: List&lt;MessageListItem>, reads: List&lt;ChannelUserRead>?, currentUserId: String, ): List&lt;MessageListItem></ID>
+    <ID>PrintStackTrace:StreamFileUtil.kt$StreamFileUtil$e</ID>
+    <ID>ReturnCount:MediaStringUtil.kt$MediaStringUtil$@JvmStatic public fun convertFileSizeByteCount(bytes: Long): String</ID>
+    <ID>ReturnCount:MessageListItemLiveData.kt$MessageListItemLiveData$ private fun addReads( messages: List&lt;MessageListItem>, reads: List&lt;ChannelUserRead>?, currentUserId: String, ): List&lt;MessageListItem></ID>
+    <ID>SwallowedException:AttachmentFilter.kt$AttachmentFilter$e: IllegalArgumentException</ID>
+    <ID>TooManyFunctions:MessageComposerController.kt$MessageComposerController</ID>
+    <ID>TooManyFunctions:MessageInputViewModel.kt$MessageInputViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:MessageListItemLiveData.kt$MessageListItemLiveData : MediatorLiveData</ID>
+    <ID>TooManyFunctions:MessageListViewModel.kt$MessageListViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:StorageHelper.kt$StorageHelper</ID>
+    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private const val LIMIT = 30</ID>
+    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val CHANNEL = createChannel(CID)</ID>
+    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)</ID>
+    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)</ID>
+    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val MESSAGES = createMessageList { createMessage( user = CURRENT_USER, createdAt = Date.from(Instant.now()), parentId = null ) }</ID>
+    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val THREAD_MESSAGES = createMessageList { createMessage( createdAt = Date.from(Instant.now()), parentId = THREAD_PARENT_MESSAGE.id, user = CURRENT_USER ) }</ID>
+  </CurrentIssues>
+</SmellBaseline>

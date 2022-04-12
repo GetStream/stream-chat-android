@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -37,6 +53,50 @@ internal object UserDtoTestData {
             id = "",
             name = "username",
             image = "image",
+            invisible = false,
+            role = "",
+            devices = emptyList(),
+            online = false,
+            updated_at = null,
+            created_at = null,
+            last_active = null,
+            total_unread_count = 0,
+            unread_channels = 0,
+            unread_count = 0,
+            mutes = emptyList(),
+            teams = emptyList(),
+            channel_mutes = emptyList(),
+            extraData = emptyMap(),
+        )
+
+    @Language("JSON")
+    val downstreamJsonWithoutImageAndName =
+        """{
+            "id": "",
+            "role": "",
+            "name": null,
+            "image": null,
+            "invisible": false,
+            "banned": false,
+            "devices": [],
+            "online": false,
+            "created_at": null,
+            "updated_at": null,
+            "last_active": null,
+            "total_unread_count": 0,
+            "unread_channels": 0,
+            "unread_count": 0,
+            "mutes": [],
+            "teams": [],
+            "channel_mutes": []
+         }"""
+
+    val downstreamUserWithoutImageAndName =
+        DownstreamUserDto(
+            banned = false,
+            id = "",
+            name = null,
+            image = null,
             invisible = false,
             role = "",
             devices = emptyList(),

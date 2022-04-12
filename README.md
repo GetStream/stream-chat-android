@@ -52,6 +52,7 @@ This SDK consists of two low-level artifacts you can build on:
 - [**Compose UI Components**](/stream-chat-android-compose): Reusable and modular Composables for displaying conversations, lists of channels, and more!
   - [Sample app](/stream-chat-android-compose-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
+  - [Compose SDK Guidelines](/stream-chat-android-compose/GUIDELINES.md)
 - [**UI Components**](/stream-chat-android-ui-components): Reusable and customizable chat Views for displaying conversations, lists of channels, and more!
   - [Sample app](/stream-chat-android-ui-components-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
@@ -122,3 +123,21 @@ For more, see the [SDK's website](https://getstream.io/chat/sdk/android/).
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
 Check out our current openings and apply via [Stream's website](https://getstream.io/team/#jobs).
+
+## License
+
+```
+Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+Licensed under the Stream License;
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
