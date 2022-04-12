@@ -23,6 +23,7 @@ import android.net.Uri
 import android.widget.Toast
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.R
 
 @InternalStreamChatApi
 public class WebLinkDestination(context: Context, private val url: String) : ChatDestination(context) {
@@ -31,7 +32,9 @@ public class WebLinkDestination(context: Context, private val url: String) : Cha
         try {
             start(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "There is no app to view this url\n$url", Toast.LENGTH_LONG).show()
+            Toast.makeText(context,
+                context.getString(R.string.stream_ui_message_list_error_cannot_open_link, url),
+                Toast.LENGTH_LONG).show()
         }
     }
 }

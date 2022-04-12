@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,12 +41,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
@@ -84,6 +88,10 @@ public fun LinkAttachmentContent(
 
     val hasImage = attachment.imagePreviewUrl != null
     val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
+    val errorMessage = stringResource(
+        id = R.string.stream_compose_message_list_error_cannot_open_link,
+        previewUrl
+    )
 
     Column(
         modifier = modifier
@@ -93,12 +101,19 @@ public fun LinkAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(previewUrl)
+                    try {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(previewUrl)
+                            )
                         )
-                    )
+                    } catch (e: ActivityNotFoundException) {
+                        Toast
+                            .makeText(context, errorMessage, Toast.LENGTH_LONG)
+                            .show()
+                    }
+
                 },
                 onLongClick = { onLongItemClick(message) }
             )
