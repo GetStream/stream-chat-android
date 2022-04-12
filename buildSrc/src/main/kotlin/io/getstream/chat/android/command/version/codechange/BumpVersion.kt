@@ -5,16 +5,22 @@ import java.io.File
 fun parseVersion(file: File, bumpMinor: Boolean): List<String> {
     var versionChanged = false
     val minorVersionMarker = "const val minorVersion ="
-    val patchVersionMarker = "const val minorVersion ="
+    val patchVersionMarker = "const val patchVersion ="
 
     val newLines = file.readLines().map { line ->
+        val trimmedLine = line.trim()
+
         when {
-            bumpMinor && line.trim().startsWith(minorVersionMarker) ->
+            bumpMinor && trimmedLine.startsWith(minorVersionMarker) ->
                 bumpVersionInLine(line).also {
                     versionChanged = true
                 }
 
-            !bumpMinor && line.trim().startsWith(patchVersionMarker) ->
+            bumpMinor && trimmedLine.startsWith(patchVersionMarker) -> {
+                resetVersionInLine(line)
+            }
+
+            !bumpMinor && trimmedLine.startsWith(patchVersionMarker) ->
                 bumpVersionInLine(line).also {
                     versionChanged = true
                 }
@@ -37,4 +43,10 @@ private fun bumpVersionInLine(line: String): String {
     val newVersion = lineArray[1].trim().toInt().plus(1).toString()
 
     return "${lineArray[0]}= $newVersion"
+}
+
+private fun resetVersionInLine(line: String): String {
+    val lineArray = line.split("=")
+
+    return "${lineArray[0]}= 0"
 }
