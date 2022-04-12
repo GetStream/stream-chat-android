@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
@@ -51,10 +52,10 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         if (messageListItemPredicate != null) {
             val deletedMessageVisibility = when (messageListItemPredicate) {
                 DeletedMessageListItemPredicate.NotVisibleToAnyone ->
-                    MessageListViewModel.DeletedMessageVisibility.ALWAYS_HIDDEN
+                    DeletedMessageVisibility.ALWAYS_HIDDEN
                 DeletedMessageListItemPredicate.VisibleToAuthorOnly ->
-                    MessageListViewModel.DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
-                else -> MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE
+                    DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+                else -> DeletedMessageVisibility.ALWAYS_VISIBLE
             }
 
             setDeletedMessageVisibility(deletedMessageVisibility)
