@@ -34,12 +34,14 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -70,17 +72,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
@@ -110,6 +119,7 @@ import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewView
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
+import kotlin.math.abs
 
 /**
  * Shows an image preview, where we can page through image items, zoom in and perform various actions.
@@ -184,7 +194,15 @@ public class ImagePreviewActivity : AppCompatActivity() {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = { ImagePreviewTopBar(message) },
-                content = { ImagePreviewContent(pagerState, message.attachments) },
+                content = { contentPadding ->
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(contentPadding)
+                    ) {
+                        ImagePreviewContent(pagerState, message.attachments)
+                    }
+                },
                 bottomBar = { ImagePreviewBottomBar(message.attachments, pagerState) }
             )
 
@@ -460,6 +478,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the content pager.
      * @param attachments The attachments to show within the pager.
      */
+    @OptIn(ExperimentalCoilApi::class)
     @Composable
     private fun ImagePreviewContent(
         pagerState: PagerState,
@@ -475,50 +494,120 @@ public class ImagePreviewActivity : AppCompatActivity() {
             state = pagerState,
             count = attachments.size
         ) { page ->
-            val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
 
-            var currentScale by remember { mutableStateOf(1f) }
+                val density = LocalDensity.current
+                val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
+                var imageSize by remember { mutableStateOf(Size(0f, 0f)) }
 
-            val transformableState = rememberTransformableState { zoomChange, _, _ ->
-                val newScale = (currentScale * zoomChange)
-                    .coerceAtLeast(1f)
-                    .coerceAtMost(3f)
+                var currentScale by remember { mutableStateOf(1f) }
+                var translation by remember { mutableStateOf(Offset(0f, 0f)) }
 
-                currentScale = newScale
-            }
+                val scale by animateFloatAsState(targetValue = currentScale)
 
-            val scale by animateFloatAsState(targetValue = currentScale)
-
-            Image(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clipToBounds()
-                    .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale
-                    )
-                    .transformable(state = transformableState)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onDoubleTap = {
-                                val newScale = when {
-                                    currentScale == 3f -> 1f
-                                    currentScale >= 2f -> 3f
-                                    else -> 2f
-                                }
-
-                                currentScale = newScale
-                            }
+                Image(
+                    modifier = Modifier
+                        .then(
+                            (painter.state as? ImagePainter.State.Success)
+                                ?.painter
+                                ?.intrinsicSize
+                                ?.let { intrinsicsSize ->
+                                    Modifier.aspectRatio(intrinsicsSize.width / intrinsicsSize.height, true)
+                                } ?: Modifier
                         )
-                    },
-                painter = painter,
-                contentDescription = null
-            )
+                        .graphicsLayer(
+                            scaleY = scale,
+                            scaleX = scale,
+                            translationX = translation.x,
+                            translationY = translation.y
+                        )
+                        .onGloballyPositioned {
+                            imageSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
+                        }
+                        .pointerInput(Unit) {
+                            forEachGesture {
+                                awaitPointerEventScope {
+                                    awaitFirstDown(requireUnconsumed = true)
+                                    do {
+                                        val event = awaitPointerEvent(pass = PointerEventPass.Initial)
 
-            if (pagerState.currentPage != page) {
-                currentScale = 1f
+                                        val maxTranslation = calculateMaxOffset(
+                                            imageSize = imageSize,
+                                            scale = currentScale,
+                                            parentSize = parentSize
+                                        )
+
+                                        val zoom = event.calculateZoom()
+                                        currentScale = (zoom * currentScale).coerceAtMost(3f)
+
+                                        val offset = event.calculatePan()
+                                        val newTranslationX = translation.x + offset.x * currentScale
+                                        val newTranslationY = translation.y + offset.y * currentScale
+
+                                        translation = Offset(
+                                            newTranslationX.coerceIn(-maxTranslation.x, maxTranslation.x),
+                                            newTranslationY.coerceIn(-maxTranslation.y, maxTranslation.y)
+                                        )
+
+                                        if (abs(newTranslationX) < calculateMaxOffsetPerAxis(
+                                                imageSize.width,
+                                                currentScale,
+                                                parentSize.width
+                                            ) || zoom != 1f
+                                        ) {
+                                            event.changes.forEach { it.consumeAllChanges() }
+                                        }
+                                    } while (event.changes.any { it.pressed })
+
+                                    if (currentScale < 1f) {
+                                        currentScale = 1f
+                                    }
+                                }
+                            }
+                        }
+                        .pointerInput(Unit) {
+                            forEachGesture {
+                                awaitPointerEventScope {
+                                    awaitFirstDown()
+                                    withTimeoutOrNull(DOUBLE_TAP_TIMEOUT_MS) {
+                                        awaitFirstDown()
+                                        currentScale = when {
+                                            currentScale == 3f -> 1f
+                                            currentScale >= 2f -> 3f
+                                            else -> 2f
+                                        }
+
+                                        if (currentScale == 1f) {
+                                            translation = Offset(0f, 0f)
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    painter = painter,
+                    contentDescription = null
+                )
+
+                if (pagerState.currentPage != page) {
+                    currentScale = 1f
+                    translation = Offset(0f, 0f)
+                }
             }
         }
+    }
+
+    private fun calculateMaxOffset(imageSize: Size, scale: Float, parentSize: Size): Offset {
+        val maxTranslationY = calculateMaxOffsetPerAxis(imageSize.height, scale, parentSize.height)
+        val maxTranslationX = calculateMaxOffsetPerAxis(imageSize.width, scale, parentSize.width)
+        return Offset(maxTranslationX, maxTranslationY)
+    }
+
+    private fun calculateMaxOffsetPerAxis(axisSize: Float, scale: Float, parentAxisSize: Float): Float {
+        return (axisSize * scale - parentAxisSize).coerceAtLeast(0f) / 2
     }
 
     /**
@@ -820,6 +909,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
          * Represents the key for the result of the preview, like scrolling to the message.
          */
         public const val KEY_IMAGE_PREVIEW_RESULT: String = "imagePreviewResult"
+
+        /**
+         * Time period inside which two taps are registered as double tap.
+         */
+        private const val DOUBLE_TAP_TIMEOUT_MS: Long = 500L
 
         /**
          * Used to build an [Intent] to start the [ImagePreviewActivity] with the required data.
