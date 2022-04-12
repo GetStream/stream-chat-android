@@ -109,6 +109,7 @@ public fun LinkAttachmentContent(
                             )
                         )
                     } catch (e: ActivityNotFoundException) {
+                        e.printStackTrace()
                         Toast
                             .makeText(context, errorMessage, Toast.LENGTH_LONG)
                             .show()
