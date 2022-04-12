@@ -77,6 +77,7 @@ unitTestDebugScript {
 
 releaseScript {
     changelogPath = "CHANGELOG.md"
+    changelogModel = "CHANGELOG_MODEL.md"
 }
 
 task clean(type: Delete) {

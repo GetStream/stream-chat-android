@@ -1,6 +1,7 @@
 package io.getstream.chat.android.command.release.task
 
 import io.getstream.chat.android.command.release.markdown.clean
+import io.getstream.chat.android.command.release.markdown.createdUpdatedChangelog
 import io.getstream.chat.android.command.utils.parseChangelogFile
 import io.getstream.chat.android.command.release.output.FilePrinter
 import io.getstream.chat.android.command.release.output.print
@@ -20,12 +21,11 @@ open class ReleaseTask : DefaultTask() {
         val changeLogFile = File(config.changelogPath)
         println("changelogPath: $changeLogFile")
 
-        val document = parseChangelogFile(changeLogFile).clean()
-
-        FilePrinter("CHANGELOG_PARSED.md").use { printer ->
-            document.print(printer)
-        }
+        val releaseDocument = parseChangelogFile(changeLogFile).clean()
+        FilePrinter("CHANGELOG_PARSED.md").use { printer -> releaseDocument.print(printer) }
 
         println("CHANGELOG_PARSED.md generated")
+
+        createdUpdatedChangelog("CHANGELOG_UPDATED.md", File(config.changelogModel), releaseDocument, "5.0.4")
     }
 }

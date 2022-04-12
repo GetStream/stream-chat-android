@@ -2,6 +2,7 @@ package io.getstream.chat.android.command.release.output
 
 import java.io.Closeable
 import java.io.File
+import java.io.PrintWriter
 
 class FilePrinter(fileName: String) : Closeable, Printer {
 
@@ -14,5 +15,7 @@ class FilePrinter(fileName: String) : Closeable, Printer {
     override fun printline(text: String) {
         filePrinter.println(text)
     }
+
+    fun getPrinter(): PrintWriter = filePrinter
 
 }
