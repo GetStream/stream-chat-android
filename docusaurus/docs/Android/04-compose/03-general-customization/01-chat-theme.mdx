@@ -9,10 +9,11 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **RippleTheme**: Defines the appearance for ripples. Can be used to override the ripple colors used in light and dark modes.
 * **AttachmentFactories**: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
 * **AttachmentPreviewHandlers**: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
-* **ReactionTypes**: Used to define the supported message reactions in the app. You can use the default-provided reactions, or customize them to your app's needs.
+* **ReactionIconFactory**: Used to create a reaction icon for the given reaction type. You can use the default factory that supports predefined set of reactions, or provide a custom one.
 * **DateFormatter**: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
 * **ChannelNameFormatter**: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
 * **MessagePreviewFormatter**: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
+* **ImageLoader**: Coil image loader used to load images. You can use the default image loader, or provide a custom one.
 * **MessageAlignmentProvider** Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
 
 :::note
@@ -171,11 +172,19 @@ The channel name formatter is customizable by overriding `ChatTheme.channelNameF
 
 ### MessagePreviewFormatter
 
-Used for formatting the preview message in `ChannelItem`. The default message preview formatter is Stream's `DefaultMessagePreviewFormatter`
+Used for formatting the preview message in `ChannelItem`. The default message preview formatter is Stream's `DefaultMessagePreviewFormatter`.
 
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter.kt).
 
 The message preview formatter can be customized by overriding `ChatTheme.messagePreviewFormatter` with your own implementation of `MessagePreviewFormatter`
+
+### ImageLoader
+
+Coil ImageLoader used to load images. The default implementation is provided by `StreamCoilImageLoader`.
+
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/StreamCoilImageLoader.kt).
+
+You can easily customize how the images are loaded by overriding `ChatTheme.imageLoader` with your own implementation of Coil `ImageLoader`.
 
 ### MessageAlignmentProvider
 
