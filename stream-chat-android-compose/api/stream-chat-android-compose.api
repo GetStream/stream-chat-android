@@ -160,14 +160,6 @@ public final class io/getstream/chat/android/compose/state/messageoptions/Messag
 	public final fun getTitleColor-0d7_KjU ()J
 }
 
-public final class io/getstream/chat/android/compose/state/messages/DeletedMessagesVisibility : java/lang/Enum {
-	public static final field ALL Lio/getstream/chat/android/compose/state/messages/DeletedMessagesVisibility;
-	public static final field NONE Lio/getstream/chat/android/compose/state/messages/DeletedMessagesVisibility;
-	public static final field OWN Lio/getstream/chat/android/compose/state/messages/DeletedMessagesVisibility;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/messages/DeletedMessagesVisibility;
-	public static fun values ()[Lio/getstream/chat/android/compose/state/messages/DeletedMessagesVisibility;
-}
-
 public final class io/getstream/chat/android/compose/state/messages/MessageAlignment : java/lang/Enum {
 	public static final field End Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
 	public static final field Start Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
