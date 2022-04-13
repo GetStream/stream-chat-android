@@ -164,7 +164,7 @@ public class MessageInputView : ConstraintLayout {
     private var selectedAttachmentsCountListener: SelectedAttachmentsCountListener =
         SelectedAttachmentsCountListener { attachmentsCount, maxAttachmentsCount ->
 
-            suggestionListController?.commandsEnabled = attachmentsCount == 0
+            suggestionListController?.commandsEnabled = commandsEnabled && attachmentsCount == 0
 
             if (attachmentsCount > maxAttachmentsCount) {
                 alertMaxAttachmentsCountExceeded()
