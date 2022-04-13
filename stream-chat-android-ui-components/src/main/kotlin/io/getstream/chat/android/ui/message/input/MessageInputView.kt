@@ -138,6 +138,9 @@ public class MessageInputView : ConstraintLayout {
      *
      * Disables or enables the send button and
      * displays a snackbar when necessary.
+     *
+     * Note: This value is updated only if
+     * the user is not allowed to send links.
      */
     private var inputContainsLinks = false
         set(value) {
@@ -741,7 +744,13 @@ public class MessageInputView : ConstraintLayout {
                         maxMessageLengthExceeded = isMessageTooLong()
                     )
 
-                    inputContainsLinks = !canSendLinks && messageText.containsLinks()
+                    /**
+                     * Check for links only if the user is not allowed
+                     * to send them, otherwise it is unnecessary overhead.
+                     */
+                    if (!canSendLinks) {
+                        inputContainsLinks = messageText.containsLinks()
+                    }
 
                     refreshControlsState()
                     handleKeyStroke()
@@ -877,6 +886,9 @@ public class MessageInputView : ConstraintLayout {
      * Setter method for own capabilities which dictate which
      * parts of the UI are enabled or disabled for the current user
      * in the given channel.
+     *
+     * @param ownCapabilities A set of capabilities given to the user
+     * in the current channel.
      */
     public fun setOwnCapabilities(ownCapabilities: Set<String>) {
         this.ownCapabilities = ownCapabilities
@@ -896,6 +908,8 @@ public class MessageInputView : ConstraintLayout {
      * Disables or enables entering and sending a message
      * into the [MessageInputView] depending on if the given user
      * can send messages in the given channel.
+     *
+     * @param canSend If the user is given the ability to send messages.
      */
     private fun setCanSendMessages(canSend: Boolean) {
         binding.commandsButton.isVisible = canSend
@@ -921,6 +935,8 @@ public class MessageInputView : ConstraintLayout {
      * Disables or enables the integration for sending attachments
      * depending on if the given user can send attachments
      * in the given channel.
+     *
+     * @param canSend If the user is given the ability to send attachments.
      */
     private fun setCanSendAttachments(canSend: Boolean) {
         binding.attachmentsButton.isVisible = canSend
