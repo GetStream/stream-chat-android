@@ -51,3 +51,14 @@ internal fun String.bold(items: List<String>? = null, ignoreCase: Boolean = fals
 
 internal fun String.italicize(items: List<String>? = null, ignoreCase: Boolean = false): SpannableString =
     applyTypeface(ITALIC, getOccurrenceRanges(items, ignoreCase))
+
+/**
+ * Small extension function designed to add a
+ * scheme to URLs that do not have one so that
+ * they can be opened using [android.content.Intent.ACTION_VIEW]
+ */
+internal fun String.addSchemeToUrlIfNeeded(): String = when {
+    this.startsWith("http://") -> this
+    this.startsWith("https://") -> this
+    else -> "http://$this"
+}
