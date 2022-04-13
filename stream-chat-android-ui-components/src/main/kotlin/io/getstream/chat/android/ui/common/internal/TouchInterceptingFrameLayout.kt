@@ -23,7 +23,7 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 
 /**
- * A [FrameLayout] which intercepts all touch screen motion events.
+ * A [FrameLayout] that consumes all touch screen motion events.
  */
 internal class TouchInterceptingFrameLayout : FrameLayout {
 
