@@ -62,6 +62,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
 - Added `imageLoader` parameter to `ChatTheme` that allows providing a custom Coil `ImageLoader`. [#3336](https://github.com/GetStream/stream-chat-android/pull/3336)
 
 ### ⚠️ Changed
