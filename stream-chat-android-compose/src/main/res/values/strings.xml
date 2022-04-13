@@ -58,6 +58,7 @@
         <item quantity="other">%d Replies</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
+    <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_resend_message">Resend</string>
