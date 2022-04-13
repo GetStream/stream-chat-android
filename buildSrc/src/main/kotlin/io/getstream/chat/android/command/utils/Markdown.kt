@@ -5,9 +5,7 @@ import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
 import io.getstream.chat.android.command.release.model.Section
 import java.io.File
-
-private const val UNRELEASED_START = "<!-- UNRELEASED START -->"
-private const val UNRELEASED_END = "<!-- UNRELEASED END -->"
+import kotlin.streams.asStream
 
 fun parseChangelogFile(file: File): Document {
     return file.readLines()
@@ -106,19 +104,20 @@ private fun List<String>.filterUnreleasedSection(): List<String> {
 }
 
 fun hasBreakingChange(file: File): Boolean {
-    var hasBreakingChange = false
+    var sectionCount = 0
 
-    file.useLines { lines ->
-        lines.forEach { line ->
-            if (line.contains(UNRELEASED_END))
-                return hasBreakingChange
+    return file.useLines { lines ->
+        lines.asStream()
+            .filter { line ->
+                if (isStartOfMainSection(line)) {
+                    sectionCount++
+                }
 
-            if (line.contains("- \uD83D\uDEA8 Breaking change")) {
-                hasBreakingChange = true
+                sectionCount in 1..2
+            }
+            .anyMatch { line ->
+                line.contains("- \uD83D\uDEA8 Breaking change")
             }
         }
-    }
-
-    throw IllegalStateException("Could not reach the end of unreleased file")
 }
 
