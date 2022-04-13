@@ -49,6 +49,7 @@
 - Fixed a bug where command suggestion popup was displayed even though all the commands were disabled. [#3334](https://github.com/GetStream/stream-chat-android/pull/3334)
 
 ### ⬆️ Improved
+- Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
 
 ### ✅ Added
 
