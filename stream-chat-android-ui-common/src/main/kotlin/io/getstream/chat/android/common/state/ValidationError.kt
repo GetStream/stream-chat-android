@@ -57,4 +57,9 @@ public sealed class ValidationError {
         val attachmentCount: Int,
         val maxAttachmentCount: Int,
     ) : ValidationError()
+
+    /**
+     * Triggered if the input contains a link and the user is not allowed to send them.
+     */
+    public object ContainsLinksWhenNotAllowed : ValidationError()
 }

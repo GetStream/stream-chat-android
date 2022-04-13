@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -41,12 +42,15 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionO
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.util.extensions.toSet
 
 /**
  * Represents the list of user reactions.
  *
  * @param message The selected message.
  * @param currentUser The currently logged in user.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  * @param onMessageAction Handler that propagates click events on each item.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
@@ -62,6 +66,7 @@ import io.getstream.chat.android.compose.ui.util.ReactionIcon
 public fun SelectedReactionsMenu(
     message: Message,
     currentUser: User?,
+    ownCapabilities: Set<String>,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
@@ -71,13 +76,17 @@ public fun SelectedReactionsMenu(
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsHeaderContent(
-            message = message,
-            reactionTypes = reactionTypes,
-            showMoreReactionsIcon = showMoreReactionsIcon,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected
-        )
+        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
+
+        if (canLeaveReaction) {
+            DefaultSelectedReactionsHeaderContent(
+                message = message,
+                reactionTypes = reactionTypes,
+                showMoreReactionsIcon = showMoreReactionsIcon,
+                onMessageAction = onMessageAction,
+                onShowMoreReactionsSelected = onShowMoreReactionsSelected
+            )
+        }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedReactionsCenterContent(
@@ -196,7 +205,8 @@ private fun OneSelectedReactionMenuPreview() {
             message = message,
             currentUser = PreviewUserData.user1,
             onMessageAction = {},
-            onShowMoreReactionsSelected = {}
+            onShowMoreReactionsSelected = {},
+            ownCapabilities = ChannelCapabilities.toSet()
         )
     }
 }
@@ -214,7 +224,8 @@ private fun ManySelectedReactionsMenuPreview() {
             message = message,
             currentUser = PreviewUserData.user1,
             onMessageAction = {},
-            onShowMoreReactionsSelected = {}
+            onShowMoreReactionsSelected = {},
+            ownCapabilities = ChannelCapabilities.toSet()
         )
     }
 }

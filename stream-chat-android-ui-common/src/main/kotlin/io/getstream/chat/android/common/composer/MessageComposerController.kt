@@ -17,11 +17,13 @@
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.extensions.containsLinks
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -41,11 +43,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
@@ -83,6 +88,53 @@ public class MessageComposerController(
         cid = channelId,
         messageLimit = DEFAULT_MESSAGE_LIMIT
     ).filterNotNull()
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = setOf()
+        )
+
+    /**
+     * Signals if the user's typing will send a typing update in the given channel.
+     *
+     * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
+     * on every typing update.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val canSendTypingUpdates = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    /**
+     * Signals if the user is allowed to send links.
+     *
+     * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
+     * on every typing update.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_LINKS) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
 
     /**
      * Full message composer state holding all the required information.
@@ -263,6 +315,10 @@ public class MessageComposerController(
         alsoSendToChannel.onEach { alsoSendToChannel ->
             state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
         }.launchIn(scope)
+
+        ownCapabilities.onEach { ownCapabilities ->
+            state.value = state.value.copy(ownCapabilities = ownCapabilities)
+        }.launchIn(scope)
     }
 
     /**
@@ -273,7 +329,7 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        handleTypingEvent(isTyping = value.isNotEmpty())
+        handleTypingEvent(isTyping = canSendTypingUpdates.value && value.isNotEmpty())
         handleMentionSuggestions()
         handleCommandSuggestions()
         handleValidationErrors()
@@ -509,7 +565,9 @@ public class MessageComposerController(
      */
     private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
-            val messageLength = input.value.length
+            val message = input.value
+            val messageLength = message.length
+
             if (messageLength > maxMessageLength) {
                 add(
                     ValidationError.MessageLengthExceeded(
@@ -537,6 +595,11 @@ public class MessageComposerController(
                         attachments = attachments,
                         maxAttachmentSize = maxAttachmentSize
                     )
+                )
+            }
+            if (!canSendLinks.value && message.containsLinks()) {
+                add(
+                    ValidationError.ContainsLinksWhenNotAllowed
                 )
             }
         }

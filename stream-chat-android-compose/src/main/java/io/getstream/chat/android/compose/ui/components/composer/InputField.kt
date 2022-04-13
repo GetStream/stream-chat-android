@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param value The current input value.
  * @param onValueChange Handler when the value changes as the user types.
+ * @param enabled If the Composable is enabled for text input or not.
  * @param modifier Modifier for styling.
  * @param maxLines The number of lines that are allowed in the input, no limit by default.
  * @param border The [BorderStroke] that will appear around the input field.
@@ -55,6 +56,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun InputField(
     value: String,
     onValueChange: (String) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
@@ -95,7 +97,8 @@ public fun InputField(
         cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
         maxLines = maxLines,
-        singleLine = maxLines == 1
+        singleLine = maxLines == 1,
+        enabled = enabled
     )
 }
 

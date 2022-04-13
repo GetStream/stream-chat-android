@@ -210,11 +210,13 @@ public fun MessagesScreen(
         }
 
         val selectedMessage = selectedMessageState?.message ?: Message()
+        val ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
 
         val newMessageOptions = defaultMessageOptionsState(
             selectedMessage = selectedMessage,
             currentUser = user,
-            isInThread = listViewModel.isInThread
+            isInThread = listViewModel.isInThread,
+            ownCapabilities = ownCapabilities
         )
 
         var messageOptions by rememberSaveable { mutableStateOf<List<MessageOptionItemState>>(emptyList()) }
@@ -243,6 +245,7 @@ public fun MessagesScreen(
                     ),
                 messageOptions = messageOptions,
                 message = selectedMessage,
+                ownCapabilities = ownCapabilities,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)
                     listViewModel.performMessageAction(action)
@@ -281,7 +284,8 @@ public fun MessagesScreen(
                 onShowMoreReactionsSelected = {
                     listViewModel.selectExtendedReactions(selectedMessage)
                 },
-                onDismiss = { listViewModel.removeOverlay() }
+                onDismiss = { listViewModel.removeOverlay() },
+                ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
             )
         }
 

@@ -23,10 +23,13 @@ if (selectedMessageState is SelectedMessageOptionsState) {
         messageOptions = defaultMessageOptionsState(
             selectedMessage = selectedMessage,
             currentUser = user,
-            isInThread = listViewModel.isInThread
+            isInThread = listViewModel.isInThread,
+            ownCapabilities = selectedMessageState.ownCapabilities
         ),
         // The message you selected
         message = selectedMessage,
+        // The capabilities the user has in a given channel
+        ownCapabilities = selectedMessageState.ownCapabilities,
         onMessageAction = { action ->
             // Handle message action
         },

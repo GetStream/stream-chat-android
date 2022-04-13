@@ -178,9 +178,11 @@ class MessagesActivity : AppCompatActivity() {
                             messageOptions = defaultMessageOptionsState(
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
-                                isInThread = listViewModel.isInThread
+                                isInThread = listViewModel.isInThread,
+                                ownCapabilities = selectedMessageState.ownCapabilities
                             ),
                             message = selectedMessage,
+                            ownCapabilities = selectedMessageState.ownCapabilities,
                             onMessageAction = { action ->
                                 composerViewModel.performMessageAction(action)
                                 listViewModel.performMessageAction(action)
@@ -207,7 +209,8 @@ class MessagesActivity : AppCompatActivity() {
                             onShowMoreReactionsSelected = {
                                 listViewModel.selectExtendedReactions(selectedMessage)
                             },
-                            onDismiss = { listViewModel.removeOverlay() }
+                            onDismiss = { listViewModel.removeOverlay() },
+                            ownCapabilities = selectedMessageState.ownCapabilities
                         )
                     }
                     is SelectedMessageReactionsPickerState -> {
