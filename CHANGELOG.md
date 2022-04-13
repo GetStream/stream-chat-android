@@ -57,11 +57,11 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
 
 ### ⚠️ Changed
 
