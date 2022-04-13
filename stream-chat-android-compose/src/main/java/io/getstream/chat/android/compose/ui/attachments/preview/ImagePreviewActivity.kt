@@ -76,7 +76,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -133,7 +133,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
     private val factory by lazy {
         ImagePreviewViewModelFactory(
             chatClient = ChatClient.instance(),
-            messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
+            messageId = intent?.getStringExtra(KeyMessageId) ?: ""
         )
     }
 
@@ -149,8 +149,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
-        val attachmentPosition = intent?.getIntExtra(KEY_ATTACHMENT_POSITION, 0) ?: 0
+        val messageId = intent?.getStringExtra(KeyMessageId) ?: ""
+        val attachmentPosition = intent?.getIntExtra(KeyAttachmentPosition, 0) ?: 0
 
         if (messageId.isBlank()) {
             throw IllegalArgumentException("Missing messageId to load images.")
@@ -466,7 +466,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
      */
     private fun handleResult(result: ImagePreviewResult) {
         val data = Intent().apply {
-            putExtra(KEY_IMAGE_PREVIEW_RESULT, result)
+            putExtra(KeyImagePreviewResult, result)
         }
         setResult(RESULT_OK, data)
         finish()
@@ -509,16 +509,16 @@ public class ImagePreviewActivity : AppCompatActivity() {
 
                 val scale by animateFloatAsState(targetValue = currentScale)
 
+                val transformModifier = if (painter.state is ImagePainter.State.Success) {
+                    val size = painter.intrinsicSize
+                    Modifier.aspectRatio(size.width / size.height, true)
+                } else {
+                    Modifier
+                }
+
                 Image(
                     modifier = Modifier
-                        .then(
-                            (painter.state as? ImagePainter.State.Success)
-                                ?.painter
-                                ?.intrinsicSize
-                                ?.let { intrinsicsSize ->
-                                    Modifier.aspectRatio(intrinsicsSize.width / intrinsicsSize.height, true)
-                                } ?: Modifier
-                        )
+                        .then(transformModifier)
                         .graphicsLayer(
                             scaleY = scale,
                             scaleX = scale,
@@ -535,14 +535,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
                                     do {
                                         val event = awaitPointerEvent(pass = PointerEventPass.Initial)
 
+                                        val zoom = event.calculateZoom()
+                                        currentScale = (zoom * currentScale).coerceAtMost(MaxZoomScale)
+
                                         val maxTranslation = calculateMaxOffset(
                                             imageSize = imageSize,
                                             scale = currentScale,
                                             parentSize = parentSize
                                         )
-
-                                        val zoom = event.calculateZoom()
-                                        currentScale = (zoom * currentScale).coerceAtMost(3f)
 
                                         val offset = event.calculatePan()
                                         val newTranslationX = translation.x + offset.x * currentScale
@@ -557,14 +557,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
                                                 imageSize.width,
                                                 currentScale,
                                                 parentSize.width
-                                            ) || zoom != 1f
+                                            ) || zoom != DefaultZoomScale
                                         ) {
-                                            event.changes.forEach { it.consumeAllChanges() }
+                                            event.changes.forEach { it.consumePositionChange() }
                                         }
                                     } while (event.changes.any { it.pressed })
 
-                                    if (currentScale < 1f) {
-                                        currentScale = 1f
+                                    if (currentScale < DefaultZoomScale) {
+                                        currentScale = DefaultZoomScale
                                     }
                                 }
                             }
@@ -573,15 +573,15 @@ public class ImagePreviewActivity : AppCompatActivity() {
                             forEachGesture {
                                 awaitPointerEventScope {
                                     awaitFirstDown()
-                                    withTimeoutOrNull(DOUBLE_TAP_TIMEOUT_MS) {
+                                    withTimeoutOrNull(DoubleTapTimeoutMs) {
                                         awaitFirstDown()
                                         currentScale = when {
-                                            currentScale == 3f -> 1f
-                                            currentScale >= 2f -> 3f
-                                            else -> 2f
+                                            currentScale == MaxZoomScale -> DefaultZoomScale
+                                            currentScale >= MidZoomScale -> MaxZoomScale
+                                            else -> MidZoomScale
                                         }
 
-                                        if (currentScale == 1f) {
+                                        if (currentScale == DefaultZoomScale) {
                                             translation = Offset(0f, 0f)
                                         }
                                     }
@@ -815,7 +815,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     ImageGalleryHeader()
 
                     LazyVerticalGrid(
-                        cells = GridCells.Fixed(COLUMN_COUNT),
+                        cells = GridCells.Fixed(ColumnCount),
                         content = {
                             itemsIndexed(message.attachments) { index, attachment ->
                                 ImageGalleryItem(index, attachment, message.user, pagerState)
@@ -907,27 +907,42 @@ public class ImagePreviewActivity : AppCompatActivity() {
         /**
          * The column count used for the image gallery.
          */
-        private const val COLUMN_COUNT = 3
+        private const val ColumnCount = 3
 
         /**
          * Represents the key for the ID of the message with the attachments we're browsing.
          */
-        private const val KEY_MESSAGE_ID: String = "messageId"
+        private const val KeyMessageId: String = "messageId"
 
         /**
          * Represents the key for the starting attachment position based on the clicked attachment.
          */
-        private const val KEY_ATTACHMENT_POSITION: String = "attachmentPosition"
+        private const val KeyAttachmentPosition: String = "attachmentPosition"
 
         /**
          * Represents the key for the result of the preview, like scrolling to the message.
          */
-        public const val KEY_IMAGE_PREVIEW_RESULT: String = "imagePreviewResult"
+        public const val KeyImagePreviewResult: String = "imagePreviewResult"
 
         /**
          * Time period inside which two taps are registered as double tap.
          */
-        private const val DOUBLE_TAP_TIMEOUT_MS: Long = 500L
+        private const val DoubleTapTimeoutMs: Long = 500L
+
+        /**
+         * Maximum scale that can be applied to the image.
+         */
+        private const val MaxZoomScale: Float = 3f
+
+        /**
+         * Middle scale value that can be applied to image.
+         */
+        private const val MidZoomScale: Float = 2f
+
+        /**
+         * Default (min) value that can be applied to image.
+         */
+        private const val DefaultZoomScale: Float = 1f
 
         /**
          * Used to build an [Intent] to start the [ImagePreviewActivity] with the required data.
@@ -938,8 +953,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
          */
         public fun getIntent(context: Context, messageId: String, attachmentPosition: Int): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
-                putExtra(KEY_MESSAGE_ID, messageId)
-                putExtra(KEY_ATTACHMENT_POSITION, attachmentPosition)
+                putExtra(KeyMessageId, messageId)
+                putExtra(KeyAttachmentPosition, attachmentPosition)
             }
         }
     }

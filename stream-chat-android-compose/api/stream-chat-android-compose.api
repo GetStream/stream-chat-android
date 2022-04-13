@@ -565,7 +565,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Comp
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewActivity$Companion;
-	public static final field KEY_IMAGE_PREVIEW_RESULT Ljava/lang/String;
+	public static final field KeyImagePreviewResult Ljava/lang/String;
 	public fun <init> ()V
 }
 
