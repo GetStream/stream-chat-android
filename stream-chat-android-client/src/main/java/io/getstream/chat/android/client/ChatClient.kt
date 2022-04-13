@@ -288,23 +288,8 @@ public class ChatClient internal constructor(
     private fun createInitListenerCall(
         performCall: (initListener: InitConnectionListener) -> Unit,
     ): Call<ConnectionData> {
-        return object : Call<ConnectionData> {
-            override fun execute(): Result<ConnectionData> {
-                // Uses coroutines to turn the async call into blocking
-                return runBlocking { await() }
-            }
-
-            override fun enqueue(callback: Call.Callback<ConnectionData>) {
-                // Converts InitConnectionListener to Call.Callback
-                scope.launch {
-                    val result = performCall.awaitResult()
-                    withContext(Dispatchers.Main) {
-                        callback.onResult(result)
-                    }
-                }
-            }
-
-            override fun cancel() {}
+        return CoroutineCall(scope) {
+            performCall.awaitResult()
         }
     }
 
