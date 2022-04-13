@@ -504,7 +504,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
                 var imageSize by remember { mutableStateOf(Size(0f, 0f)) }
 
-                var currentScale by remember { mutableStateOf(1f) }
+                var currentScale by remember { mutableStateOf(DefaultZoomScale) }
                 var translation by remember { mutableStateOf(Offset(0f, 0f)) }
 
                 val scale by animateFloatAsState(targetValue = currentScale)
@@ -517,8 +517,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 }
 
                 Image(
-                    modifier = Modifier
-                        .then(transformModifier)
+                    modifier = transformModifier
                         .graphicsLayer(
                             scaleY = scale,
                             scaleX = scale,
@@ -593,7 +592,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 )
 
                 if (pagerState.currentPage != page) {
-                    currentScale = 1f
+                    currentScale = DefaultZoomScale
                     translation = Offset(0f, 0f)
                 }
             }
