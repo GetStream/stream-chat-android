@@ -209,7 +209,8 @@ class MessagesActivity : AppCompatActivity() {
                             onShowMoreReactionsSelected = {
                                 listViewModel.selectExtendedReactions(selectedMessage)
                             },
-                            onDismiss = { listViewModel.removeOverlay() }
+                            onDismiss = { listViewModel.removeOverlay() },
+                            ownCapabilities = selectedMessageState.ownCapabilities
                         )
                     }
                     is SelectedMessageReactionsPickerState -> {

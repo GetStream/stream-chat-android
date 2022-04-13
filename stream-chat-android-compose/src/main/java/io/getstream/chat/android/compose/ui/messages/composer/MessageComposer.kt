@@ -647,10 +647,13 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
         }
 
         val context = LocalContext.current
+        val stringOk = stringResource(id = R.string.stream_compose_ok)
         LaunchedEffect(validationErrors.size) {
             if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed) {
                 snackbarHostState.showSnackbar(
-                    message = errorMessage, duration = SnackbarDuration.Short
+                    message = errorMessage,
+                    actionLabel = stringOk,
+                    duration = SnackbarDuration.Indefinite
                 )
             } else {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
