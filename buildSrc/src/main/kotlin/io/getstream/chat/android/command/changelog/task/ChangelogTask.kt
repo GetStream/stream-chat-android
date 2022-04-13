@@ -2,9 +2,9 @@ package io.getstream.chat.android.command.changelog.task
 
 import io.getstream.chat.android.command.changelog.plugin.ChangelogCommandExtension
 import io.getstream.chat.android.command.release.markdown.createdUpdatedChangelog
-import io.getstream.chat.android.command.release.markdown.parser.filterOldReleases
-import io.getstream.chat.android.command.release.markdown.parser.parseChangelogFile
 import io.getstream.chat.android.command.release.output.InMemoryPrinter
+import io.getstream.chat.android.command.utils.filterOldReleases
+import io.getstream.chat.android.command.utils.parseChangelogFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
