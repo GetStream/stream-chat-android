@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed a bug where command suggestion popup was displayed even though all the commands were disabled. [#3334](https://github.com/GetStream/stream-chat-android/pull/3334)
 
 ### ⬆️ Improved
 
