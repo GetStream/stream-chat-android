@@ -1,6 +1,8 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
+import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
+import io.getstream.chat.android.command.version.plugin.MinorBumpPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
@@ -9,6 +11,9 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
+apply plugin: VersionBumpPlugin
+apply plugin: MinorBumpPlugin
+
 
 buildscript {
     repositories {

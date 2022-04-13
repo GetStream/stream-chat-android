@@ -1,7 +1,7 @@
 package io.getstream.chat.android.command.release.task
 
 import io.getstream.chat.android.command.release.markdown.clean
-import io.getstream.chat.android.command.release.markdown.parser.parseChangelogFile
+import io.getstream.chat.android.command.utils.parseChangelogFile
 import io.getstream.chat.android.command.release.output.FilePrinter
 import io.getstream.chat.android.command.release.output.print
 import io.getstream.chat.android.command.release.plugin.ReleaseCommandExtension
