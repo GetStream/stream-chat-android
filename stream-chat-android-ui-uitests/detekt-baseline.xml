@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
+    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$10</ID>
+    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>
+    <ID>MagicNumber:DataProvider.kt$100000L</ID>
+    <ID>MagicNumber:DataProvider.kt$99</ID>
+    <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
+  </CurrentIssues>
+</SmellBaseline>
