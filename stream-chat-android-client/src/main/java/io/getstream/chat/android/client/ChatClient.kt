@@ -147,13 +147,18 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -291,22 +296,36 @@ public class ChatClient internal constructor(
 
             override fun enqueue(callback: Call.Callback<ConnectionData>) {
                 // Converts InitConnectionListener to Call.Callback
-                performCall(
-                    object : InitConnectionListener() {
-                        override fun onSuccess(data: ConnectionData) {
-                            val connectionData =
-                                io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
-                            callback.onResult(Result(connectionData))
-                        }
-
-                        override fun onError(error: ChatError) {
-                            callback.onResult(Result(error))
-                        }
+                scope.launch {
+                    val result = performCall.awaitResult()
+                    withContext(Dispatchers.Main) {
+                        callback.onResult(result)
                     }
-                )
+                }
             }
 
             override fun cancel() {}
+        }
+    }
+
+    /**
+     * Awaits [InitConnectionListener] being invoked from either [setUser] or [setGuestUser] or [setAnonymousUser].
+     */
+    private suspend fun ((initListener: InitConnectionListener) -> Unit).awaitResult(): Result<ConnectionData> {
+        return suspendCoroutine { continuation ->
+            invoke(
+                object : InitConnectionListener() {
+                    override fun onSuccess(data: ConnectionData) {
+                        val connectionData =
+                            io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
+                        continuation.resume(Result.success(connectionData))
+                    }
+
+                    override fun onError(error: ChatError) {
+                        continuation.resume(Result.error(error))
+                    }
+                }
+            )
         }
     }
 
