@@ -44,9 +44,17 @@ import io.getstream.chat.android.ui.message.list.MessageListView
  *
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
+ *
+ * @param view The [MessageListView] to bind the ViewModel to.
+ * @param lifecycleOwner Current owner of the lifecycle in which the events are handled.
+ * @param enforceUniqueReactions If message reactions are unique or a single user can post multiple reactions.
  */
 @JvmName("bind")
-public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+public fun MessageListViewModel.bindView(
+    view: MessageListView,
+    lifecycleOwner: LifecycleOwner,
+    enforceUniqueReactions: Boolean = true,
+) {
 
     view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
         if (messageListItemPredicate != null) {
@@ -77,7 +85,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     view.setMessageRetryHandler { onEvent(RetryMessage(it)) }
     view.setMessageReactionHandler { message, reactionType ->
-        onEvent(MessageReaction(message, reactionType, enforceUnique = true))
+        onEvent(MessageReaction(message, reactionType, enforceUnique = enforceUniqueReactions))
     }
     view.setUserMuteHandler { onEvent(MuteUser(it)) }
     view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
