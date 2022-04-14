@@ -1,7 +1,7 @@
 package io.getstream.chat.android.command.release.markdown
 
 import io.getstream.chat.android.command.release.extensions.toDocument
-import io.getstream.chat.android.command.release.markdown.parser.isStartOfProject
+import io.getstream.chat.android.command.utils.isStartOfProject
 import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
 import io.getstream.chat.android.command.release.model.Section
