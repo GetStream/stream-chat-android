@@ -486,20 +486,20 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      * Executes the given [block] function on [MessageListItemViewHolderFactory] with
      * the provided decorators and then resets them to the previous value.
      *
-     * @param decoratorProvider The temporary provider of item decorators.
+     * @param messageOptionsDecoratorProvider The temporary provider of item decorators.
      * @param block The block of code that will be invoked with the modified item factory.
      */
     private inline fun MessageListItemViewHolderFactory.withDecoratorProvider(
-        decoratorProvider: MessageOptionsDecoratorProvider,
+        messageOptionsDecoratorProvider: MessageOptionsDecoratorProvider,
         block: (MessageListItemViewHolderFactory) -> Unit,
     ) {
         val tempDecoratorProvider = decoratorProvider
 
-        this.decoratorProvider = decoratorProvider
+        decoratorProvider = messageOptionsDecoratorProvider
         try {
             block(this)
         } finally {
-            this.decoratorProvider = tempDecoratorProvider
+            decoratorProvider = tempDecoratorProvider
         }
     }
 }
