@@ -305,6 +305,9 @@ public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
 public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/StringKt {
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
 	public static final fun getInflater (Landroid/view/ViewGroup;)Landroid/view/LayoutInflater;
 }
