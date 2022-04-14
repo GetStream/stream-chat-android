@@ -23,7 +23,7 @@
     <ID>LongMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
-    <ID>LongMethod:MessageListViewModelBinding.kt$ @JvmName("bind") public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner)</ID>
+    <ID>LongMethod:MessageListViewModelBinding.kt$ @JvmName("bind") public fun MessageListViewModel.bindView( view: MessageListView, lifecycleOwner: LifecycleOwner, enforceUniqueReactions: Boolean = true, )</ID>
     <ID>LongMethod:MessageListViewStyle.kt$MessageListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle</ID>
     <ID>LongMethod:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment$private fun setupOptionsClickListeners( messageOptionsHandlers: MessageOptionsHandlers, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
     <ID>LongMethod:MessageOptionsView.kt$MessageOptionsView$internal fun configure( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>

@@ -49,6 +49,7 @@
 - Fixed a bug where command suggestion popup was displayed even though all the commands were disabled. [#3334](https://github.com/GetStream/stream-chat-android/pull/3334)
 
 ### ⬆️ Improved
+- Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
 
 ### ✅ Added
 
@@ -62,6 +63,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
 - Added `imageLoader` parameter to `ChatTheme` that allows providing a custom Coil `ImageLoader`. [#3336](https://github.com/GetStream/stream-chat-android/pull/3336)
 
 ### ⚠️ Changed
@@ -707,7 +709,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 - Removed some redundant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
-
 
 # December 9th, 2021 - 4.24.0
 ## stream-chat-android-offline
