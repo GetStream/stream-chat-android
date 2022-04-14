@@ -39,10 +39,12 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.io.File
 
 /**
@@ -98,6 +100,21 @@ public class MessageInputViewModel @JvmOverloads constructor(
         channelState.flatMapLatest { it.channelConfig }.map { config ->
             config.maxMessageLength
         }.asLiveData()
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: LiveData<Set<String>> = channelState.flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = setOf()
+        ).asLiveData()
 
     /**
      * Holds the message the user is currently replying to,

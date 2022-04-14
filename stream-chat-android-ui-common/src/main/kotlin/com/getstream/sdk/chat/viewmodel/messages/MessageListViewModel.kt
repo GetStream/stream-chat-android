@@ -49,10 +49,16 @@ import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
@@ -72,6 +78,32 @@ public class MessageListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    public val channelState: StateFlow<ChannelState?> =
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            coroutineScope = viewModelScope
+        )
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: LiveData<Set<String>> = channelState.filterNotNull()
+        .flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = setOf()
+        ).asLiveData()
 
     /**
      * Contains a list of messages along with additional
@@ -214,43 +246,41 @@ public class MessageListViewModel(
 
     /**
      * Initializes the ViewModel with offline capabilities using
-     * [io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin].
+     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
      */
     private fun initWithOfflinePlugin() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
-        val channelState = chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
-        ).value ?: return
+        val capturedChannelState = channelState.value ?: return
 
         ChatClient.dismissChannelNotifications(
-            channelType = channelState.channelType,
-            channelId = channelState.channelId
+            channelType = capturedChannelState.channelType,
+            channelId = capturedChannelState.channelId
         )
 
-        val channelDataLiveData = channelState.channelData.asLiveData()
+        val channelDataLiveData = capturedChannelState.channelData.asLiveData()
         _channel.addSource(channelDataLiveData) {
-            _channel.value = channelState.toChannel()
+            _channel.value = capturedChannelState.toChannel()
             // Channel should be propagated only once because it's used to initialize MessageListView
             _channel.removeSource(channelDataLiveData)
         }
-        val typingIds = channelState.typing.map { (_, idList) -> idList }.asLiveData()
+        val typingIds = capturedChannelState.typing.map { (_, idList) -> idList }.asLiveData()
 
         messageListData = MessageListItemLiveData(
             user,
-            channelState.messages.asLiveData(),
-            channelState.reads.asLiveData(),
+            capturedChannelState.messages.asLiveData(),
+            capturedChannelState.reads.asLiveData(),
             typingIds,
             false,
             dateSeparatorHandler,
         )
-        _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
-        _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
+        _reads.addSource(capturedChannelState.reads.asLiveData()) { _reads.value = it }
+        _loadMoreLiveData.addSource(capturedChannelState.loadingOlderMessages.asLiveData()) {
+            _loadMoreLiveData.value = it
+        }
 
         stateMerger.apply {
-            val messagesStateLiveData = channelState.messagesState.asLiveData()
+            val messagesStateLiveData = capturedChannelState.messagesState.asLiveData()
             addSource(messagesStateLiveData) { messageState ->
                 when (messageState) {
                     MessagesState.Loading,

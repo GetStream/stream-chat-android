@@ -150,6 +150,12 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
 
+    /**
+     * Used to enable or disable parts of the UI depending
+     * on which abilities the user has in the given channel.
+     */
+    private var ownCapabilities: Set<String> = setOf()
+
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -335,6 +341,7 @@ public class MessageListView : ConstraintLayout {
                             channelConfig = channel.config,
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
+                            ownCapabilities = ownCapabilities
                         ),
                         viewStyle,
                         messageListItemViewHolderFactory,
@@ -462,6 +469,7 @@ public class MessageListView : ConstraintLayout {
                         channelConfig = channel.config,
                         hasTextToCopy = false, // No effect when displaying reactions
                         suppressThreads = false, // No effect when displaying reactions
+                        ownCapabilities = ownCapabilities
                     ),
                     requireStyle(),
                     messageListItemViewHolderFactory,
@@ -605,6 +613,15 @@ public class MessageListView : ConstraintLayout {
         if (background == null) {
             setBackgroundColor(requireStyle().backgroundColor)
         }
+    }
+
+    /**
+     * Setter method for own capabilities which dictate which
+     * parts of the UI are enabled or disabled for the current user
+     * in the given channel.
+     */
+    public fun setOwnCapabilities(ownCapabilities: Set<String>) {
+        this.ownCapabilities = ownCapabilities
     }
 
     override fun onAttachedToWindow() {

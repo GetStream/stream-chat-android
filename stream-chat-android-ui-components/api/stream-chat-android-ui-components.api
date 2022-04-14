@@ -1107,6 +1107,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setMessageInputMentionListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageInputMentionListener;)V
 	public final fun setMessageInputModeListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageInputViewModeListener;)V
 	public final fun setOnSendButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener;)V
+	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setSelectedAttachmentsCountListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$SelectedAttachmentsCountListener;)V
 	public final fun setSendMessageButtonDisabledDrawable (Landroid/graphics/drawable/Drawable;)V
 	public final fun setSendMessageButtonEnabledDrawable (Landroid/graphics/drawable/Drawable;)V
@@ -1663,6 +1664,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
+	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
 	public final fun setRepliesEnabled (Z)V

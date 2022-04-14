@@ -16,7 +16,15 @@
  
 package com.getstream.sdk.chat.utils.extensions
 
-internal fun String.containsLinks(): Boolean {
-    val regex = """(?:\s|^)((?:https?:)?(?:[a-z0-9-]+(?:\.[a-z0-9-]+)+)(?::[0-9]+)?(?:(?:[^\s]+)?)?)""".toRegex()
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
+/**
+ * Checks if a message contains a link using a
+ * regular expression.
+ */
+@InternalStreamChatApi
+public fun String.containsLinks(): Boolean {
+    val regex =
+        """(?:\s|^)((?:https?:)?(?:[a-z|A-Z0-9-]+(?:\.[a-z|A-Z0-9-]+)+)(?::[0-9]+)?(?:(?:[^\s]+)?)?)""".toRegex()
     return this.contains(regex = regex)
 }

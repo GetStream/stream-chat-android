@@ -22,16 +22,20 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
-import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * Used by [ChannelActionsDialogFragment] to provide the correct state
@@ -55,6 +59,21 @@ internal class ChannelActionsViewModel(
             messageLimit = DEFAULT_MESSAGE_LIMIT,
             coroutineScope = viewModelScope
         ).filterNotNull()
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    private val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = setOf()
+        )
 
     /**
      * The initial empty state.
@@ -117,10 +136,13 @@ internal class ChannelActionsViewModel(
      * @return Returns the updated [State].
      */
     private fun updateMembers(members: List<Member>): State {
-        val canDeleteChannel = members.isCurrentUserOwnerOrAdmin()
+        val canDeleteChannel = ownCapabilities.value.contains(ChannelCapabilities.DELETE_CHANNEL)
+        val canLeaveChannel = ownCapabilities.value.contains(ChannelCapabilities.LEAVE_CHANNEL)
+
         return currentState.copy(
             members = members.filter { isGroup || !it.user.isCurrentUser() },
             canDeleteChannel = canDeleteChannel,
+            canLeaveChannel = canLeaveChannel
         )
     }
 
@@ -133,6 +155,7 @@ internal class ChannelActionsViewModel(
     data class State(
         val members: List<Member> = listOf(),
         val canDeleteChannel: Boolean = false,
+        val canLeaveChannel: Boolean = false
     )
 
     /**
