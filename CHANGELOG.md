@@ -47,9 +47,11 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed a bug where command suggestion popup was displayed even though all the commands were disabled. [#3334](https://github.com/GetStream/stream-chat-android/pull/3334)
+- Fixed a bug on Nougat where the reaction colors were not displayed properly. [#3347](https://github.com/GetStream/stream-chat-android/pull/3347)
 - Fixed a bug where custom `MessageListItemViewHolderFactory` was ignore on the message options overlay. [#3343](https://github.com/GetStream/stream-chat-android/pull/3343)
 
 ### ⬆️ Improved
+- Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
 
 ### ✅ Added
 
@@ -709,7 +711,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ❌ Removed
 - Removed some redundant components from separate files and the `components` package [#2795](https://github.com/GetStream/stream-chat-android/pull/2795)
-
 
 # December 9th, 2021 - 4.24.0
 ## stream-chat-android-offline
