@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
@@ -59,6 +60,7 @@ import kotlin.math.abs
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
+ * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that represents the item that displays each message.
@@ -71,6 +73,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = DefaultMessagesContentPadding),
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(messagesState, lazyListState)
     },
@@ -86,7 +89,7 @@ public fun Messages(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom,
             reverseLayout = true,
-            contentPadding = PaddingValues(vertical = 16.dp)
+            contentPadding = contentPadding
         ) {
             itemsIndexed(
                 messages,
@@ -189,3 +192,8 @@ internal fun DefaultMessagesLoadingMoreIndicator() {
             .padding(8.dp)
     )
 }
+
+/**
+ * Default value for [Messages] content padding.
+ */
+internal val DefaultMessagesContentPadding: Dp = 16.dp
