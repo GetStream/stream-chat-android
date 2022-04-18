@@ -79,8 +79,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.extensions.mergeReactions
-import io.getstream.chat.android.offline.extensions.internal.setMember
-import io.getstream.chat.android.offline.extensions.internal.mergeReactions
 import io.getstream.chat.android.offline.extensions.internal.updateMembers
 import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState

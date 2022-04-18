@@ -39,11 +39,11 @@ public class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        //Todo: Review the !!
         return UploadAttachmentsWorker(
             ChannelsManagerProvider.getChannelsManager(),
-            RepositoryProvider.messageRepository { ChatClient.instance().getCurrentUser()!! },
-            RepositoryProvider.userRepository(),
+            //Todo: Review the !!
+            RepositoryProvider.get().messageRepository { ChatClient.instance().getCurrentUser()!! },
+            RepositoryProvider.get().userRepository(),
             ChatClient.instance()
         ).uploadAttachmentsForMessage(
             channelType,
