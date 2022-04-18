@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.offline.repository.facade
 
+import io.getstream.chat.android.client.channel.internal.ChannelConfig
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.query.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomMessage
@@ -42,6 +42,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -131,7 +132,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(channels).insertChannel(eq(channel))
         verify(users).insertUsers(
-            org.mockito.kotlin.check { listUser ->
+            check { listUser ->
                 listUser.size `should be equal to` 5
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser)
             }

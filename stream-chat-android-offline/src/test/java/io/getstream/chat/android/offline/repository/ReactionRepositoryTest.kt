@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.repository
 
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistence.repository.ReactionRepository
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
 import io.getstream.chat.android.test.TestCoroutineRule
@@ -29,6 +29,7 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.coInvoking
 import org.amshove.kluent.shouldThrow
 import org.junit.Rule

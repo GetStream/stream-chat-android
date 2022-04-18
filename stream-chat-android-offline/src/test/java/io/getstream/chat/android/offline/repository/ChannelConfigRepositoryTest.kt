@@ -18,13 +18,13 @@ package io.getstream.chat.android.offline.repository
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
+import io.getstream.chat.android.client.persistence.repository.ChannelConfigRepository
 import io.getstream.chat.android.offline.randomChannelConfig
 import io.getstream.chat.android.offline.randomConfig
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigDao
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigInnerEntity
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -50,7 +50,7 @@ internal class ChannelConfigRepositoryTest {
     @Before
     fun before() {
         dao = mock()
-        sut = ChannelConfigRepositoryImpl(dao)
+        sut = DatabaseChannelConfigRepository(dao)
     }
 
     @Test

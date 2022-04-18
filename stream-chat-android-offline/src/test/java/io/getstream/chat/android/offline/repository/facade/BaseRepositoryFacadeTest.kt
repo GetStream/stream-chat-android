@@ -17,15 +17,15 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.annotation.CallSuper
+import io.getstream.chat.android.client.persistence.repository.AttachmentRepository
+import io.getstream.chat.android.client.persistence.repository.ChannelConfigRepository
+import io.getstream.chat.android.client.persistence.repository.ChannelRepository
+import io.getstream.chat.android.client.persistence.repository.MessageRepository
+import io.getstream.chat.android.client.persistence.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.persistence.repository.ReactionRepository
+import io.getstream.chat.android.client.persistence.repository.SyncStateRepository
+import io.getstream.chat.android.client.persistence.repository.UserRepository
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepository
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepository
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
-import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepository
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
