@@ -62,6 +62,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the message input handling when typing quickly or holding down the delete (backspace) button. [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
 
 ### ⬆️ Improved
 
