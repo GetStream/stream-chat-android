@@ -3381,14 +3381,6 @@ public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeT
 	public final fun isImageMimeTypeSupported (Ljava/lang/String;)Z
 }
 
-public final class io/getstream/chat/android/client/uploader/attachment/AttachmentUploader {
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun uploadAttachment (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/utils/ProgressCallback;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun uploadAttachment$default (Lio/getstream/chat/android/client/uploader/attachment/AttachmentUploader;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/utils/ProgressCallback;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/client/uploader/attachment/network/UploadAttachmentsNetworkType : java/lang/Enum {
 	public static final field CONNECTED Lio/getstream/chat/android/client/uploader/attachment/network/UploadAttachmentsNetworkType;
 	public static final field METERED Lio/getstream/chat/android/client/uploader/attachment/network/UploadAttachmentsNetworkType;
