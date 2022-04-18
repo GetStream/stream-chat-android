@@ -37,13 +37,13 @@ public object MediaStringUtil {
     @JvmStatic
     public fun convertFileSizeByteCount(bytes: Long): String {
         return when {
-            bytes <= 0 -> 0.toString() + " B"
+            bytes <= 0 -> "0 B"
             bytes < BYTE_UNIT_CONVERSION_FACTOR -> "$bytes B"
             else -> {
                 val exp = (ln(bytes.toDouble()) / ln(BYTE_UNIT_CONVERSION_FACTOR.toDouble())).toInt()
                 val pre = "KMGTPE"[exp - 1].toString()
                 val df = DecimalFormat("###.##")
-                df.format(bytes / BYTE_UNIT_CONVERSION_FACTOR.toDouble().pow(exp.toDouble())) + " " + pre + "B"
+                df.format(bytes / BYTE_UNIT_CONVERSION_FACTOR.toDouble().pow(exp.toDouble())) + " ${pre}B"
             }
         }
     }
