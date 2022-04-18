@@ -20,6 +20,7 @@ import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelInfo
@@ -30,10 +31,12 @@ import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.positiveRandomLong
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import org.mockito.kotlin.mock
@@ -183,3 +186,16 @@ internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachm
 }
 
 private val fixture = JFixture()
+
+internal fun randomAttachmentsWithFile(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Attachment = {
+        Attachment(upload = randomFile()).apply {
+            uploadId = generateUploadId()
+        }
+    },
+): List<Attachment> = (1..size).map(creationFunction)
+
+private fun generateUploadId(): String {
+    return "upload_id_${UUID.randomUUID()}"
+}

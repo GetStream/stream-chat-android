@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.channel.controller.attachment
+package io.getstream.chat.android.client.uploader.attachment.worker
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.randomAttachmentsWithFile
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.uploader.attachment.AttachmentUploader
-import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomString
