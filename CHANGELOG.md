@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `DispatcherProvider.Immediate` to our providers for operations that require no-scheduling [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
 
 ### ⚠️ Changed
 - Changed visibility of the `retry` extension to internal. [#3353](https://github.com/GetStream/stream-chat-android/pull/3353)
