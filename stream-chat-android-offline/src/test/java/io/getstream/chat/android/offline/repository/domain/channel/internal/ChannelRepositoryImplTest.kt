@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
@@ -37,10 +53,12 @@ internal class ChannelRepositoryImplTest {
 
         channelRepository.updateLastMessageForChannel("cid", lastMessage)
 
-        verify(channelDao).insert(argThat { channelEntity ->
-            channelEntity.lastMessageAt == lastMessage.createdAt &&
-                channelEntity.lastMessageId == lastMessage.id
-        })
+        verify(channelDao).insert(
+            argThat { channelEntity ->
+                channelEntity.lastMessageAt == lastMessage.createdAt &&
+                    channelEntity.lastMessageId == lastMessage.id
+            }
+        )
     }
 
     @Test
@@ -56,9 +74,11 @@ internal class ChannelRepositoryImplTest {
 
         // channel.lastMessageAt `should be equal to` newLastMessage.createdAt
         // channel.lastMessage `should be equal to` newLastMessage
-        verify(channelDao).insert(argThat { channelEntity ->
-            channelEntity.lastMessageAt == after &&
-                channelEntity.lastMessageId == newLastMessage.id
-        })
+        verify(channelDao).insert(
+            argThat { channelEntity ->
+                channelEntity.lastMessageAt == after &&
+                    channelEntity.lastMessageId == newLastMessage.id
+            }
+        )
     }
 }
