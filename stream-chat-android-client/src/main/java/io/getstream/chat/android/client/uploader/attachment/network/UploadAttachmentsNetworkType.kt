@@ -19,7 +19,8 @@ package io.getstream.chat.android.client.uploader.attachment.network
 import androidx.work.NetworkType
 
 /**
- * An enumeration of various network types used as a constraint in [io.getstream.chat.android.offline.internal.message.attachments.UploadAttachmentsAndroidWorker].
+ * An enumeration of various network types used as a constraint in
+ * [io.getstream.chat.android.offline.internal.message.attachments.UploadAttachmentsAndroidWorker].
  */
 public enum class UploadAttachmentsNetworkType {
     /**

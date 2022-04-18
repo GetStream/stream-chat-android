@@ -112,7 +112,6 @@ internal class UploadAttachmentsWorker(
                 }
             }.toMutableList()
         } catch (e: Exception) {
-            e.printStackTrace()
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))

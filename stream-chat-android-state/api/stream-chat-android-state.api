@@ -1,0 +1,8 @@
+public final class io/getstream/chat/android/state/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field STREAM_CHAT_VERSION Ljava/lang/String;
+	public fun <init> ()V
+}
+

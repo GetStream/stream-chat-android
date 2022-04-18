@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.models.Attachment
@@ -22,8 +22,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import java.util.Date
-
-//TODO: Evaluate which methods really need to be public
 
 /** Updates collection of messages with more recent data of [users]. */
 public fun Collection<Message>.updateUsers(users: Map<String, User>): List<Message> = map { it.updateUsers(users) }
