@@ -19,4 +19,6 @@
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
     <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
+    <string name="stream_ui_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
+
 </resources>

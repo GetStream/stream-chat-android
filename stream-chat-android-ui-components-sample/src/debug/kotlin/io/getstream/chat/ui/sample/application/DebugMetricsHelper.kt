@@ -28,5 +28,15 @@ object DebugMetricsHelper {
             .apply {
                 StrictMode.setThreadPolicy(this)
             }
+
+        StrictMode.VmPolicy.Builder()
+            .detectLeakedSqlLiteObjects()
+            .detectLeakedClosableObjects()
+            .penaltyLog()
+            .penaltyDeath()
+            .build()
+            .apply {
+                StrictMode.setVmPolicy(this)
+            }
     }
 }

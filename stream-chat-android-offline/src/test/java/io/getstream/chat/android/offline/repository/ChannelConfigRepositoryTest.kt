@@ -24,10 +24,14 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.interna
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigInnerEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
+import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepositoryImpl
+import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
@@ -37,6 +41,8 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ChannelConfigRepositoryTest {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private lateinit var dao: ChannelConfigDao
     private lateinit var sut: ChannelConfigRepository
@@ -44,11 +50,11 @@ internal class ChannelConfigRepositoryTest {
     @Before
     fun before() {
         dao = mock()
-        sut = DatabaseChannelConfigRepository(dao)
+        sut = ChannelConfigRepositoryImpl(dao)
     }
 
     @Test
-    fun `When insert channel config Should store this value in DB`() = runBlockingTest {
+    fun `When insert channel config Should store this value in DB`() = runTest {
         sut.insertChannelConfig(randomChannelConfig(type = "messaging", config = randomConfig(name = "configName")))
 
         verify(dao).insert(
@@ -60,7 +66,7 @@ internal class ChannelConfigRepositoryTest {
     }
 
     @Test
-    fun `Given inserted channel When select config Should get config from cache`() = runBlockingTest {
+    fun `Given inserted channel When select config Should get config from cache`() = runTest {
         sut.insertChannelConfig(randomChannelConfig(type = "messaging", config = randomConfig(name = "configName")))
 
         val result = sut.selectChannelConfig("messaging")
@@ -70,7 +76,7 @@ internal class ChannelConfigRepositoryTest {
     }
 
     @Test
-    fun `When insert configs Should store these values in DB`() = runBlockingTest {
+    fun `When insert configs Should store these values in DB`() = runTest {
         val config1 = randomChannelConfig(type = "messaging1", config = randomConfig(name = "configName1"))
         val config2 = randomChannelConfig(type = "messaging2", config = randomConfig(name = "configName2"))
 
@@ -92,7 +98,7 @@ internal class ChannelConfigRepositoryTest {
     }
 
     @Test
-    fun `Given config in cache When select Should return config`() = runBlockingTest {
+    fun `Given config in cache When select Should return config`() = runTest {
         val config = randomChannelConfig(type = "messaging", config = randomConfig(name = "configName"))
         sut.insertChannelConfig(config)
 
@@ -102,7 +108,7 @@ internal class ChannelConfigRepositoryTest {
     }
 
     @Test
-    fun `Given DB with saved config When cache configs Should load them fromDB`() = runBlockingTest {
+    fun `Given DB with saved config When cache configs Should load them fromDB`() = runTest {
         val firstConfigEntity = createChannelConfigEntity("type1", "name1")
         val secondConfigEntity = createChannelConfigEntity("type2", "name2")
         whenever(dao.selectAll()) doReturn listOf(firstConfigEntity, secondConfigEntity)

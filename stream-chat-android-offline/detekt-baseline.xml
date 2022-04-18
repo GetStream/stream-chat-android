@@ -165,7 +165,6 @@
     <ID>MaxLineLength:UploadAttachmentsNetworkType.kt$UploadAttachmentsNetworkType$* An enumeration of various network types used as a constraint in [io.getstream.chat.android.offline.internal.message.attachments.UploadAttachmentsAndroidWorker].</ID>
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
     <ID>MaxLineLength:WhenEnrichChannel.kt$WhenEnrichChannel$fun</ID>
-    <ID>MaxLineLength:WhenUpdateLastMessage.kt$WhenUpdateLastMessage$fun</ID>
     <ID>MaxLineLength:WhenUploadAttachmentsTests.kt$WhenUploadAttachmentsTests$fun</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
@@ -202,6 +201,7 @@
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loadingNewerMessages = MutableStateFlow(false)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _loadingOlderMessages = MutableStateFlow(false)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _members = MutableStateFlow&lt;Map&lt;String, Member>>(emptyMap())</ID>
+    <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _membersCount = MutableStateFlow(0)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _messages = MutableStateFlow&lt;Map&lt;String, Message>>(emptyMap())</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _muted = MutableStateFlow(false)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _oldMessages = MutableStateFlow&lt;Map&lt;String, Message>>(emptyMap())</ID>

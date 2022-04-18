@@ -22,14 +22,18 @@ import io.getstream.chat.android.offline.event.handler.chat.NonMemberChatEventHa
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMemberAddedEvent
 import io.getstream.chat.android.offline.randomMemberRemovedEvent
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 
 internal class NonMemberChatEventHandlerTest {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     @Test
     fun `Given channel is cached, When received MemberAddedEvent, Should remove be removed`() {
@@ -71,36 +75,38 @@ internal class NonMemberChatEventHandlerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Given channel is not present, When received MemberRemovedEvent and channel cached, Should channel be added`() = runBlockingTest {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = NonMemberChatEventHandler(MutableStateFlow(emptyList()))
+    fun `Given channel is not present, When received MemberRemovedEvent and channel cached, Should channel be added`() =
+        runTest {
+            val cid = randomString()
+            val channel = randomChannel(cid = cid)
+            val eventHandler = NonMemberChatEventHandler(MutableStateFlow(emptyList()))
 
-        val event = randomMemberRemovedEvent(cid)
-        val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral(), channel)
+            val event = randomMemberRemovedEvent(cid)
+            val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral(), channel)
 
-        result `should be equal to` EventHandlingResult.Add(channel)
-    }
+            result `should be equal to` EventHandlingResult.Add(channel)
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Given channel is present, When received MemberRemovedEvent and channel cached, Should channel be skipped`() = runBlockingTest {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = NonMemberChatEventHandler(MutableStateFlow(listOf(channel)))
+    fun `Given channel is present, When received MemberRemovedEvent and channel cached, Should channel be skipped`() =
+        runTest {
+            val cid = randomString()
+            val channel = randomChannel(cid = cid)
+            val eventHandler = NonMemberChatEventHandler(MutableStateFlow(listOf(channel)))
 
-        val event = randomMemberRemovedEvent(cid)
-        val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral(), channel)
+            val event = randomMemberRemovedEvent(cid)
+            val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral(), channel)
 
-        result `should be equal to` EventHandlingResult.Skip
-    }
+            result `should be equal to` EventHandlingResult.Skip
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `Given channel is present, When received MemberRemovedEvent but channel is not cached, Should event be skipped`() =
-        runBlockingTest {
+        runTest {
             val cid = randomString()
-            val eventHandler = NonMemberChatEventHandler(MutableStateFlow(emptyList()),)
+            val eventHandler = NonMemberChatEventHandler(MutableStateFlow(emptyList()))
 
             val event = randomMemberRemovedEvent(cid)
             val result = eventHandler.handleMemberRemovedEvent(event, Filters.neutral(), null)

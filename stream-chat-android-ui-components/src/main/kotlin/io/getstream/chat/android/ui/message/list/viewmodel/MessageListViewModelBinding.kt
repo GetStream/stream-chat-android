@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
@@ -43,18 +44,26 @@ import io.getstream.chat.android.ui.message.list.MessageListView
  *
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
+ *
+ * @param view The [MessageListView] to bind the ViewModel to.
+ * @param lifecycleOwner Current owner of the lifecycle in which the events are handled.
+ * @param enforceUniqueReactions If message reactions are unique or a single user can post multiple reactions.
  */
 @JvmName("bind")
-public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+public fun MessageListViewModel.bindView(
+    view: MessageListView,
+    lifecycleOwner: LifecycleOwner,
+    enforceUniqueReactions: Boolean = true,
+) {
 
     view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
         if (messageListItemPredicate != null) {
             val deletedMessageVisibility = when (messageListItemPredicate) {
                 DeletedMessageListItemPredicate.NotVisibleToAnyone ->
-                    MessageListViewModel.DeletedMessageVisibility.ALWAYS_HIDDEN
+                    DeletedMessageVisibility.ALWAYS_HIDDEN
                 DeletedMessageListItemPredicate.VisibleToAuthorOnly ->
-                    MessageListViewModel.DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
-                else -> MessageListViewModel.DeletedMessageVisibility.ALWAYS_VISIBLE
+                    DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+                else -> DeletedMessageVisibility.ALWAYS_VISIBLE
             }
 
             setDeletedMessageVisibility(deletedMessageVisibility)
@@ -76,7 +85,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     view.setMessageRetryHandler { onEvent(RetryMessage(it)) }
     view.setMessageReactionHandler { message, reactionType ->
-        onEvent(MessageReaction(message, reactionType, enforceUnique = true))
+        onEvent(MessageReaction(message, reactionType, enforceUnique = enforceUniqueReactions))
     }
     view.setUserMuteHandler { onEvent(MuteUser(it)) }
     view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }

@@ -22,7 +22,7 @@
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
             />
 
-        <FrameLayout
+        <io.getstream.chat.android.ui.common.internal.TouchInterceptingFrameLayout
             android:id="@+id/messageContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1568,6 +1568,7 @@ public class ChatClient internal constructor(
      *
      * @return String formatted header that contains all the information.
      */
+    @InternalStreamChatApi
     public fun buildSdkTrackingHeaders(): String {
         val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
         val buildModel = Build.MODEL
@@ -1575,7 +1576,7 @@ public class ChatClient internal constructor(
         val apiLevel = Build.VERSION.SDK_INT
         val osName = "Android ${Build.VERSION.RELEASE}"
 
-        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""
+        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""
     }
 
     @CheckResult
@@ -2436,9 +2437,19 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
+        /**
+         * Header used to track which SDK is being used.
+         */
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        /**
+         * Flag used to track whether offline support is enabled.
+         */
+        @InternalStreamChatApi
+        @JvmStatic
+        public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"

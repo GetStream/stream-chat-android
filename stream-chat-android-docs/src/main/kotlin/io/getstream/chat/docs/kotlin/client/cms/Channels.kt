@@ -76,7 +76,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
         fun createChannelWithListOfMembers() {
             client.createChannel(
                 channelType = "messaging",
-                channelId = "general",
+                channelId = "",
                 memberIds = listOf("thierry", "tomasso"),
                 extraData = emptyMap()
             ).enqueue { result ->

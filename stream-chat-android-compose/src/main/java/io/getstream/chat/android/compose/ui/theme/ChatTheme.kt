@@ -26,6 +26,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import coil.ImageLoader
 import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
@@ -92,6 +93,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
+ * @param imageLoader [ImageLoader] used by Coil to load images.
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
  * @param content The content shown within the theme wrapper.
  */
@@ -104,7 +106,9 @@ public fun ChatTheme(
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(
+        LocalContext.current
+    ),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -113,6 +117,7 @@ public fun ChatTheme(
         typography = typography,
         attachmentFactories = attachmentFactories
     ),
+    imageLoader: ImageLoader = StreamCoilImageLoader.imageLoader(LocalContext.current),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     content: @Composable () -> Unit,
 ) {
@@ -132,7 +137,7 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
-        LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current),
+        LocalImageLoader provides imageLoader,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
     ) {
         content()

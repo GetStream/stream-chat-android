@@ -23,12 +23,15 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
-import kotlinx.coroutines.test.runBlockingTest
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepositoryImpl
+import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
+import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -38,19 +41,22 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@ExperimentalCoroutinesApi
 internal class QueryChannelsImplRepositoryTest {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private lateinit var dao: QueryChannelsDao
-    private lateinit var sut: DatabaseQueryChannelsRepository
+    private lateinit var sut: QueryChannelsRepositoryImpl
 
     @BeforeEach
     fun before() {
         dao = mock()
-        sut = DatabaseQueryChannelsRepository(dao)
+        sut = QueryChannelsRepositoryImpl(dao)
     }
 
     @Test
-    fun `When insert Should insert to DB`() = runBlockingTest {
+    fun `When insert Should insert to DB`() = runTest {
         sut.insertQueryChannels(
             randomQueryChannelsSpec(
                 cids = setOf("cid1", "cid2"),
@@ -65,7 +71,7 @@ internal class QueryChannelsImplRepositoryTest {
     }
 
     @Test
-    fun `Given query channels spec in DB When select by id Should return not null result`() = runBlockingTest {
+    fun `Given query channels spec in DB When select by id Should return not null result`() = runTest {
         whenever(dao.select(any())) doReturn randomQueryChannelsEntity(
             id = "id1",
             filter = Filters.contains("cid", "cid1"),
@@ -83,7 +89,7 @@ internal class QueryChannelsImplRepositoryTest {
     }
 
     @Test
-    fun `Given no row in DB with such id When select by id Should return null`() = runBlockingTest {
+    fun `Given no row in DB with such id When select by id Should return null`() = runTest {
         whenever(dao.select(any())) doReturn null
 
         val result = sut.selectBy(NeutralFilterObject, QuerySort())

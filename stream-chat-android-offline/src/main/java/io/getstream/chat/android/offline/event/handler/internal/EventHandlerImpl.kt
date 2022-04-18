@@ -80,6 +80,8 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.extensions.mergeReactions
 import io.getstream.chat.android.offline.extensions.internal.setMember
+import io.getstream.chat.android.offline.extensions.internal.mergeReactions
+import io.getstream.chat.android.offline.extensions.internal.updateMembers
 import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -380,23 +382,47 @@ internal class EventHandlerImpl(
                 }
                 is MemberAddedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
+                        batch.addChannel(
+                            it.apply {
+                                updateMembers(
+                                    userId = event.member.user.id,
+                                    member = event.member,
+                                    isUpdate = false
+                                )
+                            }
+                        )
                     }
                 }
                 is MemberUpdatedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
+                        batch.addChannel(
+                            it.apply {
+                                updateMembers(
+                                    userId = event.member.user.id,
+                                    member = event.member,
+                                    isUpdate = true
+                                )
+                            }
+                        )
                     }
                 }
                 is MemberRemovedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { setMember(event.user.id, null) })
+                        batch.addChannel(
+                            it.apply {
+                                updateMembers(
+                                    userId = event.user.id,
+                                    member = null,
+                                    isUpdate = false
+                                )
+                            }
+                        )
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         event.user?.let { user ->
-                            channel.setMember(user.id, null)
+                            channel.updateMembers(user.id, null, isUpdate = false)
                         }
                         batch.addChannel(channel)
                     }

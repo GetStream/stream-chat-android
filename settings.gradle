@@ -17,6 +17,7 @@ include (
 		':stream-chat-android-pushprovider-firebase',
 		':stream-chat-android-pushprovider-huawei',
 		':stream-chat-android-pushprovider-xiaomi',
+		':stream-chat-android-ui-uitests'
 		':stream-chat-android-state'
 )
 

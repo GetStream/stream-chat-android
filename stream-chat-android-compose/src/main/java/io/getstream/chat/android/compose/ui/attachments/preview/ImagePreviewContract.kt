@@ -46,7 +46,7 @@ public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.
      * @return The [ImagePreviewResult] or null if it doesn't exist.
      */
     override fun parseResult(resultCode: Int, intent: Intent?): ImagePreviewResult? {
-        return intent?.getParcelableExtra(ImagePreviewActivity.KEY_IMAGE_PREVIEW_RESULT)
+        return intent?.getParcelableExtra(ImagePreviewActivity.KeyImagePreviewResult)
     }
 
     /**

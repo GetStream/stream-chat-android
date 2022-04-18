@@ -317,6 +317,7 @@ internal class ChannelLogic(
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
+        mutableState._membersCount.value = c.memberCount
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
@@ -335,6 +336,7 @@ internal class ChannelLogic(
         setWatcherCount(c.watcherCount)
 
         mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
+        mutableState._membersCount.value = c.memberCount
 
         updateReads(c.read)
 
@@ -398,7 +400,7 @@ internal class ChannelLogic(
      * @param message [Message].
      */
     internal fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = GlobalMutableState.getOrCreate().user.value?.id ?: return
+        val currentUserId = globalMutableState.user.value?.id ?: return
 
         val shouldIncrementUnreadCount =
             message.shouldIncrementUnreadCount(
@@ -631,6 +633,7 @@ internal class ChannelLogic(
 
     private fun deleteMember(userId: String) {
         mutableState._members.value = mutableState._members.value - userId
+        mutableState._membersCount.value -= 1
     }
 
     private fun upsertMembers(members: List<Member>) {
@@ -771,13 +774,18 @@ internal class ChannelLogic(
             is MemberRemovedEvent -> {
                 deleteMember(event.user.id)
             }
+            is NotificationRemovedFromChannelEvent -> {
+                deleteMember(event.member.user.id)
+            }
             is MemberAddedEvent -> {
+                mutableState._membersCount.value += 1
                 upsertMember(event.member)
             }
             is MemberUpdatedEvent -> {
                 upsertMember(event.member)
             }
             is NotificationAddedToChannelEvent -> {
+                mutableState._membersCount.value += event.channel.members.size
                 upsertMembers(event.channel.members)
             }
             is UserPresenceChangedEvent -> {
@@ -848,7 +856,6 @@ internal class ChannelLogic(
             is ChannelUserUnbannedEvent,
             is NotificationChannelDeletedEvent,
             is NotificationInvitedEvent,
-            is NotificationRemovedFromChannelEvent,
             is ConnectedEvent,
             is ConnectingEvent,
             is DisconnectedEvent,
