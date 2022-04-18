@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.uitests.reactions
+package io.getstream.chat.android.uitests.ui.suite
 
-import androidx.fragment.app.testing.launchFragmentInContainer
-import com.karumi.shot.FragmentScenarioUtils.waitForFragment
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import org.junit.Test
+import io.getstream.chat.android.uitests.ui.test.MessagesTests
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
 
-@InternalStreamChatApi
-class EditReactionsTest : ScreenshotTest {
-
-    @Test
-    fun reactionsTestWithNoCustomization() {
-        val fragmentScenario = launchFragmentInContainer<ComponentBrowserEditReactionsFragment>()
-        compareScreenshot(fragmentScenario.waitForFragment())
-    }
-}
+@Suite.SuiteClasses(MessagesTests::class)
+@RunWith(Suite::class)
+internal class MessagesSuite

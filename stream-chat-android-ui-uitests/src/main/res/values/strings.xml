@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">UiTests</string>
+
+    <string name="login_button_text">Login</string>
 </resources>

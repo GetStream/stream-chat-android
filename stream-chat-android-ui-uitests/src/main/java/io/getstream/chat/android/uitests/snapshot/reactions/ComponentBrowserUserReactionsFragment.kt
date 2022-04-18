@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.uitests.reactions
+package io.getstream.chat.android.uitests.snapshot.reactions
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,9 +28,9 @@ import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
-import io.getstream.chat.ui.uitests.databinding.FragmentComponentBrowserUserReactionsViewBinding
-import io.getstream.chat.ui.uitests.utils.randomMessage
-import io.getstream.chat.ui.uitests.utils.randomUser
+import io.getstream.chat.android.uitests.databinding.FragmentComponentBrowserUserReactionsViewBinding
+import io.getstream.chat.android.uitests.snapshot.utils.randomMessage
+import io.getstream.chat.android.uitests.snapshot.utils.randomUser
 
 @InternalStreamChatApi
 class ComponentBrowserUserReactionsFragment : Fragment() {

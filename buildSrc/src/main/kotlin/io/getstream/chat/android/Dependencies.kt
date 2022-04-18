@@ -128,6 +128,8 @@ object Dependencies {
     const val dokkasaurus = "io.getstream:dokkasaurus:${Versions.DOKKASAURUS}"
     const val dotenv = "io.github.cdimascio:java-dotenv:${Versions.DOTENV}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO}"
+    const val espressoContrib = "androidx.test.espresso:espresso-contrib:${Versions.ESPRESSO}"
+    const val espressoIdlingResources = "androidx.test.espresso:espresso-idling-resource:${Versions.ESPRESSO}"
     const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.FRAGMENT_TESTING}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics:${Versions.FIREBASE_CRASHLYTICS}"

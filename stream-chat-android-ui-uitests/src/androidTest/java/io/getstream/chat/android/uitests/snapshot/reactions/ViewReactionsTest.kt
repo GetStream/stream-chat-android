@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.uitests.reactions
+package io.getstream.chat.android.uitests.snapshot.reactions
 
 import androidx.core.os.bundleOf
 import androidx.fragment.app.testing.launchFragmentInContainer

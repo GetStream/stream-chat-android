@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.uitests.search
+package io.getstream.chat.android.uitests.snapshot.search
 
 import android.view.View
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -27,7 +27,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.karumi.shot.FragmentScenarioUtils.waitForFragment
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.uitests.R
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher

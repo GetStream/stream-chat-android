@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.uitests.utils
+package io.getstream.chat.android.uitests.snapshot.utils
 
 import android.content.ContentResolver
 import android.content.Context

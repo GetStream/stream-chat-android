@@ -1,4 +1,4 @@
-public final class io/getstream/chat/ui/uitests/BuildConfig {
+public final class io/getstream/chat/android/uitests/BuildConfig {
 	public static final field APPLICATION_ID Ljava/lang/String;
 	public static final field BUILD_TYPE Ljava/lang/String;
 	public static final field DEBUG Z
@@ -7,44 +7,53 @@ public final class io/getstream/chat/ui/uitests/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding : androidx/viewbinding/ViewBinding {
+public final class io/getstream/chat/android/uitests/databinding/ActivityLoginBinding : androidx/viewbinding/ViewBinding {
+	public final field loginButton Landroid/widget/Button;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/ActivityLoginBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/FrameLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/ActivityLoginBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/ActivityLoginBinding;
+}
+
+public final class io/getstream/chat/android/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding : androidx/viewbinding/ViewBinding {
 	public final field editReactionsView1 Lio/getstream/chat/android/ui/message/list/reactions/edit/internal/EditReactionsView;
 	public final field editReactionsView2 Lio/getstream/chat/android/ui/message/list/reactions/edit/internal/EditReactionsView;
 	public final field editReactionsView3 Lio/getstream/chat/android/ui/message/list/reactions/edit/internal/EditReactionsView;
 	public final field editReactionsView4 Lio/getstream/chat/android/ui/message/list/reactions/edit/internal/EditReactionsView;
 	public final field pageTitle Landroid/widget/TextView;
-	public static fun bind (Landroid/view/View;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding;
 }
 
-public final class io/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserSearchViewBinding : androidx/viewbinding/ViewBinding {
+public final class io/getstream/chat/android/uitests/databinding/FragmentComponentBrowserSearchViewBinding : androidx/viewbinding/ViewBinding {
 	public final field pageTitle Landroid/widget/TextView;
 	public final field searchView Lio/getstream/chat/android/ui/search/SearchInputView;
 	public final field searchView2 Lio/getstream/chat/android/ui/search/SearchInputView;
-	public static fun bind (Landroid/view/View;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserSearchViewBinding;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserSearchViewBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserSearchViewBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserSearchViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserSearchViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserSearchViewBinding;
 }
 
-public final class io/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding : androidx/viewbinding/ViewBinding {
+public final class io/getstream/chat/android/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding : androidx/viewbinding/ViewBinding {
 	public final field pageTitle Landroid/widget/TextView;
 	public final field userReactionsView1 Lio/getstream/chat/android/ui/message/list/reactions/user/internal/UserReactionsView;
 	public final field userReactionsView2 Lio/getstream/chat/android/ui/message/list/reactions/user/internal/UserReactionsView;
 	public final field userReactionsView3 Lio/getstream/chat/android/ui/message/list/reactions/user/internal/UserReactionsView;
 	public final field userReactionsView4 Lio/getstream/chat/android/ui/message/list/reactions/user/internal/UserReactionsView;
-	public static fun bind (Landroid/view/View;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserUserReactionsViewBinding;
 }
 
-public final class io/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding : androidx/viewbinding/ViewBinding {
+public final class io/getstream/chat/android/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding : androidx/viewbinding/ViewBinding {
 	public final field pageTitle Landroid/widget/TextView;
 	public final field viewReactionsView1 Lio/getstream/chat/android/ui/message/list/reactions/view/internal/ViewReactionsView;
 	public final field viewReactionsView2 Lio/getstream/chat/android/ui/message/list/reactions/view/internal/ViewReactionsView;
@@ -52,21 +61,25 @@ public final class io/getstream/chat/ui/uitests/databinding/FragmentComponentBro
 	public final field viewReactionsView4 Lio/getstream/chat/android/ui/message/list/reactions/view/internal/ViewReactionsView;
 	public final field viewReactionsView5 Lio/getstream/chat/android/ui/message/list/reactions/view/internal/ViewReactionsView;
 	public final field viewReactionsView6 Lio/getstream/chat/android/ui/message/list/reactions/view/internal/ViewReactionsView;
-	public static fun bind (Landroid/view/View;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/ui/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
 }
 
-public final class io/getstream/chat/ui/uitests/reactions/ComponentBrowserViewReactionsFragmentKt {
+public final class io/getstream/chat/android/uitests/snapshot/reactions/ComponentBrowserViewReactionsFragmentKt {
 	public static final field CUSTOM_REACTIONS Ljava/lang/String;
 }
 
-public final class io/getstream/chat/ui/uitests/search/ComponentBrowserSearchViewFragment : androidx/fragment/app/Fragment {
+public final class io/getstream/chat/android/uitests/snapshot/search/ComponentBrowserSearchViewFragment : androidx/fragment/app/Fragment {
 	public fun <init> ()V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/uitests/ui/LoginActivity : androidx/appcompat/app/AppCompatActivity {
+	public fun <init> ()V
 }
 

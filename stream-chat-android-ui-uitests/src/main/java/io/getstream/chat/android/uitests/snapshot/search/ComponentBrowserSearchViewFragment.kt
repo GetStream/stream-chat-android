@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.uitests.search
+package io.getstream.chat.android.uitests.snapshot.search
 
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import io.getstream.chat.ui.uitests.databinding.FragmentComponentBrowserSearchViewBinding
+import io.getstream.chat.android.uitests.databinding.FragmentComponentBrowserSearchViewBinding
 
 class ComponentBrowserSearchViewFragment : Fragment() {
 
