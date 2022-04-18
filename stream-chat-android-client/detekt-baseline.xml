@@ -309,8 +309,9 @@
     <ID>EmptyFunctionBlock:FakeSocketService.kt$FakeSocketService${ }</ID>
     <ID>EmptyFunctionBlock:RetroError.kt$RetroError${ }</ID>
     <ID>EmptyFunctionBlock:RetroSuccess.kt$RetroSuccess${ }</ID>
-    <ID>ForbiddenComment:Call.kt$// TODO: Make internal after migrating ChatDomain</ID>
+    <ID>ForbiddenComment:ChannelStateManager.kt$ChannelStateManager$* Todo: Move this to State module</ID>
     <ID>ForbiddenComment:ChatClient.kt$ChatClient$// TODO: An InterceptedCall wrapper can be created to avoid so much code here.</ID>
+    <ID>ForbiddenComment:UploadAttachmentsAndroidWorker.kt$UploadAttachmentsAndroidWorker$//Todo: Review the !!</ID>
     <ID>LargeClass:ChatClient.kt$ChatClient</ID>
     <ID>LargeClass:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>
     <ID>LongMethod:EventAdapter.kt$EventDtoAdapter$override fun fromJson(reader: JsonReader): ChatEventDto?</ID>
@@ -329,6 +330,7 @@
     <ID>LongParameterList:ChatClient.kt$ChatClient$( public val config: ChatClientConfig, private val api: ChatApi, private val socket: ChatSocket, @property:InternalStreamChatApi public val notifications: ChatNotifications, private val tokenManager: TokenManager = TokenManagerImpl(), private val socketStateService: SocketStateService = SocketStateService(), private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper, private val userCredentialStorage: UserCredentialStorage, private val userStateService: UserStateService = UserStateService(), private val tokenUtils: TokenUtils = TokenUtils, internal val scope: CoroutineScope, internal val retryPolicy: RetryPolicy, private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(), private val appSettingsManager: AppSettingManager, )</ID>
     <ID>LongParameterList:FileUploader.kt$FileUploader$( channelType: String, channelId: String, userId: String, connectionId: String, file: File, callback: ProgressCallback, )</ID>
     <ID>LongParameterList:MoshiChatApi.kt$MoshiChatApi$( private val fileUploader: FileUploader, private val userApi: UserApi, private val guestApi: GuestApi, private val messageApi: MessageApi, private val channelApi: ChannelApi, private val deviceApi: DeviceApi, private val moderationApi: ModerationApi, private val generalApi: GeneralApi, private val configApi: ConfigApi, private val coroutineScope: CoroutineScope, )</ID>
+    <ID>LongParameterList:Mother.kt$( id: String = randomString(), cid: String = randomCID(), text: String = randomString(), html: String = randomString(), parentId: String? = randomString(), command: String? = randomString(), attachments: MutableList&lt;Attachment> = mutableListOf(), mentionedUsers: MutableList&lt;User> = mutableListOf(), replyCount: Int = randomInt(), reactionCounts: MutableMap&lt;String, Int> = mutableMapOf(), reactionScores: MutableMap&lt;String, Int> = mutableMapOf(), syncStatus: SyncStatus = randomSyncStatus(), type: String = randomString(), latestReactions: MutableList&lt;Reaction> = mutableListOf(), ownReactions: MutableList&lt;Reaction> = mutableListOf(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), deletedAt: Date? = randomDate(), updatedLocallyAt: Date? = randomDate(), createdLocallyAt: Date? = randomDate(), user: User = randomUser(), extraData: MutableMap&lt;String, Any> = mutableMapOf(), silent: Boolean = randomBoolean(), replyTo: Message? = null, showInChannel: Boolean = randomBoolean(), shadowed: Boolean = false, channelInfo: ChannelInfo? = randomChannelInfo(), replyMessageId: String? = randomString(), pinned: Boolean = randomBoolean(), pinnedAt: Date? = randomDate(), pinExpires: Date? = randomDate(), pinnedBy: User? = randomUser(), threadParticipants: List&lt;User> = emptyList(), )</ID>
     <ID>LongParameterList:QueryChannelsRequest.kt$QueryChannelsRequest$( val filter_conditions: Map&lt;*, *>, val offset: Int, val limit: Int, val sort: List&lt;Map&lt;String, Any>>, val message_limit: Int, val member_limit: Int, val state: Boolean, val watch: Boolean, val presence: Boolean, )</ID>
     <ID>LongParameterList:QueryMembersErrorHandler.kt$( errorHandlers: List&lt;QueryMembersErrorHandler>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
     <ID>LongParameterList:QueryMembersErrorHandler.kt$QueryMembersErrorHandler$( originalCall: Call&lt;List&lt;Member>>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
@@ -451,6 +453,7 @@
     <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Message>(it), QuerySort.Companion.asc&lt;Message>(it)) }</ID>
     <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Channel>(it), QuerySort.Companion.desc&lt;Channel>(it)) }</ID>
     <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Message>(it), QuerySort.Companion.desc&lt;Message>(it)) }</ID>
+    <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:RetryCall.kt$RetryCall$*</ID>
     <ID>MaxLineLength:SocketFactory.kt$SocketFactory$private</ID>
     <ID>MaxLineLength:ToggleDialogController.kt$ToggleDialogController.ToggleEvent.CommitChanges$class</ID>
@@ -474,6 +477,8 @@
     <ID>MaxLineLength:User.kt$User$*</ID>
     <ID>MaxLineLength:UserStateServiceTests.kt$UserStateServiceTests$fun</ID>
     <ID>MaxLineLength:WhenConnectUser.kt$WhenConnectUser$fun</ID>
+    <ID>MaxLineLength:WhenUploadAttachmentsTests.kt$WhenUploadAttachmentsTests$Fixture().givenAttachmentUploader(attachmentUploader).givenMessageRepository(repository).givenMessage(message)</ID>
+    <ID>MaxLineLength:WhenUploadAttachmentsTests.kt$WhenUploadAttachmentsTests$fun</ID>
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val channelId = "channelId"</ID>
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val channelType = "channelType"</ID>
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val cid = "channelType:channelId"</ID>
@@ -485,6 +490,7 @@
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val watcherCount = 3</ID>
     <ID>MemberNameEqualsClassName:EventArguments.kt$EventArguments$private fun eventArguments()</ID>
     <ID>NestedBlockDepth:ChatParser.kt$ChatParser$fun toError(okHttpResponse: Response): ChatNetworkError</ID>
+    <ID>NestedBlockDepth:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>ProtectedMemberInFinalClass:RetrofitCall.kt$RetrofitCall$protected var canceled = AtomicBoolean(false)</ID>
     <ID>ReturnCount:AttachmentHelper.kt$AttachmentHelper$public fun hasValidImageUrl(attachment: Attachment): Boolean</ID>
     <ID>ReturnCount:EventAdapter.kt$EventDtoAdapter$override fun fromJson(reader: JsonReader): ChatEventDto?</ID>
@@ -492,6 +498,7 @@
     <ID>ReturnCount:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$private fun Buffer.isProbablyUtf8(): Boolean</ID>
     <ID>ReturnCount:MoshiChatParser.kt$MoshiChatParser$override fun &lt;T : Any> fromJson(raw: String, clazz: Class&lt;T>): T</ID>
     <ID>ReturnCount:MoshiChatParser.kt$MoshiChatParser$override fun toJson(any: Any): String</ID>
+    <ID>ReturnCount:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>SpreadOperator:ChannelClientExtensions.kt$(*javaClassTypes, listener = listener)</ID>
     <ID>SpreadOperator:ChannelClientExtensions.kt$(lifecycleOwner, *javaClassTypes, listener = listener)</ID>
     <ID>SpreadOperator:ClientExtensions.kt$(*javaClassTypes, listener = listener)</ID>
@@ -512,9 +519,12 @@
     <ID>TooGenericExceptionCaught:TokenAuthInterceptor.kt$TokenAuthInterceptor$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:TokenManagerImpl.kt$TokenManagerImpl$t: Throwable</ID>
     <ID>TooGenericExceptionCaught:TokenUtils.kt$TokenUtils$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
     <ID>TooManyFunctions:BaseChatModule.kt$BaseChatModule</ID>
     <ID>TooManyFunctions:ChannelApi.kt$ChannelApi</ID>
     <ID>TooManyFunctions:ChannelClient.kt$ChannelClient</ID>
+    <ID>TooManyFunctions:ChannelInMemoryRepository.kt$ChannelInMemoryRepository : ChannelRepository</ID>
+    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepository</ID>
     <ID>TooManyFunctions:ChatApi.kt$ChatApi</ID>
     <ID>TooManyFunctions:ChatClient.kt$ChatClient</ID>
     <ID>TooManyFunctions:ChatClient.kt$ChatClient$Builder : ChatClientBuilder</ID>
@@ -526,6 +536,7 @@
     <ID>TooManyFunctions:EventsParser.kt$EventsParser : WebSocketListener</ID>
     <ID>TooManyFunctions:ExtraDataValidator.kt$ExtraDataValidator : ChatApi</ID>
     <ID>TooManyFunctions:Filters.kt$Filters$Filters</ID>
+    <ID>TooManyFunctions:Message.kt$io.getstream.chat.android.client.extensions.Message.kt</ID>
     <ID>TooManyFunctions:MessageApi.kt$MessageApi</ID>
     <ID>TooManyFunctions:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler : NotificationHandler</ID>
     <ID>TooManyFunctions:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>

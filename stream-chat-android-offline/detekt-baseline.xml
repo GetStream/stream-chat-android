@@ -67,9 +67,7 @@
     <ID>LongParameterList:OfflinePlugin.kt$OfflinePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, private val deleteReactionListener: DeleteReactionListener, private val sendReactionListener: SendReactionListener, private val deleteMessageListener: DeleteMessageListener, private val sendGiphyListener: SendGiphyListener, private val shuffleGiphyListener: ShuffleGiphyListener, private val sendMessageListener: SendMessageListener, private val queryMembersListener: QueryMembersListener, private val typingEventListener: TypingEventListener, private val createChannelListener: CreateChannelListener, )</ID>
     <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
     <ID>LongParameterList:TestDataHelper.kt$( year: Int, month: Int, date: Int, hourOfDay: Int = 0, minute: Int = 0, seconds: Int = 0, )</ID>
-    <ID>MagicNumber:AnyChannelPaginationRequest.kt$AnyChannelPaginationRequest$30</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
-    <ID>MagicNumber:RepositoryFactory.kt$RepositoryFactory$100</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
     <ID>MagicNumber:TypingEventListenerImpl.kt$TypingEventListenerImpl$3000</ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>
@@ -98,6 +96,10 @@
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$List(positiveRandomInt(10)) { randomChannel(type = randomString(20) + stringQuery + randomString(20)) }</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
+    <ID>MaxLineLength:DatabaseChannelConfigRepository.kt$DatabaseChannelConfigRepository$internal</ID>
+    <ID>MaxLineLength:DatabaseMessageRepository.kt$DatabaseMessageRepository$// the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)</ID>
+    <ID>MaxLineLength:DatabaseQueryChannelsRepository.kt$DatabaseQueryChannelsRepository$internal</ID>
+    <ID>MaxLineLength:DatabaseRepositoryFactory.kt$DatabaseRepositoryFactory$)</ID>
     <ID>MaxLineLength:DefaultChatEventHandlerTest.kt$DefaultChatEventHandlerTest$fun</ID>
     <ID>MaxLineLength:DefaultInterceptor.kt$DefaultInterceptor$*</ID>
     <ID>MaxLineLength:DeleteMessageListenerImpl.kt$DeleteMessageListenerImpl$*</ID>
@@ -112,7 +114,6 @@
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
     <ID>MaxLineLength:GlobalMutableState.kt$GlobalMutableState.Companion$*</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
-    <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt; :dateFilter || createdLocallyAt &lt; :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt;= :dateFilter || createdLocallyAt &lt;= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
@@ -121,7 +122,6 @@
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
     <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
-    <ID>MaxLineLength:MessageRepository.kt$MessageRepositoryImpl$// the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)</ID>
     <ID>MaxLineLength:MessagesState.kt$MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:NonMemberChatEventHandlerTest.kt$NonMemberChatEventHandlerTest$fun</ID>
@@ -133,7 +133,6 @@
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
     <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
     <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
-    <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:ReactionDao.kt$ReactionDao$@Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")</ID>
     <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade$lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)</ID>
     <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade.Companion$requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }</ID>
@@ -162,32 +161,24 @@
     <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$*</ID>
     <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$else</ID>
     <ID>MaxLineLength:TypingEventsTest.kt$TypingEventsTest$fun</ID>
-    <ID>MaxLineLength:UploadAttachmentsNetworkType.kt$UploadAttachmentsNetworkType$* An enumeration of various network types used as a constraint in [io.getstream.chat.android.offline.internal.message.attachments.UploadAttachmentsAndroidWorker].</ID>
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
     <ID>MaxLineLength:WhenEnrichChannel.kt$WhenEnrichChannel$fun</ID>
-    <ID>MaxLineLength:WhenUploadAttachmentsTests.kt$WhenUploadAttachmentsTests$fun</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
-    <ID>NestedBlockDepth:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
-    <ID>PrintStackTrace:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e</ID>
     <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$ internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
-    <ID>ReturnCount:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
-    <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
-    <ID>TooManyFunctions:ChannelLogic.kt$ChannelLogic : QueryChannelListener</ID>
-    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepository</ID>
-    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepositoryImpl : ChannelRepository</ID>
+    <ID>TooManyFunctions:ChannelLogic.kt$ChannelLogic : QueryChannelListenerChannelStateManager</ID>
+    <ID>TooManyFunctions:DatabaseChannelRepository.kt$DatabaseChannelRepository : ChannelRepository</ID>
+    <ID>TooManyFunctions:DatabaseMessageRepository.kt$DatabaseMessageRepository : MessageRepository</ID>
+    <ID>TooManyFunctions:DatabaseUserRepository.kt$DatabaseUserRepository : UserRepository</ID>
     <ID>TooManyFunctions:EventHandlerImpl.kt$EventHandlerImpl</ID>
-    <ID>TooManyFunctions:Message.kt$io.getstream.chat.android.offline.extensions.internal.Message.kt</ID>
     <ID>TooManyFunctions:MessageDao.kt$MessageDao</ID>
-    <ID>TooManyFunctions:MessageRepository.kt$MessageRepositoryImpl : MessageRepository</ID>
     <ID>TooManyFunctions:QueryChannelsLogic.kt$QueryChannelsLogic</ID>
     <ID>TooManyFunctions:RepositoryFacade.kt$RepositoryFacade : UserRepositoryChannelRepositoryReactionRepositoryMessageRepositoryChannelConfigRepositoryQueryChannelsRepositorySyncStateRepositoryAttachmentRepository</ID>
     <ID>TooManyFunctions:SyncManager.kt$SyncManager</ID>
-    <ID>TooManyFunctions:UserRepository.kt$UserRepositoryImpl : UserRepository</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
