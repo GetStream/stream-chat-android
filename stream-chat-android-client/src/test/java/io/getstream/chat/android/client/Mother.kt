@@ -18,15 +18,26 @@ package io.getstream.chat.android.client
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
+import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.test.positiveRandomLong
+import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import org.mockito.kotlin.mock
+import java.util.Date
 import java.util.UUID
 
 internal object Mother {
@@ -70,3 +81,105 @@ internal object Mother {
         }()
     }
 }
+
+
+internal fun randomMessage(
+    id: String = randomString(),
+    cid: String = randomCID(),
+    text: String = randomString(),
+    html: String = randomString(),
+    parentId: String? = randomString(),
+    command: String? = randomString(),
+    attachments: MutableList<Attachment> = mutableListOf(),
+    mentionedUsers: MutableList<User> = mutableListOf(),
+    replyCount: Int = randomInt(),
+    reactionCounts: MutableMap<String, Int> = mutableMapOf(),
+    reactionScores: MutableMap<String, Int> = mutableMapOf(),
+    syncStatus: SyncStatus = randomSyncStatus(),
+    type: String = randomString(),
+    latestReactions: MutableList<Reaction> = mutableListOf(),
+    ownReactions: MutableList<Reaction> = mutableListOf(),
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    deletedAt: Date? = randomDate(),
+    updatedLocallyAt: Date? = randomDate(),
+    createdLocallyAt: Date? = randomDate(),
+    user: User = randomUser(),
+    extraData: MutableMap<String, Any> = mutableMapOf(),
+    silent: Boolean = randomBoolean(),
+    replyTo: Message? = null,
+    showInChannel: Boolean = randomBoolean(),
+    shadowed: Boolean = false,
+    channelInfo: ChannelInfo? = randomChannelInfo(),
+    replyMessageId: String? = randomString(),
+    pinned: Boolean = randomBoolean(),
+    pinnedAt: Date? = randomDate(),
+    pinExpires: Date? = randomDate(),
+    pinnedBy: User? = randomUser(),
+    threadParticipants: List<User> = emptyList(),
+): Message = Message(
+    id = id,
+    cid = cid,
+    text = text,
+    html = html,
+    parentId = parentId,
+    command = command,
+    attachments = attachments,
+    mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
+    mentionedUsers = mentionedUsers,
+    replyCount = replyCount,
+    reactionCounts = reactionCounts,
+    reactionScores = reactionScores,
+    syncStatus = syncStatus,
+    type = type,
+    latestReactions = latestReactions,
+    ownReactions = ownReactions,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    updatedLocallyAt = updatedLocallyAt,
+    createdLocallyAt = createdLocallyAt,
+    user = user,
+    extraData = extraData,
+    silent = silent,
+    replyTo = replyTo,
+    showInChannel = showInChannel,
+    shadowed = shadowed,
+    channelInfo = channelInfo,
+    replyMessageId = replyMessageId,
+    pinned = pinned,
+    pinnedAt = pinnedAt,
+    pinExpires = pinExpires,
+    pinnedBy = pinnedBy,
+    threadParticipants = threadParticipants,
+)
+
+internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
+    (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
+
+internal fun randomDate(): Date = Date(positiveRandomLong())
+
+internal fun randomChannelInfo(
+    cid: String? = randomString(),
+    id: String? = randomString(),
+    type: String = randomString(),
+    memberCount: Int = randomInt(),
+    name: String? = randomString(),
+): ChannelInfo = ChannelInfo(
+    cid = cid,
+    id = id,
+    type = type,
+    memberCount = memberCount,
+    name = name
+)
+
+internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
+    return KFixture(fixture) {
+        sameInstance(
+            Attachment.UploadState::class.java,
+            Attachment.UploadState.Success
+        )
+    } <Attachment>().apply(attachmentBuilder)
+}
+
+private val fixture = JFixture()
