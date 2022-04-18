@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
@@ -148,29 +147,6 @@ internal class RepositoryFacade(
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
-    }
-
-    internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        selectChannelWithoutMessages(cid)?.also { channel ->
-            val messageCreatedAt = checkNotNull(
-                lastMessage.createdAt
-                    ?: lastMessage.createdLocallyAt
-            ) { "created at cant be null, be sure to set message.createdAt" }
-
-            val oldLastMessage = channel.lastMessage
-            val updateNeeded = if (oldLastMessage != null) {
-                lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)
-            } else {
-                true
-            }
-
-            if (updateNeeded) {
-                channel.apply {
-                    lastMessageAt = messageCreatedAt
-                    messages = listOf(lastMessage)
-                }.also { channelsRepository.insertChannel(it) }
-            }
-        }
     }
 
     internal companion object {
