@@ -25,12 +25,11 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
-/* Todo: Evaluate if this class need to be public at the end of the refactor */
-public class AttachmentUploader(
+internal class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
 
-    public suspend fun uploadAttachment(
+    suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,

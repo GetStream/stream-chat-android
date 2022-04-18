@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import androidx.annotation.VisibleForTesting
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member

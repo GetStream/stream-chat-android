@@ -37,11 +37,13 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Dat
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 
+private const val DEFAULT_CACHE_SIZE = 100
+
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User?,
 ): RepositoryFactory {
-    override fun userRepository(): UserRepository = DatabaseUserRepository(database.userDao(), 100)
+    override fun userRepository(): UserRepository = DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE)
 
     override fun channelConfigRepository(): ChannelConfigRepository =
         DatabaseChannelConfigRepository(database.channelConfigDao())
@@ -49,14 +51,14 @@ internal class DatabaseRepositoryFactory(
     override fun channelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, 100)
+    ): ChannelRepository = DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
 
     override fun queryChannelsRepository(): QueryChannelsRepository =
         DatabaseQueryChannelsRepository(database.queryChannelsDao())
 
     override fun messageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = DatabaseMessageRepository(database.messageDao(), getUser, currentUser, 100)
+    ): MessageRepository = DatabaseMessageRepository(database.messageDao(), getUser, currentUser, DEFAULT_CACHE_SIZE)
 
     override fun reactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         DatabaseReactionRepository(database.reactionDao(), getUser)
