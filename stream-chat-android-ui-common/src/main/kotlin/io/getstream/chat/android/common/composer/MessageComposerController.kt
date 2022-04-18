@@ -73,6 +73,10 @@ public class MessageComposerController(
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
+     *
+     * We use the [DispatcherProvider.Immediate] variant here to make sure the UI updates don't go through the
+     * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing really
+     * fast.
      */
     private val scope = CoroutineScope(DispatcherProvider.Main)
 
