@@ -4,17 +4,23 @@ import io.getstream.chat.android.client.persistence.repository.factory.InMemoryR
 import io.getstream.chat.android.client.persistence.repository.factory.RepositoryFactory
 
 public class RepositoryProvider private constructor(
-    private val repositoryFactory: RepositoryFactory
+    private val repositoryFactory: RepositoryFactory,
 ) : RepositoryFactory by repositoryFactory {
 
     public companion object {
 
-        private var instance: RepositoryProvider = RepositoryProvider(InMemoryRepositoryFactory())
+        private var instance: RepositoryProvider? = null
+
+        public fun changeRepositoryFactoryIfNotSet(repositoryFactory: RepositoryFactory) {
+            if (instance == null) {
+                instance = RepositoryProvider(repositoryFactory)
+            }
+        }
 
         public fun changeRepositoryFactory(repositoryFactory: RepositoryFactory) {
             instance = RepositoryProvider(repositoryFactory)
         }
 
-        public fun get(): RepositoryProvider = instance
+        public fun get(): RepositoryProvider = instance ?: RepositoryProvider(InMemoryRepositoryFactory())
     }
 }

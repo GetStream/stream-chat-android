@@ -96,7 +96,7 @@ public class StreamOfflinePluginFactory(
 
         val repositoryFactory = createRepositoryFactory(scope, appContext, user, config.persistenceEnabled)
 
-        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
+        RepositoryProvider.changeRepositoryFactoryIfNotSet(repositoryFactory)
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
