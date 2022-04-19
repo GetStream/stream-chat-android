@@ -12,6 +12,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
+/**
+ * Task called to update an specified changelog. It takes most recent section and attributed a version to it.
+ * Use this after the release is done.
+ */
 open class ChangelogTask : DefaultTask() {
 
     @Input

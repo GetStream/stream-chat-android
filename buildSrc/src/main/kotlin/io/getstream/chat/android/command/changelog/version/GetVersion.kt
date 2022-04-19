@@ -5,6 +5,9 @@ import io.getstream.chat.android.command.utils.MINOR_VERSION_MARKER
 import io.getstream.chat.android.command.utils.PATCH_VERSION_MARKER
 import java.io.File
 
+/**
+ * Gets the current version of the SDK as a String
+ */
 fun getCurrentVersion(file: File): String {
     val currentVersion = file.readLines()
         .filter { line ->
