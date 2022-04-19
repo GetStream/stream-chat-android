@@ -17,11 +17,17 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.core.internal.StreamHandsOff
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter] for
  * special [extraData] handling.
  */
+@StreamHandsOff(
+    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
+        "content of [extraData] map"
+)
+@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class AttachmentDto(
     val asset_url: String?,

@@ -16,12 +16,13 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class SendActionRequest(
-    val channel_id: String,
-    val message_id: String,
-    val type: String,
-    val form_data: Map<Any, Any>,
+    @Json(name = "channel_id") val channelId: String,
+    @Json(name = "message_id") val messageId: String,
+    @Json(name = "type") val type: String,
+    @Json(name = "form_data") val formData: Map<Any, Any>,
 )

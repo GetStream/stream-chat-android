@@ -71,7 +71,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             return false
         }
         val keys = messages.keys
-        return keys.contains(Pagination.GREATER_THAN.toString()) || keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())
+        return keys.contains(Pagination.GREATER_THAN.toString()) ||
+            keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())
     }
 
     public fun filteringOlderMessages(): Boolean {
@@ -79,7 +80,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             return false
         }
         val keys = messages.keys
-        return keys.contains(Pagination.LESS_THAN.toString()) || keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
+        return keys.contains(Pagination.LESS_THAN.toString()) ||
+            keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
     }
 
     /**

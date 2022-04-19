@@ -22,9 +22,9 @@ import io.getstream.chat.android.client.models.BannedUser
 internal fun BannedUserResponse.toDomain(): BannedUser {
     return BannedUser(
         user = user.toDomain(),
-        bannedBy = banned_by?.toDomain(),
+        bannedBy = bannedBy?.toDomain(),
         channel = channel?.toDomain(),
-        createdAt = created_at,
+        createdAt = createdAt,
         expires = expires,
         shadow = shadow,
         reason = reason,

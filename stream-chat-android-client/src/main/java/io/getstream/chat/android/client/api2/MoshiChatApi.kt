@@ -193,7 +193,7 @@ internal class MoshiChatApi(
             connectionId = connectionId,
             request = ReactionRequest(
                 reaction = reaction.toDto(),
-                enforce_unique = enforceUnique,
+                enforceUnique = enforceUnique,
             ),
         ).map { response -> response.reaction.toDomain() }
     }
@@ -250,8 +250,8 @@ internal class MoshiChatApi(
         return moderationApi.muteUser(
             connectionId = connectionId,
             body = MuteUserRequest(
-                target_id = userId,
-                user_id = this.userId,
+                targetId = userId,
+                userId = this.userId,
                 timeout = timeout,
             ),
         ).map { response -> response.mute.toDomain() }
@@ -261,8 +261,8 @@ internal class MoshiChatApi(
         return moderationApi.unmuteUser(
             connectionId = this.connectionId,
             body = MuteUserRequest(
-                target_id = userId,
-                user_id = this.userId,
+                targetId = userId,
+                userId = this.userId,
                 timeout = null
             ),
         ).toUnitCall()
@@ -276,7 +276,7 @@ internal class MoshiChatApi(
         return moderationApi.muteChannel(
             connectionId = connectionId,
             body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
+                channelCid = "$channelType:$channelId",
                 expiration = expiration
             ),
         ).toUnitCall()
@@ -289,7 +289,7 @@ internal class MoshiChatApi(
         return moderationApi.unmuteChannel(
             connectionId = connectionId,
             body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
+                channelCid = "$channelType:$channelId",
                 expiration = null
             ),
         ).toUnitCall()
@@ -414,7 +414,7 @@ internal class MoshiChatApi(
         return moderationApi.banUser(
             connectionId = connectionId,
             body = BanUserRequest(
-                target_user_id = targetId,
+                targetUserId = targetId,
                 timeout = timeout,
                 reason = reason,
                 type = channelType,
@@ -452,14 +452,14 @@ internal class MoshiChatApi(
         return moderationApi.queryBannedUsers(
             connectionId = connectionId,
             payload = QueryBannedUsersRequest(
-                filter_conditions = filter.toMap(),
+                filterConditions = filter.toMap(),
                 sort = sort.toDto(),
                 offset = offset,
                 limit = limit,
-                created_at_after = createdAtAfter,
-                created_at_after_or_equal = createdAtAfterOrEqual,
-                created_at_before = createdAtBefore,
-                created_at_before_or_equal = createdAtBeforeOrEqual,
+                createdAtAfter = createdAtAfter,
+                createdAtAfterOrEqual = createdAtAfterOrEqual,
+                createdAtBefore = createdAtBefore,
+                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
             )
         ).map { response -> response.bans.map(BannedUserResponse::toDomain) }
     }
@@ -664,14 +664,14 @@ internal class MoshiChatApi(
 
     private fun flattenChannel(response: ChannelResponse): Channel {
         return response.channel.toDomain().apply {
-            watcherCount = response.watcher_count
+            watcherCount = response.watcherCount
             read = response.read.map(DownstreamChannelUserRead::toDomain)
             members = response.members.map(DownstreamMemberDto::toDomain)
             messages = response.messages.map { it.toDomain().enrichWithCid(cid) }
             watchers = response.watchers.map(DownstreamUserDto::toDomain)
             hidden = response.hidden
-            hiddenMessagesBefore = response.hide_messages_before
-            unreadCount = response.read.firstOrNull { it.user.id == userId }?.unread_messages
+            hiddenMessagesBefore = response.hideMessagesBefore
+            unreadCount = response.read.firstOrNull { it.user.id == userId }?.unreadMessages
         }
     }
 
@@ -697,10 +697,10 @@ internal class MoshiChatApi(
             messageId = request.messageId,
             connectionId = connectionId,
             request = SendActionRequest(
-                channel_id = request.channelId,
-                message_id = request.messageId,
+                channelId = request.channelId,
+                messageId = request.messageId,
                 type = request.type,
-                form_data = request.formData,
+                formData = request.formData,
             ),
         ).map { response -> response.message.toDomain() }
     }
@@ -729,7 +729,7 @@ internal class MoshiChatApi(
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
             body = GuestUserRequest.create(userId, userName),
-        ).map { response -> GuestUser(response.user.toDomain(), response.access_token) }
+        ).map { response -> GuestUser(response.user.toDomain(), response.accessToken) }
     }
 
     override fun translate(messageId: String, language: String): Call<Message> {
@@ -742,8 +742,8 @@ internal class MoshiChatApi(
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = request.channelFilter.toMap(),
-            message_filter_conditions = request.messageFilter.toMap(),
+            filterConditions = request.channelFilter.toMap(),
+            messageFilterConditions = request.messageFilter.toMap(),
             offset = request.offset,
             limit = request.limit,
             next = request.next,
@@ -769,8 +769,8 @@ internal class MoshiChatApi(
         sort: QuerySort<Message>?,
     ): Call<SearchMessagesResult> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = channelFilter.toMap(),
-            message_filter_conditions = messageFilter.toMap(),
+            filterConditions = channelFilter.toMap(),
+            messageFilterConditions = messageFilter.toMap(),
             offset = offset,
             limit = limit,
             next = next,
@@ -799,12 +799,12 @@ internal class MoshiChatApi(
         if (connectionId.isEmpty()) return noConnectionIdError()
 
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = query.filter.toMap(),
+            filterConditions = query.filter.toMap(),
             offset = query.offset,
             limit = query.limit,
             sort = query.sort,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -845,7 +845,7 @@ internal class MoshiChatApi(
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = queryUsers.filter.toMap(),
+            filterConditions = queryUsers.filter.toMap(),
             offset = queryUsers.offset,
             limit = queryUsers.limit,
             sort = queryUsers.sort,
@@ -869,7 +869,7 @@ internal class MoshiChatApi(
         val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
             type = channelType,
             id = channelId,
-            filter_conditions = filter.toMap(),
+            filterConditions = filter.toMap(),
             offset = offset,
             limit = limit,
             sort = sort.toDto(),

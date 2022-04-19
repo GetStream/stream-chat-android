@@ -16,14 +16,15 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class ChannelInfoDto(
-    val cid: String?,
-    val id: String?,
-    val member_count: Int = 0,
-    val name: String?,
-    val type: String?,
-    val image: String?,
+    @Json(name = "cid") val cid: String?,
+    @Json(name = "id") val id: String?,
+    @Json(name = "member_count") val memberCount: Int = 0,
+    @Json(name = "name") val name: String?,
+    @Json(name = "type") val type: String?,
+    @Json(name = "image") val image: String?,
 )

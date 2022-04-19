@@ -16,12 +16,13 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class SearchWarningDto(
-    val channel_search_cids: List<String>,
-    val channel_search_count: Int,
-    val warning_code: Int,
-    val warning_description: String,
+    @Json(name = "channel_search_cids") val channelSearchCids: List<String>,
+    @Json(name = "channel_search_count") val channelSearchCount: Int,
+    @Json(name = "warning_code") val warningCode: Int,
+    @Json(name = "warning_description") val warningDescription: String,
 )

@@ -31,7 +31,7 @@ internal fun SocketErrorResponse.ErrorResponse.toDomain(): ErrorResponse {
     return ErrorResponse(
         code = dto.code,
         message = dto.message,
-        statusCode = dto.StatusCode,
+        statusCode = dto.statusCode,
     ).apply {
         duration = dto.duration
     }

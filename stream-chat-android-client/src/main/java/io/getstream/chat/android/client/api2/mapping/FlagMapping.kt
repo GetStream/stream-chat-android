@@ -22,14 +22,14 @@ import io.getstream.chat.android.client.models.Flag
 internal fun DownstreamFlagDto.toDomain(): Flag {
     return Flag(
         user = user.toDomain(),
-        targetUser = target_user?.toDomain(),
-        targetMessageId = target_message_id,
-        reviewedBy = created_at,
-        createdByAutomod = created_by_automod,
-        createdAt = approved_at,
-        updatedAt = updated_at,
-        reviewedAt = reviewed_at,
-        approvedAt = reviewed_by,
-        rejectedAt = rejected_at,
+        targetUser = targetUser?.toDomain(),
+        targetMessageId = targetMessageId,
+        reviewedBy = createdAt,
+        createdByAutomod = createdByAutomod,
+        createdAt = approvedAt,
+        updatedAt = updatedAt,
+        reviewedAt = reviewedAt,
+        approvedAt = approvedAt,
+        rejectedAt = rejectedAt,
     )
 }

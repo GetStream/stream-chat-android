@@ -23,11 +23,11 @@ import io.getstream.chat.android.client.models.PushProvider
 internal fun Device.toDto(): DeviceDto =
     DeviceDto(
         id = token,
-        push_provider = pushProvider.key,
+        pushProvider = pushProvider.key,
     )
 
 internal fun DeviceDto.toDomain(): Device =
     Device(
         token = id,
-        pushProvider = PushProvider.fromKey(push_provider),
+        pushProvider = PushProvider.fromKey(pushProvider),
     )

@@ -16,13 +16,20 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter] for
  * special [extraData] handling.
  */
+@StreamHandsOff(
+    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
+        "content of [extraData] map"
+)
+@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class UpstreamUserDto(
     val banned: Boolean,
@@ -41,6 +48,11 @@ internal data class UpstreamUserDto(
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter] for
  * special [extraData] handling.
  */
+@StreamHandsOff(
+    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
+        "content of [extraData] map"
+)
+@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserDto(
     val id: String,
@@ -66,7 +78,7 @@ internal data class DownstreamUserDto(
 
 @JsonClass(generateAdapter = true)
 internal data class PartialUpdateUserDto(
-    val id: String,
-    val set: Map<String, Any>,
-    val unset: List<String>,
+    @Json(name = "id") val id: String,
+    @Json(name = "set") val set: Map<String, Any>,
+    @Json(name = "unset") val unset: List<String>,
 )
