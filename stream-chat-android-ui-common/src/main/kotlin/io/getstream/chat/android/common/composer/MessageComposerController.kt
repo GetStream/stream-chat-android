@@ -78,7 +78,7 @@ public class MessageComposerController(
      * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing really
      * fast.
      */
-    private val scope = CoroutineScope(DispatcherProvider.Main)
+    private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
     /**
      * Buffers typing updates.
