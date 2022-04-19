@@ -93,7 +93,6 @@ public interface ChannelRepository {
      */
     public suspend fun updateMembersForChannel(cid: String, members: List<Member>)
 
-
     public suspend fun evictChannel(cid: String)
 
     @VisibleForTesting
