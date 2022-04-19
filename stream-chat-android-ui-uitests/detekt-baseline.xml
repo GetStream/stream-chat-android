@@ -7,6 +7,7 @@
     <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>
     <ID>MagicNumber:DataProvider.kt$100000L</ID>
     <ID>MagicNumber:DataProvider.kt$99</ID>
+    <ID>MaxLineLength:LoginActivity.kt$LoginActivity$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.2_5Hae3LKjVSfA0gQxXlZn54Bq6xDlhjPx2J7azUNB4"</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>
