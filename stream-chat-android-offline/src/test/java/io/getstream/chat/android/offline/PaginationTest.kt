@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.ascByName
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.descByName
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.extensions.internal.applyPagination
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.utils.calendar
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest

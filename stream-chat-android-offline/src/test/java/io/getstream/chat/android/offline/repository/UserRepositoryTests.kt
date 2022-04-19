@@ -16,13 +16,16 @@
 
 package io.getstream.chat.android.offline.repository
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule

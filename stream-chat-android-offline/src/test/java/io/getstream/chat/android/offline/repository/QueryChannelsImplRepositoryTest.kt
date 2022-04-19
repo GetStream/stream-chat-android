@@ -84,7 +84,7 @@ internal class QueryChannelsImplRepositoryTest {
         result.shouldNotBeNull()
         result.filter.shouldBeInstanceOf<ContainsFilterObject>()
         (result.filter as ContainsFilterObject).fieldName shouldBeEqualTo "cid"
-        result.filter.value shouldBeEqualTo "cid1"
+        (result.filter as ContainsFilterObject).value shouldBeEqualTo "cid1"
         result.cids shouldBeEqualTo setOf("cid1")
     }
 

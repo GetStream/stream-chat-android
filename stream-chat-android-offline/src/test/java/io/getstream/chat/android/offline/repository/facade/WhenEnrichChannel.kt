@@ -23,6 +23,7 @@ import io.getstream.chat.android.offline.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
