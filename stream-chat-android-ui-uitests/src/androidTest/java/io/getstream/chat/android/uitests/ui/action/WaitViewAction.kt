@@ -72,7 +72,7 @@ class WaitViewAction private constructor(
         /**
          * The default time period to wait for the View to appear.
          */
-        private const val DEFAULT_WAIT_VIEW_TIMEOUT: Long = 3000L
+        private const val DEFAULT_WAIT_VIEW_TIMEOUT: Long = 5000L
 
         /**
          * Creates [WaitViewAction] with reasonable defaults.
