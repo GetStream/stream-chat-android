@@ -115,6 +115,7 @@ complexity:
   LongMethod:
     active: true
     threshold: 60
+    ignoreAnnotated: [ 'ParameterizedRobolectricTestRunner.Parameters' ]
   LongParameterList:
     active: true
     excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
@@ -696,6 +697,7 @@ style:
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
+    ignoreAnnotated: ['Test', 'ParameterizedTest']
   MayBeConst:
     active: true
   ModifierOrder:

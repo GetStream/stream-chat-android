@@ -27,7 +27,7 @@ import retrofit2.Retrofit
 
 internal interface ChatParser {
 
-    private val TAG: String
+    private val tag: String
         get() = ChatParser::class.java.simpleName
 
     fun toJson(any: Any): String
@@ -60,7 +60,7 @@ internal interface ChatParser {
                 ChatNetworkError.create(error.code, error.message, statusCode)
             }
         } catch (t: Throwable) {
-            ChatLogger.instance.logE(TAG, t)
+            ChatLogger.instance.logE(tag, t)
             ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)
         }
     }

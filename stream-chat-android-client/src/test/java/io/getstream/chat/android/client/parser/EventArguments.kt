@@ -104,7 +104,6 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.EventType
@@ -141,8 +140,20 @@ internal object EventArguments {
         extraData = mutableMapOf(),
     )
 
-    private val member = Member(user, role = "user", createdAt = date, updatedAt = date)
-    private val giphyCommand = Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
+    private val member = Member(
+        user,
+        role = "user",
+        createdAt = date,
+        updatedAt = date
+    )
+
+    private val giphyCommand = Command(
+        name = "giphy",
+        description = "Post a random gif to the channel",
+        args = "[text]",
+        set = "fun_set"
+    )
+
     private val config = Config(
         createdAt = date,
         updatedAt = date,
@@ -165,6 +176,7 @@ internal object EventArguments {
         blocklistBehavior = "flag",
         commands = mutableListOf(giphyCommand)
     )
+
     private val channel = Channel(
         id = channelId,
         type = channelType,
@@ -178,6 +190,7 @@ internal object EventArguments {
         memberCount = 1,
         config = config
     )
+
     private val message = Message(
         id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         text = "Hello",
@@ -188,6 +201,7 @@ internal object EventArguments {
         cid = channel.cid,
         type = "regular",
     )
+
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "type",
@@ -196,53 +210,389 @@ internal object EventArguments {
         userId = "bender",
         createdAt = date
     )
-    private val channelMute = ChannelMute(user, channel, date, date, null)
-    private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)
-    private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)
-    private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, null, channel)
-    private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, null, null, channel)
-    private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, message, channel)
-    private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)
-    private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)
-    private val memberAddedEvent = MemberAddedEvent(EventType.MEMBER_ADDED, date, user, cid, channelType, channelId, member)
-    private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId, member)
-    private val memberUpdatedEvent = MemberUpdatedEvent(EventType.MEMBER_UPDATED, date, user, cid, channelType, channelId, member)
-    private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message, hardDelete = false)
-    private val messageDeletedServerSideEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, null, cid, channelType, channelId, message, hardDelete = true)
-    private val messageReadEvent = MessageReadEvent(EventType.MESSAGE_READ, date, user, cid, channelType, channelId)
-    private val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, date, user, cid, channelType, channelId, message)
-    private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel, totalUnreadCount, unreadChannels)
-    private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(EventType.NOTIFICATION_CHANNEL_DELETED, date, cid, channelType, channelId, channel)
-    private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, date, cid, channelType, channelId, channel)
-    private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(EventType.NOTIFICATION_INVITE_ACCEPTED, date, cid, channelType, channelId, user, member, channel)
-    private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(EventType.NOTIFICATION_INVITE_REJECTED, date, cid, channelType, channelId, user, member, channel)
-    private val notificationInvitedEvent = NotificationInvitedEvent(EventType.NOTIFICATION_INVITED, date, cid, channelType, channelId, user, member)
-    private val notificationMarkReadEvent = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, date, user, cid, channelType, channelId, totalUnreadCount, unreadChannels)
-    private val notificationMessageNewEvent = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, date, cid, channelType, channelId, channel, message, totalUnreadCount, unreadChannels)
-    private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(EventType.NOTIFICATION_REMOVED_FROM_CHANNEL, date, user, cid, channelType, channelId, channel, member)
-    private val reactionDeletedEvent = ReactionDeletedEvent(EventType.REACTION_DELETED, date, user, cid, channelType, channelId, message, reaction)
-    private val reactionNewEvent = ReactionNewEvent(EventType.REACTION_NEW, date, user, cid, channelType, channelId, message, reaction)
-    private val reactionUpdateEvent = ReactionUpdateEvent(EventType.REACTION_UPDATED, date, user, cid, channelType, channelId, message, reaction)
-    private val typingStartEvent = TypingStartEvent(EventType.TYPING_START, date, user, cid, channelType, channelId, parentMessageId)
-    private val typingStopEvent = TypingStopEvent(EventType.TYPING_STOP, date, user, cid, channelType, channelId, parentMessageId)
-    private val channelUserBannedEvent = ChannelUserBannedEvent(EventType.USER_BANNED, date, cid, channelType, channelId, user, date)
-    private val globalUserBannedEvent = GlobalUserBannedEvent(EventType.USER_BANNED, user, date)
-    private val userDeletedEvent = UserDeletedEvent(EventType.USER_DELETED, date, user)
-    private val userPresenceChangedEvent = UserPresenceChangedEvent(EventType.USER_PRESENCE_CHANGED, date, user)
-    private val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, date, cid, watcherCount, channelType, channelId, user)
-    private val userStopWatchingEvent = UserStopWatchingEvent(EventType.USER_WATCHING_STOP, date, cid, watcherCount, channelType, channelId, user)
-    private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(EventType.USER_UNBANNED, date, user, cid, channelType, channelId)
-    private val globalUserUnbannedEvent = GlobalUserUnbannedEvent(EventType.USER_UNBANNED, date, user)
-    private val userUpdatedEvent = UserUpdatedEvent(EventType.USER_UPDATED, date, user)
-    private val healthEvent = HealthEvent(EventType.HEALTH_CHECK, date, connectionId)
-    private val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, date, user, connectionId)
-    private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)
-    private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)
-    private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)
-    private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount)
-    private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, null, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))
-    private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, null, mapOf("type" to "some.unknown.type", "created_at" to dateString))
-    private val markAllReadEvent = MarkAllReadEvent(EventType.NOTIFICATION_MARK_READ, date, user)
+
+    private val channelDeletedEvent = ChannelDeletedEvent(
+        type = EventType.CHANNEL_DELETED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        user = user
+    )
+
+    private val channelHiddenEvent = ChannelHiddenEvent(
+        type = EventType.CHANNEL_HIDDEN,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user, clearHistory = true
+    )
+
+    private val channelTruncatedEvent = ChannelTruncatedEvent(
+        type = EventType.CHANNEL_TRUNCATED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user,
+        message = null,
+        channel = channel
+    )
+    private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(
+        type = EventType.CHANNEL_TRUNCATED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = null,
+        message = null,
+        channel = channel
+    )
+    private val channelUpdatedEvent = ChannelUpdatedEvent(
+        type = EventType.CHANNEL_UPDATED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        channel = channel
+    )
+    private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(
+        type = EventType.CHANNEL_UPDATED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user,
+        message = message,
+        channel = channel
+    )
+    private val channelVisibleEvent = ChannelVisibleEvent(
+        type = EventType.CHANNEL_VISIBLE,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user
+    )
+    private val memberAddedEvent = MemberAddedEvent(
+        type = EventType.MEMBER_ADDED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        member = member
+    )
+    private val memberRemovedEvent = MemberRemovedEvent(
+        type = EventType.MEMBER_REMOVED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        member = member
+    )
+    private val memberUpdatedEvent = MemberUpdatedEvent(
+        type = EventType.MEMBER_UPDATED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        member = member
+    )
+    private val messageDeletedEvent = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message, hardDelete = false
+    )
+    private val messageDeletedServerSideEvent = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = date,
+        user = null,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message, hardDelete = true
+    )
+    private val messageReadEvent = MessageReadEvent(
+        type = EventType.MESSAGE_READ,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId
+    )
+    private val messageUpdatedEvent = MessageUpdatedEvent(
+        type = EventType.MESSAGE_UPDATED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message
+    )
+    private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(
+        type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels
+    )
+    private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_DELETED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel
+    )
+    private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel
+    )
+    private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(
+        type = EventType.NOTIFICATION_INVITE_ACCEPTED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user,
+        member = member,
+        channel = channel
+    )
+    private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(
+        type = EventType.NOTIFICATION_INVITE_REJECTED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user,
+        member = member,
+        channel = channel
+    )
+    private val notificationInvitedEvent = NotificationInvitedEvent(
+        type = EventType.NOTIFICATION_INVITED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user,
+        member = member
+    )
+    private val notificationMarkReadEvent = NotificationMarkReadEvent(
+        type = EventType.NOTIFICATION_MARK_READ,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels
+    )
+    private val notificationMessageNewEvent = NotificationMessageNewEvent(
+        type = EventType.NOTIFICATION_MESSAGE_NEW,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        message = message,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels
+    )
+    private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(
+        type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        member = member
+    )
+    private val reactionDeletedEvent = ReactionDeletedEvent(
+        type = EventType.REACTION_DELETED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        reaction = reaction
+    )
+    private val reactionNewEvent = ReactionNewEvent(
+        type = EventType.REACTION_NEW,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        reaction = reaction
+    )
+    private val reactionUpdateEvent = ReactionUpdateEvent(
+        type = EventType.REACTION_UPDATED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        reaction = reaction
+    )
+    private val typingStartEvent = TypingStartEvent(
+        type = EventType.TYPING_START,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        parentId = parentMessageId
+    )
+    private val typingStopEvent = TypingStopEvent(
+        type = EventType.TYPING_STOP,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        parentId = parentMessageId
+    )
+    private val channelUserBannedEvent = ChannelUserBannedEvent(
+        type = EventType.USER_BANNED,
+        createdAt = date,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        user = user,
+        expiration = date
+    )
+    private val globalUserBannedEvent = GlobalUserBannedEvent(
+        type = EventType.USER_BANNED,
+        user = user,
+        createdAt = date
+    )
+    private val userDeletedEvent = UserDeletedEvent(
+        type = EventType.USER_DELETED,
+        createdAt = date,
+        user = user
+    )
+    private val userPresenceChangedEvent = UserPresenceChangedEvent(
+        type = EventType.USER_PRESENCE_CHANGED,
+        createdAt = date,
+        user = user
+    )
+    private val userStartWatchingEvent = UserStartWatchingEvent(
+        type = EventType.USER_WATCHING_START,
+        createdAt = date,
+        cid = cid,
+        watcherCount = watcherCount,
+        channelType = channelType,
+        channelId = channelId,
+        user = user
+    )
+    private val userStopWatchingEvent = UserStopWatchingEvent(
+        type = EventType.USER_WATCHING_STOP,
+        createdAt = date,
+        cid = cid,
+        watcherCount = watcherCount,
+        channelType = channelType,
+        channelId = channelId,
+        user = user
+    )
+    private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(
+        type = EventType.USER_UNBANNED,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId
+    )
+    private val globalUserUnbannedEvent = GlobalUserUnbannedEvent(
+        type = EventType.USER_UNBANNED,
+        createdAt = date,
+        user = user
+    )
+    private val userUpdatedEvent = UserUpdatedEvent(
+        type = EventType.USER_UPDATED,
+        createdAt = date,
+        user = user
+    )
+    private val healthEvent = HealthEvent(
+        type = EventType.HEALTH_CHECK,
+        createdAt = date,
+        connectionId = connectionId
+    )
+    private val connectedEvent = ConnectedEvent(
+        type = EventType.HEALTH_CHECK,
+        createdAt = date,
+        me = user,
+        connectionId = connectionId
+    )
+    private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
+        createdAt = date,
+        me = user
+    )
+    private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(
+        type = EventType.NOTIFICATION_MUTES_UPDATED,
+        createdAt = date,
+        me = user
+    )
+    private val newMessageEvent = NewMessageEvent(
+        type = EventType.MESSAGE_NEW,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        watcherCount = watcherCount,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels
+    )
+    private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(
+        type = EventType.MESSAGE_NEW,
+        createdAt = date,
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        watcherCount = watcherCount
+    )
+    private val unknownEvent = UnknownEvent(
+        type = EventType.UNKNOWN,
+        createdAt = date,
+        user = null,
+        rawData = mapOf("type" to EventType.UNKNOWN, "created_at" to dateString)
+    )
+    private val otherUnknownEvent = UnknownEvent(
+        type = "some.unknown.type",
+        createdAt = date,
+        user = null,
+        rawData = mapOf("type" to "some.unknown.type", "created_at" to dateString)
+    )
+    private val markAllReadEvent = MarkAllReadEvent(
+        type = EventType.NOTIFICATION_MARK_READ,
+        createdAt = date,
+        user = user
+    )
 
     private fun eventArguments() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),

@@ -46,7 +46,8 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
  *     Filters.`in`("members", listOf(user.id))
  * )
  *
- * See <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin" target="_top">Query Channels Documentation</a>
+ * See<a href="https://getstream.io/chat/docs/query_channels/?language=kotlin" target="_top">
+ *     Query Channels Documentation</a>
  */
 public object Filters {
 
@@ -81,13 +82,15 @@ public object Filters {
     public fun greaterThan(fieldName: String, value: Any): FilterObject = GreaterThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject = GreaterThanOrEqualsFilterObject(fieldName, value)
+    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject =
+        GreaterThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
     public fun lessThan(fieldName: String, value: Any): FilterObject = LessThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun lessThanEquals(fieldName: String, value: Any): FilterObject = LessThanOrEqualsFilterObject(fieldName, value)
+    public fun lessThanEquals(fieldName: String, value: Any): FilterObject =
+        LessThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
     public fun `in`(fieldName: String, vararg values: String): FilterObject = InFilterObject(fieldName, values.toSet())
@@ -99,13 +102,15 @@ public object Filters {
     public fun `in`(fieldName: String, vararg values: Number): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(fieldName: String, vararg values: String): FilterObject = NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, vararg values: String): FilterObject =
+        NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun nin(fieldName: String, values: List<Any>): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(fieldName: String, vararg values: Number): FilterObject = NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, vararg values: Number): FilterObject =
+        NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun autocomplete(fieldName: String, value: String): FilterObject = AutocompleteFilterObject(fieldName, value)

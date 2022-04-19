@@ -41,7 +41,13 @@ internal class SocketFactory(
     fun createNormalSocket(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User): Socket =
         create(eventsParser, endpoint, apiKey, user, false)
 
-    private fun create(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): Socket {
+    private fun create(
+        eventsParser: EventsParser,
+        endpoint: String,
+        apiKey: String,
+        user: User,
+        isAnonymous: Boolean,
+    ): Socket {
         val url = buildUrl(endpoint, apiKey, user, isAnonymous)
         val request = Request.Builder().url(url).build()
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)

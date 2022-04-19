@@ -39,6 +39,7 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
 
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"
-        private val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)
+        private val STREAM_CDN_HOST_PATTERN =
+            "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)
     }
 }

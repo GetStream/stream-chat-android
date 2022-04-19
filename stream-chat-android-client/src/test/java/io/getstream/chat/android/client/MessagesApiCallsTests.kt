@@ -144,7 +144,10 @@ internal class MessagesApiCallsTests {
 
         val result = client.searchMessages(channelFilter, messageFilter, 0, 1).execute()
 
-        verifySuccess(result, SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page"))
+        verifySuccess(
+            result,
+            SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page")
+        )
     }
 
     @Test

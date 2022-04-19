@@ -24,7 +24,8 @@ import java.util.Date
  * @property user The user which has read some of the messages and may have some unread messages.
  * @property lastRead The time of the last read message.
  * @property unreadMessages How many messages are unread.
- * @property lastMessageSeenDate The time of the last message that the SDK is aware of. If new messages arrive with the createdAt newer than this one, that means that the count of unread messages should be incremented.
+ * @property lastMessageSeenDate The time of the last message that the SDK is aware of. If new messages arrive with
+ * the createdAt newer than this one, that means that the count of unread messages should be incremented.
  */
 public data class ChannelUserRead(
     override var user: User,
