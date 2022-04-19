@@ -25,12 +25,12 @@ import io.getstream.chat.android.uitests.R
 /**
  * A factory function for [MessagesRobot].
  */
-fun messagesRobot(func: MessagesRobot.() -> Unit) = MessagesRobot().apply { func() }
+internal fun messagesRobot(func: MessagesRobot.() -> Unit) = MessagesRobot().apply { func() }
 
 /**
  * A robot that simulates user behavior on the messages screen.
  */
-class MessagesRobot : BaseTestRobot() {
+internal class MessagesRobot : BaseTestRobot() {
 
     /**
      * Send a text message on the message list screen.

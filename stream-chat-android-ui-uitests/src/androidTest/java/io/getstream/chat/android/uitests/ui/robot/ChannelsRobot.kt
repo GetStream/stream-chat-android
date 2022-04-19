@@ -21,12 +21,12 @@ import io.getstream.chat.android.uitests.R
 /**
  * A factory function for [ChannelsRobot].
  */
-fun channelsRobot(func: ChannelsRobot.() -> Unit) = ChannelsRobot().apply { func() }
+internal fun channelsRobot(func: ChannelsRobot.() -> Unit) = ChannelsRobot().apply { func() }
 
 /**
  * A robot that simulates user behavior on the channels screen.
  */
-class ChannelsRobot : BaseTestRobot() {
+internal class ChannelsRobot : BaseTestRobot() {
 
     /**
      * Clicks on the first channel in the channel list.

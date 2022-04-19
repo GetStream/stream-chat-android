@@ -26,38 +26,67 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.util.TreeIterables
 import org.hamcrest.Matcher
 
+/**
+ * An actions that allows to wait for the desired view to appear.
+ *
+ * @param resId The View identifier.
+ * @param intervalMillis The interval between View lookup attempts.
+ * @param timeoutMillis The time period to wait for the View to appear.
+ */
 class WaitViewAction private constructor(
-    private val viewId: Int,
-    private val millis: Long,
+    private val resId: Int,
+    private val intervalMillis: Long,
+    private val timeoutMillis: Long,
 ) : ViewAction {
-
-    companion object {
-        fun waitId(viewId: Int, millis: Long = 5000): ViewInteraction {
-            return onView(isRoot()).perform(WaitViewAction(viewId, millis))
-        }
-    }
 
     override fun getConstraints(): Matcher<View> {
         return isRoot()
     }
 
     override fun getDescription(): String {
-        return "Waiting for $viewId"
+        return "Waiting for $resId"
     }
 
     override fun perform(uiController: UiController, view: View?) {
         uiController.loopMainThreadUntilIdle()
-        val startTime = System.currentTimeMillis()
-        val endTime = startTime + millis
-        val viewMatcher = withId(viewId)
+        val startTimeMillis = System.currentTimeMillis()
+        val endTimeMillis = startTimeMillis + timeoutMillis
+        val viewMatcher = withId(resId)
         do {
             for (child in TreeIterables.breadthFirstViewTraversal(view)) {
                 if (viewMatcher.matches(child)) {
                     return
                 }
             }
-            uiController.loopMainThreadForAtLeast(50)
-        } while (System.currentTimeMillis() < endTime)
+            uiController.loopMainThreadForAtLeast(intervalMillis)
+        } while (System.currentTimeMillis() < endTimeMillis)
         throw IllegalStateException("View waiting timed out")
+    }
+
+    companion object {
+        /**
+         * The default interval between View lookup attempts.
+         */
+        private const val DEFAULT_WAIT_VIEW_INTERVAL: Long = 50L
+
+        /**
+         * The default time period to wait for the View to appear.
+         */
+        private const val DEFAULT_WAIT_VIEW_TIMEOUT: Long = 3000L
+
+        /**
+         * Creates [WaitViewAction] with reasonable defaults.
+         *
+         * @param resId The View identifier.
+         * @param intervalMillis The interval between View lookup attempts.
+         * @param timeoutMillis The time period to wait for the View to appear.
+         */
+        fun waitForViewWithId(
+            resId: Int,
+            intervalMillis: Long = DEFAULT_WAIT_VIEW_INTERVAL,
+            timeoutMillis: Long = DEFAULT_WAIT_VIEW_TIMEOUT,
+        ): ViewInteraction {
+            return onView(isRoot()).perform(WaitViewAction(resId, intervalMillis, timeoutMillis))
+        }
     }
 }

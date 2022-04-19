@@ -21,12 +21,12 @@ import io.getstream.chat.android.uitests.R
 /**
  * A factory function for [LoginRobot].
  */
-fun loginRobot(func: LoginRobot.() -> Unit) = LoginRobot().apply { func() }
+internal fun loginRobot(func: LoginRobot.() -> Unit) = LoginRobot().apply { func() }
 
 /**
  * A robot that simulates user behavior on the login screen.
  */
-class LoginRobot : BaseTestRobot() {
+internal class LoginRobot : BaseTestRobot() {
 
     /**
      * Clicks on the login button that should take the user to the channels screen.

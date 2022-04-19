@@ -31,7 +31,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class MessagesTests {
+internal class MessagesTests {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)

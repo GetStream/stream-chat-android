@@ -6,13 +6,11 @@ plugins {
     id 'shot'
 }
 
-android {
-    compileSdk 31
+apply from: "${rootDir}/scripts/android.gradle"
 
+android {
     defaultConfig {
         applicationId "io.getstream.chat.android.uitests"
-        minSdk 21
-        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -42,6 +40,14 @@ android {
     
     buildFeatures {
         viewBinding true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-Xopt-in=kotlin.RequiresOptIn',
+        ]
     }
 }
 

@@ -29,7 +29,7 @@ import kotlin.coroutines.CoroutineContext
  *
  * @property delegate The inner dispatcher that will be wrapped.
  */
-class DelegatingIdlingResourceDispatcher(
+internal class DelegatingIdlingResourceDispatcher(
     private val delegate: CoroutineDispatcher,
 ) : CoroutineDispatcher() {
 

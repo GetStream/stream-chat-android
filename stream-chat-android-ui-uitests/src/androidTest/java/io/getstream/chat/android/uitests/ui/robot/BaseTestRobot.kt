@@ -25,7 +25,7 @@ import io.getstream.chat.android.uitests.ui.action.WaitViewAction
 /**
  * A base class for all user robots.
  */
-open class BaseTestRobot {
+internal open class BaseTestRobot {
 
     /**
      * Performs a click on a View with the specified ID.
@@ -42,6 +42,6 @@ open class BaseTestRobot {
      * @param resId The layout ID of a view to click.
      */
     fun clickElementByIdWithDelay(resId: Int) {
-        WaitViewAction.waitId(resId).perform(ViewActions.click())
+        WaitViewAction.waitForViewWithId(resId).perform(ViewActions.click())
     }
 }

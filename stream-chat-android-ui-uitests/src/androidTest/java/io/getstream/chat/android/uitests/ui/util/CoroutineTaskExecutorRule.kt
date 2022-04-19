@@ -26,8 +26,7 @@ import org.junit.runner.Description
  * A Junit Test Rule that helps to synchronize Espresso tests with the work that is
  * being done on the IO dispatcher.
  */
-@InternalStreamChatApi
-class CoroutineTaskExecutorRule : TestWatcher() {
+internal class CoroutineTaskExecutorRule : TestWatcher() {
 
     /**
      * The wrapped IO dispatcher
@@ -37,6 +36,7 @@ class CoroutineTaskExecutorRule : TestWatcher() {
     /**
      * Invoked when a test is about to start.
      */
+    @OptIn(InternalStreamChatApi::class)
     override fun starting(description: Description) {
         super.starting(description)
         DispatcherProvider.set(
@@ -48,6 +48,7 @@ class CoroutineTaskExecutorRule : TestWatcher() {
     /**
      * Invoked when a test method finishes (whether passing or failing).
      */
+    @OptIn(InternalStreamChatApi::class)
     override fun finished(description: Description) {
         super.finished(description)
         DispatcherProvider.reset()
