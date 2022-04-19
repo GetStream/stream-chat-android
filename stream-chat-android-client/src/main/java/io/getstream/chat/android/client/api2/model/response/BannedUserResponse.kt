@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.model.response
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
@@ -23,11 +24,11 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class BannedUserResponse(
-    val user: DownstreamUserDto,
-    val banned_by: DownstreamUserDto?,
-    val channel: DownstreamChannelDto?,
-    val created_at: Date?,
-    val expires: Date?,
-    val shadow: Boolean = false,
-    val reason: String?,
+    @Json(name = "user") val user: DownstreamUserDto,
+    @Json(name = "banned_by") val bannedBy: DownstreamUserDto?,
+    @Json(name = "channel") val channel: DownstreamChannelDto?,
+    @Json(name = "created_at") val createdAt: Date?,
+    @Json(name = "expires") val expires: Date?,
+    @Json(name = "shadow") val shadow: Boolean = false,
+    @Json(name = "reason") val reason: String?,
 )

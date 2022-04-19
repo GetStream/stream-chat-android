@@ -27,7 +27,7 @@ internal data class SocketErrorResponse(
     data class ErrorResponse(
         val code: Int = -1,
         val message: String = "",
-        val StatusCode: Int = -1,
+        val statusCode: Int = -1,
         val duration: String = "",
     )
 }

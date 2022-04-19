@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -29,31 +30,33 @@ import java.util.Date
  *
  * @param limit Max limit of messages to be fetched.
  * @param sort Parameter by which we sort the messages.
- * @param id_around Id of the message used to fetch messages around.
- * @param id_gt Id of the message used to fetch messages greater than provided, based on [sort].
- * @param id_gte Same as [id_gt] but the response will also include the message with provided id.
- * @param id_lt Id of the message used to fetch messages lower than provided, based on [sort].
- * @param id_lte Same as [id_lt] but the response will also include the message with provided id.
- * @param pinned_at_around Date of the message used to fetch messages around.
- * @param pinned_at_after Date of the message used to fetch messages sent after the date, based on [sort].
- * @param pinned_at_after_or_equal Same as [pinned_at_after] but the response will also include the message with provided id.
- * @param pinned_at_before Date of the message used to fetch messages sent before the date, based on [sort].
- * @param pinned_at_before_or_equal Same as [pinned_at_before] but the response will also include the message with provided id.
+ * @param idAround Id of the message used to fetch messages around.
+ * @param idGt Id of the message used to fetch messages greater than provided, based on [sort].
+ * @param idGte Same as [idGt] but the response will also include the message with provided id.
+ * @param idLt Id of the message used to fetch messages lower than provided, based on [sort].
+ * @param idLte Same as [idLt] but the response will also include the message with provided id.
+ * @param pinnedAtAround Date of the message used to fetch messages around.
+ * @param pinnedAtAfter Date of the message used to fetch messages sent after the date, based on [sort].
+ * @param pinnedAtAfterOrEqual Same as [pinnedAtAfter] but the response will also include the message with
+ * provided id.
+ * @param pinnedAtBefore Date of the message used to fetch messages sent before the date, based on [sort].
+ * @param pinnedAtBeforeOrEqual Same as [pinnedAtBefore] but the response will also include the message with
+ * provided id.
  */
 @JsonClass(generateAdapter = true)
 internal data class PinnedMessagesRequest(
-    val limit: Int,
-    val sort: List<Map<String, Any>>,
-    val id_around: String? = null,
-    val id_gt: String? = null,
-    val id_gte: String? = null,
-    val id_lt: String? = null,
-    val id_lte: String? = null,
-    val pinned_at_around: Date? = null,
-    val pinned_at_after: Date? = null,
-    val pinned_at_after_or_equal: Date? = null,
-    val pinned_at_before: Date? = null,
-    val pinned_at_before_or_equal: Date? = null,
+    @Json(name = "limit") val limit: Int,
+    @Json(name = "sort") val sort: List<Map<String, Any>>,
+    @Json(name = "id_around") val idAround: String? = null,
+    @Json(name = "id_gt") val idGt: String? = null,
+    @Json(name = "id_gte") val idGte: String? = null,
+    @Json(name = "id_lt") val idLt: String? = null,
+    @Json(name = "id_lte") val idLte: String? = null,
+    @Json(name = "pinned_at_around") val pinnedAtAround: Date? = null,
+    @Json(name = "pinned_at_after") val pinnedAtAfter: Date? = null,
+    @Json(name = "pinned_at_after_or_equal") val pinnedAtAfterOrEqual: Date? = null,
+    @Json(name = "pinned_at_before") val pinnedAtBefore: Date? = null,
+    @Json(name = "pinned_at_before_or_equal") val pinnedAtBeforeOrEqual: Date? = null,
 ) {
 
     companion object {
@@ -70,48 +73,48 @@ internal data class PinnedMessagesRequest(
             return when (pagination) {
                 is PinnedMessagesPagination.AroundDate -> PinnedMessagesRequest(
                     limit = limit,
-                    pinned_at_around = pagination.date,
+                    pinnedAtAround = pagination.date,
                     sort = sort.toDto(),
                 )
                 is PinnedMessagesPagination.BeforeDate -> if (pagination.inclusive) PinnedMessagesRequest(
                     limit = limit,
-                    pinned_at_before_or_equal = pagination.date,
+                    pinnedAtBeforeOrEqual = pagination.date,
                     sort = sort.toDto(),
                 ) else PinnedMessagesRequest(
                     limit = limit,
-                    pinned_at_before = pagination.date,
+                    pinnedAtBefore = pagination.date,
                     sort = sort.toDto(),
                 )
                 is PinnedMessagesPagination.AfterDate -> if (pagination.inclusive) PinnedMessagesRequest(
                     limit = limit,
-                    pinned_at_after_or_equal = pagination.date,
+                    pinnedAtAfterOrEqual = pagination.date,
                     sort = sort.toDto(),
                 ) else PinnedMessagesRequest(
                     limit = limit,
-                    pinned_at_after = pagination.date,
+                    pinnedAtAfter = pagination.date,
                     sort = sort.toDto(),
                 )
                 is PinnedMessagesPagination.AroundMessage -> PinnedMessagesRequest(
                     limit = limit,
-                    id_around = pagination.messageId,
+                    idAround = pagination.messageId,
                     sort = sort.toDto(),
                 )
                 is PinnedMessagesPagination.BeforeMessage -> if (pagination.inclusive) PinnedMessagesRequest(
                     limit = limit,
-                    id_lte = pagination.messageId,
+                    idLte = pagination.messageId,
                     sort = sort.toDto(),
                 ) else PinnedMessagesRequest(
                     limit = limit,
-                    id_lt = pagination.messageId,
+                    idLt = pagination.messageId,
                     sort = sort.toDto(),
                 )
                 is PinnedMessagesPagination.AfterMessage -> if (pagination.inclusive) PinnedMessagesRequest(
                     limit = limit,
-                    id_gte = pagination.messageId,
+                    idGte = pagination.messageId,
                     sort = sort.toDto(),
                 ) else PinnedMessagesRequest(
                     limit = limit,
-                    id_gt = pagination.messageId,
+                    idGt = pagination.messageId,
                     sort = sort.toDto(),
                 )
             }

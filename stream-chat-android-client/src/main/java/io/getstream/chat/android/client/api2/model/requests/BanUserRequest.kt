@@ -16,14 +16,15 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class BanUserRequest(
-    val target_user_id: String,
-    val timeout: Int?,
-    val reason: String?,
-    val type: String,
-    val id: String,
-    val shadow: Boolean,
+    @Json(name = "target_user_id") val targetUserId: String,
+    @Json(name = "timeout") val timeout: Int?,
+    @Json(name = "reason") val reason: String?,
+    @Json(name = "type") val type: String,
+    @Json(name = "id") val id: String,
+    @Json(name = "shadow") val shadow: Boolean,
 )

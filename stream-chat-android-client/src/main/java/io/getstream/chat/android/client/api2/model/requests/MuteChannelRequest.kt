@@ -16,10 +16,11 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class MuteChannelRequest(
-    val channel_cid: String,
-    val expiration: Int?,
+    @Json(name = "channel_cid") val channelCid: String,
+    @Json(name = "expiration") val expiration: Int?,
 )

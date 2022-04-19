@@ -131,6 +131,7 @@ internal class EventDtoAdapter(
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
     private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
 
+    @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
         if (reader.peek() == JsonReader.Token.NULL) {
             reader.nextNull<Nothing?>()
@@ -197,7 +198,7 @@ internal class EventDtoAdapter(
             else -> // Custom case, early return
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,
-                    created_at = moshi.adapter(Date::class.java).fromJsonValue(map["created_at"])!!,
+                    createdAt = moshi.adapter(Date::class.java).fromJsonValue(map["created_at"])!!,
                     user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
                     rawData = map
                 )

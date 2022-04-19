@@ -16,17 +16,18 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal class QueryChannelsRequest(
-    val filter_conditions: Map<*, *>,
-    val offset: Int,
-    val limit: Int,
-    val sort: List<Map<String, Any>>,
-    val message_limit: Int,
-    val member_limit: Int,
-    val state: Boolean,
-    val watch: Boolean,
-    val presence: Boolean,
+internal data class QueryChannelsRequest(
+    @Json(name = "filter_conditions") val filterConditions: Map<*, *>,
+    @Json(name = "offset") val offset: Int,
+    @Json(name = "limit") val limit: Int,
+    @Json(name = "sort") val sort: List<Map<String, Any>>,
+    @Json(name = "message_limit") val messageLimit: Int,
+    @Json(name = "member_limit") val memberLimit: Int,
+    @Json(name = "state") val state: Boolean,
+    @Json(name = "watch") val watch: Boolean,
+    @Json(name = "presence") val presence: Boolean,
 )

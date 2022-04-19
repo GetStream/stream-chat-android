@@ -16,13 +16,14 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class QueryUsersRequest(
-    val filter_conditions: Map<*, *>,
-    val offset: Int,
-    val limit: Int,
-    val sort: List<Map<String, Any>>,
-    val presence: Boolean,
+    @Json(name = "filter_conditions") val filterConditions: Map<*, *>,
+    @Json(name = "offset") val offset: Int,
+    @Json(name = "limit") val limit: Int,
+    @Json(name = "sort") val sort: List<Map<String, Any>>,
+    @Json(name = "presence") val presence: Boolean,
 )

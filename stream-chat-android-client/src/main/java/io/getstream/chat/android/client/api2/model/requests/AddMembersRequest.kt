@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 
 @JsonClass(generateAdapter = true)
 internal data class AddMembersRequest(
-    val add_members: List<String>,
-    val message: UpstreamMessageDto?,
+    @Json(name = "add_members") val addMembers: List<String>,
+    @Json(name = "message") val message: UpstreamMessageDto?,
 )
