@@ -18,27 +18,11 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal interface UserRepository {
-    suspend fun insertUsers(users: Collection<User>)
-    suspend fun insertUser(user: User)
-    suspend fun insertCurrentUser(user: User)
-    suspend fun selectUser(userId: String): User?
-
-    /**
-     * @return The list of users stored in the cache.
-     */
-    suspend fun selectUsers(ids: List<String>): List<User>
-    suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
-    suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
-
-    /** Returns flow of latest updated users. */
-    fun observeLatestUsers(): StateFlow<Map<String, User>>
-}
-
-internal class UserRepositoryImpl(
+internal class DatabaseUserRepository(
     private val userDao: UserDao,
     cacheSize: Int = 100,
 ) : UserRepository {

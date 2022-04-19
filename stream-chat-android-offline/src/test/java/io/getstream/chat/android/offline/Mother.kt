@@ -58,8 +58,8 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
+import io.getstream.chat.android.client.models.ChannelConfig
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity

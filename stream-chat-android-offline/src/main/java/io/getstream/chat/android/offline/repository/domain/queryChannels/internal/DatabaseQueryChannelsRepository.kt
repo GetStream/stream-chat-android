@@ -19,14 +19,10 @@ package io.getstream.chat.android.offline.repository.domain.queryChannels.intern
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
+import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 
-internal interface QueryChannelsRepository {
-    suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
-    suspend fun selectBy(filter: FilterObject, querySort: QuerySort<Channel>): QueryChannelsSpec?
-}
-
-internal class QueryChannelsRepositoryImpl(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
+internal class DatabaseQueryChannelsRepository(private val queryChannelsDao: QueryChannelsDao) : QueryChannelsRepository {
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }

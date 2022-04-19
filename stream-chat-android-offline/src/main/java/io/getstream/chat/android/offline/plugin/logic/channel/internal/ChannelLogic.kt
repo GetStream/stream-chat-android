@@ -93,8 +93,8 @@ import io.getstream.chat.android.offline.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.offline.extensions.internal.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.models.ChannelConfig
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState

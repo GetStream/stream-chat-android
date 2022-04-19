@@ -24,12 +24,10 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.interna
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigInnerEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,7 +48,7 @@ internal class ChannelConfigRepositoryTest {
     @Before
     fun before() {
         dao = mock()
-        sut = ChannelConfigRepositoryImpl(dao)
+        sut = DatabaseChannelConfigRepository(dao)
     }
 
     @Test

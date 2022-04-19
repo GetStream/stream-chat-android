@@ -20,35 +20,12 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
 import java.util.Date
 
-internal interface MessageRepository {
-    suspend fun selectMessagesForChannel(
-        cid: String,
-        pagination: AnyChannelPaginationRequest?,
-    ): List<Message>
-
-    /**
-     * Selects messages by IDs.
-     *
-     * @param messageIds A list of [Message.id] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
-     *
-     * @return A list of messages found in repository.
-     */
-    suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean = false): List<Message>
-    suspend fun selectMessage(messageId: String): Message?
-    suspend fun insertMessages(messages: List<Message>, cache: Boolean = false)
-    suspend fun insertMessage(message: Message, cache: Boolean = false)
-    suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date)
-    suspend fun deleteChannelMessage(message: Message)
-    suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
-}
-
-internal class MessageRepositoryImpl(
+internal class DatabaseMessageRepository(
     private val messageDao: MessageDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,

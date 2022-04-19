@@ -16,14 +16,10 @@
 
 package io.getstream.chat.android.offline.repository.domain.syncState.internal
 
-import io.getstream.chat.android.offline.sync.internal.SyncState
+import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.sync.SyncState
 
-internal interface SyncStateRepository {
-    suspend fun insertSyncState(syncState: SyncState)
-    suspend fun selectSyncState(userId: String): SyncState?
-}
-
-internal class SyncStateRepositoryImpl(private val syncStateDao: SyncStateDao) : SyncStateRepository {
+internal class DatabaseSyncStateRepository(private val syncStateDao: SyncStateDao) : SyncStateRepository {
     override suspend fun insertSyncState(syncState: SyncState) {
         syncStateDao.insert(syncState.toEntity())
     }

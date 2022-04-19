@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.querychannels.internal
+package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.models.Channel
-
-internal data class QueryChannelsSpec(
-    val filter: FilterObject,
-    val querySort: QuerySort<Channel>
-) {
-    var cids: Set<String> = emptySet()
-}
+//Todo: Create documentation
+public data class ChannelConfig(val type: String, val config: Config)
