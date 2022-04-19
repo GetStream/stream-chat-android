@@ -26,9 +26,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -46,7 +48,7 @@ internal class ChannelRepositoryImplTest {
         )
 
     @Test
-    fun `Given channel without messages in DB Should insert channel with updated last message`() = runTest {
+    fun `Given channel without messages in DB, Should insert channel with updated last message`() = runTest {
         val channel = randomChannel(messages = emptyList())
         val lastMessage = randomMessage(createdAt = Date())
         whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity())
@@ -62,7 +64,7 @@ internal class ChannelRepositoryImplTest {
     }
 
     @Test
-    fun `Given channel with outdated lastMessage in DB Should insert channel with updated last message`() = runTest {
+    fun `Given channel with outdated lastMessage in DB, Should insert channel with updated last message`() = runTest {
         val before = Date(1000)
         val after = Date(2000)
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
@@ -78,5 +80,19 @@ internal class ChannelRepositoryImplTest {
                     channelEntity.lastMessageId == newLastMessage.id
             }
         )
+    }
+
+    @Test
+    fun `Given channel with recent lastMessage in DB, Should NOT insert channel`() = runTest {
+        val before = Date(1000)
+        val after = Date(2000)
+        val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
+        val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
+        val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
+        whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity())
+
+        channelRepository.updateLastMessageForChannel("cid", outdatedMessage)
+
+        verify(channelDao, never()).insert(any())
     }
 }
