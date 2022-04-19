@@ -249,7 +249,9 @@ internal open class BaseChatModule(
             val auth = this.annotations.any { it is AuthenticatedApi }
 
             if (anon && auth) {
-                throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")
+                throw IllegalStateException(
+                    "Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both"
+                )
             }
 
             if (anon) return true

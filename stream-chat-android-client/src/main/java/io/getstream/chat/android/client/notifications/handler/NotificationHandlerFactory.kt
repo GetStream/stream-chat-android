@@ -36,7 +36,8 @@ public object NotificationHandlerFactory {
      *
      * @param context The [Context] to build the [NotificationHandler] with.
      * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
-     * @param notificationChannel Lambda expression used to generate a [NotificationChannel]. Used in SDK_INT >= VERSION_CODES.O.
+     * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
+     * Used in SDK_INT >= VERSION_CODES.O.
      */
     @SuppressLint("NewApi")
     public fun createNotificationHandler(
@@ -54,7 +55,9 @@ public object NotificationHandlerFactory {
         }
     }
 
-    private fun getDefaultNewMessageIntentFun(context: Context): (messageId: String, channelType: String, channelId: String) -> Intent {
+    private fun getDefaultNewMessageIntentFun(
+        context: Context
+    ): (messageId: String, channelType: String, channelId: String) -> Intent {
         return { _, _, _ -> createDefaultNewMessageIntent(context) }
     }
 

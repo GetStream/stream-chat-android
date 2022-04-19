@@ -5,7 +5,6 @@
     <ID>ComplexMethod:ChannelClient.kt$ChannelClient$private fun isRelevantForChannel(event: ChatEvent): Boolean</ID>
     <ID>ComplexMethod:EventMapping.kt$internal fun ChatEventDto.toDomain(): ChatEvent</ID>
     <ID>ComplexMethod:FilterObjectToMap.kt$internal fun FilterObject.toMap(): Map&lt;String, Any></ID>
-    <ID>ComplexMethod:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$@JvmStatic fun writeArguments()</ID>
     <ID>EmptyFunctionBlock:EventsParser.kt$EventsParser${ }</ID>
     <ID>EmptyFunctionBlock:FakeChatSocket.kt$FakeChatSocket${ }</ID>
     <ID>EmptyFunctionBlock:FakeSocketService.kt$FakeSocketService${ }</ID>
@@ -14,8 +13,6 @@
     <ID>ForbiddenComment:ChatClient.kt$ChatClient$// TODO: An InterceptedCall wrapper can be created to avoid so much code here.</ID>
     <ID>LargeClass:ChatClient.kt$ChatClient</ID>
     <ID>LargeClass:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>
-    <ID>LongMethod:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$@JvmStatic fun writeArguments()</ID>
-    <ID>LongMethod:TokenUtilsTest.kt$TokenUtilsTest.Companion$@JvmStatic @ParameterizedRobolectricTestRunner.Parameters(name = "{index}: {0} => {1}") fun data(): Collection&lt;Array&lt;Any?>></ID>
     <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val callbackExecutor: Executor?, private val customOkHttpClient: OkHttpClient? = null, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
     <ID>LongParameterList:ChannelClient.kt$ChannelClient$( filter: FilterObject? = null, sort: QuerySort&lt;BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt), offset: Int? = null, limit: Int? = null, createdAtAfter: Date? = null, createdAtAfterOrEqual: Date? = null, createdAtBefore: Date? = null, createdAtBeforeOrEqual: Date? = null, )</ID>
     <ID>LongParameterList:ChatApi.kt$ChatApi$( channelFilter: FilterObject, messageFilter: FilterObject, offset: Int?, limit: Int?, next: String?, sort: QuerySort&lt;Message>?, )</ID>
@@ -32,7 +29,6 @@
     <ID>LongParameterList:QueryMembersErrorHandler.kt$QueryMembersErrorHandler$( originalCall: Call&lt;List&lt;Member>>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
     <ID>LongParameterList:QueryMembersListener.kt$QueryMembersListener$( result: Result&lt;List&lt;Member>>, channelType: String, channelId: String, offset: Int, limit: Int, filter: FilterObject, sort: QuerySort&lt;Member>, members: List&lt;Member>, )</ID>
     <ID>LongParameterList:TypingEventListener.kt$TypingEventListener$( result: Result&lt;ChatEvent>, eventType: String, channelType: String, channelId: String, extraData: Map&lt;Any, Any>, eventTime: Date, )</ID>
-    <ID>LoopWithTooManyJumpStatements:CallRetryService.kt$CallRetryService$while (true) { result = runnable().await() if (result.isSuccess || result.error().isPermanent()) { break } else { // retry logic val shouldRetry = retryPolicy.shouldRetry(attempt, result.error()) val timeout = retryPolicy.retryTimeout(attempt, result.error()) if (shouldRetry) { // temporary failure, continue logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}") delay(timeout.toLong()) attempt += 1 } else { logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}") break } } }</ID>
     <ID>MagicNumber:ChatClient.kt$ChatClient$120</ID>
     <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.AUTHENTICATION_ERROR$5</ID>
     <ID>MagicNumber:ChatErrorCode.kt$ChatErrorCode.CANT_PARSE_CONNECTION_EVENT$1004</ID>
@@ -62,110 +58,6 @@
     <ID>MagicNumber:PerformanceUtils.kt$PerformanceUtils$1000.0</ID>
     <ID>MagicNumber:SyncStatus.kt$SyncStatus.AWAITING_ATTACHMENTS$4</ID>
     <ID>MagicNumber:SyncStatus.kt$SyncStatus.IN_PROGRESS$3</ID>
-    <ID>MaxLineLength:AttachmentHelper.kt$AttachmentHelper.Companion$private val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)</ID>
-    <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests$fun</ID>
-    <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests.Companion$"https://stream-chat-.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&amp;s=43257e963dbb993d65bd358d57b54a38" to false</ID>
-    <ID>MaxLineLength:AttachmentHelperTests.kt$AttachmentHelperTests.Companion$"https://stream-chat-us-east-c4.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&amp;s=43257e963dbb993d65bd358d57b54a38" to true</ID>
-    <ID>MaxLineLength:BaseChatModule.kt$BaseChatModule$throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")</ID>
-    <ID>MaxLineLength:CallRetryService.kt$CallRetryService$logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")</ID>
-    <ID>MaxLineLength:CallRetryService.kt$CallRetryService$logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")</ID>
-    <ID>MaxLineLength:Channel.kt$Channel$*</ID>
-    <ID>MaxLineLength:ChannelClient.kt$ChannelClient$*</ID>
-    <ID>MaxLineLength:ChannelUserRead.kt$ChannelUserRead$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$// Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$userState is UserState.UserSet &amp;&amp; userState.user.id == user.id &amp;&amp; socketStateService.state == SocketState.Idle</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext)</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Companion$*</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient.Companion$?:</ID>
-    <ID>MaxLineLength:ChatSocketServiceImplTest.kt$ChatSocketServiceImplTest$fun</ID>
-    <ID>MaxLineLength:ConnectUserTest.kt$ConnectUserTest$result.error().message `should be equal to` "The user_id provided on the JWT token doesn't match with the current user you try to connect"</ID>
-    <ID>MaxLineLength:DeleteMessageListener.kt$DeleteMessageListener$*</ID>
-    <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)</ID>
-    <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutNameAndImage, DownstreamChannelDto::class.java)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, null, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, null, null, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, message, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUserBannedEvent = ChannelUserBannedEvent(EventType.USER_BANNED, date, cid, channelType, channelId, user, date)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(EventType.USER_UNBANNED, date, user, cid, channelType, channelId)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val memberAddedEvent = MemberAddedEvent(EventType.MEMBER_ADDED, date, user, cid, channelType, channelId, member)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId, member)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val memberUpdatedEvent = MemberUpdatedEvent(EventType.MEMBER_UPDATED, date, user, cid, channelType, channelId, member)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message, hardDelete = false)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val messageDeletedServerSideEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, null, cid, channelType, channelId, message, hardDelete = true)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, date, user, cid, channelType, channelId, message)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel, totalUnreadCount, unreadChannels)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(EventType.NOTIFICATION_CHANNEL_DELETED, date, cid, channelType, channelId, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, date, cid, channelType, channelId, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(EventType.NOTIFICATION_INVITE_ACCEPTED, date, cid, channelType, channelId, user, member, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(EventType.NOTIFICATION_INVITE_REJECTED, date, cid, channelType, channelId, user, member, channel)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationInvitedEvent = NotificationInvitedEvent(EventType.NOTIFICATION_INVITED, date, cid, channelType, channelId, user, member)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationMarkReadEvent = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, date, user, cid, channelType, channelId, totalUnreadCount, unreadChannels)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationMessageNewEvent = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, date, cid, channelType, channelId, channel, message, totalUnreadCount, unreadChannels)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(EventType.NOTIFICATION_REMOVED_FROM_CHANNEL, date, user, cid, channelType, channelId, channel, member)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, null, mapOf("type" to "some.unknown.type", "created_at" to dateString))</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val reactionDeletedEvent = ReactionDeletedEvent(EventType.REACTION_DELETED, date, user, cid, channelType, channelId, message, reaction)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val reactionNewEvent = ReactionNewEvent(EventType.REACTION_NEW, date, user, cid, channelType, channelId, message, reaction)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val reactionUpdateEvent = ReactionUpdateEvent(EventType.REACTION_UPDATED, date, user, cid, channelType, channelId, message, reaction)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val typingStartEvent = TypingStartEvent(EventType.TYPING_START, date, user, cid, channelType, channelId, parentMessageId)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val typingStopEvent = TypingStopEvent(EventType.TYPING_STOP, date, user, cid, channelType, channelId, parentMessageId)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, null, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, date, cid, watcherCount, channelType, channelId, user)</ID>
-    <ID>MaxLineLength:EventArguments.kt$EventArguments$private val userStopWatchingEvent = UserStopWatchingEvent(EventType.USER_WATCHING_STOP, date, cid, watcherCount, channelType, channelId, user)</ID>
-    <ID>MaxLineLength:FileUploader.kt$FileUploader$*</ID>
-    <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
-    <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
-    <ID>MaxLineLength:FilterObjectTypeAdapterTest.kt$FilterObjectTypeAdapterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"</ID>
-    <ID>MaxLineLength:Filters.kt$Filters$*</ID>
-    <ID>MaxLineLength:Filters.kt$Filters$public</ID>
-    <ID>MaxLineLength:MessagesApiCallsTests.kt$MessagesApiCallsTests$verifySuccess(result, SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page"))</ID>
-    <ID>MaxLineLength:MessagingStyleNotificationHandler.kt$MessagingStyleNotificationHandler$private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }</ID>
-    <ID>MaxLineLength:NetworkStateProvider.kt$NetworkStateProvider$hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &amp;&amp; hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)</ID>
-    <ID>MaxLineLength:NotificationHandler.kt$NotificationHandler$*</ID>
-    <ID>MaxLineLength:NotificationHandlerFactory.kt$NotificationHandlerFactory$*</ID>
-    <ID>MaxLineLength:NotificationHandlerFactory.kt$NotificationHandlerFactory$private</ID>
-    <ID>MaxLineLength:ProgressCallback.kt$ProgressCallback$*</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Channel>(it), QuerySort.Companion.asc&lt;Channel>(it)) }</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.asc&lt;Message>(it), QuerySort.Companion.asc&lt;Message>(it)) }</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Channel>(it), QuerySort.Companion.desc&lt;Channel>(it)) }</ID>
-    <ID>MaxLineLength:QuerySortTest.kt$QuerySortTest.Companion$randomString().let { Arguments.of(QuerySort.Companion.desc&lt;Message>(it), QuerySort.Companion.desc&lt;Message>(it)) }</ID>
-    <ID>MaxLineLength:RetryCall.kt$RetryCall$*</ID>
-    <ID>MaxLineLength:SocketFactory.kt$SocketFactory$private</ID>
-    <ID>MaxLineLength:ToggleDialogController.kt$ToggleDialogController.ToggleEvent.CommitChanges$class</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDYzNTY1NjQtMTQ5Zi00YjJjLTg1MjUtZDIyMDU2ZmVjNDA0In0.R3-HY9Cno62yIhCjLXDBR8LF7y1udwX8m4LLNP2dIZo"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMGQzZTZlNjMtNjIwMC00ZGQxLWE4NDEtNDA1MDY2NDg5MWUyIn0.osFIgnle17f6yEkK7rPJguQaKhOiawAO3BylYaiRTqE"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTJmYjBlZDktOTNkOC00OGE1LTk4ODUtMjhlNDFmMmU0YzQzIn0.t_oc_DEwTav7ni0z4bi8Xla_5Zj5cI6l3rKxwoCvtB0"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWUzMzAxMTEtNjcwZC00OWE3LThmMDgtZTY3MzQzMzhjNjQxIn0.YEFdEMWj5rurQKr0QMrvO72jGZHU-AlpUIbyY4jxYdU"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYwNTJjMDgtZjY4Mi00YTgzLTg5NmMtOWYxOWE2OGJkMmJiIn0.L-cQ-DYubOzFpsg94OEwlTRYjat9G4cqfAgzBPALW0g"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYzN2U1OGQtZDhiMC00NzZhLWE0ZjItZjg2MTFlMGQ4NWQ5In0.l3u9P1NKhJ91rI1tzOcABGh045Kj69-iVkC2yUtohVw"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjllNDZkZWYtODhmNC00YjZhLWExMGMtNTg0ZDEwYzRmZGM5In0.Mxr4Prnb1-EVM5NSSP2EugLApSChoKnVFwe7ZO15V_U"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNTUzMWE4Y2ItM2I4MS00YTU0LWI0MjQtN2FlNGUyN2JmOGJhIn0.PXkmukg3JU4igH_YUMr7WC7a1EcwKBr_C5V2ouBlmIs"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNmQ5NTI3M2ItMzNmMC00MGY1LWIwN2MtMGRhMjYxMDkyMDc0In0.lT5O4EmWzhRKPTau6dHP4F6M42EA2aN_8-iAPuiFPLc"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiY2ViZjU2MmEtNDgwNi00YzY0LWE4MjctNTlkNTBhYWM0MmJhIn0.kuXab7RhQRHdsErEW5tTN_mmuyLPNU4ZbprvuPXM4OY"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWQ3ZDkzMTQtNTA3MS00ZDYxLTk4YTEtZmZhNjQzY2U4MjRhIn0.iF4UWGFtX0eTAIBTCum7fjD_TKn8wjEqb3PVxJrwbuM"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiRnJhIn0.ENQGHEsAL3WjVhd_qTiJa_9ojGKi2ftJ8xlocT8SVX4"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MCJ9.Vow00KvvhLvWRZIPKomXQOYpBL_P-_-eDeDKmBRvEj4"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc"</ID>
-    <ID>MaxLineLength:TokenUtilsTest.kt$TokenUtilsTest.Companion$"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MyJ9.kLZJz5kl7e3Zw7i2T39Yp05_nAmh9RGG0rt6-5zOpfE"</ID>
-    <ID>MaxLineLength:TypingEventListener.kt$TypingEventListener$*</ID>
-    <ID>MaxLineLength:User.kt$User$*</ID>
-    <ID>MaxLineLength:UserStateServiceTests.kt$UserStateServiceTests$fun</ID>
-    <ID>MaxLineLength:WhenConnectUser.kt$WhenConnectUser$fun</ID>
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val channelId = "channelId"</ID>
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val channelType = "channelType"</ID>
     <ID>MayBeConst:EventArguments.kt$EventArguments$private val cid = "channelType:channelId"</ID>
@@ -226,6 +118,5 @@
     <ID>UnusedPrivateMember:ChannelsApiCallsTests.kt$ChannelsApiCallsTests$val event = MessageReadEvent( EventType.MESSAGE_READ, Date(), User(), "${mock.channelType}:${mock.channelId}", mock.channelType, mock.channelId, )</ID>
     <ID>UnusedPrivateMember:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$i</ID>
     <ID>UtilityClassWithPublicConstructor:ModelFields.kt$ModelFields</ID>
-    <ID>VariableNaming:ChatParser.kt$ChatParser$private val TAG: String get() = ChatParser::class.java.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>
