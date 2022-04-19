@@ -75,6 +75,7 @@ import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasThread
 import io.getstream.chat.android.compose.ui.util.isDeleted
+import io.getstream.chat.android.compose.ui.util.isEmojiOnly
 import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.util.isUploading
 
@@ -384,6 +385,40 @@ internal fun DefaultMessageItemCenterContent(
 ) {
     val (message, position, _, ownsMessage, _) = messageItem
 
+    val modifier = Modifier.widthIn(max = 250.dp)
+    val isFailed = ownsMessage && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+
+    if (message.isEmojiOnly()) {
+        if (!isFailed) {
+            MessageContent(
+                message = message,
+                onLongItemClick = onLongItemClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onImagePreviewResult = onImagePreviewResult
+            )
+        } else {
+            Box(modifier = modifier) {
+                MessageContent(
+                    message = message,
+                    onLongItemClick = onLongItemClick,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onImagePreviewResult = onImagePreviewResult
+                )
+
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(BottomEnd),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_error),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.errorAccent,
+                )
+            }
+        }
+
+        return
+    }
+
     val messageBubbleShape = when (position) {
         Top, Middle -> RoundedCornerShape(16.dp)
         else -> {
@@ -398,9 +433,6 @@ internal fun DefaultMessageItemCenterContent(
         else -> ChatTheme.colors.otherMessagesBackground
     }
 
-    val modifier = Modifier.widthIn(max = 250.dp)
-
-    val isFailed = ownsMessage && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
     if (!isFailed) {
         MessageBubble(
             modifier = modifier,

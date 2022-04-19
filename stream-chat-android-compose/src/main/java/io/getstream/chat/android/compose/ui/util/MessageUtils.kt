@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.EmojiUtils
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -80,3 +82,18 @@ internal fun Message.isGiphy(): Boolean = command == ModelType.attach_giphy
  * @return If the message is a temporary message to select a gif.
  */
 internal fun Message.isGiphyEphemeral(): Boolean = isGiphy() && isEphemeral()
+
+/**
+ * @return If the message is emoji only or not.
+ */
+internal fun Message.isEmojiOnly(): Boolean = EmojiUtils.isEmojiOnly(text)
+
+/**
+ * @return If the message is single emoji only or not.
+ */
+internal fun Message.isSingleEmoji(): Boolean = EmojiUtils.isSingleEmoji(text)
+
+/**
+ * @return If the current message is the current users message.
+ */
+internal fun Message.isMine() = ChatClient.instance().getCurrentUser()?.id == this.user.id

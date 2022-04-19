@@ -40,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isMine
+import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -64,17 +67,28 @@ public fun MessageText(
     val styledText = buildAnnotatedMessageText(message)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
+    val isMyMessage = message.isMine()
+
+    val isEmojiOnly = message.isEmojiOnly()
+    val isSingleEmoji = message.isSingleEmoji()
+
+    val style = when {
+        isSingleEmoji -> ChatTheme.typography.singleEmoji
+        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        else -> ChatTheme.typography.bodyBold
+    }
+
     if (annotations.isNotEmpty()) {
         ClickableText(
             modifier = modifier
                 .padding(
-                    start = 12.dp,
-                    end = 12.dp,
+                    start = if (isEmojiOnly && !isMyMessage) 0.dp else 12.dp,
+                    end = if (isEmojiOnly && isMyMessage) 0.dp else 12.dp,
                     top = 8.dp,
                     bottom = 8.dp
                 ),
             text = styledText,
-            style = ChatTheme.typography.bodyBold,
+            style = style,
             onLongPress = { onLongItemClick(message) }
         ) { position ->
             val targetUrl = annotations.firstOrNull {
@@ -94,13 +108,13 @@ public fun MessageText(
         Text(
             modifier = modifier
                 .padding(
-                    start = 12.dp,
-                    end = 12.dp,
+                    start = if (isEmojiOnly && !isMyMessage) 0.dp else 12.dp,
+                    end = if (isEmojiOnly && isMyMessage) 0.dp else 12.dp,
                     top = 8.dp,
                     bottom = 8.dp
                 ),
             text = styledText,
-            style = ChatTheme.typography.bodyBold
+            style = style
         )
     }
 }
