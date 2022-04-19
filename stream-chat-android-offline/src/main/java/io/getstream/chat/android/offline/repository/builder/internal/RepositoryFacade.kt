@@ -18,14 +18,12 @@ package io.getstream.chat.android.offline.repository.builder.internal
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.internal.lastMessage
-import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
@@ -36,6 +34,8 @@ import io.getstream.chat.android.client.persistance.repository.SyncStateReposito
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
+import io.getstream.chat.android.offline.extensions.internal.lastMessage
+import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async

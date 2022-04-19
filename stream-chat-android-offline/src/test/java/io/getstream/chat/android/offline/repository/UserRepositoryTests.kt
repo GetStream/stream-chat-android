@@ -18,9 +18,9 @@ package io.getstream.chat.android.offline.repository
 
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
-import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
