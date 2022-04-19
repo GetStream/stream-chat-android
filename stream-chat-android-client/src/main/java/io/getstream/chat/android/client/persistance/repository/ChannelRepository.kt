@@ -21,6 +21,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import java.util.Date
 
+/**
+ * Repository to read and write [Channel] data.
+ */
 public interface ChannelRepository {
     public suspend fun insertChannel(channel: Channel)
     public suspend fun insertChannels(channels: Collection<Channel>)
@@ -44,12 +47,53 @@ public interface ChannelRepository {
      * @return A list of channels found in repository.
      */
     public suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean = false): List<Channel>
+
+    /**
+     * Read which channels need sync.
+     */
     public suspend fun selectChannelsSyncNeeded(): List<Channel>
+
+    /**
+     * Sets the Channel.deleteAt for a channel.
+     *
+     * @param cid String.
+     * @param deletedAt Date.
+     */
     public suspend fun setChannelDeletedAt(cid: String, deletedAt: Date)
+
+    /**
+     * Sets the Channel.hidden for a channel.
+     *
+     * @param cid String.
+     * @param hidden Date.
+     * @param hideMessagesBefore Date.
+     */
     public suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date)
+
+    /**
+     * Sets the Channel.hidden for a channel.
+     *
+     * @param cid String.
+     * @param hidden Date.
+     */
     public suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
+
+    /**
+     * Reads the member list of a channel.
+     *
+     * @param cid String.
+     */
     public suspend fun selectMembersForChannel(cid: String): List<Member>
+
+    /**
+     * Updates the members of a [Channel]
+     *
+     * @param cid String.
+     * @param members list of [Member]
+     */
     public suspend fun updateMembersForChannel(cid: String, members: List<Member>)
+
+
     public suspend fun evictChannel(cid: String)
 
     @VisibleForTesting

@@ -20,9 +20,32 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
+/**
+ * Repository to read and write reactions.
+ */
 public interface ReactionRepository {
+
+    /**
+     * Inserts a reaction.
+     *
+     * @param reaction [Reaction]
+     */
     public suspend fun insertReaction(reaction: Reaction)
+
+    /**
+     * Updates the Reaction.deletedAt for reactions of a message.
+     *
+     * @param userId String.
+     * @param messageId String.
+     * @param deletedAt Date.
+     */
     public suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
+
+    /**
+     * Selects all reactions with specific [SyncStatus]
+     *
+     * @param syncStatus [SyncStatus]
+     */
     public suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction>
     /**
      * Selects the reaction of given type to the message if exists.
@@ -35,6 +58,12 @@ public interface ReactionRepository {
      */
     public suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): Reaction?
 
+    /**
+     * Selects all current user reactions of a message.
+     *
+     * @param messageId String.
+     * @param userId String.
+     */
     public suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,

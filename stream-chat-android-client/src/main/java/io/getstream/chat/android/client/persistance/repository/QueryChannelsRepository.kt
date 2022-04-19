@@ -21,7 +21,23 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 
+/**
+ * Repository for queries of channels.
+ */
 public interface QueryChannelsRepository {
+
+    /**
+     * Inserts a query channels.
+     *
+     * @param queryChannelsSpec [QueryChannelsSpec]
+     */
     public suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
+
+    /**
+     * Selects by a filter and query sort.
+     *
+     * @param filter [FilterObject]
+     * @param querySort [QuerySort]
+     */
     public suspend fun selectBy(filter: FilterObject, querySort: QuerySort<Channel>): QueryChannelsSpec?
 }

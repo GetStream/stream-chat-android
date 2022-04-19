@@ -16,5 +16,10 @@
 
 package io.getstream.chat.android.client.models
 
-// Todo: Create documentation
+/**
+ * Configuration of a channel.
+ *
+ * @property type String.
+ * @property config [Config]
+ */
 public data class ChannelConfig(val type: String, val config: Config)

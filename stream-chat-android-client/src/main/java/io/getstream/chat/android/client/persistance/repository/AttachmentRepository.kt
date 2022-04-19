@@ -19,6 +19,13 @@ package io.getstream.chat.android.client.persistance.repository
 import io.getstream.chat.android.client.models.Attachment
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Repository to access data of attachments.
+ */
 public interface AttachmentRepository {
+
+    /**
+     * Observes any change in attachments for an specific message.
+     */
     public fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
 }

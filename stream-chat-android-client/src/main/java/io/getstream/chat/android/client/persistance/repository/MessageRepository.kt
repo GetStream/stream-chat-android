@@ -21,7 +21,17 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
+/**
+ * Repository to read and write [Message] data.
+ */
 public interface MessageRepository {
+
+    /**
+     * Select messages for a channel in a desired page.
+     *
+     * @param cid String.
+     * @param pagination [AnyChannelPaginationRequest]
+     */
     public suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
@@ -37,10 +47,49 @@ public interface MessageRepository {
      * @return A list of messages found in repository.
      */
     public suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean = false): List<Message>
+
+    /**
+     * Reads the message with passed ID.
+     *
+     * @param messageId String.
+     */
     public suspend fun selectMessage(messageId: String): Message?
+
+    /**
+     * Inserts many messages.
+     *
+     * @param messages list of [Message]
+     * @param cache Boolean.
+     */
     public suspend fun insertMessages(messages: List<Message>, cache: Boolean = false)
+
+    /**
+     * Inserts a messages.
+     *
+     * @param message [Message]
+     * @param cache Boolean.
+     */
     public suspend fun insertMessage(message: Message, cache: Boolean = false)
+
+    /**
+     * Deletes all messages before a message with passed ID.
+     *
+     * @param cid of message - String.
+     * @param hideMessagesBefore Boolean.
+     */
     public suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date)
+
+    /**
+     * Deletes message.
+     *
+     * @param message [Message]
+     */
     public suspend fun deleteChannelMessage(message: Message)
+
+    /**
+     * Selects all message of a [SyncStatus]
+     *
+     * @param syncStatus [SyncStatus]
+     */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 }
