@@ -32,7 +32,8 @@ internal class DatabaseMessageRepository(
     private val cacheSize: Int = 100,
     private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
 ) : MessageRepository {
-    // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
+    // the message cache, specifically caches messages on which we're receiving events
+    // (saving a few trips to the db when you get 10 likes on 1 message)
 
     override suspend fun selectMessagesForChannel(
         cid: String,
