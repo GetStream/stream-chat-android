@@ -74,7 +74,7 @@ internal class ChannelRepositoryImplTest {
         whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity())
 
         channelRepository.updateLastMessageForChannel("cid", newLastMessage)
-        
+
         verify(channelDao).insert(
             argThat { channelEntity ->
                 channelEntity.lastMessageAt == after &&
