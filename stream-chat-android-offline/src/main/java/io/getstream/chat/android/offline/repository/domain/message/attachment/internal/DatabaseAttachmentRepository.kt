@@ -22,7 +22,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
+/**
+ * Repository to access data of attachments. This implementation uses database.
+ */
 internal class DatabaseAttachmentRepository(private val attachmentDao: AttachmentDao) : AttachmentRepository {
+
+    /**
+     * Observes any change in attachments for an specific message.
+     */
     override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {
         return attachmentDao.observeAttachmentsForMessage(messageId)
             .distinctUntilChanged()

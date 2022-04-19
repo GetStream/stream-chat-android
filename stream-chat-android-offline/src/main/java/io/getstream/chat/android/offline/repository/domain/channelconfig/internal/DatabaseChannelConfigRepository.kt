@@ -29,15 +29,24 @@ internal class DatabaseChannelConfigRepository(
 ) : ChannelConfigRepository {
     private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
 
+    /**
+     * Caches in memory data from DB.
+     */
     override suspend fun cacheChannelConfigs() {
         channelConfigs += channelConfigDao.selectAll().map(ChannelConfigEntity::toModel)
             .associateBy(ChannelConfig::type)
     }
 
+    /**
+     * Select the [ChannelConfig] for a channel type.
+     */
     override fun selectChannelConfig(channelType: String): ChannelConfig? {
         return channelConfigs[channelType]
     }
 
+    /**
+     * Writes many [ChannelConfig]
+     */
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
         // update the local configs
         channelConfigs += configs.associateBy(ChannelConfig::type)
@@ -46,6 +55,9 @@ internal class DatabaseChannelConfigRepository(
         channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
     }
 
+    /**
+     * Writes [ChannelConfig]
+     */
     override suspend fun insertChannelConfig(config: ChannelConfig) {
         channelConfigs += config.type to config
         channelConfigDao.insert(config.toEntity())

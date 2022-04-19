@@ -35,6 +35,12 @@ internal class DatabaseMessageRepository(
     // the message cache, specifically caches messages on which we're receiving events
     // (saving a few trips to the db when you get 10 likes on 1 message)
 
+    /**
+     * Select messages for a channel in a desired page.
+     *
+     * @param cid String.
+     * @param pagination [AnyChannelPaginationRequest]
+     */
     override suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
@@ -42,6 +48,101 @@ internal class DatabaseMessageRepository(
         return selectMessagesEntitiesForChannel(cid, pagination)
             .map { it.toModel(getUser, ::selectMessage) }
             .filterReactions()
+    }
+
+    /**
+     * Selects messages by IDs.
+     *
+     * @param messageIds A list of [Message.id] as query specification.
+     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
+     * value is true.
+     *
+     * @return A list of messages found in repository.
+     */
+    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
+        return if (forceCache) {
+            fetchMessages(messageIds)
+        } else {
+            val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
+            val cachedIds = messageIds - missingMessageIds
+            cachedIds.mapNotNull { messageCache[it] } + fetchMessages(missingMessageIds)
+        }
+    }
+
+    /**
+     * Reads the message with passed ID.
+     *
+     * @param messageId String.
+     */
+    override suspend fun selectMessage(messageId: String): Message? {
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
+            ?.filterReactions()
+            ?.also { messageCache.put(it.id, it) }
+    }
+
+    /**
+     * Inserts many messages.
+     *
+     * @param messages list of [Message]
+     * @param cache Boolean.
+     */
+    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+        if (messages.isEmpty()) return
+        val messagesToInsert = messages.flatMap(Companion::allMessages)
+        for (message in messagesToInsert) {
+            require(message.cid.isNotEmpty()) {
+                "message.cid can not be empty. Id of the message: ${message.id}. Text: ${message.text}"
+            }
+        }
+        for (m in messagesToInsert) {
+            if (messageCache.get(m.id) != null || cache) {
+                messageCache.put(m.id, m)
+            }
+        }
+        messageDao.insert(messagesToInsert.map { it.toEntity() })
+    }
+
+    /**
+     * Inserts a messages.
+     *
+     * @param message [Message]
+     * @param cache Boolean.
+     */
+    override suspend fun insertMessage(message: Message, cache: Boolean) {
+        insertMessages(listOf(message), cache)
+    }
+
+    /**
+     * Deletes all messages before a message with passed ID.
+     *
+     * @param cid of message - String.
+     * @param hideMessagesBefore Boolean.
+     */
+    override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
+        // delete the messages
+        messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
+        // wipe the cache
+        messageCache = LruCache(cacheSize)
+    }
+
+    /**
+     * Deletes message.
+     *
+     * @param message [Message]
+     */
+    override suspend fun deleteChannelMessage(message: Message) {
+        messageDao.deleteMessage(message.cid, message.id)
+        messageCache.remove(message.id)
+    }
+
+
+    /**
+     * Selects all message of a [SyncStatus]
+     *
+     * @param syncStatus [SyncStatus]
+     */
+    override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
     }
 
     private suspend fun selectMessagesEntitiesForChannel(
@@ -75,64 +176,12 @@ internal class DatabaseMessageRepository(
         }
     }
 
-    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
-        return if (forceCache) {
-            fetchMessages(messageIds)
-        } else {
-            val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-            val cachedIds = messageIds - missingMessageIds
-            cachedIds.mapNotNull { messageCache[it] } + fetchMessages(missingMessageIds)
-        }
-    }
-
     /** Fetches messages from [MessageDao] and cache values in [LruCache]. */
     private suspend fun fetchMessages(messageIds: List<String>): List<Message> {
         return messageDao.select(messageIds)
             .map { entity ->
                 entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) }
             }
-    }
-
-    override suspend fun selectMessage(messageId: String): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
-            ?.filterReactions()
-            ?.also { messageCache.put(it.id, it) }
-    }
-
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
-        if (messages.isEmpty()) return
-        val messagesToInsert = messages.flatMap(Companion::allMessages)
-        for (message in messagesToInsert) {
-            require(message.cid.isNotEmpty()) {
-                "message.cid can not be empty. Id of the message: ${message.id}. Text: ${message.text}"
-            }
-        }
-        for (m in messagesToInsert) {
-            if (messageCache.get(m.id) != null || cache) {
-                messageCache.put(m.id, m)
-            }
-        }
-        messageDao.insert(messagesToInsert.map { it.toEntity() })
-    }
-
-    override suspend fun insertMessage(message: Message, cache: Boolean) {
-        insertMessages(listOf(message), cache)
-    }
-
-    override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
-        // delete the messages
-        messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
-        // wipe the cache
-        messageCache = LruCache(cacheSize)
-    }
-
-    override suspend fun deleteChannelMessage(message: Message) {
-        messageDao.deleteMessage(message.cid, message.id)
-        messageCache.remove(message.id)
-    }
-
-    override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
     }
 
     private fun List<Message>.filterReactions(): List<Message> = also {

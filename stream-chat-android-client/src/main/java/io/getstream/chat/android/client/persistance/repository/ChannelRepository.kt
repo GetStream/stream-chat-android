@@ -25,9 +25,33 @@ import java.util.Date
  * Repository to read and write [Channel] data.
  */
 public interface ChannelRepository {
+
+    /**
+     * Inserts a [Channel]
+     *
+     * @param channel [Channel]
+     */
     public suspend fun insertChannel(channel: Channel)
+
+    /**
+     * Inserts many [Channel]s.
+     *
+     * @param channels collection of [Channel]
+     */
     public suspend fun insertChannels(channels: Collection<Channel>)
+
+    /**
+     * Deletes a [Channel] by the cid.
+     *
+     * @param cid String
+     */
     public suspend fun deleteChannel(cid: String)
+
+    /**
+     * Select a channels, but without loading the messages.
+     *
+     * @param cid String
+     */
     public suspend fun selectChannelWithoutMessages(cid: String): Channel?
 
     /**

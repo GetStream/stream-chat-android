@@ -26,6 +26,9 @@ import io.getstream.chat.android.offline.repository.domain.channel.member.intern
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import java.util.Date
 
+/**
+ * Repository to read and write [Channel] data.
+ */
 internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
@@ -35,28 +38,62 @@ internal class DatabaseChannelRepository(
     // the channel cache is simple, just keeps the last several users in memory
     private val channelCache = LruCache<String, Channel>(cacheSize)
 
+    /**
+     * Inserts a [Channel]
+     *
+     * @param channel [Channel]
+     */
     override suspend fun insertChannel(channel: Channel) {
         updateCache(listOf(channel))
         channelDao.insert(channel.toEntity())
     }
 
+    /**
+     * Inserts many [Channel]s.
+     *
+     * @param channels collection of [Channel]
+     */
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
         updateCache(channels)
         channelDao.insertMany(channels.map(Channel::toEntity))
     }
 
+    /**
+     * Deletes a [Channel] by the cid.
+     *
+     * @param cid String
+     */
     override suspend fun deleteChannel(cid: String) {
         channelCache.remove(cid)
         channelDao.delete(cid)
     }
 
+    /**
+     * Select a channels, but without loading the messages.
+     *
+     * @param cid String
+     */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return selectChannels(listOf(cid)).getOrNull(0)
     }
 
+    /**
+     * Selects all channels' cids.
+     *
+     * @return A list of channels' cids stored in the repository.
+     */
     override suspend fun selectAllCids(): List<String> = channelDao.selectAllCids()
 
+    /**
+     * Select channels by full channel IDs [Channel.cid]
+     *
+     * @param channelCIDs A list of [Channel.cid] as query specification.
+     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
+     * value is true.
+     *
+     * @return A list of channels found in repository.
+     */
     override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> {
         if (channelCIDs.isEmpty()) {
             return emptyList()
@@ -72,34 +109,63 @@ internal class DatabaseChannelRepository(
         }
     }
 
-    private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
-        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }.also(::updateCache)
-    }
-
+    /**
+     * Read which channels need sync.
+     */
     override suspend fun selectChannelsSyncNeeded(): List<Channel> {
         return channelDao.selectSyncNeeded().map { it.toModel(getUser, getMessage) }
     }
 
+    /**
+     * Sets the Channel.deleteAt for a channel.
+     *
+     * @param cid String.
+     * @param deletedAt Date.
+     */
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
         channelCache.remove(cid)
         channelDao.setDeletedAt(cid, deletedAt)
     }
 
+    /**
+     * Sets the Channel.hidden for a channel.
+     *
+     * @param cid String.
+     * @param hidden Date.
+     * @param hideMessagesBefore Date.
+     */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
         channelCache.remove(cid)
         channelDao.setHidden(cid, hidden, hideMessagesBefore)
     }
 
+    /**
+     * Sets the Channel.hidden for a channel.
+     *
+     * @param cid String.
+     * @param hidden Date.
+     */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
         channelCache.remove(cid)
         channelDao.setHidden(cid, hidden)
     }
 
-    // Allows us to avoid enriching channel just to select members
+
+    /**
+     * Reads the member list of a channel. Allows us to avoid enriching channel just to select members
+     *
+     * @param cid String.
+     */
     override suspend fun selectMembersForChannel(cid: String): List<Member> {
         return channelDao.select(cid)?.members?.values?.map { it.toModel(getUser) } ?: emptyList()
     }
 
+    /**
+     * Updates the members of a [Channel]
+     *
+     * @param cid String.
+     * @param members list of [Member]
+     */
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
         members
             .map { it.toEntity() }
@@ -112,17 +178,21 @@ internal class DatabaseChannelRepository(
             }
     }
 
-    private fun updateCache(channels: Collection<Channel>) {
-        for (channel in channels) {
-            channelCache.put(channel.cid, channel)
-        }
-    }
-
     override suspend fun evictChannel(cid: String) {
         channelCache.remove(cid)
     }
 
     override fun clearChannelCache() {
         channelCache.evictAll()
+    }
+
+    private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
+        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }.also(::updateCache)
+    }
+
+    private fun updateCache(channels: Collection<Channel>) {
+        for (channel in channels) {
+            channelCache.put(channel.cid, channel)
+        }
     }
 }
