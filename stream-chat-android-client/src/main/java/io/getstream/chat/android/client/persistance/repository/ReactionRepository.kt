@@ -47,6 +47,7 @@ public interface ReactionRepository {
      * @param syncStatus [SyncStatus]
      */
     public suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction>
+
     /**
      * Selects the reaction of given type to the message if exists.
      *

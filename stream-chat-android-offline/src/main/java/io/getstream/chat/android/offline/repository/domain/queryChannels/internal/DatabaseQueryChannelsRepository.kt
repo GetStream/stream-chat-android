@@ -22,18 +22,33 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 
+/**
+ * Repository for queries of channels. This implementation uses the database.
+ */
 internal class DatabaseQueryChannelsRepository(
     private val queryChannelsDao: QueryChannelsDao,
 ) : QueryChannelsRepository {
+
+    /**
+     * Inserts a query channels.
+     *
+     * @param queryChannelsSpec [QueryChannelsSpec]
+     */
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         queryChannelsDao.insert(toEntity(queryChannelsSpec))
     }
 
+    /**
+     * Selects by a filter and query sort.
+     *
+     * @param filter [FilterObject]
+     * @param querySort [QuerySort]
+     */
     override suspend fun selectBy(filter: FilterObject, querySort: QuerySort<Channel>): QueryChannelsSpec? {
         return queryChannelsDao.select(generateId(filter, querySort))?.let(Companion::toModel)
     }
 
-    companion object {
+    private companion object {
         private fun generateId(filter: FilterObject, querySort: QuerySort<Channel>): String {
             return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
         }

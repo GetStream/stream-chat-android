@@ -135,7 +135,6 @@ internal class DatabaseMessageRepository(
         messageCache.remove(message.id)
     }
 
-
     /**
      * Selects all message of a [SyncStatus]
      *

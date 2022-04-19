@@ -150,7 +150,6 @@ internal class DatabaseChannelRepository(
         channelDao.setHidden(cid, hidden)
     }
 
-
     /**
      * Reads the member list of a channel. Allows us to avoid enriching channel just to select members
      *
