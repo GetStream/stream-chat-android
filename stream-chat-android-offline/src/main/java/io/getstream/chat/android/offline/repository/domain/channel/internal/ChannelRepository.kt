@@ -163,6 +163,12 @@ internal class ChannelRepositoryImpl(
         channelCache.evictAll()
     }
 
+    /**
+     * Updates the last message for a [Channel]
+     *
+     * @param cid String.
+     * @param lastMessage [Message].
+     */
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
         selectChannelWithoutMessages(cid)?.also { channel ->
             val messageCreatedAt = checkNotNull(
