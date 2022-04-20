@@ -205,6 +205,7 @@ public final class io/getstream/chat/android/offline/plugin/configuration/Config
 public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/experimental/plugin/factory/PluginFactory {
 	public fun <init> (Lio/getstream/chat/android/offline/plugin/configuration/Config;Landroid/content/Context;)V
 	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/experimental/plugin/Plugin;
+	public final fun setRepositoryFactory (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;)V
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/StateRegistry {
