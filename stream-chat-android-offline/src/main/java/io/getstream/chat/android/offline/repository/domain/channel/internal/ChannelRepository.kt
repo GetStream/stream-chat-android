@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import java.util.Date
@@ -55,6 +56,7 @@ internal interface ChannelRepository {
     suspend fun setHiddenForChannel(cid: String, hidden: Boolean)
     suspend fun selectMembersForChannel(cid: String): List<Member>
     suspend fun updateMembersForChannel(cid: String, members: List<Member>)
+    suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
     suspend fun evictChannel(cid: String)
 
     @VisibleForTesting
@@ -159,5 +161,36 @@ internal class ChannelRepositoryImpl(
 
     override fun clearChannelCache() {
         channelCache.evictAll()
+    }
+
+    /**
+     * Updates the last message for a [Channel]
+     *
+     * @param cid String.
+     * @param lastMessage [Message].
+     */
+    override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
+        selectChannelWithoutMessages(cid)?.also { channel ->
+            val messageCreatedAt = checkNotNull(
+                lastMessage.createdAt
+                    ?: lastMessage.createdLocallyAt
+            ) { "created at cant be null, be sure to set message.createdAt" }
+
+            val oldLastMessage = channel.lastMessage
+            val updateNeeded = if (oldLastMessage != null) {
+                lastMessage.id == oldLastMessage.id ||
+                    channel.lastMessageAt == null ||
+                    messageCreatedAt.after(channel.lastMessageAt)
+            } else {
+                true
+            }
+
+            if (updateNeeded) {
+                channel.apply {
+                    lastMessageAt = messageCreatedAt
+                    messages = listOf(lastMessage)
+                }.also { insertChannel(it) }
+            }
+        }
     }
 }
