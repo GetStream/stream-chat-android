@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -80,6 +81,12 @@ public class StreamOfflinePluginFactory(
      */
     override fun get(user: User): Plugin = createOfflinePlugin(user)
 
+    private var repositoryFactory: RepositoryFactory? = null
+
+    public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
+        this.repositoryFactory = repositoryFactory
+    }
+
     /**
      * Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.
      */
@@ -92,6 +99,11 @@ public class StreamOfflinePluginFactory(
         val job = SupervisorJob()
         val scope = CoroutineScope(job + DispatcherProvider.IO)
 
+        val repositoryFactory =
+            repositoryFactory ?: createRepositoryFactory(scope, appContext, user, config.persistenceEnabled)
+
+        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
+
         val repos = RepositoryFacadeBuilder {
             context(appContext)
             scope(scope)
@@ -102,7 +114,7 @@ public class StreamOfflinePluginFactory(
                 )
             )
             currentUser(user)
-            setOfflineEnabled(config.persistenceEnabled)
+            repositoryFactory(repositoryFactory)
         }.build()
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
@@ -204,7 +216,6 @@ public class StreamOfflinePluginFactory(
             createChannelListener = CreateChannelListenerImpl(globalState, repos),
         )
     }
-
 
     private fun createRepositoryFactory(
         scope: CoroutineScope,
