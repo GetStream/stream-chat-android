@@ -41,6 +41,8 @@ import java.util.concurrent.ConcurrentHashMap
  * 1. Query channels
  * 2. Query channel
  * 3. Query thread
+ *
+ * @property ignoreMutesForUnreadCount If we should ignore muted channel state when updating the unread count.
  */
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
@@ -48,6 +50,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
+    internal val ignoreMutesForUnreadCount: Boolean
 ) {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
@@ -79,7 +82,8 @@ internal class LogicRegistry internal constructor(
                 mutableState = stateRegistry.channel(channelType, channelId).toMutableState(),
                 globalMutableState = globalState,
                 repos = repos,
-                userPresence = userPresence
+                userPresence = userPresence,
+                ignoreMutesForUnreadCount = ignoreMutesForUnreadCount
             )
         }
     }
@@ -154,6 +158,7 @@ internal class LogicRegistry internal constructor(
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
+            ignoreMutesForUnreadCount: Boolean
         ): LogicRegistry {
             if (instance == null) {
                 logger.logE(
@@ -161,7 +166,14 @@ internal class LogicRegistry internal constructor(
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
                 )
             }
-            return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
+            return LogicRegistry(
+                stateRegistry = stateRegistry,
+                globalState = globalState,
+                userPresence = userPresence,
+                repos = repos,
+                client = client,
+                ignoreMutesForUnreadCount = ignoreMutesForUnreadCount
+            ).also { logicRegistry ->
                 instance = logicRegistry
             }
         }

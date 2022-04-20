@@ -105,13 +105,15 @@ internal fun Message.users(): List<User> {
  * @param currentUserId The id of the user that the unread count should be evaluated.
  * @param lastMessageAtDate The Date of the last message the SDK is aware of. This is normally the ChannelUserRead.lastMessageSeenDate.
  * @param isChannelMuted If the channel is muted for the current user or not.
+ * @param ignoreMutesForUnreadCount If we should ignore muted channel state when updating the unread count.
  */
 internal fun Message.shouldIncrementUnreadCount(
     currentUserId: String,
     lastMessageAtDate: Date?,
     isChannelMuted: Boolean,
+    ignoreMutesForUnreadCount: Boolean
 ): Boolean {
-    if (isChannelMuted) return false
+    if (isChannelMuted && !ignoreMutesForUnreadCount) return false
 
     val isMoreRecent = if (createdAt != null && lastMessageAtDate != null) {
         createdAt!! > lastMessageAtDate

@@ -47,6 +47,8 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * fourth, execute the batch using
  * batch.execute()
+ *
+ * @property ignoreMutesForUnreadCount If we should ignore muted channel state when updating the unread count.
  */
 internal class EventBatchUpdate private constructor(
     private val currentUser: StateFlow<User?>,
@@ -54,6 +56,7 @@ internal class EventBatchUpdate private constructor(
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
     private val userMap: MutableMap<String, User>,
+    private val ignoreMutesForUnreadCount: Boolean,
 ) {
 
     /**
@@ -73,7 +76,8 @@ internal class EventBatchUpdate private constructor(
                 if (message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastReadDate,
-                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid)
+                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid),
+                        ignoreMutesForUnreadCount = ignoreMutesForUnreadCount
                     )
                 ) {
                     channel.incrementUnreadCount(currentUserId, message.createdAt)
@@ -163,7 +167,11 @@ internal class EventBatchUpdate private constructor(
             users += usersToAdd
         }
 
-        suspend fun build(repos: RepositoryFacade, currentUser: StateFlow<User?>): EventBatchUpdate {
+        suspend fun build(
+            repos: RepositoryFacade,
+            currentUser: StateFlow<User?>,
+            ignoreMutesForUnreadCount: Boolean,
+        ): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
             val messageMap: Map<String, Message> =
@@ -175,7 +183,8 @@ internal class EventBatchUpdate private constructor(
                 repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),
-                users.associateBy(User::id).toMutableMap()
+                users.associateBy(User::id).toMutableMap(),
+                ignoreMutesForUnreadCount = ignoreMutesForUnreadCount
             )
         }
     }

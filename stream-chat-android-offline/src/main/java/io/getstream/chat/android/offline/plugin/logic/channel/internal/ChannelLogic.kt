@@ -114,6 +114,7 @@ import kotlin.math.max
  * @property repos [RepositoryFacade] that interact with data sources.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
+ * @property ignoreMutesForUnreadCount If we should ignore muted channel state when updating the unread count.
  */
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
@@ -121,6 +122,7 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val ignoreMutesForUnreadCount: Boolean = false
 ) : QueryChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
@@ -404,7 +406,8 @@ internal class ChannelLogic(
             message.shouldIncrementUnreadCount(
                 currentUserId = currentUserId,
                 lastMessageAtDate = mutableState._read.value?.lastMessageSeenDate,
-                isChannelMuted = isChannelMutedForCurrentUser(mutableState.cid)
+                isChannelMuted = isChannelMutedForCurrentUser(mutableState.cid),
+                ignoreMutesForUnreadCount = ignoreMutesForUnreadCount
             )
 
         if (shouldIncrementUnreadCount) {

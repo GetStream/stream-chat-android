@@ -190,7 +190,7 @@ internal class SendReactionsTests {
 
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<GlobalMutableState>()
-        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client)
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client, false)
 
         suspend fun givenMessageWithReactions(message: Message): Fixture = apply {
             whenever(repos.selectMessage(message.id)) doReturn message

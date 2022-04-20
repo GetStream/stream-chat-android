@@ -234,7 +234,7 @@ internal class DeleteReactionsTests {
 
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<GlobalMutableState>()
-        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client)
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client, false)
 
         fun givenMockedRepos(repos: RepositoryFacade): Fixture = apply {
             this.repos = repos

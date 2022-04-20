@@ -103,7 +103,14 @@ public class StreamOfflinePluginFactory(
 
         val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
         val stateRegistry = StateRegistry.create(job, scope, userStateFlow, repos, repos.observeLatestUsers())
-        val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
+        val logic = LogicRegistry.create(
+            stateRegistry = stateRegistry,
+            globalState = globalState,
+            userPresence = config.userPresence,
+            repos = repos,
+            client = chatClient,
+            ignoreMutesForUnreadCount = config.ignoreMutesForUnreadCount
+        )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
