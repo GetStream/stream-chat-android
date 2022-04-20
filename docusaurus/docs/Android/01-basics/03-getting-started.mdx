@@ -55,6 +55,8 @@ val offlinePluginFactory = StreamOfflinePluginFactory(
         persistenceEnabled = true,
         // An enumeration of various network types used as a constraint inside upload attachments worker.
         uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        // Allows the app to locally ignore muted channel state, when counting unread messages
+        ignoreMutesForUnreadCount = false,
     ),
     appContext = context,
 )
