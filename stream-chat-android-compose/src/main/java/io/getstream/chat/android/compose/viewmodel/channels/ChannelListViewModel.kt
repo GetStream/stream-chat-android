@@ -272,6 +272,7 @@ public class ChannelListViewModel(
      * Loads more data when the user reaches the end of the channels list.
      */
     public fun loadMore() {
+        if (chatClient.globalState.isOffline()) return
         val currentConfig = queryConfig.value
 
         channelsState = channelsState.copy(isLoadingMore = true)
