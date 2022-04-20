@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.persistance.repository.SyncStateReposito
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
-import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
 import kotlinx.coroutines.CoroutineScope
