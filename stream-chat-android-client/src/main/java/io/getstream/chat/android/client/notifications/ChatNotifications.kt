@@ -42,6 +42,7 @@ public interface ChatNotifications {
     public fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
+@Suppress("TooManyFunctions")
 internal class ChatNotificationsImpl constructor(
     private val handler: NotificationHandler,
     private val notificationConfig: NotificationConfig,

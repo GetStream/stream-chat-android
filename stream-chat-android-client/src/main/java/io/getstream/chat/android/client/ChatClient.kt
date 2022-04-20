@@ -159,8 +159,10 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-public class ChatClient internal constructor(
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "TooManyFunctions", "LargeClass")
+public class ChatClient
+@Suppress("LongParameterList")
+internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
@@ -522,6 +524,7 @@ public class ChatClient internal constructor(
      *
      * @return [Call] with a list of members or an error.
      */
+    @Suppress("LongParameterList")
     @CheckResult
     public fun queryMembers(
         channelType: String,
@@ -1204,7 +1207,6 @@ public class ChatClient internal constructor(
 
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
             relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
@@ -1515,7 +1517,7 @@ public class ChatClient internal constructor(
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
-     * between 1-120.
+     * between 1-[MAX_COOLDOWN_TIME_SECONDS].
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -1529,10 +1531,14 @@ public class ChatClient internal constructor(
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel> {
-        return if (cooldownTimeInSeconds in 1..120) {
+        return if (cooldownTimeInSeconds in 1..MAX_COOLDOWN_TIME_SECONDS) {
             api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
         } else {
-            ErrorCall(ChatError("You can't specify a value outside the range 1-120 for cooldown duration."))
+            ErrorCall(
+                ChatError(
+                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
+                )
+            )
         }
     }
 
@@ -2196,6 +2202,7 @@ public class ChatClient internal constructor(
      * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
+    @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var baseUrl: String = "chat.stream-io-api.com"
@@ -2479,6 +2486,7 @@ public class ChatClient internal constructor(
         @JvmStatic
         public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
+        private const val MAX_COOLDOWN_TIME_SECONDS = 120
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"

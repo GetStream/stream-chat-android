@@ -92,6 +92,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
+@Suppress("TooManyFunctions")
 public class ChannelClient internal constructor(
     public val channelType: String,
     public val channelId: String,
@@ -185,6 +186,7 @@ public class ChannelClient internal constructor(
         }
     }
 
+    @Suppress("ComplexMethod")
     private fun isRelevantForChannel(event: ChatEvent): Boolean {
         return when (event) {
             is ChannelDeletedEvent -> event.cid == cid

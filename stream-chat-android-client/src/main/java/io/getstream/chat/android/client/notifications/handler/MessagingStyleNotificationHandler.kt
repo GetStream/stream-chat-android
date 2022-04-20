@@ -40,6 +40,7 @@ import java.util.Date
  * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
 @RequiresApi(Build.VERSION_CODES.M)
+@Suppress("TooManyFunctions")
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,

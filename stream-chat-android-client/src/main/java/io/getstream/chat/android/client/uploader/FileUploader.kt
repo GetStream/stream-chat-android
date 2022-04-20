@@ -34,6 +34,7 @@ public interface FileUploader {
      * @see [Result.success]
      * @see [Result.error]
      */
+    @Suppress("LongParameterList")
     public fun sendFile(
         channelType: String,
         channelId: String,
@@ -69,6 +70,7 @@ public interface FileUploader {
      * @see [Result.success]
      * @see [Result.error]
      */
+    @Suppress("LongParameterList")
     public fun sendImage(
         channelType: String,
         channelId: String,

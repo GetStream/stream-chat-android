@@ -95,7 +95,10 @@ import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
-internal class MoshiChatApi(
+@Suppress("TooManyFunctions", "LargeClass")
+internal class MoshiChatApi
+@Suppress("LongParameterList")
+constructor(
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,

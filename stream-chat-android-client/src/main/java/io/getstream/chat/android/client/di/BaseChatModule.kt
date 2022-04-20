@@ -66,6 +66,7 @@ import retrofit2.Retrofit
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
+@Suppress("TooManyFunctions")
 internal open class BaseChatModule(
     private val appContext: Context,
     private val config: ChatClientConfig,

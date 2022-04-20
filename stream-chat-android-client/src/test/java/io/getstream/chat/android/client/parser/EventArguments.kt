@@ -114,18 +114,17 @@ import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 
-@Suppress("unused") // used via reflection
 internal object EventArguments {
     private val date = Date(1593411268000)
-    private val dateString = "2020-06-29T06:14:28.000Z"
-    private val connectionId = "6cfffec7-40df-40ac-901a-6ea6c5b7fb83"
-    private val channelType = "channelType"
-    private val channelId = "channelId"
-    private val cid = "channelType:channelId"
-    private val parentMessageId = "parentMessageId"
-    private val watcherCount = 3
-    private val unreadChannels = 5
-    private val totalUnreadCount = 4
+    private const val dateString = "2020-06-29T06:14:28.000Z"
+    private const val connectionId = "6cfffec7-40df-40ac-901a-6ea6c5b7fb83"
+    private const val channelType = "channelType"
+    private const val channelId = "channelId"
+    private const val cid = "channelType:channelId"
+    private const val parentMessageId = "parentMessageId"
+    private const val watcherCount = 3
+    private const val unreadChannels = 5
+    private const val totalUnreadCount = 4
     private val user = User(
         id = "bender",
         role = "user",
@@ -594,7 +593,7 @@ internal object EventArguments {
         user = user
     )
 
-    private fun eventArguments() = listOf(
+    private fun eventArgumentsList() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),
         Arguments.of(createChannelTruncatedServerSideEventStringJson(), channelTruncatedServerSideEvent),
         Arguments.of(createChannelUpdatedEventStringJson(), channelUpdatedEvent),
@@ -645,8 +644,8 @@ internal object EventArguments {
     )
 
     @JvmStatic
-    fun eventAdapterArguments() = eventArguments()
+    fun eventAdapterArgumentsList() = eventArgumentsList()
 
     @JvmStatic
-    fun chatParserEventArguments() = eventArguments()
+    fun chatParserEventArgumentsList() = eventArgumentsList()
 }

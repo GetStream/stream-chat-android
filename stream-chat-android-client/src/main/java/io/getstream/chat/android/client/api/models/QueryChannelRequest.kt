@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
+@Suppress("TooManyFunctions")
 public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     override var state: Boolean = false

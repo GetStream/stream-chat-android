@@ -35,7 +35,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     private val logger = ChatLogger.get("Http")
 
     @Throws(IOException::class)
-    @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
+    @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
         val level = logger.getLevel()
 
@@ -139,6 +139,7 @@ internal class HttpLoggingInterceptor : Interceptor {
             !contentEncoding.equals("gzip", ignoreCase = true)
     }
 
+    @Suppress("UnusedPrivateMember", "ReturnCount", "MagicNumber")
     private fun Buffer.isProbablyUtf8(): Boolean {
         try {
             val prefix = Buffer()

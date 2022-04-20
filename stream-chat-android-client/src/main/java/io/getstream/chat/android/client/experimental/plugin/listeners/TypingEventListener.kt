@@ -77,6 +77,7 @@ public interface TypingEventListener {
      * @param extraData Any extra data such as parent id.
      * @param eventTime [Date] object as the time of this event.
      */
+    @Suppress("LongParameterList")
     public fun onTypingEventResult(
         result: Result<ChatEvent>,
         eventType: String,

@@ -120,6 +120,7 @@ internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     )
 }
 
+@Suppress("ComplexMethod")
 internal fun ChatEventDto.toDomain(): ChatEvent {
     return when (this) {
         is NewMessageEventDto -> toDomain()
