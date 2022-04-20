@@ -42,9 +42,9 @@ class ChatInitializer(private val context: Context) {
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
-                    messageId: String,
-                    channelType: String,
-                    channelId: String,
+                messageId: String,
+                channelType: String,
+                channelId: String,
                 ->
                 HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
             }
