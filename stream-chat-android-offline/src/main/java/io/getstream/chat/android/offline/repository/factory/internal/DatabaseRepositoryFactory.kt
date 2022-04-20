@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.channel.internal.DatabaseChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
@@ -36,30 +37,35 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Dat
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 
-internal class RepositoryFactory(
+private const val DEFAULT_CACHE_SIZE = 100
+
+internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User?,
-) {
-    fun createUserRepository(): UserRepository = DatabaseUserRepository(database.userDao(), 100)
-    fun createChannelConfigRepository(): ChannelConfigRepository =
+) : RepositoryFactory {
+
+    override fun createUserRepository(): UserRepository = DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE)
+    override fun createChannelConfigRepository(): ChannelConfigRepository =
         DatabaseChannelConfigRepository(database.channelConfigDao())
 
-    fun createChannelRepository(
+    override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, 100)
+    ): ChannelRepository =
+        DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
 
-    fun createQueryChannelsRepository(): QueryChannelsRepository =
+    override fun createQueryChannelsRepository(): QueryChannelsRepository =
         DatabaseQueryChannelsRepository(database.queryChannelsDao())
 
-    fun createMessageRepository(
+    override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = DatabaseMessageRepository(database.messageDao(), getUser, currentUser, 100)
+    ): MessageRepository = DatabaseMessageRepository(database.messageDao(), getUser, currentUser, DEFAULT_CACHE_SIZE)
 
-    fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
+    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         DatabaseReactionRepository(database.reactionDao(), getUser)
 
-    fun createSyncStateRepository(): SyncStateRepository = DatabaseSyncStateRepository(database.syncStateDao())
+    override fun createSyncStateRepository(): SyncStateRepository = DatabaseSyncStateRepository(database.syncStateDao())
 
-    fun createAttachmentRepository(): AttachmentRepository = DatabaseAttachmentRepository(database.attachmentDao())
+    override fun createAttachmentRepository(): AttachmentRepository =
+        DatabaseAttachmentRepository(database.attachmentDao())
 }
