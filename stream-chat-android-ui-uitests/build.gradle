@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
 
 plugins {
     id 'com.android.application'
@@ -40,6 +41,15 @@ android {
     
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.COMPOSE
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
     }
 }
 
@@ -57,11 +67,25 @@ shot {
 
 dependencies {
     implementation project(":stream-chat-android-ui-components")
+    implementation project(":stream-chat-android-compose")
+
     androidTestImplementation project(':stream-chat-android-test')
 
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.materialComponents
+
+    // Compose
+    implementation Dependencies.composeCompiler
+    implementation Dependencies.composeUi
+    implementation Dependencies.composeUiTooling
+    implementation Dependencies.composeFoundation
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeActivity
+    implementation Dependencies.composeViewModel
+    implementation Dependencies.composeAccompanistPermissions
+    implementation Dependencies.composeAccompanistPager
+    implementation Dependencies.composeCoil
 
     // Instrumentation tests
     androidTestImplementation Dependencies.fragmentTest
@@ -72,4 +96,6 @@ dependencies {
     androidTestImplementation Dependencies.espressoIdlingResources
     androidTestImplementation Dependencies.androidxTestJunit
     androidTestImplementation Dependencies.navigationTest
+    androidTestImplementation Dependencies.composeUiTest
+    androidTestImplementation Dependencies.composeUiTestManifest
 }

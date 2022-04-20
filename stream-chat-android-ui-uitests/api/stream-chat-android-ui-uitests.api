@@ -7,13 +7,60 @@ public final class io/getstream/chat/android/uitests/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/uitests/databinding/ActivityLoginBinding : androidx/viewbinding/ViewBinding {
-	public final field loginButton Landroid/widget/Button;
-	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/ActivityLoginBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroid/widget/FrameLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/ActivityLoginBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/ActivityLoginBinding;
+public final class io/getstream/chat/android/uitests/app/ChatApp : android/app/Application {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun onCreate ()V
+}
+
+public final class io/getstream/chat/android/uitests/app/compose/ChannelsActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/uitests/app/compose/ChannelsActivity$Companion;
+	public fun <init> ()V
+}
+
+public final class io/getstream/chat/android/uitests/app/compose/ChannelsActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/uitests/app/compose/MessagesActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/uitests/app/compose/MessagesActivity$Companion;
+	public fun <init> ()V
+}
+
+public final class io/getstream/chat/android/uitests/app/compose/MessagesActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/uitests/app/login/LoginActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/uitests/app/login/LoginActivity$Companion;
+	public fun <init> ()V
+	public final fun LoginScreen (Landroidx/compose/runtime/Composer;I)V
+	public final fun UserItem (Lio/getstream/chat/android/uitests/app/login/LoginUser;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class io/getstream/chat/android/uitests/app/login/LoginActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/uitests/app/login/LoginUser {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lio/getstream/chat/android/uitests/app/login/LoginUser;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/uitests/app/login/LoginUser;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/uitests/app/login/LoginUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getToken ()Ljava/lang/String;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/uitests/app/login/LoginUserKt {
+	public static final fun getLOGIN_USERS ()Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding : androidx/viewbinding/ViewBinding {
@@ -73,13 +120,10 @@ public final class io/getstream/chat/android/uitests/snapshot/reactions/Componen
 }
 
 public final class io/getstream/chat/android/uitests/snapshot/search/ComponentBrowserSearchViewFragment : androidx/fragment/app/Fragment {
+	public static final field $stable I
 	public fun <init> ()V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-}
-
-public final class io/getstream/chat/android/uitests/ui/LoginActivity : androidx/appcompat/app/AppCompatActivity {
-	public fun <init> ()V
 }
 

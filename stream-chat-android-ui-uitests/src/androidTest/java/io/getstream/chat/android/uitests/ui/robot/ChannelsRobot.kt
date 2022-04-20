@@ -21,7 +21,7 @@ import io.getstream.chat.android.uitests.R
 /**
  * A factory function for [ChannelsRobot].
  */
-internal fun channelsRobot(func: ChannelsRobot.() -> Unit) = ChannelsRobot().apply { func() }
+internal fun channelsRobot(block: ChannelsRobot.() -> Unit) = ChannelsRobot().apply { block() }
 
 /**
  * A robot that simulates user behavior on the channels screen.
@@ -29,9 +29,9 @@ internal fun channelsRobot(func: ChannelsRobot.() -> Unit) = ChannelsRobot().app
 internal class ChannelsRobot : BaseTestRobot() {
 
     /**
-     * Clicks on the first channel in the channel list.
+     * Clicks on any channel.
      */
-    fun clickFirstChannel() {
+    fun clickAnyChannel() {
         clickElementByIdWithDelay(R.id.channelItemView)
     }
 }

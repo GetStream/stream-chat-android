@@ -4,6 +4,7 @@
     >
 
     <application
+        android:name=".app.ChatApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,8 +14,25 @@
         >
 
         <activity
-            android:name=".ui.LoginActivity"
+            android:name=".app.login.LoginActivity"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".app.compose.ChannelsActivity"
             android:exported="false"
+            />
+
+        <activity
+            android:name=".app.compose.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             />
 
     </application>

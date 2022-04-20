@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot
+package io.getstream.chat.android.uitests.ui.robot.compose
 
-import io.getstream.chat.android.uitests.R
-
-/**
- * A factory function for [LoginRobot].
- */
-internal fun loginRobot(func: LoginRobot.() -> Unit) = LoginRobot().apply { func() }
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import org.junit.rules.TestRule
 
 /**
- * A robot that simulates user behavior on the login screen.
+ * A base class for all user robots.
+ *
+ * @param composeTestRule A [TestRule] that provides the main entry point into testing.
  */
-internal class LoginRobot : BaseTestRobot() {
-
-    /**
-     * Clicks on the login button that should take the user to the channels screen.
-     */
-    fun clickLoginButton() {
-        clickElementById(R.id.loginButton)
-    }
-}
+internal open class BaseComposeTestRobot(
+    protected val composeTestRule: ComposeTestRule,
+)

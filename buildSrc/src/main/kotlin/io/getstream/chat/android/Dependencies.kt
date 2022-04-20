@@ -108,6 +108,8 @@ object Dependencies {
     const val composeCoil = "io.coil-kt:coil-compose:${Versions.COIL}"
     const val composeCompiler = "androidx.compose.compiler:compiler:${Versions.COMPOSE}"
     const val composeUi = "androidx.compose.ui:ui:${Versions.COMPOSE}"
+    const val composeUiTest = "androidx.compose.ui:ui-test-junit4:${Versions.COMPOSE}"
+    const val composeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.COMPOSE}"
     const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.COMPOSE}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.COMPOSE}"

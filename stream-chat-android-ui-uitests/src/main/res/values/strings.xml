@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">UiTests</string>
+    <string name="app_name">UI Testing</string>
 
-    <string name="login_button_text">Login</string>
+    <string name="sdk_name_compose">Compose UI Components</string>
+    <string name="sdk_name_ui_components">UI Components</string>
 </resources>

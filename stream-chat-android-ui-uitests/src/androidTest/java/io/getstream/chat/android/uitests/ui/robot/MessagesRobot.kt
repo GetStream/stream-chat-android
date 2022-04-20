@@ -17,6 +17,7 @@
 package io.getstream.chat.android.uitests.ui.robot
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -25,7 +26,7 @@ import io.getstream.chat.android.uitests.R
 /**
  * A factory function for [MessagesRobot].
  */
-internal fun messagesRobot(func: MessagesRobot.() -> Unit) = MessagesRobot().apply { func() }
+internal fun messagesRobot(block: MessagesRobot.() -> Unit) = MessagesRobot().apply { block() }
 
 /**
  * A robot that simulates user behavior on the messages screen.
@@ -33,10 +34,20 @@ internal fun messagesRobot(func: MessagesRobot.() -> Unit) = MessagesRobot().app
 internal class MessagesRobot : BaseTestRobot() {
 
     /**
-     * Send a text message on the message list screen.
+     * Types certain text in the message composer.
+     *
+     * @param text The text what will be typed in the message input.
      */
-    fun sendTextMessage(message: String) {
+    fun typeMessageText(text: String) {
         onView(withId(R.id.messageEditText))
-            .perform(typeText(message), closeSoftKeyboard())
+            .perform(typeText(text), closeSoftKeyboard())
+    }
+
+    /**
+     * Clicks the "send message" button.
+     */
+    fun clickSendButton() {
+        onView(withId(R.id.sendButtonContainer))
+            .perform(ViewActions.click())
     }
 }

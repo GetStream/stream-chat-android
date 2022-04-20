@@ -16,13 +16,15 @@
 
 package io.getstream.chat.android.uitests.ui.test
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.uitests.ui.LoginActivity
+import io.getstream.chat.android.uitests.app.login.LoginActivity
 import io.getstream.chat.android.uitests.ui.robot.channelsRobot
-import io.getstream.chat.android.uitests.ui.robot.loginRobot
+import io.getstream.chat.android.uitests.ui.robot.compose.composeChannelsRobot
+import io.getstream.chat.android.uitests.ui.robot.compose.composeLoginRobot
+import io.getstream.chat.android.uitests.ui.robot.compose.composeMessagesRobot
 import io.getstream.chat.android.uitests.ui.robot.messagesRobot
 import io.getstream.chat.android.uitests.ui.util.CoroutineTaskExecutorRule
 import org.junit.Rule
@@ -34,7 +36,7 @@ import org.junit.runner.RunWith
 internal class MessagesTests {
 
     @get:Rule
-    val activityRule = ActivityScenarioRule(LoginActivity::class.java)
+    val composeTestRule = createAndroidComposeRule<LoginActivity>()
 
     @get:Rule
     @InternalStreamChatApi
@@ -42,18 +44,34 @@ internal class MessagesTests {
 
     @Test
     fun testSendMessage() {
-        val message = "test message"
-
-        loginRobot {
-            clickLoginButton()
+        composeLoginRobot(composeTestRule) {
+            loginWithUser("Jc Miñarro")
         }
 
         channelsRobot {
-            clickFirstChannel()
+            clickAnyChannel()
         }
 
         messagesRobot {
-            sendTextMessage(message)
+            typeMessageText("Test message")
+            clickSendButton()
+        }
+    }
+
+    @Test
+    fun testSendMessageCompose() {
+        composeLoginRobot(composeTestRule) {
+            useComposeSdk()
+            loginWithUser("Jc Miñarro")
+        }
+
+        composeChannelsRobot(composeTestRule) {
+            clickAnyChannel()
+        }
+
+        composeMessagesRobot(composeTestRule) {
+            typeMessageText("Test message")
+            clickSendButton()
         }
     }
 }
