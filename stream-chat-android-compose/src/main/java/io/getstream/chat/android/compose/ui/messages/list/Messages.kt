@@ -59,6 +59,7 @@ import kotlin.math.abs
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
+ * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based on the list state.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Composable that represents the item that displays each message.
@@ -71,6 +72,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(messagesState, lazyListState)
     },
@@ -86,7 +88,7 @@ public fun Messages(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom,
             reverseLayout = true,
-            contentPadding = PaddingValues(vertical = 16.dp)
+            contentPadding = contentPadding
         ) {
             itemsIndexed(
                 messages,
