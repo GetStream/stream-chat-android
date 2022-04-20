@@ -109,7 +109,9 @@ public class StreamOfflinePluginFactory(
             context = appContext,
             logic = logic,
             globalState = globalState,
-            repos = repos,
+            channelRepository = repos,
+            messageRepository = repos,
+            attachmentRepository = repos,
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType
         )

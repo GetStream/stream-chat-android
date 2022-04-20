@@ -309,7 +309,6 @@
     <ID>EmptyFunctionBlock:FakeSocketService.kt$FakeSocketService${ }</ID>
     <ID>EmptyFunctionBlock:RetroError.kt$RetroError${ }</ID>
     <ID>EmptyFunctionBlock:RetroSuccess.kt$RetroSuccess${ }</ID>
-    <ID>ForbiddenComment:Call.kt$// TODO: Make internal after migrating ChatDomain</ID>
     <ID>ForbiddenComment:ChatClient.kt$ChatClient$// TODO: An InterceptedCall wrapper can be created to avoid so much code here.</ID>
     <ID>LargeClass:ChatClient.kt$ChatClient</ID>
     <ID>LargeClass:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>
