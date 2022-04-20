@@ -455,6 +455,7 @@ public class MessageListViewModel(
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
     public fun loadMore() {
+        if (chatClient.globalState.isOffline()) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
