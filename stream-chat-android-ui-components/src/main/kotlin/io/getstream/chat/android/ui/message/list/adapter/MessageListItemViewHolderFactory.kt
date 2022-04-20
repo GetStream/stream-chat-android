@@ -135,34 +135,6 @@ public open class MessageListItemViewHolderFactory {
     private val textTransformer: ChatMessageTextTransformer by lazy { ChatUI.messageTextTransformer }
 
     /**
-     * This is necessary to maintain the configuration of this factory, but without sharing the instance. Please use
-     * clone when sharing the factory between MessageListView and MessageOptionsDialogFragment
-     */
-    internal fun clone(): MessageListItemViewHolderFactory {
-        val newFactory = MessageListItemViewHolderFactory()
-
-        if (::decoratorProvider.isInitialized) {
-            newFactory.decoratorProvider = decoratorProvider
-        }
-        if (::attachmentFactoryManager.isInitialized) {
-            newFactory.attachmentFactoryManager = attachmentFactoryManager
-        }
-        if (::style.isInitialized) {
-            newFactory.style = style
-        }
-        if (::messageReplyStyle.isInitialized) {
-            newFactory.messageReplyStyle = messageReplyStyle
-        }
-        if (::giphyViewHolderStyle.isInitialized) {
-            newFactory.giphyViewHolderStyle = giphyViewHolderStyle
-        }
-
-        newFactory.listenerContainer = listenerContainer
-
-        return newFactory
-    }
-
-    /**
      * Returns a view type value based on the type and contents of the given [item].
      * The view type returned here will be used as a parameter in [createViewHolder].
      *

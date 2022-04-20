@@ -31,6 +31,5 @@ import kotlinx.coroutines.CoroutineScope
  * @param retryPolicy A policy used for retrying the call.
  */
 @InternalStreamChatApi
-// TODO: Make internal after migrating ChatDomain
-public fun <T : Any> Call<T>.retry(scope: CoroutineScope, retryPolicy: RetryPolicy): Call<T> =
+internal fun <T : Any> Call<T>.retry(scope: CoroutineScope, retryPolicy: RetryPolicy): Call<T> =
     RetryCall(this, scope, CallRetryService(retryPolicy))
