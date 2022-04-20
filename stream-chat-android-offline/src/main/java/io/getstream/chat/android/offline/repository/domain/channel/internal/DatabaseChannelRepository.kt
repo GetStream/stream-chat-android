@@ -194,4 +194,35 @@ internal class DatabaseChannelRepository(
             channelCache.put(channel.cid, channel)
         }
     }
+
+    /**
+     * Updates the last message for a [Channel]
+     *
+     * @param cid String.
+     * @param lastMessage [Message].
+     */
+    override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
+        selectChannelWithoutMessages(cid)?.also { channel ->
+            val messageCreatedAt = checkNotNull(
+                lastMessage.createdAt
+                    ?: lastMessage.createdLocallyAt
+            ) { "created at cant be null, be sure to set message.createdAt" }
+
+            val oldLastMessage = channel.lastMessage
+            val updateNeeded = if (oldLastMessage != null) {
+                lastMessage.id == oldLastMessage.id ||
+                    channel.lastMessageAt == null ||
+                    messageCreatedAt.after(channel.lastMessageAt)
+            } else {
+                true
+            }
+
+            if (updateNeeded) {
+                channel.apply {
+                    lastMessageAt = messageCreatedAt
+                    messages = listOf(lastMessage)
+                }.also { insertChannel(it) }
+            }
+        }
+    }
 }

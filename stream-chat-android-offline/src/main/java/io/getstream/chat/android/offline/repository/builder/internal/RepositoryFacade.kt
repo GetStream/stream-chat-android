@@ -150,29 +150,6 @@ internal class RepositoryFacade(
         insertMessages(messages, cacheForMessages)
     }
 
-    internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        selectChannelWithoutMessages(cid)?.also { channel ->
-            val messageCreatedAt = checkNotNull(
-                lastMessage.createdAt
-                    ?: lastMessage.createdLocallyAt
-            ) { "created at cant be null, be sure to set message.createdAt" }
-
-            val oldLastMessage = channel.lastMessage
-            val updateNeeded = if (oldLastMessage != null) {
-                lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)
-            } else {
-                true
-            }
-
-            if (updateNeeded) {
-                channel.apply {
-                    lastMessageAt = messageCreatedAt
-                    messages = listOf(lastMessage)
-                }.also { channelsRepository.insertChannel(it) }
-            }
-        }
-    }
-
     internal companion object {
 
         private var instance: RepositoryFacade? = null

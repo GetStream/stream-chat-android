@@ -72,6 +72,7 @@
 - Added the "Copy Message" option to link messages [#3354](https://github.com/GetStream/stream-chat-android/pull/3354)
 
 ### ⚠️ Changed
+- `loadMore` calls inside `MessageListViewModel` and `ChannelListViewModel` should no longer load data if there is no network connection. [3362](https://github.com/GetStream/stream-chat-android/pull/3362)
 
 ### ❌ Removed
 
@@ -118,7 +119,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-<!-- UNRELEASED START -->
 # April 12th, 2022 - 5.0.3
 ## Common changes for all artifacts
 
@@ -182,7 +182,6 @@
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
-<!-- UNRELEASED END -->
 
 # March 30th, 2022 - 5.0.2
 ## stream-chat-android-client
