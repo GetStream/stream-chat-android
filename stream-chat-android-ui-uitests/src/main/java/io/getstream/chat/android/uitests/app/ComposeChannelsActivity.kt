@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.app.compose
+package io.getstream.chat.android.uitests.app
 
 import android.content.Context
 import android.content.Intent
@@ -33,7 +33,7 @@ import io.getstream.chat.android.uitests.app.login.LoginActivity
  * An Activity that represents a channel list screen. Relies on the components
  * taken from Compose SDK.
  */
-class ChannelsActivity : AppCompatActivity() {
+class ComposeChannelsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +57,7 @@ class ChannelsActivity : AppCompatActivity() {
      * @param channel The channel to open.
      */
     private fun openMessages(channel: Channel) {
-        startActivity(MessagesActivity.createIntent(this, channel.cid))
+        startActivity(ComposeMessagesActivity.createIntent(this, channel.cid))
     }
 
     /**
@@ -73,13 +73,13 @@ class ChannelsActivity : AppCompatActivity() {
 
     companion object {
         /**
-         * Create an [Intent] to start [ChannelsActivity].
+         * Create an [Intent] to start [ComposeChannelsActivity].
          *
          * @param context The context used to create the intent.
-         * @return The [Intent] to start [ChannelsActivity].
+         * @return The [Intent] to start [ComposeChannelsActivity].
          */
         fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
+            return Intent(context, ComposeChannelsActivity::class.java)
         }
     }
 }

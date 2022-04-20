@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.uitests.R
-import io.getstream.chat.android.uitests.app.compose.ChannelsActivity
+import io.getstream.chat.android.uitests.app.ChannelsActivity
+import io.getstream.chat.android.uitests.app.ComposeChannelsActivity
 
 /**
  * An Activity that allows users to log in using one of our predefined sample users.
@@ -189,9 +189,9 @@ class LoginActivity : AppCompatActivity() {
         ).enqueue()
 
         if (isCompose) {
-            startActivity(ChannelsActivity.createIntent(this))
+            startActivity(ComposeChannelsActivity.createIntent(this))
         } else {
-            startActivity(ChannelListActivity.createIntent(this))
+            startActivity(ChannelsActivity.createIntent(this))
         }
         finish()
     }

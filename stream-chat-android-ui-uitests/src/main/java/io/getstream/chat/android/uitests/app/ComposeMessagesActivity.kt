@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.app.compose
+package io.getstream.chat.android.uitests.app
 
 import android.content.Context
 import android.content.Intent
@@ -28,7 +28,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * An Activity that represents a message list screen. Relies on the components
  * taken from Compose SDK.
  */
-class MessagesActivity : AppCompatActivity() {
+class ComposeMessagesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +48,14 @@ class MessagesActivity : AppCompatActivity() {
         private const val KEY_CHANNEL_ID = "channelId"
 
         /**
-         * Create an [Intent] to start [MessagesActivity].
+         * Create an [Intent] to start [ComposeMessagesActivity].
          *
          * @param context The context used to create the intent.
          * @param channelId The channel id. ie 123.
-         * @return The [Intent] to start [MessagesActivity].
+         * @return The [Intent] to start [ComposeMessagesActivity].
          */
         fun createIntent(context: Context, channelId: String): Intent {
-            return Intent(context, MessagesActivity::class.java).apply {
+            return Intent(context, ComposeMessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
             }
         }
