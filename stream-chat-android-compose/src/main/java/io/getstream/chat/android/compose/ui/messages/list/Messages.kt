@@ -32,7 +32,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
@@ -73,7 +72,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = DefaultMessagesContentPadding),
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(messagesState, lazyListState)
     },
@@ -192,8 +191,3 @@ internal fun DefaultMessagesLoadingMoreIndicator() {
             .padding(8.dp)
     )
 }
-
-/**
- * Default value for [Messages] content padding.
- */
-internal val DefaultMessagesContentPadding: Dp = 16.dp

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
@@ -69,7 +70,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 public fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = DefaultMessagesContentPadding),
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
@@ -205,7 +206,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 public fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = DefaultMessagesContentPadding),
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
