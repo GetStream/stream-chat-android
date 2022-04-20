@@ -57,6 +57,7 @@ internal class QueryChannelsPostponeHelper(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun <T : Any> doSafeJob(job: () -> Call<T>): Call<T> =
         try {
             doJob(attemptsCount, job)

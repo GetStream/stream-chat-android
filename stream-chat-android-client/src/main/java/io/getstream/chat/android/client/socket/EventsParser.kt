@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
 import okhttp3.WebSocket
 
+@Suppress("TooManyFunctions")
 internal class EventsParser(
     private val parser: ChatParser,
     private val service: ChatSocketService,
@@ -41,6 +42,7 @@ internal class EventsParser(
         closedByClient = false
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun onMessage(webSocket: WebSocket, text: String) {
         try {
             logger.logI(text)
@@ -57,7 +59,9 @@ internal class EventsParser(
         }
     }
 
-    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) { }
+    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+        // no-op
+    }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         if (code == CODE_CLOSE_SOCKET_FROM_CLIENT) {

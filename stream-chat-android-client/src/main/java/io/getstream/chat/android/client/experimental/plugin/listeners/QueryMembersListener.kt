@@ -39,6 +39,7 @@ public interface QueryMembersListener {
      * @param sort Sort the list of members.
      * @param members List of members.
      */
+    @Suppress("LongParameterList")
     public suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
         channelType: String,

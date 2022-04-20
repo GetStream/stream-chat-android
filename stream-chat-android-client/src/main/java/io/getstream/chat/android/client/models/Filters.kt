@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
  * See<a href="https://getstream.io/chat/docs/query_channels/?language=kotlin" target="_top">
  *     Query Channels Documentation</a>
  */
+@Suppress("TooManyFunctions")
 public object Filters {
 
     @JvmStatic

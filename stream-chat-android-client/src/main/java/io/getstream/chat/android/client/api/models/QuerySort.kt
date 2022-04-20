@@ -31,6 +31,7 @@ import kotlin.reflect.full.memberProperties
  * name as string instance.
  * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
  */
+@Suppress("TooManyFunctions")
 public class QuerySort<T : Any> {
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 

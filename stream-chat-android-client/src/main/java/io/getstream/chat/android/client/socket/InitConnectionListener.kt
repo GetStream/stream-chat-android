@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.User
 
-internal abstract class InitConnectionListener {
+internal open class InitConnectionListener {
 
     open fun onSuccess(data: ConnectionData) {
     }
