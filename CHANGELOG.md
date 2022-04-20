@@ -72,6 +72,7 @@
 - Added the "Copy Message" option to link messages [#3354](https://github.com/GetStream/stream-chat-android/pull/3354)
 
 ### ⚠️ Changed
+- `loadMore` calls inside `MessageListViewModel` and `ChannelListViewModel` should no longer load data if there is no network connection. [3362](https://github.com/GetStream/stream-chat-android/pull/3362)
 
 ### ❌ Removed
 
