@@ -24,6 +24,9 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.extensions.internal.hasPendingAttachments
@@ -33,9 +36,6 @@ import io.getstream.chat.android.offline.message.attachments.internal.generateUp
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepository
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
 import io.getstream.chat.android.offline.utils.internal.getMessageType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

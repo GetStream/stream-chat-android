@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.persistance.repository
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import java.util.Date
 
 /**
@@ -118,6 +119,14 @@ public interface ChannelRepository {
     public suspend fun updateMembersForChannel(cid: String, members: List<Member>)
 
     public suspend fun evictChannel(cid: String)
+
+    /**
+     * Updates the last message for a [Channel]
+     *
+     * @param cid String.
+     * @param lastMessage [Message].
+     */
+    public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
 
     @VisibleForTesting
     public fun clearChannelCache()

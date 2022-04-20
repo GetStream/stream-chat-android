@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.offline.extensions.internal.lastMessage
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import java.util.Date
