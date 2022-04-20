@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.offline.extensions.internal.users
@@ -163,7 +164,7 @@ internal class RepositoryFacade(
          */
         @VisibleForTesting
         internal fun create(
-            factory: DatabaseRepositoryFactory,
+            factory: RepositoryFactory,
             scope: CoroutineScope,
             defaultConfig: Config,
         ): RepositoryFacade {
