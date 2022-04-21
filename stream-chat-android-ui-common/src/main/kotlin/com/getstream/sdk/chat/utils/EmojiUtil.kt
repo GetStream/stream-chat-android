@@ -18,17 +18,33 @@ package com.getstream.sdk.chat.utils
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+/**
+ * Util used for detecting emojis inside messages.
+ */
 @InternalStreamChatApi
-public object EmojiUtils {
+public object EmojiUtil {
 
+    /**
+     * Checks whether the message consists of emoji only.
+     *
+     * @param message The message that was sent/received by user.
+     */
     public fun isEmojiOnly(message: String): Boolean {
         return message.replace(EMOJI_REGEX, "").isEmpty()
     }
 
+    /**
+     * Checks whether the message consists of single emoji.
+     *
+     * @param message The message that was sent/received by user.
+     */
     public fun isSingleEmoji(message: String): Boolean {
         return isEmojiOnly(message) && message.replaceFirst(EMOJI_REGEX, "").isEmpty()
     }
 
+    /**
+     * Regex which matches emojis inside a string.
+     */
     private val EMOJI_REGEX = Regex(
         "(?:[\\u2700-\\u27bf]|(?:[\\ud83c\\udde6-\\ud83c\\uddff]){2}|[\\ud800\\udc00-\\uDBFF\\uDFFF]|" +
             "[\\u2600-\\u26FF])[\\ufe0e\\ufe0f]?(?:[\\u0300-\\u036f\\ufe20-\\ufe23\\u20d0-\\u20f0]" +

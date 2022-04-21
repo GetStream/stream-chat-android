@@ -72,6 +72,7 @@ public fun MessageText(
     val isEmojiOnly = message.isEmojiOnly()
     val isSingleEmoji = message.isSingleEmoji()
 
+    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
         isSingleEmoji -> ChatTheme.typography.singleEmoji
         isEmojiOnly -> ChatTheme.typography.emojiOnly
@@ -82,8 +83,8 @@ public fun MessageText(
         ClickableText(
             modifier = modifier
                 .padding(
-                    start = if (isEmojiOnly && !isMyMessage) 0.dp else 12.dp,
-                    end = if (isEmojiOnly && isMyMessage) 0.dp else 12.dp,
+                    start = 12.dp,
+                    end = 12.dp,
                     top = 8.dp,
                     bottom = 8.dp
                 ),
@@ -110,8 +111,8 @@ public fun MessageText(
                 .padding(
                     start = if (isEmojiOnly && !isMyMessage) 0.dp else 12.dp,
                     end = if (isEmojiOnly && isMyMessage) 0.dp else 12.dp,
-                    top = 8.dp,
-                    bottom = 8.dp
+                    top = if (isEmojiOnly) 0.dp else 8.dp,
+                    bottom = if (isEmojiOnly) 0.dp else 8.dp
                 ),
             text = styledText,
             style = style

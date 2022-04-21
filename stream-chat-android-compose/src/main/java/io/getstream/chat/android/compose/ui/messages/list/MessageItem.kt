@@ -51,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -76,6 +75,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasThread
 import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.util.isUploading
 
@@ -369,7 +369,7 @@ internal fun DefaultMessageItemTrailingContent(
 /**
  * Represents the default content shown at the center of the message list item.
  *
- * By default, we show a message bubble with attachments.
+ * By default, we show a message bubble with attachments or emoji stickers if message is emoji only.
  *
  * @param messageItem The message item to show the content for.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
@@ -383,41 +383,91 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
-    val (message, position, _, ownsMessage, _) = messageItem
-
     val modifier = Modifier.widthIn(max = 250.dp)
-    val isFailed = ownsMessage && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+    if (messageItem.message.isEmojiOnly()) {
+        EmojiMessageContent(
+            modifier = modifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult
+        )
+    } else {
+        RegularMessageContent(
+            modifier = modifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult
+        )
+    }
+}
 
-    if (message.isEmojiOnly()) {
-        if (!isFailed) {
+/**
+ * Message content when the message consists only of emoji.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ */
+@Composable
+internal fun EmojiMessageContent(
+    messageItem: MessageItemState,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val message = messageItem.message
+
+    if (!messageItem.isFailed()) {
+        MessageContent(
+            message = message,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult
+        )
+    } else {
+        Box(modifier = modifier) {
             MessageContent(
                 message = message,
                 onLongItemClick = onLongItemClick,
                 onGiphyActionClick = onGiphyActionClick,
                 onImagePreviewResult = onImagePreviewResult
             )
-        } else {
-            Box(modifier = modifier) {
-                MessageContent(
-                    message = message,
-                    onLongItemClick = onLongItemClick,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onImagePreviewResult = onImagePreviewResult
-                )
 
-                Icon(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(BottomEnd),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_error),
-                    contentDescription = null,
-                    tint = ChatTheme.colors.errorAccent,
-                )
-            }
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd),
+                painter = painterResource(id = R.drawable.stream_compose_ic_error),
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent,
+            )
         }
-
-        return
     }
+}
+
+/**
+ * Message content for messages which consist of more than just emojis.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ */
+@Composable
+internal fun RegularMessageContent(
+    messageItem: MessageItemState,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val (message, position, _, ownsMessage, _) = messageItem
 
     val messageBubbleShape = when (position) {
         Top, Middle -> RoundedCornerShape(16.dp)
@@ -433,7 +483,7 @@ internal fun DefaultMessageItemCenterContent(
         else -> ChatTheme.colors.otherMessagesBackground
     }
 
-    if (!isFailed) {
+    if (!messageItem.isFailed()) {
         MessageBubble(
             modifier = modifier,
             shape = messageBubbleShape,
