@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,6 +42,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
  * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
  * @param onLastItemReached Handler for when the user reaches the end of the list.
  * @param modifier Modifier for styling.
+ * @param contentPadding Padding values to be applied to the channel list surrounding the content inside.
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Customizable UI component, that represents each item in the list.
@@ -52,6 +54,7 @@ public fun Channels(
     lazyListState: LazyListState,
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit,
@@ -64,6 +67,7 @@ public fun Channels(
             modifier = Modifier.fillMaxSize(),
             state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = contentPadding
         ) {
             item {
                 DummyFirstChannelItem()

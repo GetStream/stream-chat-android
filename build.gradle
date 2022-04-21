@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.command.changelog.plugin.ChangelogPlugin
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
@@ -11,6 +12,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
+apply plugin: ChangelogPlugin
 apply plugin: VersionBumpPlugin
 apply plugin: MinorBumpPlugin
 
@@ -77,6 +79,11 @@ unitTestDebugScript {
 
 releaseScript {
     changelogPath = "CHANGELOG.md"
+}
+
+changelogScript {
+    changelogPath = "CHANGELOG.md"
+    changelogModel = "CHANGELOG_MODEL.md"
 }
 
 task clean(type: Delete) {
