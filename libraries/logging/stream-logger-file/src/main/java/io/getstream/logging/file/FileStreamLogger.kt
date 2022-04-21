@@ -67,7 +67,7 @@ public class FileStreamLogger(
     override fun log(
         priority: Priority,
         tag: String,
-        message: () -> String,
+        message: String,
         throwable: Throwable?,
     ) {
         val thread = Thread.currentThread()
@@ -80,7 +80,7 @@ public class FileStreamLogger(
                 val formatterPrefix = "$formattedDateTime $formattedPriority/$formattedThread [$tag]: "
 
                 write(formatterPrefix)
-                write(message())
+                write(message)
                 appendLine()
                 if (write(throwable)) {
                     appendLine()

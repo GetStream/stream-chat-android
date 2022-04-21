@@ -86,9 +86,7 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
-import io.getstream.logging.logD
-import io.getstream.logging.logI
-import io.getstream.logging.logV
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -106,6 +104,8 @@ internal class EventHandlerImpl(
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) {
+
+    private val logger = StreamLog.getLogger(TAG)
 
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
     private var initJob: Deferred<*>? = null
@@ -144,7 +144,7 @@ internal class EventHandlerImpl(
      */
     @VisibleForTesting
     internal suspend fun handleEvent(event: ChatEvent) {
-        logI(TAG) { "[handleEvent] event: $event" }
+        logger.i { "[handleEvent] event: $event" }
         handleConnectEvents(listOf(event))
         handleEventsInternal(listOf(event), isFromSync = false)
     }
@@ -161,7 +161,7 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
-        logI(TAG) { "[replayEventsForChannels] cids: $cids" }
+        logger.i { "[replayEventsForChannels] cids: $cids" }
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
                 syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
@@ -178,7 +178,7 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun handleEvents(events: List<ChatEvent>) {
-        logI(TAG) { "[handleEvents] events.size: ${events.size}" }
+        logger.i { "[handleEvents] events.size: ${events.size}" }
         handleConnectEvents(events)
         handleEventsInternal(events, isFromSync = false)
     }
@@ -186,7 +186,7 @@ internal class EventHandlerImpl(
     private suspend fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
         // send out the connect events
         sortedEvents.forEach { event ->
-            logI(TAG) { "[handleConnectEvents] event: $event" }
+            logger.i { "[handleConnectEvents] event: $event" }
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
@@ -552,7 +552,7 @@ internal class EventHandlerImpl(
 
     private suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
-            logV(TAG) { "[handleEventsInternal] chatEvent: $chatEvent" }
+            logger.v { "[handleEventsInternal] chatEvent: $chatEvent" }
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }
@@ -649,7 +649,7 @@ internal class EventHandlerImpl(
             if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
                 true
             } else {
-                logD(TAG) {
+                logger.d {
                     "Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."
                 }
                 false

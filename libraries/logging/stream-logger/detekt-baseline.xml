@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>EmptyFunctionBlock:StreamLogger.kt$SilentStreamLogger${}</ID>
-    <ID>MaxLineLength:StreamLog.kt$*</ID>
+    <ID>MaxLineLength:StreamLog.kt$IsLoggableValidator$*</ID>
     <ID>MaxLineLength:StreamLog.kt$StreamLog$*</ID>
     <ID>MaxLineLength:StreamLogger.kt$StreamLogger$*</ID>
   </CurrentIssues>

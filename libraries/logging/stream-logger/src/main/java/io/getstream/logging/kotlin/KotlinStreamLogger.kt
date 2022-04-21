@@ -32,10 +32,10 @@ public class KotlinStreamLogger(
     private val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH),
 ) : StreamLogger {
 
-    override fun log(priority: Priority, tag: String, message: () -> String, throwable: Throwable?) {
+    override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
         val now = dateFormat.format(now())
         val thread = Thread.currentThread().run { "$name:$id" }
-        val composed = "$now ($thread) [${priority.stringify()}/$tag]: ${message()}"
+        val composed = "$now ($thread) [${priority.stringify()}/$tag]: $message"
         val finalMessage = throwable?.let {
             "$composed\n${it.stringify()}"
         } ?: composed

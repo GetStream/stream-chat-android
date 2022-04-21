@@ -25,7 +25,7 @@ public class CompositeStreamLogger(
     override fun log(
         priority: Priority,
         tag: String,
-        message: () -> String,
+        message: String,
         throwable: Throwable?,
     ) {
         children.forEach { childLogger ->

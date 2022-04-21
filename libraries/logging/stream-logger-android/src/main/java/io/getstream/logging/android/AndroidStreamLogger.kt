@@ -30,7 +30,7 @@ private const val MAX_TAG_LEN = 23
  */
 public class AndroidStreamLogger : StreamLogger {
 
-    override fun log(priority: Priority, tag: String, message: () -> String, throwable: Throwable?) {
+    override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
 
         val androidPriority = priority.toAndroidPriority()
         val androidTag = tag.takeIf { it.length > MAX_TAG_LEN && !isNougatOrHigher() }
@@ -38,7 +38,7 @@ public class AndroidStreamLogger : StreamLogger {
             ?: tag
 
         val thread = Thread.currentThread().run { "$name:$id" }
-        val composed = "($thread) $${message()}"
+        val composed = "($thread) $message"
         val finalMessage = throwable?.let {
             "$composed\n${it.stringify()}"
         } ?: composed

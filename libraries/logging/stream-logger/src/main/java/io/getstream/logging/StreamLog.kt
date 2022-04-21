@@ -16,104 +16,28 @@
 
 package io.getstream.logging
 
-import io.getstream.logging.StreamLog.isLoggable
 import io.getstream.logging.StreamLogger.Level.DEBUG
 import io.getstream.logging.StreamLogger.Level.ERROR
 import io.getstream.logging.StreamLogger.Level.INFO
 import io.getstream.logging.StreamLogger.Level.VERBOSE
 import io.getstream.logging.StreamLogger.Level.WARN
 
-/**
- * Send a [ERROR] log message.
- *
- * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
- * @param throwable An exception to log.
- * @param message The function returning a message you would like logged.
- */
-public inline fun logE(tag: String, throwable: Throwable, crossinline message: () -> String) {
-    if (isLoggable(ERROR, tag)) {
-        StreamLog.e(tag, throwable) { message() }
-    }
-}
-
-/**
- * Send a [ERROR] log message.
- *
- * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
- * @param message The function returning a message you would like logged.
- */
-public inline fun logE(tag: String, crossinline message: () -> String) {
-    if (isLoggable(ERROR, tag)) {
-        StreamLog.e(tag) { message() }
-    }
-}
-
-/**
- * Send a [WARN] log message.
- *
- * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
- * @param message The function returning a message you would like logged.
- */
-public inline fun logW(tag: String, crossinline message: () -> String) {
-    if (isLoggable(WARN, tag)) {
-        StreamLog.w(tag) { message() }
-    }
-}
-
-/**
- * Send a [INFO] log message.
- *
- * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
- * @param message The function returning a message you would like logged.
- */
-public inline fun logI(tag: String, crossinline message: () -> String) {
-    if (isLoggable(INFO, tag)) {
-        StreamLog.i(tag) { message() }
-    }
-}
-
-/**
- * Send a [DEBUG] log message.
- *
- * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
- * @param message The function returning a message you would like logged.
- */
-public inline fun logD(tag: String, crossinline message: () -> String) {
-    if (isLoggable(DEBUG, tag)) {
-        StreamLog.d(tag) { message() }
-    }
-}
-
-/**
- * Send a [VERBOSE] log message.
- *
- * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
- * @param message The function returning a message you would like logged.
- */
-public inline fun logV(tag: String, crossinline message: () -> String) {
-    if (isLoggable(VERBOSE, tag)) {
-        StreamLog.v(tag) { message() }
-    }
-}
-
 public object StreamLog {
 
-    private var logger: StreamLogger = SilentStreamLogger
-    private var isLoggable: (priority: Priority, tag: String) -> Boolean = { _, _ -> false }
+    @PublishedApi
+    internal var logger: StreamLogger = SilentStreamLogger
+    @PublishedApi
+    internal var validator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
 
     /**
      * Sets custom [StreamLogger] implementation.
      */
     public fun init(
         logger: StreamLogger,
-        isLoggable: (priority: Priority, tag: String) -> Boolean = { _, _ -> false }
+        validator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
     ) {
         this.logger = logger
-        this.isLoggable = isLoggable
-    }
-
-    public fun isLoggable(priority: Priority, tag: String): Boolean {
-        return isLoggable.invoke(priority, tag)
+        this.validator = validator
     }
 
     /**
@@ -121,7 +45,7 @@ public object StreamLog {
      *
      * @return [TaggedLogger] Tagged logger.
      */
-    public fun getLogger(tag: String): TaggedLogger = TaggedLoggerImpl(tag, logger)
+    public fun getLogger(tag: String): TaggedLogger = TaggedLogger(tag, logger, validator)
 
     /**
      * Send a [ERROR] log message.
@@ -130,9 +54,9 @@ public object StreamLog {
      * @param throwable An exception to log.
      * @param message The function returning a message you would like logged.
      */
-    public fun e(tag: String, throwable: Throwable, message: () -> String) {
-        if (isLoggable(ERROR, tag)) {
-            logger.log(ERROR, tag, message, throwable)
+    public inline fun e(tag: String, throwable: Throwable, message: () -> String) {
+        if (validator.isLoggable(ERROR, tag)) {
+            logger.log(ERROR, tag, message(), throwable)
         }
     }
 
@@ -142,9 +66,9 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
      * @param message The function returning a message you would like logged.
      */
-    public fun e(tag: String, message: () -> String) {
-        if (isLoggable(ERROR, tag)) {
-            logger.log(ERROR, tag, message)
+    public inline fun e(tag: String, message: () -> String) {
+        if (validator.isLoggable(ERROR, tag)) {
+            logger.log(ERROR, tag, message())
         }
     }
 
@@ -154,9 +78,9 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
      * @param message The function returning a message you would like logged.
      */
-    public fun w(tag: String, message: () -> String) {
-        if (isLoggable(WARN, tag)) {
-            logger.log(WARN, tag, message)
+    public inline fun w(tag: String, message: () -> String) {
+        if (validator.isLoggable(WARN, tag)) {
+            logger.log(WARN, tag, message())
         }
     }
 
@@ -166,9 +90,9 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
      * @param message The function returning a message you would like logged.
      */
-    public fun i(tag: String, message: () -> String) {
-        if (isLoggable(INFO, tag)) {
-            logger.log(INFO, tag, message)
+    public inline fun i(tag: String, message: () -> String) {
+        if (validator.isLoggable(INFO, tag)) {
+            logger.log(INFO, tag, message())
         }
     }
 
@@ -178,9 +102,9 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
      * @param message The function returning a message you would like logged.
      */
-    public fun d(tag: String, message: () -> String) {
-        if (isLoggable(DEBUG, tag)) {
-            logger.log(DEBUG, tag, message)
+    public inline fun d(tag: String, message: () -> String) {
+        if (validator.isLoggable(DEBUG, tag)) {
+            logger.log(DEBUG, tag, message())
         }
     }
 
@@ -190,17 +114,35 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
      * @param message The function returning a message you would like logged.
      */
-    public fun v(tag: String, message: () -> String) {
-        if (isLoggable(VERBOSE, tag)) {
-            logger.log(VERBOSE, tag, message)
+    public inline fun v(tag: String, message: () -> String) {
+        if (validator.isLoggable(VERBOSE, tag)) {
+            logger.log(VERBOSE, tag, message())
         }
     }
 }
 
 /**
+ * Validates if message can be logged.
+ */
+public fun interface IsLoggableValidator {
+
+    /**
+     * Validates [priority] and [tag] of a message you would like logged.
+     *
+     * @param priority The priority/type of a log message.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     */
+    public fun isLoggable(priority: Priority, tag: String): Boolean
+}
+
+/**
  * Represents a tagged logger.
  */
-public interface TaggedLogger {
+public class TaggedLogger(
+    @PublishedApi internal val tag: String,
+    @PublishedApi internal val delegate: StreamLogger,
+    @PublishedApi internal var validator: IsLoggableValidator,
+) {
 
     /**
      * Send a [ERROR] log message.
@@ -208,40 +150,64 @@ public interface TaggedLogger {
      * @param throwable An exception to log.
      * @param message The function returning a message you would like logged.
      */
-    public fun e(throwable: Throwable, message: () -> String)
+    public inline fun e(throwable: Throwable, message: () -> String) {
+        if (validator.isLoggable(ERROR, tag)) {
+            delegate.log(ERROR, tag, message(), throwable)
+        }
+    }
 
     /**
      * Send a [ERROR] log message.
      *
      * @param message The function returning a message you would like logged.
      */
-    public fun e(message: () -> String)
+    public inline fun e(message: () -> String) {
+        if (validator.isLoggable(ERROR, tag)) {
+            delegate.log(ERROR, tag, message())
+        }
+    }
 
     /**
      * Send a [WARN] log message.
      *
      * @param message The function returning a message you would like logged.
      */
-    public fun w(message: () -> String)
+    public inline fun w(message: () -> String) {
+        if (validator.isLoggable(WARN, tag)) {
+            delegate.log(WARN, tag, message())
+        }
+    }
 
     /**
      * Send a [INFO] log message.
      *
      * @param message The function returning a message you would like logged.
      */
-    public fun i(message: () -> String)
+    public inline fun i(message: () -> String) {
+        if (validator.isLoggable(INFO, tag)) {
+            delegate.log(INFO, tag, message())
+        }
+    }
 
     /**
      * Send a [DEBUG] log message.
      *
      * @param message The function returning a message you would like logged.
      */
-    public fun d(message: () -> String)
+    public inline fun d(message: () -> String) {
+        if (validator.isLoggable(DEBUG, tag)) {
+            delegate.log(DEBUG, tag, message())
+        }
+    }
 
     /**
      * Send a [VERBOSE] log message.
      *
      * @param message The function returning a message you would like logged.
      */
-    public fun v(message: () -> String)
+    public inline fun v(message: () -> String) {
+        if (validator.isLoggable(VERBOSE, tag)) {
+            delegate.log(VERBOSE, tag, message())
+        }
+    }
 }
