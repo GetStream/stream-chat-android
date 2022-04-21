@@ -31,7 +31,7 @@ public object EmojiUtil {
      * @param message The message that was sent/received by user.
      */
     public fun isEmojiOnly(message: Message): Boolean {
-        if (message.attachments.isNotEmpty()) return false
+        if (message.replyTo != null || message.attachments.isNotEmpty() || message.deletedAt != null) return false
         return message.text.replace(EMOJI_REGEX, "").isEmpty()
     }
 
@@ -41,7 +41,6 @@ public object EmojiUtil {
      * @param message The message that was sent/received by user.
      */
     public fun isSingleEmoji(message: Message): Boolean {
-        if (message.attachments.isNotEmpty()) return false
         return isEmojiOnly(message) && message.text.replaceFirst(EMOJI_REGEX, "").isEmpty()
     }
 

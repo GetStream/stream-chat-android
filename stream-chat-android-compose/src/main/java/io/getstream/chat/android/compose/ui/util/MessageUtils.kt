@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.EmojiUtil
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -92,8 +91,3 @@ internal fun Message.isEmojiOnly(): Boolean = EmojiUtil.isEmojiOnly(this)
  * @return If the message is single emoji only or not.
  */
 internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)
-
-/**
- * @return If the current message is the current users message.
- */
-internal fun Message.isMine(): Boolean = ChatClient.instance().getCurrentUser()?.id == this.user.id

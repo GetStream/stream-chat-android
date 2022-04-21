@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -41,7 +42,6 @@ import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
-import io.getstream.chat.android.compose.ui.util.isMine
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
@@ -54,12 +54,14 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
+ * @param isQuote Is the message is a quote inside another message.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
+    isQuote: Boolean = false,
     onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
@@ -67,10 +69,8 @@ public fun MessageText(
     val styledText = buildAnnotatedMessageText(message)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
-    val isMyMessage = message.isMine()
-
-    val isEmojiOnly = message.isEmojiOnly()
-    val isSingleEmoji = message.isSingleEmoji()
+    val isEmojiOnly = message.isEmojiOnly() && !isQuote
+    val isSingleEmoji = message.isSingleEmoji() && !isQuote
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
@@ -106,14 +106,16 @@ public fun MessageText(
             }
         }
     } else {
+        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
         Text(
             modifier = modifier
                 .padding(
-                    start = if (isEmojiOnly && !isMyMessage) 0.dp else 12.dp,
-                    end = if (isEmojiOnly && isMyMessage) 0.dp else 12.dp,
+                    start = horizontalPadding,
+                    end = horizontalPadding,
                     top = if (isEmojiOnly) 0.dp else 8.dp,
                     bottom = if (isEmojiOnly) 0.dp else 8.dp
-                ),
+                )
+                .clipToBounds(),
             text = styledText,
             style = style
         )
