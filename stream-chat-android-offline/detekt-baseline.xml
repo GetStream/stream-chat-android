@@ -129,6 +129,8 @@
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>NestedBlockDepth:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>PrintStackTrace:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e</ID>
+    <ID>ReturnCount:Channel.kt$ internal fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>ReturnCount:Channel.kt$ internal fun Channel.removeMember(currentUserId: String?, memberUserId: String?): Channel</ID>
     <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$ internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
     <ID>ReturnCount:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
