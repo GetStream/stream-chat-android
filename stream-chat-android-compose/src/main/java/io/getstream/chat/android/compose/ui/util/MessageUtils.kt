@@ -86,12 +86,12 @@ internal fun Message.isGiphyEphemeral(): Boolean = isGiphy() && isEphemeral()
 /**
  * @return If the message is emoji only or not.
  */
-internal fun Message.isEmojiOnly(): Boolean = EmojiUtil.isEmojiOnly(text)
+internal fun Message.isEmojiOnly(): Boolean = EmojiUtil.isEmojiOnly(this)
 
 /**
  * @return If the message is single emoji only or not.
  */
-internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(text)
+internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)
 
 /**
  * @return If the current message is the current users message.

@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils
 
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -29,8 +30,9 @@ public object EmojiUtil {
      *
      * @param message The message that was sent/received by user.
      */
-    public fun isEmojiOnly(message: String): Boolean {
-        return message.replace(EMOJI_REGEX, "").isEmpty()
+    public fun isEmojiOnly(message: Message): Boolean {
+        if (message.attachments.isNotEmpty()) return false
+        return message.text.replace(EMOJI_REGEX, "").isEmpty()
     }
 
     /**
@@ -38,8 +40,9 @@ public object EmojiUtil {
      *
      * @param message The message that was sent/received by user.
      */
-    public fun isSingleEmoji(message: String): Boolean {
-        return isEmojiOnly(message) && message.replaceFirst(EMOJI_REGEX, "").isEmpty()
+    public fun isSingleEmoji(message: Message): Boolean {
+        if (message.attachments.isNotEmpty()) return false
+        return isEmojiOnly(message) && message.text.replaceFirst(EMOJI_REGEX, "").isEmpty()
     }
 
     /**
