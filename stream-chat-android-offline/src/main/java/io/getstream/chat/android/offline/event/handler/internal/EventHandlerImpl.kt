@@ -79,11 +79,11 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.extensions.internal.addMember
 import io.getstream.chat.android.offline.extensions.internal.addMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMembership
 import io.getstream.chat.android.offline.extensions.internal.mergeReactions
 import io.getstream.chat.android.offline.extensions.internal.removeMember
 import io.getstream.chat.android.offline.extensions.internal.removeMembership
 import io.getstream.chat.android.offline.extensions.internal.updateMember
+import io.getstream.chat.android.offline.extensions.internal.updateMembership
 import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
