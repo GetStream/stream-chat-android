@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.randomQueryChannelsSpec
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepositoryImpl
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -47,12 +47,12 @@ internal class QueryChannelsImplRepositoryTest {
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private lateinit var dao: QueryChannelsDao
-    private lateinit var sut: QueryChannelsRepositoryImpl
+    private lateinit var sut: DatabaseQueryChannelsRepository
 
     @BeforeEach
     fun before() {
         dao = mock()
-        sut = QueryChannelsRepositoryImpl(dao)
+        sut = DatabaseQueryChannelsRepository(dao)
     }
 
     @Test
@@ -84,7 +84,7 @@ internal class QueryChannelsImplRepositoryTest {
         result.shouldNotBeNull()
         result.filter.shouldBeInstanceOf<ContainsFilterObject>()
         (result.filter as ContainsFilterObject).fieldName shouldBeEqualTo "cid"
-        result.filter.value shouldBeEqualTo "cid1"
+        (result.filter as ContainsFilterObject).value shouldBeEqualTo "cid1"
         result.cids shouldBeEqualTo setOf("cid1")
     }
 

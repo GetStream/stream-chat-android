@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.domain.syncState.internal
+package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.sync.SyncState
-
-internal fun SyncStateEntity.toModel() =
-    SyncState(userId, activeChannelIds, lastSyncedAt, markedAllReadAt)
-
-internal fun SyncState.toEntity() =
-    SyncStateEntity(userId, activeChannelIds, lastSyncedAt, markedAllReadAt)
+/**
+ * Configuration of a channel.
+ *
+ * @property type String.
+ * @property config [Config]
+ */
+public data class ChannelConfig(val type: String, val config: Config)

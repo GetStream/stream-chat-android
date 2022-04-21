@@ -17,15 +17,19 @@
 package io.getstream.chat.android.offline.repository.domain.message.attachment.internal
 
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-internal interface AttachmentRepository {
-    fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
-}
+/**
+ * Repository to access data of attachments. This implementation uses database.
+ */
+internal class DatabaseAttachmentRepository(private val attachmentDao: AttachmentDao) : AttachmentRepository {
 
-internal class AttachmentRepositoryImpl(private val attachmentDao: AttachmentDao) : AttachmentRepository {
+    /**
+     * Observes any change in attachments for an specific message.
+     */
     override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {
         return attachmentDao.observeAttachmentsForMessage(messageId)
             .distinctUntilChanged()

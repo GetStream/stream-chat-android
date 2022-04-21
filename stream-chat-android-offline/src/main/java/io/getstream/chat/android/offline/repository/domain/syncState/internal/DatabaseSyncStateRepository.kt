@@ -16,18 +16,28 @@
 
 package io.getstream.chat.android.offline.repository.domain.syncState.internal
 
-import io.getstream.chat.android.offline.sync.internal.SyncState
+import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.sync.SyncState
 
-internal interface SyncStateRepository {
-    suspend fun insertSyncState(syncState: SyncState)
-    suspend fun selectSyncState(userId: String): SyncState?
-}
+/**
+ * Repository to read and write data about the sync state of the SDK. This implementation uses database
+ */
+internal class DatabaseSyncStateRepository(private val syncStateDao: SyncStateDao) : SyncStateRepository {
 
-internal class SyncStateRepositoryImpl(private val syncStateDao: SyncStateDao) : SyncStateRepository {
+    /**
+     * Inserts a sync state.
+     *
+     * @param syncState [SyncState]
+     */
     override suspend fun insertSyncState(syncState: SyncState) {
         syncStateDao.insert(syncState.toEntity())
     }
 
+    /**
+     * Selects a sync state.
+     *
+     * @param userId String
+     */
     override suspend fun selectSyncState(userId: String): SyncState? {
         return syncStateDao.select(userId)?.toModel()
     }

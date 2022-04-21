@@ -17,12 +17,12 @@
 package io.getstream.chat.android.offline.repository
 
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
@@ -55,7 +55,7 @@ internal class ReactionRepositoryTest {
         runBlocking {
             currentUser = randomUser()
             reactionDao = mock()
-            reactionRepo = ReactionRepositoryImpl(reactionDao) { currentUser }
+            reactionRepo = DatabaseReactionRepository(reactionDao) { currentUser }
         }
     }
 
