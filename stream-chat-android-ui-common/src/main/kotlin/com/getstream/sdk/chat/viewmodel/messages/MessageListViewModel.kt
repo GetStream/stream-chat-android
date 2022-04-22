@@ -50,10 +50,13 @@ import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
@@ -215,23 +218,36 @@ public class MessageListViewModel(
             }
         }
 
+    /**
+     * A background job used for view model initialization.
+     * The job should be canceled after receiving the first, non-null value from the watch channel request.
+     */
+    private var initialJob: Job? = null
+
     init {
-        initWithOfflinePlugin()
+        stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
+
+        initialJob = viewModelScope.launch {
+            chatClient.watchChannelAsState(
+                cid = cid,
+                messageLimit = DEFAULT_MESSAGES_LIMIT,
+                coroutineScope = viewModelScope
+            ).collect { channelState ->
+                if (channelState != null) {
+                    initWithOfflinePlugin(channelState)
+                    initialJob?.cancel()
+                }
+            }
+        }
     }
 
     /**
      * Initializes the ViewModel with offline capabilities using
-     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin] after connecting the user.
+     *
+     * @param channelState State container for particular channel.
      */
-    private fun initWithOfflinePlugin() {
-        stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
-
-        val channelState = chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
-        ).value ?: return
-
+    private fun initWithOfflinePlugin(channelState: ChannelState) {
         ChatClient.dismissChannelNotifications(
             channelType = channelState.channelType,
             channelId = channelState.channelId
