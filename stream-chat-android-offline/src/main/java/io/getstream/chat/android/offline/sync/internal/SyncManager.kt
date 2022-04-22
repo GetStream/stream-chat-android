@@ -26,15 +26,16 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -120,7 +121,7 @@ internal class SyncManager(
         val selectedState = repos.selectSyncState(userId)
 
         selectedState?.let { state ->
-            if (state.markedAllReadAt == null || state.markedAllReadAt.before(currentDate)) {
+            if (state.markedAllReadAt?.before(currentDate) == true) {
                 repos.insertSyncState(state.copy(markedAllReadAt = currentDate))
             }
         }

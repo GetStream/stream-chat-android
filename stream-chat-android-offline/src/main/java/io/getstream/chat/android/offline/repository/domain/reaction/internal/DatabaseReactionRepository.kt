@@ -18,13 +18,52 @@ package io.getstream.chat.android.offline.repository.domain.reaction.internal
 
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
-internal interface ReactionRepository {
-    suspend fun insertReaction(reaction: Reaction)
-    suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
-    suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction>
+/**
+ * Repository to read and write reactions. This implementation uses database.
+ * We don't do any caching on reactions since usage is infrequent.
+ */
+internal class DatabaseReactionRepository(
+    private val reactionDao: ReactionDao,
+    private val getUser: suspend (userId: String) -> User,
+) : ReactionRepository {
+
+    /**
+     * Inserts a reaction.
+     *
+     * @param reaction [Reaction]
+     */
+    override suspend fun insertReaction(reaction: Reaction) {
+        require(reaction.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
+        require(reaction.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
+        require(reaction.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
+
+        reactionDao.insert(reaction.toEntity())
+    }
+
+    /**
+     * Updates the Reaction.deletedAt for reactions of a message.
+     *
+     * @param userId String.
+     * @param messageId String.
+     * @param deletedAt Date.
+     */
+    override suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {
+        reactionDao.setDeleteAt(userId, messageId, deletedAt)
+    }
+
+    /**
+     * Selects all reactions with specific [SyncStatus]
+     *
+     * @param syncStatus [SyncStatus]
+     */
+    override suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction> {
+        return reactionDao.selectSyncStatus(syncStatus).map { it.toModel(getUser) }
+    }
+
     /**
      * Selects the reaction of given type to the message if exists.
      *
@@ -34,38 +73,6 @@ internal interface ReactionRepository {
      *
      * @return [Reaction] if exists, null otherwise.
      */
-    suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): Reaction?
-
-    suspend fun selectUserReactionsToMessage(
-        messageId: String,
-        userId: String,
-    ): List<Reaction>
-}
-
-/**
- * We don't do any caching on reactions since usage is infrequent.
- */
-internal class ReactionRepositoryImpl(
-    private val reactionDao: ReactionDao,
-    private val getUser: suspend (userId: String) -> User,
-) : ReactionRepository {
-
-    override suspend fun insertReaction(reaction: Reaction) {
-        require(reaction.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
-        require(reaction.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
-        require(reaction.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
-
-        reactionDao.insert(reaction.toEntity())
-    }
-
-    override suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {
-        reactionDao.setDeleteAt(userId, messageId, deletedAt)
-    }
-
-    override suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction> {
-        return reactionDao.selectSyncStatus(syncStatus).map { it.toModel(getUser) }
-    }
-
     override suspend fun selectUserReactionToMessage(
         reactionType: String,
         messageId: String,
@@ -78,6 +85,12 @@ internal class ReactionRepositoryImpl(
         )?.toModel(getUser)
     }
 
+    /**
+     * Selects all current user reactions of a message.
+     *
+     * @param messageId String.
+     * @param userId String.
+     */
     override suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,

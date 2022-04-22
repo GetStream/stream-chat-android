@@ -514,6 +514,7 @@
     <ID>TooManyFunctions:BaseChatModule.kt$BaseChatModule</ID>
     <ID>TooManyFunctions:ChannelApi.kt$ChannelApi</ID>
     <ID>TooManyFunctions:ChannelClient.kt$ChannelClient</ID>
+    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepository</ID>
     <ID>TooManyFunctions:ChatApi.kt$ChatApi</ID>
     <ID>TooManyFunctions:ChatClient.kt$ChatClient</ID>
     <ID>TooManyFunctions:ChatClient.kt$ChatClient$Builder : ChatClientBuilder</ID>

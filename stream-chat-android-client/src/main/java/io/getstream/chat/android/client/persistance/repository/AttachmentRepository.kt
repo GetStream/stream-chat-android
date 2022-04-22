@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.querychannels.internal
+package io.getstream.chat.android.client.persistance.repository
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Attachment
+import kotlinx.coroutines.flow.Flow
 
-internal data class QueryChannelsSpec(
-    val filter: FilterObject,
-    val querySort: QuerySort<Channel>
-) {
-    var cids: Set<String> = emptySet()
+/**
+ * Repository to access data of attachments.
+ */
+public interface AttachmentRepository {
+
+    /**
+     * Observes any change in attachments for an specific message.
+     */
+    public fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
 }

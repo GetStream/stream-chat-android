@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.channel.internal
+package io.getstream.chat.android.compose.ui.util
 
-import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 
-internal data class ChannelConfig(val type: String, val config: Config)
+/**
+ * @return If the current message failed to send.
+ */
+internal fun MessageItemState.isFailed(): Boolean = isMine && message.syncStatus == SyncStatus.FAILED_PERMANENTLY

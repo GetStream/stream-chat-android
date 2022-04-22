@@ -67,6 +67,7 @@ public fun QuotedMessage(
 
                     if (message.text.isNotEmpty()) {
                         MessageText(
+                            isQuote = true,
                             message = message,
                             onLongItemClick = onLongItemClick
                         )

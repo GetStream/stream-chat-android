@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.sync.internal
+package io.getstream.chat.android.client.sync
 
 import java.util.Date
 
-internal data class SyncState(
+public data class SyncState(
     val userId: String,
     val activeChannelIds: List<String> = emptyList(),
     val lastSyncedAt: Date? = null,

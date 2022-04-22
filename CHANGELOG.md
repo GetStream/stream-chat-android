@@ -62,14 +62,19 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the message input handling when typing quickly or holding down the delete (backspace) button. [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
 - Added `imageLoader` parameter to `ChatTheme` that allows providing a custom Coil `ImageLoader`. [#3336](https://github.com/GetStream/stream-chat-android/pull/3336)
+- Added the "Copy Message" option to link messages [#3354](https://github.com/GetStream/stream-chat-android/pull/3354)
+- Added padding customisation option to `ChannelList` and `MessageList` components. [#3350](https://github.com/GetStream/stream-chat-android/pull/3350)
+- Added emoji sticker support. [3359](https://github.com/GetStream/stream-chat-android/pull/3359)
 
 ### ⚠️ Changed
+- `loadMore` calls inside `MessageListViewModel` and `ChannelListViewModel` should no longer load data if there is no network connection. [3362](https://github.com/GetStream/stream-chat-android/pull/3362)
 
 ### ❌ Removed
 
@@ -116,7 +121,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-<!-- UNRELEASED START -->
 # April 12th, 2022 - 5.0.3
 ## Common changes for all artifacts
 
@@ -180,7 +184,6 @@
 
 ### ⚠️ Changed
 - Switched from vertical to horizontal scrolling for files in the preview section of the message composer. [#3289](https://github.com/GetStream/stream-chat-android/pull/3289)
-<!-- UNRELEASED END -->
 
 # March 30th, 2022 - 5.0.2
 ## stream-chat-android-client
