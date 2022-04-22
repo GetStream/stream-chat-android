@@ -18,8 +18,11 @@ package io.getstream.chat.android.uitests.app.login
 
 import io.getstream.chat.android.client.models.User
 
-val LOGIN_USERS: List<LoginUser> = listOf(
-    LoginUser(
+/**
+ * A predefined set of available users.
+ */
+val userCredentialsList: List<UserCredentials> = listOf(
+    UserCredentials(
         user = User().apply {
             id = "jc"
             name = "Jc Miñarro"
@@ -27,7 +30,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.2_5Hae3LKjVSfA0gQxXlZn54Bq6xDlhjPx2J7azUNB4"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "amit"
             name = "Amit Kumar"
@@ -35,7 +38,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "belal"
             name = "Belal Khan"
@@ -43,7 +46,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "dmitrii"
             name = "Dmitrii Bychkov"
@@ -51,7 +54,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "filip"
             name = "Filip Babić"
@@ -59,7 +62,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "jaewoong"
             name = "Jaewoong Eum"
@@ -67,7 +70,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "leandro"
             name = "Leandro Borges Ferreira"
@@ -75,7 +78,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "marton"
             name = "Márton Braun"
@@ -83,7 +86,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "oleg"
             name = "Oleg Kuzmin"
@@ -91,7 +94,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "rafal"
             name = "Rafal Adasiewicz"
@@ -99,7 +102,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "samuel"
             name = "Samuel Urbanowicz"
@@ -107,7 +110,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic2FtdWVsIn0.SusttZNc2Y0sc-JPEOPCmTa5FuKDHRcWGO_7kYrC1C0"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "thierry"
             name = "Thierry Schellenbach"
@@ -115,7 +118,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.hZi4pBPt2v2HSoS-7Yn7Ll2a1twhs763MlRGFAday2c"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "tommaso"
             name = "Tommaso Barbugli"
@@ -123,7 +126,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.lNaWC2Opyq6gmV50a2BGxK-5gm5mwCpefnUA30_k9YA"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "qatest1"
             name = "QA Test 1"
@@ -131,7 +134,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
         },
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0"
     ),
-    LoginUser(
+    UserCredentials(
         user = User().apply {
             id = "qatest2"
             name = "QA Test 2"
@@ -145,7 +148,7 @@ val LOGIN_USERS: List<LoginUser> = listOf(
  * A data class that encapsulates all the information needed to initialize
  * the SDK and connect to Stream servers.
  */
-data class LoginUser(
+data class UserCredentials(
     val user: User,
     val token: String,
 )

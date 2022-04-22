@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot
+package io.getstream.chat.android.uitests.ui.robot.uicomponents
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -25,7 +25,7 @@ import io.getstream.chat.android.uitests.ui.action.WaitViewAction
 /**
  * A base class for all user robots.
  */
-internal open class BaseTestRobot {
+internal open class BaseUiComponentsTestRobot {
 
     /**
      * Performs a click on a View with the specified ID.

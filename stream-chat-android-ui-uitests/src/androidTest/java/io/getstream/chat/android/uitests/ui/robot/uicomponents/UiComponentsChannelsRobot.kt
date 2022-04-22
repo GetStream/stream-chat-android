@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot
+package io.getstream.chat.android.uitests.ui.robot.uicomponents
 
 import io.getstream.chat.android.uitests.R
 
 /**
- * A factory function for [ChannelsRobot].
+ * A factory function for [ChannelsRobotUiComponents].
  */
-internal fun channelsRobot(block: ChannelsRobot.() -> Unit) = ChannelsRobot().apply { block() }
+internal fun channelsRobot(block: ChannelsRobotUiComponents.() -> Unit) = ChannelsRobotUiComponents().apply { block() }
 
 /**
  * A robot that simulates user behavior on the channels screen.
  */
-internal class ChannelsRobot : BaseTestRobot() {
+internal class ChannelsRobotUiComponents : BaseUiComponentsTestRobot() {
 
     /**
      * Clicks on any channel.

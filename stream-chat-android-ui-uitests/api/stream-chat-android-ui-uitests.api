@@ -7,40 +7,29 @@ public final class io/getstream/chat/android/uitests/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/uitests/app/ChannelsActivity : io/getstream/chat/android/ui/channel/ChannelListActivity, io/getstream/chat/android/ui/channel/ChannelListFragment$HeaderUserAvatarClickListener {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/uitests/app/ChannelsActivity$Companion;
-	public fun <init> ()V
-	public fun onUserAvatarClick ()V
-}
-
-public final class io/getstream/chat/android/uitests/app/ChannelsActivity$Companion {
-	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
-}
-
 public final class io/getstream/chat/android/uitests/app/ChatApp : android/app/Application {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun onCreate ()V
 }
 
-public final class io/getstream/chat/android/uitests/app/ComposeChannelsActivity : androidx/appcompat/app/AppCompatActivity {
+public final class io/getstream/chat/android/uitests/app/compose/ComposeChannelsActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/uitests/app/ComposeChannelsActivity$Companion;
+	public static final field Companion Lio/getstream/chat/android/uitests/app/compose/ComposeChannelsActivity$Companion;
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/uitests/app/ComposeChannelsActivity$Companion {
+public final class io/getstream/chat/android/uitests/app/compose/ComposeChannelsActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
 }
 
-public final class io/getstream/chat/android/uitests/app/ComposeMessagesActivity : androidx/appcompat/app/AppCompatActivity {
+public final class io/getstream/chat/android/uitests/app/compose/ComposeMessagesActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/uitests/app/ComposeMessagesActivity$Companion;
+	public static final field Companion Lio/getstream/chat/android/uitests/app/compose/ComposeMessagesActivity$Companion;
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/uitests/app/ComposeMessagesActivity$Companion {
+public final class io/getstream/chat/android/uitests/app/compose/ComposeMessagesActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 }
 
@@ -48,21 +37,20 @@ public final class io/getstream/chat/android/uitests/app/login/LoginActivity : a
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/uitests/app/login/LoginActivity$Companion;
 	public fun <init> ()V
-	public final fun LoginScreen (Landroidx/compose/runtime/Composer;I)V
-	public final fun UserItem (Lio/getstream/chat/android/uitests/app/login/LoginUser;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public final fun UserList (Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/uitests/app/login/LoginActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
 }
 
-public final class io/getstream/chat/android/uitests/app/login/LoginUser {
+public final class io/getstream/chat/android/uitests/app/login/UserCredentials {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lio/getstream/chat/android/uitests/app/login/LoginUser;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/uitests/app/login/LoginUser;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/uitests/app/login/LoginUser;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lio/getstream/chat/android/uitests/app/login/UserCredentials;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/uitests/app/login/UserCredentials;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/uitests/app/login/UserCredentials;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getToken ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
@@ -70,8 +58,15 @@ public final class io/getstream/chat/android/uitests/app/login/LoginUser {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/uitests/app/login/LoginUserKt {
-	public static final fun getLOGIN_USERS ()Ljava/util/List;
+public final class io/getstream/chat/android/uitests/app/uicomponents/UiComponentsChannelsActivity : io/getstream/chat/android/ui/channel/ChannelListActivity, io/getstream/chat/android/ui/channel/ChannelListFragment$HeaderUserAvatarClickListener {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/uitests/app/uicomponents/UiComponentsChannelsActivity$Companion;
+	public fun <init> ()V
+	public fun onUserAvatarClick ()V
+}
+
+public final class io/getstream/chat/android/uitests/app/uicomponents/UiComponentsChannelsActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/uitests/databinding/FragmentComponentBrowserEditReactionsViewBinding : androidx/viewbinding/ViewBinding {

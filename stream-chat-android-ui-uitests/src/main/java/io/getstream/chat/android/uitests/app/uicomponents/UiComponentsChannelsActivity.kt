@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.app
+package io.getstream.chat.android.uitests.app.uicomponents
 
 import android.content.Context
 import android.content.Intent
@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.channel.ChannelListFragment
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 
-class ChannelsActivity : ChannelListActivity(), ChannelListFragment.HeaderUserAvatarClickListener {
+class UiComponentsChannelsActivity : ChannelListActivity(), ChannelListFragment.HeaderUserAvatarClickListener {
 
     /**
      * Logs out and navigated to the login screen.
@@ -38,13 +38,13 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.HeaderUserAv
 
     companion object {
         /**
-         * Create an [Intent] to start [ChannelsActivity].
+         * Create an [Intent] to start [UiComponentsChannelsActivity].
          *
          * @param context The context used to create the intent.
-         * @return The [Intent] to start [ChannelsActivity].
+         * @return The [Intent] to start [UiComponentsChannelsActivity].
          */
         fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
+            return Intent(context, UiComponentsChannelsActivity::class.java)
         }
     }
 }

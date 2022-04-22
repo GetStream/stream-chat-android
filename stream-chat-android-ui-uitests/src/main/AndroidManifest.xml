@@ -25,18 +25,18 @@
         </activity>
 
         <activity
-            android:name=".app.ComposeChannelsActivity"
+            android:name=".app.compose.ComposeChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name=".app.ComposeMessagesActivity"
+            android:name=".app.compose.ComposeMessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
 
         <activity
-            android:name=".app.ChannelsActivity"
+            android:name=".app.uicomponents.UiComponentsChannelsActivity"
             android:exported="false"
             />
 

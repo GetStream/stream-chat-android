@@ -21,11 +21,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.uitests.app.login.LoginActivity
-import io.getstream.chat.android.uitests.ui.robot.channelsRobot
 import io.getstream.chat.android.uitests.ui.robot.compose.composeChannelsRobot
 import io.getstream.chat.android.uitests.ui.robot.compose.composeLoginRobot
 import io.getstream.chat.android.uitests.ui.robot.compose.composeMessagesRobot
-import io.getstream.chat.android.uitests.ui.robot.messagesRobot
+import io.getstream.chat.android.uitests.ui.robot.uicomponents.channelsRobot
+import io.getstream.chat.android.uitests.ui.robot.uicomponents.messagesRobot
 import io.getstream.chat.android.uitests.ui.util.CoroutineTaskExecutorRule
 import org.junit.Rule
 import org.junit.Test
@@ -43,8 +43,9 @@ internal class MessagesTests {
     val coroutineTaskExecutorRule = CoroutineTaskExecutorRule()
 
     @Test
-    fun testSendMessage() {
+    fun testSendMessageUiComponents() {
         composeLoginRobot(composeTestRule) {
+            selectedUiComponentsSdk()
             loginWithUser("Jc Miñarro")
         }
 
@@ -61,7 +62,7 @@ internal class MessagesTests {
     @Test
     fun testSendMessageCompose() {
         composeLoginRobot(composeTestRule) {
-            useComposeSdk()
+            selectComposeSdk()
             loginWithUser("Jc Miñarro")
         }
 

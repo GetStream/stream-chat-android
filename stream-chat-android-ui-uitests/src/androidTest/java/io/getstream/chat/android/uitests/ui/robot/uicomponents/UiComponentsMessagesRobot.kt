@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot
+package io.getstream.chat.android.uitests.ui.robot.uicomponents
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
@@ -24,14 +24,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import io.getstream.chat.android.uitests.R
 
 /**
- * A factory function for [MessagesRobot].
+ * A factory function for [MessagesRobotUiComponents].
  */
-internal fun messagesRobot(block: MessagesRobot.() -> Unit) = MessagesRobot().apply { block() }
+internal fun messagesRobot(block: MessagesRobotUiComponents.() -> Unit) = MessagesRobotUiComponents().apply { block() }
 
 /**
  * A robot that simulates user behavior on the messages screen.
  */
-internal class MessagesRobot : BaseTestRobot() {
+internal class MessagesRobotUiComponents : BaseUiComponentsTestRobot() {
 
     /**
      * Types certain text in the message composer.

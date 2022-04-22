@@ -46,9 +46,18 @@ internal class ComposeLoginRobot(
 ) : BaseComposeTestRobot(composeTestRule) {
 
     /**
-     * Use Compose SDK instead of XML UI Components.
+     * Use UI Components SDK after login.
      */
-    fun useComposeSdk() {
+    fun selectedUiComponentsSdk() {
+        composeTestRule
+            .onNodeWithContentDescription("UI Components")
+            .performClick()
+    }
+
+    /**
+     * Use Compose SDK after login.
+     */
+    fun selectComposeSdk() {
         composeTestRule
             .onNodeWithContentDescription("Compose")
             .performClick()
