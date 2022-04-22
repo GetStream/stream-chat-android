@@ -128,7 +128,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
             if (!state.loading) {
                 binding.apply {
                     optionMessage.isVisible = true
-                    optionViewInfo.isVisible = true
+                    optionViewInfo.isVisible = state.directChannelCid != null
                 }
             }
         }
