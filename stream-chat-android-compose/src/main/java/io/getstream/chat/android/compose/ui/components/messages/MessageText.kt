@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -40,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -51,18 +54,30 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
+ * @param isQuote Is the message is a quote inside another message.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
+    isQuote: Boolean = false,
     onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
 
     val styledText = buildAnnotatedMessageText(message)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
+
+    val isEmojiOnly = message.isEmojiOnly() && !isQuote
+    val isSingleEmoji = message.isSingleEmoji() && !isQuote
+
+    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
+    val style = when {
+        isSingleEmoji -> ChatTheme.typography.singleEmoji
+        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        else -> ChatTheme.typography.bodyBold
+    }
 
     if (annotations.isNotEmpty()) {
         ClickableText(
@@ -74,7 +89,7 @@ public fun MessageText(
                     bottom = 8.dp
                 ),
             text = styledText,
-            style = ChatTheme.typography.bodyBold,
+            style = style,
             onLongPress = { onLongItemClick(message) }
         ) { position ->
             val targetUrl = annotations.firstOrNull {
@@ -91,16 +106,18 @@ public fun MessageText(
             }
         }
     } else {
+        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
         Text(
             modifier = modifier
                 .padding(
-                    start = 12.dp,
-                    end = 12.dp,
-                    top = 8.dp,
-                    bottom = 8.dp
-                ),
+                    start = horizontalPadding,
+                    end = horizontalPadding,
+                    top = if (isEmojiOnly) 0.dp else 8.dp,
+                    bottom = if (isEmojiOnly) 0.dp else 8.dp
+                )
+                .clipToBounds(),
             text = styledText,
-            style = ChatTheme.typography.bodyBold
+            style = style
         )
     }
 }
