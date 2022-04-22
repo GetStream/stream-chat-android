@@ -16,17 +16,16 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 
 @JsonClass(generateAdapter = true)
 internal data class QueryMembersRequest(
-    @Json(name = "type") val type: String,
-    @Json(name = "id") val id: String,
-    @Json(name = "filter_conditions") val filterConditions: Map<*, *>,
-    @Json(name = "offset") val offset: Int,
-    @Json(name = "limit") val limit: Int,
-    @Json(name = "sort") val sort: List<Map<String, Any>>,
-    @Json(name = "members") val members: List<UpstreamMemberDto>,
+    val type: String,
+    val id: String,
+    val filter_conditions: Map<*, *>,
+    val offset: Int,
+    val limit: Int,
+    val sort: List<Map<String, Any>>,
+    val members: List<UpstreamMemberDto>,
 )

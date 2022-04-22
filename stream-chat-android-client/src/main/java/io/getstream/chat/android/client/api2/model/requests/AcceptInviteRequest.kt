@@ -16,14 +16,13 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class AcceptInviteRequest(
-    @Json(name = "user") val user: AcceptInviteUser,
-    @Json(name = "message") val message: AcceptInviteMessage,
-    @Json(name = "accept_invite") val acceptInvite: Boolean = true,
+    val user: AcceptInviteUser,
+    val message: AcceptInviteMessage,
+    val accept_invite: Boolean = true,
 ) {
     @JsonClass(generateAdapter = true)
     data class AcceptInviteUser(val id: String)

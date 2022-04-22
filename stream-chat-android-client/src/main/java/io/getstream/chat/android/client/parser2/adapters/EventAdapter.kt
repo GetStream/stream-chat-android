@@ -198,7 +198,7 @@ internal class EventDtoAdapter(
             else -> // Custom case, early return
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,
-                    createdAt = moshi.adapter(Date::class.java).fromJsonValue(map["created_at"])!!,
+                    created_at = moshi.adapter(Date::class.java).fromJsonValue(map["created_at"])!!,
                     user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
                     rawData = map
                 )

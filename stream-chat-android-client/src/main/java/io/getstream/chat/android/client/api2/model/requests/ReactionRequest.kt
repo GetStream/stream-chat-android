@@ -16,12 +16,11 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 
 @JsonClass(generateAdapter = true)
 internal data class ReactionRequest(
-    @Json(name = "reaction") val reaction: UpstreamReactionDto,
-    @Json(name = "enforce_unique") val enforceUnique: Boolean,
+    val reaction: UpstreamReactionDto,
+    val enforce_unique: Boolean,
 )

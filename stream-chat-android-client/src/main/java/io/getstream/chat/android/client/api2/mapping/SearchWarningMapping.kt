@@ -21,9 +21,9 @@ import io.getstream.chat.android.client.models.SearchWarning
 
 internal fun SearchWarningDto.toDomain(): SearchWarning {
     return SearchWarning(
-        channelSearchCids = channelSearchCids,
-        channelSearchCount = channelSearchCount,
-        warningCode = warningCode,
-        warningDescription = warningDescription,
+        channelSearchCids = channel_search_cids,
+        channelSearchCount = channel_search_count,
+        warningCode = warning_code,
+        warningDescription = warning_description,
     )
 }

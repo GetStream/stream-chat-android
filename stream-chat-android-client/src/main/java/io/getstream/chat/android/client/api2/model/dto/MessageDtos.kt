@@ -28,7 +28,6 @@ import java.util.Date
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class UpstreamMessageDto(
     val attachments: List<AttachmentDto>,
@@ -60,7 +59,6 @@ internal data class UpstreamMessageDto(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class DownstreamMessageDto(
     val attachments: List<AttachmentDto>,

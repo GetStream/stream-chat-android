@@ -16,18 +16,17 @@
 
 package io.getstream.chat.android.client.api2.model.requests
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class QueryBannedUsersRequest(
-    @Json(name = "filter_conditions") var filterConditions: Map<*, *>,
-    @Json(name = "sort") val sort: List<Map<String, Any>>,
-    @Json(name = "offset") val offset: Int?,
-    @Json(name = "limit") val limit: Int?,
-    @Json(name = "created_at_after") val createdAtAfter: Date?,
-    @Json(name = "created_at_after_or_equal") val createdAtAfterOrEqual: Date?,
-    @Json(name = "created_at_before") val createdAtBefore: Date?,
-    @Json(name = "created_at_before_or_equal") val createdAtBeforeOrEqual: Date?,
+    var filter_conditions: Map<*, *>,
+    val sort: List<Map<String, Any>>,
+    val offset: Int?,
+    val limit: Int?,
+    val created_at_after: Date?,
+    val created_at_after_or_equal: Date?,
+    val created_at_before: Date?,
+    val created_at_before_or_equal: Date?,
 )

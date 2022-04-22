@@ -28,7 +28,6 @@ import java.util.Date
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class UpstreamReactionDto(
     val created_at: Date?,
@@ -50,7 +49,6 @@ internal data class UpstreamReactionDto(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class DownstreamReactionDto(
     val created_at: Date?,

@@ -16,12 +16,11 @@
 
 package io.getstream.chat.android.client.api2.model.response
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 
 @JsonClass(generateAdapter = true)
 internal data class TokenResponse(
-    @Json(name = "user") val user: DownstreamUserDto,
-    @Json(name = "access_token") val accessToken: String,
+    val user: DownstreamUserDto,
+    val access_token: String,
 )

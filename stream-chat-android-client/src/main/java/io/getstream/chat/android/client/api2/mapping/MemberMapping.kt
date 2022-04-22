@@ -26,26 +26,26 @@ internal fun DownstreamMemberDto.toDomain(): Member =
     Member(
         user = user.toDomain(),
         role = role,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = created_at,
+        updatedAt = updated_at,
         isInvited = invited,
-        inviteAcceptedAt = inviteAcceptedAt,
-        inviteRejectedAt = inviteRejectedAt,
-        shadowBanned = shadowBanned,
+        inviteAcceptedAt = invite_accepted_at,
+        inviteRejectedAt = invite_rejected_at,
+        shadowBanned = shadow_banned,
         banned = banned,
-        channelRole = channelRole,
+        channelRole = channel_role,
     )
 
 internal fun Member.toDto(): UpstreamMemberDto =
     UpstreamMemberDto(
         user = user.toDto(),
         role = role,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        created_at = createdAt,
+        updated_at = updatedAt,
         invited = isInvited,
-        inviteAcceptedAt = inviteAcceptedAt,
-        inviteRejectedAt = inviteRejectedAt,
-        shadowBanned = shadowBanned,
+        invite_accepted_at = inviteAcceptedAt,
+        invite_rejected_at = inviteRejectedAt,
+        shadow_banned = shadowBanned,
         banned = banned,
-        channelRole = channelRole,
+        channel_role = channelRole,
     )

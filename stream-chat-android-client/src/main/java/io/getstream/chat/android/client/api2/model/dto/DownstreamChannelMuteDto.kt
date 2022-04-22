@@ -16,15 +16,14 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamChannelMuteDto(
-    @Json(name = "user") val user: DownstreamUserDto,
-    @Json(name = "channel") val channel: DownstreamChannelDto,
-    @Json(name = "created_at") val createdAt: Date,
-    @Json(name = "updated_at") val updatedAt: Date,
-    @Json(name = "expires") val expires: Date?,
+    val user: DownstreamUserDto,
+    val channel: DownstreamChannelDto,
+    val created_at: Date,
+    val updated_at: Date,
+    val expires: Date?,
 )
