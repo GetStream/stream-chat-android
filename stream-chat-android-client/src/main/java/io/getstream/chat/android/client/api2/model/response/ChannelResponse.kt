@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.api2.model.response
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -27,12 +26,12 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class ChannelResponse(
-    @Json(name = "channel") val channel: DownstreamChannelDto,
-    @Json(name = "messages") val messages: List<DownstreamMessageDto> = emptyList(),
-    @Json(name = "members") val members: List<DownstreamMemberDto> = emptyList(),
-    @Json(name = "watchers") val watchers: List<DownstreamUserDto> = emptyList(),
-    @Json(name = "read") val read: List<DownstreamChannelUserRead> = emptyList(),
-    @Json(name = "watcher_count") val watcherCount: Int = 0,
-    @Json(name = "hidden") val hidden: Boolean?,
-    @Json(name = "hide_messages_before") val hideMessagesBefore: Date?,
+    val channel: DownstreamChannelDto,
+    val messages: List<DownstreamMessageDto> = emptyList(),
+    val members: List<DownstreamMemberDto> = emptyList(),
+    val watchers: List<DownstreamUserDto> = emptyList(),
+    val read: List<DownstreamChannelUserRead> = emptyList(),
+    val watcher_count: Int = 0,
+    val hidden: Boolean?,
+    val hide_messages_before: Date?,
 )

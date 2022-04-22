@@ -35,7 +35,7 @@ internal object ChannelInfoDtoTestData {
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
-        memberCount = 0,
+        member_count = 0,
         name = "name",
         image = "image",
     )

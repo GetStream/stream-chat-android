@@ -24,7 +24,6 @@ import java.util.Date
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class UpstreamChannelDto(
     val cid: String,
@@ -32,7 +31,7 @@ internal data class UpstreamChannelDto(
     val type: String,
     val name: String,
     val image: String,
-    val watcherCount: Int,
+    val watcher_count: Int,
     val frozen: Boolean,
     val last_message_at: Date?,
     val created_at: Date?,
@@ -52,11 +51,6 @@ internal data class UpstreamChannelDto(
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map"
-)
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class DownstreamChannelDto(
     val cid: String,

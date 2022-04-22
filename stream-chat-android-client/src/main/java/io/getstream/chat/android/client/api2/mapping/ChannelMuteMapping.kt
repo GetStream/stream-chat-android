@@ -23,7 +23,7 @@ internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
     ChannelMute(
         user = user.toDomain(),
         channel = channel.toDomain(),
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = created_at,
+        updatedAt = updated_at,
         expires = expires,
     )

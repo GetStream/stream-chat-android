@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
@@ -29,7 +28,6 @@ import java.util.Date
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class UpstreamUserDto(
     val banned: Boolean,
@@ -52,7 +50,6 @@ internal data class UpstreamUserDto(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
         "content of [extraData] map"
 )
-@Suppress("ConstructorParameterNaming")
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserDto(
     val id: String,
@@ -78,7 +75,7 @@ internal data class DownstreamUserDto(
 
 @JsonClass(generateAdapter = true)
 internal data class PartialUpdateUserDto(
-    @Json(name = "id") val id: String,
-    @Json(name = "set") val set: Map<String, Any>,
-    @Json(name = "unset") val unset: List<String>,
+    val id: String,
+    val set: Map<String, Any>,
+    val unset: List<String>,
 )

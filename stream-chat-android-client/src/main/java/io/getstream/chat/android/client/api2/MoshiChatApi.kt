@@ -196,7 +196,7 @@ constructor(
             connectionId = connectionId,
             request = ReactionRequest(
                 reaction = reaction.toDto(),
-                enforceUnique = enforceUnique,
+                enforce_unique = enforceUnique,
             ),
         ).map { response -> response.reaction.toDomain() }
     }
@@ -253,8 +253,8 @@ constructor(
         return moderationApi.muteUser(
             connectionId = connectionId,
             body = MuteUserRequest(
-                targetId = userId,
-                userId = this.userId,
+                target_id = userId,
+                user_id = this.userId,
                 timeout = timeout,
             ),
         ).map { response -> response.mute.toDomain() }
@@ -264,8 +264,8 @@ constructor(
         return moderationApi.unmuteUser(
             connectionId = this.connectionId,
             body = MuteUserRequest(
-                targetId = userId,
-                userId = this.userId,
+                target_id = userId,
+                user_id = this.userId,
                 timeout = null
             ),
         ).toUnitCall()
@@ -279,7 +279,7 @@ constructor(
         return moderationApi.muteChannel(
             connectionId = connectionId,
             body = MuteChannelRequest(
-                channelCid = "$channelType:$channelId",
+                channel_cid = "$channelType:$channelId",
                 expiration = expiration
             ),
         ).toUnitCall()
@@ -292,7 +292,7 @@ constructor(
         return moderationApi.unmuteChannel(
             connectionId = connectionId,
             body = MuteChannelRequest(
-                channelCid = "$channelType:$channelId",
+                channel_cid = "$channelType:$channelId",
                 expiration = null
             ),
         ).toUnitCall()
@@ -417,7 +417,7 @@ constructor(
         return moderationApi.banUser(
             connectionId = connectionId,
             body = BanUserRequest(
-                targetUserId = targetId,
+                target_user_id = targetId,
                 timeout = timeout,
                 reason = reason,
                 type = channelType,
@@ -455,14 +455,14 @@ constructor(
         return moderationApi.queryBannedUsers(
             connectionId = connectionId,
             payload = QueryBannedUsersRequest(
-                filterConditions = filter.toMap(),
+                filter_conditions = filter.toMap(),
                 sort = sort.toDto(),
                 offset = offset,
                 limit = limit,
-                createdAtAfter = createdAtAfter,
-                createdAtAfterOrEqual = createdAtAfterOrEqual,
-                createdAtBefore = createdAtBefore,
-                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+                created_at_after = createdAtAfter,
+                created_at_after_or_equal = createdAtAfterOrEqual,
+                created_at_before = createdAtBefore,
+                created_at_before_or_equal = createdAtBeforeOrEqual,
             )
         ).map { response -> response.bans.map(BannedUserResponse::toDomain) }
     }
@@ -667,14 +667,14 @@ constructor(
 
     private fun flattenChannel(response: ChannelResponse): Channel {
         return response.channel.toDomain().apply {
-            watcherCount = response.watcherCount
+            watcherCount = response.watcher_count
             read = response.read.map(DownstreamChannelUserRead::toDomain)
             members = response.members.map(DownstreamMemberDto::toDomain)
             messages = response.messages.map { it.toDomain().enrichWithCid(cid) }
             watchers = response.watchers.map(DownstreamUserDto::toDomain)
             hidden = response.hidden
-            hiddenMessagesBefore = response.hideMessagesBefore
-            unreadCount = response.read.firstOrNull { it.user.id == userId }?.unreadMessages
+            hiddenMessagesBefore = response.hide_messages_before
+            unreadCount = response.read.firstOrNull { it.user.id == userId }?.unread_messages
         }
     }
 
@@ -700,10 +700,10 @@ constructor(
             messageId = request.messageId,
             connectionId = connectionId,
             request = SendActionRequest(
-                channelId = request.channelId,
-                messageId = request.messageId,
+                channel_id = request.channelId,
+                message_id = request.messageId,
                 type = request.type,
-                formData = request.formData,
+                form_data = request.formData,
             ),
         ).map { response -> response.message.toDomain() }
     }
@@ -732,7 +732,7 @@ constructor(
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
             body = GuestUserRequest.create(userId, userName),
-        ).map { response -> GuestUser(response.user.toDomain(), response.accessToken) }
+        ).map { response -> GuestUser(response.user.toDomain(), response.access_token) }
     }
 
     override fun translate(messageId: String, language: String): Call<Message> {
@@ -745,8 +745,8 @@ constructor(
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filterConditions = request.channelFilter.toMap(),
-            messageFilterConditions = request.messageFilter.toMap(),
+            filter_conditions = request.channelFilter.toMap(),
+            message_filter_conditions = request.messageFilter.toMap(),
             offset = request.offset,
             limit = request.limit,
             next = request.next,
@@ -772,8 +772,8 @@ constructor(
         sort: QuerySort<Message>?,
     ): Call<SearchMessagesResult> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filterConditions = channelFilter.toMap(),
-            messageFilterConditions = messageFilter.toMap(),
+            filter_conditions = channelFilter.toMap(),
+            message_filter_conditions = messageFilter.toMap(),
             offset = offset,
             limit = limit,
             next = next,
@@ -802,12 +802,12 @@ constructor(
         if (connectionId.isEmpty()) return noConnectionIdError()
 
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filterConditions = query.filter.toMap(),
+            filter_conditions = query.filter.toMap(),
             offset = query.offset,
             limit = query.limit,
             sort = query.sort,
-            messageLimit = query.messageLimit,
-            memberLimit = query.memberLimit,
+            message_limit = query.messageLimit,
+            member_limit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -848,7 +848,7 @@ constructor(
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filterConditions = queryUsers.filter.toMap(),
+            filter_conditions = queryUsers.filter.toMap(),
             offset = queryUsers.offset,
             limit = queryUsers.limit,
             sort = queryUsers.sort,
@@ -872,7 +872,7 @@ constructor(
         val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
             type = channelType,
             id = channelId,
-            filterConditions = filter.toMap(),
+            filter_conditions = filter.toMap(),
             offset = offset,
             limit = limit,
             sort = sort.toDto(),

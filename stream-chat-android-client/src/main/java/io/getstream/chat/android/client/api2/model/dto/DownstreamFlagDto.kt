@@ -16,20 +16,19 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamFlagDto(
-    @Json(name = "user") val user: DownstreamUserDto,
-    @Json(name = "target_user") val targetUser: DownstreamUserDto?,
-    @Json(name = "target_message_id") val targetMessageId: String,
-    @Json(name = "created_at") val createdAt: String,
-    @Json(name = "created_by_automod") val createdByAutomod: Boolean,
-    @Json(name = "approved_at") val approvedAt: Date,
-    @Json(name = "updated_at") val updatedAt: Date,
-    @Json(name = "reviewed_at") val reviewedAt: Date,
-    @Json(name = "reviewed_by") val reviewedBy: Date?,
-    @Json(name = "rejected_at") val rejectedAt: Date,
+    val user: DownstreamUserDto,
+    val target_user: DownstreamUserDto?,
+    val target_message_id: String,
+    val created_at: String,
+    val created_by_automod: Boolean,
+    val approved_at: Date,
+    val updated_at: Date,
+    val reviewed_at: Date,
+    val reviewed_by: Date?,
+    val rejected_at: Date,
 )

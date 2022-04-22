@@ -114,9 +114,9 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     return UpstreamConnectedEventDto(
         type = this.type,
-        createdAt = createdAt,
+        created_at = createdAt,
         me = me.toDto(),
-        connectionId = connectionId,
+        connection_id = connectionId,
     )
 }
 
@@ -174,10 +174,10 @@ internal fun ChatEventDto.toDomain(): ChatEvent {
 private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent {
     return ChannelDeletedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         channel = channel.toDomain(),
         user = user?.toDomain(),
     )
@@ -186,22 +186,22 @@ private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent {
 private fun ChannelHiddenEventDto.toDomain(): ChannelHiddenEvent {
     return ChannelHiddenEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
-        clearHistory = clearHistory,
+        clearHistory = clear_history,
     )
 }
 
 private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent {
     return ChannelTruncatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user?.toDomain(),
         message = message?.toDomain(),
         channel = channel.toDomain(),
@@ -211,10 +211,10 @@ private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent {
 private fun ChannelUpdatedEventDto.toDomain(): ChannelUpdatedEvent {
     return ChannelUpdatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message?.toDomain(),
         channel = channel.toDomain(),
     )
@@ -223,10 +223,10 @@ private fun ChannelUpdatedEventDto.toDomain(): ChannelUpdatedEvent {
 private fun ChannelUpdatedByUserEventDto.toDomain(): ChannelUpdatedByUserEvent {
     return ChannelUpdatedByUserEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
         message = message?.toDomain(),
         channel = channel.toDomain(),
@@ -236,10 +236,10 @@ private fun ChannelUpdatedByUserEventDto.toDomain(): ChannelUpdatedByUserEvent {
 private fun ChannelVisibleEventDto.toDomain(): ChannelVisibleEvent {
     return ChannelVisibleEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
     )
 }
@@ -247,19 +247,19 @@ private fun ChannelVisibleEventDto.toDomain(): ChannelVisibleEvent {
 private fun HealthEventDto.toDomain(): HealthEvent {
     return HealthEvent(
         type = type,
-        createdAt = createdAt,
-        connectionId = connectionId,
+        createdAt = created_at,
+        connectionId = connection_id,
     )
 }
 
 private fun MemberAddedEventDto.toDomain(): MemberAddedEvent {
     return MemberAddedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         member = member.toDomain(),
     )
 }
@@ -267,11 +267,11 @@ private fun MemberAddedEventDto.toDomain(): MemberAddedEvent {
 private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent {
     return MemberRemovedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         member = member.toDomain(),
     )
 }
@@ -279,11 +279,11 @@ private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent {
 private fun MemberUpdatedEventDto.toDomain(): MemberUpdatedEvent {
     return MemberUpdatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         member = member.toDomain(),
     )
 }
@@ -292,35 +292,35 @@ private fun MessageDeletedEventDto.toDomain(): MessageDeletedEvent {
     // TODO review createdAt and deletedAt fields here
     return MessageDeletedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user?.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message.toDomain(),
-        hardDelete = hardDelete ?: false,
+        hardDelete = hard_delete ?: false,
     )
 }
 
 private fun MessageReadEventDto.toDomain(): MessageReadEvent {
     return MessageReadEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
     )
 }
 
 private fun MessageUpdatedEventDto.toDomain(): MessageUpdatedEvent {
     return MessageUpdatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message.toDomain(),
     )
 }
@@ -328,48 +328,48 @@ private fun MessageUpdatedEventDto.toDomain(): MessageUpdatedEvent {
 private fun NewMessageEventDto.toDomain(): NewMessageEvent {
     return NewMessageEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message.toDomain(),
-        watcherCount = watcherCount,
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
+        watcherCount = watcher_count,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToChannelEvent {
     return NotificationAddedToChannelEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         channel = channel.toDomain(),
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadchannels,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun NotificationChannelDeletedEventDto.toDomain(): NotificationChannelDeletedEvent {
     return NotificationChannelDeletedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         channel = channel.toDomain(),
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent {
     return NotificationChannelMutesUpdatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         me = me.toDomain(),
     )
 }
@@ -377,23 +377,23 @@ private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChan
 private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent {
     return NotificationChannelTruncatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         channel = channel.toDomain(),
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcceptedEvent {
     return NotificationInviteAcceptedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
         member = member.toDomain(),
         channel = channel.toDomain(),
@@ -403,10 +403,10 @@ private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcc
 private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRejectedEvent {
     return NotificationInviteRejectedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
         member = member.toDomain(),
         channel = channel.toDomain(),
@@ -416,10 +416,10 @@ private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRej
 private fun NotificationInvitedEventDto.toDomain(): NotificationInvitedEvent {
     return NotificationInvitedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
         member = member.toDomain(),
     )
@@ -428,44 +428,44 @@ private fun NotificationInvitedEventDto.toDomain(): NotificationInvitedEvent {
 private fun NotificationMarkReadEventDto.toDomain(): NotificationMarkReadEvent {
     return NotificationMarkReadEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
+        channelType = channel_type,
+        channelId = channel_id,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun MarkAllReadEventDto.toDomain(): MarkAllReadEvent {
     return MarkAllReadEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun NotificationMessageNewEventDto.toDomain(): NotificationMessageNewEvent {
     return NotificationMessageNewEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         channel = channel.toDomain(),
         message = message.toDomain(),
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
 private fun NotificationMutesUpdatedEventDto.toDomain(): NotificationMutesUpdatedEvent {
     return NotificationMutesUpdatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         me = me.toDomain(),
     )
 }
@@ -473,11 +473,11 @@ private fun NotificationMutesUpdatedEventDto.toDomain(): NotificationMutesUpdate
 private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemovedFromChannelEvent {
     return NotificationRemovedFromChannelEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user?.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         channel = channel.toDomain(),
         member = member.toDomain()
     )
@@ -486,11 +486,11 @@ private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemov
 private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent {
     return ReactionDeletedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message.toDomain(),
         reaction = reaction.toDomain(),
     )
@@ -499,11 +499,11 @@ private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent {
 private fun ReactionNewEventDto.toDomain(): ReactionNewEvent {
     return ReactionNewEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message.toDomain(),
         reaction = reaction.toDomain(),
     )
@@ -512,11 +512,11 @@ private fun ReactionNewEventDto.toDomain(): ReactionNewEvent {
 private fun ReactionUpdateEventDto.toDomain(): ReactionUpdateEvent {
     return ReactionUpdateEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         message = message.toDomain(),
         reaction = reaction.toDomain(),
     )
@@ -525,34 +525,34 @@ private fun ReactionUpdateEventDto.toDomain(): ReactionUpdateEvent {
 private fun TypingStartEventDto.toDomain(): TypingStartEvent {
     return TypingStartEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        parentId = parentId,
+        channelType = channel_type,
+        channelId = channel_id,
+        parentId = parent_id,
     )
 }
 
 private fun TypingStopEventDto.toDomain(): TypingStopEvent {
     return TypingStopEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        parentId = parentId,
+        channelType = channel_type,
+        channelId = channel_id,
+        parentId = parent_id,
     )
 }
 
 private fun ChannelUserBannedEventDto.toDomain(): ChannelUserBannedEvent {
     return ChannelUserBannedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
         expiration = expiration,
     )
@@ -562,14 +562,14 @@ private fun GlobalUserBannedEventDto.toDomain(): GlobalUserBannedEvent {
     return GlobalUserBannedEvent(
         type = type,
         user = user.toDomain(),
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun UserDeletedEventDto.toDomain(): UserDeletedEvent {
     return UserDeletedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
     )
 }
@@ -577,7 +577,7 @@ private fun UserDeletedEventDto.toDomain(): UserDeletedEvent {
 private fun UserPresenceChangedEventDto.toDomain(): UserPresenceChangedEvent {
     return UserPresenceChangedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
     )
 }
@@ -585,11 +585,11 @@ private fun UserPresenceChangedEventDto.toDomain(): UserPresenceChangedEvent {
 private fun UserStartWatchingEventDto.toDomain(): UserStartWatchingEvent {
     return UserStartWatchingEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        watcherCount = watcherCount,
-        channelType = channelType,
-        channelId = channelId,
+        watcherCount = watcher_count,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
     )
 }
@@ -597,11 +597,11 @@ private fun UserStartWatchingEventDto.toDomain(): UserStartWatchingEvent {
 private fun UserStopWatchingEventDto.toDomain(): UserStopWatchingEvent {
     return UserStopWatchingEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         cid = cid,
-        watcherCount = watcherCount,
-        channelType = channelType,
-        channelId = channelId,
+        watcherCount = watcher_count,
+        channelType = channel_type,
+        channelId = channel_id,
         user = user.toDomain(),
     )
 }
@@ -609,18 +609,18 @@ private fun UserStopWatchingEventDto.toDomain(): UserStopWatchingEvent {
 private fun ChannelUserUnbannedEventDto.toDomain(): ChannelUserUnbannedEvent {
     return ChannelUserUnbannedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
         cid = cid,
-        channelType = channelType,
-        channelId = channelId,
+        channelType = channel_type,
+        channelId = channel_id,
     )
 }
 
 private fun GlobalUserUnbannedEventDto.toDomain(): GlobalUserUnbannedEvent {
     return GlobalUserUnbannedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
     )
 }
@@ -628,7 +628,7 @@ private fun GlobalUserUnbannedEventDto.toDomain(): GlobalUserUnbannedEvent {
 private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent {
     return UserUpdatedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user.toDomain(),
     )
 }
@@ -636,30 +636,30 @@ private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent {
 private fun ConnectedEventDto.toDomain(): ConnectedEvent {
     return ConnectedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         me = me.toDomain(),
-        connectionId = connectionId,
+        connectionId = connection_id,
     )
 }
 
 private fun ConnectingEventDto.toDomain(): ConnectingEvent {
     return ConnectingEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
     return DisconnectedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun ErrorEventDto.toDomain(): ErrorEvent {
     return ErrorEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         error = error,
     )
 }
@@ -667,7 +667,7 @@ private fun ErrorEventDto.toDomain(): ErrorEvent {
 private fun UnknownEventDto.toDomain(): UnknownEvent {
     return UnknownEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         user = user?.toDomain(),
         rawData = rawData,
     )
