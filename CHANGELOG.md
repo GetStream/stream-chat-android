@@ -27,6 +27,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Adding the possibility to change the repositories of `OfflinePlugin`. You can change `RepositoryFactory` in `OfflinePlugin` and use custom implementations of repositories.
 
 ### ✅ Added
 
