@@ -60,6 +60,7 @@ internal class SendMessageInterceptorImpl(
 ) : SendMessageInterceptor {
 
     private var jobsMap: Map<String, Job> = emptyMap()
+    private val uploadIds = mutableListOf<UUID>()
 
     private val logger = ChatLogger.get("MessageSendingService")
     override suspend fun interceptMessage(
@@ -239,7 +240,8 @@ internal class SendMessageInterceptorImpl(
      * Enqueues attachment upload work.
      */
     private fun enqueueAttachmentUpload(message: Message, channelType: String, channelId: String) {
-        UploadAttachmentsAndroidWorker.start(context, channelType, channelId, message.id, networkType)
+        val workId = UploadAttachmentsAndroidWorker.start(context, channelType, channelId, message.id, networkType)
+        uploadIds += workId
     }
 
     /**
@@ -247,6 +249,7 @@ internal class SendMessageInterceptorImpl(
      */
     fun cancelJobs() {
         jobsMap.values.forEach { it.cancel() }
+        uploadIds.forEach { UploadAttachmentsAndroidWorker.stop(context, it) }
     }
 
     /**
