@@ -155,7 +155,7 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
-            if (instance == null) {
+            if (instance != null) {
                 logger.logE(
                     "LogicRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"

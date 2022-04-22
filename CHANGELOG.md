@@ -13,6 +13,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed ANR happening on a token request. [#3342](https://github.com/GetStream/stream-chat-android/pull/3342)
 
 ### ⬆️ Improved
 
@@ -72,6 +73,7 @@
 - Added `imageLoader` parameter to `ChatTheme` that allows providing a custom Coil `ImageLoader`. [#3336](https://github.com/GetStream/stream-chat-android/pull/3336)
 - Added the "Copy Message" option to link messages [#3354](https://github.com/GetStream/stream-chat-android/pull/3354)
 - Added padding customisation option to `ChannelList` and `MessageList` components. [#3350](https://github.com/GetStream/stream-chat-android/pull/3350)
+- Added emoji sticker support. [3359](https://github.com/GetStream/stream-chat-android/pull/3359)
 
 ### ⚠️ Changed
 - `loadMore` calls inside `MessageListViewModel` and `ChannelListViewModel` should no longer load data if there is no network connection. [3362](https://github.com/GetStream/stream-chat-android/pull/3362)

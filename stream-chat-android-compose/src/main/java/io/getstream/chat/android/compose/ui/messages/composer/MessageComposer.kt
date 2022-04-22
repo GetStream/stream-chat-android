@@ -44,6 +44,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -536,11 +538,13 @@ internal fun DefaultMessageComposerTrailingContent(
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
     val isInputValid = (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
+    val description = stringResource(id = R.string.stream_compose_cd_send_button)
 
     if (coolDownTime > 0) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         IconButton(
+            modifier = Modifier.semantics { contentDescription = description },
             enabled = isInputValid,
             content = {
                 val layoutDirection = LocalLayoutDirection.current
