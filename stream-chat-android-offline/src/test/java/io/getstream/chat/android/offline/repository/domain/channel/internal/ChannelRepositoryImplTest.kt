@@ -41,8 +41,8 @@ internal class ChannelRepositoryImplTest {
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private val channelDao: ChannelDao = mock()
-    private val channelRepository: ChannelRepositoryImpl =
-        ChannelRepositoryImpl(
+    private val channelRepository: DatabaseChannelRepository =
+        DatabaseChannelRepository(
             channelDao,
             { randomUser() },
             { randomMessage() }

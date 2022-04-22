@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.domain.syncState.internal
+package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.client.sync.SyncState
 
-internal fun SyncStateEntity.toModel() =
-    SyncState(userId, activeChannelIds, lastSyncedAt, markedAllReadAt)
+/**
+ * Repository to read and write data about the sync state of the SDK.
+ */
+public interface SyncStateRepository {
 
-internal fun SyncState.toEntity() =
-    SyncStateEntity(userId, activeChannelIds, lastSyncedAt, markedAllReadAt)
+    /**
+     * Inserts a sync state.
+     *
+     * @param syncState [SyncState]
+     */
+    public suspend fun insertSyncState(syncState: SyncState)
+
+    /**
+     * Selects a sync state.
+     *
+     * @param userId String
+     */
+    public suspend fun selectSyncState(userId: String): SyncState?
+}
