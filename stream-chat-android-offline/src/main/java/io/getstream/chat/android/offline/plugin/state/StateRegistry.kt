@@ -143,7 +143,7 @@ public class StateRegistry private constructor(
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
-            if (instance == null) {
+            if (instance != null) {
                 logger.logE(
                     "StateRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use StateRegistry.get()"
