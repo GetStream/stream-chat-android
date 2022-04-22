@@ -3,6 +3,5 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>EmptyFunctionBlock:ActivityLifecycleCallbacks.kt$ActivityLifecycleCallbacks${}</ID>
-    <ID>SwallowedException:StreamLogFileProvider.kt$StreamLogFileProvider$e: PackageManager.NameNotFoundException</ID>
   </CurrentIssues>
 </SmellBaseline>

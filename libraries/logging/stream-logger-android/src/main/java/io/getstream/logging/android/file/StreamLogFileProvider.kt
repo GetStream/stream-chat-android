@@ -72,13 +72,13 @@ public class StreamLogFileProvider : FileProvider() {
 
     private fun Context.getVersionName(): String = try {
         packageManager?.getPackageInfo(packageName, 0)?.versionName ?: ""
-    } catch (e: PackageManager.NameNotFoundException) {
+    } catch (_: PackageManager.NameNotFoundException) {
         ""
     }
 
     private fun Context.getVersionCode(): Long = try {
         packageManager?.getPackageInfo(packageName, 0)?.getSupportVersionCode() ?: -1L
-    } catch (e: PackageManager.NameNotFoundException) {
+    } catch (_: PackageManager.NameNotFoundException) {
         -1L
     }
 

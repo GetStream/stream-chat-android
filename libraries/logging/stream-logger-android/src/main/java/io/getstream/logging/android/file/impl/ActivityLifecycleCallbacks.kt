@@ -20,6 +20,10 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 
+/**
+ * Stub/no-op implementations of all methods of [Application.ActivityLifecycleCallbacks].
+ * Override this if you only care about a few of the available callback methods.
+ */
 internal abstract class ActivityLifecycleCallbacks : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, bunlde: Bundle?) {}
