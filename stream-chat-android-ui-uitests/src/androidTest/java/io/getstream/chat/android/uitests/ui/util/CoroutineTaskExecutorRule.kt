@@ -40,7 +40,7 @@ internal class CoroutineTaskExecutorRule : TestWatcher() {
     override fun starting(description: Description) {
         super.starting(description)
         DispatcherProvider.set(
-            mainDispatcher = Dispatchers.Main,
+            mainDispatcher = Dispatchers.Main.immediate,
             ioDispatcher = dispatcher
         )
     }
