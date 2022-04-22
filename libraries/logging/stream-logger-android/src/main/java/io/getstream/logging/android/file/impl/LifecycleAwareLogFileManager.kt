@@ -22,13 +22,17 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import io.getstream.logging.android.file.StreamLogFileManager
+import io.getstream.logging.android.file.StreamLogFileManager.ClearManager
+import io.getstream.logging.android.file.StreamLogFileManager.ShareManager
 import io.getstream.logging.file.FileStreamLogger
 import java.io.File
 
+/**
+ * Allows you to share/clear a log file using a current foreground activity.
+ */
 internal class LifecycleAwareLogFileManager(
     private val fileLogger: FileStreamLogger,
-) : ActivityLifecycleCallbacks(), StreamLogFileManager.ShareManager, StreamLogFileManager.ClearManager {
+) : ActivityLifecycleCallbacks(), ShareManager, ClearManager {
 
     private val handler = Handler(Looper.getMainLooper())
     private var foregroundActivity: Activity? = null

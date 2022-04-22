@@ -22,6 +22,15 @@ import io.getstream.logging.StreamLogger.Level.INFO
 import io.getstream.logging.StreamLogger.Level.VERBOSE
 import io.getstream.logging.StreamLogger.Level.WARN
 
+/**
+ * API for sending log output.
+ *
+ * Generally, you should use the [StreamLog.v], [StreamLog.d],
+ * [StreamLog.i], [StreamLog.w], and [StreamLog.e] methods to write logs.
+ *
+ * The order in terms of verbosity, from least to most is [ERROR], [WARN], [INFO], [DEBUG], [VERBOSE].
+ *
+ */
 public object StreamLog {
 
     @PublishedApi

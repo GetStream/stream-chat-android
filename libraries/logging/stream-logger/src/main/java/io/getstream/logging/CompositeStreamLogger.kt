@@ -16,6 +16,9 @@
 
 package io.getstream.logging
 
+/**
+ * A [StreamLogger] container that can hold onto multiple other loggers.
+ */
 public class CompositeStreamLogger(
     private val children: List<StreamLogger>,
 ) : StreamLogger {

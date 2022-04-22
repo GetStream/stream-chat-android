@@ -19,6 +19,9 @@ package io.getstream.logging.android.file
 import io.getstream.logging.android.file.StreamLogFileManager.ClearManager
 import io.getstream.logging.android.file.StreamLogFileManager.ShareManager
 
+/**
+ * An entry point to share/clear a log file.
+ */
 public object StreamLogFileManager {
 
     private var shareManager: ShareManager = ShareManager { }
@@ -29,18 +32,30 @@ public object StreamLogFileManager {
         this.clearManager = clearManager
     }
 
+    /**
+     * Shares log file.
+     */
     public fun share() {
         shareManager.share()
     }
 
+    /**
+     * Clears log file.
+     */
     public fun clear() {
         clearManager.clear()
     }
 
+    /**
+     * Shares a log file.
+     */
     public fun interface ShareManager {
         public fun share()
     }
 
+    /**
+     * Clears a log file.
+     */
     public fun interface ClearManager {
         public fun clear()
     }
