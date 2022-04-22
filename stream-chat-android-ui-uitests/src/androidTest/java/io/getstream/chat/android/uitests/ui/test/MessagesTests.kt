@@ -44,7 +44,7 @@ internal class MessagesTests {
 
     @Test
     fun testSendMessageUiComponents() {
-        composeLoginRobot(composeTestRule) {
+        composeTestRule.composeLoginRobot {
             selectedUiComponentsSdk()
             loginWithUser("Jc Miñarro")
         }
@@ -61,18 +61,20 @@ internal class MessagesTests {
 
     @Test
     fun testSendMessageCompose() {
-        composeLoginRobot(composeTestRule) {
-            selectComposeSdk()
-            loginWithUser("Jc Miñarro")
-        }
+        with(composeTestRule) {
+            composeLoginRobot {
+                selectComposeSdk()
+                loginWithUser("Jc Miñarro")
+            }
 
-        composeChannelsRobot(composeTestRule) {
-            clickAnyChannel()
-        }
+            composeChannelsRobot {
+                clickAnyChannel()
+            }
 
-        composeMessagesRobot(composeTestRule) {
-            typeMessageText("Test message")
-            clickSendButton()
+            composeMessagesRobot {
+                typeMessageText("Test message")
+                clickSendButton()
+            }
         }
     }
 }

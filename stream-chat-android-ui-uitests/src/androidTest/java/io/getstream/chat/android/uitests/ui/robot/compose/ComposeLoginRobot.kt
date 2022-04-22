@@ -24,16 +24,11 @@ import org.junit.rules.TestRule
 
 /**
  * A factory function for [ComposeLoginRobot].
- *
- * @param composeTestRule Rule that provides the main entry point into testing.
- * @param block
- * @return
  */
-internal fun composeLoginRobot(
-    composeTestRule: ComposeTestRule,
+internal fun ComposeTestRule.composeLoginRobot(
     block: ComposeLoginRobot.() -> Unit,
 ): ComposeLoginRobot {
-    return ComposeLoginRobot(composeTestRule).apply { block() }
+    return ComposeLoginRobot(this).apply { block() }
 }
 
 /**

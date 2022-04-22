@@ -24,11 +24,10 @@ import org.junit.rules.TestRule
 /**
  * A factory function for [ComposeChannelsRobot].
  */
-internal fun composeChannelsRobot(
-    composeTestRule: ComposeTestRule,
+internal fun ComposeTestRule.composeChannelsRobot(
     block: ComposeChannelsRobot.() -> Unit,
 ): ComposeChannelsRobot {
-    return ComposeChannelsRobot(composeTestRule).apply { block() }
+    return ComposeChannelsRobot(this).apply { block() }
 }
 
 /**

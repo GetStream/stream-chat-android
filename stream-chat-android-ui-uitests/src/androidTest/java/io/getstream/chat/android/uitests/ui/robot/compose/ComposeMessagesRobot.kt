@@ -25,11 +25,10 @@ import org.junit.rules.TestRule
 /**
  * A factory function for [ComposeMessagesRobot].
  */
-internal fun composeMessagesRobot(
-    composeTestRule: ComposeTestRule,
+internal fun ComposeTestRule.composeMessagesRobot(
     block: ComposeMessagesRobot.() -> Unit,
 ): ComposeMessagesRobot {
-    return ComposeMessagesRobot(composeTestRule).apply { block() }
+    return ComposeMessagesRobot(this).apply { block() }
 }
 
 /**
