@@ -50,7 +50,7 @@
 - Fixed a bug where command suggestion popup was displayed even though all the commands were disabled. [#3334](https://github.com/GetStream/stream-chat-android/pull/3334)
 - Fixed a bug on Nougat where the reaction colors were not displayed properly. [#3347](https://github.com/GetStream/stream-chat-android/pull/3347)
 - Fixed a bug where custom `MessageListItemViewHolderFactory` was ignore on the message options overlay. [#3343](https://github.com/GetStream/stream-chat-android/pull/3343)
-- Fixed `MessageListViewModel` initialization when channel's data is not available immediately, for example when the view model is created after connecting the user. []()
+- Fixed `MessageListViewModel` initialization when channel's data is not available immediately, for example when the view model is created after connecting the user. [#3379](https://github.com/GetStream/stream-chat-android/pull/3379)
 
 ### ⬆️ Improved
 - Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
