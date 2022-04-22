@@ -25,6 +25,7 @@ import java.util.Date
 /**
  * Repository to read and write [Channel] data.
  */
+@Suppress("TooManyFunctions")
 public interface ChannelRepository {
 
     /**
