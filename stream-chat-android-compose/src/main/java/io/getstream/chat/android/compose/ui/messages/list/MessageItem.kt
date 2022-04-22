@@ -383,7 +383,7 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
-    val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth).background(Color.Cyan)
+    val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isEmojiOnly()) {
         EmojiMessageContent(
             modifier = modifier,
