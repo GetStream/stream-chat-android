@@ -24,6 +24,9 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 
+/**
+ * A fragment that displays a full screen overlay dialog.
+ */
 internal open class FullScreenDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

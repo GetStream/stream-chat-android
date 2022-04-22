@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import java.util.Date
 
 /**

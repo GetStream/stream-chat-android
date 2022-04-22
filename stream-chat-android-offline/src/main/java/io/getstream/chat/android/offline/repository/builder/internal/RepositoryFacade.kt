@@ -18,24 +18,23 @@ package io.getstream.chat.android.offline.repository.builder.internal
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.internal.lastMessage
+import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.persistance.repository.ReactionRepository
+import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.isRequestingMoreThanLastMessage
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
-import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentRepository
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
-import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsRepository
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionRepository
-import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateRepository
-import io.getstream.chat.android.offline.repository.domain.user.internal.UserRepository
 import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -148,29 +147,6 @@ internal class RepositoryFacade(
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
-    }
-
-    internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        selectChannelWithoutMessages(cid)?.also { channel ->
-            val messageCreatedAt = checkNotNull(
-                lastMessage.createdAt
-                    ?: lastMessage.createdLocallyAt
-            ) { "created at cant be null, be sure to set message.createdAt" }
-
-            val oldLastMessage = channel.lastMessage
-            val updateNeeded = if (oldLastMessage != null) {
-                lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)
-            } else {
-                true
-            }
-
-            if (updateNeeded) {
-                channel.apply {
-                    lastMessageAt = messageCreatedAt
-                    messages = listOf(lastMessage)
-                }.also { channelsRepository.insertChannel(it) }
-            }
-        }
     }
 
     internal companion object {

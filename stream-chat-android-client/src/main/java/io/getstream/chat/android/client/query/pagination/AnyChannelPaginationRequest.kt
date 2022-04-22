@@ -14,32 +14,37 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.querychannels.pagination.internal
+package io.getstream.chat.android.client.query.pagination
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 
-internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
-    var messageFilterDirection: Pagination? = null
-    var messageFilterValue: String = ""
-    var sort: QuerySort<Channel> = QuerySort()
+private const val MESSAGE_LIMIT = 30
+private const val CHANNEL_LIMIT = 30
+private const val MEMBER_LIMIT = 30
+private const val WATCHER_LIMIT = 30
 
-    var channelLimit: Int = 30
-    var channelOffset: Int = 0
+public class AnyChannelPaginationRequest(public var messageLimit: Int = MESSAGE_LIMIT) {
+    public var messageFilterDirection: Pagination? = null
+    public var messageFilterValue: String = ""
+    public var sort: QuerySort<Channel> = QuerySort()
 
-    var memberLimit: Int = 30
-    var memberOffset: Int = 0
+    public var channelLimit: Int = CHANNEL_LIMIT
+    public var channelOffset: Int = 0
 
-    var watcherLimit: Int = 30
-    var watcherOffset: Int = 0
+    public var memberLimit: Int = MEMBER_LIMIT
+    public var memberOffset: Int = 0
+
+    public var watcherLimit: Int = WATCHER_LIMIT
+    public var watcherOffset: Int = 0
 }
 
 internal fun AnyChannelPaginationRequest.isFirstPage(): Boolean {
     return channelOffset == 0
 }
 
-internal fun AnyChannelPaginationRequest.isRequestingMoreThanLastMessage(): Boolean {
+public fun AnyChannelPaginationRequest.isRequestingMoreThanLastMessage(): Boolean {
     return (isFirstPage() && messageLimit > 1) || (isNotFirstPage() && messageLimit > 0)
 }
 

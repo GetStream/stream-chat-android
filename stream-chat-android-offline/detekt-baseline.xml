@@ -66,8 +66,8 @@
     <ID>LongParameterList:Mother.kt$( user: User = randomUser(), role: String? = randomString(), createdAt: Date? = randomDate(), updatedAt: Date? = randomDate(), isInvited: Boolean? = randomBoolean(), inviteAcceptedAt: Date? = randomDate(), inviteRejectedAt: Date? = randomDate(), shadowBanned: Boolean = randomBoolean(), )</ID>
     <ID>LongParameterList:OfflinePlugin.kt$OfflinePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, private val deleteReactionListener: DeleteReactionListener, private val sendReactionListener: SendReactionListener, private val deleteMessageListener: DeleteMessageListener, private val sendGiphyListener: SendGiphyListener, private val shuffleGiphyListener: ShuffleGiphyListener, private val sendMessageListener: SendMessageListener, private val queryMembersListener: QueryMembersListener, private val typingEventListener: TypingEventListener, private val createChannelListener: CreateChannelListener, )</ID>
     <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
+    <ID>LongParameterList:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$( private val context: Context, private val logic: LogicRegistry, private val globalState: GlobalState, private val channelRepository: ChannelRepository, private val messageRepository: MessageRepository, private val attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val networkType: UploadAttachmentsNetworkType, )</ID>
     <ID>LongParameterList:TestDataHelper.kt$( year: Int, month: Int, date: Int, hourOfDay: Int = 0, minute: Int = 0, seconds: Int = 0, )</ID>
-    <ID>MagicNumber:AnyChannelPaginationRequest.kt$AnyChannelPaginationRequest$30</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:RepositoryFactory.kt$RepositoryFactory$100</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
@@ -121,7 +121,6 @@
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
     <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
-    <ID>MaxLineLength:MessageRepository.kt$MessageRepositoryImpl$// the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)</ID>
     <ID>MaxLineLength:MessagesState.kt$MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:NonMemberChatEventHandlerTest.kt$NonMemberChatEventHandlerTest$fun</ID>
@@ -135,7 +134,6 @@
     <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:ReactionDao.kt$ReactionDao$@Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")</ID>
-    <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade$lastMessage.id == oldLastMessage.id || channel.lastMessageAt == null || messageCreatedAt.after(channel.lastMessageAt)</ID>
     <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade.Companion$requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }</ID>
     <ID>MaxLineLength:RepositoryFacadeIntegrationTests.kt$RepositoryFacadeIntegrationTests$fun</ID>
     <ID>MaxLineLength:RepositoryFacadeTests.kt$RepositoryFacadeTests$(acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser) to acc.second + message</ID>
@@ -178,16 +176,15 @@
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
     <ID>TooManyFunctions:ChannelLogic.kt$ChannelLogic : QueryChannelListener</ID>
-    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepository</ID>
-    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepositoryImpl : ChannelRepository</ID>
+    <ID>TooManyFunctions:DatabaseChannelRepository.kt$DatabaseChannelRepository : ChannelRepository</ID>
+    <ID>TooManyFunctions:DatabaseMessageRepository.kt$DatabaseMessageRepository : MessageRepository</ID>
+    <ID>TooManyFunctions:DatabaseUserRepository.kt$DatabaseUserRepository : UserRepository</ID>
     <ID>TooManyFunctions:EventHandlerImpl.kt$EventHandlerImpl</ID>
     <ID>TooManyFunctions:Message.kt$io.getstream.chat.android.offline.extensions.internal.Message.kt</ID>
     <ID>TooManyFunctions:MessageDao.kt$MessageDao</ID>
-    <ID>TooManyFunctions:MessageRepository.kt$MessageRepositoryImpl : MessageRepository</ID>
     <ID>TooManyFunctions:QueryChannelsLogic.kt$QueryChannelsLogic</ID>
     <ID>TooManyFunctions:RepositoryFacade.kt$RepositoryFacade : UserRepositoryChannelRepositoryReactionRepositoryMessageRepositoryChannelConfigRepositoryQueryChannelsRepositorySyncStateRepositoryAttachmentRepository</ID>
     <ID>TooManyFunctions:SyncManager.kt$SyncManager</ID>
-    <ID>TooManyFunctions:UserRepository.kt$UserRepositoryImpl : UserRepository</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
