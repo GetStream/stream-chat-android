@@ -42,7 +42,7 @@ public interface StreamLogger {
      * Low-level logging call.
      *
      * @param priority The priority/type of this log message.
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param message The message you would like logged.
      * @param throwable An exception to log.
      *

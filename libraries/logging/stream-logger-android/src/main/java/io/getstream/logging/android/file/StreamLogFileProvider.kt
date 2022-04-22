@@ -23,6 +23,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.FileProvider
 import io.getstream.logging.CompositeStreamLogger
+import io.getstream.logging.IsLoggableValidator
 import io.getstream.logging.StreamLog
 import io.getstream.logging.android.AndroidStreamLogger
 import io.getstream.logging.android.file.impl.LifecycleAwareLogFileManager
@@ -60,7 +61,8 @@ public class StreamLogFileProvider : FileProvider() {
 
         val compositeLogger = CompositeStreamLogger(androidLogger, fileLogger)
         val fileManager = LifecycleAwareLogFileManager(fileLogger)
-        StreamLog.init(compositeLogger) { _, _ -> true }
+        StreamLog.logger = compositeLogger
+        StreamLog.validator = IsLoggableValidator { _, _ -> true }
 
         StreamLogFileManager.init(fileManager, fileManager)
         application?.registerActivityLifecycleCallbacks(fileManager)

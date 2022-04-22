@@ -33,21 +33,15 @@ import io.getstream.logging.StreamLogger.Level.WARN
  */
 public object StreamLog {
 
-    @PublishedApi
-    internal var logger: StreamLogger = SilentStreamLogger
-    @PublishedApi
-    internal var validator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
+    /**
+     * [StreamLogger] implementation to be used.
+     */
+    public var logger: StreamLogger = SilentStreamLogger
 
     /**
-     * Sets custom [StreamLogger] implementation.
+     * [IsLoggableValidator] implementation to be used.
      */
-    public fun init(
-        logger: StreamLogger,
-        validator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
-    ) {
-        this.logger = logger
-        this.validator = validator
-    }
+    public var validator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
 
     /**
      * Returns a tagged logger.
@@ -59,7 +53,7 @@ public object StreamLog {
     /**
      * Send a [ERROR] log message.
      *
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param throwable An exception to log.
      * @param message The function returning a message you would like logged.
      */
@@ -72,7 +66,7 @@ public object StreamLog {
     /**
      * Send a [ERROR] log message.
      *
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
     public inline fun e(tag: String, message: () -> String) {
@@ -84,7 +78,7 @@ public object StreamLog {
     /**
      * Send a [WARN] log message.
      *
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
     public inline fun w(tag: String, message: () -> String) {
@@ -96,7 +90,7 @@ public object StreamLog {
     /**
      * Send a [INFO] log message.
      *
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
     public inline fun i(tag: String, message: () -> String) {
@@ -108,7 +102,7 @@ public object StreamLog {
     /**
      * Send a [DEBUG] log message.
      *
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
     public inline fun d(tag: String, message: () -> String) {
@@ -120,7 +114,7 @@ public object StreamLog {
     /**
      * Send a [VERBOSE] log message.
      *
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
     public inline fun v(tag: String, message: () -> String) {
@@ -139,7 +133,7 @@ public fun interface IsLoggableValidator {
      * Validates [priority] and [tag] of a message you would like logged.
      *
      * @param priority The priority/type of a log message.
-     * @param tag Used to identify the source of a log message. It usually identifies the class or activity where the log call occurs.
+     * @param tag Used to identify the source of a log message.
      */
     public fun isLoggable(priority: Priority, tag: String): Boolean
 }

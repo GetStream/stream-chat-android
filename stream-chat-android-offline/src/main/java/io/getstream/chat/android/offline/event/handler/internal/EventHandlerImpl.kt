@@ -552,7 +552,7 @@ internal class EventHandlerImpl(
 
     private suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
-            logger.v { "[handleEventsInternal] chatEvent: $chatEvent" }
+            logger.d { "[handleEventsInternal] chatEvent: $chatEvent" }
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }

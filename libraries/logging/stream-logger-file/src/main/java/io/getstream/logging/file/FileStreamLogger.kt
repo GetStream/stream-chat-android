@@ -109,7 +109,7 @@ public class FileStreamLogger(
         this.currentWriter = internalFile.fileWriter()
     }
 
-    private fun swapFiles() = runCatching {
+    private fun swapFiles(): Result<Unit> = runCatching {
         val curLen = currentFile?.length() ?: 0
         if (curLen >= config.maxLogSize / 2) {
             currentFile = if (currentFile === internalFile0) internalFile1 else internalFile0

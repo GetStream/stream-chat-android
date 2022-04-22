@@ -2,9 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>EmptyFunctionBlock:StreamLogger.kt$SilentStreamLogger${}</ID>
-    <ID>MaxLineLength:StreamLog.kt$IsLoggableValidator$*</ID>
-    <ID>MaxLineLength:StreamLog.kt$StreamLog$*</ID>
-    <ID>MaxLineLength:StreamLogger.kt$StreamLogger$*</ID>
+   <ID>EmptyFunctionBlock:StreamLogger.kt$SilentStreamLogger${}</ID>
   </CurrentIssues>
 </SmellBaseline>
