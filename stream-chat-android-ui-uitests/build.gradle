@@ -88,7 +88,9 @@ dependencies {
     implementation Dependencies.composeCoil
 
     // Instrumentation tests
-    debugImplementation Dependencies.fragmentTest
+    debugImplementation(Dependencies.fragmentTest) {
+        exclude group: 'androidx.test', module: 'monitor'
+    }
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.espressoContrib
